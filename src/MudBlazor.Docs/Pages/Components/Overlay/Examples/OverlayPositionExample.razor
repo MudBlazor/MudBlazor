@@ -1,0 +1,47 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="6" class="pa-4">
+        <MudButton @onclick="() => TogglePopover(true)"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary">
+            Open Calendar with Override
+        </MudButton>
+        <MudButton @onclick="() => TogglePopover(false)"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary">
+            Open Calendar without Override
+        </MudButton>
+    </MudItem>
+</MudGrid>
+<MudPopover Open="@_isPopoverOpen" 
+            AnchorOrigin="Origin.BottomCenter" 
+            TransformOrigin="Origin.TopCenter">
+    <MudDatePicker Label="Publish Date" Class="pa-2"
+                    MinDate="new DateTime(1950, 1, 1)"
+                    @bind-Date="@_selectedDate"
+                    Variant="Variant.Outlined"
+                    AdornmentIcon="@Icons.Material.Filled.CalendarToday" />
+</MudPopover>
+<MudOverlay DarkBackground="true" Class="@_className" AutoClose="true"
+            OnClosed="@(() => TogglePopover(false))"
+            Visible="@_isPopoverOpen" />
+
+@code {
+    private bool _isPopoverOpen = false;
+    private DateTime? _selectedDate { get; set; } = DateTime.Today;
+    private string _className = string.Empty;
+
+    private void TogglePopover(bool overRide)
+    {        
+        if (overRide)
+        {
+            _className = "mud-skip-overlay-section";
+        }
+        else
+        {
+            _className = string.Empty;
+        }
+        _isPopoverOpen = !_isPopoverOpen;
+    }    
+}

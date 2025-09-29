@@ -9,6 +9,7 @@
         <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.EndSlope)">End Slope</MudMenuItem>
         <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.Periodic)">Periodic</MudMenuItem>
     </MudMenu>
+    <MudCheckBox T="bool" ValueChanged="(v)=> Series.ForEach(x => x.ShowDataMarkers = v)" Label="Show Data Markers"></MudCheckBox>
 </div>
 
 @code {
@@ -29,17 +30,14 @@
 
     public void RandomizeData()
     {
-        var new_series = new List<ChartSeries>()
+        foreach (var series in Series)
         {
-            new ChartSeries() { Name = "Series 1", Data = new double[9] },
-            new ChartSeries() { Name = "Series 2", Data = new double[9] },
-        };
-        for (int i = 0; i < 9; i++)
-        {
-            new_series[0].Data[i] = random.NextDouble() * 100;
-            new_series[1].Data[i] = random.NextDouble() * 100;
+            for (int i = 0; i < series.Data.Length - 1; i++)
+            {
+                series.Data[i] = random.NextDouble() * 100 + 10;
+            }
         }
-        Series = new_series;
+
         StateHasChanged();
     }
 

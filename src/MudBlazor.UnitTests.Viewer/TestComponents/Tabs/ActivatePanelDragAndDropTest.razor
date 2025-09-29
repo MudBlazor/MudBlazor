@@ -1,0 +1,28 @@
+﻿<MudTabs Outlined="true" Elevation="4" Rounded="true" Border="true" ActiveTabClass="@ActiveTabClass"
+         ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6"
+         EnableDragAndDrop="@_dragDrop" @bind-ActivePanelIndex="_activePanelIndex">
+    <MudTabPanel Text="One">
+        <MudText Typo="Typo.h6">Tab One</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Two">
+        <MudText Typo="Typo.h6">Tab Two</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Three">
+        <MudText Typo="Typo.h6">Tab Three</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Four">
+        <MudText Typo="Typo.h6">Tab Four</MudText>
+    </MudTabPanel>
+</MudTabs>
+
+<MudCheckBox @bind-Value="_dragDrop" Class="drag-drop-class" Color="@Color.Primary">
+    Enable Drag & Drop
+</MudCheckBox>
+
+@code {
+    private bool _dragDrop { get; set; }
+    private int _activePanelIndex { get; set; } = 1;
+
+    [Parameter]
+    public string? ActiveTabClass { get; set; }
+}

@@ -22,12 +22,12 @@ namespace MudBlazor
         /// </summary>
         protected string ClassName =>
             new CssBuilder("mud-rating-item")
-                .AddClass($"mud-ripple mud-ripple-icon", Ripple)
-                .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
+                .AddClass("mud-ripple mud-ripple-icon", Ripple)
+                .AddClass("yellow-text.text-darken-3", Color == Color.Default)
                 .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
-                .AddClass($"mud-rating-item-active", Active)
-                .AddClass($"mud-disabled", Disabled)
-                .AddClass($"mud-readonly", ReadOnly)
+                .AddClass("mud-rating-item-active", Active)
+                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-readonly", ReadOnly)
                 .AddClass(Class)
                 .Build();
 
@@ -216,7 +216,7 @@ namespace MudBlazor
 
         private Task HandleClickAsync()
         {
-            if (Disabled)
+            if (Disabled || ReadOnly)
             {
                 return Task.CompletedTask;
             }

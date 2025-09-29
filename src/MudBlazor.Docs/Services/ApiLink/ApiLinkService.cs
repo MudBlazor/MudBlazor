@@ -132,6 +132,7 @@ namespace MudBlazor.Docs.Services
             RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
             RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
+            RegisterPage("Segmented Buttons", subtitle: "Go to Toggle Group", componentType: typeof(MudToggleGroup<T>));
             RegisterPage("Side Panel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
             RegisterPage("Toast", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));

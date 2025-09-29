@@ -47,6 +47,8 @@
                     can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
                     <br><br>
                     To hide the filter icons unless a column is currently filtered, you can set the <CodeInline>ShowFilterIcons</CodeInline> property to false.
+                    <br><br>
+                    <strong>Selection Note:</strong> For multi-selection with custom objects, override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> methods in your data model or provide a custom <CodeInline>Comparer</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridAdvancedExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -96,16 +98,40 @@
         <DocsPageSection>
             <SectionHeader Title="Grouping">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to group data by column. Setting the <CodeInline>Grouping</CodeInline> property
-                    to <CodeInline>true</CodeInline> will turn on grouping which will add a menu item in the column options to toggle grouping of that column.
-                    To disable grouping on a column, set its <CodeInline>Groupable</CodeInline> property to <CodeInline>false</CodeInline>.
-
+                    The <CodeInline Tag="true">MudDataGrid</CodeInline> allows users to organize data by grouping rows that share common values in 
+                    selected columns. Grouping collapses similar data into expandable sections, making large datasets more manageable. 
+                    <MudText Typo="Typo.h6" Class="mt-2">Enabling Grouping</MudText>
+                    <MudText HtmlTag="p">
+                        To enable grouping functionality across the grid set the <CodeInline>Groupable</CodeInline> property on <CodeInline Tag="true">MudDataGrid</CodeInline> 
+                        to <CodeInline>true</CodeInline>. This activates the grouping feature globally, allowing all columns to be groupable unless explicitly overridden.
+                        Each column also supports its own <CodeInline>Groupable</CodeInline> property. This column-level property takes precedence over the grid-level 
+                        setting. For example, if the grid’s <CodeInline>Groupable</CodeInline> is <CodeInline>true</CodeInline> but a column’s 
+                        <CodeInline>Groupable</CodeInline> is set to <CodeInline>false</CodeInline>, that column will not be groupable via the UI.
+                    </MudText>
+                    <MudText Typo="Typo.h6" Class="mt-2">Default Grouping State</MudText>
+                    <MudText HtmlTag="p">
+                        To define whether a column should start grouped by default, set its <CodeInline>Grouping</CodeInline> property to <CodeInline>true</CodeInline>. 
+                        This property supports two-way binding <CodeInline>@@bind-Grouping</CodeInline>, meaning it updates if the user groups or ungroups the column 
+                        via the grid’s UI.                         
+                    </MudText>
+                    <MudAlert Severity="Severity.Info" Dense="true">
+                        Note that for <CodeInline>Grouping</CodeInline> to take effect, either the column or grid must have <CodeInline>Groupable</CodeInline> enabled.
+                    </MudAlert>
+                    <MudText Typo="Typo.h6" Class="mt-2">Additional Features</MudText>
+                    <MudList T="string" Dense="true" ReadOnly="true">
+                        <MudListItem Class="py-0">Multi-level grouping is supported, allowing hierarchical organization by multiple columns simultaneously</MudListItem>
+                        <MudListItem Class="py-0">Group headers display the grouped column name or <CodeInline>GroupTemplate</CodeInline>, with expansion controls</MudListItem>
+                        <MudListItem Class="py-0">
+                            <CodeInline>Grouping</CodeInline>, <CodeInline>GroupExpanded</CodeInline>, and <CodeInline>GroupByOrder</CodeInline> are two-way bindable column parameters.
+                        </MudListItem>
+                    </MudList>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridGroupingExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingMultiLevelExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridGroupingMultiLevelExample />
             </SectionContent>
         </DocsPageSection>
+
 
          <DocsPageSection>
             <SectionHeader Title="Sorting">
@@ -120,6 +146,16 @@
                     In both <i>active</i> modes, single columns can be excluded from sorting by setting the <CodeInline>Sortable</CodeInline> property to false for that column.
                     When SortMode is set to <CodeInline>SortMode.None</CodeInline> sorting is disabled globally and setting the <CodeInline>Sortable</CodeInline> property on a column has no effect.<br /><br />
                     You can also use the <CodeInline>SortBy</CodeInline> parameter on a <CodeInline>TemplateColumn</CodeInline> to allow sorting on that column.
+                    <br /><br />
+                    When using <CodeInline>PropertyColumn</CodeInline>, if the <CodeInline>Property</CodeInline> lambda expression returns a <b>primitive type</b>, 
+                    the <CodeInline>SortDefinition</CodeInline>'s <CodeInline>SortBy</CodeInline> will return the Property's <CodeInline>nameof</CodeInline> value.
+                    Instead, if the Property lamda expression contains a complex value, the SortBy will return the column GUID.
+                    In this case, if you need to retrieve the column, you have several options:
+                    <MudList T="string" Dense>
+                        <MudListItem>- <b>Embed a CellTemplate within the PropertyColumn</b>: Use the lambda expression of the PropertyColumn to return the primitive Property value, while implementing the more complex, ad-hoc logic in the embedded CellTemplate.</MudListItem>
+                        <MudListItem>- <b>Title lookup via GUID</b>: Assign a Title to the TemplateColumn, and a reference to the MudDataGrid using <code>@@ref</code>. Iterate over the RenderedColumns to find the TemplateColumn by matching its unique identifier (where PropertyName == SortDefinition.SortBy), and extract its Title.</MudListItem>
+                        <MudListItem>- <b>Create a custom TemplateColumn</b>: Inherit from the Column base class and override the PropertyName's default behavior and implement your own custom logic instead of relying on a randomly generated identifier</MudListItem>
+                    </MudList>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="my-1">Changing the SortMode at runtime will reset any former sort orders on all columns.</MudAlert>
                 </Description>
             </SectionHeader>
@@ -182,7 +218,8 @@
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions.
                     <br><br>
-                    You can customize the icon to toggle the RowDetail, disable the toggle button and also initially expand the RowDetail.
+                    You can customize the icon to toggle the RowDetail, disable the toggle button and also initially expand the RowDetail. In addition most customization options are available
+                    including <CodeInline>EnableHeaderToggle</CodeInline> that puts a Toggle Icon in the header row to Expand/Collapse all.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridDetailRowExample)" ShowCode="false" Block="true" FullWidth="true">

@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Components;
+
 namespace MudBlazor;
 
 #nullable enable
@@ -7,4 +9,5 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudChart
 {
+
 }

@@ -655,7 +655,7 @@ namespace MudBlazor
         /// <remarks>
         /// When called, the <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
         /// </remarks>
-        public void ResetValidation()
+        public virtual void ResetValidation()
         {
             Error = false;
             ValidationErrors.Clear();

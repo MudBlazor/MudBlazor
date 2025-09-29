@@ -1042,7 +1042,7 @@ namespace MudBlazor.UnitTests.Components
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
             // trigger delayed re-render
-            comp.Find("#re-render-button").Click();
+            await comp.InvokeAsync(() => comp.Find("#re-render-button").Click());
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = "test";

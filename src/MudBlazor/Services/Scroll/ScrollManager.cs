@@ -47,6 +47,8 @@ internal sealed class ScrollManager : IScrollManager
     public ValueTask ScrollToListItemAsync(string elementId) =>
         _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToListItem", elementId);
 
+    // lockScroll and unlockScroll use a counter system in javascript so we can lock/unlock without limit
+    // and maintain the proper lock. IF YOU CHANGE THIS, CHANGE THE JAVASCRIPT AS WELL
     /// <inheritdoc />
     public ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
         _jSRuntime.InvokeVoidAsync("mudScrollManager.lockScroll", selector, cssClass);

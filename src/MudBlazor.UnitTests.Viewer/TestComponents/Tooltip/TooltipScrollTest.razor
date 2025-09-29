@@ -1,0 +1,24 @@
+﻿<div class="overflow-y-auto" style="height: 560px;">
+    <MudText Typo="Typo.h6">Inside Container</MudText>
+    @for (int i = 1; i < 100; i++)
+    {
+        <div>
+            <MudTooltip Text="@("Person " + i)" Placement="Placement.Right">
+                <MudIconButton Icon="@Icons.Material.Filled.Person" />
+            </MudTooltip>
+        </div>
+    }
+</div>
+<MudText Typo="Typo.h6">Scrollable Body</MudText>
+@for (int i = 1; i < 100; i++)
+{
+    <div>
+        <MudTooltip Text="@("Person " + i)" Placement="Placement.Right">
+            <MudIconButton Icon="@Icons.Material.Filled.Person" />
+        </MudTooltip>
+    </div>
+}
+
+@code {
+    public static string __description__ = "Scrolling Tooltips";
+}

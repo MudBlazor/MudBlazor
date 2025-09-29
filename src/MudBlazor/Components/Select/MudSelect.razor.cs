@@ -23,6 +23,8 @@ namespace MudBlazor
         private string? _activeItemId;
         private bool? _selectAllChecked;
         private string? _multiSelectionText;
+        private int _longestItemLength;
+        private MudSelectItem<T>? _longestItem;
         private IEqualityComparer<T?>? _comparer;
         private TaskCompletionSource? _renderComplete;
         private MudInput<string> _elementReference = null!;
@@ -36,6 +38,7 @@ namespace MudBlazor
         protected string OuterClassname =>
             new CssBuilder("mud-select")
                 .AddClass("mud-width-full", FullWidth)
+                .AddClass("mud-width-content", FitContent && !FullWidth)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -47,6 +50,14 @@ namespace MudBlazor
         protected string InputClassname =>
             new CssBuilder("mud-select-input")
                 .AddClass(InputClass)
+                .Build();
+
+        protected string FillerClassname =>
+            new CssBuilder("mud-select-filler")
+                .AddClass("d-inline-block")
+                .AddClass("invisible")
+                .AddClass("mx-2", Variant == Variant.Text)
+                .AddClass("mx-4", Variant != Variant.Text)
                 .Build();
 
         [Inject]
@@ -225,6 +236,16 @@ namespace MudBlazor
         public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
 
         /// <summary>
+        /// Sets the container width to match its contents.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Requires FullWidth to be <c>false</c>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool FitContent { get; set; }
+
+        /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.
         /// </summary>
         /// <remarks>
@@ -257,6 +278,16 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         [Parameter]
         public EventCallback OnClose { get; set; }
+
+        /// <summary>
+        /// Prevents interaction with background elements while this list is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
 
         /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
@@ -410,7 +441,10 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, _selectedValues.Select(Converter.Set)), updateValue: false).CatchAndLog();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T?>(_selectedValues, _comparer));
+
+                var newValues = new HashSet<T?>(_selectedValues, _comparer);
+                SelectedValuesChanged.InvokeAsync(newValues);
+                FieldChanged(newValues);
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
             }
@@ -779,6 +813,7 @@ namespace MudBlazor
 
             HighlightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            FieldChanged(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T?)(object?)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
@@ -834,6 +869,13 @@ namespace MudBlazor
                     _selectAllChecked = null;
                 }
             }
+        }
+
+        internal Task HandleMouseDown(MouseEventArgs args)
+        {
+            if (args.Button != 0) // if it wasn't left click drop out
+                return Task.CompletedTask;
+            return ToggleMenu();
         }
 
         /// <summary>
@@ -1004,7 +1046,7 @@ namespace MudBlazor
         /// Occurs when the <c>Clear</c> button has been clicked.
         /// </summary>
         /// <remarks>
-        /// This is the first event raised when the clear button is clicked.  
+        /// This is the first event raised when the clear button is clicked.
         /// The <see cref="SelectedValues"/> are cleared and the <see cref="OnClearButtonClick"/> event is raised.
         /// </remarks>
         protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
@@ -1015,6 +1057,7 @@ namespace MudBlazor
             await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            FieldChanged(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -1071,9 +1114,9 @@ namespace MudBlazor
         /// The icon to display whether all, none, or some items are selected.
         /// </summary>
         /// <remarks>
-        /// Only applies when <see cref="MultiSelection"/> is <c>true</c>.  
+        /// Only applies when <see cref="MultiSelection"/> is <c>true</c>.
         /// If all items are selected, <see cref="CheckedIcon"/> is returned.
-        /// If no items are selected, <see cref="UncheckedIcon"/> is returned.  
+        /// If no items are selected, <see cref="UncheckedIcon"/> is returned.
         /// Otherwise, <see cref="IndeterminateIcon"/> is returned.
         /// </remarks>
         protected string SelectAllCheckBoxIcon
@@ -1216,6 +1259,7 @@ namespace MudBlazor
             await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            FieldChanged(_selectedValues);
         }
 
         /// <summary>
@@ -1264,6 +1308,7 @@ namespace MudBlazor
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            FieldChanged(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
         }
@@ -1276,7 +1321,20 @@ namespace MudBlazor
         {
             if (item == null || item.Value == null)
                 return;
+
             _shadowLookup[item.Value] = item;
+
+            if (!FitContent) return;
+
+            var stringValue = ToStringFunc?.Invoke(item.Value) ?? Converter.Set(item.Value);
+
+            if (_longestItem is null || stringValue?.Length > _longestItemLength)
+            {
+                _longestItem = item;
+                _longestItemLength = stringValue?.Length ?? 0;
+
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -1342,7 +1400,9 @@ namespace MudBlazor
             }
             else
             {
-                await SelectedValuesChanged.InvokeAsync(new HashSet<T?>(SelectedValues!, _comparer));
+                var newValues = new HashSet<T?>(SelectedValues!, _comparer);
+                await SelectedValuesChanged.InvokeAsync(newValues);
+                FieldChanged(newValues);
             }
         }
     }

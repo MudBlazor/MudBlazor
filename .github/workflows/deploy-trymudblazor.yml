@@ -28,6 +28,7 @@ jobs:
       web-app-slot-name:  'staging'
       swap-slots: true
       project-directory: './src/TryMudBlazor.Server'
+      second-project-directory: './src/TryMudBlazor.Client'
     secrets:
       publish-profile: ${{ secrets.PUBLISH_TRY_MUDBLAZOR }}
       azure-cred: ${{ secrets.AZURE_CREDENTIALS_TRY_PROD }}

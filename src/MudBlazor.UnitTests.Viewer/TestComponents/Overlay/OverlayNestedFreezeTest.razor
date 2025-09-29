@@ -6,7 +6,7 @@
     <MudSpacer />
     <MudMenu Label="Open AutoComplete Menu">
         <ActivatorContent>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">AutoComplete button</MudButton>
         </ActivatorContent>
         <ChildContent>
             <MudMenuItem AutoClose="false">
@@ -18,7 +18,7 @@
     </MudMenu>
     <MudMenu Label="Open AutoComplete Menu">
         <ActivatorContent>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Select button</MudButton>
         </ActivatorContent>
         <ChildContent>
             <MudMenuItem AutoClose="false">
@@ -37,7 +37,7 @@
 
 <MudMenu Label="Open AutoComplete Menu">
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">Autocomplete button</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem AutoClose="false">
@@ -50,7 +50,7 @@
 
 <MudMenu Label="Open Select Menu">
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">Select button</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem AutoClose="false">
@@ -70,8 +70,8 @@
 
 @code {
     public static string __description__ = "Testing MudOverlay impact on MudAutoComplete when by itself, nested in mudmenu and nested in mudmenu in mudappbar";
-    string _value = string.Empty;
-    private string[] _states =
+    private string _value = string.Empty;
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "Arizona", "Arkansas", "California",
         "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",

@@ -378,6 +378,23 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
+    public void AddMudBlazorPointerEventsNoneService_ShouldRegisterServices()
+    {
+        // Arrange
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddSingleton<IJSRuntime, MockJsRuntime>();
+
+        // Act
+        services.AddMudBlazorPointerEventsNoneService();
+        var serviceProvider = services.BuildServiceProvider();
+        var pointerEventsNoneService = serviceProvider.GetService<IPointerEventsNoneService>();
+
+        // Assert
+        pointerEventsNoneService.Should().NotBeNull();
+    }
+
+    [Test]
     public void AddMudLocalization_ShouldRegisterServices()
     {
         // Arrange

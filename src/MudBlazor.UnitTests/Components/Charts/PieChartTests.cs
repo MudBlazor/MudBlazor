@@ -78,17 +78,16 @@ namespace MudBlazor.UnitTests.Charts
                 comp.Markup.Should()
                     .Contain("Technetium");
             }
-
             if (data.Length == 4 && data.Contains(77))
             {
                 comp.Markup.Should()
-                    .Contain("M 1 0 A 1 1 0 1 1 -0.7851254621398548 -0.6193367490305087 L 0 0");
+                    .Contain("d=\"M 0 -140 A 140 140 0 1 1 -86.7071 109.9176 L 0 0 Z\"");
             }
 
             if (data.Length == 4 && data.Contains(5))
             {
                 comp.Markup.Should()
-                    .Contain("M 0.9695598647982466 -0.24485438238350116 A 1 1 0 0 1 1 -2.4492935982947064E-16 L 0 0");
+                    .Contain("d=\"M -34.2796 -135.7384 A 140 140 0 0 1 -0 -140 L 0 0 Z\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters
@@ -132,6 +131,18 @@ namespace MudBlazor.UnitTests.Charts
                     count.Should().Be(1);
                 }
             }
+        }
+
+        [Test]
+        public void PieChart100Percent()
+        {
+            double[] data = { 50, 0, 0 };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Pie)
+                .Add(p => p.InputData, data));
+
+            comp.Markup.Should().Contain("d=\"M 0 -140 A 140 140 0 1 1 0 140 A 140 140 0 1 1 -0 -140 L 0 0 Z\"");
         }
     }
 }

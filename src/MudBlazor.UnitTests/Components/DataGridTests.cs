@@ -15,6 +15,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.Utilities.Clone;
@@ -144,8 +145,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
-            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
@@ -261,8 +262,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
-            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
@@ -584,28 +585,28 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridSingleSelectionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
 
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             // select first item programmatically
             var firstItem = dataGrid.Instance.Items.ElementAt(0);
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-            dataGrid.Instance.SelectedItem.Should().Be(firstItem);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().Be(firstItem);
 
             // select second item programmatically (still should be only one item selected)
             var secondItem = dataGrid.Instance.Items.ElementAt(1);
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-            dataGrid.Instance.SelectedItem.Should().Be(secondItem);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().Be(secondItem);
 
             // deselect an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, secondItem));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
-            dataGrid.Instance.SelectedItem.Should().BeNull();
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().BeNull();
 
             // nothing should happen as the "select all" shouldn't do anything in single selection mode
             dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
         }
 
         [Test]
@@ -730,15 +731,16 @@ namespace MudBlazor.UnitTests.Components
             //test that changing header sets all items selected
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("input.mud-checkbox-input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(dataGrid.Instance.Items.Count());
+            comp.Render();
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(dataGrid.Instance.Items.Count());
             //test that changing footer unselects all items
             dataGrid.FindAll("input.mud-checkbox-input")[^1].Change(false);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             //test that changing value in each row selects an item in grid
             for (var i = 1; i < dataGrid.Instance.Items.Count(); i++)
             {
                 dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
-                dataGrid.Instance.SelectedItems.Count.Should().Be(i);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(i);
             }
         }
 
@@ -1391,10 +1393,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1408,10 +1410,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value default case sensitivity
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1425,9 +1427,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value default case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1441,9 +1443,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1461,10 +1463,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             // case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1478,10 +1480,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1495,9 +1497,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1514,10 +1516,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1531,10 +1533,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value default case sensitivity
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1548,9 +1550,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1564,10 +1566,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1585,10 +1587,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1602,10 +1604,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1619,9 +1621,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1638,10 +1640,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1655,10 +1657,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1672,9 +1674,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1691,10 +1693,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1708,10 +1710,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1725,9 +1727,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1743,10 +1745,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1759,10 +1761,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -1778,10 +1780,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1794,10 +1796,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -1812,9 +1814,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1836,9 +1838,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, false, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, true, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1851,9 +1853,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, false, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, true, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1868,9 +1870,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, false, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, true, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1892,9 +1894,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 456, Severity.Info, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1907,9 +1909,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 456, Severity.Info, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1925,9 +1927,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1940,9 +1942,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1957,9 +1959,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1982,8 +1984,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1996,8 +1998,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2013,8 +2015,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2027,8 +2029,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2044,8 +2046,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2058,8 +2060,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2075,8 +2077,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2089,8 +2091,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2106,8 +2108,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2120,8 +2122,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2137,8 +2139,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2151,8 +2153,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2168,8 +2170,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2182,8 +2184,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2199,8 +2201,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2213,8 +2215,8 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -2229,8 +2231,287 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+        }
+
+        [Test]
+        public void FilterDefinitionDateOnlyTest()
+        {
+            var comp = Context.RenderComponent<DataGridDateOnlyFilterTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDateOnlyFilterTest.Model>>();
+            var dateColumn = dataGrid.Instance.GetColumnByPropertyName("HiredOn");
+            var testDate = new DateOnly(2020, 3, 10);
+
+            #region FilterOperator.DateOnly.Is
+
+            var filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Is,
+                Value = testDate
+            };
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeFalse();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Is,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.IsNot
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.IsNot,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.IsNot,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.After
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.After,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("John", 32, new DateOnly(2022, 6, 15))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.After,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.OnOrAfter
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrAfter,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("John", 32, new DateOnly(2022, 6, 15))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrAfter,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.Before
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Before,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Before,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.OnOrBefore
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrBefore,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrBefore,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.Empty
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Empty,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeFalse();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.NotEmpty
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.NotEmpty,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = null,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
         }
 
         [Test]
@@ -2252,9 +2533,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func.Invoke(new("Sam", 456, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
-            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2268,9 +2549,9 @@ namespace MudBlazor.UnitTests.Components
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
             // data type is an int
-            func2.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
-            func2.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
-            func2.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func2.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
+            func2.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
+            func2.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2286,9 +2567,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func3.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
-            func3.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
-            func3.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func3.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
+            func3.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
+            func3.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2301,9 +2582,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func4.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
-            func4.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
-            func4.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func4.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
+            func4.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
+            func4.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2319,9 +2600,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func5.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
-            func5.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
-            func5.Invoke(new("Joe", null, null, null, null, null)).Should().BeFalse();
+            func5.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
+            func5.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func5.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2334,9 +2615,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func6.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
-            func6.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func6.Invoke(new("Joe", null, null, null, null, null)).Should().BeTrue();
+            func6.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
+            func6.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func6.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2352,9 +2633,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func7.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
-            func7.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
-            func7.Invoke(new("Joe", null, null, null, null, null)).Should().BeFalse();
+            func7.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeTrue();
+            func7.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+            func7.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2367,9 +2648,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func8.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
-            func8.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
-            func8.Invoke(new("Joe", null, null, null, null, null)).Should().BeTrue();
+            func8.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeTrue();
+            func8.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+            func8.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2385,9 +2666,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func9.Invoke(new("Sam", 4, null, null, null, null)).Should().BeFalse();
-            func9.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
-            func9.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func9.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeFalse();
+            func9.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeFalse();
+            func9.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2400,9 +2681,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func10.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
-            func10.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
-            func10.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func10.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeTrue();
+            func10.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
+            func10.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2418,9 +2699,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func11.Invoke(new("Sam", 46, null, null, null, null)).Should().BeFalse();
-            func11.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
-            func11.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func11.Invoke(new("Sam", 46, null, null, null, null, null)).Should().BeFalse();
+            func11.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeFalse();
+            func11.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2433,9 +2714,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func12.Invoke(new("Sam", 46, null, null, null, null)).Should().BeTrue();
-            func12.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
-            func12.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func12.Invoke(new("Sam", 46, null, null, null, null, null)).Should().BeTrue();
+            func12.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
+            func12.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2450,9 +2731,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
             });
-            func13.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
-            func13.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
-            func13.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func13.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
+            func13.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
+            func13.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -2503,105 +2784,52 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
 
-            // click on the filter button
+            // Helper method to select a filter operator and verify the outcome
+            async Task SelectFilterOperator(int operatorIndex, int expectedFilterCount)
+            {
+                // Ensure the filter panel is open before interacting
+                if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count == 0)
+                {
+                    FilterButton().Click();
+                    comp.WaitForElement(".filter-operator");
+                }
+
+                // Open the operator dropdown and select an item
+                await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
+                var listItems = comp.WaitForElements(".mud-list .mud-list-item");
+                listItems[operatorIndex].Click();
+
+                // Click the overlay to close the dropdown and commit the selection
+                comp.Find(".mud-overlay").Click();
+
+                // Assert that the number of active filters is correct
+                comp.WaitForAssertion(() =>
+                {
+                    dataGrid.Instance.FilterDefinitions.Count.Should().Be(expectedFilterCount);
+                });
+
+                // Close the filter panel to ensure a clean state for the next test
+                if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count > 0)
+                {
+                    FilterButton().Click();
+                }
+            }
+
+            // 1. Initial state: Open the filter panel and confirm it's visible
             FilterButton().Click();
+            comp.WaitForAssertion(() => comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1));
 
-            // check the number of filters displayed in the filters panel is 1
-            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+            // 2. Test operators that should be removed when their value is empty
+            await SelectFilterOperator(0, 0); // "contains"
+            await SelectFilterOperator(1, 0); // "not contains"
+            await SelectFilterOperator(2, 0); // "equals"
+            await SelectFilterOperator(3, 0); // "not equals"
+            await SelectFilterOperator(4, 0); // "starts with"
+            await SelectFilterOperator(5, 0); // "ends with"
 
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            //set operator to CONTAINS
-            comp.FindAll(".mud-list .mud-list-item")[0].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to NOT CONTAINS
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[1].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to EQUALS
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[2].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to NOT EQUALS
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[3].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to STARTS WITH
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[4].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to ENDS WITH
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[5].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to IS EMPTY
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[6].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should maintain filter, no value is required
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
-
-            //set operator to IS NOT EMPTY
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[7].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should maintain filter, no value is required
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            // 3. Test operators that are valid without a value
+            await SelectFilterOperator(6, 1); // "is empty"
+            await SelectFilterOperator(7, 1); // "is not empty"
         }
 
         [Test]
@@ -2611,70 +2839,105 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
             // test filter definition on the Name property (string contains)
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            var stringFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
                 Operator = "contains",
                 Value = "John"
             };
+
             // test filter definition on the Age property (int >)
-            var filterDefinition2 = new FilterDefinition<DataGridFiltersTest.Model>
+            var intFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
                 Operator = ">",
                 Value = 30
             };
+
             // test filter definition on the Status property (Enum is)
-            var filterDefinition3 = new FilterDefinition<DataGridFiltersTest.Model>
+            var enumFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.GetColumnByPropertyName("Status"),
                 Operator = "is",
                 Value = Severity.Normal
             };
+
             // test filter definition on the Hired property (Bool is)
-            var filterDefinition4 = new FilterDefinition<DataGridFiltersTest.Model>
+            var boolFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.GetColumnByPropertyName("Hired"),
                 Operator = "is",
                 Value = true
             };
+
+            // test filter definition on the Hired property (Bool null)
+            var boolFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Hired"),
+                Value = null
+            };
+
             // test filter definition on the HiredOn property (DateTime is)
-            var filterDefinition5 = new FilterDefinition<DataGridFiltersTest.Model>
+            var dateTimeFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"),
                 Operator = "is",
                 Value = DateTime.UtcNow.Date
             };
+
+            // test filter definition on the HiredOn property (DateTime null)
+            var dateTimeFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"),
+                Value = null
+            };
+
+            // test filter definition on the StartDate property (DateOnly is)
+            var dateOnlyFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("StartDate"),
+                Operator = "is",
+                Value = new DateOnly(2020, 3, 10)
+            };
+
+            // test filter definition on the StartDate property (DateOnly null)
+            var dateOnlyFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("StartDate"),
+                Value = null
+            };
+
             // test filter definition on the ApplicationId property (Guid equals)
-            var filterDefinition6 = new FilterDefinition<DataGridFiltersTest.Model>
+            var guidFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.GetColumnByPropertyName("ApplicationId"),
                 Operator = "equals",
                 Value = Guid.NewGuid()
             };
 
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition2));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition3));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition4));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition5));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition6));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(stringFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(intFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(enumFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(boolFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateOnlyFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(guidFilterDefinition));
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
 
             // check the number of filters displayed in the filters panel
-            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
 
             // click the Add Filter button in the filters panel to add a filter
             comp.FindAll(".filters-panel > button")[0].Click();
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
 
             // add a filter via the AddFilter method
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(9);
 
             // add a filter via the AddFilter method
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
@@ -2684,47 +2947,124 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(9);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(10);
 
             // toggle the filters menu (should be closed after this)
             await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
             comp.FindAll(".filters-panel").Count.Should().Be(0);
 
             // test internal filter class for string data type.
-            var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
-            filterDefinition.Column.dataType.Should().Be(typeof(string));
+            var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, stringFilterDefinition, null);
+            stringFilterDefinition.Column.dataType.Should().Be(typeof(string));
             await comp.InvokeAsync(() => internalFilter.StringValueChanged("J"));
-            filterDefinition.Value.Should().Be("J");
+            stringFilterDefinition.Value.Should().Be("J");
+
             // test internal filter class for number data type.
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition2, null);
-            filterDefinition2.Column.dataType.Should().Be(typeof(int?));
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, intFilterDefinition, null);
+            intFilterDefinition.Column.dataType.Should().Be(typeof(int?));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
-            filterDefinition2.Value.Should().Be(35);
+            intFilterDefinition.Value.Should().Be(35);
+
             // test internal filter class for enum data type.
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition3, null);
-            filterDefinition3.Column.dataType.Should().Be(typeof(Severity?));
-            await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
-            filterDefinition3.Value.Should().Be(35);
-            filterDefinition3.FieldType.IsEnum.Should().Be(true);
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, enumFilterDefinition, null);
+            enumFilterDefinition.Column.dataType.Should().Be(typeof(Severity?));
+            await comp.InvokeAsync(() => internalFilter.EnumValueChanged(Severity.Warning));
+            enumFilterDefinition.Value.Should().Be(Severity.Warning);
+            enumFilterDefinition.FieldType.IsEnum.Should().Be(true);
+
             // test internal filter class for bool data type.
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4, null);
-            filterDefinition4.Column.dataType.Should().Be(typeof(bool?));
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, boolFilterDefinition, null);
+            boolFilterDefinition.Column.dataType.Should().Be(typeof(bool?));
             await comp.InvokeAsync(() => internalFilter.BoolValueChanged(false));
-            filterDefinition4.Value.Should().Be(false);
-            // test internal filter class for datetime data type.
+            boolFilterDefinition.Value.Should().Be(false);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(boolFilterDefinitionWithNull)); // Test adding Bool filter with null value
+            boolFilterDefinitionWithNull.Value.Should().BeNull();
+
+            // test internal filter class for datetime data type
             var date = DateTime.UtcNow;
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition5, null);
-            filterDefinition5.Column.dataType.Should().Be(typeof(DateTime?));
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            dateTimeFilterDefinition.Column.dataType.Should().Be(typeof(DateTime?));
+
             await comp.InvokeAsync(() => internalFilter.DateValueChanged(date));
-            filterDefinition5.Value.Should().Be(date.Date);
+            dateTimeFilterDefinition.Value.Should().Be(date.Date);
+
             await comp.InvokeAsync(() => internalFilter.TimeValueChanged(date.TimeOfDay));
-            filterDefinition5.Value.Should().Be(date);
+            dateTimeFilterDefinition.Value.Should().Be(date);
+
+            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(null));
+            dateTimeFilterDefinition.Value.Should().Be(date.Date);
+
+            await comp.InvokeAsync(() => internalFilter.DateValueChanged(null));
+            dateTimeFilterDefinition.Value.Should().BeNull();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinitionWithNull)); // Test adding DateTime filter with null value
+            dateTimeFilterDefinitionWithNull.Value.Should().BeNull();
+
+            // test internal filter class for dateonly data type.
+            var dateOnlyDateTimeInput = DateTime.UtcNow;
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateOnlyFilterDefinition, null);
+            dateOnlyFilterDefinition.Column.dataType.Should().Be(typeof(DateOnly?));
+
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyDateTimeInput));
+            dateOnlyFilterDefinition.Value.Should().Be(DateOnly.FromDateTime(dateOnlyDateTimeInput));
+
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(null));
+            dateOnlyFilterDefinition.Value.Should().BeNull();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateOnlyFilterDefinitionWithNull)); // Test Adding DateOnly filter with null value
+            dateOnlyFilterDefinitionWithNull.Value.Should().BeNull();
+
             // test internal filter class for guid data type.
             var guid = Guid.NewGuid();
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition6, null);
-            filterDefinition6.Column.dataType.Should().Be(typeof(Guid?));
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, guidFilterDefinition, null);
+            guidFilterDefinition.Column.dataType.Should().Be(typeof(Guid?));
             await comp.InvokeAsync(() => internalFilter.GuidValueChanged(guid));
-            filterDefinition6.Value.Should().Be(guid);
+            guidFilterDefinition.Value.Should().Be(guid);
+        }
+
+        [Test]
+        public async Task DataGridFilterRemoveAsyncTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = "contains",
+                Value = "Test"
+            };
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
+            comp.WaitForAssertion(() => dataGrid.Instance.FilterDefinitions.Should().Contain(filterDefinition));
+
+            var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
+            await comp.InvokeAsync(() => filter.RemoveFilterAsync());
+
+            comp.WaitForAssertion(() => dataGrid.Instance.FilterDefinitions.Should().NotContain(filterDefinition));
+        }
+
+        [Test]
+        public void DataGridFilterFieldChangedTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name")
+            };
+
+            var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
+            var newBoolColumn = dataGrid.Instance.GetColumnByPropertyName("Hired");
+
+            filter.FieldChanged(newBoolColumn!);
+
+            filterDefinition.Column.Should().Be(newBoolColumn);
+            filterDefinition.Operator.Should().Be(FilterOperator.Boolean.Is);
+            filterDefinition.Title.Should().Be(newBoolColumn.Title);
+            filterDefinition.Value.Should().BeNull();
         }
 
         [Test]
@@ -2938,6 +3278,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_RowDetail_ExpandCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+            // one is disabled and will not be expanded
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4));
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+            var svg = dataGrid.Find(".mud-table-body .mud-table-row .mud-table-cell .mud-icon-root");
+
+            if (!rightToLeft)
+            {
+                // ChevronRight by Default
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M10 6L8.59 7.41");
+            }
+            else
+            {
+                // ChevronLeft when RTL is true
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M15.41 7.41L14 6l-6");
+            }
+        }
+
+        [Test]
         public void DataGridRowDetailButtonDisabledTest()
         {
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
@@ -2961,28 +3340,6 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll("td")
                 .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
             });
-        }
-
-        [Test]
-        public void DataGridRowDetailInitiallyExpandedMultipleTest()
-        {
-            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
-
-            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
-
-            dataGrid.Instance._openHierarchies.Should().Contain(item);
-
-            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
-
-            dataGrid.Instance._openHierarchies.Should().Contain(item);
-
-            comp.Markup.Should().Contain("uid = Ira|27|Success|");
-            comp.Markup.Should().Contain("uid = Anders|24|Error|");
-
-            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
-            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
-            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]
@@ -3125,7 +3482,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridColumnChooserTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnChooserTest.Model>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-            var popover = dataGrid.FindComponent<MudPopover>();
 
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
             await comp.InvokeAsync(() =>
@@ -3146,7 +3502,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnsButton.Click();
-
+                var popover = dataGrid.FindComponent<MudPopover>();
                 popover.Instance.Open.Should().BeTrue("Should be open once clicked");
                 var listItems = popoverProvider.FindComponents<MudMenuItem>();
                 listItems.Count.Should().Be(1);
@@ -3189,13 +3545,12 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnHiddenTest.Model>>();
 
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-            var popover = dataGrid.FindComponent<MudPopover>();
-            popover.Instance.Open.Should().BeFalse("Should start as closed");
 
+            comp.Markup.Should().NotContain("mud-popover-open");
             var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
             columnsButton.Click();
 
-            popover.Instance.Open.Should().BeTrue("Should be open once clicked");
+            comp.Markup.Should().Contain("mud-popover-open");
             var listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(1);
             var clickablePopover = listItems[0].Find(".mud-menu-item");
@@ -3536,6 +3891,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGrid_ColumnFilterMenu_OpensAtCursorPosition()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/11518
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+
+            (double Top, double Left) openPosition = (50, 50);
+            var mouseArgs = new MouseEventArgs
+            {
+                PageY = openPosition.Top,
+                PageX = openPosition.Left
+            };
+            comp.Find(".filter-button").Click(mouseArgs);
+            comp.WaitForAssertion(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
+        }
+
+        [Test]
         public async Task DataGridServerDataColumnFilterMenuApplyTwiceTest()
         {
             var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
@@ -3736,6 +4110,45 @@ namespace MudBlazor.UnitTests.Components
             removeButton.Click();
 
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+        }
+
+        /// <summary>
+        /// Checks that when the collection is modified, the change is applied in the rendering.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/11758
+        /// </remarks>
+        [Test]
+        public void DataGridObservabilityTest2()
+        {
+            // Arrange
+
+            var sup = Context.RenderComponent<DataGridObservabilityTest>();
+            var comp = sup.Instance;
+            var dataGrid = sup.FindComponent<MudDataGrid<DataGridObservabilityTest.Model>>();
+
+            // Assert : Initial state with 8 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+
+            // Act : Add 2 items
+
+            comp.AddItem();
+            comp.AddItem();
+
+            // Arrange : DataGrid should display 10 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10);
+
+            // Act : Remove 3 items
+
+            comp.RemoveItem();
+            comp.RemoveItem();
+            comp.RemoveItem();
+
+            // Arrange : DataGrid should display 7 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(7);
         }
 
         public void TableFilterGuid()
@@ -4092,152 +4505,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridGroupExpandedTrueTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            dataGrid.Render();
-            // after all groups are collapsed
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
-            dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(5);
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedTrueAsyncTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedAsyncTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            dataGrid.Render();
-            // after all groups are collapsed
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedTrueServerDataTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedServerDataTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            dataGrid.Render();
-            // after all groups are collapsed
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedFalseTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            dataGrid.Render();
-            // after all groups are expanded
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
-            dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedFalseAsyncTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseAsyncTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            dataGrid.Render();
-            // after all groups are expanded
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedFalseServerDataTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseServerDataTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            dataGrid.Render();
-            // after all groups are expanded
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
-        }
-
-        [Test]
-        public async Task DataGridGroupCollapseAllTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupCollapseAllTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            comp.Instance.RefreshList();
-            comp.Render();
-            // after all groups are expanded
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandAllCollapseAllTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandAllCollapseAllTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
-            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
-            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.RefreshList();
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-        }
-
-        [Test]
         public async Task DataGridPropertyColumnFormatTest()
         {
             var comp = Context.RenderComponent<DataGridFormatTest>();
@@ -4285,9 +4552,9 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 7);
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 8);
-            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
@@ -4305,14 +4572,14 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1); //ensure selection is rendered
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(2);
 
             var parameters = new List<ComponentParameter>();
@@ -4321,13 +4588,13 @@ namespace MudBlazor.UnitTests.Components
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
         }
 
@@ -4338,20 +4605,20 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1); //ensure selection is rendered
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1);
 
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
 
             var parameters = new List<ComponentParameter>
@@ -4363,12 +4630,12 @@ namespace MudBlazor.UnitTests.Components
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
         }
 
@@ -4424,10 +4691,10 @@ namespace MudBlazor.UnitTests.Components
             //check if dialog is open
             comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
             //find button with arialabel close in dialog
-            var closeButton = comp.Find("button[aria-label=\"Close dialog\"]");
+            var closeButton = comp.Find("button[aria-label=\"Close\"]");
             closeButton.Should().NotBeNull();
             //click close button
-            comp.Find("button[aria-label=\"Close dialog\"]").Click();
+            comp.Find("button[aria-label=\"Close\"]").Click();
             //check if dialog is closed
             comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
         }
@@ -4492,43 +4759,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
-        {
-            // Render the DataGridGroupingTest component for testing.
-            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
-
-            // Attempt to find the MudPopoverProvider component within the rendered component.
-            // MudPopoverProvider is used to manage popovers in the component, including the grouping popover.
-            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-
-            // Assert that initially, before any user interaction, IsGenderGrouped should be false.
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-
-            // Find the button within the 'th' element with class 'gender' that triggers the popover for grouping.
-            var genderHeaderOption = comp.Find("th.gender .mud-menu button");
-
-            // Simulate a click on the gender header group button to open the popover with grouping options.
-            genderHeaderOption.Click();
-
-            // Find all MudListItem components within the popoverProvider.
-            // These list items represent the individual options within the grouping popover.
-            var listItems = popoverProvider.FindComponents<MudMenuItem>();
-
-            // Assert that there are exactly 2 list items (options) available in the popover.
-            listItems.Count.Should().Be(2);
-
-            // From the list items found, select the second one which is expected to be the clickable option for grouping.
-            var clickablePopover = listItems[1].Find(".mud-menu-item");
-
-            // click on the grouping option to apply grouping to the data grid.
-            clickablePopover.Click();
-
-            // After clicking the grouping option, assert that IsGenderGrouped is now true, indicating that
-            // the action of applying grouping has successfully updated the component's state.
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-        }
-
-        [Test]
         public void DataGridDynamicColumnsTest()
         {
             var comp = Context.RenderComponent<DataGridDynamicColumnsTest>();
@@ -4581,161 +4811,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [SetCulture("en-US")]
-        public void DataGridServerGroupUngroupingTest()
-        {
-            var comp = Context.RenderComponent<DataGridServerDataColumnGroupingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<Examples.Data.Models.Element>>();
-            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-
-            //click name grouping in grid
-            var headerOption = comp.Find("th.name .mud-menu button");
-            headerOption.Click();
-            var listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(4);
-            var clickablePopover = listItems[3].Find(".mud-menu-item");
-            clickablePopover.Click();
-            var cells = dataGrid.FindAll("td");
-
-            //checking cell content is the most reliable way to verify grouping
-            cells[0].TextContent.Should().Be("Name: Hydrogen");
-            cells[1].TextContent.Should().Be("Name: Helium");
-            cells[2].TextContent.Should().Be("Name: Lithium");
-            cells[3].TextContent.Should().Be("Name: Beryllium");
-            cells[4].TextContent.Should().Be("Name: Boron");
-            cells[5].TextContent.Should().Be("Name: Carbon");
-            cells[6].TextContent.Should().Be("Name: Nitrogen");
-            cells[7].TextContent.Should().Be("Name: Oxygen");
-            cells[8].TextContent.Should().Be("Name: Fluorine");
-            cells[9].TextContent.Should().Be("Name: Neon");
-            dataGrid.Instance.GroupedColumn.Should().NotBeNull();
-
-            //click name ungrouping in grid
-            headerOption = comp.Find("th.name .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(4);
-            clickablePopover = listItems[3].Find(".mud-menu-item");
-            clickablePopover.Click();
-            cells = dataGrid.FindAll("td");
-            // We do not need check all 10 rows as it's clear that it's ungrouped if first row pass
-            cells[0].TextContent.Should().Be("1");
-            cells[1].TextContent.Should().Be("H");
-            cells[2].TextContent.Should().Be("Hydrogen");
-            cells[3].TextContent.Should().Be("0");
-            cells[4].TextContent.Should().Be("1.00794");
-            cells[5].TextContent.Should().Be("Other");
-            dataGrid.Instance.GroupedColumn.Should().BeNull();
-        }
-
-        [Test]
-        public void DataGridGroupingTestBoundAndUnboundScenarios()
-        {
-            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
-            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-
-            IRefreshableElementCollection<IElement> Rows() => dataGrid.FindAll("tr");
-            IRefreshableElementCollection<IElement> Cells() => dataGrid.FindAll("td");
-
-            // Assert that initially, before any user interaction, IsGenderGrouped and IsAgeGrouped should be false
-            // The default grouping is by name
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-
-            var nameCells = Cells();
-            nameCells.Count.Should().Be(4, because: "4 data rows");
-            nameCells[0].TextContent.Should().Be("Name: John");
-            nameCells[1].TextContent.Should().Be("Name: Johanna");
-            nameCells[2].TextContent.Should().Be("Name: Steve");
-            nameCells[3].TextContent.Should().Be("Name: Alice");
-            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
-
-            var ageGrouping = comp.Find(".GroupByAge");
-            ageGrouping.Click();
-            comp.Instance.IsAgeGrouped.Should().Be(true);
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            var ageCells = Cells();
-            ageCells.Count.Should().Be(3, because: "3 data rows");
-            ageCells[0].TextContent.Should().Be("Age: 45");
-            ageCells[1].TextContent.Should().Be("Age: 23");
-            ageCells[2].TextContent.Should().Be("Age: 32");
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
-
-            var genderGrouping = comp.Find(".GroupByGender");
-            genderGrouping.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            var genderCells = Cells();
-            genderCells.Count.Should().Be(2, because: "2 data rows");
-            genderCells[0].TextContent.Should().Be("Gender: Male");
-            genderCells[1].TextContent.Should().Be("Gender: Female");
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-
-            var professionGrouping = comp.Find(".GroupByProfession");
-            professionGrouping.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
-            var professionCells = Cells();
-            professionCells.Count.Should().Be(2, because: "2 data rows");
-            professionCells[0].TextContent.Should().Be("Profession: Cook");
-            professionCells[1].TextContent.Should().Be("Profession: (None)");
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-
-            //click age grouping in grid
-            var headerOption = comp.Find("th.age .mud-menu button");
-            headerOption.Click();
-            var listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            var clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsAgeGrouped.Should().Be(true);
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
-
-            //click gender grouping in grid
-            headerOption = comp.Find("th.gender .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-
-            //click Name grouping in grid
-            headerOption = comp.Find("th.name .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
-
-            //click profession grouping in grid
-            headerOption = comp.Find("th.profession .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-        }
-
-        [Test]
         public async Task FilterDefinitionTestHasFilterProperty()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -4758,72 +4833,6 @@ namespace MudBlazor.UnitTests.Components
             // test filter not applied
             var statusHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[2];
             statusHeaderCell.Instance.hasFilter.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task DataGridGroupedWithServerDataPaginationTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupableServerDataTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupableServerDataTest.Item>>();
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
-            var cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
-            cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(30, because: "We have 10 data rows with one group + 10*2 cells inside groups");
-            //check cells
-            cells[0].TextContent.Should().Be("Number: 1");
-            cells[1].TextContent.Should().Be("Hydrogen"); cells[2].TextContent.Should().Be("1");
-            cells[3].TextContent.Should().Be("Number: 2");
-            cells[4].TextContent.Should().Be("Helium"); cells[5].TextContent.Should().Be("2");
-            cells[6].TextContent.Should().Be("Number: 3");
-            cells[7].TextContent.Should().Be("Lithium"); cells[8].TextContent.Should().Be("3");
-            cells[9].TextContent.Should().Be("Number: 4");
-            cells[10].TextContent.Should().Be("Beryllium"); cells[11].TextContent.Should().Be("4");
-            cells[12].TextContent.Should().Be("Number: 5");
-            cells[13].TextContent.Should().Be("Boron"); cells[14].TextContent.Should().Be("5");
-            cells[15].TextContent.Should().Be("Number: 6");
-            cells[16].TextContent.Should().Be("Carbon"); cells[17].TextContent.Should().Be("6");
-            cells[18].TextContent.Should().Be("Number: 7");
-            cells[19].TextContent.Should().Be("Nitrogen"); cells[20].TextContent.Should().Be("7");
-            cells[21].TextContent.Should().Be("Number: 8");
-            cells[22].TextContent.Should().Be("Oxygen"); cells[23].TextContent.Should().Be("8");
-            cells[24].TextContent.Should().Be("Number: 9");
-            cells[25].TextContent.Should().Be("Fluorine"); cells[26].TextContent.Should().Be("9");
-            cells[27].TextContent.Should().Be("Number: 10");
-            cells[28].TextContent.Should().Be("Neon"); cells[29].TextContent.Should().Be("10");
-            //get next page
-            dataGrid.Instance.CurrentPage = 1;
-            await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
-            cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
-            //cells should have data from next page
-            cells[0].TextContent.Should().Be("Number: 11");
-            cells[1].TextContent.Should().Be("Sodium"); cells[2].TextContent.Should().Be("11");
-            cells[3].TextContent.Should().Be("Number: 12");
-            cells[4].TextContent.Should().Be("Magnesium"); cells[5].TextContent.Should().Be("12");
-            cells[6].TextContent.Should().Be("Number: 13");
-            cells[7].TextContent.Should().Be("Aluminium"); cells[8].TextContent.Should().Be("13");
-            cells[9].TextContent.Should().Be("Number: 14");
-            cells[10].TextContent.Should().Be("Silicon"); cells[11].TextContent.Should().Be("14");
-            cells[12].TextContent.Should().Be("Number: 15");
-            cells[13].TextContent.Should().Be("Phosphorus"); cells[14].TextContent.Should().Be("15");
-            cells[15].TextContent.Should().Be("Number: 16");
-            cells[16].TextContent.Should().Be("Sulfur"); cells[17].TextContent.Should().Be("16");
-            cells[18].TextContent.Should().Be("Number: 17");
-            cells[19].TextContent.Should().Be("Chlorine"); cells[20].TextContent.Should().Be("17");
-            cells[21].TextContent.Should().Be("Number: 18");
-            cells[22].TextContent.Should().Be("Argon"); cells[23].TextContent.Should().Be("18");
-            cells[24].TextContent.Should().Be("Number: 19");
-            cells[25].TextContent.Should().Be("Potassium"); cells[26].TextContent.Should().Be("19");
-            cells[27].TextContent.Should().Be("Number: 20");
-            cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
         }
 
         /// <summary>
@@ -5016,24 +5025,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
-        [Test]
-        [TestCase(true, true)]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(false, false)]
-        public void TestRtlGroupIconMethod(bool isRightToLeft, bool isExpanded)
-        {
-            var test = new MudDataGrid<int>();
-            if (isExpanded)
-            {
-                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
-            }
-            else
-            {
-                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
-            }
-        }
-
         /// <summary>
         /// Verifies data grid does not reuse row child components for different items (the @key for the row is set to the user supplied item).
         /// </summary>
@@ -5053,10 +5044,9 @@ namespace MudBlazor.UnitTests.Components
 
             before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
 
-
             //Test the expanded group case
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Group, true));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => x));
             before = dataGrid.FindComponent<MudInput<string>>();
@@ -5064,6 +5054,467 @@ namespace MudBlazor.UnitTests.Components
             after = dataGrid.FindComponent<MudInput<string>>();
 
             before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
+        }
+
+        [Test]
+        public async Task DataGrid_TwoWayBind_SelectedItem_SelectedItems()
+        {
+            int selectedItem = 3;
+            var items = new List<int> { 1, 2, 3, 4, 5 };
+            HashSet<int> selectedItems = new HashSet<int> { selectedItem };
+            var comp = Context.RenderComponent<MudDataGrid<int>>(parameters =>
+            {
+                parameters.Add(x => x.Items, items);
+                parameters.Bind(x => x.SelectedItem, selectedItem, x => selectedItem = x);
+                parameters.Bind(x => x.SelectedItems, selectedItems, x => selectedItems = x);
+                parameters.Add(x => x.MultiSelection, false);
+            });
+
+            comp.Instance.Items.Count().Should().Be(items.Count);
+            comp.Instance.GetState(x => x.SelectedItem).Should().Be(selectedItem);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(selectedItem);
+
+            // in single selection toggle selection using row click method
+            await comp.Instance.SetSelectedItemAsync(5);
+
+            // two way binding should have updated
+            selectedItems.Should().Contain(5);
+            selectedItems.Count().Should().Be(1);
+            selectedItem.Should().Be(5);
+
+            // in multi selection toggle selection using row click method
+            comp.SetParam(x => x.MultiSelection, true);
+            comp.Render();
+            await comp.Instance.SetSelectedItemAsync(4);
+
+            // two way binding should have updated
+            selectedItems.Should().Contain(4);
+            selectedItems.Should().Contain(5);
+            selectedItems.Count().Should().Be(2);
+            selectedItem.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridSelectedItemEventsTest()
+        {
+            var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // Test single selection mode
+            dataGrid.SetParam(x => x.MultiSelection, false);
+            comp.Render();
+
+            // Select an item
+            var firstItem = dataGrid.Instance.Items.First();
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            // Verify events
+            comp.Instance.SelectedItemChanged.Should().BeTrue();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Deselect the item
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, firstItem));
+
+            // Verify events for deselection
+            comp.Instance.SelectedItemChanged.Should().BeTrue();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Test multi-selection mode
+            dataGrid.SetParam(x => x.MultiSelection, true);
+            comp.Render();
+
+            // Select all items
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
+
+            // Verify events
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Deselect all items
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+
+            // Verify events for deselection
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Test row click select
+            // find first mud-table-row and second mud-table-cell
+            var firstRow = dataGrid.FindAll(".mud-table-row")[1];
+            firstRow.Click();
+
+            // Verify events for row click
+            comp.WaitForAssertion(() => comp.Instance.SelectedItemChanged.Should().BeTrue());
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+        }
+
+        [Test]
+        public void DataGridHeaderToggleHierarchyTest()
+        {
+            // Render with EnableHeaderToggle = true to enable header toggle functionality
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters =>
+                parameters.Add(p => p.EnableHeaderToggle, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Find the header cell that should include hierarchy toggle
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            var headerElement = comp.Find("th.mud-header-togglehierarchy");
+            headerElement.Should().NotBeNull("Header should have mud-header-togglehierarchy class when EnableHeaderToggle is true");
+            headerCell.Instance.IncludeHierarchyToggle.Should().BeTrue();
+
+            // Check that the HierarchyToggle button exists in the header
+            var toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            toggleButton.Should().NotBeNull("HierarchyToggle button should be rendered in header");
+
+            // The initial state should be expanded (Anders and Ira items are initially expanded)
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+
+            // Click the toggle button to collapse all hierarchies
+            toggleButton.Click();
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+
+            // Click again to expand all
+            toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            toggleButton.Click();
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4)); // one disabled
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DataGridHeaderToggleIconTest(bool rightToLeft)
+        {
+            // Render with EnableHeaderToggle = true and set RTL mode
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters =>
+            {
+                parameters.Add(p => p.EnableHeaderToggle, true);
+                parameters.Add(p => p.RightToLeft, rightToLeft);
+            });
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Find the header with toggle
+            var headerElement = comp.Find("th.mud-header-togglehierarchy");
+
+            // Find the toggle button in header
+            var toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            var icon = toggleButton.QuerySelector(".mud-icon-root");
+
+            // Initial state should show expanded icon (ExpandMore)
+            var iconPath = icon.InnerHtml;
+            iconPath.Should().Contain("M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z",
+                "Icon should be ExpandMore when hierarchies are expanded");
+
+            // Click to collapse all
+            toggleButton.Click();
+
+            // Now the icon should change based on RTL mode
+            icon = headerElement.QuerySelector(".mud-hierarchy-toggle-button .mud-icon-root");
+            iconPath = icon.InnerHtml;
+
+            if (rightToLeft)
+            {
+                iconPath.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+                    "Icon should be ChevronLeft in RTL mode when hierarchies are collapsed");
+            }
+            else
+            {
+                iconPath.Should().Contain("M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+                    "Icon should be ChevronRight in LTR mode when hierarchies are collapsed");
+            }
+        }
+
+        [Test]
+        public async Task DataGridToggleHierarchyMethodTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            // Initially, there should be 2 expanded items
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+            var accessor = headerCell.Instance;
+            await accessor.ToggleHierarchyAsync();
+
+            // After calling ToggleHierarchy when some hierarchies are open, all should be collapsed
+            dataGrid.Instance._openHierarchies.Count.Should().Be(0);
+
+            // Call ToggleHierarchy again
+            await accessor.ToggleHierarchyAsync();
+
+            // Now all hierarchies should be expanded (except the disabled one)
+            dataGrid.Instance._openHierarchies.Count.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridGetHierarchyGroupIconTest()
+        {
+            // Create a test component
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Get a reference to a HeaderCell to test GetGroupIcon method
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            // Create a PrivateAccessor to invoke the GetGroupIcon method
+            var accessor = headerCell.Instance;
+
+            // When expanded (RTL doesn't matter in this case)
+            var expandedIcon = accessor.GetGroupIcon();
+            expandedIcon.Should().Be(Icons.Material.Filled.ExpandMore);
+
+            await accessor.ToggleHierarchyAsync(); // collapse all
+
+            // When collapsed + LTR
+            var collapsedIcon = accessor.GetGroupIcon();
+            comp.WaitForAssertion(() => collapsedIcon.Should().Be(Icons.Material.Filled.ChevronRight));
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.RightToLeft, true));
+            // When collapsed + RTL
+            comp.WaitForAssertion(() => accessor.GetGroupIcon().Should().Be(Icons.Material.Filled.ChevronLeft));
+        }
+
+        [Test]
+        public void DataGrid_HierarchyExpandSingleRowTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters => parameters
+                .Add(p => p.ExpandSingleRow, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+            var item = dataGrid.Instance._openHierarchies.First();
+            item.Should().NotBeNull();
+
+            comp.SetParametersAndRender(p => p.Add(p => p.ExpandSingleRow, true));
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(1);
+
+            dataGrid.Instance._openHierarchies.First().Should().Be(item);
+        }
+
+        [Test]
+        public void DataGridRowDetailInitiallyExpandedMultipleTest()
+        {
+            // just setting Items
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+        [Test]
+        public void DataGridRowDetailInitiallyExpandedObservableMultipleTest()
+        {
+            // updating an observable collection of items after initial load
+            var comp = Context.RenderComponent<DataGridHierarchyInitiallyExpandedItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedItemsTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+        [Test]
+        public async Task DataGridRowDetailInitiallyExpandedServerMultipleTest()
+        {
+            // ServerReload different pages
+            var comp = Context.RenderComponent<DataGridHierarchyInitiallyExpandedServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedServerDataTest.Model>>();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Ira|27|Success|"));
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+
+            // Collapse Ira to ensure it remains collapsed when we return to the row
+            // Use LINQ to find the index of the row containing "uid = Ira"
+            var iraIndex = comp.FindAll("tr")
+                .Select((row, index) => new { row, index })
+                .First(r => r.row.InnerHtml.Contains("uid = Ira")).index;
+
+            iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
+
+            // Now access the row above and find the toggle button and click it
+            await comp.InvokeAsync(() => comp.FindAll("tr")[iraIndex - 2].QuerySelector("button").Click());
+
+            // Find button with aria-label = "Next Page"
+            var nextButton = comp.Find("button[aria-label='Next page']");
+            nextButton.Should().NotBeNull();
+            nextButton.Click();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
+
+            comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
+            comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Garderoben|32|Warning|");
+            comp.Markup.Should().NotContain("uid = Henon|54|Info|");
+
+            // go back and make sure Ira isn't re-expanded
+            var prevButton = comp.Find("button[aria-label='Previous page']");
+            prevButton.Should().NotBeNull();
+            prevButton.Click();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
+
+            comp.Markup.Should().NotContain("uid = Ira|27|Success|");
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+        [Test]
+        public async Task DataGridShouldAllowUnsortedAscDescOnly()
+        {
+            var comp = Context.RenderComponent<DataGridAllowUnsortedTest>(parameters => parameters
+                .Add(p => p.AllowUnsorted, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridAllowUnsortedTest.Item>>();
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridAllowUnsortedTest.Item>>()[0];
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+            var cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("C");
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("A");
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("C");
+
+            comp = Context.RenderComponent<DataGridAllowUnsortedTest>(parameters => parameters
+                .Add(p => p.AllowUnsorted, true));
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridAllowUnsortedTest.Item>>();
+            headerCell = dataGrid.FindComponents<HeaderCell<DataGridAllowUnsortedTest.Item>>()[0];
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("C");
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("A");
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.None);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("A");
+            cells[6].TextContent.Should().Be("B");
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_SingleRowToggle()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance
+                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+
+            await comp.InvokeAsync(() => dataGrid.Instance
+                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(2);
+            testComponent.ToggledEvents[1].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[1].Expanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_CollapseAll()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+            testComponent.ToggledEvents.Clear();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_ExpandAll()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
         }
     }
 }

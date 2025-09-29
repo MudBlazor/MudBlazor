@@ -77,6 +77,17 @@ namespace MudBlazor
                 .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+
+            if (firstRender && _expandedState.Value)
+            {
+                _state = CollapseState.Entered;
+                StateHasChanged();
+            }
+        }
+
         private Task OnExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
         {
             _state = args.Value ? CollapseState.Entering : CollapseState.Exiting;

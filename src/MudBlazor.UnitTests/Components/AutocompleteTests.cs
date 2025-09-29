@@ -9,6 +9,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Examples.Data;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
@@ -20,6 +21,27 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
+        [Test]
+        public void Autocomplete_Should_Handle_Converter_WithStrict()
+        {
+            var comp = Context.RenderComponent<AutocompleteConverterStrictTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteConverterStrictTest.ConverterElement>>();
+            comp.Markup.Should().NotContain("mud-popover-open");
+
+            autocompleteComponent.Find(".mud-button-root.mud-no-activator").Click(); // open popover
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
+            items.Length.Should().Be(10, "The popover should contain 10 items."); // default maxitems is 10
+            comp.Find(".mud-button-root.mud-no-activator").Click(); // close popover
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            // set search
+            autocompleteComponent.Find("input").Input("he");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
+            filteredItems.Length.Should().Be(4, "The popover should contain 4 items.");
+        }
+
         /// <summary>
         /// Initial value should be shown and popup should not open.
         /// </summary>
@@ -1503,14 +1525,17 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be(virginiaString);
             autocomplete.Value.StateName.Should().Be(virginiaString);
 
-            //West Virginia is not in the first 10 states, so it should not appear in the list
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             var items2 = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items2.Length.Should().Be(10);
-            var item2 = items2.SingleOrDefault(x => x.Markup.Contains(virginiaString));
-            items2.ToList().IndexOf(item).Should().Be(-1);
-            items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(0);
+            // Select Virginia
+            var item2 = items2.FirstOrDefault(x => x.Markup.Contains(virginiaString));
+            // Virginia and West Virginia should be in the list
+            var count = items2.Count(x => x.Markup.Contains(virginiaString));
+            count.Should().Be(2);
+            items2.ToList().IndexOf(item2).Should().Be(5);
+            items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(1);
         }
 
         [Test]
@@ -1851,6 +1876,75 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Ensure selecting an option does not reopen the list.
+        /// </summary>
+        [Test]
+        public void Autocomplete_SelectingOption_ShouldNot_ReopenList()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Open the menu
+            autocompleteComponent.Find("div.mud-input-control").Focus();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Select an option
+            comp.Find("div.mud-list-item").Click();
+
+            // Assert: Menu should remain closed
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
+
+        /// <summary>
+        /// Ensure the menu does not open in read-only mode.
+        /// </summary>
+        [Test]
+        public void Autocomplete_User_ShouldNot_OpenMenu_InReadOnlyMode()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.OpenOnFocus, true));
+            var autocomplete = comp.Instance;
+
+            // Attempt to open the menu via focus
+            comp.Find("div.mud-input-control").Focus();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
+
+            // Attempt to open the menu via click
+            comp.Find("div.mud-input-control").MouseDown();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
+        }
+
+        /// <summary>
+        /// Ensure the menu does not open in disabled mode.
+        /// </summary>
+        [Test]
+        public void Autocomplete_User_ShouldNot_OpenMenu_InDisabledMode()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Disabled, true)
+                .Add(p => p.OpenOnFocus, true));
+            var autocomplete = comp.Instance;
+
+            // Attempt to open the menu via focus
+            comp.Find("div.mud-input-control").Focus();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
+
+            // Attempt to open the menu via click
+            comp.Find("div.mud-input-control").MouseDown();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
         }
 
         /// <summary>

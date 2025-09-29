@@ -32,5 +32,27 @@ namespace MudBlazor.UnitTests.Extensions
             ((long?)3L).ToPx().Should().Be("3px");
             ((long?)null).ToPx().Should().Be(string.Empty);
         }
+
+        [Test]
+        public void All_ToPercentMethods_Work()
+        {
+            0.0.ToPercent().Should().Be("0%");
+            3.3333.ToPercent().Should().Be("3.33%");
+            (-3.3333).ToPercent().Should().Be("-3.33%");
+            ((double?)3.3333).ToPercent().Should().Be("3.33%");
+            ((double?)null).ToPercent().Should().Be(string.Empty);
+
+            0.ToPercent().Should().Be("0%");
+            3.ToPercent().Should().Be("3%");
+            (-3).ToPercent().Should().Be("-3%");
+            ((int?)3).ToPercent().Should().Be("3%");
+            ((int?)null).ToPercent().Should().Be(string.Empty);
+
+            0L.ToPercent().Should().Be("0%");
+            3L.ToPercent().Should().Be("3%");
+            (-3L).ToPercent().Should().Be("-3%");
+            ((long?)3L).ToPercent().Should().Be("3%");
+            ((long?)null).ToPercent().Should().Be(string.Empty);
+        }
     }
 }
