@@ -82,9 +82,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void LineChartYAxisFormat()
+        [TestCase(ChartType.Bar)]
+        [TestCase(ChartType.Line)]
+        [TestCase(ChartType.StackedBar)]
+        public void ChartYAxisFormat(ChartType chartType)
         {
-            var options = new LineChartOptions();
+            DefaultAxisChartOptions options = chartType switch
+            {
+                ChartType.Bar => new BarChartOptions(),
+                ChartType.Line => new LineChartOptions(),
+                ChartType.StackedBar => new StackedBarChartOptions(),
+                _ => throw new NotImplementedException()
+            };
+
             var series = new List<ChartSeries<double>>()
             {
                 new() { Name = "Series 1", Data = new([90, 79, 72, 69, 62, 62, 55, 65, 70]) },
@@ -95,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
             var height = "350px";
 
             var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.ChartLabels, xAxis)
                 .Add(p => p.ChartOptions, options)
@@ -111,7 +121,7 @@ namespace MudBlazor.UnitTests.Components
             // now, we will apply currency format
             options.YAxisFormat = "c2";
             comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.ChartLabels, xAxis)
                 .Add(p => p.ChartOptions, options)
@@ -125,7 +135,7 @@ namespace MudBlazor.UnitTests.Components
             //number format
             options.YAxisFormat = "n6";
             comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.ChartLabels, xAxis)
                 .Add(p => p.ChartOptions, options)
