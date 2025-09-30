@@ -82,6 +82,8 @@
   }
 
   & .mud-dialog-title {
+    display: flex;
+    align-items: start;
     z-index: +1;
     flex: 0 0 auto;
     margin: 0;
@@ -89,13 +91,25 @@
     border-top-left-radius: var(--mud-default-borderradius);
     border-top-right-radius: var(--mud-default-borderradius);
 
+
+    &:has(.mud-button-close) {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 6px;
+      white-space: normal;
+      word-wrap: break-word;
+
+      .mud-button-close {
+        position: relative;
+      }
+    }
+
     + * > .mud-dialog-content {
       border-radius: 0
     }
 
     & .mud-button-close {
-      top: 8px;
-      right: 8px;
       position: absolute;
     }
   }
