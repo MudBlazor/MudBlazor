@@ -958,17 +958,13 @@ namespace MudBlazor
 
             var scrollAmount = Math.Max(GetVisiblePanels(), 1);
             _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
-
-            if (_scrollIndex >= 0 && _scrollIndex < _panels.Count)
-            {
-                ScrollToItem(_panels[_scrollIndex]);
-            }
-
+            // when _scrollIndex is set incorrectly this corrects it to the last panel
+            if (_scrollIndex > _panels.Count - 1)
+                _scrollIndex = _panels.Count - 1;
+            ScrollToItem(_panels[_scrollIndex]);
             SetScrollButtonVisibility();
             SetScrollabilityStates();
         }
-
-
 
         private void ScrollNext()
         {
