@@ -953,6 +953,10 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
+            // guard against an empty _panels list
+            if (_panels.Count == 0)
+                return;
+
             var scrollAmount = Math.Max(GetVisiblePanels(), 1);
             // this guards for negative index
             _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
