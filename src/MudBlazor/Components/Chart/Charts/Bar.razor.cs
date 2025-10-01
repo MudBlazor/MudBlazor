@@ -40,7 +40,10 @@ namespace MudBlazor.Charts
         protected override void RebuildChart()
         {
             if (MudChartParent != null)
+            {
                 _series = MudChartParent.ChartSeries;
+                ChartOptions = MudChartParent.ChartOptions;
+            }
 
             SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);

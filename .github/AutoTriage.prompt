@@ -70,18 +70,19 @@ Exclude `good first issue` if:
 ### Help Wanted
 Apply `help wanted` when ONE of these conditions is met:
 - Explicit maintainer approval
-- Community interest (>=3 distinct non-author comments OR >=5 distinct reactions)
+- Community interest (>=15 points from distinct non-maintainer, non-author users, where each user contributes at most once: supportive comment = 3 points, reaction = 1 point, or both = 3 points total)
 
 Exclude `help wanted` if:
 - `good first issue` applies
 - A maintainer is assigned
 - Maintainers choose to implement internally
+- Maintainers are in disagreement of how to approach it
 - A PR was opened addressing it less than 3 months ago
 - Thread was assigned less than 3 months ago
 
 ### Nudges
 Respond when ALL of these conditions are met:
-- A bump-only comment appears (e.g., "any update?", "+1") or a user explicitly offers to contribute a fix/feature (e.g., "I can open a PR", "I'll submit a PR") within the last 28 days.
+- A pure bump comment appears (content-free status requests like "any update?", "bump", "+1", or standalone emoji/reactions with no substantive information) OR a user explicitly offers to contribute a fix/feature (e.g., "I can open a PR", "I'll submit a PR") in a comment within the last 28 days.
 - You or a maintainer has not responded to a nudge in this thread and suggested a PR already
 
 What to say:
@@ -171,7 +172,8 @@ Shared rules (apply to all Chat & Support interactions):
 - Only reply if the human (non-bot) comment you intend to answer (1) is the most recent human comment in the thread at decision time AND (2) was posted <28 days ago.
 
 Question threads:
-- Apply `question` when the title is phrased as a question or the thread is purely a usage/help/discussion topic with no clear defect or feature request.
+- Apply `question` when the initial post is phrased as a question or is purely a usage/help/discussion topic with no clear defect or feature request.
+- Do not apply question retroactively just because someone later provided an answer.
 - If a concrete proposal emerges, switch to a different primary label.
 
 Conversational replies:
@@ -204,20 +206,15 @@ When NOT to edit:
 - A maintainer set the title and no substantial new context was added after the maintainer action (e.g., new reproduction, logs, confirmations).
 
 ### Format Guidelines
-- Issues: Sentence case, descriptive, no version numbers, no redundant labels
-- Pull Requests: Prefix with component name + colon for single-component changes (e.g., "MudDataGrid: Fix row selection flicker")
+- Issues Only: Sentence case, descriptive, no version numbers, no redundant labels
+- Pull Requests Only: Prefix with component name + colon for single-component changes (e.g., "MudDataGrid: Fix row selection flicker")
 - Prioritize clarity and searchability over brevity
-
-## Content Editing Restrictions
-- Do not edit body content if created by maintainer
-- Do not edit any thread created or last edited within last 7 days
-- Use `newTitle` ONLY (never modify title field directly)
 
 ## Inactivity Rules
 
 General Rules:
 - Skip threads assigned to or created by maintainers or bots
-- Remove `stale` label and reset timer after a human (non-bot) posts a comment. No other kind of timeline event should reset the timer.
+- Only remove `stale` label and reset timer after a human (non-bot) posts a comment. No other kind of timeline event should reset the timer.
 - Do not post a comment when closing stale threads
 
 ### Issues Only
@@ -225,10 +222,10 @@ General Rules:
 
 Mark issues as `stale` when ALL conditions are met:
 - Meets ONE of these inactivity thresholds:
-  - Bug: >=12 months without a timeline event (excluding labeled/unlabeled/renamed)
-  - Feature: >=24 months without a timeline event (excluding labeled/unlabeled/renamed)
+  - Bug: >=18 months without a timeline event (excluding labeled/unlabeled/renamed)
+  - Feature: >=36 months without a timeline event (excluding labeled/unlabeled/renamed)
   - Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days
-- Does NOT have `on hold`, `help wanted`, or `awaiting triage` labels
+- Does NOT qualify for `on hold`, `help wanted`, or `awaiting triage` labels
 
 Post this comment verbatim (exclude default footer) when marking an issue stale:
 ```
@@ -243,7 +240,7 @@ If no response is received, it will be automatically closed.
 
 Mark pull requests as `stale` when ALL conditions are met:
 - No timeline event (excluding labeled/unlabeled/renamed) for >=168 consecutive days
-- Does NOT have `on hold` or `awaiting triage` labels
+- Does NOT qualify for `on hold` or `awaiting triage` labels
 
 Post this comment verbatim (exclude default footer) when marking a pull request stale:
 ```
