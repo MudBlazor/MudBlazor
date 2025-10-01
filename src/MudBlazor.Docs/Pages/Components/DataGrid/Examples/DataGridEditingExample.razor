@@ -3,23 +3,32 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements.Take(4)" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
-    StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
-    Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
+<MudDataGrid T="Student" Items="@_students" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
+             StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
+             Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
     <Columns>
-        <PropertyColumn Property="x => x.Number" Title="Nr" Editable="false" />
-        <PropertyColumn Property="x => x.Sign" />
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Position">
+        <PropertyColumn Property="x => x.Name" Title="Nr" Editable="false" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Foreign" />
+        <PropertyColumn Property="x => x.Graduated" />
+        <PropertyColumn Property="x => x.Degree">
             <EditTemplate>
-                <MudSelect @bind-Value="context.Item.Position" Required RequiredError="You must select a Position!!!" Margin="@Margin.Dense">
-                    <MudSelectItem Value="0">zero</MudSelectItem>
-                    <MudSelectItem Value="1">one</MudSelectItem>
-                    <MudSelectItem Value="17">seventeen</MudSelectItem>
+                <MudSelect @bind-Value="context.Item.Degree" Label="Degree" Variant="Variant.Outlined" Margin="@Margin.Dense">
+                    <MudSelectItem Value="@Degree.Bachelor">Bachelor</MudSelectItem>
+                    <MudSelectItem Value="@Degree.Master">Master</MudSelectItem>
+                    <MudSelectItem Value="@Degree.PhD">PhD</MudSelectItem>
                 </MudSelect>
             </EditTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Position">
+            <EditTemplate>
+                <MudSelect @bind-Value="context.Item.Position" Required RequiredError="You must select a Position!!!" Label="Position" Variant="Variant.Outlined" Margin="@Margin.Dense">
+                    <MudSelectItem T="int?" Value="0">zero</MudSelectItem>
+                    <MudSelectItem T="int?" Value="1">one</MudSelectItem>
+                    <MudSelectItem T="int?" Value="17">seventeen</MudSelectItem>
+                </MudSelect>
+            </EditTemplate>
+        </PropertyColumn>
         <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
@@ -57,30 +66,51 @@
 </MudExpansionPanels>
 
 @code {
+
     private IEnumerable<Element> Elements = new List<Element>();
+    private List<Student> _students = new();
     private bool _readOnly;
     private bool _isCellEditMode;
     private List<string> _events = new();
     private bool _editTriggerRowClick;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        _students.Add(new Student() { Name = "John", Age = 25, Foreign = true, Graduated = false, Degree = Degree.Bachelor });
+        _students.Add(new Student() { Name = "Mary", Age = 27, Foreign = false, Graduated = null,  Degree = Degree.Master });
+        _students.Add(new Student() { Name = "Angelina", Age = 32, Foreign = false, Graduated = true, Degree = Degree.PhD });
     }
 
     // events
-    void StartedEditingItem(Element item)
+    private void StartedEditingItem(Student item)
     {
         _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    void CanceledEditingItem(Element item)
+    private void CanceledEditingItem(Student item)
     {
         _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    void CommittedItemChanges(Element item)
+    private void CommittedItemChanges(Student item)
     {
         _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    private class Student
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public bool Foreign { get; set; }
+        public bool? Graduated { get; set; }
+        public Degree Degree { get; set; }
+        public int? Position { get; set; }
+    }
+
+    private enum Degree
+    {
+        Bachelor,
+        Master,
+        PhD
     }
 }

@@ -295,13 +295,23 @@
 
                             if (propertyType == typeof(string))
                             {
-                                <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                <MudTextField T="string" Label="@column.Title" @bind-Value:get="@cell._valueString" @bind-Value:set="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
+                                              Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
-                                <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                <MudNumericField T="double?" Label="@column.Title" @bind-Value:get="@cell._valueNumber" @bind-Value:set="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
+                                                 Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                            }
+                            else if (propertyType == typeof(bool))
+                            {
+                                <MudCheckBox T="bool" Label="@column.Title" @bind-Value:get="@cell._valueBoolean" @bind-Value:set="@cell.BoolValueChangedAsync"
+                                             Color="Color.Primary" Disabled="@(!column.Editable || ReadOnly)" />
+                            }
+                            else if (propertyType == typeof(bool?))
+                            {
+                                <MudCheckBox T="bool?" TriState="true" Label="@column.Title" @bind-Value:get="@cell._valueNullableBoolean" @bind-Value:set="@cell.NullableBoolValueChangedAsync"
+                                             Color="Color.Primary" Disabled="@(!column.Editable || ReadOnly)" />
                             }
                         }
                     }
@@ -376,8 +386,8 @@
                          if (column.PropertyType == typeof(string))
                          {
                              <MudTextField T="string"
-                                           Value="@cell._valueString"
-                                           ValueChanged="@cell.StringValueChangedAsync"
+                                           @bind-Value:get="@cell._valueString"
+                                           @bind-Value:set="@cell.StringValueChangedAsync"
                                            Margin="@Margin.Dense" Style="margin-top:0"
                                            Required=column.Required
                                            Variant="@Variant.Text"/>
@@ -385,10 +395,25 @@
                          else if (column.isNumber)
                          {
                              <MudNumericField T="double?"
-                                              Value="@cell._valueNumber"
-                                              ValueChanged="@cell.NumberValueChangedAsync"
+                                              @bind-Value:get="@cell._valueNumber"
+                                              @bind-Value:set="@cell.NumberValueChangedAsync"
                                               Margin="@Margin.Dense" Style="margin-top:0"
                                               Required=column.Required Variant="@Variant.Text" Culture="@column.Culture"/>
+                         }
+                         else if (column.PropertyType == typeof(bool))
+                         {
+                            <MudCheckBox T="bool"
+                                         @bind-Value:get="@cell._valueBoolean"
+                                         @bind-Value:set="@cell.BoolValueChangedAsync"
+                                         Color="Color.Primary" />
+                         }
+                         else if (column.PropertyType == typeof(bool?))
+                         {
+                            <MudCheckBox T="bool?"
+                                         TriState="true"
+                                         @bind-Value:get="@cell._valueNullableBoolean"
+                                         @bind-Value:set="@cell.NullableBoolValueChangedAsync"
+                                         Color="Color.Primary" />
                          }
                      }
                  }
