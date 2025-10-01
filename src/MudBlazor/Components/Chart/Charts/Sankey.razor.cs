@@ -14,23 +14,16 @@ namespace MudBlazor.Charts
         {
             public double LowestIncomingNodeY { get; set; } = Y;
         }
-
         private record EdgePath(string Name, NodeRect Source, NodeRect Target, string D, double CenterX, double CenterY);
 
         private const double BoundWidth = 650;
-
         private const double BoundHeight = 350;
-
         private const double HorizontalPadding = 10;
 
         private Dictionary<string, NodeRect> _nodeRects { get; } = [];
-
         private List<EdgePath> _edgePaths { get; } = [];
-
         private Dictionary<string, double> _nodeValues { get; set; } = [];
-
         private string? _activeNode { get; set; }
-
         private string? _activeEdge { get; set; }
 
         /// <summary>

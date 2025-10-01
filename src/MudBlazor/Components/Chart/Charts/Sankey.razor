@@ -34,7 +34,7 @@
               @onmouseover="@((e) => OnEdgeMouseOver(e, edge))"
               @onmouseout="@OnEdgeMouseOut"/>
     }
-    @foreach (KeyValuePair<string, NodeRect> kv in _nodeRects)
+    @foreach (var kv in _nodeRects)
     {
         <rect x="@ToS(kv.Value.X)"
               y="@ToS(kv.Value.Y)"
@@ -55,7 +55,7 @@
                           ShowTriangle="false"
                           StrokeWidth="0"
                           FontColor="var(--mud-palette-text-primary)"
-                          RelativePositionX="@(kv.Value.X <= 10 ? ChartTooltipRelativePositionX.End : ChartTooltipRelativePositionX.Start)"
+                          AnchorPositionX="@(kv.Value.X <= 10 ? ChartTooltipAnchorPositionX.Start : ChartTooltipAnchorPositionX.End)"
                           FontSize="@NodeChartOptions.LabelFontSize"/>
         }
     }

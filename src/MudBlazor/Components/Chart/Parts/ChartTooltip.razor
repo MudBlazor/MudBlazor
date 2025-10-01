@@ -1,40 +1,43 @@
 ﻿@namespace MudBlazor.Charts
 
-@{
-    var hasSubtitle = !string.IsNullOrWhiteSpace(Subtitle);
-    var subtitleHeight = hasSubtitle ? 16 : 0;
-    var opacity = _boxWidth > 0 ? 1 : 0;
-    var triangleOffset = ShowTriangle ? 14 : -4;
-    var x = RelativePositionX switch
-    {
-        ChartTooltipRelativePositionX.Start => X - _boxWidth / 2,
-        ChartTooltipRelativePositionX.Center => X,
-        ChartTooltipRelativePositionX.End => X + _boxWidth / 2,
-        _ => throw new ArgumentException($"Unknown relative position {RelativePositionX}")
-    };
-}
-<g class="svg-tooltip" opacity="@opacity" style="pointer-events: none;">
-    <!-- The triangle pointing down (8px wide at the top) -->
+<g class="svg-tooltip" style="pointer-events: none;">
+    <!-- Triangle stroke -->
     @if (ShowTriangle)
     {
-        <polygon points="@ToS(x - 8),@ToS(Y - 8) @ToS(x + 8),@ToS(Y - 8) @ToS(x),@ToS(Y - 1.5)"
-                 fill="@Color"
-                 stroke="white"
-                 stroke-width="2"/>
-        <polygon points="@ToS(x - 10),@ToS(Y - 10) @ToS(x + 10),@ToS(Y - 10) @ToS(x),@ToS(Y - 1.5)"
-                 fill="@Color"
-                 stroke="white"
-                 stroke-width="0"/>
+        <polygon points="@_triangleBorderPoints" 
+                 fill="@Color" 
+                 stroke="white" 
+                 stroke-width="@TriangleStrokeWidth"/>
     }
 
-    <rect x="@ToS(x - (_boxWidth / 2))" y="@ToS(Y - triangleOffset - 16 - subtitleHeight)" width="@ToS(_boxWidth)" height="@ToS(24 + subtitleHeight)" rx="4" ry="4" fill="@Color" stroke="white"
+    <!-- Keep this here to prevent the triangle from having a base line -->
+    <rect x="@ToS(_backgroundBBox.X)"
+          y="@ToS(_backgroundBBox.Y)"
+          width="@ToS(_backgroundBBox.Width)"
+          height="@ToS(_backgroundBBox.Height)"
+          rx="4"
+          ry="4"
+          fill="@Color"
+          stroke="white"
           stroke-width="@StrokeWidth"/>
 
-    <text @ref="_hoverTextTitle" x="@ToS(x)" y="@ToS(Y - triangleOffset - subtitleHeight)" text-anchor="middle" font-size="@FontSize" fill="@FontColor">
-        <tspan x="@ToS(x)" dy="0">@Title</tspan>
-        @if (hasSubtitle)
+    <!-- Triangle fill -->
+    @if (ShowTriangle)
+    {
+        <polygon points="@_triangleBackgroundPoints" 
+                 fill="@Color"/>
+    }
+
+    <text @ref="_text"
+          x="@ToS(_textBbox.X)"
+          y="@ToS(_textBbox.Y - (HasSubtitle ? _textBbox.Height : 0))"
+          font-size="@FontSize"
+          fill="@FontColor"
+          text-anchor="middle">
+        <tspan x="@ToS(_textBbox.X)" dy="-.3em">@Title</tspan>
+        @if (HasSubtitle)
         {
-            <tspan x="@ToS(x)" dy="16">@Subtitle</tspan>
+            <tspan x="@ToS(_textBbox.X)" dy="@ToS(_textBbox.Height)">@Subtitle</tspan>
         }
     </text>
 </g>
