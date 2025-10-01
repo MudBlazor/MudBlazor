@@ -5533,5 +5533,43 @@ namespace MudBlazor.UnitTests.Components
             testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
             testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
         }
+
+        [Test]
+        public void DataGridFilterIconsTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterIconsTest>();
+            MudIconButton FirstFilterButton() =>
+                comp.FindComponents<MudIconButton>().FirstOrDefault(x => x.Markup.Contains("filter-button"))?.Instance;
+
+            // Check filter buttons when no filter applied
+            var mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+
+            // Check filter buttons when filter applied
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
+            comp.Find("button.filter-button").Click();
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+
+            // Check filter buttons when FilterMode is ColumnFilterRow
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow));
+
+            var mudMenu = comp.FindComponents<MudMenu>().FirstOrDefault(x => x.Markup.Contains("column-filter-menu"))?.Instance;
+            mudMenu.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
+        }
     }
 }
