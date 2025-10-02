@@ -1259,30 +1259,29 @@ namespace MudBlazor.UnitTests.Components
 
         #endregion
 
-
         [Test]
         public void DynamicTabs_CollectionRenderSyncTest()
         {
             var comp = Context.RenderComponent<DynamicTabsSimpleTest>();
 
             var userTabs = comp.Instance.UserTabs;
-            var mudTabs = comp.Instance.DynamicTabs;
+            var mudTabs = comp.FindComponent<MudDynamicTabs>();
 
             // Initial
             userTabs.Count.Should().Be(3);
-            mudTabs.Panels.Count.Should().Be(3);
+            mudTabs.Instance.Panels.Count.Should().Be(3);
 
             // Remove
             comp.Instance.RemoveTab(userTabs.Last().Id);
             userTabs.Count.Should().Be(2);
             comp.Render(); // Render to refresh MudTabs
-            mudTabs.Panels.Count.Should().Be(2);
+            mudTabs.Instance.Panels.Count.Should().Be(2);
 
             // Add
             comp.Instance.AddTab(Guid.NewGuid());
             userTabs.Count.Should().Be(3);
             comp.Render(); // Render to refresh MudTabs
-            mudTabs.Panels.Count.Should().Be(3);
+            mudTabs.Instance.Panels.Count.Should().Be(3);
 
             // Remove all, no ArgumentOutOfRangeException should be thrown.
             comp.Instance.RemoveTab(userTabs.Last().Id);
@@ -1290,16 +1289,15 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RemoveTab(userTabs.Last().Id);
             userTabs.Count.Should().Be(0);
             comp.Render(); // Render to refresh MudTabs.
-            mudTabs.Panels.Count.Should().Be(0);
+            mudTabs.Instance.Panels.Count.Should().Be(0);
 
             // No active panel.
-            mudTabs.ActivePanel.Should().BeNull();
+            mudTabs.Instance.ActivePanel.Should().BeNull();
 
             // No active panel means no active panel index.
             comp.Instance.UserIndex.Should().Be(-1);
-            mudTabs.ActivePanelIndex.Should().Be(-1);
+            mudTabs.Instance.ActivePanelIndex.Should().Be(-1);
         }
-
 
         [Test]
         public void TabPanel_ShowCloseIconTest()
