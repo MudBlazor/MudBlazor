@@ -677,6 +677,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public async Task DataGridGroupingTemplateSetAtGridLevel()
         {
             var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
@@ -689,7 +690,7 @@ namespace MudBlazor.UnitTests.Components
             groupingTemplateSwitch.Find("input").Change(true);
             dataGrid.Render();
 
-            //current grouping should use the defined template  
+            //current grouping should use the defined template
             var groupRow = component.FindComponent<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>().Find(".mud-datagrid-group");
             var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Manufacturing1states");
