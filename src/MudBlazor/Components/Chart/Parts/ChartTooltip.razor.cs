@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor.Utilities;
 
 #nullable enable
 namespace MudBlazor.Charts;
@@ -66,6 +67,20 @@ public partial class ChartTooltip : ComponentBase
             _boxWidth = Math.Max(bboxTitle?.Width ?? 0, 30) + 10; // Minimum width for the text of 30px with 10px padding (5px each side)
 
             StateHasChanged();
+        }
+    }
+
+    private string GetContrastTextColor(string backgroundColor)
+    {
+        try
+        {
+            var mudColor = new MudColor(backgroundColor);
+            return mudColor.L > 0.40 ? "black" : "white";
+        }
+        catch
+        {
+            // Fallback to black for unknown colors
+            return "black";
         }
     }
 

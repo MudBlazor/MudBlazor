@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.Reflection;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -545,6 +546,39 @@ namespace MudBlazor.UnitTests.Components
             // Verify custom value override
             var customValue = comp.Find(".mud-chart-cell title");
             customValue.TextContent.Trim().Should().Be("10.05");
+        }
+
+        [Test]
+        // Dark colors (L ≤ 40%) should get white text
+        [TestCase(0, 100, 20, "white")]     // HSL(0°, 100%, 20%) - Red, very dark
+        [TestCase(120, 100, 30, "white")]   // HSL(120°, 100%, 30%) - Green, dark  
+        [TestCase(240, 100, 40, "white")]   // HSL(240°, 100%, 40%) - Blue, at threshold
+        [TestCase(0, 0, 25, "white")]       // HSL(0°, 0%, 25%) - Dark gray
+                                            // Light colors (L > 40%) should get black text  
+        [TestCase(60, 100, 50, "black")]    // HSL(60°, 100%, 50%) - Yellow, bright
+        [TestCase(180, 100, 60, "black")]   // HSL(180°, 100%, 60%) - Cyan, bright
+        [TestCase(0, 0, 75, "black")]       // HSL(0°, 0%, 75%) - Light gray
+        [TestCase(300, 50, 80, "black")]    // HSL(300°, 50%, 80%) - Light purple
+        public void GetContrastTextColor_ShouldFollowLightnessThreshold(double hue, double saturation, double lightness, string expectedTextColor)
+        {
+            // Arrange
+            var hslColor = new MudColor(hue, saturation / 100.0, lightness / 100.0, 1.0);
+            var backgroundColor = hslColor.ToString(MudColorOutputFormats.Hex);
+
+            var comp = Context.RenderComponent<ChartTooltip>(parameters => parameters
+                .Add(p => p.Title, "Test")
+                .Add(p => p.X, 0)
+                .Add(p => p.Y, 0)
+                .Add(p => p.Color, backgroundColor));
+
+            // Act
+            var method = typeof(ChartTooltip).GetMethod("GetContrastTextColor", BindingFlags.NonPublic | BindingFlags.Instance);
+            var result = (string)method.Invoke(comp.Instance, new object[] { backgroundColor });
+
+            // Assert
+            var expectedRule = lightness <= 40 ? "≤ 40% gets white text" : "> 40% gets black text";
+            result.Should().Be(expectedTextColor,
+                because: $"HSL({hue}°, {saturation}%, {lightness}%) follows rule: lightness {expectedRule}");
         }
 
         [Test]

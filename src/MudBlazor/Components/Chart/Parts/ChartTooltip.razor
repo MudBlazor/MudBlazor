@@ -4,6 +4,7 @@
     var hasSubtitle = !string.IsNullOrWhiteSpace(Subtitle);
     var subtitleHeight = hasSubtitle ? 16 : 0;
     var opacity = _boxWidth > 0 ? 1 : 0;
+    var textColor = GetContrastTextColor(Color);
 }
 <g class="svg-tooltip" opacity="@opacity" style="pointer-events: none;">
     <!-- The triangle pointing down (8px wide at the top) -->
@@ -20,7 +21,7 @@
             stroke-width="0" />
 
 
-    <text @ref="_hoverTextTitle" x="@ToS(X)" y="@ToS(Y - 14 - subtitleHeight)" text-anchor="middle" font-size="12px">
+    <text @ref="_hoverTextTitle" x="@ToS(X)" y="@ToS(Y - 14 - subtitleHeight)" text-anchor="middle" font-size="12px" fill="@textColor">
         <tspan x="@ToS(X)" dy="0">@Title</tspan>
         @if (hasSubtitle)
         {
