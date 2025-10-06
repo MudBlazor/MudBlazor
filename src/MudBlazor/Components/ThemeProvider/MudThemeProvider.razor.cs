@@ -307,8 +307,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Palette}-dark-hover: {palette.Dark.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
 
         theme.AppendLine($"--{Palette}-text-primary: {palette.TextPrimary};");
+        theme.AppendLine(
+            $"--{Palette}-text-primary-rgb: {palette.TextPrimary.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-text-secondary: {palette.TextSecondary};");
+        theme.AppendLine(
+            $"--{Palette}-text-secondary-rgb: {palette.TextSecondary.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-text-disabled: {palette.TextDisabled};");
+        theme.AppendLine(
+            $"--{Palette}-text-disabled-rgb: {palette.TextDisabled.ToString(MudColorOutputFormats.ColorElements)};");
 
         theme.AppendLine($"--{Palette}-action-default: {palette.ActionDefault};");
         theme.AppendLine(
@@ -334,6 +340,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-table-hover: {palette.TableHover};");
 
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
+        theme.AppendLine(
+            $"--{Palette}-divider-rgb: {palette.Divider.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
         theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
