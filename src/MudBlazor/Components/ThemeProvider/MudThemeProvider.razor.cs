@@ -248,6 +248,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-primary-darken: {palette.PrimaryDarken};");
         theme.AppendLine($"--{Palette}-primary-lighten: {palette.PrimaryLighten};");
         theme.AppendLine(
+            $"--{Palette}-primary-lighten-rgb: {new MudColor(palette.PrimaryLighten).ToString(MudColorOutputFormats.ColorElements)};");
+        theme.AppendLine(
             $"--{Palette}-primary-hover: {palette.Primary.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-secondary: {palette.Secondary};");
         theme.AppendLine(
@@ -255,6 +257,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-secondary-text: {palette.SecondaryContrastText};");
         theme.AppendLine($"--{Palette}-secondary-darken: {palette.SecondaryDarken};");
         theme.AppendLine($"--{Palette}-secondary-lighten: {palette.SecondaryLighten};");
+        theme.AppendLine(
+            $"--{Palette}-secondary-lighten-rgb: {new MudColor(palette.SecondaryLighten).ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine(
             $"--{Palette}-secondary-hover: {palette.Secondary.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-tertiary: {palette.Tertiary};");
@@ -264,6 +268,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-tertiary-darken: {palette.TertiaryDarken};");
         theme.AppendLine($"--{Palette}-tertiary-lighten: {palette.TertiaryLighten};");
         theme.AppendLine(
+            $"--{Palette}-tertiary-lighten-rgb: {new MudColor(palette.TertiaryLighten).ToString(MudColorOutputFormats.ColorElements)};");
+        theme.AppendLine(
             $"--{Palette}-tertiary-hover: {palette.Tertiary.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-info: {palette.Info};");
         theme.AppendLine(
@@ -271,6 +277,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-info-text: {palette.InfoContrastText};");
         theme.AppendLine($"--{Palette}-info-darken: {palette.InfoDarken};");
         theme.AppendLine($"--{Palette}-info-lighten: {palette.InfoLighten};");
+        theme.AppendLine(
+            $"--{Palette}-info-lighten-rgb: {new MudColor(palette.InfoLighten).ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine(
             $"--{Palette}-info-hover: {palette.Info.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-success: {palette.Success};");
@@ -280,6 +288,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-success-darken: {palette.SuccessDarken};");
         theme.AppendLine($"--{Palette}-success-lighten: {palette.SuccessLighten};");
         theme.AppendLine(
+            $"--{Palette}-success-lighten-rgb: {new MudColor(palette.SuccessLighten).ToString(MudColorOutputFormats.ColorElements)};");
+        theme.AppendLine(
             $"--{Palette}-success-hover: {palette.Success.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-warning: {palette.Warning};");
         theme.AppendLine(
@@ -287,6 +297,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-warning-text: {palette.WarningContrastText};");
         theme.AppendLine($"--{Palette}-warning-darken: {palette.WarningDarken};");
         theme.AppendLine($"--{Palette}-warning-lighten: {palette.WarningLighten};");
+        theme.AppendLine(
+            $"--{Palette}-warning-lighten-rgb: {new MudColor(palette.WarningLighten).ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine(
             $"--{Palette}-warning-hover: {palette.Warning.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-error: {palette.Error};");
@@ -296,6 +308,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-error-darken: {palette.ErrorDarken};");
         theme.AppendLine($"--{Palette}-error-lighten: {palette.ErrorLighten};");
         theme.AppendLine(
+            $"--{Palette}-error-lighten-rgb: {new MudColor(palette.ErrorLighten).ToString(MudColorOutputFormats.ColorElements)};");
+        theme.AppendLine(
             $"--{Palette}-error-hover: {palette.Error.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-dark: {palette.Dark};");
         theme.AppendLine(
@@ -304,9 +318,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-dark-darken: {palette.DarkDarken};");
         theme.AppendLine($"--{Palette}-dark-lighten: {palette.DarkLighten};");
         theme.AppendLine(
+            $"--{Palette}-dark-lighten-rgb: {new MudColor(palette.DarkLighten).ToString(MudColorOutputFormats.ColorElements)};");
+        theme.AppendLine(
             $"--{Palette}-dark-hover: {palette.Dark.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
 
         theme.AppendLine($"--{Palette}-text-primary: {palette.TextPrimary};");
+        theme.AppendLine(
+            $"--{Palette}-text-primary-rgb: {palette.TextPrimary.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-text-secondary: {palette.TextSecondary};");
         theme.AppendLine($"--{Palette}-text-disabled: {palette.TextDisabled};");
 
@@ -318,6 +336,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Palette}-action-disabled-background: {palette.ActionDisabledBackground};");
 
         theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
+        theme.AppendLine(
+            $"--{Palette}-surface-rgb: {palette.Surface.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-background: {palette.Background};");
         theme.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
         theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
@@ -334,6 +354,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-table-hover: {palette.TableHover};");
 
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
+        theme.AppendLine(
+            $"--{Palette}-divider-rgb: {palette.Divider.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
         theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
