@@ -120,6 +120,7 @@ namespace MudBlazor
         /// Hides the submenu arrow if the item is being populated from the activator content. 
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
         public bool HideSubMenuArrow { get; set; }
 
         public ElementReference ElementReference { get; private set; }
