@@ -56,33 +56,39 @@ Feature labels (used as part of a policy rule):
 `good first issue`, `help wanted`, `awaiting triage`, `needs: info`, `needs: reproduction`, `needs: visuals`, `needs: tests`, `needs: changes`, `question`, `invalid`, `stale`
 
 ## Contribution Encouragement
-Skip this section if the thread is a PR or has an assignee.
+Skip this section if ANY of these conditions are met:
+- The thread is a PR
+- Created by a maintainer
+- A maintainer is assigned
 
 ### Good First Issue
 Apply `good first issue` when ALL conditions are met:
-- Small scope with clear acceptance criteria
-- Minimal reproducible example present
+- Issue is well-defined with clear acceptance criteria (what success looks like is explicitly stated or objectively verifiable)
+- For bugs: A reproduction link or clear reproduction steps are provided
 
-Exclude `good first issue` if:
-- Scope grows beyond newcomer-friendly complexity
-- The issue has a `needs:` label
+Exclude `good first issue` if ANY conditions are met:
+- Has any `needs:` label
+- Multiple components or files need coordination
+- Solution approach is unclear or debatable
+- Involves complex areas (state management, rendering lifecycle, performance optimization, accessibility implementation, interop)
+- Requires architectural decisions, breaking changes, or design discussions
 
 ### Help Wanted
 Apply `help wanted` when ONE of these conditions is met:
 - Explicit maintainer approval
-- Community interest (>=15 points from distinct non-maintainer, non-author users, where each user contributes at most once: supportive comment = 3 points, reaction = 1 point, or both = 3 points total)
+- Community interest (>=15 points from distinct non-author users, where each user contributes at most once: supportive comment = 4 points, reaction = 1 point, or both = 4 points total)
 
 Exclude `help wanted` if:
-- `good first issue` applies
-- A maintainer is assigned
+- Qualifies for `good first issue`
 - Maintainers choose to implement internally
 - Maintainers are in disagreement of how to approach it
 - A PR was opened addressing it less than 3 months ago
 - Thread was assigned less than 3 months ago
 
+<!-- Disabled due to low value and subjectivity in "bump comment"
 ### Nudges
 Respond when ALL of these conditions are met:
-- A pure bump comment appears (content-free status requests like "any update?", "bump", "+1", or standalone emoji/reactions with no substantive information) OR a user explicitly offers to contribute a fix/feature (e.g., "I can open a PR", "I'll submit a PR") in a comment within the last 28 days.
+- A pure bump comment appears (content-free status requests like "any update?", "bump", "+1", or standalone emoji/reactions with no substantive information) OR a user explicitly offers to contribute a fix/feature (e.g., "I can open a PR", "I'll submit a PR") in a comment within the last 28 days. Responses to stale notifications are valid updates showing continued interest and should reset the timer normally. They are NOT "nudges" or "bumps"..
 - You or a maintainer has not responded to a nudge in this thread and suggested a PR already
 
 What to say:
@@ -91,24 +97,6 @@ What to say:
   - Contributing guide: https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md
   - Creating a pull request: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
 - Example phrasing: "If you'd like to work on this, a pull request would be a great next step. Here are some helpful resources to get started. Feel free to reference this issue in your PR description so it gets linked automatically."
-
-<!-- Alternative version (summarizer)
-Respond when ALL of these conditions are met:
-- The `help wanted` or `good first issue` label is applied
-- A bump-only comment appears (e.g., "any update?", "+1") or a user explicitly offers to contribute a fix/feature (e.g., "I can open a PR", "I'll submit a PR") within the last 28 days.
-
-What to say:
-- Quote parts of every relevant proposed approach or workaround if there are any (cite who proposed it generically, e.g., "a community member" or "a maintainer") and create a summary report. Do not present anything as confirmed.
-- Invite contributions and outline next steps. Include concrete requirements if known (tests, visuals, docs, link to issue).
-- Provide links:
-  - Contributing guide: https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md
-  - Creating a pull request: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
-- Example phrasing: "A potential approach was proposed earlier in the thread. If someone from the community is interested in implementing it, a pull request referencing this issue would be the next step. See the contributing guide for details."
-
-Guardrails:
-- Do not imply that maintainers will take action or that a solution is confirmed.
-- Post at most once per thread unless substantial new context emerges and it has been >=84 days since your last encouragement comment; if posting again, state exactly what changed.
-- If a maintainer has given explicit acceptance criteria, include them; otherwise keep requirements minimal and generic.
 -->
 
 ## Needs Triage
@@ -124,7 +112,7 @@ Case — Thread is a pull request:
 
 Case — Thread is an issue:
 - Has at least two attention-request comments from any users (e.g., asks for help/review/triage or pings maintainers)
-- Those comments were within the last 6 months
+- Those comments were within the last 12 months
 - Those comments are at least 14 days apart
 - No maintainer has replied since the first request
 
