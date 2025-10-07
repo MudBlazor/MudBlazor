@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.Docs.Examples
-
-<MudDynamicTabs @ref="@_dynamicTabs" @bind-ActivePanelIndex="@_userIndex"
+﻿<MudDynamicTabs @ref="@_dynamicTabs" @bind-ActivePanelIndex="@_userIndex"
                 AddTab="@OnAddTab" CloseTab="@OnCloseTab"
                 AddIconToolTip="Click to add a new tab" CloseIconToolTip="Close tab. All data will be lost"
                 PanelClass="px-4 py-6" Elevation="4" Rounded ApplyEffectsToContainer>
@@ -15,6 +13,8 @@
 <MudText>UserTabs.Count: @_userTabs.Count / DynamicTabs Panels.Count: @_dynamicTabs.Panels.Count</MudText>
 
 @code {
+    public static string __description__ = "A test to ensure setting ActivePanelIndex when out of viewable range causes scroll.";
+
     private int _userIndex;
     private bool _showCloseIcon;
     private bool _stateHasChanged;
