@@ -116,6 +116,12 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        /// <summary>
+        /// Hides the submenu arrow if the item is being populated from the activator content. 
+        /// </summary>
+        [Parameter]
+        public bool HideSubMenuArrow { get; set; }
+
         public ElementReference ElementReference { get; private set; }
 
         protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";

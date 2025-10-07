@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -35,6 +36,7 @@ namespace MudBlazor
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
+        private DateTime _lastKeyboardActivation = DateTime.MinValue;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -479,7 +481,20 @@ namespace MudBlazor
             _focusedIndex = -1;
             _lastInteractionWasKeyboard = false;
             _menuItems.Clear();
-            await KeyInterceptorService.UnsubscribeAsync(_elementId);
+            await Task.Yield();
+
+            if (_openState.Value)
+            {
+                try
+                {
+                    await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                }
+                catch (JSException)
+                {
+                    // Element already gone, safe to ignore.
+                }
+            }
+
             await _openState.SetValueAsync(false);
             await InvokeAsync(StateHasChanged);
         }
@@ -586,6 +601,13 @@ namespace MudBlazor
             if (args is MouseEventArgs mouseEventArgs)
             {
                 // Determine if the click matches the expected activation event.
+                // This indicates it's a synthetic click following Enter/Space
+                var timeSinceKeyboard = DateTime.UtcNow - _lastKeyboardActivation;
+                if (timeSinceKeyboard.TotalMilliseconds < 50)
+                {
+                    return Task.CompletedTask;
+                }
+
                 var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
                 var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu = -1, right click = 2.
 
@@ -920,16 +942,21 @@ namespace MudBlazor
                         var submenu = FindSubmenuForItem(menuItem);
                         if (submenu != null)
                         {
+                            submenu._lastKeyboardActivation = DateTime.UtcNow;
+                            submenu._lastInteractionWasKeyboard = true;
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
                         else
                         {
                             await menuItem.OnClickHandlerAsync(new MouseEventArgs());
+                            _lastInteractionWasKeyboard = false;
                         }
                         break;
 
                     case MudMenu menu:
                         // For MudMenu items, always open the submenu
+                        menu._lastKeyboardActivation = DateTime.UtcNow;
+                        menu._lastInteractionWasKeyboard = true;
                         await menu.OpenSubMenuAsync(EventArgs.Empty);
                         break;
                 }
@@ -1069,7 +1096,7 @@ namespace MudBlazor
                     }
                 }
             }
-            catch (Microsoft.JSInterop.JSException)
+            catch (JSException)
             {
                 // No focus added - menu closed without focusing, as the element is likely gone from the DOM.
             }
@@ -1103,6 +1130,21 @@ namespace MudBlazor
                     _focusedIndex = _menuItems.Count - 1;
                     _ = InvokeAsync(() => FocusItemAsync(_focusedIndex));
                 }
+            }
+        }
+
+        /// <summary>
+        /// Handle activator keydown when activator content is added to the menu/submenus. 
+        /// </summary>
+        /// <param name="e"></param>
+        private async Task HandleActivatorKeydown(KeyboardEventArgs e)
+        {
+            if (e.Key == "Enter" || e.Key == " ")
+            {
+                _lastInteractionWasKeyboard = true;
+                _lastKeyboardActivation = DateTime.UtcNow;
+
+                await ToggleMenuAsync(e);
             }
         }
     }

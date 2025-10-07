@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("div.mud-menu-item")[0].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
 
             comp.FindAll("button.mud-button-root")[0].Click();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item")[0].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item")[1].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
         }
 
         [Test]
@@ -300,7 +300,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item")[0].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[5].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
@@ -388,7 +391,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("a.mud-menu-item")[2].Click(); // disabled
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item")[1].Click(); // enabled
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
@@ -491,8 +497,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "No popovers should be visible.");
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button should open the menu.");
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button should open the menu.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
+            });
 
             SwitchElement().Change(false);
             comp.WaitForAssertion(() =>
@@ -503,24 +513,36 @@ namespace MudBlazor.UnitTests.Components
             });
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
-            comp.Instance.Open.Should().BeTrue();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should reappear after reopening.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should reappear after reopening.");
+            });
 
             SwitchElement().Change(true);
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Setting Open to true again should not change the state.");
-            comp.Instance.Open.Should().BeTrue();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover count should remain the same.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Setting Open to true again should not change the state.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover count should remain the same.");
+            });
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeFalse("Clicking the button should close the menu.");
-            comp.Instance.Open.Should().BeFalse();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should no longer be visible.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeFalse("Clicking the button should close the menu.");
+                comp.Instance.Open.Should().BeFalse();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should no longer be visible.");
+            });
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
-            comp.Instance.Open.Should().BeTrue();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should appear again.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should appear again.");
+            });
         }
 
         [Test]
@@ -586,7 +608,10 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-menu-item:contains('2.2')").Click();
 
             // Ensure all popovers are closed.
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
@@ -656,7 +681,10 @@ namespace MudBlazor.UnitTests.Components
 
             // Click the MudIconButton inside the ActivatorContent
             comp.Find("button.mud-icon-button-activator").Click();
-            provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            provider.WaitForAssertion(() =>
+            {
+                provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            });
         }
 
         [Test]
