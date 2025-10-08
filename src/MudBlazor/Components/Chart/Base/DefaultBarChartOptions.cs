@@ -4,6 +4,9 @@
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents the default options for a bar chart.
+/// </summary>
 public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
 {
     private double _seriesSpacingRatio = 1;
@@ -49,5 +52,11 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// </remarks>
     public int? FixedBarWidth { get; set; }
 
+    /// <summary>
+    /// The format applied to the data marker tooltip title.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to "{{Y_VALUE}}"
+    /// </remarks>
     public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
 }

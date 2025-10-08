@@ -490,13 +490,7 @@ namespace MudBlazor.Charts
         {
             MudHeatMapCells.Add(cell);
 
-            _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
-            {
-                await InvokeAsync(() =>
-                {
-                    RebuildChart();
-                });
-            });
+            DebouncedRebuild();
         }
 
         private void SetBounds()
@@ -539,13 +533,18 @@ namespace MudBlazor.Charts
                 return;
             }
 
-            _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
+            DebouncedRebuild();
+        }
+
+        private void DebouncedRebuild()
+        {
+            _debouncer.DebounceAfterFirstExecuteAsync(async () =>
             {
                 await InvokeAsync(() =>
                 {
                     RebuildChart();
                 });
-            });
+            }).CatchAndLog();
         }
 
         private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T> cell)

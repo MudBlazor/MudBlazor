@@ -51,16 +51,6 @@ public class TimeSeriesChartOptions : DefaultAxisLineChartOptions
 
     public override string? TooltipSubtitleFormat { get; set; } = "{{Y_VALUE}}";
 
-    /// <summary>
-    /// Specifies the title for the X axis.
-    /// </summary>
-    public string? XAxisTitle { get; set; }
-
-    /// <summary>
-    /// Specifies the title for the Y axis.
-    /// </summary>
-    public string? YAxisTitle { get; set; }
-
     public static implicit operator TimeSeriesChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,

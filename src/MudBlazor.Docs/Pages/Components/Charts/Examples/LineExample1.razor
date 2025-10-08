@@ -36,7 +36,11 @@
 
 @code {
     private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
-    private LineChartOptions _options = new LineChartOptions();
+    private LineChartOptions _options = new LineChartOptions()
+    {
+        XAxisTitle = "Months",
+        YAxisTitle = "Sales",
+    };
 
     private int _height = 350;
     private bool _matchBoundsToSize = false;

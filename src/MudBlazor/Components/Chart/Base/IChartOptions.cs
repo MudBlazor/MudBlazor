@@ -5,6 +5,9 @@
 #nullable enable
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents the options for a chart.
+/// </summary>
 public interface IChartOptions
 {
     /// <summary>

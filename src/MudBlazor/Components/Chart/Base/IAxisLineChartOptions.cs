@@ -4,6 +4,9 @@
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents the options for a line chart that has axes.
+/// </summary>
 public interface IAxisLineChartOptions : IAxisChartOptions
 {
     /// <summary>
@@ -46,10 +49,28 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     public IDictionary<IChartSeries, SeriesDisplayOverride> SeriesDisplayOverrides { get; set; }
 }
 
+/// <summary>
+/// Represents display overrides for a specific series (line) in a line chart.
+/// </summary>
 public record SeriesDisplayOverride
 {
+    /// <summary>
+    /// The display type for the series, overriding the chart's default.
+    /// </summary>
     public LineDisplayType? LineDisplayType { get; set; }
+
+    /// <summary>
+    /// The interpolation option for the series, overriding the chart's default.
+    /// </summary>
     public InterpolationOption? InterpolationOption { get; set; }
+
+    /// <summary>
+    /// The stroke opacity for the series.
+    /// </summary>
     public double StrokeOpacity { get; set; } = 1;
+
+    /// <summary>
+    /// The fill opacity for the series, used when the display type is 'Area'.
+    /// </summary>
     public double FillOpacity { get; set; } = 0.4;
 }

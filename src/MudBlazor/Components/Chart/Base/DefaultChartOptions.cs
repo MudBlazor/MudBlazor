@@ -5,6 +5,9 @@
 #nullable enable
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents the default options for a chart.
+/// </summary>
 public abstract class DefaultChartOptions : IChartOptions
 {
     /// <summary>
@@ -26,6 +29,9 @@ public abstract class DefaultChartOptions : IChartOptions
     /// <summary>
     /// The format applied to the data marker tooltip title.
     /// </summary>
+    /// <remarks>
+    /// Defaults to "{{Y_VALUE}} - {{X_VALUE}}"
+    /// </remarks>
     public virtual string TooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
 
     /// <summary>

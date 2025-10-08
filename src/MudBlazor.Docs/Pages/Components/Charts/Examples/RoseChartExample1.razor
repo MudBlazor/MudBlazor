@@ -7,7 +7,7 @@
                   y="25"
                   dominant-baseline="middle"
                   text-anchor="middle"
-                  fill="@_options.ChartPalette[Math.Max(0, _selectedIndex)]">@(_selectedIndex == -1 ? "" : $"Selected: {_series[0].Data[_selectedIndex]}")</text>
+                  fill="@_options.ChartPalette[Math.Max(0, _selectedIndex)]">@(_selectedIndex == -1 ? "" : $"Selected: {_series[0].Data[_selectedIndex].Y}")</text>
         </CustomGraphics>
     </MudChart>
 </MudPaper>

@@ -14,6 +14,11 @@ using MudBlazor.Utilities.Debounce;
 #nullable enable
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents a base class for radial charts.
+/// </summary>
+/// <typeparam name="T">The data type of the chart.</typeparam>
+/// <typeparam name="TOptions">The type of options for the chart.</typeparam>
 public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions>, IDisposable
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TOptions : IRadialChartOptions
@@ -35,16 +40,45 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
 
     private ElementSize? _elementSize;
+
+    /// <summary>
+    /// The width of the chart's bounds.
+    /// </summary>
     protected double _boundWidth = 280;
+
+    /// <summary>
+    /// The height of the chart's bounds.
+    /// </summary>
     protected double _boundHeight = 280;
 
+    /// <summary>
+    /// The SVG paths for the chart segments.
+    /// </summary>
     internal List<SvgPath> _paths = [];
+
+    /// <summary>
+    /// The legends for the chart.
+    /// </summary>
     internal List<SvgLegend> _legends = [];
+
+    /// <summary>
+    /// The currently hovered SVG path segment.
+    /// </summary>
     internal SvgPath? _hoveredSegment;
 
+    /// <summary>
+    /// The indices of hidden data series.
+    /// </summary>
     protected HashSet<int> HiddenIndices { get; set; } = [];
+
+    /// <summary>
+    /// The radius of the radial chart.
+    /// </summary>
     protected double Radius => Math.Round(Math.Min(_boundWidth, _boundHeight) / 2);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MudRadialChartBase{T, TOptions}"/> class.
+    /// </summary>
     [DynamicDependency(nameof(OnElementSizeChanged))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
     protected MudRadialChartBase()
@@ -52,6 +86,9 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         _dotNetObjectReference = DotNetObjectReference.Create(this);
     }
 
+    /// <summary>
+    /// Called when the component's parameters are set.
+    /// </summary>
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -69,6 +106,11 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         RebuildChart();
     }
 
+    /// <summary>
+    /// Sets the element reference and observes its size.
+    /// </summary>
+    /// <param name="elementRef">The element reference.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     protected async Task SetElementReference(ElementReference elementRef)
     {
         var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
@@ -76,6 +118,10 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         OnElementSizeChanged(elementSize);
     }
 
+    /// <summary>
+    /// Gets the labels for the chart.
+    /// </summary>
+    /// <returns>An array of chart labels.</returns>
     protected string[] GetChartLabels()
     {
         return ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
@@ -83,6 +129,11 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
             : ChartLabels ?? [];
     }
 
+    /// <summary>
+    /// Aggregates the series data based on the specified aggregation option.
+    /// </summary>
+    /// <param name="aggregation">The aggregation option.</param>
+    /// <returns>An array of aggregated data.</returns>
     protected T[] AggregateSeriesData(AggregationOption aggregation)
     {
         if (aggregation == AggregationOption.None || ChartSeries is null || ChartSeries.Count == 0 || !ChartSeries.Any(x => x.Visible))
@@ -141,6 +192,10 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         return aggregated;
     }
 
+    /// <summary>
+    /// Builds the legends for the chart.
+    /// </summary>
+    /// <param name="chartLabels">The labels for the chart.</param>
     protected void BuildLegends(string[] chartLabels)
     {
         for (var i = 0; i < chartLabels.Length; i++)
@@ -162,6 +217,9 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         }
     }
 
+    /// <summary>
+    /// Sets the bounds of the chart.
+    /// </summary>
     protected void SetBounds()
     {
         _boundWidth = BoundWidthDefault;
@@ -202,6 +260,10 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         return data.Select(x => T.Abs(x) / total).ToArray();
     }
 
+    /// <summary>
+    /// Handles the visibility change of a legend.
+    /// </summary>
+    /// <param name="legend">The legend whose visibility changed.</param>
     protected void HandleLegendVisibilityChanged(SvgLegend legend)
     {
         if (legend.Visible)
@@ -215,21 +277,57 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         RebuildChart();
     }
 
+    /// <summary>
+    /// Represents the coordinates of a segment in a radial chart.
+    /// </summary>
     protected readonly struct SegmentCoordinates
     {
+        /// <summary>
+        /// The starting X coordinate.
+        /// </summary>
         public double StartX { get; init; }
+        /// <summary>
+        /// The starting Y coordinate.
+        /// </summary>
         public double StartY { get; init; }
+        /// <summary>
+        /// The middle X coordinate.
+        /// </summary>
         public double MidX { get; init; }
+        /// <summary>
+        /// The middle Y coordinate.
+        /// </summary>
         public double MidY { get; init; }
+        /// <summary>
+        /// The ending X coordinate.
+        /// </summary>
         public double EndX { get; init; }
+        /// <summary>
+        /// The ending Y coordinate.
+        /// </summary>
         public double EndY { get; init; }
+        /// <summary>
+        /// The large arc flag for SVG path.
+        /// </summary>
         public int LargeArcFlag { get; init; }
     }
 
+    /// <summary>
+    /// Handles the mouse over event for a segment.
+    /// </summary>
+    /// <param name="args">The mouse event arguments.</param>
+    /// <param name="segment">The hovered segment path.</param>
     internal virtual void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment) => _hoveredSegment = segment;
 
+    /// <summary>
+    /// Handles the mouse out event for a segment.
+    /// </summary>
     internal virtual void OnSegmentMouseOut() => _hoveredSegment = null;
 
+    /// <summary>
+    /// Called when the element size changes.
+    /// </summary>
+    /// <param name="elementSize">The new element size.</param>
     [JSInvokable]
     public void OnElementSizeChanged(ElementSize elementSize)
     {
@@ -245,22 +343,29 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         _boundWidth = minDimension;
         _boundHeight = minDimension;
 
-        _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
+        _debouncer.DebounceAfterFirstExecuteAsync(async () =>
         {
             await InvokeAsync(() =>
             {
                 RebuildChart();
                 StateHasChanged();
             });
-        });
+        }).CatchAndLog();
     }
 
+    /// <summary>
+    /// Releases the resources used by the component.
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Releases the unmanaged resources used by the component and optionally releases the managed resources.
+    /// </summary>
+    /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)

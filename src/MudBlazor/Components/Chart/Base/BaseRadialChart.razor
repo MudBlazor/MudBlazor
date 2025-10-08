@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor.Charts
-@using MudBlazor.Extensions
 
 @inherits MudComponentBase
 
@@ -88,6 +87,7 @@
 
         builder.OpenElement(seq++, "text");
         builder.AddAttribute(seq++, "class", "mud-chart-label-value");
+        builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => OnPathClick.InvokeAsync(path.Index)));
         builder.AddAttribute(seq++, "x", x);
         builder.AddAttribute(seq++, "y", y);
         builder.AddAttribute(seq++, "fill", "white");
@@ -108,27 +108,4 @@
 
         builder.CloseElement(); // </text>
     };
-
-    private static double EstimateFontSize(string text, double radius, double angleRadians)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-            return 8;
-
-        const int MinTextLength = 2;
-        const int MaxTextLength = 6;
-        const double ArcLengthDivisor = 3;
-        const double FontSizeOffset = 1.6;
-        const double MinFontSize = 6;
-        const double MaxFontSize = 30;
-
-        var arcLength = angleRadians * radius;
-        var avgCharWidth = 0.6;
-        var estimatedTextWidth = text.Length.EnsureRange(MinTextLength, MaxTextLength)
-                                 * avgCharWidth
-                                 * Math.Sqrt(arcLength / ArcLengthDivisor);
-        var size = (arcLength / estimatedTextWidth) + FontSizeOffset;
-
-        return size.EnsureRange(MinFontSize, MaxFontSize);
-    }
-
 }

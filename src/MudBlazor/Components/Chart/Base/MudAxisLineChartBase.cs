@@ -12,22 +12,93 @@ using MudBlazor.Interpolation;
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents a base class for axis-based line charts.
+/// </summary>
+/// <typeparam name="T">The data type of the chart.</typeparam>
+/// <typeparam name="TOptions">The type of options for the chart.</typeparam>
 public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TOptions>, IMudAxisChart<T>
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TOptions : IAxisLineChartOptions
 {
+    /// <summary>
+    /// The SVG paths for the chart lines.
+    /// </summary>
     protected List<SvgPath> ChartLines { get; set; } = [];
+
+    /// <summary>
+    /// The SVG paths for the chart areas.
+    /// </summary>
     protected Dictionary<int, SvgPath> ChartAreas { get; set; } = [];
+
+    /// <summary>
+    /// The SVG circles for the chart data points.
+    /// </summary>
     protected Dictionary<int, List<SvgCircle>> ChartDataPoints { get; set; } = [];
+
+    /// <summary>
+    /// The SVG path for the hovered data point.
+    /// </summary>
     protected SvgPath? HoveredDataPointPath { get; set; }
+
+    /// <summary>
+    /// Indicates whether the chart should be interpolated.
+    /// </summary>
     protected abstract bool ShouldInterpolate { get; }
 
+    /// <summary>
+    /// Gets the data value for a specific series and data point.
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the return value.</typeparam>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="dataPointIndex">The index of the data point.</param>
+    /// <returns>The data value.</returns>
     protected abstract TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex);
+
+    /// <summary>
+    /// Gets the X-axis label for a specific series and data point.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="dataPointIndex">The index of the data point.</param>
+    /// <returns>The X-axis label.</returns>
     protected abstract string GetLabelXValue(int seriesIndex, int dataPointIndex);
+
+    /// <summary>
+    /// Gets the label for a vertical grid line.
+    /// </summary>
+    /// <param name="index">The index of the grid line.</param>
+    /// <returns>The label for the vertical grid line.</returns>
     protected abstract string GetVerticalGridLineLabel(int index);
+
+    /// <summary>
+    /// Gets the X and Y coordinates for a data point.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="dataPointIndex">The index of the data point.</param>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <param name="gridYUnits">The Y-axis grid units.</param>
+    /// <param name="horizontalSpace">The horizontal space between points.</param>
+    /// <param name="verticalSpace">The vertical space between points.</param>
+    /// <returns>A tuple containing the X and Y coordinates.</returns>
     protected abstract (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace);
+
+    /// <summary>
+    /// Creates a line interpolator for a series.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <param name="gridYUnits">The Y-axis grid units.</param>
+    /// <param name="horizontalSpace">The horizontal space between points.</param>
+    /// <param name="verticalSpace">The vertical space between points.</param>
+    /// <returns>The line interpolator.</returns>
     internal abstract ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace);
 
+    /// <summary>
+    /// Generates the vertical grid lines for the chart.
+    /// </summary>
+    /// <param name="numVerticalLines">The number of vertical lines.</param>
+    /// <param name="startOffset">The starting offset.</param>
+    /// <param name="horizontalSpace">The horizontal space between lines.</param>
     protected void GenerateVerticalGridLines(int numVerticalLines, double startOffset, double horizontalSpace)
     {
         VerticalLines.Clear();
@@ -62,6 +133,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         }
     }
 
+    /// <summary>
+    /// Generates the chart lines.
+    /// </summary>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <param name="gridYUnits">The Y-axis grid units.</param>
+    /// <param name="horizontalSpace">The horizontal space between points.</param>
+    /// <param name="verticalSpace">The vertical space between points.</param>
     protected void GenerateChartLines(int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
     {
         ChartLines.Clear();
@@ -114,6 +192,17 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         }
     }
 
+    /// <summary>
+    /// Generates straight lines for a series.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="chartLine">The string builder for the chart line.</param>
+    /// <param name="chartDataCircles">The list of circles for data points.</param>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <param name="gridYUnits">The Y-axis grid units.</param>
+    /// <param name="horizontalSpace">The horizontal space between points.</param>
+    /// <param name="verticalSpace">The vertical space between points.</param>
+    /// <returns>A tuple containing the first X, first Y, and last X coordinates.</returns>
     protected (double firstX, double firstY, double lastX) GenerateStraightLines(int seriesIndex,
                                                                                  StringBuilder chartLine,
                                                                                  List<SvgCircle> chartDataCircles,
@@ -167,6 +256,17 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         return (firstPointX, firstPointY, lastPointX);
     }
 
+    /// <summary>
+    /// Generates interpolated lines for a series.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="chartLine">The string builder for the chart line.</param>
+    /// <param name="chartDataCircles">The list of circles for data points.</param>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <param name="gridYUnits">The Y-axis grid units.</param>
+    /// <param name="horizontalSpace">The horizontal space between points.</param>
+    /// <param name="verticalSpace">The vertical space between points.</param>
+    /// <returns>A tuple containing the first X, first Y, and last X coordinates.</returns>
     protected (double firstX, double firstY, double lastX) GenerateInterpolatedLines(int seriesIndex,
                                                                                      StringBuilder chartLine,
                                                                                      List<SvgCircle> chartDataCircles,
@@ -225,12 +325,23 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         return (firstPointX, firstPointY, lastPointX);
     }
 
+    /// <summary>
+    /// Gets the data value as a string for a specific series and data point.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="dataPointIndex">The index of the data point.</param>
+    /// <returns>The data value as a string.</returns>
     protected virtual string GetDataValueAsString(int seriesIndex, int dataPointIndex)
     {
         var value = GetDataValue<double>(seriesIndex, dataPointIndex);
         return value.ToString(Series[seriesIndex].TooltipYValueFormat) ?? string.Empty;
     }
 
+    /// <summary>
+    /// Adds a legend for a series.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="series">The chart series.</param>
     protected void AddLegend(int seriesIndex, ChartSeries<T> series)
     {
         var legend = new SvgLegend()
@@ -244,6 +355,15 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         Legends.Add(legend);
     }
 
+    /// <summary>
+    /// Generates the area chart for a series.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="chartLine">The string builder for the chart line.</param>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <param name="firstPointX">The X coordinate of the first point.</param>
+    /// <param name="firstPointY">The Y coordinate of the first point.</param>
+    /// <param name="lastPointX">The X coordinate of the last point.</param>
     protected void GenerateAreaChart(int seriesIndex, StringBuilder chartLine, int lowestHorizontalLine,
                                      double firstPointX, double firstPointY, double lastPointX)
     {
@@ -279,6 +399,11 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         ChartAreas.Add(seriesIndex, area);
     }
 
+    /// <summary>
+    /// Gets the Y coordinate for the zero point.
+    /// </summary>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <returns>The Y coordinate for the zero point.</returns>
     protected double GetYForZeroPoint(int lowestHorizontalLine)
     {
         var gridValue = -lowestHorizontalLine * GetVerticalSpace();
@@ -287,11 +412,20 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         return y;
     }
 
+    /// <summary>
+    /// Gets the vertical space of the chart.
+    /// </summary>
+    /// <returns>The vertical space.</returns>
     protected double GetVerticalSpace()
     {
         return _boundHeight - VerticalStartSpace;
     }
 
+    /// <summary>
+    /// Gets the series display override for a series.
+    /// </summary>
+    /// <param name="series">The chart series.</param>
+    /// <returns>The series display override, or null if not found.</returns>
     protected SeriesDisplayOverride? GetSeriesDisplayOverride(ChartSeries<T> series)
     {
         return ChartOptions?.SeriesDisplayOverrides?.TryGetValue(series, out var overrideData) is true
@@ -299,6 +433,11 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             : null;
     }
 
+    /// <summary>
+    /// Handles the mouse over event for a data point.
+    /// </summary>
+    /// <param name="_">The mouse event arguments.</param>
+    /// <param name="hoveredPoint">The hovered data point path.</param>
     protected void OnDataPointMouseOver(MouseEventArgs _, SvgPath hoveredPoint)
     {
         HoveredDataPointPath = hoveredPoint;
@@ -307,6 +446,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             chart.StateHasChanged();
     }
 
+    /// <summary>
+    /// Handles the mouse out event for a data point.
+    /// </summary>
     protected void OnDataPointMouseOut()
     {
         HoveredDataPointPath = null;

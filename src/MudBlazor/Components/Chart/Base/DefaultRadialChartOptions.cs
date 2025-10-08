@@ -5,6 +5,9 @@
 #nullable enable
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents the default options for a radial chart.
+/// </summary>
 public abstract class DefaultRadialChartOptions : DefaultChartOptions, IRadialChartOptions
 {
     /// <summary>

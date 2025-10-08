@@ -38,13 +38,13 @@
         {
             @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
-        @if (YAxisTitle is not null)
-        {
-            <g transform="translate(10, @(ViewBoxHeight / 2))">
-                <text transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
-            </g>
-        }
     </g>
+    @if (YAxisTitle is not null)
+    {
+        <g transform="translate(@(ToS(-1 * (_yAxisLabelSize?.Width ?? 2 / 2))), @(ToS(ViewBoxHeight / 2)))">
+            <text class="mud-charts-yaxis axis-title" transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
+        </g>
+    }
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
         @for (var i = 0; i < VerticalValues.Count; i++)
         {
@@ -74,6 +74,6 @@
 @if (XAxisTitle is not null)
 {
     <MudStack Class="mt-2" Row="true" Justify="Justify.Center">
-        <MudText Typo="Typo.body2">@XAxisTitle</MudText>
+        <MudText Class="mud-charts-xaxis axis-title" Typo="Typo.body2">@XAxisTitle</MudText>
     </MudStack>
 }

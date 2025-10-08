@@ -5,6 +5,9 @@
 #nullable enable
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Represents the options for a chart that has axes.
+/// </summary>
 public interface IAxisChartOptions : IChartOptions
 {
     /// <summary>
