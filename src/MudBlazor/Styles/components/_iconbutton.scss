@@ -23,7 +23,7 @@
     background-color: var(--mud-palette-action-default-hover);
 
     @each $color in $mud-palette-colors {
-      &[class*="mud-button-filled-#{$color}"] {
+      &.mud-button-filled-#{$color} {
         background-color: var(--mud-palette-#{$color}-darken);
       }
     }
