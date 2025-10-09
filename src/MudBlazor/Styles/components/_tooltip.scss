@@ -1,7 +1,12 @@
 
 .mud-tooltip-root {
   &.mud-tooltip-inline {
-    display: block; // allow FullWidth children to stretch
+    display: inline-block;
+  }
+
+  &.mud-tooltip-inline:has(> .mud-width-full) {
+    display: block;
+    width: 100%;
   }
 }
 
