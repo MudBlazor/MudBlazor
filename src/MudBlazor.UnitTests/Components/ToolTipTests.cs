@@ -415,9 +415,8 @@ namespace MudBlazor.UnitTests.Components
             var btn = comp.Find("button");
             btn.Should().NotBeNull();
 
-            // If a specific full-width class is exposed in this version, assert it here:
-            // var classes = string.Join(' ', btn.ClassList).ToLowerInvariant();
-            // classes.Should().Contain("mud-button-full-width");
+            // Assert the full-width utility class is applied to the button
+            btn.ClassList.Should().Contain("mud-width-full");
         }
     }
 }
