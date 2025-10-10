@@ -304,6 +304,8 @@ namespace MudBlazor
         /// <summary>
         /// Enables tooltips for icon buttons.
         /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowTooltips { get; set; } = true;
 
         /// <inheritdoc />
