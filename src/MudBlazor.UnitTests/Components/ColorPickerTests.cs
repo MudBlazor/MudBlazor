@@ -618,7 +618,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Tooltips_Enabled_ShouldDisplayLocalizedContent()
+        public void Tooltips_Enabled_ShouldDisplayLocalizedContent()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
