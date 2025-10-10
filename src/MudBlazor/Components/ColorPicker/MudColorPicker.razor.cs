@@ -301,6 +301,11 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ThrottleInterval { get; set; } = 50;
 
+        /// <summary>
+        /// Enables tooltips for icon buttons.
+        /// </summary>
+        public bool ShowTooltips { get; set; } = true;
+
         /// <inheritdoc />
         protected override void OnInitialized()
         {
