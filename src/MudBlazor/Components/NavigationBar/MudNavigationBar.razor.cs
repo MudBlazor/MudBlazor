@@ -37,8 +37,8 @@ namespace MudBlazor
             _underline = registerScope.RegisterParameter<bool>(nameof(Underline))
                 .WithParameter(() => Underline)
                 .WithChangeHandler(OnParameterChanged);
-            _density = registerScope.RegisterParameter<short>(nameof(Density))
-                .WithParameter(() => Density)
+            _dense = registerScope.RegisterParameter<bool>(nameof(Dense))
+                .WithParameter(() => Dense)
                 .WithChangeHandler(OnParameterChanged);
             _selectedClass = registerScope.RegisterParameter<string?>(nameof(SelectedClass))
                 .WithParameter(() => SelectedClass)
@@ -50,7 +50,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _ripple;
         private readonly ParameterState<bool> _hover;
         private readonly ParameterState<bool> _underline;
-        private readonly ParameterState<short> _density;
+        private readonly ParameterState<bool> _dense;
         private readonly ParameterState<string?> _selectedClass;
 
         private readonly List<MudNavigationBarItem> _items = new();
@@ -59,7 +59,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar mud-nav-bar-fixed")
-                .AddClass($"mud-density-layout-{(0 > Density ? $"n{Math.Abs(Density)}" : Math.Abs(Density))}")
+                .AddClass("mud-nav-bar-dense", Dense)
                 .AddClass(Class)
                 .Build();
 
@@ -111,11 +111,11 @@ namespace MudBlazor
         public bool Underline { get; set; } = true;
 
         /// <summary>
-        /// The density of the navigation bar. A positive value increases the density, while a negative value decreases it. The range is between -5 to 5. Default height equals 4rem (64px).
+        /// If true, the navigation bar will have less height.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public short Density { get; set; } = 0;
+        public bool Dense { get; set; }
 
         /// <summary>
         /// The color of the selected navigation item.

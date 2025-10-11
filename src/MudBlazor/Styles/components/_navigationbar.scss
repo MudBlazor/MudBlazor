@@ -4,6 +4,11 @@
   /*overflow: hidden;*/
   z-index: var(--mud-zindex-appbar);
   background-color: var(--mud-palette-background);
+  height: var(--mud-appbar-height);
+
+  &.mud-nav-bar-dense {
+    height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+  }
 
   &:focus:not(.mud-disabled) {
     outline: auto 2px var(--mud-palette-primary);
