@@ -1193,5 +1193,46 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
         }
 #nullable disable
+
+        [Test]
+        public void Should_resolve_the_expected_underlying_input_id_and_label_id()
+        {
+            // using InputId
+            var inputIdComp = Context.RenderComponent<MudNumericField<int>>(p => p
+                .Add(x => x.Label, "A label")
+                .Add(x => x.InputId, "my-input-id"));
+            inputIdComp.Find("input").Id.Should().Be("my-input-id");
+            inputIdComp.Find("label").GetAttribute("for").Should().Be("my-input-id");
+
+            // using UserAttributes
+            var userAttributesComp = Context.RenderComponent<MudNumericField<int>>(p => p
+                .Add(x => x.Label, "A label")
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { { "id", "my-user-attributes-input-id" } }));
+            userAttributesComp.Find("input").Id.Should().Be("my-user-attributes-input-id");
+            userAttributesComp.Find("label").GetAttribute("for").Should().Be("my-user-attributes-input-id");
+
+            // using neither InputId nor UserAttributes
+            var defaultComp = Context.RenderComponent<MudNumericField<int>>(p => p
+                .Add(x => x.Label, "A label"));
+            defaultComp.Find("input").Id.Should().StartWith("mudinput");
+            defaultComp.Find("label").GetAttribute("for").Should().Be(defaultComp.Find("input").Id);
+
+            // using both InputId and UserAttributes, InputId should take precedence
+            var bothComp = Context.RenderComponent<MudNumericField<int>>(p => p
+                .Add(x => x.Label, "A label")
+                .Add(x => x.InputId, "my-input-id")
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { { "id", "my-user-attributes-input-id" } }));
+            bothComp.Find("input").Id.Should().Be("my-input-id");
+            bothComp.Find("label").GetAttribute("for").Should().Be("my-input-id");
+
+            // InputId is initially null, then set to a value
+            var dynamicComp = Context.RenderComponent<MudNumericField<int>>(p => p
+                .Add(x => x.Label, "A label"));
+            dynamicComp.Find("input").Id.Should().StartWith("mudinput");
+            dynamicComp.Find("label").GetAttribute("for").Should().Be(dynamicComp.Find("input").Id);
+            dynamicComp.SetParametersAndRender(p => p.Add(x => x.InputId, "my-input-id"));
+            dynamicComp.Find("input").Id.Should().Be("my-input-id");
+            dynamicComp.Find("label").GetAttribute("for").Should().Be("my-input-id");
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -15,7 +16,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A field for numeric values from users. 
+    /// A field for numeric values from users.
     /// </summary>
     /// <typeparam name="T">The type of number being collected.</typeparam>
     public partial class MudNumericField<T> : MudDebouncedInput<T>
@@ -38,6 +39,9 @@ namespace MudBlazor
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         public MudNumericField()
         {
@@ -152,7 +156,7 @@ namespace MudBlazor
             }
 
             // Overrides the browser's culture since <input type="number"> does not consider culture.
-            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used 
+            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used
             // with the corresponding attributes applied.
             if (!IsFormatted)
             {
@@ -193,6 +197,20 @@ namespace MudBlazor
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
             return base.SetValueAsync(value, valueChanged || updateText, force);
+        }
+
+        /// <inheritdoc />
+        protected override async Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            // workaround for #11196, in firefox if letters are typed into a number input,
+            // firefox sends a null value but retains the invalid letters in the input field
+            // the only way to remove those, is by explicitly resetting the value
+            if (Text is null)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", InputElementId);
+            }
+
+            await base.UpdateTextPropertyAsync(updateValue);
         }
 
         /// <inheritdoc />
@@ -381,7 +399,7 @@ namespace MudBlazor
         /// Reverses the mouse wheel direction.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c>.
         /// When <c>true</c>, moving the mouse wheel up will decrease the value, and down will increase the value.
         /// </remarks>
         [Parameter]
@@ -428,7 +446,7 @@ namespace MudBlazor
         /// The amount added or subtracted when changing values.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>.  
+        /// Defaults to <c>1</c>.
         /// This affects changing values via spin buttons or the keyboard.
         /// </remarks>
         [Parameter]
