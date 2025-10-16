@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MudBlazor.Charts;
 using NUnit.Framework;
 

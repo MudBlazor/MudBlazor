@@ -46,4 +46,8 @@ public enum ChartType
     /// Data is displayed on multiple axes originating from a central point.
     /// </summary>
     Radar,
+    /// <summary>
+    /// Data is displayed as nodes connected by edges.
+    /// </summary>
+    Sankey,
 }
