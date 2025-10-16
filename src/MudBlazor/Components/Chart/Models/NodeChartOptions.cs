@@ -1,6 +1,15 @@
-﻿namespace MudBlazor;
+﻿using MudBlazor.Charts;
+
+namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Represents options which customize the display of node-based charts (<see cref="Sankey"/>).
+/// </summary>
+/// <remarks>
+/// Note that the more general options are available in <see cref="ChartOptions"/>.
+/// </remarks>
 public class NodeChartOptions
 {
     /// <summary>

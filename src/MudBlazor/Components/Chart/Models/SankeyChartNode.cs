@@ -4,6 +4,9 @@
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Options for a single Sankey Chart node.
+    /// </summary>
     public class SankeyChartNode
     {
         /// <summary>
@@ -24,7 +27,16 @@ namespace MudBlazor
         /// </summary>
         public MudColor? Color { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="SankeyChartNode"/> with default values.
+        /// </summary>
         public SankeyChartNode() { }
+        
+        /// <summary>
+        ///  Initializes a new instance of <see cref="SankeyChartNode"/>.
+        /// </summary>
+        /// <param name="name">The name of this node.</param>
+        /// <param name="column">The column in which to display this node.</param>
         public SankeyChartNode(string name, int column)
         {
             Name = name;
