@@ -21,6 +21,12 @@
 
   &:focus-within, &:active {
     background-color: var(--mud-palette-action-default-hover);
+
+    @each $color in $mud-palette-colors {
+      &.mud-button-filled-#{$color} {
+        background-color: var(--mud-palette-#{$color}-darken);
+      }
+    }
   }
 
   &:disabled {
