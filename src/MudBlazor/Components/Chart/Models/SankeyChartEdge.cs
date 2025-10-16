@@ -24,7 +24,7 @@
         /// Initialize a new instance of <see cref="SankeyChartEdge"/> with default values.
         /// </summary>
         public SankeyChartEdge() { }
-        
+
         /// <summary>
         /// Initialize a new instance of <see cref="SankeyChartEdge"/>.
         /// </summary>

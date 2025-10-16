@@ -159,7 +159,7 @@ namespace MudBlazor.Charts
 
         private string GetNextHexColorForNodeRect(SankeyChartNode node)
         {
-            if (node.Color is not null)
+            if (node.Color != null)
             {
                 return node.Color.ToString(MudColorOutputFormats.HexA);
             }

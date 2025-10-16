@@ -31,7 +31,7 @@ namespace MudBlazor
         /// Initializes a new instance of <see cref="SankeyChartNode"/> with default values.
         /// </summary>
         public SankeyChartNode() { }
-        
+
         /// <summary>
         ///  Initializes a new instance of <see cref="SankeyChartNode"/>.
         /// </summary>
