@@ -6,6 +6,7 @@ using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 #nullable enable
 namespace MudBlazor.Charts;
@@ -153,6 +154,11 @@ public partial class BaseRadialChart<T, TChartOptions> : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
     public Func<SvgPath, (double X, double Y)>? TooltipPositionFunc { get; set; }
+
+    private string HoveredStylename =>
+        new StyleBuilder()
+            .AddStyle("overflow", "visible", HoveredSegment is not null)
+            .Build();
 
     /// <summary>
     /// Called after the component has been rendered.

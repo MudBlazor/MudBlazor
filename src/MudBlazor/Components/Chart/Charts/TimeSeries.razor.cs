@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Globalization;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interpolation;
 
@@ -11,8 +12,6 @@ namespace MudBlazor.Charts;
 /// </summary>
 partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
-    public static new ChartType ChartType => ChartType.Timeseries;
-
     public override RenderFragment? OverlayContent { get; set; }
 
     private DateTime _minDateTime;
@@ -27,6 +26,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     protected override void OnInitialized()
     {
+        ChartType = ChartType.Timeseries;
         ChartOptions ??= new TimeSeriesChartOptions();
 
         if (ChartReference is IMudAxisChart<T> axisChart)

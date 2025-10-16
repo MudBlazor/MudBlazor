@@ -1,8 +1,6 @@
-﻿using System.Data;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Numerics;
 using System.Text;
-using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
 #nullable enable
@@ -18,10 +16,9 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries{T}"/>
     partial class Pie<T> : MudRadialChartBase<T, PieChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        public static new ChartType ChartType => ChartType.Pie;
-
         protected override void OnInitialized()
         {
+            ChartType = ChartType.Pie;
             ChartOptions ??= new PieChartOptions();
             base.OnInitialized();
         }

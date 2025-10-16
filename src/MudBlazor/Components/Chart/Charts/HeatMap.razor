@@ -9,11 +9,10 @@
 @inject InternalMudLocalizer Localizer
 
 @{
-    var style = _hoveredCell is not null || _hoveredLegend is not null ? "overflow: visible;" : "";
     var series = _series.Where(x => x.Visible).ToList();
 }
 
-<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@Width" height="@Height" viewBox="0 0 @_boundWidth.ToStr() @_boundHeight.ToStr()" style="@style">
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@Width" height="@Height" viewBox="0 0 @_boundWidth.ToStr() @_boundHeight.ToStr()" style="@HoveredStylename">
     @if (_options is { EnableSmoothGradient: true })
     {
         <defs>

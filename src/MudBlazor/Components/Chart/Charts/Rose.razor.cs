@@ -12,10 +12,9 @@ namespace MudBlazor.Charts;
 
 public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
-    public static new ChartType ChartType => ChartType.Rose;
-
     protected override void OnInitialized()
     {
+        ChartType = ChartType.Rose;
         ChartOptions ??= new RoseChartOptions();
         base.OnInitialized();
     }

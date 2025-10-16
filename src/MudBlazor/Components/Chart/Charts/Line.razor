@@ -1,6 +1,4 @@
-﻿@using System.Globalization;
-
-@namespace MudBlazor.Charts
+﻿@namespace MudBlazor.Charts
 
 @inherits MudAxisLineChartBase<T, LineChartOptions>
 
@@ -58,7 +56,7 @@
         {
             var series = Series[chartLine.Index];
             var color = ChartOptions!.ChartPalette?.Length > 0
-                ? ChartOptions.ChartPalette.GetValue(chartLine.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                ? ChartOptions.ChartPalette[chartLine.Index % ChartOptions.ChartPalette.Length]
                 : string.Empty;
             var showDataMarkers = ChartOptions?.ShowDataMarkers ?? false;
             var isHovered = HoveredDataPointPath?.Index == chartLine.Index;

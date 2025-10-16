@@ -6,14 +6,16 @@
 @typeparam T
 @typeparam TChartOptions
 
-@{
-    var style = HoveredSegment is not null ? "overflow: visible;" : "";
-}
-
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()" style="@style">
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()" style="@HoveredStylename">
     <Filters />
 
     <g class="mud-charts-grid">
+        @if (XAxisTitle is not null)
+        {
+            <g transform="translate(@(ToS(ViewBoxWidth / 2)), 10)">
+                <text class="mud-charts-yaxis axis-title" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@XAxisTitle</text>
+            </g>
+        }
         @if (ChartOptions?.YAxisLines is true)
         {
             <g class="mud-charts-gridlines-yaxis">
@@ -36,7 +38,7 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in HorizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value}</text>")
         }
     </g>
     @if (YAxisTitle is not null)
@@ -52,7 +54,7 @@
             var x = verticalLineValue.X.ToStr();
             var y = verticalLineValue.Y.ToStr();
             var rotation = (-ChartOptions?.XAxisLabelRotation ?? 0).ToString();
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
         }
     </g>
     <g class="@($"mud-charts-{ChartType?.ToString().ToLower()}-series")">
@@ -65,15 +67,15 @@
 
     @if (ChartOptions?.ShowToolTips is true) 
     {
-        <g class="mud-charts-tooltip" style="display: @(HoveredSegment is not null ? "block" : "none")">
+        <g class="mud-charts-tooltip" style="@TooltipStylename">
             @TooltipContent
         </g>
     }
 </svg>
 
-@if (XAxisTitle is not null)
+@* @if (XAxisTitle is not null)
 {
     <MudStack Class="mt-2" Row="true" Justify="Justify.Center">
         <MudText Class="mud-charts-xaxis axis-title" Typo="Typo.body2">@XAxisTitle</MudText>
     </MudStack>
-}
+} *@

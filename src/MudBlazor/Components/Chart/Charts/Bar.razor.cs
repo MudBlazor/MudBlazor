@@ -18,8 +18,6 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries{T}"/>
     partial class Bar<T> : MudAxisChartBase<T, BarChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        public static new ChartType ChartType => ChartType.Bar;
-
         public override RenderFragment? OverlayContent { get; set; }
 
         private readonly List<SvgPath> _bars = [];
@@ -33,6 +31,8 @@ namespace MudBlazor.Charts
 
         protected override void OnInitialized()
         {
+            ChartType = ChartType.Bar;
+
             ChartOptions ??= new BarChartOptions();
 
             if (ChartReference is IMudAxisChart<T> axisChart)

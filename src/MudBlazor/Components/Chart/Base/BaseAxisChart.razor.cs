@@ -6,6 +6,7 @@ using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
+using MudBlazor.Utilities;
 
 #nullable enable
 namespace MudBlazor.Charts;
@@ -197,6 +198,17 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<ElementReference> ElementRefChanged { get; set; }
+
+    private string HoveredStylename =>
+        new StyleBuilder()
+            .AddStyle("overflow", "visible", HoveredSegment is not null)
+            .Build();
+
+    private string TooltipStylename =>
+        new StyleBuilder()
+            .AddStyle("display", "block", HoveredSegment is not null)
+            .AddStyle("display", "none", HoveredSegment is null)
+            .Build();
 
     /// <summary>
     /// Called after the component has been rendered.
