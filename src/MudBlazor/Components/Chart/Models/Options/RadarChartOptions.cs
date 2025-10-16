@@ -6,6 +6,9 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Options specific to radar charts, extending <see cref="DefaultRadialChartOptions"/>.
+/// </summary>
 public class RadarChartOptions : DefaultRadialChartOptions, IRadialChartOptions, IHasDataPointOptions
 {
     /// <summary>
@@ -87,6 +90,7 @@ public class RadarChartOptions : DefaultRadialChartOptions, IRadialChartOptions,
     /// </summary>
     public double DataPointRadius { get; set; } = 3.0;
 
+    /// <inheritdoc/>
     public override AggregationOption AggregationOption { get; set; } = AggregationOption.GroupByDataSet;
 
     public static implicit operator RadarChartOptions(ChartOptions options) => new()

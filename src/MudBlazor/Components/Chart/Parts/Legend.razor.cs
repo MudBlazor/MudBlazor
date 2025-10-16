@@ -22,12 +22,21 @@ namespace MudBlazor.Charts
         [EditorRequired]
         public List<SvgLegend> Data { get; set; } = [];
 
+        /// <summary>
+        /// Whether the chart legend should be displayed.
+        /// </summary>
         [Parameter]
         public bool? ShowLegend { get; set; }
 
+        /// <summary>
+        /// The palette of colors to use for the chart series.
+        /// </summary>
         [Parameter]
         public string[]? ChartPalette { get; set; }
 
+        /// <summary>
+        /// Raised when a legend item is clicked.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public EventCallback<int> OnLegendSelected { get; set; }

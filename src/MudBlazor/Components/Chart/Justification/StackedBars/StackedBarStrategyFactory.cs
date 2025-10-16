@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Justification.StackedBars;
 
-public interface IStackedBarPositionStrategy
+internal interface IStackedBarPositionStrategy
 {
     double[] CalculatePositions(StackedBarContext ctx);
 }

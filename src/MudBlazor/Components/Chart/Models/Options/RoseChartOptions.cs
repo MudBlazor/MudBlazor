@@ -6,6 +6,9 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Options specific to rose charts, extending <see cref="DefaultRadialChartOptions"/>.
+/// </summary>
 public class RoseChartOptions : DefaultRadialChartOptions, IHasValueLabelOptions
 {
     /// <summary>

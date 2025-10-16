@@ -9,31 +9,70 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Data values used for a chart series.
+/// </summary>
+/// <remarks>
+/// Includes X and Y values based on the chart type.
+/// X values are optional and can be null.
+/// </remarks>
+/// <typeparam name="T">The data type of tye Y value</typeparam>
 public class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
-    private readonly IReadOnlyList<ChartPoint<T>> _points = [];
-
     public ChartData() { }
 
-    public ChartData(T value) => _points = [new ChartPoint<T>(null, value)];
+    /// <summary>
+    /// Create a data series with a single Y value.
+    /// </summary>
+    /// <param name="value">The Y value of the chart series</param>
+    public ChartData(T value) => Points = [new ChartPoint<T>(null, value)];
 
-    public ChartData(IReadOnlyList<T> values) => _points = [.. values.Select(v => new ChartPoint<T>(null, v))];
+    /// <summary>
+    /// Create a data series with multiple Y values.
+    /// </summary>
+    /// <param name="values">The Y values of the chart series</param>
+    public ChartData(IReadOnlyList<T> values) => Points = [.. values.Select(v => new ChartPoint<T>(null, v))];
 
+    /// <summary>
+    /// Create a data series with a single time-value pair.
+    /// </summary>
+    /// <param name="timeValue">The <see cref="DateTime"/> (X) and Y value pair of the chart series</param>
     public ChartData((DateTime dateTime, T value) timeValue) =>
-        _points = [new ChartPoint<T>(timeValue.dateTime, timeValue.value)];
+        Points = [new ChartPoint<T>(timeValue.dateTime, timeValue.value)];
 
+    /// <summary>
+    /// Create a data series with multiple time-value pairs.
+    /// </summary>
+    /// <param name="timeValues">The <see cref="DateTime"/> (X) and Y value pairs of the chart series</param>
     public ChartData(IReadOnlyList<(DateTime dateTime, T value)> timeValues) =>
-        _points = [.. timeValues.Select(tv => new ChartPoint<T>(tv.dateTime, tv.value))];
+        Points = [.. timeValues.Select(tv => new ChartPoint<T>(tv.dateTime, tv.value))];
 
-    public IReadOnlyList<ChartPoint<T>> Points => _points;
+    /// <summary>
+    /// A list of data points in the chart series.
+    /// </summary>
+    public IReadOnlyList<ChartPoint<T>> Points { get; } = [];
 
-    public IReadOnlyList<T> Values => [.. _points.Select(p => p.Y)];
+    /// <summary>
+    /// A list of Y values in the chart series.
+    /// </summary>
+    public IReadOnlyList<T> Values => [.. Points.Select(p => p.Y)];
 
-    public ChartPoint<T> this[int index] => _points[index];
+    /// <summary>
+    /// The data point at the specified index.
+    /// </summary>
+    /// <param name="index"></param>
+    public ChartPoint<T> this[int index] => Points[index];
 
-    public T GetValue(int index) => _points[index].Y;
+    /// <summary>
+    /// The Y value at the specified index.
+    /// </summary>
+    /// <param name="index"></param>
+    public T GetValue(int index) => Points[index].Y;
 
-    public int Count => _points.Count;
+    /// <summary>
+    /// The number of data points in the chart series.
+    /// </summary>
+    public int Count => Points.Count;
 
     public static implicit operator ChartData<T>(T value) => new(value);
     public static implicit operator ChartData<T>(T[] values) => new(values);
@@ -44,6 +83,8 @@ public class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMax
     public static implicit operator ChartData<T>(TimeValue<T>[] values) => new(values.Select(tv => (tv.DateTime, tv.Value)).ToArray());
     public static implicit operator ChartData<T>(List<TimeValue<T>> values) => new(values.Select(tv => (tv.DateTime, tv.Value)).ToArray());
 
+    ///<inheritdoc/>
     public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
+    
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

@@ -23,7 +23,7 @@ internal static class BarGroupStrategyFactory
     };
 }
 
-public class BarGroupContext
+internal class BarGroupContext
 {
     public int ColumnsPerDataSet { get; init; }
     public int DataSetCount { get; init; }

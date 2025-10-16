@@ -7,10 +7,18 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Options specific to stacked bar charts, extending <see cref="DefaultBarChartOptions"/>.
+/// </summary>
 public class StackedBarChartOptions : DefaultBarChartOptions
 {
+    /// <inheritdoc />
     public override double SeriesSpacingRatio { get; set; } = 0.8;
 
+    /// <summary>
+    /// Converts a <see cref="ChartOptions"/> instance to a <see cref="StackedBarChartOptions"/> instance.
+    /// </summary>
+    /// <param name="options">The <see cref="ChartOptions"/> instance to convert. Cannot be <see langword="null"/>.</param>
     public static implicit operator StackedBarChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,

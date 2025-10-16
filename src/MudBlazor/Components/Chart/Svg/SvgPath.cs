@@ -38,6 +38,7 @@ namespace MudBlazor
         /// </summary>
         public double LabelY { get; set; }
 
+        ///<inheritdoc />
         public virtual bool Equals(SvgPath? other)
         {
             if (other is null)
@@ -54,11 +55,13 @@ namespace MudBlazor
                    LabelY.Equals(other.LabelY);
         }
 
+        ///<inheritdoc />
         public override bool Equals(object? obj)
         {
             return Equals(obj as SvgPath);
         }
 
+        ///<inheritdoc />
         public override int GetHashCode()
         {
             return HashCode.Combine(Index, Data, LabelXValue, LabelYValue, LabelX, LabelY);

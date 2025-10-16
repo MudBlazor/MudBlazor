@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-using System.Data;
 using System.Numerics;
 
 namespace MudBlazor;
@@ -14,6 +13,10 @@ public interface IChartSeries
     bool Visible { get; }
 }
 
+/// <summary>
+/// Represents a series of data to be plotted on a chart.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     public ChartSeries() { }
@@ -60,8 +63,10 @@ public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> wh
                Data.Values.SequenceEqual(other.Data.Values);
     }
 
+    ///<inheritdoc />
     public override bool Equals(object? obj) => Equals(obj as ChartSeries<T>);
 
+    ///<inheritdoc />
     public override int GetHashCode()
     {
         var hashCode = new HashCode();
@@ -84,13 +89,28 @@ public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> wh
     public static implicit operator ChartSeries<T>(T[] values) => new() { Data = values };
 }
 
+/// <summary>
+/// Utility methods for <see cref="ChartSeries{T}"/>.
+/// </summary>
 public static class ChartDataSetExtensions
 {
+    /// <summary>
+    /// Converts a single <see cref="ChartSeries{T}"/> instance to a list containing that instance.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="dataSet"></param>
+    /// <returns></returns>
     public static List<ChartSeries<T>> AsList<T>(this ChartSeries<T> dataSet) where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         return [dataSet];
     }
 
+    /// <summary>
+    /// Converts an array of values to a list containing a single <see cref="ChartSeries{T}"/> instance with those values.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="dataSet"></param>
+    /// <returns></returns>
     public static List<ChartSeries<T>> AsChartDataSet<T>(this T[] dataSet) where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         return new ChartSeries<T>(dataSet).AsList();

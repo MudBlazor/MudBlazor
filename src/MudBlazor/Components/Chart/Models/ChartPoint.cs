@@ -7,9 +7,19 @@ using System.Numerics;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Represents the data point in a chart series, with optional X value and required Y value.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class ChartPoint<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
+    /// <summary>
+    /// The X value of the data point.
+    /// </summary>
     public object? X { get; set; } = null;
+    /// <summary>
+    /// The Y value of the data point.
+    /// </summary>
     public T Y { get; set; }
 
     public ChartPoint(T y) => Y = y;

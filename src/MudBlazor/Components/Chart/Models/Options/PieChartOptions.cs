@@ -7,6 +7,9 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Options specific to pie charts, extending <see cref="DefaultRadialChartOptions"/>.
+/// </summary>
 public class PieChartOptions : DefaultRadialChartOptions, IHasValueLabelOptions
 {
     /// <summary>
