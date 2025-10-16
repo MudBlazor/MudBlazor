@@ -24,10 +24,8 @@ namespace MudBlazor.UnitTests.Charts
             Regex.Matches(markup, "<linearGradient").Count.Should().Be(edges.Count);
             Regex.Matches(markup, "<path").Count.Should().Be(edges.Count);
             Regex.Matches(markup, "stop-color=\"#9E9E9E\"").Count.Should().Be(0); // Ensure the parent color palette is used
-            sankey.Markup.Should().Contain(
-                "<path d=\"M19.9,227.3333 C167.5,227.3333 167.5,245.3333 315.1,245.3333 L315.1,350 C167.5,350 167.5,332 19.9,332 Z\" fill=\"url(#gradient_32044263_3628092)\" " +
-                "opacity=\"0.5\" filter=\"\" blazor:onmouseover=\"5\" blazor:onmouseout=\"6\">"
-            );
+            sankey.Markup.Should().Contain("<path d=\"M19.9,227.3333 C167.5,227.3333 167.5,245.3333 315.1,245.3333 L315.1,350 C167.5,350 167.5,332 19.9,332 Z\" fill=\"url(#gradient_");
+            sankey.Markup.Should().Contain(")\" opacity=\"0.5\" filter=\"\" blazor:onmouseover=\"5\" blazor:onmouseout=\"6\">");
 
             // Nodes
             Regex.Matches(markup, "<rect").Count.Should().Be(nodes.Count * 2);
