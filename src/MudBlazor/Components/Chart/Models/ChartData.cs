@@ -85,6 +85,6 @@ public class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMax
 
     ///<inheritdoc/>
     public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
-    
+
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
