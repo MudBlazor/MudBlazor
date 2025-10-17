@@ -7,6 +7,7 @@
                 TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })"
                 Palette="@Palette"
                 ShowToolbar="@ShowToolbar"
+                ShowTooltips="@ShowTooltips"
                 ShowColorField="@ShowColorField"
                 ShowPreview="@ShowPreview"
                 ShowSliders="@ShowSliders"
@@ -53,6 +54,9 @@
 
     [Parameter]
     public bool ShowModeSwitch { get; set; } = true;
+
+    [Parameter]
+    public bool ShowTooltips { get; set; } = true;
 
     [Parameter]
     public bool ShowAlpha { get; set; } = true;

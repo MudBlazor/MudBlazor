@@ -86,8 +86,13 @@
     flex: 0 0 auto;
     margin: 0;
     padding: 16px 24px;
+    overflow-wrap: anywhere;
     border-top-left-radius: var(--mud-default-borderradius);
     border-top-right-radius: var(--mud-default-borderradius);
+
+    &:has(.mud-button-close) {
+      padding-inline-end: 64px;
+    }
 
     + * > .mud-dialog-content {
       border-radius: 0
