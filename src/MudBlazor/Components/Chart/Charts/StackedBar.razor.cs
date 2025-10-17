@@ -18,8 +18,6 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries{T}"/>
     partial class StackedBar<T> : MudAxisChartBase<T, StackedBarChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        public static new ChartType ChartType => ChartType.StackedBar;
-
         public override RenderFragment? OverlayContent { get; set; }
 
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
@@ -33,6 +31,7 @@ namespace MudBlazor.Charts
 
         protected override void OnInitialized()
         {
+            ChartType = ChartType.StackedBar;
             ChartOptions ??= new StackedBarChartOptions();
 
             if (ChartReference is IMudAxisChart<T> axisChart)

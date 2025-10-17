@@ -7,6 +7,9 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Options specific to bar charts, extending <see cref="DefaultBarChartOptions"/>.
+/// </summary>
 public class BarChartOptions : DefaultBarChartOptions
 {
     private double _barSpacingRatio = 0.20;
@@ -22,6 +25,10 @@ public class BarChartOptions : DefaultBarChartOptions
         set => _barSpacingRatio = Math.Clamp(value, 0.0, 1.0);
     }
 
+    /// <summary>
+    /// Converts a <see cref="ChartOptions"/> instance to a <see cref="BarChartOptions"/> instance.
+    /// </summary>
+    /// <param name="options">The <see cref="ChartOptions"/> instance to convert. Cannot be <see langword="null"/>.</param>
     public static implicit operator BarChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,

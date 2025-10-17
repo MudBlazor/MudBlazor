@@ -12,8 +12,6 @@ namespace MudBlazor.Charts;
 
 public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
-    public static new ChartType ChartType => ChartType.Radar;
-
     protected List<SvgPath> _gridLines = [];
     protected List<SvgPath> _axisLines = [];
     protected List<SvgPath> _axisValues = [];
@@ -23,6 +21,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
     protected override void OnInitialized()
     {
+        ChartType = ChartType.Radar;
         ChartOptions ??= new RadarChartOptions();
         base.OnInitialized();
     }

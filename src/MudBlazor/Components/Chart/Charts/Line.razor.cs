@@ -15,14 +15,13 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries{T}"/>
     partial class Line<T> : MudAxisLineChartBase<T, LineChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        public static new ChartType ChartType => ChartType.Line;
-
         public override RenderFragment? OverlayContent { get; set; }
 
         protected override bool ShouldInterpolate => true;
 
         protected override void OnInitialized()
         {
+            ChartType = ChartType.Line;
             ChartOptions ??= new LineChartOptions();
 
             if (ChartReference is IMudAxisChart<T> axisChart)

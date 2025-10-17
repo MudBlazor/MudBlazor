@@ -49,7 +49,7 @@
                 continue;
 
             var color = ChartOptions!.ChartPalette?.Length > 0
-                ? ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                ? ChartOptions.ChartPalette[bar.Index % ChartOptions.ChartPalette.Length]
                 : string.Empty;
 
             builder.OpenElement(seq++, "path");

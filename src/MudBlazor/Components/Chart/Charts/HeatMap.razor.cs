@@ -21,8 +21,6 @@ namespace MudBlazor.Charts
     {
         internal record CellDimension(double Width, double Height, int Padding);
 
-        public static new ChartType ChartType => ChartType.HeatMap;
-
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -125,6 +123,11 @@ namespace MudBlazor.Charts
 
         private const int DebounceIntervalMs = 150;
 
+        private string HoveredStylename =>
+            new StyleBuilder()
+                .AddStyle("overflow", "visible", _hoveredCell is not null || _hoveredLegend is not null)
+                .Build();
+
         /// <summary>
         /// The currently selected <see cref="HeatMapCell{T}"/>.
         /// </summary>
@@ -162,6 +165,7 @@ namespace MudBlazor.Charts
 
         protected override void OnInitialized()
         {
+            ChartType = ChartType.HeatMap;
             ChartOptions ??= new HeatMapChartOptions();
             base.OnInitialized();
         }

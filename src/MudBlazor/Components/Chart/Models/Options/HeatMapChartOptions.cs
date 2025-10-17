@@ -7,6 +7,9 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Options specific to heatmap charts, extending <see cref="DefaultChartOptions"/>.
+/// </summary>
 public class HeatMapChartOptions : DefaultChartOptions
 {
     /// <summary>
@@ -55,6 +58,7 @@ public class HeatMapChartOptions : DefaultChartOptions
     /// </remarks>
     public bool ShowLegendLabels { get; set; } = false;
 
+    /// <inheritdoc/>
     public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
 
     /// <summary>

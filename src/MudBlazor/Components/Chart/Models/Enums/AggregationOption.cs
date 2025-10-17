@@ -4,9 +4,21 @@
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Specifies the options for aggregating data in a dataset.
+/// </summary>
 public enum AggregationOption
 {
+    /// <summary>
+    /// No aggregation is applied;
+    /// </summary>
     None,
+    /// <summary>
+    /// Aggregate data based on the dataset
+    /// </summary>
     GroupByDataSet,
+    /// <summary>
+    /// Aggregate data based on labels
+    /// </summary>
     GroupByLabel,
 }

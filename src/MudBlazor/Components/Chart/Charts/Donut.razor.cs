@@ -18,10 +18,9 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries{T}"/>
     public partial class Donut<T> : MudRadialChartBase<T, DonutChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        public static new ChartType ChartType => ChartType.Donut;
-
         protected override void OnInitialized()
         {
+            ChartType = ChartType.Donut;
             ChartOptions ??= new DonutChartOptions();
             base.OnInitialized();
         }

@@ -7,6 +7,9 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Options specific to line charts, extending <see cref="DefaultAxisLineChartOptions"/>.
+/// </summary>
 public class LineChartOptions : DefaultAxisLineChartOptions, IAxisLineChartOptions
 {
     public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";

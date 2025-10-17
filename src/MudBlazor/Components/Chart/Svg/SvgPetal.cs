@@ -4,9 +4,21 @@
 
 namespace MudBlazor;
 
+/// <summary>
+/// Represents a petal shape along an <see cref="SvgPath"/>.
+/// </summary>
 public sealed class SvgPetal : SvgPath
 {
+    /// <summary>
+    /// The radius of the segment.
+    /// </summary>
     public double SegmentRadius { get; set; }
+    /// <summary>
+    /// The angle in radians of the segment.
+    /// </summary>
     public double AngleRadians { get; set; }
+    /// <summary>
+    /// The offset distance for the label from the center of the petal.
+    /// </summary>
     public double LabelOffset { get; set; }
 }
