@@ -599,7 +599,7 @@ window.mudpopoverHelper = {
             }
             else if (!classList.contains('mud-popover-fixed')) {
                 offsetX += window.scrollX;
-                offsetY += window.scrollY
+                offsetY += window.scrollY;
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
