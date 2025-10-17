@@ -10,7 +10,7 @@ public partial class ChartData<T>
 {
     public ChartData(DateTime dateTime, T value) => Points = [new ChartPoint<T>(dateTime, value)];
 
-    public ChartData((DateTime dateTime, T value) timeValue) => 
+    public ChartData((DateTime dateTime, T value) timeValue) =>
         Points = [new ChartPoint<T>(timeValue.dateTime, timeValue.value)];
 
     public ChartData(IReadOnlyList<(DateTime dateTime, T value)> timeValues) =>
