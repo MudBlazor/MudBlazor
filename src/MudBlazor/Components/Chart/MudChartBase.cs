@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Shared a base class for designing category <see cref="MudChart"/> and <see cref="MudTimeSeriesChart"/> components.
+/// Shared a base class for all <see cref="MudChart"/> components.
 /// </summary>
 public abstract class MudChartBase : MudComponentBase
 {
@@ -19,13 +19,6 @@ public abstract class MudChartBase : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
     public ChartOptions ChartOptions { get; set; } = new();
-
-    /// <summary>
-    /// Display options for axis-based charts.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.Chart.Appearance)]
-    public AxisChartOptions AxisChartOptions { get; set; } = new();
 
     /// <summary>
     /// The custom graphics within this chart.
@@ -131,26 +124,4 @@ public abstract class MudChartBase : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<int> SelectedIndexChanged { get; set; }
-
-    /// <summary>
-    /// Allows series to be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
-    /// </summary>
-    /// <remarks>
-    /// When <c>true</c>, checkboxes are displayed which can toggle visibility of each line.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Chart.Behavior)]
-    public bool CanHideSeries { get; set; } = false;
-
-    internal List<MudHeatMapCell> MudHeatMapCells { get; set; } = [];
-
-    internal void AddCell(MudHeatMapCell cell)
-    {
-        MudHeatMapCells.Add(cell);
-    }
-
-    protected string BuildYAxisValueString(double value) =>
-        ChartOptions.YAxisToStringFunc is null
-            ? ToS(value, ChartOptions.YAxisFormat)
-            : ChartOptions.YAxisToStringFunc(value);
 }

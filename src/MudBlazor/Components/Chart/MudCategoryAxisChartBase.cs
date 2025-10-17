@@ -17,6 +17,8 @@ namespace MudBlazor
         [CascadingParameter]
         public MudChart? MudChartParent { get; set; }
 
+        protected AxisChartOptions AxisChartOptions { get; set; } = (AxisChartOptions)new ChartOptions();
+
         private const double Epsilon = 1e-6;
         protected const double BoundWidthDefault = 650.0;
         protected const double BoundHeightDefault = 350.0;
@@ -44,6 +46,7 @@ namespace MudBlazor
         protected MudCategoryAxisChartBase()
         {
             _dotNetObjectReference = DotNetObjectReference.Create(this);
+            if (ChartOptions is AxisChartOptions options) AxisChartOptions = options;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -87,7 +90,7 @@ namespace MudBlazor
             _boundWidth = BoundWidthDefault;
             _boundHeight = BoundHeightDefault;
 
-            if (MudChartParent != null && (MudChartParent.AxisChartOptions.MatchBoundsToSize)) // backwards compatibilitly to the mudchartparent approach
+            if (MudChartParent is { ChartOptions.MatchBoundsToSize: true }) // backwards compatibilitly to the mudchartparent approach
             {
                 if (_elementSize != null)
                 {
@@ -113,7 +116,7 @@ namespace MudBlazor
 
             _elementSize = elementSize;
 
-            if (!AxisChartOptions.MatchBoundsToSize)
+            if (!ChartOptions.MatchBoundsToSize)
             {
                 return;
             }
@@ -141,5 +144,10 @@ namespace MudBlazor
         {
             _dotNetObjectReference.Dispose();
         }
+        
+        protected string BuildYAxisValueString(double value) =>
+            AxisChartOptions.YAxisToStringFunc is null
+                ? ToS(value, AxisChartOptions.YAxisFormat)
+                : AxisChartOptions.YAxisToStringFunc(value);
     }
 }

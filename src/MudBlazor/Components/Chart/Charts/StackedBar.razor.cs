@@ -2,19 +2,17 @@
 using MudBlazor.Extensions;
 
 #nullable enable
+
 namespace MudBlazor.Charts
 {
     /// <summary>
     /// Represents a chart which displays series values as portions of vertical rectangles.
     /// </summary>
-    /// <seealso cref="Bar"/>
-    /// <seealso cref="Donut"/>
-    /// <seealso cref="Line"/>
-    /// <seealso cref="Pie"/>
-    /// <seealso cref="TimeSeries"/>
     partial class StackedBar : MudCategoryAxisChartBase
     {
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
+        
+        private StackedBarChartOptions StackedBarChartOptions { get; set; } = new();
 
         private readonly List<SvgPath> _horizontalLines = [];
         private readonly List<SvgText> _horizontalValues = [];
@@ -34,7 +32,8 @@ namespace MudBlazor.Charts
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-
+            
+            if (ChartOptions is StackedBarChartOptions options) StackedBarChartOptions = options;
             RebuildChart();
         }
 
@@ -44,7 +43,7 @@ namespace MudBlazor.Charts
                 _series = MudChartParent.ChartSeries;
 
             // ensure the stacked bar width ratio is within the valid range
-            AxisChartOptions.StackedBarWidthRatio = AxisChartOptions.StackedBarWidthRatio.EnsureRange(0.1, 1);
+            StackedBarChartOptions.StackedBarWidthRatio = StackedBarChartOptions.StackedBarWidthRatio.EnsureRange(0.1, 1);
 
             SetBounds();
             ComputeStackedUnitsAndNumberOfLines(out var _, out var gridYUnits, out var numHorizontalLines, out var numVerticalLines);
@@ -69,16 +68,16 @@ namespace MudBlazor.Charts
             out int numVerticalLines)
         {
             gridXUnits = 30;
-            gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            gridYUnits = AxisChartOptions.YAxisTicks;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
             // Determine the number of columns (i.e. vertical grid lines)
             numVerticalLines = _series.Any() ? _series.Max(series => series.Data.Length) : 0;
 
-            _barWidthStroke = _barWidth = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1) * AxisChartOptions.StackedBarWidthRatio;
+            _barWidthStroke = _barWidth = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? numVerticalLines : 1) * StackedBarChartOptions.StackedBarWidthRatio;
 
-            if (AxisChartOptions.StackedBarWidthRatio >= 0.9999)
+            if (StackedBarChartOptions.StackedBarWidthRatio >= 0.9999)
             {
                 // Optimisation to remove gaps between bars due to floating point rounding causing gaps to be visible between bars.
                 // This givs a very slight overlap which isn't visible without purposeful inspection and zooming.
@@ -107,7 +106,7 @@ namespace MudBlazor.Charts
             numHorizontalLines = (int)(maxY / gridYUnits) + 1;
 
             // this is a safeguard against millions of gridlines which might arise with very high values
-            var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
+            var maxYTicks = AxisChartOptions.MaxNumYAxisTicks;
             while (numHorizontalLines > maxYTicks)
             {
                 gridYUnits *= 2;
@@ -155,7 +154,7 @@ namespace MudBlazor.Charts
             _verticalLines.Clear();
             _verticalValues.Clear();
 
-            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - AxisChartOptions.StackedBarWidthRatio) / 2);
+            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - StackedBarChartOptions.StackedBarWidthRatio) / 2);
 
             for (int j = 0; j <= numVerticalLines; j++)
             {
@@ -186,7 +185,7 @@ namespace MudBlazor.Charts
         {
             _bars.Clear();
 
-            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - AxisChartOptions.StackedBarWidthRatio) / 2);
+            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - StackedBarChartOptions.StackedBarWidthRatio) / 2);
 
             // For each series, stack the bars in each column
             var maxSeriesLength = _series.Any() ? _series.Max(series => series.Data.Length) : 0;
