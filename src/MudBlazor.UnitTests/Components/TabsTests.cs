@@ -1712,5 +1712,59 @@ namespace MudBlazor.UnitTests.Components
 
             result.Should().Be("test-tab-list-id");
         }
+
+        /// <summary>
+        /// Code coverage test showed a missing test line, this tests the return tabListId returns the correct ID. 
+        /// </summary>
+        [Test]
+        public async Task TabHeaderMouseDownEvents()
+        {
+            var comp = Context.RenderComponent<ClosableTabsWithHeaderTest>();
+
+            // Close the tab with the mouse wheel click.
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                tabs.Count.Should().Be(6);
+
+                var tab1 = tabs[1];
+                await tab1.TriggerEventAsync("onmousedown", new MouseEventArgs { Button = 1 });
+
+                tabs = comp.FindAll("div.mud-tab");
+                tabs.Count.Should().Be(5);
+            });
+
+            // Close all but the selected tab.
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                tabs.Count.Should().Be(5);
+
+                var tab1 = tabs[1];
+                await tab1.TriggerEventAsync("oncontextmenu", default);
+
+                var menuItems = comp.FindComponents<MudMenuItem>();
+
+                menuItems.Count.Should().Be(3);
+                menuItems[2].Find(".mud-menu-item").Click();
+
+                tabs = comp.FindAll("div.mud-tab");
+                tabs.Count.Should().Be(1);
+            });
+
+            // Close All tabs.
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                var tab1 = tabs[0];
+                await tab1.TriggerEventAsync("oncontextmenu", default);
+
+                var menuItems = comp.FindComponents<MudMenuItem>();
+                menuItems[1].Find(".mud-menu-item").Click();
+
+                tabs = comp.FindAll("div.mud-tab");
+                tabs.Count.Should().Be(0);
+            });
+        }
     }
 }

@@ -152,6 +152,20 @@ public partial class MudTabPanel
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     /// <summary>
+    /// Gets or sets the callback that is invoked when a mouse down event occurs.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public EventCallback<MouseEventArgs> OnMouseDown { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback that is invoked when a context menu event occurs.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public EventCallback<MouseEventArgs> OnContextMenu { get; set; }
+
+    /// <summary>
     /// The content within this tab.
     /// </summary>
     [Parameter]
