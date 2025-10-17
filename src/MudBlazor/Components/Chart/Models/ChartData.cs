@@ -1,11 +1,10 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
 using System.Collections;
 using System.Numerics;
-using MudBlazor.Charts;
 
 namespace MudBlazor;
 
@@ -17,7 +16,7 @@ namespace MudBlazor;
 /// X values are optional and can be null.
 /// </remarks>
 /// <typeparam name="T">The data type of tye Y value</typeparam>
-public class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+public partial class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     public ChartData() { }
 
@@ -32,20 +31,6 @@ public class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMax
     /// </summary>
     /// <param name="values">The Y values of the chart series</param>
     public ChartData(IReadOnlyList<T> values) => Points = [.. values.Select(v => new ChartPoint<T>(null, v))];
-
-    /// <summary>
-    /// Create a data series with a single time-value pair.
-    /// </summary>
-    /// <param name="timeValue">The <see cref="DateTime"/> (X) and Y value pair of the chart series</param>
-    public ChartData((DateTime dateTime, T value) timeValue) =>
-        Points = [new ChartPoint<T>(timeValue.dateTime, timeValue.value)];
-
-    /// <summary>
-    /// Create a data series with multiple time-value pairs.
-    /// </summary>
-    /// <param name="timeValues">The <see cref="DateTime"/> (X) and Y value pairs of the chart series</param>
-    public ChartData(IReadOnlyList<(DateTime dateTime, T value)> timeValues) =>
-        Points = [.. timeValues.Select(tv => new ChartPoint<T>(tv.dateTime, tv.value))];
 
     /// <summary>
     /// A list of data points in the chart series.
@@ -77,11 +62,6 @@ public class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMax
     public static implicit operator ChartData<T>(T value) => new(value);
     public static implicit operator ChartData<T>(T[] values) => new(values);
     public static implicit operator ChartData<T>(List<T> values) => new(values);
-    public static implicit operator ChartData<T>((DateTime dateTime, T value)[] timeValues) => new(timeValues);
-    public static implicit operator ChartData<T>(List<(DateTime dateTime, T value)> timeValues) => new(timeValues);
-    public static implicit operator ChartData<T>(TimeValue<T> timeValue) => new((timeValue.DateTime, timeValue.Value));
-    public static implicit operator ChartData<T>(TimeValue<T>[] values) => new(values.Select(tv => (tv.DateTime, tv.Value)).ToArray());
-    public static implicit operator ChartData<T>(List<TimeValue<T>> values) => new(values.Select(tv => (tv.DateTime, tv.Value)).ToArray());
 
     ///<inheritdoc/>
     public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();

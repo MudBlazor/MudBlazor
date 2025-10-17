@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Charts
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.Sankey" Width="@_width" Height="@_height" ChartSeries="@_series" ChartOptions="@_options" />
+</MudPaper>
+
+<MudGrid>
+    <MudItem md="6" xs="12">
+        <MudTextField @bind-Value="_width" Label="Chart Width"></MudTextField>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudTextField @bind-Value="_height" Label="Chart Height"></MudTextField>
+    </MudItem>
+    <MudItem md="4" xs="12">
+        <MudSlider @bind-Value="_options.NodeWidth" Max="50" ValueLabel="true">Node width</MudSlider>
+    </MudItem>
+    <MudItem md="4" xs="12">
+        <MudSlider @bind-Value="_options.MinVerticalSpacing" Max="30" ValueLabel="true">Min. vertical spacing</MudSlider>
+    </MudItem>
+    <MudItem md="4" xs="12">
+        <MudSlider @bind-Value="_options.EdgeOpacity" Step="0.01" Max="1" ValueLabel="true">Edge opacity</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private SankeyChartOptions _options = new();
+    private string _width = "650px";
+    private string _height = "350px";
+
+    private List<ChartSeries<int>> _series = new()
+    {
+        new() 
+        { 
+            Name = "Income", 
+            Data = new List<SankeyEdge<int>> 
+            { 
+                new("Income", "Expenses", 2800),
+                new("Income", "Savings", 400),
+                new("Expenses", "Housing", 1200),
+                new("Expenses", "Food", 500),
+                new("Expenses", "Insurance", 250),
+                new("Expenses", "Mobility", 125),
+                new("Expenses", "Travel", 425),
+                new("Expenses", "Leisure", 300),
+                new("Savings", "Interest", 10),
+                new("Savings", "Stocks", 390),
+                new("Housing", "Rent", 950),
+                new("Housing", "Other", 250),
+                new("Insurance", "Home insurance", 50),
+                new("Insurance", "Car insurance", 75),
+                new("Insurance", "Health insurance", 125),
+                new("Travel", "Car", 300),
+                new("Travel", "Public transport", 125),
+            },
+        }
+    };
+}

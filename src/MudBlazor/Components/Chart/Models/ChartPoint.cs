@@ -4,6 +4,7 @@
 
 #nullable enable
 using System.Numerics;
+using MudBlazor.Charts;
 
 namespace MudBlazor;
 
@@ -30,6 +31,7 @@ public class ChartPoint<T> where T : struct, INumber<T>, IMinMaxValue<T>, IForma
         Y = y;
     }
 
+    public static implicit operator ChartPoint<T>((SankeyLink x, T y) value) => new(value.x, value.y);
     public static implicit operator ChartPoint<T>((DateTime x, T y) value) => new(value.x, value.y);
     public static implicit operator ChartPoint<T>((T x, T y) value) => new(value.x, value.y);
     public static implicit operator ChartPoint<T>(T y) => new(y);
