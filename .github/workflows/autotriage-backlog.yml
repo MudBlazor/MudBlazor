@@ -19,7 +19,6 @@ concurrency:
 
 jobs:
   triage:
-    if: ${{ secrets.GEMINI_API_KEY != '' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate app token
