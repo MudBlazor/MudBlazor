@@ -1,8 +1,10 @@
-﻿<MudTabs @bind-ActivePanelIndex="Index" Border="true" Outlined="true" PanelClass="px-4 py-6" ApplyEffectsToContainer="true">
+﻿<MudPopoverProvider />
+
+<MudTabs @bind-ActivePanelIndex="Index" Border="true" Outlined="true" PanelClass="px-4 py-6" ApplyEffectsToContainer="true">
     <ChildContent>
         @foreach (var item in _tabs)
         {
-            <MudTabPanel Text="@item.Name" Tag="@item.Id" ShowCloseIcon="true" OnMouseDown="@(e => OnMouseDown(e, item))" OnContextMenu="@(e => OpenMenuContent(e, item))">
+            <MudTabPanel Text="@item.Name" Tag="@item.Id" ShowCloseIcon="true" OnMouseDown="@(e => OnMouseDown(e, item))" OnContextMenu="@(e => OpenMenuContentAsync(e, item))">
                 @item.Content
             </MudTabPanel>
         }
@@ -75,7 +77,7 @@
         }
     }
 
-    private async Task OpenMenuContent(MouseEventArgs args, TabView context)
+    private async Task OpenMenuContentAsync(MouseEventArgs args, TabView context)
     {
         _context = context;
         await _contextMenu.OpenMenuAsync(args);
