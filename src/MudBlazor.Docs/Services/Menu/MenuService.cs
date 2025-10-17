@@ -143,7 +143,8 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
                 new DocsLink {Title = "Localization", Href = "features/localization"},
-                new DocsLink {Title = "Analyzers", Href = "features/analyzers"}
+                new DocsLink {Title = "Analyzers", Href = "features/analyzers"},
+                new DocsLink {Title = "Services", Href = "features/services"},
             }.OrderBy(x => x.Title);
 
         /// <summary>

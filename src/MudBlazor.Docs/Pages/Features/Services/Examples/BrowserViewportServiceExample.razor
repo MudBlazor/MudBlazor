@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Services
+@inject IBrowserViewportService BrowserViewportService
+@implements IAsyncDisposable
+
+<MudStack Spacing="2">
+    <MudText>Browser width: @CurrentBrowserWindowSize.Width px</MudText>
+    <MudText>Browser height: @CurrentBrowserWindowSize.Height px</MudText>
+</MudStack>
+
+@code {
+    private static readonly Guid OBSERVER_ID = Guid.NewGuid();
+    private BrowserWindowSize CurrentBrowserWindowSize { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(OBSERVER_ID, args =>
+            {
+                CurrentBrowserWindowSize = args.BrowserWindowSize;
+                StateHasChanged();
+            });
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await BrowserViewportService.UnsubscribeAsync(OBSERVER_ID);
+    }
+}
