@@ -278,8 +278,8 @@ window.mudpopoverHelper = {
             const classListArray = Array.from(classList);
 
             if (isPositionOverride) {
-                const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y')) || boundingRect.top;
-                const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x')) || boundingRect.left;
+                const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y')) ?? boundingRect.top;
+                const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x')) ?? boundingRect.left;
                 const scrollLeft = window.scrollX;
                 const scrollTop = window.scrollY;
 
