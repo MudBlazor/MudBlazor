@@ -1714,7 +1714,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Code coverage test showed a missing test line, this tests the return tabListId returns the correct ID. 
+        /// Tests the behavior of mouse events on tab headers, including closing tabs via mouse actions.
         /// </summary>
         [Test]
         public async Task TabHeaderMouseDownEvents()
