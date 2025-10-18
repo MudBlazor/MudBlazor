@@ -6,10 +6,10 @@
 <div id="scroll_div" style="height: 100px; width: 100px; overflow-y: scroll; background-color: rgba(0,0,0,0.25);)">
     <div style="height: 1000px;"></div>
 </div>
-<MudText>Scroll position: @ScrollTop px</MudText>
+<MudText>Scroll position: @_scrollTop px</MudText>
 
 @code {
-    private double ScrollTop { get; set; }
+    private double _scrollTop;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -28,7 +28,7 @@
     
     private void ScrollListenerOnScroll(object sender, ScrollEventArgs e)
     {
-        ScrollTop = e.ScrollTop;
+        _scrollTop = e.ScrollTop;
         StateHasChanged();
     }
 }

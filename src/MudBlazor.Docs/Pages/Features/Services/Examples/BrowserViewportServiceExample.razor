@@ -5,13 +5,13 @@
 @implements IAsyncDisposable
 
 <MudStack Spacing="2">
-    <MudText>Browser width: @CurrentBrowserWindowSize.Width px</MudText>
-    <MudText>Browser height: @CurrentBrowserWindowSize.Height px</MudText>
+    <MudText>Browser width: @_currentBrowserWindowSize.Width px</MudText>
+    <MudText>Browser height: @_currentBrowserWindowSize.Height px</MudText>
 </MudStack>
 
 @code {
-    private Guid ObserverId { get; set; }
-    private BrowserWindowSize CurrentBrowserWindowSize { get; set; } = new();
+    private readonly Guid _observerId = Guid.NewGuid();
+    private BrowserWindowSize _currentBrowserWindowSize = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -19,10 +19,9 @@
 
         if (firstRender)
         {
-            ObserverId = Guid.NewGuid();
-            await BrowserViewportService.SubscribeAsync(ObserverId, args =>
+            await BrowserViewportService.SubscribeAsync(_observerId, args =>
             {
-                CurrentBrowserWindowSize = args.BrowserWindowSize;
+                _currentBrowserWindowSize = args.BrowserWindowSize;
                 StateHasChanged();
             });
         }
@@ -30,6 +29,6 @@
 
     public async ValueTask DisposeAsync()
     {
-        if (ObserverId != Guid.Empty) await BrowserViewportService.UnsubscribeAsync(ObserverId);
+        await BrowserViewportService.UnsubscribeAsync(_observerId);
     }
 }

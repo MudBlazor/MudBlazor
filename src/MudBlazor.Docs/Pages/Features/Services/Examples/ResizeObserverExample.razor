@@ -5,13 +5,13 @@
 @inject IResizeObserver ResizeObserver
 @implements IDisposable
 
-<div @ref="DivReference" style="width: 100%; text-align: center;">
-    <MudText>This div is @DivWidth px wide</MudText>
+<div @ref="_divReference" style="width: 100%; text-align: center;">
+    <MudText>This div is @_divWidth px wide</MudText>
 </div>
 
 @code {
-    private ElementReference DivReference { get; set; }
-    private double DivWidth { get; set; }
+    private ElementReference _divReference;
+    private double _divWidth;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -20,8 +20,8 @@
         if (firstRender)
         {
             ResizeObserver.OnResized += ResizeObserverOnResized;
-            await ResizeObserver.Observe(DivReference);
-            DivWidth = ResizeObserver.GetWidth(DivReference);
+            await ResizeObserver.Observe(_divReference);
+            _divWidth = ResizeObserver.GetWidth(_divReference);
             StateHasChanged();
         }
     }
@@ -33,7 +33,7 @@
     
     private void ResizeObserverOnResized(IDictionary<ElementReference, BoundingClientRect> changes)
     {
-        DivWidth = changes.Values.LastOrDefault()?.Width ?? 0;
+        _divWidth = changes.Values.LastOrDefault()?.Width ?? 0;
         StateHasChanged();
     }
 }
