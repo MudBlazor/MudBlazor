@@ -10,7 +10,7 @@
 </MudStack>
 
 @code {
-    private static readonly Guid OBSERVER_ID = Guid.NewGuid();
+    private Guid ObserverId { get; set; }
     private BrowserWindowSize CurrentBrowserWindowSize { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -19,7 +19,8 @@
 
         if (firstRender)
         {
-            await BrowserViewportService.SubscribeAsync(OBSERVER_ID, args =>
+            ObserverId = Guid.NewGuid();
+            await BrowserViewportService.SubscribeAsync(ObserverId, args =>
             {
                 CurrentBrowserWindowSize = args.BrowserWindowSize;
                 StateHasChanged();
@@ -29,6 +30,6 @@
 
     public async ValueTask DisposeAsync()
     {
-        await BrowserViewportService.UnsubscribeAsync(OBSERVER_ID);
+        if (ObserverId != Guid.Empty) await BrowserViewportService.UnsubscribeAsync(ObserverId);
     }
 }
