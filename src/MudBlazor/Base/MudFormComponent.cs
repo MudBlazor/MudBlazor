@@ -653,8 +653,10 @@ namespace MudBlazor
         public virtual void ResetValidation()
         {
             Error = false;
+            _converter.GetError = false;
             ValidationErrors.Clear();
             ErrorText = null;
+            _converter.GetErrorMessage = default;
             StateHasChanged();
         }
 
