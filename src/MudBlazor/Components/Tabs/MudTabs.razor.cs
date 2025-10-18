@@ -953,8 +953,14 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
+            if (_panels.Count == 0)
+                return;
+
             var scrollAmount = Math.Max(GetVisiblePanels(), 1);
             _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
+            // when _scrollIndex is set incorrectly this corrects it to the last panel
+            if (_scrollIndex > _panels.Count - 1)
+                _scrollIndex = _panels.Count - 1;
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollButtonVisibility();
             SetScrollabilityStates();
