@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Services
+@inject IBrowserViewportService BrowserViewportService
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
+
+<MudStack Row="true" AlignItems="AlignItems.Center">
+    <MudText>This will only update on breakpoints:</MudText>
+    <MudStack Spacing="2">
+        <MudText>Browser width: @_currentBrowserWindowSize.Width px</MudText>
+        <MudText>Browser height: @_currentBrowserWindowSize.Height px</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    public Guid Id { get; } = Guid.NewGuid(); // The id of the observer
+    public ResizeOptions ResizeOptions { get; } = new() // The observer options
+    {
+        NotifyOnBreakpointOnly = false
+    };
+    
+    private BrowserWindowSize _currentBrowserWindowSize = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await BrowserViewportService.UnsubscribeAsync(this);
+    }
+
+    public Task NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        _currentBrowserWindowSize = browserViewportEventArgs.BrowserWindowSize;
+        return InvokeAsync(StateHasChanged);
+    }
+}

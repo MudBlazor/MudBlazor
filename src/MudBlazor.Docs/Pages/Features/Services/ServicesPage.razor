@@ -10,9 +10,26 @@
                     Provides functionality to get the current view port size, to monitor the browser viewport size for any changes and to get the current breakpoint.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(BrowserViewportServiceExample)">
-                <BrowserViewportServiceExample/>
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Lambda-implementation"/>
+                    <SectionContent Code="@nameof(BrowserViewportServiceExampleLambda)">
+                        <BrowserViewportServiceExampleLambda/>
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Interface-implementation">
+                        <Description>
+                            This requires to inherit from
+                            <CodeInline>IBrowserViewportObserver</CodeInline>
+                            .
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(BrowserViewportServiceExampleInterface)">
+                        <BrowserViewportServiceExampleInterface/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="@nameof(ResizeObserver)">
