@@ -5,12 +5,9 @@
 @implements IBrowserViewportObserver
 @implements IAsyncDisposable
 
-<MudStack Row="true" AlignItems="AlignItems.Center">
-    <MudText>This will only update on breakpoints:</MudText>
-    <MudStack Spacing="2">
-        <MudText>Browser width: @_currentBrowserWindowSize.Width px</MudText>
-        <MudText>Browser height: @_currentBrowserWindowSize.Height px</MudText>
-    </MudStack>
+<MudStack Spacing="2">
+    <MudText>Browser width: @_currentBrowserWindowSize.Width px</MudText>
+    <MudText>Browser height: @_currentBrowserWindowSize.Height px</MudText>
 </MudStack>
 
 @code {
@@ -19,7 +16,7 @@
     {
         NotifyOnBreakpointOnly = false
     };
-    
+
     private BrowserWindowSize _currentBrowserWindowSize = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -2,14 +2,15 @@
 
 @using MudBlazor.Interop
 @using MudBlazor.Services
-@inject IResizeObserver ResizeObserver
-@implements IDisposable
+@inject IResizeObserverFactory ResizeObserverFactory
+@implements IAsyncDisposable
 
 <div @ref="_divReference" style="width: 100%; text-align: center;">
     <MudText>This div is @_divWidth px wide</MudText>
 </div>
 
 @code {
+    private IResizeObserver _resizeObserver;
     private ElementReference _divReference;
     private double _divWidth;
 
@@ -19,18 +20,19 @@
 
         if (firstRender)
         {
-            ResizeObserver.OnResized += ResizeObserverOnResized;
-            await ResizeObserver.Observe(_divReference);
-            _divWidth = ResizeObserver.GetWidth(_divReference);
+            _resizeObserver = ResizeObserverFactory.Create();
+            _resizeObserver.OnResized += ResizeObserverOnResized;
+            await _resizeObserver.Observe(_divReference);
+            _divWidth = _resizeObserver.GetWidth(_divReference);
             StateHasChanged();
         }
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        ResizeObserver.OnResized -= ResizeObserverOnResized;
+        if (_resizeObserver != null) await _resizeObserver.DisposeAsync();
     }
-    
+
     private void ResizeObserverOnResized(IDictionary<ElementReference, BoundingClientRect> changes)
     {
         _divWidth = changes.Values.LastOrDefault()?.Width ?? 0;

@@ -39,6 +39,13 @@
                     is similar to
                     <MudLink Href="features/services#ibrowserviewportservice">BrowserViewportService</MudLink>
                     but for elements instead of the browser window.
+                    <MudAlert Severity="Severity.Warning">
+                        Don't inject the
+                        <CodeInline>IResizeObserver</CodeInline>
+                        directly. Always use the
+                        <CodeInline>IResizeObserverFactory</CodeInline>
+                        instead.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ResizeObserverExample)">
@@ -59,6 +66,13 @@
             <SectionHeader Title="@nameof(ScrollListener)">
                 <Description>
                     Provides functionality to listen for scroll events for a specific element.
+                    <MudAlert Severity="Severity.Warning">
+                        Don't inject the
+                        <CodeInline>IScrollListener</CodeInline>
+                        directly. Always use the
+                        <CodeInline>IScrollListenerFactory</CodeInline>
+                        instead.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ScrollListenerExample)">
