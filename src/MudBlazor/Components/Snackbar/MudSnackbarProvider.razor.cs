@@ -3,6 +3,7 @@
 // Changes and improvements Copyright (c) The MudBlazor Team
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -13,6 +14,9 @@ namespace MudBlazor
     {
         [Inject]
         private ISnackbar Snackbars { get; set; } = null!;
+
+        [Inject]
+        private NavigationManager NavigationManager { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -43,6 +47,7 @@ namespace MudBlazor
         {
             base.OnInitialized();
             Snackbars.OnSnackbarsUpdated += OnSnackbarsUpdated;
+            NavigationManager.LocationChanged += NavigationManager_LocationChanged;
         }
 
         private void OnSnackbarsUpdated()
@@ -50,11 +55,28 @@ namespace MudBlazor
             InvokeAsync(StateHasChanged);
         }
 
+        private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e)
+        {
+            if (Snackbars.Configuration.ClearAfterNavigation)
+            {
+                Snackbars.Clear();
+            }
+            else
+            {
+                var snackbarsToRemove = Snackbars.ShownSnackbars.Where(s => s.State.Options.CloseAfterNavigation).ToArray();
+                foreach (var snackbar in snackbarsToRemove)
+                {
+                    Snackbars.Remove(snackbar);
+                }
+            }
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
                 Snackbars.OnSnackbarsUpdated -= OnSnackbarsUpdated;
+                NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
             }
         }
 

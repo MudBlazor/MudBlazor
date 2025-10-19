@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Options;
 using MudBlazor.Components.Snackbar;
 using MudBlazor.Components.Snackbar.InternalComponents;
@@ -19,18 +18,15 @@ namespace MudBlazor
     {
         private readonly List<Snackbar> _snackBarList;
         private readonly ReaderWriterLockSlim _snackBarLock;
-        private readonly NavigationManager _navigationManager;
 
         public SnackbarConfiguration Configuration { get; }
 
         public event Action? OnSnackbarsUpdated;
 
-        public SnackbarService(NavigationManager navigationManager, IOptions<SnackbarConfiguration>? configuration = null)
+        public SnackbarService(IOptions<SnackbarConfiguration>? configuration = null)
         {
-            _navigationManager = navigationManager;
             Configuration = configuration?.Value ?? new SnackbarConfiguration();
             Configuration.OnUpdate += ConfigurationUpdated;
-            navigationManager.LocationChanged += NavigationManager_LocationChanged;
 
             _snackBarLock = new ReaderWriterLockSlim();
             _snackBarList = new List<Snackbar>();
@@ -209,23 +205,6 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
         }
 
-        private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e)
-        {
-            if (Configuration.ClearAfterNavigation)
-            {
-                Clear();
-            }
-            else
-            {
-                var snackbarsToRemove = ShownSnackbars.Where(s => s.State.Options.CloseAfterNavigation).ToArray();
-                foreach (var snackbar in snackbarsToRemove)
-                {
-                    Remove(snackbar);
-                }
-            }
-        }
-
-
         private void RemoveAllSnackbars(IEnumerable<Snackbar> snackbars)
         {
             if (_snackBarList.Count == 0) return;
@@ -244,7 +223,6 @@ namespace MudBlazor
             if (disposing)
             {
                 Configuration.OnUpdate -= ConfigurationUpdated;
-                _navigationManager.LocationChanged -= NavigationManager_LocationChanged;
                 RemoveAllSnackbars(_snackBarList);
             }
         }

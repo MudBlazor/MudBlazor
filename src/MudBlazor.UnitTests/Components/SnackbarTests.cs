@@ -7,6 +7,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Snackbar;
 using NUnit.Framework;
@@ -861,6 +862,55 @@ namespace MudBlazor.UnitTests.Components
                 _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
             );
             _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void NavigationManager_LocationChanged_ClearsSnackbarsWhenClearAfterNavigationIsTrue()
+        {
+            // Arrange
+            _service.Configuration.ClearAfterNavigation = true;
+            _service.Add("Test message");
+            _service.ShownSnackbars.Should().NotBeEmpty();
+
+            // Act
+            var navManager = Context.Services.GetRequiredService<NavigationManager>();
+            navManager.NavigateTo("/new-location");
+
+            // Assert
+            _provider.WaitForAssertion(() => _service.ShownSnackbars.Should().BeEmpty());
+        }
+
+        [Test]
+        public void NavigationManager_LocationChanged_DoesNotClearSnackbarsWhenClearAfterNavigationIsFalse()
+        {
+            // Arrange
+            _service.Configuration.ClearAfterNavigation = false;
+            _service.Add("Test message");
+
+            // Act
+            var navManager = Context.Services.GetRequiredService<NavigationManager>();
+            navManager.NavigateTo("/new-location");
+
+            // Assert - wait a bit to ensure no clearing happens
+            _provider.WaitForAssertion(() => _service.ShownSnackbars.Should().NotBeEmpty(), TimeSpan.FromMilliseconds(100));
+        }
+
+        [Test]
+        public void NavigationManager_LocationChanged_RemovesSnackbarsWithCloseAfterNavigationEnabled()
+        {
+            // Arrange
+            _service.Configuration.ClearAfterNavigation = false;
+            _service.Add("Test message", configure: options => options.CloseAfterNavigation = true);
+            _service.Add("Another message", configure: options => options.CloseAfterNavigation = false);
+
+            // Act
+            var navManager = Context.Services.GetRequiredService<NavigationManager>();
+            navManager.NavigateTo("/new-location");
+
+            // Assert
+            _provider.WaitForAssertion(() =>
+                _service.ShownSnackbars.Should().ContainSingle().Which.SnackbarMessage.Text.Should().Be("Another message")
+            );
         }
     }
 }
