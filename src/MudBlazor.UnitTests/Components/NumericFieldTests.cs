@@ -1208,19 +1208,25 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input").First().Blur();
 
             // conversion is not possible and conversion error is set
-            comp.WaitForAssertion(() => numericField.Value.Should().Be(0));
-            comp.WaitForAssertion(() => numericField.HasErrors.Should().Be(true));
-            comp.WaitForAssertion(() => numericField.ConversionError.Should().Be(true));
-            comp.WaitForAssertion(() => numericField.ConversionErrorMessage.Should().NotBeNullOrEmpty());
+            comp.WaitForAssertion(() =>
+            {
+                numericField.Value.Should().Be(0);
+                numericField.HasErrors.Should().Be(true);
+                numericField.ConversionError.Should().Be(true);
+                numericField.ConversionErrorMessage.Should().NotBeNullOrEmpty();
+            });
 
             // reset the field
-            await comp.InvokeAsync(() => comp.Instance.ResetAsync().Wait());
+            await comp.InvokeAsync(numericField.ResetAsync);
 
             // conversion error is cleared
-            comp.WaitForAssertion(() => numericField.Value.Should().Be(0));
-            comp.WaitForAssertion(() => numericField.HasErrors.Should().Be(false));
-            comp.WaitForAssertion(() => numericField.ConversionError.Should().Be(false));
-            comp.WaitForAssertion(() => numericField.ConversionErrorMessage.Should().BeNull());
+            comp.WaitForAssertion(() =>
+            {
+                numericField.Value.Should().Be(0);
+                numericField.HasErrors.Should().Be(false); 
+                numericField.ConversionError.Should().Be(false);
+                numericField.ConversionErrorMessage.Should().BeNull();
+            });
         }
     }
 }
