@@ -73,9 +73,10 @@
         <DocsPageSection>
             <SectionHeader Title="Z-Index">
                 <Description>
-                    Control the stacking order of the overlay relative to other elements by adjusting the <CodeInline>ZIndex</CodeInline> property.
-                    <MudAlert Dense Severity="Severity.Warning">Use with Caution when explicitly setting the ZIndex. The automatic scaffolded 
-                    ZIndex calculations always uses the higher of the two values.</MudAlert>
+                    <MudAlert Dense Severity="Severity.Warning">
+                        Use with caution when explicitly setting the ZIndex. The automatic scaffolding logic 
+                        will use whichever value is higher: your explicit `ZIndex` or its own calculated value.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayZIndexExample)" ShowCode="false">
@@ -97,22 +98,22 @@
             </SectionContent>
         </DocsPageSection>
 
-<DocsPageSection>
-  <SectionHeader Title="Positioning">
-    <Description>
-      By default, <CodeInline>MudOverlay</CodeInline> is scaffolded into the <CodeInline>MudPopoverProvider</CodeInline>, producing a singleton stack where the most recently created overlay sits on top and stacks back down in reverse creation order as overlays close.
-      <MudAlert Dense Severity="Severity.Info">Scaffolded ZIndex uses the higher of the explicit <CodeInline>ZIndex</CodeInline> and the calculated scaffold value; explicit values do not blindly override the scaffolded computation.</MudAlert>
-      <ul class="bullet-list">
-        <li>Set <CodeInline>Absolute="true"</CodeInline> to scope the overlay to its parent (excluded from scaffolding).</li>
-        <li>Apply <CodeInline>mud-skip-overlay-section</CodeInline> to opt out of the global overlay stack (excluded from scaffolding).</li>
-        <li>Provide <CodeInline>ChildContent</CodeInline> to render custom content; overlays with <CodeInline>ChildContent</CodeInline> are excluded from scaffolding.</li>
-      </ul>
-      <p class="mt-2"><b>Theme defaults:</b> Unpaired overlays default to ZIndex 5; common theme values are AppBar 1300, Drawer 1100, Popover 1200.</p>
-    </Description>
-  </SectionHeader>
-  <SectionContent Code="@nameof(OverlayPositionExample)" ShowCode="false">
-    <OverlayPositionExample />
-  </SectionContent>
-</DocsPageSection>
+        <DocsPageSection>
+          <SectionHeader Title="Positioning">
+            <Description>
+              By default, <CodeInline>MudOverlay</CodeInline> is scaffolded into the <CodeInline>MudPopoverProvider</CodeInline>, producing a singleton stack where the most recently created overlay sits on top and stacks back down in reverse creation order as overlays close.
+              <MudAlert Dense Severity="Severity.Info">The scaffolded ZIndex will be the higher value between the explicit `ZIndex` parameter and the internally calculated value. This means an explicit `ZIndex` does not automatically override the scaffolded value if the latter is higher.</MudAlert>
+              <ul class="bullet-list">
+                <li>Set <CodeInline>Absolute="true"</CodeInline> to scope the overlay to its parent (excluded from scaffolding).</li>
+                <li>Apply <CodeInline>mud-skip-overlay-section</CodeInline> to opt out of the global overlay stack (excluded from scaffolding).</li>
+                <li>Provide <CodeInline>ChildContent</CodeInline> to render custom content; overlays with <CodeInline>ChildContent</CodeInline> are excluded from scaffolding.</li>
+              </ul>
+              <p class="mt-2"><b>Theme defaults:</b> Unpaired overlays default to ZIndex 5; common theme values are AppBar 1300, Drawer 1100, Popover 1200.</p>
+            </Description>
+          </SectionHeader>
+          <SectionContent Code="@nameof(OverlayPositionExample)" ShowCode="false">
+            <OverlayPositionExample />
+          </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
