@@ -1193,5 +1193,34 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
         }
 #nullable disable
+
+        /// <summary>
+        /// Test that reset method clears conversion errors.
+        /// </summary>
+        [Test]
+        public async Task NumericFieldConverterErrorReset()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+            var numericField = comp.Instance;
+
+            // insert an invalid int number, greater then maximum int value
+            comp.FindAll("input").First().Change("2147483648");
+            comp.FindAll("input").First().Blur();
+
+            // conversion is not possible and conversion error is set
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(0));
+            comp.WaitForAssertion(() => numericField.HasErrors.Should().Be(true));
+            comp.WaitForAssertion(() => numericField.ConversionError.Should().Be(true));
+            comp.WaitForAssertion(() => numericField.ConversionErrorMessage.Should().NotBeNullOrEmpty());
+
+            // reset the field
+            await comp.InvokeAsync(() => comp.Instance.ResetAsync().Wait());
+
+            // conversion error is cleared
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(0));
+            comp.WaitForAssertion(() => numericField.HasErrors.Should().Be(false));
+            comp.WaitForAssertion(() => numericField.ConversionError.Should().Be(false));
+            comp.WaitForAssertion(() => numericField.ConversionErrorMessage.Should().BeNull());
+        }
     }
 }
