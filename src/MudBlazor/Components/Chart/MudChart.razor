@@ -19,6 +19,10 @@
             {
                 <Line ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
             }
+            @if (ChartType == ChartType.Sankey)
+            {
+                <Sankey Nodes="@Nodes" Edges="@Edges" ChartOptions="ChartOptions" NodeChartOptions="NodeChartOptions" @bind-SelectedIndex="@SelectedIndex"></Sankey>
+            }
             @if (ChartType == ChartType.Bar)
             {
                 <Bar ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>

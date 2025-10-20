@@ -1,0 +1,90 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.Sankey" Nodes="@_nodes" Edges="@_edges" Width="@_width" Height="@_height" ChartOptions="@_options" NodeChartOptions="_nodeChartOptions"/>
+</MudPaper>
+
+<MudGrid>
+    <MudItem md="6" xs="12">
+        <MudTextField @bind-Value="_width" Label="Chart Width"></MudTextField>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudTextField @bind-Value="_height" Label="Chart Height"></MudTextField>
+    </MudItem>
+    <MudItem md="4" xs="12">
+        <MudSlider @bind-Value="_nodeChartOptions.NodeWidth" Max="50" ValueLabel="true">Node width</MudSlider>
+    </MudItem>
+    <MudItem md="4" xs="12">
+        <MudSlider @bind-Value="_nodeChartOptions.MinVerticalSpacing" Max="30" ValueLabel="true">Min. vertical spacing</MudSlider>
+    </MudItem>
+    <MudItem md="4" xs="12">
+        <MudSlider @bind-Value="_nodeChartOptions.EdgeOpacity" Step="0.01" Max="1" ValueLabel="true">Edge opacity</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private ChartOptions _options = new();
+    private NodeChartOptions _nodeChartOptions = new();
+    private string _width = "650px";
+    private string _height = "350px";
+
+    private readonly List<SankeyChartNode> _nodes =
+    [
+        new("Income", 0),
+
+        // Income
+        new("Expenses", 1),
+        new("Savings", 1),
+
+        // Expenses
+        new("Housing", 2),
+        new("Food", 2),
+        new("Insurance", 2),
+        new("Mobility", 2),
+        new("Travel", 2),
+        new("Leisure", 2),
+        // Savings
+        new("Interest", 2),
+        new("Stocks", 2),
+
+        // Housing
+        new("Rent", 3),
+        new("Other", 3),
+        // Insurance
+        new("Home insurance", 3),
+        new("Car insurance", 3),
+        new("Health insurance", 3),
+        // Travel
+        new("Car", 3),
+        new("Public transport", 3),
+    ];
+
+    private readonly List<SankeyChartEdge> _edges =
+    [
+        // Income
+        new("Income", "Expenses", 2800),
+        new("Income", "Savings", 400),
+
+        // Expenses
+        new("Expenses", "Housing", 1200),
+        new("Expenses", "Food", 500),
+        new("Expenses", "Insurance", 250),
+        new("Expenses", "Mobility", 125),
+        new("Expenses", "Travel", 425),
+        new("Expenses", "Leisure", 300),
+        // Savings
+        new("Savings", "Interest", 10),
+        new("Savings", "Stocks", 390),
+
+        // Housing
+        new("Housing", "Rent", 950),
+        new("Housing", "Other", 250),
+        // Insurance
+        new("Insurance", "Home insurance", 50),
+        new("Insurance", "Car insurance", 75),
+        new("Insurance", "Health insurance", 125),
+        // Travel
+        new("Travel", "Car", 300),
+        new("Travel", "Public transport", 125),
+    ];
+}
