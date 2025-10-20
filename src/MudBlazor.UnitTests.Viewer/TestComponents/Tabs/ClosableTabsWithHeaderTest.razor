@@ -57,10 +57,13 @@
 
     private void RemoveTab(MudTabPanel tabPanel)
     {
-        var tab = _tabs.FirstOrDefault(x => x.Id == (Guid?)tabPanel.Tag);
-        if (tab != null)
+        if (tabPanel.Tag is Guid id)
         {
-            RemoveTab(tab);
+            var tab = _tabs.FirstOrDefault(x => x.Id == id);
+            if (tab != null)
+            {
+                RemoveTab(tab);
+            }
         }
     }
 
