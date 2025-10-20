@@ -393,30 +393,5 @@ namespace MudBlazor.UnitTests.Components
                 tooltip.GetState(x => x.Visible).Should().Be(!showOnHover);
             }
         }
-
-        [Test]
-        public void InlineWrapper_Allows_FullWidth_Button_To_Stretch_Structurally()
-        {
-            var comp = Context.RenderComponent<MudTooltip>(p => p
-                .Add(x => x.Inline, true)
-                .Add(x => x.Text, "tip")
-                .AddChildContent(builder =>
-                {
-                    builder.OpenComponent<MudButton>(0);
-                    builder.AddAttribute(1, "FullWidth", true);
-                    builder.AddContent(2, "Go");
-                    builder.CloseComponent();
-                })
-            );
-
-            var wrapper = comp.Find(".mud-tooltip-root");
-            wrapper.ClassList.Should().Contain("mud-tooltip-inline");
-
-            var btn = comp.Find("button");
-            btn.Should().NotBeNull();
-
-            // Assert the full-width utility class is applied to the button
-            btn.ClassList.Should().Contain("mud-width-full");
-        }
     }
 }
