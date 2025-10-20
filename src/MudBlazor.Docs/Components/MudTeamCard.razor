@@ -11,12 +11,12 @@
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.h6">@Member.Name</MudText>
 
-                    <MudText Typo="Typo.body2">@Member.GitHub</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@Member.GitHub</MudText>
                 </div>
 
                 @if (!string.IsNullOrWhiteSpace(Member.From))
                 {
-                    <div class="d-flex flex-row align-self-start align-center justify-center">
+                    <div class="d-flex flex-row align-self-start align-center justify-center mud-text-secondary">
                         <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="me-1" />
 
                         <MudText Typo="Typo.body2">
@@ -28,12 +28,12 @@
         </CardHeaderContent>
     </MudCardHeader>
 
-        <MudCardContent Class="py-0">
-            @if (!string.IsNullOrWhiteSpace(Member.Bio))
-            {
-                <MudText Typo="Typo.body2">@Member.Bio</MudText>
-            }
-        </MudCardContent>
+    <MudCardContent Class="py-0">
+        @if (!string.IsNullOrWhiteSpace(Member.Bio))
+        {
+            <MudText Typo="Typo.body2">@Member.Bio</MudText>
+        }
+    </MudCardContent>
 
     <MudCardActions>
         <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Target="_blank" Href="@($"https://github.com/{Member.GitHub}")">
