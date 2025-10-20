@@ -49,22 +49,14 @@ class MudScrollListener {
 
             // determine if the target is the document
             const isDocument = element === document;
+            const scrollSource = isDocument ? (document.scrollingElement || document.documentElement || document.body) : element;
 
             //data to pass
-            let scrollTop = element.scrollTop;
-            let scrollHeight = element.scrollHeight;
-            let scrollWidth = element.scrollWidth;
-            let scrollLeft = element.scrollLeft;
+            let scrollTop = scrollSource.scrollTop || 0;
+            let scrollHeight = scrollSource.scrollHeight || 0;
+            let scrollWidth = scrollSource.scrollWidth || 0;
+            let scrollLeft = scrollSource.scrollLeft || 0;
             let nodeName = element.nodeName;
-
-            if (isDocument) {
-                // prefer document.scrollingElement for page-level scroll values
-                const scrollingEl = document.scrollingElement || document.documentElement || document.body;
-                scrollTop = scrollingEl.scrollTop || 0;
-                scrollHeight = scrollingEl.scrollHeight || 0;
-                scrollWidth = scrollingEl.scrollWidth || 0;
-                scrollLeft = scrollingEl.scrollLeft || 0;
-            }
 
             //data to pass
             let firstChild = element.firstElementChild;
