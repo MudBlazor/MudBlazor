@@ -47,12 +47,24 @@ class MudScrollListener {
         try {
             let element = event.target;
 
+            // determine if the target is the document
+            const isDocument = element === document;
+
             //data to pass
             let scrollTop = element.scrollTop;
             let scrollHeight = element.scrollHeight;
             let scrollWidth = element.scrollWidth;
             let scrollLeft = element.scrollLeft;
             let nodeName = element.nodeName;
+
+            if (isDocument) {
+                // prefer document.scrollingElement for page-level scroll values
+                const scrollingEl = document.scrollingElement || document.documentElement || document.body;
+                scrollTop = scrollingEl.scrollTop || 0;
+                scrollHeight = scrollingEl.scrollHeight || 0;
+                scrollWidth = scrollingEl.scrollWidth || 0;
+                scrollLeft = scrollingEl.scrollLeft || 0;
+            }
 
             //data to pass
             let firstChild = element.firstElementChild;
@@ -67,7 +79,7 @@ class MudScrollListener {
                 nodeName,
             });
         } catch (error) {
-            console.log('[MudBlazor] Error in scrollHandler:', { error });
+            console.error('[MudBlazor] Error in scrollHandler:', { error });
         }
     }
 
