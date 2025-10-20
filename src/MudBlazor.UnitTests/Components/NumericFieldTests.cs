@@ -1223,7 +1223,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() =>
             {
                 numericField.Value.Should().Be(0);
-                numericField.HasErrors.Should().Be(false); 
+                numericField.HasErrors.Should().Be(false);
                 numericField.ConversionError.Should().Be(false);
                 numericField.ConversionErrorMessage.Should().BeNull();
             });
