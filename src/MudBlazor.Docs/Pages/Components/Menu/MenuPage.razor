@@ -63,7 +63,8 @@
                     <SectionHeader Title="Custom Activator">
                         <Description>
                             If the regular customization options are not enough, use the <CodeInline>ActivatorContent</CodeInline> render fragment to define a custom activator element for opening the menu.
-                            In this example, a custom button, chip, and avatar are each used to open a menu.
+                            In this example, a custom button, chip, and avatar are each used to open a menu. When generating activator elements inside a Blazor code block (<CodeInline>&#64;{ ... }</CodeInline>) or conditional markup, ensure that the element includes
+							<CodeInline>tabindex="0"</CodeInline> so it can receive focus and remain accessible via keyboard input.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
