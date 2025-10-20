@@ -3,7 +3,7 @@
 @inject IScrollManager ScrollManager
 
 <MudStack Row="true">
-    <MudButton OnClick="@ToggleScrollLock" Variant="Variant.Filled" EndIcon="@LockScrollBtIcon">@LockScrollBtText</MudButton>
+    <MudButton OnClick="@ToggleScrollLockAsync" Variant="Variant.Filled" EndIcon="@LockScrollBtIcon">@LockScrollBtText</MudButton>
     <MudButton OnClick="@(() => ScrollManager.ScrollIntoViewAsync("#iresizeobserver", ScrollBehavior.Smooth))" Variant="Variant.Filled">Scroll to resize observer</MudButton>
 </MudStack>
 
@@ -12,10 +12,10 @@
     private string LockScrollBtText => _scrollIsLocked ? "Unlock scroll" : "Lock scroll";
     private string LockScrollBtIcon => _scrollIsLocked ? Icons.Material.Outlined.LockOpen : Icons.Material.Outlined.Lock;
 
-    private void ToggleScrollLock()
+    private async Task ToggleScrollLockAsync()
     {
-        if (_scrollIsLocked) ScrollManager.UnlockScrollAsync();
-        else ScrollManager.LockScrollAsync();
+        if (_scrollIsLocked) await ScrollManager.UnlockScrollAsync();
+        else await ScrollManager.LockScrollAsync();
 
         _scrollIsLocked = !_scrollIsLocked;
     }
