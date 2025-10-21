@@ -954,10 +954,7 @@ namespace MudBlazor
         /// This provides an alternative to <see cref="ChildRowContent"/> with more control over the rendering.
         /// </remarks>
         [Parameter]
-        public RenderFragment<CellContext<T>> ChildRowRenderer
-        {
-            get; set;
-        }
+        public RenderFragment<CellContext<T>> ChildRowRenderer { get; set; }
 
         /// <summary>
         /// The content shown when there are no rows to display.
