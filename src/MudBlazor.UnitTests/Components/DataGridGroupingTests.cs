@@ -677,6 +677,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public async Task DataGridGroupingTemplateSetAtGridLevel()
         {
             var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
@@ -689,7 +690,7 @@ namespace MudBlazor.UnitTests.Components
             groupingTemplateSwitch.Find("input").Change(true);
             dataGrid.Render();
 
-            //current grouping should use the defined template  
+            //current grouping should use the defined template
             var groupRow = component.FindComponent<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>().Find(".mud-datagrid-group");
             var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Manufacturing1states");
@@ -718,6 +719,33 @@ namespace MudBlazor.UnitTests.Components
             var groupRow = component.FindComponent<DataGridGroupRow<DataGridColumnGroupingTest.Model>>().Find(".mud-datagrid-group");
             var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Name:John");
+        }
+
+
+        [Test]
+        public async Task DataGrid_MultilevelGrouping_ExpandSpecificNestedGroup()
+        {
+            var comp = Context.RenderComponent<DataGridMultilevelGroupingNestedGroupExpansionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultilevelGroupingNestedGroupExpansionTest.Model>>();
+            var subGroupColName = nameof(DataGridMultilevelGroupingNestedGroupExpansionTest.Model.SubGroup);
+            var groupKey = new GroupKeyPath(["A", "X"]);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleGroupExpand(
+                subGroupColName,
+                groupKey,
+                true));
+            dataGrid.Render();
+
+            var subGroupRows = comp
+                .FindComponents<DataGridGroupRow<DataGridMultilevelGroupingNestedGroupExpansionTest.Model>>()
+                .Where(x => x.Instance.GroupDefinition.Title == subGroupColName)
+                .ToList();
+
+            var groupRowA_X = subGroupRows.First(x => x.Instance.GroupDefinition.KeyPath.Equals(groupKey));
+            var groupRowB_X = subGroupRows.First(x => !x.Instance.GroupDefinition.KeyPath.Equals(groupKey));
+
+            Assert.That(groupRowA_X.Instance.GroupDefinition.Expanded, Is.True, "SubGroup X under group A should be expanded");
+            Assert.That(groupRowB_X.Instance.GroupDefinition.Expanded, Is.False, "SubGroup X under group B should remain collapsed");
         }
     }
 }

@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Components.Web.Virtualization
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization
 <MudGrid>
     <MudItem xs="6">
         <MudDataGrid T="Model"
@@ -90,7 +90,7 @@
 </MudExpansionPanels>
 <style>
     .mud-table-row-selected {
-        background-color: rgb(from var(--mud-palette-primary) r g b / 0.25) !important;
+        background-color: rgba(var(--mud-palette-primary-rgb), 0.25) !important;
     }
 </style>
 

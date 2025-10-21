@@ -237,11 +237,11 @@ namespace MudBlazor
         public override void AddItem(MudCarouselItem item)
         {
             Items.Add(item);
+
             if (Items.Count - 1 == SelectedIndex)
-            {
                 _currentColor = item.Color;
-                StateHasChanged();
-            }
+
+            StateHasChanged();
         }
 
         private void TimerElapsed(object? stateInfo) => InvokeAsync(async () => await TimerTickAsync());

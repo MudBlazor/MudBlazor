@@ -1,7 +1,8 @@
 ﻿@page "/components/overlay"
 
 <DocsPage>
-    <DocsPageHeader Title="Overlay" Component="@nameof(MudOverlay)" />
+    <DocsPageHeader Title="Overlay" Component="@nameof(MudOverlay)">
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
@@ -59,5 +60,24 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Positioning">
+        <Description>
+            <p class="my-2">
+                By default, <CodeInline>MudOverlay</CodeInline> is automatically placed inside the <CodeInline>MudPopoverProvider</CodeInline> and supports 
+                only a single instance, with the most recently created instance taking precedence over previous and scaffolding back down as they close.                
+            </p>
+            <b>However, this behavior can be overridden in the following ways:</b>
+            <ol class="ml-6 my-2">
+                <li><b>1. </b>Set <CodeInline>Absolute="true"</CodeInline> to constrain the overlay to a specific section of the page.</li>
+                <li><b>2. </b>Apply the <CodeInline>mud-skip-overlay-section</CodeInline> class to exclude an overlay from the singleton effect.</li>
+                <li><b>3. </b>Provide <CodeInline>ChildContent</CodeInline> directly within <CodeInline>MudOverlay</CodeInline> to display custom content.</li>
+            </ol>
+        </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(OverlayPositionExample)" ShowCode="false">
+                <OverlayPositionExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

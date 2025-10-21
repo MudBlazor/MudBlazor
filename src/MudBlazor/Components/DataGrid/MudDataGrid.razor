@@ -154,11 +154,11 @@
 
                                                                 @if (context.HeaderCell.hasFilter)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters(e))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@context.DataGrid.FilterIconFilled" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.OpenFilters"></MudIconButton>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter(e))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@context.DataGrid.FilterIconEmpty" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.AddFilter"></MudIconButton>
                                                                 }
 
                                                                 @if (ColumnsPanelReordering)
@@ -296,12 +296,12 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" />
                             }
                         }
                     }
@@ -379,8 +379,8 @@
                                            Value="@cell._valueString"
                                            ValueChanged="@cell.StringValueChangedAsync"
                                            Margin="@Margin.Dense" Style="margin-top:0"
-                                           Required=column.Required
-                                           Variant="@Variant.Text"/>
+                                           Required="@column.Required"
+                                           Variant="@Variant.Text" Culture="@column.Culture" />
                          }
                          else if (column.isNumber)
                          {
@@ -388,7 +388,8 @@
                                               Value="@cell._valueNumber"
                                               ValueChanged="@cell.NumberValueChangedAsync"
                                               Margin="@Margin.Dense" Style="margin-top:0"
-                                              Required=column.Required Variant="@Variant.Text" Culture="@column.Culture"/>
+                                              Required="@column.Required"
+                                              Variant="@Variant.Text" Culture="@column.Culture" />
                          }
                      }
                  }
@@ -485,11 +486,15 @@
                                 <MudSelectItem T="bool?" Value="@(false)">@Localizer[LanguageResource.MudDataGrid_False]</MudSelectItem>
                             </MudSelect>
                         }
+                        else if (fieldType.IsDateOnly && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                        {
+                            <MudDatePicker Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                        }
                         else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
                                     <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time" />
@@ -547,11 +552,15 @@
                                 <MudSelectItem T="bool?" Value="@(false)">@Localizer[LanguageResource.MudDataGrid_False]</MudSelectItem>
                             </MudSelect>
                         }
+                        else if (fieldType.IsDateOnly && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                        {
+                            <MudDatePicker Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                        }
                         else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
                                     <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time"/>

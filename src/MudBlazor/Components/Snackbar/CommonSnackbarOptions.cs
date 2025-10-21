@@ -122,6 +122,14 @@ public abstract class CommonSnackbarOptions
     /// </remarks>
     public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
 
+    /// <summary>
+    /// Hides the icon for the snackbar.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool HideIcon { get; set; }
+
     protected CommonSnackbarOptions() { }
 
     protected CommonSnackbarOptions(CommonSnackbarOptions options)
@@ -140,5 +148,6 @@ public abstract class CommonSnackbarOptions
         SuccessIcon = options.SuccessIcon;
         WarningIcon = options.WarningIcon;
         ErrorIcon = options.ErrorIcon;
+        HideIcon = options.HideIcon;
     }
 }

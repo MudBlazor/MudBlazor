@@ -459,13 +459,14 @@
     box-sizing: border-box;
     margin-top: 18.5px;
     margin-bottom: 0;
-    padding: 0px 18.5px 14px;
+    padding: 0px 14px 18.5px;
 
     &.mud-input-root:-webkit-autofill {
       border-radius: inherit;
     }
 
     &.mud-input-root-margin-dense {
+      margin-top: 0px;
       padding-top: 10.5px;
       padding-bottom: 10.5px;
       mask-image: linear-gradient(to bottom,

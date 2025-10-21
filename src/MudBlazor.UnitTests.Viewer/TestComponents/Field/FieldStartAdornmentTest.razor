@@ -1,0 +1,16 @@
+﻿<MudStack>
+    <MudField Label="What am I? (0)" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Info" />            
+    <MudField Label="What am I? (1)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Info" />
+    <MudField Label="What am I? (2)" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Info">
+        <MudText>Some Content Here</MudText>
+    </MudField> 
+    <MudField Label="What am I? (3)" Adornment="Adornment.Start" ShrinkLabel="true" AdornmentIcon="@Icons.Material.Outlined.Info" />
+    <MudField Label="What am I? (4)" Adornment="Adornment.End" ShrinkLabel="true" AdornmentIcon="@Icons.Material.Outlined.Info">
+        <MudText>Some Content Here</MudText>
+    </MudField>
+</MudStack>
+
+@code {
+    public static string __description__ = "Issue 7533, testing that the Start Adornment is not going two lines with the label";
+
+}

@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-class MudScrollManager { 
+class MudScrollManager {
     constructor() {
         this._lockCount = 0; // internal tracking for the # of overlay locks
     }
@@ -78,7 +78,36 @@ class MudScrollManager {
             // remove both lock classes to be sure it's unlocked
             element.classList.remove(lockclass);
             element.classList.remove(lockclass + "-no-padding");
-        }        
+        }
+    }
+
+    scrollToVirtualizedItem(containerId, itemIndex, itemHeight, targetItemId, behaviorString) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.warn(`ScrollManager.scrollToVirtualizedItem: Container with id '${containerId}' not found.`);
+            return;
+        }
+
+        // Calculate initial estimated scroll position
+        const isScrollable = container.scrollHeight > container.clientHeight || container.scrollWidth > container.clientWidth;
+        const actualContainer = (container === document.documentElement || container === document.body) && !isScrollable ? window : container;
+
+        requestAnimationFrame(() => {
+            // Apply the estimated scroll position.
+            if (actualContainer === window) {
+                actualContainer.scrollTo(0, itemIndex * itemHeight);
+            } else {
+                actualContainer.scrollTop = itemIndex * itemHeight;
+            }
+
+            requestAnimationFrame(() => {
+                const targetElement = document.getElementById(targetItemId);
+                if (targetElement) {
+                    let scrollBehavior = behaviorString === 'smooth' ? 'smooth' : 'auto';
+                    targetElement.scrollIntoView({ behavior: scrollBehavior, block: 'nearest', inline: 'nearest' });
+                }
+            });
+        });
     }
 };
 window.mudScrollManager = new MudScrollManager();

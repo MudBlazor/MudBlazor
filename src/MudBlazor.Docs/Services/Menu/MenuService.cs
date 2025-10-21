@@ -120,6 +120,7 @@ namespace MudBlazor.Docs.Services
             .AddNavGroup("Charts", false, new DocsComponents()
                 .AddItem("Donut Chart", typeof(Donut))
                 .AddItem("Line Chart", typeof(Line), typeof(Legend))
+                .AddItem("Sankey Chart", typeof(Sankey), typeof(Legend))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
                 .AddItem("Heat Map Chart", typeof(HeatMap))
@@ -143,7 +144,8 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
                 new DocsLink {Title = "Localization", Href = "features/localization"},
-                new DocsLink {Title = "Analyzers", Href = "features/analyzers"}
+                new DocsLink {Title = "Analyzers", Href = "features/analyzers"},
+                new DocsLink {Title = "Services", Href = "features/services"},
             }.OrderBy(x => x.Title);
 
         /// <summary>

@@ -69,14 +69,6 @@ namespace MudBlazor
         public bool CloseAfterNavigation { get; set; }
 
         /// <summary>
-        /// Hides the icon for the snackbar.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        public bool HideIcon { get; set; }
-
-        /// <summary>
         /// The custom icon to display for the snackbar.
         /// </summary>
         /// <remarks>

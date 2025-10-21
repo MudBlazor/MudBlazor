@@ -39,6 +39,13 @@ namespace MudBlazor
         public string? YAxisFormat { get; set; }
 
         /// <summary>
+        /// Custom formatting function for vertical axis values.
+        /// If set, this function will be used to convert Y-axis values to strings for display purposes.
+        /// If not provided, <see cref="YAxisFormat"/> will be used instead.
+        /// </summary>
+        public Func<double, string>? YAxisToStringFunc { get; set; }
+
+        /// <summary>
         /// Shows vertical axis lines.
         /// </summary>
         /// <remarks>
@@ -126,9 +133,11 @@ namespace MudBlazor
         public bool ShowToolTips { get; set; } = true;
 
         /// <summary>
-        /// Enables labels for every box in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to <c>true</c>
+        /// Enables labels for every box in a <see cref="ChartType.HeatMap"/> or every node in a <see cref="ChartType.Sankey"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         public bool ShowLabels { get; set; } = true;
 
         /// <summary>

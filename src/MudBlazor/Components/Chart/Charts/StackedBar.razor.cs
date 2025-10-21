@@ -41,7 +41,10 @@ namespace MudBlazor.Charts
         protected override void RebuildChart()
         {
             if (MudChartParent != null)
+            {
                 _series = MudChartParent.ChartSeries;
+                ChartOptions = MudChartParent.ChartOptions;
+            }
 
             // ensure the stacked bar width ratio is within the valid range
             AxisChartOptions.StackedBarWidthRatio = AxisChartOptions.StackedBarWidthRatio.EnsureRange(0.1, 1);
@@ -141,7 +144,7 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = ToS(lineValue, MudChartParent?.ChartOptions.YAxisFormat)
+                    Value = BuildYAxisValueString(lineValue)
                 };
                 _horizontalValues.Add(text);
             }

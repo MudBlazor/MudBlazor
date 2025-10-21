@@ -47,6 +47,8 @@
                     can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
                     <br><br>
                     To hide the filter icons unless a column is currently filtered, you can set the <CodeInline>ShowFilterIcons</CodeInline> property to false.
+                    <br><br>
+                    <strong>Selection Note:</strong> For multi-selection with custom objects, override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> methods in your data model or provide a custom <CodeInline>Comparer</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridAdvancedExample)" ShowCode="false" Block="true" FullWidth="true">

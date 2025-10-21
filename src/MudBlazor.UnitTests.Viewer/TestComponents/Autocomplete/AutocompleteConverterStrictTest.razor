@@ -1,0 +1,34 @@
+@using MudBlazor.Examples.Data
+<MudPopoverProvider />
+
+<MudAutocomplete @bind-Value="_value1" SearchFunc="@Search1" CoerceValue Strict="false" Converter="_elementConverter" PopoverClass="autocomplete-popover-class" />
+
+@code {
+    public static string __description__ = "Strict = false should work when a Converter is provided and CoerceValue is true";
+
+    private ConverterElement? _value1;
+    private PeriodicTableService _service = new PeriodicTableService();
+    
+    private Converter<ConverterElement?> _elementConverter = new Converter<ConverterElement?>
+    {
+        SetFunc = value => value?.ToString(), //convert to string
+        GetFunc = text => new ConverterElement { Name = text } //convert to element
+    };
+
+    private async Task<IEnumerable<ConverterElement?>> Search1(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(50, token);
+
+        value ??= string.Empty;
+        var elements = await _service.GetElements(value);
+        return elements.Select(x => new ConverterElement { Name = x.Name });
+    }
+    
+    public class ConverterElement
+    {
+        public string? Name { get; set; }
+        
+        public override string ToString() => Name ?? string.Empty;
+    }
+}

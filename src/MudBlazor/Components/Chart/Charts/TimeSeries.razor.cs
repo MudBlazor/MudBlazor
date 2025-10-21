@@ -110,7 +110,10 @@ namespace MudBlazor.Charts
         private void RebuildChart()
         {
             if (MudChartParent != null)
+            {
                 _series = MudChartParent.ChartSeries;
+                ChartOptions = MudChartParent.ChartOptions;
+            }
 
             SetBounds();
             ComputeMinAndMaxDateTimes();
@@ -271,7 +274,7 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
+                    Value = BuildYAxisValueString(startGridY)
                 };
                 _horizontalValues.Add(lineValue);
             }
