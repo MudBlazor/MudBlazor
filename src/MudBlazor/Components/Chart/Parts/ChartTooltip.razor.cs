@@ -110,6 +110,12 @@ public partial class ChartTooltip : ComponentBase
 
     private string? WidthCalculatedOnFontSize { get; set; }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (WidthCalculatedOnFontSize != null) await RecalculateBoxWidthAsync();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);

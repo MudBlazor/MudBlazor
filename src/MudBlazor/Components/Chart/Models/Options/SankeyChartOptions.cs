@@ -77,4 +77,13 @@ public class SankeyChartOptions : DefaultChartOptions
     /// Defaults to <c>var(--mud-palette-text-primary)</c>.
     /// </remarks>
     public string HighlightColor { get; set; } = "var(--mud-palette-text-primary)";
+
+    public static implicit operator SankeyChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
 }
