@@ -112,8 +112,8 @@
         if (item.Number == 0) // new item
         {
             bool cellMode = _elements.Remove(item); // for cell mode
-            var maxMaster = _elementMasterList.Max(x => x.Number);
-            var maxElements = _elements.Max(x => x.Number);
+            var maxMaster = _elementMasterList.Any() ? _elementMasterList.Max(x => x.Number) : 0;
+            var maxElements = _elements.Any() ? _elements.Max(x => x.Number) : 0;
             item.Number = Math.Max(maxMaster, maxElements) + 1;          
             if (cellMode)
             {
