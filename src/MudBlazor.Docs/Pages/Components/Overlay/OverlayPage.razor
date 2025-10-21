@@ -1,4 +1,5 @@
 ﻿@page "/components/overlay"
+@inject NavigationManager NavManager
 
 <style>
     ul.bullet-list {
@@ -21,7 +22,7 @@
                     <li>
                         The <CodeInline Tag="true">MudOverlay</CodeInline> does not cover high-priority elements like the <CodeInline Tag="true">MudAppBar</CodeInline> 
                         or <CodeInline Tag="true">MudDrawer</CodeInline> when used alone as they render above overlays due to 
-                        theme-level defaults (typically ≥ 1200).
+                        <MudLink Href="/customization/default-theme#mudtheme-zindex">theme-level defaults</MudLink>.
                     </li>
                     <li>
                         Unless excluded, the <CodeInline Tag="true">MudOverlay</CodeInline> is scaffolded globally via the <CodeInline Tag="true">MudPopoverProvider</CodeInline>, 
