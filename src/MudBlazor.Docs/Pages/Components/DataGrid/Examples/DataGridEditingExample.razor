@@ -11,7 +11,7 @@
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
         <MudButtonGroup Class="ma-0 pa-0" Color="Color.Success" Variant="Variant.Filled">
-            <MudButton OnClick="NewItem">
+            <MudButton OnClick="NewItemAsync">
                 Add New Item
             </MudButton>
         </MudButtonGroup>
@@ -81,7 +81,7 @@
         _elements = _elementMasterList.Take(4).ToList();
     }
 
-    private async Task NewItem(MouseEventArgs args)
+    private async Task NewItemAsync()
     {
         var elem = new Element();
         if (_isCellEditMode)
@@ -112,8 +112,9 @@
         if (item.Number == 0) // new item
         {
             bool cellMode = _elements.Remove(item); // for cell mode
-            int maxId = _elementMasterList.Union(_elements).Max(x => x.Number) + 1;            
-            item.Number = maxId;
+            var maxMaster = _elementMasterList.Max(x => x.Number);
+            var maxElements = _elements.Max(x => x.Number);
+            item.Number = Math.Max(maxMaster, maxElements) + 1;          
             if (cellMode)
             {
                 _elements.Insert(0, item);
