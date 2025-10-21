@@ -23,6 +23,12 @@ public partial class MudItem : MudComponentBase
             .AddClass($"mud-grid-item-lg-{lg}", lg != 0)
             .AddClass($"mud-grid-item-xl-{xl}", xl != 0)
             .AddClass($"mud-grid-item-xxl-{xxl}", xxl != 0)
+            .AddClass($"order-{Order}", Order != null)
+            .AddClass($"order-sm-{OrderSm}", OrderSm != null)
+            .AddClass($"order-md-{OrderMd}", OrderMd != null)
+            .AddClass($"order-lg-{OrderLg}", OrderLg != null)
+            .AddClass($"order-xl-{OrderXl}", OrderXl != null)
+            .AddClass($"order-xxl-{OrderXxl}", OrderXxl != null)
             .AddClass(Class)
             .Build();
 
@@ -70,6 +76,59 @@ public partial class MudItem : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Item.Behavior)]
     public int xxl { get; set; }
+
+    /// <summary>
+    /// Controls the visual order of the grid item for all breakpoints by default.
+    /// Lower values appear before higher ones.  
+    /// If multiple order parameters are set (e.g., <see cref="OrderMd"/>),  
+    /// the largest active breakpoint takes precedence.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? Order { get; set; }
+
+    /// <summary>
+    /// Controls the visual order of the grid item starting from the 'small' breakpoint (≥600px).
+    /// Overrides <see cref="Order"/> when the viewport width is within this range or larger.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? OrderSm { get; set; }
+
+    /// <summary>
+    /// Controls the visual order of the grid item starting from the 'medium' breakpoint (≥960px).
+    /// Overrides smaller breakpoint orders (<see cref="Order"/> and <see cref="OrderSm"/>)
+    /// when the viewport width is within this range or larger.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? OrderMd { get; set; }
+
+    /// <summary>
+    /// Controls the visual order of the grid item starting from the 'large' breakpoint (≥1280px).
+    /// Overrides <see cref="Order"/>, <see cref="OrderSm"/>, and <see cref="OrderMd"/>  
+    /// when this breakpoint is active.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? OrderLg { get; set; }
+
+    /// <summary>
+    /// Controls the visual order of the grid item starting from the 'extra large' breakpoint (≥1920px).
+    /// Overrides all smaller breakpoint order values when active.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? OrderXl { get; set; }
+
+    /// <summary>
+    /// Controls the visual order of the grid item starting from the 'extra extra large' breakpoint (≥2560px).
+    /// Overrides all smaller breakpoint order values when active.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? OrderXxl { get; set; }
+
 
     // ToDo false,auto,true on all sizes.
 

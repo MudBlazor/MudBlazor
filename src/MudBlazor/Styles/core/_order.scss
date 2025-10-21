@@ -1,0 +1,47 @@
+$orders: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12;
+
+@each $o in $orders {
+  .order-#{$o} {
+    order: $o !important;
+  }
+}
+
+@media (min-width: $breakpoint-sm) {
+  @each $o in $orders {
+    .order-sm-#{$o} {
+      order: $o !important;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-md) {
+  @each $o in $orders {
+    .order-md-#{$o} {
+      order: $o !important;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  @each $o in $orders {
+    .order-lg-#{$o} {
+      order: $o !important;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-xl) {
+  @each $o in $orders {
+    .order-xl-#{$o} {
+      order: $o !important;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-xxl) {
+  @each $o in $orders {
+    .order-xxl-#{$o} {
+      order: $o !important;
+    }
+  }
+}

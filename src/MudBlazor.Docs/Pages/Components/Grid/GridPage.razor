@@ -46,6 +46,23 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Responsive Grid">
+                <Description>
+                    Demonstrates how to build a responsive layout using the MudGrid and MudItem components.
+                    <br />
+                    You can use the Order, OrderSm, OrderMd, OrderLg, OrderXl, and OrderXxl parameters (max value up to 12) to control the visual order of grid items across different breakpoints.
+                    <br />
+                    This allows the same layout to adapt naturally between mobile and desktop views without duplicating markup.
+                    <br />
+                    If multiple order parameters are set, the largest active breakpoint takes precedence.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridResponsiveExample)" ShowCode="false">
+                <GridResponsiveExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Grid Builder">
                 <Description>Calculate your breakpoints with this tool. Move the slider to add and remove items.</Description>
             </SectionHeader>
