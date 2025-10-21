@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IScrollListenerFactory ScrollListenerFactory
+@implements IDisposable
+
+<div id="scroll_div" style="height: 100px; width: 100px; overflow-y: scroll; background-color: rgba(0,0,0,0.25);)">
+    <div style="height: 1000px;"></div>
+</div>
+<MudText>Scroll position: @_scrollTop px</MudText>
+
+@code {
+    private double _scrollTop;
+    private IScrollListener _scrollListener;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            _scrollListener = ScrollListenerFactory.Create(null);
+            _scrollListener.Selector = "#scroll_div";
+            _scrollListener.OnScroll += ScrollListenerOnScroll;
+        }
+    }
+
+    public void Dispose()
+    {
+        _scrollListener?.Dispose();
+    }
+
+    private void ScrollListenerOnScroll(object sender, ScrollEventArgs e)
+    {
+        _scrollTop = e.ScrollTop;
+        StateHasChanged();
+    }
+}

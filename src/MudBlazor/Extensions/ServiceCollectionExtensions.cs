@@ -377,6 +377,7 @@ namespace MudBlazor.Services
                     snackBarConfiguration.SuccessIcon = options.SnackbarConfiguration.SuccessIcon;
                     snackBarConfiguration.WarningIcon = options.SnackbarConfiguration.WarningIcon;
                     snackBarConfiguration.ErrorIcon = options.SnackbarConfiguration.ErrorIcon;
+                    snackBarConfiguration.HideIcon = options.SnackbarConfiguration.HideIcon;
                 })
                 .AddMudBlazorResizeListener(resizeOptions =>
                 {

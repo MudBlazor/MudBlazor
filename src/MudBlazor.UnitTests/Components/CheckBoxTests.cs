@@ -180,6 +180,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A required tristate checkbox must have a value of true or false, but not null.
+        /// </summary>
+        [Test]
+        public async Task TriStateCheckBoxFormTest()
+        {
+            var comp = Context.RenderComponent<CheckBoxFormTest2>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var checkbox = comp.FindComponent<MudCheckBox<bool?>>();
+
+            // initial state: null, form should be invalid without errors
+            form.IsValid.Should().BeFalse();
+            form.Errors.Length.Should().Be(0);
+
+            // after validating, the form should be invalid with errors
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeFalse();
+            checkbox.Instance.Error.Should().BeTrue();
+            checkbox.Instance.ErrorText.Should().Be("You must select a value");
+
+            // state: true, form should be valid
+            checkbox.Find("input").Change(true);
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeTrue();
+            checkbox.Instance.Error.Should().BeFalse();
+            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+
+            // state: false, form should be valid
+            checkbox.Find("input").Change(false);
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeTrue();
+            checkbox.Instance.Error.Should().BeFalse();
+            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+
+            // state: null, form should be invalid again
+            checkbox.Find("input").Change(null);
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeFalse();
+            checkbox.Instance.Error.Should().BeTrue();
+            checkbox.Instance.ErrorText.Should().Be("You must select a value");
+        }
+
+        /// <summary>
         /// Binding checkboxes two-way against an array of bools
         /// </summary>
         [Test]

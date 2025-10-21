@@ -669,6 +669,32 @@ DateRangePicker: Fix initializing DateRange with null values (#1997)
 - Verify changes in MudBlazor.UnitTests.Viewer when applicable
 - Format code according to .NET standards
 
+## PR Review Scope Guidelines
+
+### CRITICAL: Stay Within PR Scope
+**Only review code that is directly modified, added, or deleted in this PR. Do NOT suggest changes to existing code that was not touched in this PR unless it directly impacts the new changes.**
+
+#### What TO Review:
+- ✅ New files added in this PR
+- ✅ Modified lines in existing files (shown in diff)
+- ✅ Code that directly interacts with the new/modified code
+- ✅ Dependencies that are broken by the changes
+- ✅ Security issues introduced by the changes
+
+#### What NOT to Review:
+- ❌ Existing code architecture that wasn't modified
+- ❌ Formatting issues in untouched code
+- ❌ Refactoring opportunities in existing code
+- ❌ General code quality issues in unchanged files
+- ❌ Style violations in code that predates this PR
+
+### Exception Cases
+Only suggest changes to existing code when:
+1. **Breaking Changes**: The new code breaks existing functionality
+2. **Security Vulnerabilities**: New code introduces security risks to existing code
+3. **Direct Dependencies**: Existing code must be modified for the new code to work correctly
+4. **Data Integrity**: New code could corrupt existing data or state
+
 ---
 
 **Remember**: These standards exist to ensure code quality, security, and maintainability. When in doubt, err on the side of caution and ask for clarification. All contributors are expected to follow these guidelines to maintain the high quality of our codebase.

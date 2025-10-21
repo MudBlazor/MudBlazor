@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -15,6 +16,10 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
+        [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+        [Inject] private IScrollManager ScrollManager { get; set; } = null!;
+
+        private readonly string _tableId = Identifier.Create("mudtable_");
         private T? _selectedItem;
         private IEnumerable<T>? _items;
         private IEnumerable<T>? _preEditSort;
@@ -29,6 +34,12 @@ namespace MudBlazor
 
         [MemberNotNullWhen(true, nameof(ServerData))]
         internal override bool HasServerData => ServerData is not null;
+
+        /// <summary>
+        /// Determines if the table is currently operating with active virtualization.
+        /// Virtualization is considered active if Virtualize is true and a Height is specified.
+        /// </summary>
+        protected bool IsVirtualized => Virtualize && !string.IsNullOrEmpty(Height);
 
         protected string TableClassname =>
             new CssBuilder("mud-table-root")
@@ -809,6 +820,58 @@ namespace MudBlazor
             }
             catch { /*ignored*/ }
             _cancellationTokenSrc?.Dispose();
+        }
+
+        /// <summary>
+        /// Scrolls the table to bring the specified item into view.
+        /// </summary>
+        /// <param name="item">The item to scroll to.</param>
+        public async Task ScrollToItemAsync(T item)
+        {
+            var items = FilteredItems.ToList();
+            var itemIndex = items.IndexOf(item);
+
+            if (itemIndex >= 0)
+            {
+                if (IsVirtualized)
+                {
+                    var targetItemId = $"{_tableId}_row_{itemIndex}";
+                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, (double)ItemSize, targetItemId, ScrollBehavior.Smooth);
+                }
+                else
+                {
+                    var targetItemId = $"{_tableId}_row_{itemIndex}";
+                    await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Smooth);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Scrolls to the specified item and sets focus to a specific cell within its row.
+        /// </summary>
+        /// <param name="item">The item whose row should be focused.</param>
+        /// <param name="cellIndex">The index of the cell to focus within the row.</param>
+        public async Task FocusCellAsync(T item, int cellIndex)
+        {
+            var items = FilteredItems.ToList();
+            var itemIndex = items.IndexOf(item);
+
+            if (itemIndex >= 0)
+            {
+                var targetItemId = $"{_tableId}_row_{itemIndex}";
+
+                if (IsVirtualized)
+                {
+                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, (double)ItemSize, targetItemId, ScrollBehavior.Auto);
+                }
+                else
+                {
+                    await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Auto);
+                }
+
+                await JSRuntime.InvokeVoidAsync("mudTableCell.focusCell", targetItemId, cellIndex);
+                await JSRuntime.InvokeVoidAsync("mudTableCell.selectCell", targetItemId, cellIndex);
+            }
         }
     }
 }

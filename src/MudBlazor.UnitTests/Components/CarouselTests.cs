@@ -292,5 +292,30 @@ namespace MudBlazor.UnitTests.Components
             carousel.Items.Count.Should().Be(5);
         }
 
+        /// <summary>
+        /// Testing Bullet count after adding items
+        /// </summary>
+        [Test]
+        public async Task CarouselTest_AddBullets()
+        {
+            var comp = Context.RenderComponent<MudCarousel<object>>();
+
+            // check for the default buttons
+            comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
+
+            // adding one page
+            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
+
+            // check the new button amount
+            comp.FindAll("button.mud-icon-button").Count.Should().Be(3); //left + right + 1 item
+
+            // adding 3 more pages
+            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
+
+            // check the final button amount
+            comp.FindAll("button.mud-icon-button").Count.Should().Be(6); //left + right + 4 items
+        }
     }
 }
