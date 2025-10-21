@@ -548,13 +548,14 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
-                // needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
-                Open = false;
+                // #1 needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
+                // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
+                _open = false;
 
                 await SetValueAsync(value);
 
                 // needs to be open to run the rest of the code
-                Open = true;
+                _open = true;
 
                 if (_items != null)
                     _selectedListItemIndex = Array.IndexOf(_items, value);

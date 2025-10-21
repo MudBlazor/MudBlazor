@@ -2197,5 +2197,41 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.Open.Should().Be(openOnFocus, $"OpenOnFocus should set Open to {openOnFocus} after input Focus"));
         }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_OpenMenuAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            comp.Instance.OpenedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_CloseMenuAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+            comp.Instance.ClosedCount.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_OpenClose()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_SelectOptionAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.SelectOptionAsync("Alabama"));
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(1);
+        }
     }
 }
