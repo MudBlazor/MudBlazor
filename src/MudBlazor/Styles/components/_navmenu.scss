@@ -157,7 +157,11 @@
     }
   }
 
-  &:focus:not(.mud-nav-link-disabled) {
+  &:focus:not(:focus-visible) {
+    background-color: transparent !important;
+  }
+
+  &:focus-visible:not(.mud-nav-link-disabled) {
     background-color: var(--mud-palette-action-default-hover);
   }
 
