@@ -30,21 +30,32 @@
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
-        <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
+        <TemplateColumn Hidden="@_readOnly" CellClass="d-flex justify-between">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    @if (!_isCellEditMode && !_editTriggerRowClick)
+                    {
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    }
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
             </CellTemplate>
+            <EditTemplate>
+                    @if (!_isCellEditMode && !_editTriggerRowClick)
+                    {
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    }
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
+            </EditTemplate>
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Value="_readOnly" Color="Color.Primary">Read Only</MudSwitch>
-    <div class="d-flex justify-start align-center">
+    <div class="d-flex justify-start align-center ml-4">
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">Form</p>
         <MudSwitch @bind-Value="_isCellEditMode" Color="Color.Primary">Cell</MudSwitch>
     </div>
-    <div class="d-flex justify-start align-center">
+    <div class="d-flex justify-start align-center ml-4">
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">Manual</p>
         <MudSwitch @bind-Value="_editTriggerRowClick" Color="Color.Primary">On Row Click</MudSwitch>
     </div>
@@ -92,6 +103,11 @@
         {
             await _elementGrid.SetEditingItemAsync(elem);
         }        
+    }
+
+    private void DeleteItem(Element item)
+    {
+        _elements.Remove(item);
     }
 
     // events
