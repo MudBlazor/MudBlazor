@@ -19,4 +19,7 @@ namespace MudBlazor.Charts;
 /// <param name="Name">The name of this node.</param>
 /// <param name="Column">The column in which to display this node.</param>
 /// <param name="Color">The color of this node. Picks colors from <see cref="IChartOptions.ChartPalette"/> if set to <c>null</c>.</param>
-internal record SankeyNode(string Name, int Column, MudColor? Color = null);
+public record SankeyNode(string Name, int Column, MudColor? Color = null)
+{
+    public MudColor? Color { get; set; } = Color;
+}

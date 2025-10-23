@@ -6,6 +6,11 @@ namespace MudBlazor;
 public class SankeyChartOptions : DefaultChartOptions
 {
     /// <summary>
+    /// A collection of nodes to be rendered in the chart, allows overriding default node definitions.
+    /// </summary>
+    public IReadOnlyCollection<SankeyNode> NodeOverrides { get; set; } = [];
+
+    /// <summary>
     /// The width of nodes in pixels.
     /// </summary>
     /// <remarks>

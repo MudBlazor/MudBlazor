@@ -108,23 +108,26 @@ public partial class ChartTooltip : ComponentBase
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BBox))]
     public ChartTooltip() { }
 
-    private string? WidthCalculatedOnFontSize { get; set; }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-        if (WidthCalculatedOnFontSize != null) await RecalculateBoxWidthAsync();
-    }
+    private string? _previousFontSize;
+    private string? _previousTitle;
+    private string? _previousSubtitle;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if (FontSize != WidthCalculatedOnFontSize) await RecalculateBoxWidthAsync();
+
+        if (firstRender || FontSize != _previousFontSize || Title != _previousTitle || Subtitle != _previousSubtitle)
+        {
+            await RecalculateBoxWidthAsync();
+        }
     }
 
     private async Task RecalculateBoxWidthAsync()
     {
-        WidthCalculatedOnFontSize = FontSize;
+        _previousFontSize = FontSize;
+        _previousTitle = Title;
+        _previousSubtitle = Subtitle;
+
         var textBBox = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _text);
         var textWidth = textBBox?.Width ?? 0;
         var textHeight = textBBox?.Height ?? 0;

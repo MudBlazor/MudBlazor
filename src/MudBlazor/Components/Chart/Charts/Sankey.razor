@@ -66,7 +66,7 @@
     @foreach (var edge in EdgePaths.Where(edge => ChartOptions?.ShowEdgeLabels is true || edge.Name == ActiveEdge))
     {
         <ChartTooltip Title="@edge.Name"
-                      Color="var(--mud-palette-surface)"
+                      Color="@NodeRects[edge.Source.Name].Color"
                       X="@edge.CenterX"
                       Y="@edge.CenterY"
                       ShowTriangle="false"

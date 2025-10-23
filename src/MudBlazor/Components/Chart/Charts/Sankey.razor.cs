@@ -1,8 +1,10 @@
 ﻿using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 #nullable enable
+
 namespace MudBlazor.Charts
 {
     /// <summary>
@@ -21,13 +23,29 @@ namespace MudBlazor.Charts
         private const double BoundHeight = 350;
         private const double HorizontalPadding = 10;
 
-        private HashSet<SankeyNode> Nodes { get; set; } = [];
-        private HashSet<SankeyEdge<T>> Edges { get; set; } = [];
+        /// <summary>
+        /// The collection of nodes that represent the points within the Sankey diagram. 
+        /// Each node typically corresponds to a source or target 
+        /// </summary>
+        /// <remarks>
+        /// Nodes define the visible anchors of the Sankey flow. Each node should have a unique 
+        /// identifier to ensure correct edge linkage and layout calculation.
+        /// </remarks>
+        public HashSet<SankeyNode> Nodes { get; set; } = [];
+
+        /// <summary>
+        /// The collection of edges that represent the flows between nodes in the Sankey diagram. 
+        /// Each edge defines a source node, a target node, and an associated value (or weight) that determines the flow thickness.
+        /// </summary>
+        public HashSet<SankeyEdge<T>> Edges { get; set; } = [];
+
         private Dictionary<string, NodeRect> NodeRects { get; } = [];
         private Dictionary<string, double> NodeValues { get; set; } = [];
         private List<EdgePath> EdgePaths { get; } = [];
         private string? ActiveNode { get; set; }
         private string? ActiveEdge { get; set; }
+
+        private Dictionary<string, SankeyNode> _nodeLookup = [];
 
         /// <summary>
         /// The chart, if any, containing this component.
@@ -41,6 +59,20 @@ namespace MudBlazor.Charts
 
             Edges = EnsureUniqueEdges();
             Nodes = GenerateNodesFromEdges();
+
+            if (ChartOptions?.NodeOverrides is { Count: > 0 } overrides)
+            {
+                _nodeLookup = overrides.ToDictionary(d => d.Name);
+
+                Nodes = [.. Nodes.Select(n =>
+                {
+                    if (_nodeLookup.TryGetValue(n.Name, out var definition))
+                    {
+                        return n with { Column = definition.Column, Color = definition.Color ?? n.Color };
+                    }
+                    return n;
+                })];
+            }
 
             // Assert input data
             var nodeGroups = Nodes.GroupBy(e => e.Name).ToList();
@@ -264,12 +296,12 @@ namespace MudBlazor.Charts
 
         private string GetNextHexColorForNodeRect(SankeyNode node)
         {
-            //if (node.Color is not null)
-            //{
-            //    return node.Color.ToString(MudColorOutputFormats.HexA);
-            //}
+            if (_nodeLookup.TryGetValue(node.Name, out var definition) && definition.Color is not null)
+            {
+                return definition.Color.ToString(MudColorOutputFormats.HexA);
+            }
 
-            if (MudChartParent?.ChartOptions!.ChartPalette is { Length: > 0 } palette)
+            if (ChartOptions!.ChartPalette is { Length: > 0 } palette)
             {
                 return palette[NodeRects.Count % palette.Length];
             }
@@ -328,9 +360,9 @@ namespace MudBlazor.Charts
             var ty1 = targetY + targetHeight;
 
             // Control points for cubic Bezier curve
-            const double curvature = 0.5;
-            var cx0 = sourceX + (targetX - sourceX) * curvature;
-            var cx1 = targetX - (targetX - sourceX) * curvature;
+            const double Curvature = 0.5;
+            var cx0 = sourceX + (targetX - sourceX) * Curvature;
+            var cx1 = targetX - (targetX - sourceX) * Curvature;
 
             return $"M{ToS(sourceX)},{ToS(sy0)} " + // Top-left of source
                    $"C{ToS(cx0)},{ToS(sy0)} " + // Control point 1
@@ -352,9 +384,11 @@ namespace MudBlazor.Charts
             ActiveNode = null;
         }
 
-        private void OnNodeClick(MouseEventArgs _, NodeRect rect)
+        private async Task OnNodeClick(MouseEventArgs _, NodeRect rect)
         {
-            SelectedIndex = Nodes.ToList().IndexOf(Nodes.First(n => n.Name == rect.Name));
+            var index = Nodes.ToList().IndexOf(Nodes.First(n => n.Name == rect.Name));
+
+            await SetSelectedIndexAsync(index);
         }
 
         private void OnEdgeMouseOver(MouseEventArgs _, EdgePath edge)

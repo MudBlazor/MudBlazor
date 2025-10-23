@@ -25,6 +25,7 @@ namespace MudBlazor.UnitTests.Charts
             Regex.Matches(markup, "<path").Count.Should().Be(edges.Count);
             Regex.Matches(markup, "stop-color=\"#9E9E9E\"").Count.Should().Be(0); // Ensure the parent color palette is used
             sankey.Markup.Should().Contain("<path d=\"M19.9,227.3333 C167.5,227.3333 167.5,245.3333 315.1,245.3333 L315.1,350 C167.5,350 167.5,332 19.9,332 Z\" fill=\"url(#gradient_");
+            sankey.Markup.Should().Contain(")\" opacity=\"0.5\" filter=\"\"");
 
             // Nodes
             Regex.Matches(markup, "<rect").Count.Should().Be(12);
@@ -34,7 +35,7 @@ namespace MudBlazor.UnitTests.Charts
             // Tooltips
             Regex.Matches(markup, "<g class=\"svg-tooltip\"").Count.Should().Be(6);
             sankey.Markup.Should().Contain("<tspan x=\"310\" dy=\"-.3em\">Chihuahua (10)</tspan>");
-        }
+            }
 
         [Test]
         public void EmptyData()
@@ -73,7 +74,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         private static List<SankeyEdge<double>> GetEdges()
-        {
+            {
             var edges = new List<SankeyEdge<double>>
             {
                 new("Dogs", "Dachshund", 10),

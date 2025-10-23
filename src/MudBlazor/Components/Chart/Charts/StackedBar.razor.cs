@@ -254,6 +254,10 @@ namespace MudBlazor.Charts
                         continue;
 
                     var dataValue = series.Visible ? series.Data[dataIndex].Y : T.Zero;
+
+                    if (dataValue == T.Zero && !ChartOptions!.ShowZeroValues)
+                        continue;
+
                     var segmentHeight = (dataValue / T.CreateSaturating(gridYUnits)) * T.CreateSaturating(verticalSpace);
                     var isNegative = dataValue < T.Zero;
 
@@ -263,7 +267,7 @@ namespace MudBlazor.Charts
                     _bars.Add(new SvgPath
                     {
                         Index = seriesIndex,
-                        Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(yEnd - BarOverlapAmountFix)}",
+                        Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(isNegative ? yEnd + BarOverlapAmountFix : yEnd - BarOverlapAmountFix)}",
                         LabelXValue = ChartLabels.Length > dataIndex ? ChartLabels[dataIndex] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat, null),
                         LabelX = x,
