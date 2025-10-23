@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Charts
             // Tooltips
             Regex.Matches(markup, "<g class=\"svg-tooltip\"").Count.Should().Be(6);
             sankey.Markup.Should().Contain("<tspan x=\"310\" dy=\"-.3em\">Chihuahua (10)</tspan>");
-            }
+        }
 
         [Test]
         public void EmptyData()
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         private static List<SankeyEdge<double>> GetEdges()
-            {
+        {
             var edges = new List<SankeyEdge<double>>
             {
                 new("Dogs", "Dachshund", 10),
