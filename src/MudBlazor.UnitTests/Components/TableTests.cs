@@ -1,4 +1,4 @@
-#pragma warning disable BL0005 // Set parameter outside component
+﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using AngleSharp.Dom;
 using Bunit;
@@ -3056,3 +3056,4 @@ namespace MudBlazor.UnitTests.Components
 
     }
 }
+
