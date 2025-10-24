@@ -169,13 +169,14 @@ namespace MudBlazor
                 _selectedDate = _selectedDate.HasValue ?
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(
-                        Culture.Calendar.GetYear(_selectedDate.Value),
+                        year,
                         Culture.Calendar.GetMonth(_selectedDate.Value),
                         Culture.Calendar.GetDayOfMonth(_selectedDate.Value),
                         Culture.Calendar.GetHour(_selectedDate.Value),
                         Culture.Calendar.GetMinute(_selectedDate.Value),
                         Culture.Calendar.GetSecond(_selectedDate.Value),
                         (int)Culture.Calendar.GetMilliseconds(_selectedDate.Value),
+                        Culture.Calendar,
                         _selectedDate.Value.Kind)
                     //We can assume month and day here, as they were not set yet
                     : new DateTime(year, 1, 1, Culture.Calendar);
@@ -201,11 +202,11 @@ namespace MudBlazor
             if (_selectedDate == null)
                 return;
 
-            if (FixYear.HasValue || 
+            if (FixYear.HasValue ||
                 FixMonth.HasValue || FixDay.HasValue)
                 _selectedDate = new DateTime(FixYear ?? Culture.Calendar.GetYear(_selectedDate.Value),
                     FixMonth ?? Culture.Calendar.GetMonth(_selectedDate.Value),
-                    FixDay ?? Culture.Calendar.GetYear(_selectedDate.Value),
+                    FixDay ?? Culture.Calendar.GetDayOfMonth(_selectedDate.Value),
                     Culture.Calendar.GetHour(_selectedDate.Value),
                     Culture.Calendar.GetMinute(_selectedDate.Value),
                     Culture.Calendar.GetSecond(_selectedDate.Value),

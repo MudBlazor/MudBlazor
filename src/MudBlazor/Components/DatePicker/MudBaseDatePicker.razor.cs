@@ -309,7 +309,7 @@ namespace MudBlazor
                 var a = Converter.Get(Text);
                 if (a.HasValue)
                 {
-                    a = new DateTime(Culture.Calendar.GetYear(a.Value), Culture.Calendar.GetMonth(a.Value), 1);
+                    a = new DateTime(Culture.Calendar.GetYear(a.Value), Culture.Calendar.GetMonth(a.Value), 1, Culture.Calendar);
                     PickerMonth = a;
                 }
             }
@@ -342,8 +342,8 @@ namespace MudBlazor
                 return Culture.Calendar.MinSupportedDateTime;
             }
 
-            if (_picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 9999 
-                && Culture.Calendar.GetMonth(_picker_month.Value) == Culture.Calendar.GetMonthsInYear(Culture.Calendar.GetYear(_picker_month.Value)) 
+            if (_picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 9999
+                && Culture.Calendar.GetMonth(_picker_month.Value) == Culture.Calendar.GetMonthsInYear(Culture.Calendar.GetYear(_picker_month.Value))
                 && month >= 1)
             {
                 return Culture.Calendar.MaxSupportedDateTime;
@@ -719,7 +719,7 @@ namespace MudBlazor
             var month = FixMonth ?? (year == Culture.Calendar.GetYear(today) ? Culture.Calendar.GetMonth(today) : 1);
             var day = FixDay ?? 1;
 
-            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", Culture, DateTimeStyles.None, out var date))
             {
                 HighlightedDate = date;
             }
