@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -46,6 +46,17 @@ namespace MudBlazor
         protected string FootClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass)
             .Build();
+
+        /// <summary>
+        /// The aria-label for the HTML table element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to null. When set, renders as the table's <c>aria-label</c> attribute for accessibility.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public string? AriaLabel { get; set; }
+
 
         /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.

@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudTableBase
 @using MudBlazor.Utilities
 @typeparam T
@@ -29,7 +29,7 @@
             </div>
         }
         <div id="@_tableId" class="mud-table-container @TableContainerClass" style="@TableContainerStyle @(GetHorizontalScrollbarStyle())">
-            <table class="@TableClassname">
+            <table class="@TableClassname" aria-label="@AriaLabel">
                 @if (ColGroup != null)
                 {
                     <colgroup>
