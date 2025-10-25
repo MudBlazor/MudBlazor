@@ -291,9 +291,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
-            
+
             select.Instance.Value.Should().Be(null);
-            select.Instance.Text.Should().Be("None");
+            select.Find("div.mud-input-slot").TextContent.Should().Be("None");
             select.Markup.Should().Contain("mud-shrink");
         }
 
