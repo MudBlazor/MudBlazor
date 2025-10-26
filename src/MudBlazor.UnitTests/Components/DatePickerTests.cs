@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>(parameters => parameters
                 .Add(c => c.InputId, "birthday"));
-            
+
             comp.Find("input[id='birthday']").Should().NotBeNull();
         }
 
