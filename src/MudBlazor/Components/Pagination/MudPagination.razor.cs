@@ -161,7 +161,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color? SelectedPageButtonColor { get; set; };
+        public Color SelectedPageButtonColor { get; set; } = Color.Primary;
 
         /// <summary>
         /// The color of the next page button.
