@@ -319,6 +319,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Test that RegisterShadowItem handles null items gracefully.
+        /// </summary>
+        [Test]
+        public void SelectRegisterShadowItemNullTest()
+        {
+            var comp = Context.RenderComponent<SelectNullValueTest>();
+            var select = comp.FindComponent<MudSelect<int?>>();
+
+            select.Instance.RegisterShadowItem(null);
+
+            select.Instance.Value.Should().Be(null);
+        }
+
+        /// <summary>
+        /// Test that UnregisterShadowItem handles null items gracefully.
+        /// </summary>
+        [Test]
+        public void SelectUnregisterShadowItemNullTest()
+        {
+            var comp = Context.RenderComponent<SelectNullValueTest>();
+            var select = comp.FindComponent<MudSelect<int?>>();
+
+            select.Instance.UnregisterShadowItem(null);
+
+            select.Instance.Value.Should().Be(null);
+        }
+
+        /// <summary>
         /// The items have no render fragments, so instead of RF the select must display the converted string value
         /// </summary>
         [Test]
