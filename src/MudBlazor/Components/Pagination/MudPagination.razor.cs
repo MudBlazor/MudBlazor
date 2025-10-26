@@ -131,7 +131,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color FirstButtonColor { get; set; } = Color.Default;
+        public Color FirstButtonColor { get; set; } = Color.Secondary;
 
         /// <summary>
         /// The color of the previous page button.
@@ -141,7 +141,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color PreviousButtonColor { get; set; } = Color.Default;
+        public Color PreviousButtonColor { get; set; } = Color.Secondary;
 
         /// <summary>
         /// The color of the page button.
@@ -151,7 +151,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color PageButtonColor { get; set; } = Color.Default;
+        public Color PageButtonColor { get; set; } = Color.Secondary;
 
         /// <summary>
         /// The color of the selected page button.
@@ -171,7 +171,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color NextButtonColor { get; set; } = Color.Default;
+        public Color NextButtonColor { get; set; } = Color.Secondary;
 
         /// <summary>
         /// The color of the last page button.
@@ -181,7 +181,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color LastButtonColor { get; set; } = Color.Default;
+        public Color LastButtonColor { get; set; } = Color.Secondary;
 
         /// <summary>
         /// Shows rectangular-shaped page buttons.
