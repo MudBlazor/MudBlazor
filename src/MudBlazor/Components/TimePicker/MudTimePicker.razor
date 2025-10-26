@@ -1,7 +1,6 @@
-﻿@using MudBlazor.Internal
-@using MudBlazor.Resources
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudPicker<TimeSpan?>
+
 @inject InternalMudLocalizer Localizer
 
 @Render
@@ -11,16 +10,38 @@
     protected override RenderFragment PickerContent => 
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerToolbar Class="@ToolbarClassname" Style="@Style" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
-            <div class="mud-timepicker-hourminute mud-ltr">
-                @if (TimeEditMode == TimeEditMode.Normal)
+            <div class="mud-timepicker-hourminutesecond mud-ltr">
+                @if (HoursVisible)
                 {
-                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@HoursButtonClassname" OnClick="@OnHourClickAsync">@GetHourString()</MudButton>
-                    <MudText Typo="@Typo.h2" Class="mud-timepicker-separator">:</MudText>
+                    if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutesSeconds or TimeEditMode.OnlyHours)
+                    {
+                        <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@HoursButtonClassname" OnClick="@OnHourClickAsync">@GetHourString()</MudButton>
+                    }
+                    else
+                    {
+                        <MudText Typo="ToolbarTextTypo" Class="@MudTimePickerToolbarTextClassName">@GetHourString()</MudText>
+                    }
+                    <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-separator">:</MudText>
+                }
+                @if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutesSeconds or TimeEditMode.MinutesSeconds or TimeEditMode.OnlyMinutes)
+                {
                     <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@MinuteButtonClassname" OnClick="@OnMinutesClick">@GetMinuteString()</MudButton>
                 }
                 else
                 {
-                    <MudText Typo="Typo.h2" Class="mud-timepicker-separator">@GetHourString():@GetMinuteString()</MudText>
+                    <MudText Typo="ToolbarTextTypo" Class="@MudTimePickerToolbarTextClassName">@GetMinuteString()</MudText>
+                }
+                @if (SecondsVisible)
+                {
+                    <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-separator">:</MudText>
+                    if (TimeEditMode is TimeEditMode.HoursMinutesSeconds or TimeEditMode.MinutesSeconds or TimeEditMode.OnlySeconds)
+                    {
+                        <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@SecondButtonClassname" OnClick="@OnSecondsClick">@GetSecondString()</MudButton>
+                    }
+                    else
+                    {
+                        <MudText Typo="ToolbarTextTypo" Class="@MudTimePickerToolbarTextClassName">@GetSecondString()</MudText>
+                    }
                 }
             </div>
             @if (AmPm)
@@ -93,6 +114,20 @@
                             {
                                 var _i = i;
                                 <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" data-stick-value="@_i"></div>
+                            }
+                        </div>
+                        <div class="@SecondDialClassname">   
+                            @*Seconds from 05 to 60 (00) - step 5*@                     
+                            @for (int i = 0; i < 12; ++i)
+                            {
+                                var _i = i;
+                                var angle = (6 - _i) * 30;
+                                <MudText Class="@GetNumberColor(_i * 5)" Style="@GetTransform(angle, 109, 0, 5)">@((_i * 5).ToString("D2"))</MudText>
+                            }
+                            @for (int i = 0; i < 60; ++i)
+                            {
+                                var _i = i;
+                                <div class="mud-picker-stick mud-second" style="@($"transform: rotateZ({_i * 6}deg);")" data-stick-value="@_i"></div>
                             }
                         </div>
                     </div>

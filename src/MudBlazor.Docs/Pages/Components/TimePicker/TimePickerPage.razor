@@ -66,8 +66,17 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Seconds">
+                <Description>You can edit the seconds part of a TimeSpan by setting the <CodeInline>SecondsVisible</CodeInline> to true. Make sure to use a <CodeInline>TimeEditMode</CodeInline> which allows for editing seconds. If you just want minutes and seconds then you can set <CodeInline>HoursVisible</CodeInline> to false</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerHoursVisibleSecondsVisibleExample)" ShowCode="false">
+                <TimePickerHoursVisibleSecondsVisibleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Open to Minutes">
-                <Description>By default, MudTimePicker opens the hours editor and then switches into the minutes editor. By setting <CodeInline>OpenTo="OpenTo.Minutes"</CodeInline>, it will open the minutes editor instead.</Description>
+                <Description>By default, MudTimePicker opens the hours editor and then switches into the minutes editor. By setting <CodeInline>OpenTo="OpenTo.Minutes"</CodeInline>, it will open the minutes editor instead. <CodeInline>OpenTo="OpenTo.Seconds"</CodeInline> will do similar but for seconds.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TimePickerViewsExample)" ShowCode="false">
                 <TimePickerViewsExample />
@@ -76,7 +85,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Edit Mode">
-                <Description>By setting the <CodeInline>TimeEditMode</CodeInline>, you can restrict editing of the time value to allow only changing hours or minutes.</Description>
+                <Description>By setting the <CodeInline>TimeEditMode</CodeInline>, you can restrict editing of the time value to allow only changing hours, minutes or seconds. The Default is <CodeInline>TimeEditMode.Normal</CodeInline> which allows only hours and minutes to be editable.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TimePickerTimeEditModeExample)" ShowCode="false">
                 <TimePickerTimeEditModeExample />
@@ -103,7 +112,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="MinuteSelectionStep">
-                <Description>You can change the granularity of selectable times with the <CodeInline>MinuteSelectionStep</CodeInline> parameter.</Description>
+                <Description>You can change the granularity of selectable times with the <CodeInline>MinuteSelectionStep</CodeInline> parameter. The <CodeInline>SecondSelectionStep</CodeInline> similarly controls the seconds steps. </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerStepExample)" ShowCode="false">
                 <TimePickerStepExample />

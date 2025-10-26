@@ -17,10 +17,10 @@ internal static class TimeSpanExtensions
 
         if (!ms)
         {
-            return $"{self.Hours:D2}:{self.Minutes:D2}-{self.Seconds:D2}";
+            return $"{self.Hours:D2}:{self.Minutes:D2}:{self.Seconds:D2}";
         }
 
-        return $"{self.Hours:D2}:{self.Minutes:D2}-{self.Seconds:D2},{self.Milliseconds}";
+        return $"{self.Hours:D2}:{self.Minutes:D2}:{self.Seconds:D2}.{self.Milliseconds}";
     }
 
     public static int ToAmPmHour(this TimeSpan time)

@@ -3,7 +3,10 @@
 <MudTimePicker @ref="_picker"
 			   @bind-Time="@Time"
 			   OpenTo="@OpenTo"
-			   AmPm="AmPm"
+               AmPm="AmPm"
+               HoursVisible="HoursVisible"
+               SecondsVisible="SecondsVisible"
+               PickerVariant="PickerVariant"
 			   TimeEditMode="TimeEditMode"
 			   MinuteSelectionStep="MinuteSelectionStep" />
 
@@ -11,7 +14,7 @@
 	private MudTimePicker _picker = null!;
 
 	[Parameter]
-    public OpenTo OpenTo { get; set; } = OpenTo.Hours;
+    public OpenTo? OpenTo { get; set; }
 
 	[Parameter]
     public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
@@ -22,8 +25,16 @@
 	[Parameter]
     public bool AmPm { get; set; }
 
+    [Parameter]
+    public bool HoursVisible { get; set; } = true;
+
+    [Parameter]
+    public bool SecondsVisible { get; set; } = true;
+
 	[Parameter]
     public int MinuteSelectionStep { get; set; } = 1;
+
+    [Parameter] public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
 
     public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
 
