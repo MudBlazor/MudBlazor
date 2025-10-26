@@ -112,6 +112,56 @@ public partial class MudStepper : MudComponentBase
     public Color SkippedStepColor { get; set; } = Color.Default;
 
     /// <summary>
+    /// The color of reset button color.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public Color ResetButtonColor { get; set; } = Color.Default;
+
+    /// <summary>
+    /// The color of previous button color.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public Color PreviousButtonColor { get; set; } = Color.Default;
+
+    /// <summary>
+    /// The color of skip button color.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public Color SkipButtonColor { get; set; } = Color.Default;
+
+    /// <summary>
+    /// The color of complete button color.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public Color CompleteButtonColor { get; set; } = Color.Primary;
+
+    /// <summary>
+    /// The color of next button color.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public Color NextButtonColor { get; set; } = Color.Primary;
+
+    /// <summary>
     /// The icon shown for completed steps.
     /// </summary>
     /// <remarks>

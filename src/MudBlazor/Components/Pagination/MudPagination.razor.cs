@@ -124,6 +124,66 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
+        /// The color of the first page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public Color FirstButtonColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The color of the previous page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public Color PreviousButtonColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The color of the page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public Color PageButtonColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The color of the selected page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public Color SelectedPageButtonColor { get; set; } = Color.Primary;
+
+        /// <summary>
+        /// The color of the next page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public Color NextButtonColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The color of the last page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public Color LastButtonColor { get; set; } = Color.Default;
+
+        /// <summary>
         /// Shows rectangular-shaped page buttons.
         /// </summary>
         /// <remarks>
