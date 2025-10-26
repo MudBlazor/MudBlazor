@@ -127,7 +127,7 @@ namespace MudBlazor
         /// The color of the first page button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default" />.
+        /// Defaults to <see cref="Color.Secondary" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
@@ -137,7 +137,7 @@ namespace MudBlazor
         /// The color of the previous page button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default" />.
+        /// Defaults to <see cref="Color.Secondary" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
@@ -147,7 +147,7 @@ namespace MudBlazor
         /// The color of the page button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default" />.
+        /// Defaults to <see cref="Color.Secondary" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
@@ -157,17 +157,17 @@ namespace MudBlazor
         /// The color of the selected page button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default" />.
+        /// Defaults to <see cref="Color.Primary" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color SelectedPageButtonColor { get; set; } = Color.Primary;
+        public Color? SelectedPageButtonColor { get; set; };
 
         /// <summary>
         /// The color of the next page button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default" />.
+        /// Defaults to <see cref="Color.Secondary" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
