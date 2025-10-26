@@ -1226,8 +1226,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DateRangePickerInputId()
         {
-            var comp = Context.RenderComponent<DateRangePickerInputIdTest>();
-            comp.Find("input[id='event-range']").Should().NotBeNull();
+            var comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>(parameters => parameters
+                .Add(c => c.InputId, "event-range"));
+
+            comp.Find("input[id='event-range-start']").Should().NotBeNull();
+            comp.Find("input[id='event-range-end']").Should().NotBeNull();
         }
     }
 

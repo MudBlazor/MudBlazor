@@ -265,6 +265,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// When set takes precedence over any internally generated IDs.
+        /// When used with a range picker, the ID is suffixed with <c>-start</c> for the start input and <c>-end</c> for the end input.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]

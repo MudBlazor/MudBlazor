@@ -354,7 +354,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerInputId()
         {
-            var comp = Context.RenderComponent<TimePickerInputIdTest>();
+            var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters => parameters
+                .Add(c => c.InputId, "start-time"));
+
             comp.Find("input[id='start-time']").Should().NotBeNull();
         }
     }

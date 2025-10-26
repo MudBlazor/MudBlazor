@@ -1409,7 +1409,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ColorPickerInputId()
         {
-            var comp = Context.RenderComponent<ColorPickerInputIdTest>();
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(c => c.Variant, PickerVariant.Inline)
+                .Add(c => c.InputId, "primary-color"));
+
             comp.Find("input[id='primary-color']").Should().NotBeNull();
         }
     }
