@@ -1222,6 +1222,13 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").IsFocused.Should().BeFalse();
         }
+
+        [Test]
+        public void DateRangePickerInputId()
+        {
+            var comp = Context.RenderComponent<DateRangePickerInputIdTest>();
+            comp.Find("input[id='event-range']").Should().NotBeNull();
+        }
     }
 
     public static class DatePickerRenderedFragmentExtensions

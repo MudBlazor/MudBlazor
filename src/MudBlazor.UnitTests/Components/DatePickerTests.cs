@@ -57,6 +57,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DatePickerInputId()
+        {
+            var comp = Context.RenderComponent<DatePickerInputIdTest>();
+            comp.Find("input[id='birthday']").Should().NotBeNull();
+        }
+
+        [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void DatePicker_Render_Performance()
         {

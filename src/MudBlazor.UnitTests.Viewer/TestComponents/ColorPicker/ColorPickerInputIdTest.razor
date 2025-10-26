@@ -1,0 +1,12 @@
+@using MudBlazor.Utilities
+
+<div>
+    <label for="primary-color">Primary Color (using InputId with label binding)</label>
+    <MudColorPicker InputId="primary-color" @bind-Value="PrimaryColor" />
+</div>
+
+@code {
+    public static string __description__ = "Color picker with InputId parameter";
+
+    private MudColor? PrimaryColor { get; set; }
+}

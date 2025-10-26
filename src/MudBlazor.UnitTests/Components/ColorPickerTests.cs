@@ -1405,5 +1405,12 @@ namespace MudBlazor.UnitTests.Components
                 input.GetAttribute("aria-required").Should().Be("true");
             });
         }
+
+        [Test]
+        public void ColorPickerInputId()
+        {
+            var comp = Context.RenderComponent<ColorPickerInputIdTest>();
+            comp.Find("input[id='primary-color']").Should().NotBeNull();
+        }
     }
 }

@@ -261,6 +261,16 @@ namespace MudBlazor
         public bool Editable { get; set; } = false;
 
         /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? InputId { get; set; }
+
+        /// <summary>
         /// Shows the toolbar.
         /// </summary>
         /// <remarks>

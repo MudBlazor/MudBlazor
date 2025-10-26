@@ -1,0 +1,10 @@
+<div>
+    <label for="event-range">Event Date Range (using InputId with label binding)</label>
+    <MudDateRangePicker InputId="event-range" @bind-DateRange="EventRange" />
+</div>
+
+@code {
+    public static string __description__ = "Date range picker with InputId parameter";
+    
+    private DateRange? EventRange { get; set; }
+}
