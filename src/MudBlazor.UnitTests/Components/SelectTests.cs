@@ -292,7 +292,28 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
 
+            // Initial state: null value
             select.Instance.Value.Should().Be(null);
+            select.Find("div.mud-input-slot").TextContent.Should().Be("None");
+            select.Markup.Should().Contain("mud-shrink");
+
+            // Open menu and select a non-null value
+            comp.Find("div.mud-input-control").MouseDown();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.FindAll("div.mud-list-item").ToArray()[1].Click(); // Select "One" (value = 1)
+
+            // Verify non-null value
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be(1));
+            select.Find("div.mud-input-slot").TextContent.Should().Be("One");
+            select.Markup.Should().Contain("mud-shrink");
+
+            // Open menu again and select null value
+            comp.Find("div.mud-input-control").MouseDown();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.FindAll("div.mud-list-item").ToArray()[0].Click(); // Select "None" (value = null)
+
+            // Verify back to null value
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be(null));
             select.Find("div.mud-input-slot").TextContent.Should().Be("None");
             select.Markup.Should().Contain("mud-shrink");
         }
