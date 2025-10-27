@@ -319,7 +319,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test that RegisterShadowItem handles null items gracefully.
+        /// RegisterShadowItem should not throw when the item parameter is null.
         /// </summary>
         [Test]
         public void SelectRegisterShadowItemNullTest()
@@ -327,13 +327,30 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
 
-            select.Instance.RegisterShadowItem(null);
+            var registerAction = () => select.Instance.RegisterShadowItem(null);
 
-            select.Instance.Value.Should().Be(null);
+            registerAction.Should().NotThrow();
         }
 
         /// <summary>
-        /// Test that UnregisterShadowItem handles null items gracefully.
+        /// RegisterShadowItem should not throw when the item's Value property is null.
+        /// </summary>
+        [Test]
+        public void SelectRegisterShadowItemWithNullValueTest()
+        {
+            var comp = Context.RenderComponent<SelectNullValueTest>();
+            var select = comp.FindComponent<MudSelect<int?>>();
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+            var itemWithNullValue = new MudSelectItem<int?> { Value = null };
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+
+            var registerAction = () => select.Instance.RegisterShadowItem(itemWithNullValue);
+
+            registerAction.Should().NotThrow();
+        }
+
+        /// <summary>
+        /// UnregisterShadowItem should not throw when the item parameter is null.
         /// </summary>
         [Test]
         public void SelectUnregisterShadowItemNullTest()
@@ -341,9 +358,27 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
 
-            select.Instance.UnregisterShadowItem(null);
+            var unregisterAction = () => select.Instance.UnregisterShadowItem(null);
 
-            select.Instance.Value.Should().Be(null);
+            unregisterAction.Should().NotThrow();
+        }
+
+        /// <summary>
+        /// UnregisterShadowItem should not throw when the item's Value property is null.
+        /// </summary>
+        [Test]
+        public void SelectUnregisterShadowItemWithNullValueTest()
+        {
+            var comp = Context.RenderComponent<SelectNullValueTest>();
+            var select = comp.FindComponent<MudSelect<int?>>();
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+            var itemWithNullValue = new MudSelectItem<int?> { Value = null };
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+
+            select.Instance.RegisterShadowItem(itemWithNullValue);
+            var unregisterAction = () => select.Instance.UnregisterShadowItem(itemWithNullValue);
+
+            unregisterAction.Should().NotThrow();
         }
 
         /// <summary>
