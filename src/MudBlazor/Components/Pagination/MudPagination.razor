@@ -30,7 +30,7 @@
             else if (currentPage == _selectedState.Value)
             {
                 <li class="@SelectedItemClassname">
-                    <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" Ripple="false" Disabled="@Disabled" Color="@SelectedPageButtonColor" aria-current="page" aria-label="@Localizer[LanguageResource.MudPagination_CurrentPage, $"{currentPage}"]">@currentPage</MudButton>
+                    <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" Ripple="false" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@Localizer[LanguageResource.MudPagination_CurrentPage, $"{currentPage}"]">@currentPage</MudButton>
                 </li>
             }
             else
