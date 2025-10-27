@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -16,6 +17,7 @@ namespace MudBlazor
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
         private readonly string _componentId = Identifier.Create();
+        private string _elementId = Identifier.Create("autocomplete");
 
         private bool _isCleared;
         private bool _isClearing;
@@ -34,9 +36,13 @@ namespace MudBlazor
         private List<int> _enabledItemIndices = [];
         private Func<T?, string?>? _toStringFunc;
         private bool _handleNextFocus;
+        private bool _keyInterceptorObserving = false;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -578,6 +584,7 @@ namespace MudBlazor
             }
             finally
             {
+                await HandleKeyInterception();
                 _isProcessingValue = false;
             }
         }
@@ -607,6 +614,16 @@ namespace MudBlazor
             _isCleared = false;
 
             base.OnAfterRender(firstRender);
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await EnsureKeyInterceptorAsync();
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
@@ -680,6 +697,7 @@ namespace MudBlazor
             await RestoreScrollPositionAsync();
             await CoerceTextToValueAsync();
             Open = false;
+            await HandleKeyInterception();
             StateHasChanged();
         }
 
@@ -789,6 +807,8 @@ namespace MudBlazor
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
                 Open = true;
             }
+
+            await HandleKeyInterception();
 
             _opening = false;
             StateHasChanged();
@@ -1011,7 +1031,10 @@ namespace MudBlazor
             finally
             {
                 if (Open)
+                {
                     Open = false;
+                }
+                await HandleKeyInterception();
             }
         }
 
@@ -1231,6 +1254,54 @@ namespace MudBlazor
             await FocusAsync();
 
             await SelectOptionAsync(item);
+        }
+
+        private async Task EnsureKeyInterceptorAsync()
+        {
+            if (_keyInterceptorObserving)
+            {
+                return;
+            }
+
+            _keyInterceptorObserving = true;
+            var options = new KeyInterceptorOptions(
+                "mud-input-slot",
+                [
+                    new("ArrowUp", preventDown: "key+none"),
+                    new("ArrowDown", preventDown: "key+none"),
+                    new("/./", subscribeDown: true, subscribeUp: true)
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
+        }
+
+        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (GetDisabledState() || GetReadOnlyState())
+                return;
+            switch (args.Key)
+            {
+                case "Backspace":
+                    if (args.CtrlKey && args.ShiftKey)
+                    {
+                        await ClearAsync();
+                        _value = default;
+                        await ResetAsync();
+                    }
+
+                    break;
+                case "Escape":
+                case "Tab":
+                    await CloseMenuAsync();
+                    break;
+            }
+        }
+
+        private async Task HandleKeyInterception()
+        {
+            await EnsureKeyInterceptorAsync();
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new() { Key = "Enter", PreventDown = Open ? "key+none" : "none" });
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new() { Key = "NumpadEnter", PreventDown = Open ? "key+none" : "none" });
         }
     }
 }
