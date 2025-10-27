@@ -145,7 +145,7 @@ public partial class MudStepper : MudComponentBase
     /// The color of complete button color.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Default"/>.
+    /// Defaults to <see cref="Color.Primary"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
@@ -155,7 +155,7 @@ public partial class MudStepper : MudComponentBase
     /// The color of next button color.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Default"/>.
+    /// Defaults to <see cref="Color.Primary"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
