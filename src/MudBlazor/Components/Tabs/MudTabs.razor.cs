@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interop;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Throttle;
 
@@ -21,7 +22,7 @@ namespace MudBlazor
     {
         private bool _isDisposed;
         private MudDropContainer<MudTabPanel>? _dropContainer;
-        private int _activePanelIndex = 0;
+        private ParameterState<int> _activePanelIndexState;
         private int _scrollIndex = 0;
 
         private bool _isRendered = false;
@@ -348,26 +349,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
-        public int ActivePanelIndex
-        {
-            get => _activePanelIndex;
-            set
-            {
-                var validPanel = _panels.Count > 0 && value != -1 && value <= _panels.Count - 1;
-
-                if (_activePanelIndex != value)
-                {
-                    _activePanelIndex = value;
-                    if (_isRendered)
-                    {
-                        ActivePanel = validPanel ? _panels[value] : null;
-                        ActivePanelIndexChanged.InvokeAsync(value);
-                    }
-                }
-                else if (validPanel)
-                    ActivePanel = _panels[value];
-            }
-        }
+        public int ActivePanelIndex { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="ActivePanelIndex"/> has changed.
@@ -478,6 +460,11 @@ namespace MudBlazor
             _throttleDispatcher = new ThrottleDispatcher(500);
             _panels = new List<MudTabPanel>();
             Panels = _panels.AsReadOnly();
+            using var registerScope = CreateRegisterScope();
+            _activePanelIndexState = registerScope.RegisterParameter<int>(nameof(ActivePanelIndex))
+                .WithParameter(() => ActivePanelIndex)
+                .WithEventCallback(() => ActivePanelIndexChanged)
+                .WithChangeHandler(HandleActivePanelIndexChanged);
         }
 
         protected override void OnInitialized()
@@ -506,14 +493,11 @@ namespace MudBlazor
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
-                if (_activePanelIndex != -1 && _panels.Count > 0)
-                    ActivePanel = _panels[_activePanelIndex];
-
                 await _resizeObserver!.Observe(items);
 
                 _resizeObserver.OnResized += OnResized;
 
-                ActivatePanel(ActivePanelIndex);
+                ActivatePanel(_activePanelIndexState.Value);
 
                 _isRendered = true;
                 // fix activepanelindex on initial render
@@ -524,9 +508,9 @@ namespace MudBlazor
                     [
                         // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
+            new("Enter", preventDown: "key+none"),
+            new("NumpadEnter", preventDown: "key+none"),
+            new("Backspace", preventDown: "key+none")
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
@@ -570,8 +554,8 @@ namespace MudBlazor
             _panels.Add(tabPanel);
             SortPanels();
 
-            if (_panels.Count == _activePanelIndex + 1 || _activePanelIndex == -1 && _panels.Count == 1)
-                ActivePanel = tabPanel;
+            if (_panels.Count == _activePanelIndexState.Value + 1 || _activePanelIndexState.Value == -1 && _panels.Count == 1)
+                ActivatePanel(tabPanel);
 
             StateHasChanged();
         }
@@ -586,7 +570,7 @@ namespace MudBlazor
             }
         }
 
-        internal async Task RemovePanel(MudTabPanel tabPanel)
+        internal void RemovePanel(MudTabPanel tabPanel)
         {
             if (_isDisposed)
                 return;
@@ -594,27 +578,31 @@ namespace MudBlazor
             var index = _panels.IndexOf(tabPanel);
 
             // We're at the right-most tab.
-            if (_activePanelIndex == index && index == _panels.Count - 1)
+            if (_activePanelIndexState.Value == index && index == _panels.Count - 1)
             {
                 if (_panels.Count == 1)
-                    ActivePanelIndex = -1;
+                    ActivatePanel(null);
                 else if (index > 0)
-                    ActivePanelIndex = index - 1;
+                    ActivatePanel(index - 1);
                 else
-                    ActivePanelIndex = 0;
+                    ActivatePanel(0);
             }
 
-            // Active tab is not necessarily the tab being closed.
-            else if (_activePanelIndex > index)
+            // Active tab is after the closed tab.
+            else if (_activePanelIndexState.Value > index)
             {
-                _activePanelIndex--;
-                await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
+                ActivatePanel(_activePanelIndexState.Value - 1);
             }
 
             _panels.Remove(tabPanel);
-            await _resizeObserver!.Unobserve(tabPanel.PanelRef);
-            Rerender();
-            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Handles when ActivePanelIndex is changed outside of the component
+        /// </summary>
+        private void HandleActivePanelIndexChanged(ParameterChangedEventArgs<int> args)
+        {
+            ActivatePanel(args.Value);
         }
 
         /// <summary>
@@ -667,11 +655,12 @@ namespace MudBlazor
 
                 if (previewArgs.Cancel) return;
 
-                ActivePanelIndex = previewArgs.PanelIndex;
+                await _activePanelIndexState.SetValueAsync(previewArgs.PanelIndex);
                 if (ActivePanel is not null)
                 {
                     await ActivePanel.OnClick.InvokeAsync(ev);
                 }
+                ActivePanel = _panels[_activePanelIndexState.Value];
 
                 CenterScrollPositionAroundSelectedItem();
                 SetScrollabilityStates();
@@ -877,7 +866,7 @@ namespace MudBlazor
             _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
         }
 
-        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderPositionPercentage > 0) ||
+        private bool IsSliderPositionDetermined => (_activePanelIndexState.Value > 0 && _sliderPositionPercentage > 0) ||
                                                    IsFirstVisiblePanel(ActivePanel);
 
         private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
@@ -1026,7 +1015,7 @@ namespace MudBlazor
 
         private void CenterScrollPositionAroundSelectedItem()
         {
-            if (_showScrollButtons && ActivePanelIndex + 1 == _panels.Count)
+            if (_showScrollButtons && _activePanelIndexState.Value + 1 == _panels.Count)
             {
                 var lastPanel = _panels.Last();
                 var isScrolled = ScrollToItem(lastPanel, true);
@@ -1054,7 +1043,7 @@ namespace MudBlazor
             var indexCorrection = 1;
             while (true)
             {
-                var panelAfterIndex = _activePanelIndex + indexCorrection;
+                var panelAfterIndex = _activePanelIndexState.Value + indexCorrection;
                 if (!IsAfterLastPanelIndex(panelAfterIndex))
                 {
                     length += GetPanelLength(_panels[panelAfterIndex]);
@@ -1068,7 +1057,7 @@ namespace MudBlazor
 
                 length = _tabBarContentSize - length;
 
-                var panelBeforeindex = _activePanelIndex - indexCorrection;
+                var panelBeforeindex = _activePanelIndexState.Value - indexCorrection;
                 if (!IsBeforeFirstPanelIndex(panelBeforeindex))
                 {
                     length -= GetPanelLength(_panels[panelBeforeindex]);
@@ -1085,7 +1074,7 @@ namespace MudBlazor
                 }
 
                 length = _tabBarContentSize - length;
-                panelToStart = _panels[_activePanelIndex - indexCorrection];
+                panelToStart = _panels[_activePanelIndexState.Value - indexCorrection];
 
                 indexCorrection++;
             }
