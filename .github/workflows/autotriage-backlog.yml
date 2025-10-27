@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   triage:
+    if: ${{ github.repository_owner == 'MudBlazor' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate app token

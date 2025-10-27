@@ -38,4 +38,8 @@ public enum ChartType
     /// Data is displayed as a heatmap. Similar to how github works.
     /// </summary>
     HeatMap,
+    /// <summary>
+    /// Data is displayed as nodes connected by edges.
+    /// </summary>
+    Sankey,
 }

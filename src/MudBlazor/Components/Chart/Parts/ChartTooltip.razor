@@ -1,30 +1,43 @@
 ﻿@namespace MudBlazor.Charts
 
-@{
-    var hasSubtitle = !string.IsNullOrWhiteSpace(Subtitle);
-    var subtitleHeight = hasSubtitle ? 16 : 0;
-    var opacity = _boxWidth > 0 ? 1 : 0;
-}
-<g class="svg-tooltip" opacity="@opacity" style="pointer-events: none;">
-    <!-- The triangle pointing down (8px wide at the top) -->
-    <polygon points="@ToS(X - 8),@ToS(Y - 8) @ToS(X + 8),@ToS(Y - 8) @ToS(X),@ToS(Y - 1.5)"
-            fill="@Color"
-            stroke="white"
-            stroke-width="2" />
+<g class="svg-tooltip" style="pointer-events: none;">
+    <!-- Triangle stroke -->
+    @if (ShowTriangle)
+    {
+        <polygon points="@_triangleBorderPoints" 
+                 fill="@Color" 
+                 stroke="white" 
+                 stroke-width="@TriangleStrokeWidth"/>
+    }
 
-    <rect x="@ToS(X - (_boxWidth / 2))" y="@ToS(Y - 30 - subtitleHeight)" width="@ToS(_boxWidth)" height="@ToS(24 + subtitleHeight)" rx="4" ry="4" fill="@Color" stroke="white" stroke-width="1" />
+    <!-- Keep this here to prevent the triangle from having a base line -->
+    <rect x="@ToS(_backgroundBBox.X)"
+          y="@ToS(_backgroundBBox.Y)"
+          width="@ToS(_backgroundBBox.Width)"
+          height="@ToS(_backgroundBBox.Height)"
+          rx="4"
+          ry="4"
+          fill="@Color"
+          stroke="white"
+          stroke-width="@StrokeWidth"/>
 
-    <polygon points="@ToS(X - 10),@ToS(Y - 10) @ToS(X + 10),@ToS(Y - 10) @ToS(X),@ToS(Y - 1.5)"
-            fill="@Color"
-            stroke="white"
-            stroke-width="0" />
+    <!-- Triangle fill -->
+    @if (ShowTriangle)
+    {
+        <polygon points="@_triangleBackgroundPoints" 
+                 fill="@Color"/>
+    }
 
-
-    <text @ref="_hoverTextTitle" x="@ToS(X)" y="@ToS(Y - 14 - subtitleHeight)" text-anchor="middle" font-size="12px">
-        <tspan x="@ToS(X)" dy="0">@Title</tspan>
-        @if (hasSubtitle)
+    <text @ref="_text"
+          x="@ToS(_textBbox.X)"
+          y="@ToS(_textBbox.Y - (HasSubtitle ? _textBbox.Height : 0))"
+          font-size="@FontSize"
+          fill="@FontColor"
+          text-anchor="middle">
+        <tspan x="@ToS(_textBbox.X)" dy="-.3em">@Title</tspan>
+        @if (HasSubtitle)
         {
-            <tspan x="@ToS(X)" dy="16">@Subtitle</tspan>
+            <tspan x="@ToS(_textBbox.X)" dy="@ToS(_textBbox.Height)">@Subtitle</tspan>
         }
     </text>
 </g>

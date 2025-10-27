@@ -655,7 +655,14 @@ namespace MudBlazor
             Error = false;
             ValidationErrors.Clear();
             ErrorText = null;
+            ResetConverterErrors();
             StateHasChanged();
+        }
+
+        private void ResetConverterErrors()
+        {
+            _converter.GetError = false;
+            _converter.GetErrorMessage = null;
         }
 
         #endregion
