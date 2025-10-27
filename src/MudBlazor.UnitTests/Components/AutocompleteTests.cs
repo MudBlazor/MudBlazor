@@ -9,6 +9,10 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
+using Moq;
 using MudBlazor.Examples.Data;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
@@ -1261,7 +1265,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_Should_FocusInputOnAdornmentClick()
         {
             var jsRuntimeMock = new Mock<IJSRuntime>();
-            jsRuntimeMock.Setup(x => x.InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>("Blazor._internal.domWrapper.focus", It.IsAny<object[]>()));
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus", It.IsAny<object[]>()));
             Context.Services.AddSingleton(jsRuntimeMock.Object);
 
             var comp = Context.RenderComponent<AutocompleteStates>();
@@ -1271,7 +1275,7 @@ namespace MudBlazor.UnitTests.Components
             adornment.Click();
 
             // verifies FocusAsync was called
-            jsRuntimeMock.Verify(x => x.InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>("Blazor._internal.domWrapper.focus",
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus",
                 It.Is<object[]>(args =>
                     args.Length == 2 &&
                     args[0] is ElementReference &&
@@ -1281,7 +1285,7 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
             await input.InputAsync(new ChangeEventArgs { Value = "Wyo" });
 
-            await input.KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" });
+            await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
 
             autocompleteComponent.Instance.Value.Should().Be("Wyoming");
         }
