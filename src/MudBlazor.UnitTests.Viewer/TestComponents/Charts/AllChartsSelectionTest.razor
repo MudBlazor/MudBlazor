@@ -27,7 +27,7 @@
                 }
             </MudSelect>
         }
-        else if (_chartType == ChartType.Pie || _chartType == ChartType.Donut || _chartType == ChartType.Rose || _chartType == ChartType.Radar)
+        else if (_chartType == ChartType.Pie || _chartType == ChartType.Donut || _chartType == ChartType.Rose || _chartType == ChartType.Radar || _chartType == ChartType.Sankey)
         {
             <MudSelect T="AggregationOption" Label="Group By" @bind-Value="_selectedAggregationOption" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
                 @foreach (AggregationOption groupBy in Enum.GetValues(typeof(AggregationOption)))
@@ -72,7 +72,7 @@
     }
 </MudStack>
 
-@code {
+    @code {
     private int _index = -1;
     private bool _canHideSeries;
     private bool _matchParentSize;
@@ -160,6 +160,12 @@
             ShowToolTips = true,
             ShowLabels = false,
         },
+        ChartType.Sankey => new SankeyChartOptions
+        {
+            AggregationOption = _selectedAggregationOption,
+            MinVerticalSpacing = 10,
+            EdgeOpacity = 0.7,
+        },
         _ => throw new NotImplementedException()
     };
 
@@ -169,18 +175,18 @@
         if (_chartType == ChartType.Timeseries)
         {
             return _series.Select(s => new ChartSeries<double>()
-                {
-                    Name = s.Name,
-                    Data = s.Data.Values.Take(_dataPointCount).Select((y, i) => (_dateLabels[i], y)).ToArray()
-                }).ToList();
+            {
+                Name = s.Name,
+                Data = s.Data.Values.Take(_dataPointCount).Select((y, i) => (_dateLabels[i], y)).ToArray()
+            }).ToList();
         }
         else
         {
             return _series.Select(s => new ChartSeries<double>
-                {
-                    Name = s.Name,
-                    Data = s.Data.Values.Take(_dataPointCount).ToArray()
-                }).ToList();
+            {
+                Name = s.Name,
+                Data = s.Data.Values.Take(_dataPointCount).ToArray()
+            }).ToList();
         }
     }
 

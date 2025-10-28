@@ -1,6 +1,9 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -10,7 +13,7 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays data as nodes connected by weighted edges.
     /// </summary>
-    partial class Sankey<T> : MudChartBase<T, SankeyChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    partial class Sankey<T> : MudChartBase<T, SankeyChartOptions>, IDisposable where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         private record NodeRect(int Hash, string Name, double X, double Y, double Width, double Height, string Color)
         {
@@ -19,9 +22,21 @@ namespace MudBlazor.Charts
 
         private record EdgePath(string Name, NodeRect Source, NodeRect Target, string D, double CenterX, double CenterY);
 
-        private const double BoundWidth = 650;
-        private const double BoundHeight = 350;
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
+        private DotNetObjectReference<Sankey<T>>? _dotNetObjectReference;
+        protected ElementReference _elementReference;
+
+        private const double Epsilon = 1e-6;
+        private const double BoundWidthDefault = 650;
+        private const double BoundHeightDefault = 350;
         private const double HorizontalPadding = 10;
+
+        private ElementSize? _elementSize;
+
+        private double _boundWidth = BoundWidthDefault;
+        private double _boundHeight = BoundHeightDefault;
 
         /// <summary>
         /// The collection of nodes that represent the points within the Sankey diagram. 
@@ -53,11 +68,20 @@ namespace MudBlazor.Charts
         [CascadingParameter]
         public MudChart<T>? MudChartParent { get; set; }
 
+        [DynamicDependency(nameof(OnElementSizeChanged))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
+        public Sankey()
+        {
+            _dotNetObjectReference = DotNetObjectReference.Create(this);
+        }
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
-            Edges = EnsureUniqueEdges();
+            var seriesData = AggregateSeriesData(ChartOptions?.AggregationOption ?? AggregationOption.None);
+
+            Edges = Sankey<T>.EnsureUniqueEdges(seriesData);
             Nodes = GenerateNodesFromEdges();
 
             if (ChartOptions?.NodeOverrides is { Count: > 0 } overrides)
@@ -91,11 +115,46 @@ namespace MudBlazor.Charts
                 RebuildChart();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+         
+            if (firstRender)
+            {
+                var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
+                OnElementSizeChanged(elementSize);
+            }
+        }
+
         public override void RebuildChart()
         {
+            SetBounds();
             NodeValues = GetAllNodeValues();
             var (maxColumnValue, relativeBoundHeight) = GenerateNodeRects();
             GenerateEdgePaths(maxColumnValue, relativeBoundHeight);
+        }
+
+        private void SetBounds()
+        {
+            _boundWidth = BoundWidthDefault;
+            _boundHeight = BoundHeightDefault;
+
+            if (MatchBoundsToSize)
+            {
+                if (_elementSize is not null)
+                {
+                    _boundWidth = _elementSize.Width;
+                    _boundHeight = _elementSize.Height;
+                }
+                else if (Width.EndsWith("px")
+                    && Height.EndsWith("px")
+                    && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
+                    && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+                {
+                    _boundWidth = width;
+                    _boundHeight = height;
+                }
+            }
         }
 
         /// <summary>
@@ -175,11 +234,100 @@ namespace MudBlazor.Charts
             return nodeColumns;
         }
 
-        private HashSet<SankeyEdge<T>> EnsureUniqueEdges()
+        private List<ChartSeries<T>> AggregateSeriesData(AggregationOption aggregation)
+        {
+            if (ChartSeries is null || ChartSeries.Count == 0 || !ChartSeries.Any(x => x.Visible))
+                return [];
+
+            if (aggregation == AggregationOption.None)
+                return ChartSeries;
+
+            var maxCategoryLength = aggregation == AggregationOption.GroupByLabel
+                    ? GetMaxCategoryLengthForLabelGrouping()
+                    : ChartSeries.Count;
+
+            var aggregated = new ChartSeries<T>[maxCategoryLength];
+
+            return aggregation switch
+            {
+                AggregationOption.GroupByLabel => AggregateByLabel(aggregated),
+                AggregationOption.GroupByDataSet => AggregateByDataSet(aggregated),
+                _ => throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}")
+            };
+        }
+
+        private int GetMaxCategoryLengthForLabelGrouping()
+        {
+            if (ChartLabels.Length > 0)
+                return ChartLabels.Length;
+
+            return ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
+                              .Max(x => x?.Data?.Values.Count ?? 0);
+        }
+
+        private List<ChartSeries<T>> AggregateByLabel(ChartSeries<T>[] aggregated)
+        {
+            var result = new List<ChartSeries<T>>();
+
+            foreach (var series in ChartSeries.Where(s => s.Visible))
+            {
+                var data = new List<(SankeyLink, T)>();
+                var values = series.Data?.Values ?? [];
+
+                for (var i = 0; i < values.Count; i++)
+                {
+                    if (i < aggregated.Length)
+                    {
+                        var link = new SankeyLink(ChartLabels[i], series.Name);
+                        data.Add((link, values[i]));
+                    }
+                }
+
+                result.Add(new ChartSeries<T>
+                {
+                    Name = series.Name,
+                    Data = data.ToArray(),
+                    Visible = series.Visible
+                });
+            }
+
+            return result;
+        }
+
+        private List<ChartSeries<T>> AggregateByDataSet(ChartSeries<T>[] aggregated)
+        {
+            var result = new List<ChartSeries<T>>();
+            var chartSeries = ChartSeries.Take(aggregated.Length);
+
+            foreach (var (series, index) in chartSeries.Select((s, i) => (s, i)))
+            {
+                var data = new List<(SankeyLink, T)>();
+                var values = series.Data?.Values ?? [];
+
+                if (!series.Visible) continue;
+
+                for (var i = 0; i < values.Count; i++)
+                {
+                    var link = new SankeyLink(series.Name, ChartLabels[i]);
+                    data.Add((link, values[i]));
+                }
+
+                result.Add(new ChartSeries<T>
+                {
+                    Name = series.Name,
+                    Data = data.ToArray(),
+                    Visible = series.Visible
+                });
+            }
+
+            return result;
+        }
+
+        private static HashSet<SankeyEdge<T>> EnsureUniqueEdges(List<ChartSeries<T>> chartSeries)
         {
             var unique = new HashSet<SankeyEdge<T>>();
 
-            foreach (var series in ChartSeries)
+            foreach (var series in chartSeries.Where(s => s.Visible))
             {
                 var edges = series.Data.Points.Select(x =>
                 {
@@ -233,15 +381,15 @@ namespace MudBlazor.Charts
             // Calculate grid sizes
             var maxRows = nodesPerColumn.Max(n => n.Count());
             var maxColumns = nodesPerColumn.Length - 1;
-            var boundHeightRelativeToNodeHeight = BoundHeight - ChartOptions!.MinVerticalSpacing * maxRows;
-            var boundWidthRelativeToNodeWidth = BoundWidth - ChartOptions!.NodeWidth * maxColumns - 2 * HorizontalPadding;
+            var boundHeightRelativeToNodeHeight = _boundHeight - ChartOptions!.MinVerticalSpacing * maxRows;
+            var boundWidthRelativeToNodeWidth = _boundWidth - ChartOptions!.NodeWidth * maxColumns - 2 * HorizontalPadding;
 
             // Draw all nodes column per column
             foreach (var column in nodesPerColumn)
             {
                 var x = column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth + HorizontalPadding;
                 var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]); //column.Aggregate(T.Zero, (sum, n) => sum + relativeNodesValuesMapping[n]);
-                var totalVerticalSpace = BoundHeight - double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight;
+                var totalVerticalSpace = _boundHeight - double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight;
                 var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), ChartOptions!.MinVerticalSpacing);
 
                 double currentY = 0;
@@ -399,6 +547,41 @@ namespace MudBlazor.Charts
         private void OnEdgeMouseOut(MouseEventArgs _)
         {
             ActiveEdge = null;
+        }
+
+        [JSInvokable]
+        public void OnElementSizeChanged(ElementSize elementSize)
+        {
+            if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp)
+                return;
+
+            _elementSize = elementSize;
+
+            if (!MatchBoundsToSize)
+                return;
+
+            if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
+                Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)
+            {
+                return;
+            }
+
+            RebuildChart();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _dotNetObjectReference?.Dispose();
+                _dotNetObjectReference = null;
+            }
         }
     }
 }

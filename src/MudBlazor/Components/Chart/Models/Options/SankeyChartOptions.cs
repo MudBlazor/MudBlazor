@@ -83,6 +83,14 @@ public class SankeyChartOptions : DefaultChartOptions
     /// </remarks>
     public string HighlightColor { get; set; } = "var(--mud-palette-text-primary)";
 
+    /// <summary>
+    /// The aggregation function to use for the data.
+    /// </summary>
+    /// <remarks>
+    /// Refer to <see cref="AggregationOption"/>
+    /// </remarks>
+    public AggregationOption AggregationOption { get; set; }
+
     public static implicit operator SankeyChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,
