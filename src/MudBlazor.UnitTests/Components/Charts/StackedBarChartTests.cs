@@ -188,8 +188,8 @@ namespace MudBlazor.UnitTests.Charts
         [TestCase(50.0, -25.0)]
         public void StackedBarChart_XAxisLabelOffset_CustomValues(double dx, double dy)
         {
-            var axisOptions = new AxisChartOptions 
-            { 
+            var axisOptions = new AxisChartOptions
+            {
                 XAxisLabelDx = dx,
                 XAxisLabelDy = dy
             };
@@ -200,9 +200,9 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.XAxisLabels, _defaultXAxisLabels)
                 .Add(p => p.AxisChartOptions, axisOptions));
 
-            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(dx, 
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(dx,
                 because: $"horizontal offset should be set to {dx}");
-            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(dy, 
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(dy,
                 because: $"vertical offset should be set to {dy}");
         }
 
@@ -213,14 +213,14 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, _defaultChartSeries)
                 .Add(p => p.XAxisLabels, _defaultXAxisLabels)
-                .Add(p => p.AxisChartOptions, new AxisChartOptions 
-                { 
+                .Add(p => p.AxisChartOptions, new AxisChartOptions
+                {
                     XAxisLabelRotation = 45,
                     XAxisLabelDx = 10.0,
                     XAxisLabelDy = 5.0
                 }));
 
-            comp.Markup.Should().Contain("transform='rotate(-45", 
+            comp.Markup.Should().Contain("transform='rotate(-45",
                 because: "rotation should be applied");
             comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(10.0);
             comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(5.0);
@@ -243,8 +243,8 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.Width, "600px")
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels)
-                .Add(p => p.AxisChartOptions, new AxisChartOptions 
-                { 
+                .Add(p => p.AxisChartOptions, new AxisChartOptions
+                {
                     XAxisLabelRotation = 30,
                     XAxisLabelDx = -5.0,
                     XAxisLabelDy = 10.0,
@@ -252,7 +252,7 @@ namespace MudBlazor.UnitTests.Charts
                 }));
 
             comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
-            comp.Markup.Should().Contain("transform='rotate(-30", 
+            comp.Markup.Should().Contain("transform='rotate(-30",
                 because: "rotation should be applied");
             comp.Instance.AxisChartOptions.XAxisLabelRotation.Should().Be(30);
             comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(-5.0);
@@ -263,8 +263,8 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void StackedBarChart_UpdateLabelOffset_ShouldRerender()
         {
-            var axisOptions = new AxisChartOptions 
-            { 
+            var axisOptions = new AxisChartOptions
+            {
                 XAxisLabelDx = 5.0,
                 XAxisLabelDy = 10.0
             };
@@ -284,9 +284,9 @@ namespace MudBlazor.UnitTests.Charts
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.AxisChartOptions, axisOptions));
 
-            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(15.0, 
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(15.0,
                 because: "the chart should update when offset options change");
-            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(20.0, 
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(20.0,
                 because: "the chart should update when offset options change");
         }
 
@@ -297,15 +297,15 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, _defaultChartSeries)
                 .Add(p => p.XAxisLabels, _defaultXAxisLabels)
-                .Add(p => p.AxisChartOptions, new AxisChartOptions 
-                { 
+                .Add(p => p.AxisChartOptions, new AxisChartOptions
+                {
                     XAxisLabelDx = 100.0,
                     XAxisLabelDy = -50.0
                 }));
 
             comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(100.0);
             comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(-50.0);
-            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"", 
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"",
                 because: "chart should still render with large offset values");
         }
 
@@ -316,15 +316,15 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, _defaultChartSeries)
                 .Add(p => p.XAxisLabels, _defaultXAxisLabels)
-                .Add(p => p.AxisChartOptions, new AxisChartOptions 
-                { 
+                .Add(p => p.AxisChartOptions, new AxisChartOptions
+                {
                     XAxisLabelDx = -25.0,
                     XAxisLabelDy = -15.0
                 }));
 
-            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(-25.0, 
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(-25.0,
                 because: "negative horizontal offsets should be supported");
-            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(-15.0, 
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(-15.0,
                 because: "negative vertical offsets should be supported");
             comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
         }
@@ -342,14 +342,14 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels)
-                .Add(p => p.AxisChartOptions, new AxisChartOptions 
-                { 
+                .Add(p => p.AxisChartOptions, new AxisChartOptions
+                {
                     XAxisLabelRotation = 90,
                     XAxisLabelDx = -10.0,
                     XAxisLabelDy = 0.0
                 }));
 
-            comp.Markup.Should().Contain("transform='rotate(-90", 
+            comp.Markup.Should().Contain("transform='rotate(-90",
                 because: "90 degree rotation should be applied");
             comp.Instance.AxisChartOptions.XAxisLabelRotation.Should().Be(90);
             comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(-10.0);
@@ -363,8 +363,8 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, _defaultChartSeries)
                 .Add(p => p.XAxisLabels, _defaultXAxisLabels)
-                .Add(p => p.AxisChartOptions, new AxisChartOptions 
-                { 
+                .Add(p => p.AxisChartOptions, new AxisChartOptions
+                {
                     XAxisLabelDx = 0.0,
                     XAxisLabelDy = 0.0
                 }));
