@@ -35,10 +35,12 @@
         @for (var i = 0; i < _verticalValues.Count; i++)
         {
             var verticalLineValue = _verticalValues[i];
-            var x = ToS(verticalLineValue.X);
-            var y = ToS(verticalLineValue.Y);
+            var x = verticalLineValue.X + AxisChartOptions.XAxisLabelDx;
+            var y = verticalLineValue.Y + AxisChartOptions.XAxisLabelDy;
+            var xStr = ToS(x);
+            var yStr = ToS(y);
             var rotation = ToS(-AxisChartOptions.XAxisLabelRotation);
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{xStr}' y='{yStr}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g class="mud-charts-bar-series">

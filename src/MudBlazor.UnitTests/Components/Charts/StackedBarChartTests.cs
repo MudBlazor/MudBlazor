@@ -159,5 +159,254 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
         }
+
+        [Test]
+        public void StackedBarChart_XAxisLabelOffset_DefaultValues()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels));
+
+            // Default offsets should be 0
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(0, because: "default horizontal offset should be 0");
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(0, because: "default vertical offset should be 0");
+        }
+
+        [Test]
+        [TestCase(10.0, 5.0)]
+        [TestCase(-10.0, -5.0)]
+        [TestCase(0.0, 15.0)]
+        [TestCase(20.5, 0.0)]
+        [TestCase(50.0, -25.0)]
+        public void StackedBarChart_XAxisLabelOffset_CustomValues(double dx, double dy)
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
+
+            var axisOptions = new AxisChartOptions 
+            { 
+                XAxisLabelDx = dx,
+                XAxisLabelDy = dy
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, axisOptions));
+
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(dx, 
+                because: $"horizontal offset should be set to {dx}");
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(dy, 
+                because: $"vertical offset should be set to {dy}");
+        }
+
+        [Test]
+        public void StackedBarChart_WithRotationAndOffset()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, new AxisChartOptions 
+                { 
+                    XAxisLabelRotation = 45,
+                    XAxisLabelDx = 10.0,
+                    XAxisLabelDy = 5.0
+                }));
+
+            comp.Markup.Should().Contain("transform='rotate(-45", 
+                because: "rotation should be applied");
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(10.0);
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(5.0);
+            comp.Instance.AxisChartOptions.XAxisLabelRotation.Should().Be(45);
+        }
+
+        [Test]
+        public void StackedBarChart_AllLabelOptionsTogether()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "United States", Data = new double[] { 40, 20, 25, 27 } },
+                new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13 } },
+            };
+            string[] xAxisLabels = { "Q1", "Q2", "Q3", "Q4" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.Height, "400px")
+                .Add(p => p.Width, "600px")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, new AxisChartOptions 
+                { 
+                    XAxisLabelRotation = 30,
+                    XAxisLabelDx = -5.0,
+                    XAxisLabelDy = 10.0,
+                    StackedBarWidthRatio = 0.7
+                }));
+
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+            comp.Markup.Should().Contain("transform='rotate(-30", 
+                because: "rotation should be applied");
+            comp.Instance.AxisChartOptions.XAxisLabelRotation.Should().Be(30);
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(-5.0);
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(10.0);
+            comp.Instance.AxisChartOptions.StackedBarWidthRatio.Should().Be(0.7);
+        }
+
+        [Test]
+        public void StackedBarChart_UpdateLabelOffset_ShouldRerender()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
+
+            var axisOptions = new AxisChartOptions 
+            { 
+                XAxisLabelDx = 5.0,
+                XAxisLabelDy = 10.0
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, axisOptions));
+
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(5.0);
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(10.0);
+
+            // Update the axis options
+            axisOptions.XAxisLabelDx = 15.0;
+            axisOptions.XAxisLabelDy = 20.0;
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.AxisChartOptions, axisOptions));
+
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(15.0, 
+                because: "the chart should update when offset options change");
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(20.0, 
+                because: "the chart should update when offset options change");
+        }
+
+        [Test]
+        public void StackedBarChart_LargeOffsetValues()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, new AxisChartOptions 
+                { 
+                    XAxisLabelDx = 100.0,
+                    XAxisLabelDy = -50.0
+                }));
+
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(100.0);
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(-50.0);
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"", 
+                because: "chart should still render with large offset values");
+        }
+
+        [Test]
+        public void StackedBarChart_NegativeOffsetValues()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, new AxisChartOptions 
+                { 
+                    XAxisLabelDx = -25.0,
+                    XAxisLabelDy = -15.0
+                }));
+
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(-25.0, 
+                because: "negative horizontal offsets should be supported");
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(-15.0, 
+                because: "negative vertical offsets should be supported");
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+        }
+
+        [Test]
+        public void StackedBarChart_WithRotation90DegreesAndOffset()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25, 30 } },
+            };
+            string[] xAxisLabels = { "January", "February", "March", "April" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, new AxisChartOptions 
+                { 
+                    XAxisLabelRotation = 90,
+                    XAxisLabelDx = -10.0,
+                    XAxisLabelDy = 0.0
+                }));
+
+            comp.Markup.Should().Contain("transform='rotate(-90", 
+                because: "90 degree rotation should be applied");
+            comp.Instance.AxisChartOptions.XAxisLabelRotation.Should().Be(90);
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(-10.0);
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+        }
+
+        [Test]
+        public void StackedBarChart_ZeroOffsetValues()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.AxisChartOptions, new AxisChartOptions 
+                { 
+                    XAxisLabelDx = 0.0,
+                    XAxisLabelDy = 0.0
+                }));
+
+            comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(0.0);
+            comp.Instance.AxisChartOptions.XAxisLabelDy.Should().Be(0.0);
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+        }
     }
 }

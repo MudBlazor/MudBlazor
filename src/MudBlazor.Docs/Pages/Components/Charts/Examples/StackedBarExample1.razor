@@ -31,6 +31,18 @@
     </MudItem>
     <MudItem md="6" xs="12">
         <MudStack>
+            <MudText Typo="Typo.body1">XAxis Label Horizontal Offset</MudText>
+            <MudSlider @bind-Value="_axisChartOptions.XAxisLabelDx" Min="-50" Max="50" Step="1"></MudSlider>
+        </MudStack>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudStack>
+            <MudText Typo="Typo.body1">XAxis Label Vertical Offset</MudText>
+            <MudSlider @bind-Value="_axisChartOptions.XAxisLabelDy" Min="-50" Max="50" Step="1"></MudSlider>
+        </MudStack>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudStack>
             <MudText Typo="Typo.body1">Legend Position</MudText>
             <MudRadioGroup T="Position" @bind-Value="_legendPosition">
                 <MudRadio Value="@(Position.Bottom)" Color="Color.Primary">Bottom</MudRadio>

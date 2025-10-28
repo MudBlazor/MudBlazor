@@ -29,4 +29,14 @@ public class AxisChartOptions
     /// The ratio of the width of the bars to the space between them.
     /// </summary>
     public double StackedBarWidthRatio { get; set; } = 0.5;
+
+    /// <summary>
+    /// Horizontal offset for X-axis labels in pixels.
+    /// </summary>
+    public double XAxisLabelDx { get; set; } = 0;
+
+    /// <summary>
+    /// Vertical offset for X-axis labels in pixels.
+    /// </summary>
+    public double XAxisLabelDy { get; set; } = 0;
 }
