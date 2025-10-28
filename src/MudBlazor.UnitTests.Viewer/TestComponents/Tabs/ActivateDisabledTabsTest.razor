@@ -58,17 +58,17 @@
 
     public void ActivateTab(int index, bool ignoreState)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
-            _tabElement.ActivatePanel(index, ignoreState);
+            await _tabElement.ActivatePanelAsync(index, ignoreState);
         });
     }
 
     public void ActivateTab(int index)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
-            _tabElement.ActivatePanel(index);
+            await _tabElement.ActivatePanelAsync(index);
         });
     }
 
@@ -83,33 +83,33 @@
 
     public void ActivateTab(MudTabPanel panel, bool ignoreState)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
-            _tabElement.ActivatePanel(panel, ignoreState);
+            await _tabElement.ActivatePanelAsync(panel, ignoreState);
         });
     }
 
     public void ActivateTab(MudTabPanel panel)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
-            _tabElement.ActivatePanel(panel);
+            await _tabElement.ActivatePanelAsync(panel);
         });
     }
 
     public void ActivateTab(DummyPlaceHolder id, bool ignoreState)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
-            _tabElement.ActivatePanel(id, ignoreState);
+            await _tabElement.ActivatePanelAsync(id, ignoreState);
         });
     }
 
     public void ActivateTab(DummyPlaceHolder id)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
-            _tabElement.ActivatePanel(id);
+            await _tabElement.ActivatePanelAsync(id);
         });
     }
 

@@ -1,10 +1,10 @@
 ﻿<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position">
-@foreach (var tab in _tabs)
-{
-    <MudTabPanel @key="tab" Text="@tab">
-        <MudText>@tab</MudText>
-    </MudTabPanel>
-}
+    @foreach (var tab in _tabs)
+    {
+        <MudTabPanel @key="tab" Text="@tab">
+            <MudText>@tab</MudText>
+        </MudTabPanel>
+    }
 </MudTabs>
 
 @code
@@ -22,7 +22,7 @@
 
     public void SetPanelActive(int index)
     {
-        InvokeAsync(() => _tabElement.ActivatePanel(index));
+        InvokeAsync(async () => await _tabElement.ActivatePanelAsync(index));
     }
 
     public Task AddPanel()

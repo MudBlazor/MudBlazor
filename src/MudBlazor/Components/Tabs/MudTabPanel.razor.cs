@@ -228,7 +228,6 @@ public partial class MudTabPanel
 
         _disposed = true;
         if (Parent is not null)
-            Parent.RemovePanel(this);
-        await Task.CompletedTask;
+            await Parent.RemovePanel(this);
     }
 }
