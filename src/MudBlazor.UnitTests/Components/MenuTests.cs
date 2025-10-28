@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
@@ -27,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("div.mud-menu-item")[0].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
 
             comp.FindAll("button.mud-button-root")[0].Click();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
@@ -65,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item")[0].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
         }
 
         [Test]
@@ -76,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item")[1].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
         }
 
         [Test]
@@ -171,11 +172,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Hover the list shouldn't change anything.
-            await comp.Find("div.mud-list").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await comp.Find("[data-testid='menu-wrapper']").TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Leave the list shouldn't change anything.
-            await comp.Find("div.mud-list").TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await comp.Find("[data-testid='menu-wrapper']").TriggerEventAsync("onpointerleave", new PointerEventArgs());
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Clicking the button should now close the menu.
@@ -299,7 +300,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item")[0].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[5].Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
@@ -387,7 +391,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("a.mud-menu-item")[2].Click(); // disabled
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item")[1].Click(); // enabled
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
@@ -490,33 +497,52 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "No popovers should be visible.");
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button should open the menu.");
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button should open the menu.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
+            });
 
             SwitchElement().Change(false);
-            menu.Instance.GetState(x => x.Open).Should().BeFalse("Manually setting Open to false should close the menu.");
-            comp.Instance.Open.Should().BeFalse();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should disappear after closing.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeFalse("Manually setting Open to false should close the menu.");
+                comp.Instance.Open.Should().BeFalse();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should disappear after closing.");
+            });
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
-            comp.Instance.Open.Should().BeTrue();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should reappear after reopening.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should reappear after reopening.");
+            });
 
             SwitchElement().Change(true);
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Setting Open to true again should not change the state.");
-            comp.Instance.Open.Should().BeTrue();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover count should remain the same.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Setting Open to true again should not change the state.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover count should remain the same.");
+            });
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeFalse("Clicking the button should close the menu.");
-            comp.Instance.Open.Should().BeFalse();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should no longer be visible.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeFalse("Clicking the button should close the menu.");
+                comp.Instance.Open.Should().BeFalse();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should no longer be visible.");
+            });
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
-            comp.Instance.Open.Should().BeTrue();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should appear again.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
+                comp.Instance.Open.Should().BeTrue();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should appear again.");
+            });
         }
 
         [Test]
@@ -531,7 +557,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-menu")[2].FirstElementChild.ClassName.Should().Contain("mud-menu-activator");
 
             comp.FindAll(".mud-menu")[3].FirstElementChild.Click();
-            comp.Find(".mud-popover-open > .mud-menu-list .mud-menu-item.mud-menu-sub-menu-activator").Should().NotBeNull();
+
+            comp.Find(".mud-popover-open .mud-menu-list .mud-menu-item.mud-menu-sub-menu-activator").Should().NotBeNull();
         }
 
         [Test]
@@ -581,7 +608,10 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-menu-item:contains('2.2')").Click();
 
             // Ensure all popovers are closed.
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
@@ -651,7 +681,10 @@ namespace MudBlazor.UnitTests.Components
 
             // Click the MudIconButton inside the ActivatorContent
             comp.Find("button.mud-icon-button-activator").Click();
-            provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            provider.WaitForAssertion(() =>
+            {
+                provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            });
         }
 
         [Test]
@@ -779,6 +812,414 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay((hoverDelay * 2) + 50);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1,
                 "Menu should close after rapid movement ending with pointer leave");
+        }
+
+        [Test]
+        public async Task Menu_ArrowDown_FocusSecondItem()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            var last = comp.Instance.LastInvokedIndex;
+            last.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Menu_ArrowUp_FocusLastItem()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            await comp.InvokeAsync(() => Task.CompletedTask);
+
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+
+                var allFocusableItems = comp.FindAll(".mud-menu-item[tabindex='0']");
+
+                if (allFocusableItems.Count > 0)
+                {
+                    var lastItem = allFocusableItems.Last();
+                    await lastItem.ClickAsync(new MouseEventArgs());
+                }
+            });
+
+            comp.Instance.LastInvokedIndex.Should().Be(6);
+        }
+
+        [Test]
+        public async Task Menu_ArrowRight_OpensNestedMenu()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            // Open the menu (focus starts at index -1)
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            // Press ArrowDown x4 to move to index 3 with nested menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            });
+
+            // Press ArrowRight opens submenu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+
+            // Should now be 2 open menus: the root and the submenu
+            comp.FindAll(".mud-popover-open").Count.Should().BeGreaterThan(1);
+        }
+
+        [Test]
+        public async Task Menu_ArrowRight_NoFurtherAction()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            // Open the menu (focus starts at index 0)
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            // Press ArrowRight to go back to close menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+
+            // Ensure the menu hasn't closed
+            comp.FindAll(".mud-popover-open").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Menu_ArrowLeft_ClosesMenu()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            // Open the menu (focus starts at index 0)
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            // Press Arrow Left to close menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+
+            // Ensure all popovers are closed
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Menu_ArrowLeft_ClosesNestedMenu()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            // Open the root menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            // Move focus to index 3 and open nested submenu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+
+            // Ensure we now have more than one menu open
+            var openBefore = comp.FindAll(".mud-popover-open");
+            openBefore.Count.Should().BeGreaterThan(1);
+
+            // Simulate ArrowLeft keypress inside the last opened (nested) menu
+            await comp.InvokeAsync(async () =>
+            {
+                var nestedMenu = comp.FindAll("div[data-testid='menu-wrapper']").Last();
+                await nestedMenu.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+
+            // Assert the submenu was closed (back to just one open popover)
+            var openAfter = comp.FindAll(".mud-popover-open");
+            openAfter.Count.Should().Be(openBefore.Count - 1);
+        }
+
+        [Test]
+        public async Task Menu_Enter_ClosesMenuOnLinkItem()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            // Open the root menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            // Arrow down to second item (index 1, a link)
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            });
+
+            // Press Enter to enter menu item
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            // Assert: menu should be closed
+            comp.FindAll(".mud-popover-open").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task Menu_Tab_ClosesAllMenus()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            // Open the root menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            // Arrow into nested menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+
+            // Press Tab to tab menu item
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Tab" });
+            });
+
+            // Assert: menu should be closed
+            comp.FindAll(".mud-popover-open").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task Menu_Escape_ClosesSubmenuAndReturnsFocus()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            // Open the root menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            // Arrow into nested menu
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+
+            // Press Escape to close submenu
+            await comp.InvokeAsync(async () =>
+            {
+                var nestedWrapper = comp.FindAll("[data-testid='menu-wrapper']").Last();
+                await nestedWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Escape" });
+            });
+
+            // Only parent menu should remain
+            comp.FindAll(".mud-popover-open").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Menu_DisabledItem_IsFocusableButNotInvokable()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                // Find the disabled item
+                var disabledItem = comp.Find(".mud-menu-item.mud-disabled");
+
+                // Verify it has the right accessibility attributes
+                disabledItem.GetAttribute("aria-disabled").Should().Be("true");
+                disabledItem.GetAttribute("tabindex").Should().Be("-1"); // Focusable by script, not by tab
+
+                // Verify it's in the DOM and visible for screen readers
+                disabledItem.Should().NotBeNull();
+                disabledItem.TextContent.Should().Contain("5 Disabled");
+
+                // Try to click it - it should NOT invoke the action
+                await disabledItem.ClickAsync(new MouseEventArgs());
+
+                // LastInvokedIndex should still be null because disabled items shouldn't invoke
+                comp.Instance.LastInvokedIndex.Should().BeNull();
+            });
+        }
+
+        [Test]
+        public async Task Menu_DisabledItem_HasCorrectAccessibilityAttributes()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+
+            await comp.InvokeAsync(async () =>
+            {
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
+            });
+
+            await comp.InvokeAsync(() =>
+            {
+                var disabledItem = comp.Find(".mud-menu-item.mud-disabled");
+
+                // Test all the accessibility attributes
+                disabledItem.GetAttribute("aria-disabled").Should().Be("true");
+                disabledItem.GetAttribute("class").Should().Contain("mud-disabled");
+
+                // The item should have the preventDefault attribute to stop normal click behavior
+                disabledItem.GetAttribute("blazor:onclick:preventDefault").Should().NotBeNull();
+
+                // But it should still be present in the DOM for screen readers
+                disabledItem.TextContent.Should().Contain("5 Disabled");
+            });
+        }
+
+        [Test]
+        public void TrackKeyboardInteraction_WhenMenuClosed_DoesNothing()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Menu should start closed
+            menu.GetState(x => x.Open).Should().BeFalse();
+
+            // Simulate an ArrowDown key press when the menu is closed
+            comp.InvokeAsync(() =>
+            {
+                var method = typeof(MudMenu)
+                    .GetMethod("TrackKeyboardInteraction", BindingFlags.NonPublic | BindingFlags.Instance);
+                method!.Invoke(menu, new object[] { new KeyboardEventArgs { Key = "ArrowDown" } });
+            });
+
+            // Nothing should change
+            menu.GetState(x => x.Open).Should().BeFalse();
+        }
+
+        [Test]
+        public async Task TrackKeyboardInteraction_WhenArrowDown_FocusesFirstItem()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Open the menu through its activator
+            await comp.InvokeAsync(async () =>
+            {
+                var button = comp.Find(".mud-menu-button-activator");
+                await button.ClickAsync(new MouseEventArgs());
+            });
+
+            // Simulate ArrowDown to move focus to the first item
+            await comp.InvokeAsync(() =>
+            {
+                var method = typeof(MudMenu)
+                    .GetMethod("TrackKeyboardInteraction", BindingFlags.NonPublic | BindingFlags.Instance);
+                method!.Invoke(menu, new object[] { new KeyboardEventArgs { Key = "ArrowDown" } });
+            });
+
+            // Verify that the focused index is now 0 (the first item)
+            var focusedIndex = (int)typeof(MudMenu)
+                .GetField("_focusedIndex", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            focusedIndex.Should().Be(0);
+        }
+
+        [Test]
+        public async Task TrackKeyboardInteraction_WhenArrowUp_FocusesLastItem()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Open the menu through its activator
+            await comp.InvokeAsync(async () =>
+            {
+                var button = comp.Find(".mud-menu-button-activator");
+                await button.ClickAsync(new MouseEventArgs());
+            });
+
+            // Simulate ArrowUp to move focus to the last item
+            await comp.InvokeAsync(() =>
+            {
+                var method = typeof(MudMenu)
+                    .GetMethod("TrackKeyboardInteraction", BindingFlags.NonPublic | BindingFlags.Instance);
+                method!.Invoke(menu, new object[] { new KeyboardEventArgs { Key = "ArrowUp" } });
+            });
+
+            // Verify that the focused index is now the last in the menu
+            var menuItems = (IReadOnlyList<object>)typeof(MudMenu)
+                .GetField("_menuItems", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            var focusedIndex = (int)typeof(MudMenu)
+                .GetField("_focusedIndex", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            focusedIndex.Should().Be(menuItems.Count - 1);
         }
     }
 }

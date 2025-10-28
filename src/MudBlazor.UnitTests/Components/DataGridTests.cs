@@ -3505,16 +3505,18 @@ namespace MudBlazor.UnitTests.Components
             {
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnHamburger[2].Click();
-
                 var listItems = popoverProvider.FindComponents<MudMenuItem>();
                 listItems.Count.Should().Be(2);
                 var clickablePopover = listItems[1].Find(".mud-menu-item");
                 clickablePopover.Click();
-
-                //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
+
+            dataGrid.WaitForAssertion(() =>
+            {
+                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
+            });
+
             await comp.InvokeAsync(() =>
             {
                 var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
@@ -3525,34 +3527,42 @@ namespace MudBlazor.UnitTests.Components
                 listItems.Count.Should().Be(1);
                 var clickablePopover = listItems[0].Find(".mud-menu-item");
                 clickablePopover.Click();
+            });
 
+            // Wait for switches, icons and buttons to appear
+            comp.WaitForAssertion(() =>
+            {
                 var switches = comp.FindComponents<MudSwitch<bool>>();
                 switches.Count.Should().Be(6);
-
                 var iconbuttons = comp.FindComponents<MudIconButton>();
                 iconbuttons.Count.Should().Be(29);
-
-
                 var buttons = comp.FindComponents<MudButton>();
-                // this is the show all button
+                buttons.Count.Should().BeGreaterThan(1);
                 buttons[1].Find("button").Click();
-                // 2 columns, 1 hidden
-                comp.FindAll(".mud-table-head th").Count.Should().Be(7);
-
-                //dataGrid.Instance._columns[0].Hide();
-                ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            comp.FindAll(".mud-table-head th").Count.Should().Be(7);
+
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll(".mud-table-head th").Count.Should().Be(7);
+            });
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
+
             await comp.InvokeAsync(() => dataGrid.Instance.HideColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
+            dataGrid.WaitForAssertion(() =>
+            {
+                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
+            });
+
             await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            dataGrid.WaitForAssertion(() =>
+            {
+                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            });
         }
 
         [Test]

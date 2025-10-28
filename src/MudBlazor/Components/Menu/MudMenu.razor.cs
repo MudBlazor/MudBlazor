@@ -6,7 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -24,8 +26,20 @@ namespace MudBlazor
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
         private bool _isTransient;
+        private bool _lastInteractionWasKeyboard;
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
+        private int _focusedIndex = -1;
+        private MudButton? _buttonActivator;
+        private MudMenuItem? _menuItemActivator;
+        private MudIconButton? _iconButtonActivator;
+        private ElementReference _menuWrapperRef;
+        private readonly List<object> _menuItems = [];
+        private readonly string _elementId = Identifier.Create("menu");
+        private DateTime _lastKeyboardActivation = DateTime.MinValue;
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudMenu()
         {
@@ -432,6 +446,11 @@ namespace MudBlazor
 
             // If this menu is a sub-menu, register it with its parent.
             ParentMenu?.RegisterChild(this);
+
+            if (ParentMenu != null)
+            {
+                ParentMenu.RegisterItem(this); // Pass the MudMenu directly
+            }
         }
 
         protected Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
@@ -459,6 +478,23 @@ namespace MudBlazor
             }
 
             // Now close this menu itself.
+            _focusedIndex = -1;
+            _lastInteractionWasKeyboard = false;
+            _menuItems.Clear();
+            await Task.Yield();
+
+            if (_openState.Value)
+            {
+                try
+                {
+                    await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                }
+                catch (JSException)
+                {
+                    // Element already gone, safe to ignore.
+                }
+            }
+
             await _openState.SetValueAsync(false);
             await InvokeAsync(StateHasChanged);
         }
@@ -485,6 +521,9 @@ namespace MudBlazor
 
             // Close the top-most menu, which will cascade down to close all its children.
             await top.CloseMenuAsync();
+
+            // Return focus to the menu
+            await top.FocusActivatorAsync();
         }
 
         /// <summary>
@@ -516,6 +555,11 @@ namespace MudBlazor
             // Officially open the menu.
             await _openState.SetValueAsync(true);
             await InvokeAsync(StateHasChanged);
+
+            // Wait for rendering to finish so the element with the ID is in the DOM
+            await Task.Yield();
+
+            await SubscribeToMenuKeyInterceptorAsync();
         }
 
         /// <summary>
@@ -557,6 +601,13 @@ namespace MudBlazor
             if (args is MouseEventArgs mouseEventArgs)
             {
                 // Determine if the click matches the expected activation event.
+                // This indicates it's a synthetic click following Enter/Space
+                var timeSinceKeyboard = DateTime.UtcNow - _lastKeyboardActivation;
+                if (timeSinceKeyboard.TotalMilliseconds < 50)
+                {
+                    return Task.CompletedTask;
+                }
+
                 var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
                 var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu = -1, right click = 2.
 
@@ -605,6 +656,7 @@ namespace MudBlazor
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
+            _lastInteractionWasKeyboard = false;
 
             // Prevent conflicting actions.
             CancelPendingActions();
@@ -751,6 +803,349 @@ namespace MudBlazor
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu. including arrow keys,
+        /// enter/space to select or open submenus, tab to close and move focus, and escape to close.
+        /// </summary>
+        private async Task HandleKeyDownAsync(KeyboardEventArgs e)
+        {
+            if (e.Key == "ArrowDown" || e.Key == "ArrowUp" || e.Key == "ArrowRight" || e.Key == "ArrowLeft")
+            {
+                await HandleNavigationKeyAsync(e);
+            }
+            else if (e.Key == "Enter" || e.Key == " ")
+            {
+                await HandleActivationKeyAsync(e);
+            }
+            else if (e.Key == "Tab" || e.Key == "Escape")
+            {
+                await HandleDismissalKeyAsync(e);
+            }
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu for arrow keys.
+        /// </summary>
+        private async Task HandleNavigationKeyAsync(KeyboardEventArgs e)
+        {
+            var items = _menuItems.Where(x => x is MudMenuItem).ToList();
+            if (items.Count == 0)
+                return;
+
+            switch (e.Key)
+            {
+                case "ArrowDown":
+                    await MoveFocusAsync(1, items.Count);
+                    break;
+
+                case "ArrowUp":
+                    await MoveFocusAsync(-1, items.Count);
+                    break;
+
+                case "ArrowRight":
+                    await HandleArrowRightAsync();
+                    break;
+
+                case "ArrowLeft":
+                    await HandleArrowLeftAsync();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Moves focus up or down in the menu.
+        /// </summary>
+        private Task MoveFocusAsync(int direction, int itemCount)
+        {
+            _focusedIndex = (_focusedIndex + direction + itemCount) % itemCount;
+
+            return FocusItemAsync(_focusedIndex);
+        }
+
+        /// <summary>
+        /// Handles the ArrowRight key - opens submenu or invokes click.
+        /// </summary>
+        private async Task HandleArrowRightAsync()
+        {
+            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
+            {
+                var currentItem = _menuItems[_focusedIndex];
+
+                switch (currentItem)
+                {
+                    case MudMenuItem menuItem:
+                        var submenu = FindSubmenuForItem(menuItem);
+                        if (submenu != null)
+                        {
+                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                        }
+                        else
+                        {
+                            await menuItem.OnClick.InvokeAsync();
+                        }
+                        break;
+
+                    case MudMenu menu:
+                        await menu.OpenSubMenuAsync(EventArgs.Empty);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the ArrowLeft key - closes current submenu or all menus.
+        /// </summary>
+        private async Task HandleArrowLeftAsync()
+        {
+            // Exit to parent menu if this is a submenu
+            if (ParentMenu != null)
+            {
+                await CloseMenuAsync();
+
+                // Return focus to the parent menu
+                if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
+                {
+                    await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
+                }
+            }
+            else
+            {
+                // Close the menu if there are no further menu items on the arrow left
+                await CloseAllMenusAsync();
+            }
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu and submenu for enter/space
+        /// </summary>
+        private async Task HandleActivationKeyAsync(KeyboardEventArgs e)
+        {
+            if (_menuItems.Count == 0)
+                return;
+
+            if (!_lastInteractionWasKeyboard)
+            {
+                await OpenMenuAsync(e);
+            }
+
+            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
+            {
+                var currentItem = _menuItems[_focusedIndex];
+
+                // Handle different item types
+                switch (currentItem)
+                {
+                    case MudMenuItem menuItem:
+                        // If this item has a submenu, open it instead of invoking click
+                        var submenu = FindSubmenuForItem(menuItem);
+                        if (submenu != null)
+                        {
+                            submenu._lastKeyboardActivation = DateTime.UtcNow;
+                            submenu._lastInteractionWasKeyboard = true;
+                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                        }
+                        else
+                        {
+                            await menuItem.OnClickHandlerAsync(new MouseEventArgs());
+                            _lastInteractionWasKeyboard = false;
+                        }
+                        break;
+
+                    case MudMenu menu:
+                        // For MudMenu items, always open the submenu
+                        menu._lastKeyboardActivation = DateTime.UtcNow;
+                        menu._lastInteractionWasKeyboard = true;
+                        await menu.OpenSubMenuAsync(EventArgs.Empty);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu for tab to close and move focus, and escape to close.
+        /// </summary>
+        private async Task HandleDismissalKeyAsync(KeyboardEventArgs e)
+        {
+            if (_menuItems.Count == 0)
+                return;
+
+            if (e.Key == "Tab")
+            {
+                await CloseAllMenusAsync();
+            }
+            else if (e.Key == "Escape")
+            {
+                // Close current menu or all menus if at top level
+                if (ParentMenu != null)
+                {
+                    await CloseMenuAsync();
+                    if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
+                    {
+                        await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
+                    }
+                }
+                else
+                {
+                    await CloseAllMenusAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Runs after component rendering. If the menu is open and no item is focused,
+        /// it automatically focuses the first enabled item in the list.
+        /// </summary>
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            if (_openState.Value && _focusedIndex == -1)
+            {
+                // Focus the container first. This makes the menu "listen" for keys.
+                if (_menuWrapperRef.Context is not null)
+                    await _menuWrapperRef.FocusAsync(preventScroll: true);
+
+                // Check if opened with keyboard and focus the first item
+                if (_lastInteractionWasKeyboard && _menuItems.Count > 0)
+                {
+                    _focusedIndex = 0;
+                    await FocusItemAsync(_focusedIndex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Registers a new menu item or submenu with the current menu.
+        /// Ensures the item is only added once
+        /// </summary>
+        internal void RegisterItem(object item)
+        {
+            if (!_menuItems.Contains(item))
+            {
+                _menuItems.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Sets focus to the menu item at the specified index, if the index is valid.
+        /// </summary>
+        internal async Task FocusItemAsync(int index)
+        {
+            if (index >= 0 && index < _menuItems.Count)
+            {
+                var item = _menuItems[index];
+
+                // Retrieves the cref ElementRef associated with a menu item or submenu to allow focus control.
+                ElementReference elementRef = item switch
+                {
+                    MudMenuItem menuItem => menuItem.ElementReference,
+                    MudMenu menu => menu._menuItemActivator?.ElementReference ?? default,
+                    _ => default
+                };
+
+                if (elementRef.Context is not null)
+                {
+                    await elementRef.FocusAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Subscribes to keyboard events for this menu using the <see cref="KeyInterceptorService"/>,
+        /// preventing default browser scrolling behaviour for certain keys.
+        /// </summary>
+        private Task SubscribeToMenuKeyInterceptorAsync()
+        {
+            // Subscribe key interceptor to prevent default scrolling
+            var options = new KeyInterceptorOptions(
+                "mud-list",
+                [
+                    // prevent scrolling page
+                    new("ArrowDown", preventDown: "key+none"),
+                    new("ArrowUp", preventDown: "key+none"),
+                ]);
+            return KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+        }
+
+        /// <summary>
+        /// Focuses the activator element that opened this menu. This could be a button,
+        /// icon button, or another menu item depending on the context.
+        /// </summary>
+        private async Task FocusActivatorAsync()
+        {
+            try
+            {
+                if (ParentMenu is null)
+                {
+                    if (_buttonActivator is not null)
+                    {
+                        await _buttonActivator.FocusAsync();
+                    }
+                    else if (_iconButtonActivator is not null)
+                    {
+                        await _iconButtonActivator.FocusAsync();
+                    }
+                }
+                else
+                {
+                    if (_menuItemActivator is not null)
+                    {
+                        await _menuItemActivator.ElementReference.FocusAsync();
+                    }
+                }
+            }
+            catch (JSException)
+            {
+                // No focus added - menu closed without focusing, as the element is likely gone from the DOM.
+            }
+        }
+
+        /// <summary>
+        /// Finds the submenu associated with a given menu item by checking the _subMenus collection.
+        /// </summary>
+        private MudMenu? FindSubmenuForItem(MudMenuItem menuItem)
+        {
+            return _subMenus.FirstOrDefault(submenu => submenu._menuItemActivator == menuItem);
+        }
+
+        /// <summary>
+        /// Track whether the menu is selected or not and move to the correct position on Arrow Up/Down
+        /// </summary>
+        /// <param name="e"></param>
+        private void TrackKeyboardInteraction(KeyboardEventArgs e)
+        {
+            _lastInteractionWasKeyboard = true;
+
+            if (_openState.Value && _focusedIndex == -1 && _menuItems.Count > 0)
+            {
+                if (e.Key == "ArrowDown")
+                {
+                    _focusedIndex = 0;
+                    _ = InvokeAsync(() => FocusItemAsync(_focusedIndex));
+                }
+                else if (e.Key == "ArrowUp")
+                {
+                    _focusedIndex = _menuItems.Count - 1;
+                    _ = InvokeAsync(() => FocusItemAsync(_focusedIndex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handle activator keydown when activator content is added to the menu/submenus. 
+        /// </summary>
+        /// <param name="e"></param>
+        private async Task HandleActivatorKeydown(KeyboardEventArgs e)
+        {
+            if (e.Key == "Enter" || e.Key == " ")
+            {
+                _lastInteractionWasKeyboard = true;
+                _lastKeyboardActivation = DateTime.UtcNow;
+
+                await ToggleMenuAsync(e);
+            }
         }
     }
 }
