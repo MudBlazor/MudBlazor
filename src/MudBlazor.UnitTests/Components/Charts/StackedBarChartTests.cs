@@ -30,6 +30,13 @@ namespace MudBlazor.UnitTests.Charts
             "#01153E", "#2EE8BB", "#EBDDE2"
         };
 
+        private readonly List<ChartSeries> _defaultChartSeries = new()
+        {
+            new() { Name = "Series 1", Data = new[] { 40.0, 20.0, 25.0 } },
+        };
+
+        private readonly string[] _defaultXAxisLabels = { "Jan", "Feb", "Mar" };
+
         [SetUp]
         public void Init()
         {
@@ -163,16 +170,10 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void StackedBarChart_XAxisLabelOffset_DefaultValues()
         {
-            var chartSeries = new List<ChartSeries>()
-            {
-                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
-            };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
-
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.XAxisLabels, xAxisLabels));
+                .Add(p => p.ChartSeries, _defaultChartSeries)
+                .Add(p => p.XAxisLabels, _defaultXAxisLabels));
 
             // Default offsets should be 0
             comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(0, because: "default horizontal offset should be 0");
@@ -187,12 +188,6 @@ namespace MudBlazor.UnitTests.Charts
         [TestCase(50.0, -25.0)]
         public void StackedBarChart_XAxisLabelOffset_CustomValues(double dx, double dy)
         {
-            var chartSeries = new List<ChartSeries>()
-            {
-                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
-            };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
-
             var axisOptions = new AxisChartOptions 
             { 
                 XAxisLabelDx = dx,
@@ -201,8 +196,8 @@ namespace MudBlazor.UnitTests.Charts
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartSeries, _defaultChartSeries)
+                .Add(p => p.XAxisLabels, _defaultXAxisLabels)
                 .Add(p => p.AxisChartOptions, axisOptions));
 
             comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(dx, 
@@ -214,16 +209,10 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void StackedBarChart_WithRotationAndOffset()
         {
-            var chartSeries = new List<ChartSeries>()
-            {
-                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
-            };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
-
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartSeries, _defaultChartSeries)
+                .Add(p => p.XAxisLabels, _defaultXAxisLabels)
                 .Add(p => p.AxisChartOptions, new AxisChartOptions 
                 { 
                     XAxisLabelRotation = 45,
@@ -274,12 +263,6 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void StackedBarChart_UpdateLabelOffset_ShouldRerender()
         {
-            var chartSeries = new List<ChartSeries>()
-            {
-                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
-            };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
-
             var axisOptions = new AxisChartOptions 
             { 
                 XAxisLabelDx = 5.0,
@@ -288,8 +271,8 @@ namespace MudBlazor.UnitTests.Charts
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartSeries, _defaultChartSeries)
+                .Add(p => p.XAxisLabels, _defaultXAxisLabels)
                 .Add(p => p.AxisChartOptions, axisOptions));
 
             comp.Instance.AxisChartOptions.XAxisLabelDx.Should().Be(5.0);
@@ -310,16 +293,10 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void StackedBarChart_LargeOffsetValues()
         {
-            var chartSeries = new List<ChartSeries>()
-            {
-                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
-            };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
-
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartSeries, _defaultChartSeries)
+                .Add(p => p.XAxisLabels, _defaultXAxisLabels)
                 .Add(p => p.AxisChartOptions, new AxisChartOptions 
                 { 
                     XAxisLabelDx = 100.0,
@@ -335,16 +312,10 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void StackedBarChart_NegativeOffsetValues()
         {
-            var chartSeries = new List<ChartSeries>()
-            {
-                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
-            };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
-
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartSeries, _defaultChartSeries)
+                .Add(p => p.XAxisLabels, _defaultXAxisLabels)
                 .Add(p => p.AxisChartOptions, new AxisChartOptions 
                 { 
                     XAxisLabelDx = -25.0,
@@ -388,16 +359,10 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void StackedBarChart_ZeroOffsetValues()
         {
-            var chartSeries = new List<ChartSeries>()
-            {
-                new () { Name = "Series 1", Data = new double[] { 40, 20, 25 } },
-            };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar" };
-
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartSeries, _defaultChartSeries)
+                .Add(p => p.XAxisLabels, _defaultXAxisLabels)
                 .Add(p => p.AxisChartOptions, new AxisChartOptions 
                 { 
                     XAxisLabelDx = 0.0,
