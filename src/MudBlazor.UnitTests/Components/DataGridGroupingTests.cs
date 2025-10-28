@@ -321,15 +321,31 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.IsProfessionGrouped.Should().Be(false);
             comp.Instance.IsNameGrouped.Should().Be(false);
 
-            //click age grouping in grid
             var headerOption = comp.Find("th.age .mud-menu button");
             headerOption.Click();
+
+            comp.WaitForAssertion(() =>
+            {
+                var items = popoverProvider.FindComponents<MudMenuItem>();
+                items.Count.Should().BeGreaterThan(0);
+            });
+
             var listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
+            var expectedMenuTexts = new[] { "Unsort", "Group" };
+
+            listItems.Count.Should().Be(expectedMenuTexts.Length);
+
+            for (int i = 0; i < listItems.Count; i++)
+            {
+                var itemText = listItems[i].Find(".mud-menu-item-text").TextContent.Trim();
+                itemText.Should().Be(expectedMenuTexts[i]);
+            }
+
             var clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsAgeGrouped.Should().Be(true);
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+            var rowCount = Rows().Count;
+            rowCount.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
             ungroup.Click();
             comp.Instance.IsAgeGrouped.Should().Be(false);
