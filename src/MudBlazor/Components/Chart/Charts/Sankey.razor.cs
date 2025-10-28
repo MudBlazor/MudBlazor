@@ -15,13 +15,6 @@ namespace MudBlazor.Charts
     /// </summary>
     partial class Sankey<T> : MudChartBase<T, SankeyChartOptions>, IDisposable where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        private record NodeRect(int Hash, string Name, double X, double Y, double Width, double Height, string Color)
-        {
-            public double LowestIncomingNodeY { get; set; } = Y;
-        }
-
-        private record EdgePath(string Name, NodeRect Source, NodeRect Target, string D, double CenterX, double CenterY);
-
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -118,7 +111,7 @@ namespace MudBlazor.Charts
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-         
+
             if (firstRender)
             {
                 var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
@@ -461,6 +454,7 @@ namespace MudBlazor.Charts
         {
             EdgePaths.Clear();
 
+            var index = 0;
             var edgesPerSources = Edges.GroupBy(e => e.Source).ToList();
             foreach (var sourceGrp in edgesPerSources)
             {
@@ -477,11 +471,13 @@ namespace MudBlazor.Charts
                     var endY = rectTarget.LowestIncomingNodeY;
                     var height = double.CreateSaturating(edge.Weight) / maxColumnValue * relativeBoundHeight;
 
-                    EdgePaths.Add(new EdgePath(
-                        Name: $"{rectSource.Name} -> {rectTarget.Name} ({edge.Weight})",
-                        Source: rectSource,
-                        Target: rectTarget,
-                        D: BuildSankyEdgePath(
+                    EdgePaths.Add(new EdgePath()
+                    {
+                        Index = index++,
+                        Name = $"{rectSource.Name} -> {rectTarget.Name} ({edge.Weight})",
+                        Source = rectSource,
+                        Target = rectTarget,
+                        Data = BuildSankyEdgePath(
                             sourceX: startX - 0.1, // -0.1 to prevent a visible edge when setting the edge opacity to 1
                             sourceY: startY,
                             sourceHeight: height,
@@ -489,9 +485,11 @@ namespace MudBlazor.Charts
                             targetY: endY,
                             targetHeight: height
                         ),
-                        CenterX: startX + Math.Abs(startX - endX) / 2,
-                        CenterY: startY + Math.Abs(startY - (endY + height)) / 2
-                    ));
+                        LabelXValue = rectSource.Name,
+                        LabelYValue = rectTarget.Name,
+                        LabelX = startX + Math.Abs(startX - endX) / 2,
+                        LabelY = startY + Math.Abs(startY - (endY + height)) / 2
+                    });
 
                     startYOffset += height;
                     rectTarget.LowestIncomingNodeY += height;

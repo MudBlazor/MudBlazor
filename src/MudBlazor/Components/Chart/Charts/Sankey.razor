@@ -32,7 +32,7 @@
         </defs>
         @foreach (var edge in EdgePaths)
         {
-            <path d="@edge.D"
+            <path d="@edge.Data"
                   fill="@($"url(#gradient_{NodeRects[edge.Source.Name].Hash}_{NodeRects[edge.Target.Name].Hash})")"
                   opacity="@ToS(ChartOptions?.EdgeOpacity ?? 0.5)"
                   filter="@(ActiveNode == edge.Source.Name || ActiveNode == edge.Target.Name || edge.Name == ActiveEdge ? $"url(#{glowName})" : "")"
@@ -66,13 +66,26 @@
         @* Draw edge labels last to have them at the top*@
         @foreach (var edge in EdgePaths.Where(edge => ChartOptions?.ShowEdgeLabels is true || edge.Name == ActiveEdge))
         {
-            <ChartTooltip Title="@edge.Name"
-                          Color="@NodeRects[edge.Source.Name].Color"
-                          X="@edge.CenterX"
-                          Y="@edge.CenterY"
-                          ShowTriangle="false"
-                          StrokeWidth="0"
-                          FontSize="@ChartOptions.LabelFontSize" />
+            var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(edge) is { } pos
+                    ? (pos.X, pos.Y)
+                    : (edge.LabelX, edge.LabelY);
+
+            if (TooltipTemplate is not null)
+            {
+                <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToStr(), @tooltipY.ToStr())">
+                    @TooltipTemplate((edge, @NodeRects[edge.Source.Name].Color))
+                </g>
+            }
+            else
+            {
+                <ChartTooltip Title="@edge.Name"
+                              Color="@NodeRects[edge.Source.Name].Color"
+                              X="@edge.LabelX"
+                              Y="@edge.LabelY"
+                              ShowTriangle="false"
+                              StrokeWidth="0"
+                              FontSize="@ChartOptions.LabelFontSize" />
+            }
         }
         @MudChartParent?.CustomGraphics
     </svg>
