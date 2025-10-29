@@ -31,6 +31,10 @@ namespace MudBlazor.Charts
         private double _boundWidth = BoundWidthDefault;
         private double _boundHeight = BoundHeightDefault;
 
+        private readonly List<SvgLegend> _legend = [];
+        private readonly HashSet<string> _hiddenNodes = [];
+        private readonly Dictionary<string, string> _nodeColorCache = [];
+
         /// <summary>
         /// The collection of nodes that represent the points within the Sankey diagram. 
         /// Each node typically corresponds to a source or target 
@@ -53,6 +57,7 @@ namespace MudBlazor.Charts
         private string? ActiveNode { get; set; }
         private string? ActiveEdge { get; set; }
 
+        private List<ChartSeries<T>> _seriesData = [];
         private Dictionary<string, SankeyNode> _nodeLookup = [];
 
         /// <summary>
@@ -72,9 +77,11 @@ namespace MudBlazor.Charts
         {
             base.OnParametersSet();
 
-            var seriesData = AggregateSeriesData(ChartOptions?.AggregationOption ?? AggregationOption.None);
+            _nodeColorCache.Clear();
 
-            Edges = Sankey<T>.EnsureUniqueEdges(seriesData);
+            _seriesData = AggregateSeriesData(ChartOptions?.AggregationOption ?? AggregationOption.None);
+
+            Edges = EnsureUniqueEdges();
             Nodes = GenerateNodesFromEdges();
 
             if (ChartOptions?.NodeOverrides is { Count: > 0 } overrides)
@@ -121,6 +128,17 @@ namespace MudBlazor.Charts
 
         public override void RebuildChart()
         {
+            _legend.Clear();
+            BuildLegends();
+
+            if (Nodes.Count == 0)
+            {
+                NodeRects.Clear();
+                EdgePaths.Clear();
+                NodeValues.Clear();
+                return;
+            }
+
             SetBounds();
             NodeValues = GetAllNodeValues();
             var (maxColumnValue, relativeBoundHeight) = GenerateNodeRects();
@@ -261,26 +279,32 @@ namespace MudBlazor.Charts
         private List<ChartSeries<T>> AggregateByLabel(ChartSeries<T>[] aggregated)
         {
             var result = new List<ChartSeries<T>>();
+            var visibleSeries = ChartSeries.Where(s => s.Visible).ToList();
 
-            foreach (var series in ChartSeries.Where(s => s.Visible))
+            for (var i = 0; i < ChartLabels.Length; i++)
             {
-                var data = new List<(SankeyLink, T)>();
-                var values = series.Data?.Values ?? [];
+                if (_hiddenNodes.Contains(ChartLabels[i]))
+                    continue;
 
-                for (var i = 0; i < values.Count; i++)
+                var label = ChartLabels[i];
+                var data = new List<(SankeyLink, T)>();
+
+                foreach (var series in visibleSeries)
                 {
-                    if (i < aggregated.Length)
+                    var values = series.Data?.Values ?? [];
+
+                    if (i < values.Count)
                     {
-                        var link = new SankeyLink(ChartLabels[i], series.Name);
+                        var link = new SankeyLink(label, series.Name);
                         data.Add((link, values[i]));
                     }
                 }
 
                 result.Add(new ChartSeries<T>
                 {
-                    Name = series.Name,
+                    Name = label,
                     Data = data.ToArray(),
-                    Visible = series.Visible
+                    Visible = true
                 });
             }
 
@@ -316,11 +340,11 @@ namespace MudBlazor.Charts
             return result;
         }
 
-        private static HashSet<SankeyEdge<T>> EnsureUniqueEdges(List<ChartSeries<T>> chartSeries)
+        private HashSet<SankeyEdge<T>> EnsureUniqueEdges()
         {
             var unique = new HashSet<SankeyEdge<T>>();
 
-            foreach (var series in chartSeries.Where(s => s.Visible))
+            foreach (var series in _seriesData.Where(s => s.Visible))
             {
                 var edges = series.Data.Points.Select(x =>
                 {
@@ -367,7 +391,7 @@ namespace MudBlazor.Charts
                 .ToArray();
             var maxColumnValue = Nodes
                 .GroupBy(n => n.Column)
-                .Select(grp => grp.Sum(n => NodeValues.GetValueOrDefault(n.Name))) //.Aggregate(T.Zero, (sum, n) => double.CreateSaturating(sum) + NodeValues.GetValueOrDefault(n.Name)))
+                .Select(grp => grp.Sum(n => NodeValues.GetValueOrDefault(n.Name)))
                 .Max();
             var relativeNodesValuesMapping = GetNormalisedNodeValuesMapping(maxColumnValue);
 
@@ -381,7 +405,7 @@ namespace MudBlazor.Charts
             foreach (var column in nodesPerColumn)
             {
                 var x = column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth + HorizontalPadding;
-                var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]); //column.Aggregate(T.Zero, (sum, n) => sum + relativeNodesValuesMapping[n]);
+                var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]);
                 var totalVerticalSpace = _boundHeight - double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight;
                 var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), ChartOptions!.MinVerticalSpacing);
 
@@ -391,6 +415,9 @@ namespace MudBlazor.Charts
                     var y = currentY + verticalSpacing;
                     var height = double.CreateSaturating(relativeNodesValuesMapping[node]) * boundHeightRelativeToNodeHeight;
 
+                    if (!_nodeColorCache.ContainsKey(node.Name))
+                        _nodeColorCache[node.Name] = GetNextHexColorForNodeRect(node);
+
                     NodeRects[node.Name] = new NodeRect(
                         Hash: node.GetHashCode(),
                         Name: node.Name,
@@ -398,7 +425,7 @@ namespace MudBlazor.Charts
                         Y: y,
                         Width: ChartOptions!.NodeWidth,
                         Height: height,
-                        Color: GetNextHexColorForNodeRect(node)
+                        Color: _nodeColorCache[node.Name]
                     );
 
                     currentY = y + height;
@@ -444,7 +471,7 @@ namespace MudBlazor.Charts
 
             if (ChartOptions!.ChartPalette is { Length: > 0 } palette)
             {
-                return palette[NodeRects.Count % palette.Length];
+                return palette[_nodeColorCache.Count % palette.Length];
             }
 
             return Colors.Gray.Default;
@@ -518,6 +545,39 @@ namespace MudBlazor.Charts
                    $"C{ToS(cx1)},{ToS(ty1)} " + // Control point 2 mirrored
                    $"{ToS(cx0)},{ToS(sy1)} " + // Control point 1 mirrored
                    $"{ToS(sourceX)},{ToS(sy1)} Z"; // Bottom of source
+        }
+
+        private void BuildLegends()
+        {
+            for (var i = 0; i < _seriesData.Count; i++)
+            {
+                var name = _seriesData[i].Name;
+
+                _legend.Add(new SvgLegend
+                {
+                    Index = i,
+                    Labels = name,
+                    Visible = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
+                        ? !_hiddenNodes.Contains(ChartLabels[i])
+                        : _seriesData[i].Visible,
+                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+                });
+            }
+        }
+
+        protected void HandleLegendVisibilityChanged(SvgLegend legend)
+        {
+            if (legend.Visible)
+                _hiddenNodes.Remove(legend.Labels);
+            else
+                _hiddenNodes.Add(legend.Labels);
+
+            _seriesData.First(x => x.Name == legend.Labels).Visible = legend.Visible;
+
+            Edges = EnsureUniqueEdges();
+            Nodes = GenerateNodesFromEdges();
+
+            RebuildChart();
         }
 
         private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect)

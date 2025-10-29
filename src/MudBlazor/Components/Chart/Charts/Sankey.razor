@@ -90,3 +90,8 @@
         @MudChartParent?.CustomGraphics
     </svg>
 </div>
+
+@if (CanHideSeries is true)
+{
+    <Legend T="T" Data="@_legend" />
+}
