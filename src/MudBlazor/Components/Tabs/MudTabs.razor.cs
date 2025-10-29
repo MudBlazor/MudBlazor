@@ -526,6 +526,7 @@ namespace MudBlazor
                 {
                     // update the activepanelindex to be valid
                     await _activePanelIndexState.SetValueAsync(index.Value);
+                    await ActivePanelIndexChanged.InvokeAsync(index.Value);
                 }
 
                 _isRendered = true;
@@ -746,6 +747,7 @@ namespace MudBlazor
             if (panel == null)
             {
                 await _activePanelIndexState.SetValueAsync(-1);
+                await ActivePanelIndexChanged.InvokeAsync(-1);
             }
             else if ((panel.Visible && !panel.Disabled) || ignoreDisabledState)
             {
@@ -762,6 +764,7 @@ namespace MudBlazor
                 if (previewArgs.Cancel) return;
 
                 await _activePanelIndexState.SetValueAsync(previewArgs.PanelIndex);
+                await ActivePanelIndexChanged.InvokeAsync(previewArgs.PanelIndex);
             }
             Rerender();
         }
