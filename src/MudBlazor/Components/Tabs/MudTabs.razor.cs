@@ -536,9 +536,9 @@ namespace MudBlazor
                     [
                         // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
-            new("Enter", preventDown: "key+none"),
-            new("NumpadEnter", preventDown: "key+none"),
-            new("Backspace", preventDown: "key+none")
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
