@@ -546,8 +546,13 @@ namespace MudBlazor
             else if (_addObserver)
             {
                 _addObserver = false;
+                _resizeObserver!.OnResized -= OnResized;
+                await _resizeObserver!.DisposeAsync();
+                _resizeObserver = _resizeObserverFactory.Create();
                 var items = _panels.Select(x => x.PanelRef).ToList();
+                items.Add(_tabsContentSize);
                 await _resizeObserver!.Observe(items);
+                _resizeObserver.OnResized += OnResized;
                 Rerender();
             }
         }
@@ -620,9 +625,10 @@ namespace MudBlazor
                     await ActivatePanelAsync(null);
                 else
                     await ActivatePanelAsync(newIndex.Value);
-                return;
             }
-            await ActivatePanelAsync(activePanel);
+            else
+                await ActivatePanelAsync(activePanel);
+
             _addObserver = true;
             StateHasChanged();
         }
