@@ -201,12 +201,12 @@ public partial class MudTabPanel
     public string? SortKey { get; set; }
 
     /// <inheritdoc/>
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
-        await base.OnAfterRenderAsync(firstRender);
-        if (firstRender && Parent is not null)
+        base.OnAfterRender(firstRender);
+        if (firstRender)
         {
-            await Parent.SetPanelRef(PanelRef);
+            Parent?.SetPanelRef(PanelRef);
         }
     }
 
