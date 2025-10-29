@@ -93,10 +93,7 @@ public class MockResizeObserver : IResizeObserver
             {
                 rect = new BoundingClientRect { Height = size };
             }
-            if (!_cachedValues.TryAdd(item, rect))
-            {
-                _cachedValues[item] = rect;
-            }
+            _cachedValues.Add(item, rect);
         }
 
         _firstBatchProcessed = true;
@@ -118,7 +115,11 @@ public class MockResizeObserver : IResizeObserver
 
     public bool IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);
 
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    public ValueTask DisposeAsync()
+    {
+        _cachedValues.Clear();
+        return ValueTask.CompletedTask;
+    }
 
     public void Dispose()
     {
