@@ -32,18 +32,18 @@
     MudTabPanel panel02;
     MudTabPanel panel03;
 
-    void Activate(int index)
+    Task Activate(int index)
     {
-        tabs.ActivatePanel(index);
+        return tabs.ActivatePanelAsync(index);
     }
 
-    void Activate(MudTabPanel panel)
+    Task Activate(MudTabPanel panel)
     {
-        tabs.ActivatePanel(panel);
+        return tabs.ActivatePanelAsync(panel);
     }
 
-    void Activate(object id)
+    Task Activate(object id)
     {
-        tabs.ActivatePanel(id);
+        return tabs.ActivatePanelAsync(id);
     }
 }
