@@ -93,7 +93,10 @@ public class MockResizeObserver : IResizeObserver
             {
                 rect = new BoundingClientRect { Height = size };
             }
-            _cachedValues.Add(item, rect);
+            if (!_cachedValues.TryAdd(item, rect))
+            {
+                _cachedValues[item] = rect;
+            }
         }
 
         _firstBatchProcessed = true;
