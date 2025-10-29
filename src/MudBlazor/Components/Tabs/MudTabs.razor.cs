@@ -633,6 +633,11 @@ namespace MudBlazor
         /// </summary>
         private int? FindNearestValidPanelIndex(int startIndex)
         {
+            if (!_panels.Any())
+            {
+                // nothing to find if no panels
+                return null;
+            }
             // Clamp starting point
             startIndex = Math.Clamp(startIndex, 0, _panels.Count - 1);
             // If the provided index is good stop here.
