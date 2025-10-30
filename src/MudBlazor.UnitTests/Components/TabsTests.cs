@@ -1712,7 +1712,7 @@ namespace MudBlazor.UnitTests.Components
 
             result.Should().Be("test-tab-list-id");
         }
-   
+
         [TestCase(true)]
         [TestCase(false)]
         [Test]
@@ -1728,7 +1728,7 @@ namespace MudBlazor.UnitTests.Components
             var tooltipDiv = comp.Find(".mud-tabs-tabbar-content .mud-tooltip-root .mud-popover-cascading-value");
             tooltipDiv.Should().NotBeNull();
         }
-        
+
         [Test]
         public void TabPanelCssClassesMatchTest()
         {
@@ -1742,7 +1742,7 @@ namespace MudBlazor.UnitTests.Components
             var tabButtonRef = comp.Find(".mud-tab.mud-tab-panel");
             tabButtonRef.ClassList.Should().Contain(tabButtonClasses);
             tabButtonRef.ClassList.Should().NotContain(panelClasses);
-            
+
             var panelRef = comp.Find(":not(.mud-tab).mud-tab-panel");
             panelRef.ClassList.Should().Contain(panelClasses);
             panelRef.ClassList.Should().NotContain(tabButtonClasses);
