@@ -1719,9 +1719,9 @@ namespace MudBlazor.UnitTests.Components
             var tabButtonClasses = "class1";
             var panelClasses = "class2";
 
-            var comp = Context.RenderComponent<TabPanelCssClassesMatchTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabButtonClass, tabButtonClasses));
-            comp.SetParametersAndRender(x => x.Add(y => y.PanelClass, panelClasses));
+            var comp = Context.RenderComponent<TabPanelCssClassesMatchTest>(parameters => parameters
+                .Add(p => p.TabButtonClass, tabButtonClasses)
+                .Add(p => p.PanelClass, panelClasses));
 
             var tabButtonRef = comp.Find(".mud-tab.mud-tab-panel");
             tabButtonRef.ClassList.Should().Contain(tabButtonClasses);
