@@ -116,9 +116,18 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        /// <summary>
+        /// Hides the submenu arrow if the item is being populated from the activator content. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public bool HideSubMenuArrow { get; set; }
+
+        public ElementReference ElementReference { get; private set; }
+
         protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
 
-        protected bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
+        protected internal bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
 
         protected bool GetDense() => ParentMenu?.GetDense() == true;
 
@@ -129,7 +138,7 @@ namespace MudBlazor
         /// </summary>
         protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
 
-        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
+        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (GetDisabled())
             {
@@ -152,6 +161,12 @@ namespace MudBlazor
             {
                 await OnClick.InvokeAsync(ev);
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            ParentMenu?.RegisterItem(this);
         }
     }
 }

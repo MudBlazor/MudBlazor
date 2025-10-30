@@ -879,13 +879,13 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatePanels()
         {
             var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
-               (x,y) => x.Instance.ActivateTab(y.Index),
-               (x,y) => x.Instance.ActivateTab(y.Panel),
-               (x,y) => x.Instance.ActivateTab(y.Tag),
+                (x,y) => x.Instance.ActivateTab(y.Index),
+                (x,y) => x.Instance.ActivateTab(y.Panel),
+                (x,y) => x.Instance.ActivateTab(y.Tag),
 
-               (x,y) => x.Instance.ActivateTab(y.Index, false),
-               (x,y) => x.Instance.ActivateTab(y.Panel, false),
-               (x,y) => x.Instance.ActivateTab(y.Tag, false),
+                (x,y) => x.Instance.ActivateTab(y.Index, false),
+                (x,y) => x.Instance.ActivateTab(y.Panel, false),
+                (x,y) => x.Instance.ActivateTab(y.Tag, false),
             };
 
             foreach (var invoker in activator)
@@ -937,9 +937,9 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatePanels_EvenWhenDisabled()
         {
             var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
-               (x,y) => x.Instance.ActivateTab(y.Index, true),
-               (x,y) => x.Instance.ActivateTab(y.Panel, true),
-               (x,y) => x.Instance.ActivateTab(y.Tag, true),
+                (x,y) => x.Instance.ActivateTab(y.Index, true),
+                (x,y) => x.Instance.ActivateTab(y.Panel, true),
+                (x,y) => x.Instance.ActivateTab(y.Tag, true),
             };
 
             foreach (var invoker in activator)
@@ -1395,8 +1395,8 @@ namespace MudBlazor.UnitTests.Components
              * all labels should be present and in natural order
              */
             var comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortDirection", SortDirection.None)
-                        );
+                ComponentParameter.CreateParameter("SortDirection", SortDirection.None)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("1");
@@ -1406,8 +1406,8 @@ namespace MudBlazor.UnitTests.Components
              * all labels should be present and in lexicographically ascending order
              */
             comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending)
-                        );
+                ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("1");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("2");
@@ -1417,8 +1417,8 @@ namespace MudBlazor.UnitTests.Components
              * all labels should be present and in lexicographically descending order
              */
             comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
-                        );
+                ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("3");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("2");
@@ -1435,9 +1435,9 @@ namespace MudBlazor.UnitTests.Components
              * all labels should be present and in natural order
              */
             var comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortDirection", SortDirection.None),
-                            ComponentParameter.CreateParameter("SortKeys", sortKeys)
-                        );
+                ComponentParameter.CreateParameter("SortDirection", SortDirection.None),
+                ComponentParameter.CreateParameter("SortKeys", sortKeys)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
             // sort order is per markup: 2, 1, 3, 4. Keys are ignored as list is unsorted.
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
@@ -1449,9 +1449,9 @@ namespace MudBlazor.UnitTests.Components
              * all labels should be present and in lexicographically ascending order
              */
             comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending),
-                            ComponentParameter.CreateParameter("SortKeys", sortKeys)
-                        );
+                ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending),
+                ComponentParameter.CreateParameter("SortKeys", sortKeys)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
             // sort order is: 4, a=3, b=1, c=2
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("4");
@@ -1463,9 +1463,9 @@ namespace MudBlazor.UnitTests.Components
              * all labels should be present and in lexicographically descending order
              */
             comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending),
-                            ComponentParameter.CreateParameter("SortKeys", sortKeys)
-                        );
+                ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending),
+                ComponentParameter.CreateParameter("SortKeys", sortKeys)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
             // sort order is: c=2, b=1, a=3, 4
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
@@ -1484,9 +1484,9 @@ namespace MudBlazor.UnitTests.Components
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
             var comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
-                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
-                        );
+                ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
+                ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
@@ -1503,9 +1503,9 @@ namespace MudBlazor.UnitTests.Components
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
             var comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
-                            ComponentParameter.CreateParameter("SortDirection", null)
-                        );
+                ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
+                ComponentParameter.CreateParameter("SortDirection", null)
+            );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
@@ -1711,6 +1711,22 @@ namespace MudBlazor.UnitTests.Components
             var result = method!.Invoke(instance, null);
 
             result.Should().Be("test-tab-list-id");
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        [Test]
+        /// <summary>
+        /// A test to ensure TabWrapperContent and Tooltip is rendered in both regular and EnableDragandDrop modes
+        /// </summary>
+        public void TabWrapperTest(bool enableDrag)
+        {
+            // initial pass at false fail at true, github issue 12006
+            var comp = Context.RenderComponent<TabWrapperContentTest>(t => t.Add(x => x.EnableDragAndDrop, enableDrag));
+            var wrapperDiv = comp.Find(".wrapper-class-content");
+            wrapperDiv.Should().NotBeNull();
+            var tooltipDiv = comp.Find(".mud-tabs-tabbar-content .mud-tooltip-root .mud-popover-cascading-value");
+            tooltipDiv.Should().NotBeNull();
         }
     }
 }

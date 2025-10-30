@@ -3,6 +3,11 @@
   &.mud-tooltip-inline {
     display: inline-block;
   }
+
+  &.mud-tooltip-inline:has(> .mud-width-full) {
+    display: block;
+    width: 100%;
+  }
 }
 
 .mud-tooltip {

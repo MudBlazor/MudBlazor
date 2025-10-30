@@ -1,10 +1,4 @@
-﻿<h1>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="content/MudBlazor-GitHub-NoBg-Dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="content/MudBlazor-GitHub-NoBg.png">
-    <img alt="MudBlazor" src="content/MudBlazor-GitHub-NoBg.png">
-  </picture>
-</h1>
+# ![MudBlazor Logo](content/MudBlazor-GitHub-NoBg-Dark.png)
 
 # Material Design components for Blazor
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/mudblazor/mudblazor/build-test-mudblazor.yml?branch=dev&logo=github&style=flat-square)
