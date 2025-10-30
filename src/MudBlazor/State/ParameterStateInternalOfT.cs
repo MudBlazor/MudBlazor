@@ -116,7 +116,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
             Metadata,
             _parameterChangedEventArgs?.Clone(),
             _parameterChangedHandler,
-            // We should not cache it changed by OnParametersSet.
+            // We should not cache this value because it may be modified by OnParametersSet.
+            // In theory, this could also lead to race conditions if multiple OnParametersSet calls occur with different _lastValue, currentParameterValue values.
+            // For now, we'll leave it as-is since properly fixing this would be complex, it should be fixed only if it happens in practise.
             () => _isChildOriginatedChange);
     }
 
