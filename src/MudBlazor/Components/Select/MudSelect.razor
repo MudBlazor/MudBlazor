@@ -50,7 +50,7 @@
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes"
                           OnBlur="@OnBlurAsync"
-                          ShrinkLabel="@ShrinkLabel"
+                          ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
                           Required="@Required">
                     @if (CanRenderValue)
