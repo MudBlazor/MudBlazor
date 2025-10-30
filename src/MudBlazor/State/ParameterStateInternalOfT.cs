@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
+using MudBlazor.State.Invocation;
 using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
@@ -108,21 +109,15 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         }
     }
 
-    /// <inheritdoc />
-    public Task ParameterChangeHandleAsync()
+    /// <inheritdoc/>
+    public IParameterStateInvocationSnapshot CreateInvocationSnapshot()
     {
-        if (HasHandler)
-        {
-            if (HasParameterChangedEventArgs)
-            {
-                // Since the ParameterSet lifecycles control all operations, it is acceptable to trigger the handler only when
-                // HasParameterChanged has been invoked and stored the ParameterChangedEventArgs.
-                // Direct invocation of this method by external callers is discouraged, so we shouldn't worry about it.
-                return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs.ChildOriginated(_isChildOriginatedChange));
-            }
-        }
-
-        return Task.CompletedTask;
+        return new ParameterStateInvocationSnapshot<T>(
+            Metadata,
+            _parameterChangedEventArgs?.Clone(),
+            _parameterChangedHandler,
+            // We should not cache it changed by OnParametersSet.
+            () => _isChildOriginatedChange);
     }
 
     /// <inheritdoc />
