@@ -50,13 +50,12 @@ public class ParameterHandlerUniquenessComparerTests
             .WithGetParameterValueFunc(() => 0)
             .Attach();
         var snapshot = parameterState.CreateInvocationSnapshot();
-        IParameterComponentLifeCycle parameterStateLifeCycle = parameterState;
 
         // Act
         var result1 = comparer.Equals(parameterMetadata, null);
         var result2 = comparer.Equals(null, parameterMetadata);
-        var result3 = comparer.Equals(parameterStateLifeCycle, null);
-        var result4 = comparer.Equals(null, parameterStateLifeCycle);
+        var result3 = comparer.Equals(parameterState, null);
+        var result4 = comparer.Equals(null, parameterState);
         var result5 = comparer.Equals(snapshot, null);
         var result6 = comparer.Equals(null, snapshot);
 
@@ -88,13 +87,10 @@ public class ParameterHandlerUniquenessComparerTests
             .Attach();
         var snapshot1 = parameterState1.CreateInvocationSnapshot();
         var snapshot2 = parameterState2.CreateInvocationSnapshot();
-        IParameterComponentLifeCycle parameterStateLifeCycle1 = parameterState1;
-        IParameterComponentLifeCycle parameterStateLifeCycle2 = parameterState2;
-
 
         // Act
         var result1 = comparer.Equals(handler1, handler2);
-        var result2 = comparer.Equals(parameterStateLifeCycle1, parameterStateLifeCycle2);
+        var result2 = comparer.Equals(parameterState1, parameterState2);
         var result3 = comparer.Equals(snapshot1, snapshot2);
 
         // Assert
@@ -110,24 +106,28 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler2");
-        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+        var parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
-        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+        var parameterState2 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler2)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
+        var snapshot1 = parameterState1.CreateInvocationSnapshot();
+        var snapshot2 = parameterState2.CreateInvocationSnapshot();
 
         // Act
         var result1 = comparer.Equals(handler1, handler2);
         var result2 = comparer.Equals(parameterState1, parameterState2);
+        var result3 = comparer.Equals(snapshot1, snapshot2);
 
         // Assert
         result1.Should().BeFalse();
         result2.Should().BeFalse();
+        result3.Should().BeFalse();
     }
 
     [Test]
@@ -137,24 +137,28 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", null);
         var handler2 = new ParameterMetadata("Parameter2", null);
-        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+        var parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
-        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+        var parameterState2 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler2)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
+        var snapshot1 = parameterState1.CreateInvocationSnapshot();
+        var snapshot2 = parameterState2.CreateInvocationSnapshot();
 
         // Act
         var result1 = comparer.Equals(handler1, handler2);
         var result2 = comparer.Equals(parameterState1, parameterState2);
+        var result3 = comparer.Equals(snapshot1, snapshot2);
 
         // Assert
         result1.Should().BeFalse("If there is no handler name we consider them to be unique.");
         result2.Should().BeFalse("If there is no handler name we consider them to be unique.");
+        result3.Should().BeFalse("If there is no handler name we consider them to be unique.");
     }
 
     [Test]
@@ -164,28 +168,35 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler1");
-        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+        var parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
-        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+        var parameterState2 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler2)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
+        var snapshot1 = parameterState1.CreateInvocationSnapshot();
+        var snapshot2 = parameterState2.CreateInvocationSnapshot();
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
         var handler2HashCode = comparer.GetHashCode(handler2);
         var parameterState1HashCode = comparer.GetHashCode(parameterState1);
         var parameterState2HashCode = comparer.GetHashCode(parameterState2);
+        var snapshot11HashCode = comparer.GetHashCode(snapshot1);
+        var snapshot2HashCode = comparer.GetHashCode(snapshot2);
+
         var result1 = handler1HashCode == handler2HashCode;
         var result2 = parameterState1HashCode == parameterState2HashCode;
+        var result3 = snapshot11HashCode == snapshot2HashCode;
 
         // Assert
         result1.Should().BeTrue();
         result2.Should().BeTrue();
+        result3.Should().BeTrue();
     }
 
     [Test]
@@ -195,28 +206,34 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler2");
-        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+        var parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
-        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+        var parameterState2 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler2)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
+        var snapshot1 = parameterState1.CreateInvocationSnapshot();
+        var snapshot2 = parameterState2.CreateInvocationSnapshot();
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
         var handler2HashCode = comparer.GetHashCode(handler2);
         var parameterState1HashCode = comparer.GetHashCode(parameterState1);
         var parameterState2HashCode = comparer.GetHashCode(parameterState2);
+        var snapshot11HashCode = comparer.GetHashCode(snapshot1);
+        var snapshot2HashCode = comparer.GetHashCode(snapshot2);
         var result1 = handler1HashCode == handler2HashCode;
         var result2 = parameterState1HashCode == parameterState2HashCode;
+        var result3 = snapshot11HashCode == snapshot2HashCode;
 
         // Assert
         result1.Should().BeFalse();
         result2.Should().BeFalse();
+        result3.Should().BeFalse();
     }
 
     [Test]
@@ -226,27 +243,33 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", null);
         var handler2 = new ParameterMetadata("Parameter2", null);
-        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+        var parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
-        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+        var parameterState2 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler2)
             .WithGetParameterValueFunc(() => 0)
             .Attach();
+        var snapshot1 = parameterState1.CreateInvocationSnapshot();
+        var snapshot2 = parameterState2.CreateInvocationSnapshot();
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
         var handler2HashCode = comparer.GetHashCode(handler2);
         var parameterState1HashCode = comparer.GetHashCode(parameterState1);
         var parameterState2HashCode = comparer.GetHashCode(parameterState2);
+        var snapshot11HashCode = comparer.GetHashCode(snapshot1);
+        var snapshot2HashCode = comparer.GetHashCode(snapshot2);
         var result1 = handler1HashCode == handler2HashCode;
         var result2 = parameterState1HashCode == parameterState2HashCode;
+        var result3 = snapshot11HashCode == snapshot2HashCode;
 
         // Assert
         result1.Should().BeFalse("If there is no handler name we consider them to be unique.");
         result2.Should().BeFalse("If there is no handler name we consider them to be unique.");
+        result3.Should().BeFalse("If there is no handler name we consider them to be unique.");
     }
 }
