@@ -38,6 +38,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         new StyleBuilder()
             .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
             .AddStyle("pointer-events", "none", !Modal)
+            .AddStyle("opacity", $"{(Opacity / 100.0).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}", Opacity is <= 100 and >= 0)
             .AddStyle(Style)
             .Build();
 
@@ -151,6 +152,18 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     [Category(CategoryTypes.Overlay.Appearance)]
     public bool LightBackground { get; set; }
 
+    /// <summary>
+    /// Applies the theme's overlay background opacity.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>50</c>.
+    /// - <c>0</c> means fully transparent,
+    /// - <c>100</c> means fully opaque (no transparency).
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public int Opacity { get; set; } = 50;
+    
     /// <summary>
     /// Uses absolute positioning for the overlay.
     /// </summary>

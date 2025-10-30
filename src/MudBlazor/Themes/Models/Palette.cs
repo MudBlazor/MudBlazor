@@ -438,11 +438,11 @@ namespace MudBlazor
         /// <summary>
         /// The dark overlay color.
         /// </summary>
-        public virtual string OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+        public virtual string OverlayDark { get; set; } = new MudColor("#212121").ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The light overlay color.
         /// </summary>
-        public virtual string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+        public virtual string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).ToString(MudColorOutputFormats.RGBA);
     }
 }
