@@ -22,7 +22,7 @@ namespace MudBlazor
     {
         private bool _isDisposed;
         private MudDropContainer<MudTabPanel>? _dropContainer;
-        private ParameterState<int> _activePanelIndexState;
+        private readonly ParameterState<int> _activePanelIndexState;
         private int _scrollIndex = 0;
 
         private bool _isRendered;
@@ -970,6 +970,10 @@ namespace MudBlazor
 
         }
 
+        /// <summary>
+        /// this sets _tabBarContentSize to the total width of the mud-tabs-tabbar-content which does not include
+        /// the scroll buttons whether they exist or not. 
+        /// </summary>
         private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
 
         private void GetAllTabsSize()
