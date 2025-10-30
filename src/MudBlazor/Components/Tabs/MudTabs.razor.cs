@@ -26,12 +26,15 @@ namespace MudBlazor
         private int _scrollIndex = 0;
 
         private bool _isRendered;
-        private bool _addObserver;
+        private HashSet<ElementReference> _addObservers = [];
         private bool _isSliderPositionDetermined;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
         private ElementReference _tabsContentSize;
+        private ElementReference _tabsInnerSize;
+        private ElementReference? _headerBefore;
+        private ElementReference? _headerAfter;
         private double _sliderSizePercentage;
         private double _sliderPositionPercentage;
         private double _tabBarContentSize;
@@ -484,7 +487,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            _resizeObserver ??= _resizeObserverFactory.Create();
+            _resizeObserver ??= _resizeObserverFactory.Create(new ResizeObserverOptions() { EnableLogging = true, ReportRate = 0 });
 
             _nextIcon = RightToLeft ? PrevIcon : NextIcon;
             _prevIcon = RightToLeft ? NextIcon : PrevIcon;
@@ -498,7 +501,7 @@ namespace MudBlazor
             if (dragAndDropChanged)
             {
                 // need to recalculate the panelref's since they changed
-                _addObserver = true;
+                Rerender();
             }
         }
 
@@ -511,6 +514,9 @@ namespace MudBlazor
             {
                 var items = _panels.Where(x => x.PanelRef.Context != null).Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
+                items.Add(_tabsInnerSize);
+                if (_headerBefore.HasValue) items.Add(_headerBefore.Value);
+                if (_headerAfter.HasValue) items.Add(_headerAfter.Value);
                 await _resizeObserver!.Observe(items);
 
                 _resizeObserver.OnResized += OnResized;
@@ -543,16 +549,10 @@ namespace MudBlazor
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
                 StateHasChanged();
             }
-            else if (_addObserver)
+            else if (_addObservers.Count > 0)
             {
-                _addObserver = false;
-                _resizeObserver!.OnResized -= OnResized;
-                await _resizeObserver!.DisposeAsync();
-                _resizeObserver = _resizeObserverFactory.Create();
-                var items = _panels.Select(x => x.PanelRef).ToList();
-                items.Add(_tabsContentSize);
-                await _resizeObserver!.Observe(items);
-                _resizeObserver.OnResized += OnResized;
+                await _resizeObserver!.Observe(_addObservers);
+                _addObservers.Clear();
                 Rerender();
             }
         }
@@ -587,14 +587,13 @@ namespace MudBlazor
         {
             _panels.Add(tabPanel);
             SortPanels();
-            _addObserver = true;
         }
 
         internal void SetPanelRef(ElementReference reference)
         {
             if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
             {
-                _addObserver = true;
+                _addObservers.Add(reference);
                 StateHasChanged();
             }
         }
@@ -629,7 +628,7 @@ namespace MudBlazor
             else
                 await ActivatePanelAsync(activePanel);
 
-            _addObserver = true;
+            Rerender();
             StateHasChanged();
         }
 
@@ -826,9 +825,12 @@ namespace MudBlazor
                 .AddClass($"mud-tabs-vertical", IsVerticalTabs())
                 .Build();
 
+        /// <summary>
+        /// translateX/Y (or _scrollPosition) is how many tabs are scrolled out of view * tab width
+        /// </summary>
         protected string WrapperScrollStyle =>
             new StyleBuilder()
-                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
+                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", !IsVerticalTabs())
                 .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
                 .Build();
 
@@ -974,7 +976,11 @@ namespace MudBlazor
         /// this sets _tabBarContentSize to the total width of the mud-tabs-tabbar-content which does not include
         /// the scroll buttons whether they exist or not. 
         /// </summary>
-        private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
+        private void GetTabBarContentSize() => _tabBarContentSize =
+            GetRelevantSize(_tabsInnerSize)
+            - (_showScrollButtons ? 96 : 0)
+            - (_headerBefore.HasValue ? GetRelevantSize(_headerBefore.Value) : 0)
+            - (_headerAfter.HasValue ? GetRelevantSize(_headerAfter.Value) : 0);
 
         private void GetAllTabsSize()
         {
@@ -995,6 +1001,12 @@ namespace MudBlazor
                 _ => _resizeObserver!.GetHeight(reference)
             };
 
+        /// <summary>
+        /// Returns the width of all a subset of panel items up to the panel item selected.
+        /// </summary>
+        /// <remarks>
+        /// If inclusive is true, it returns the width of the panel item selected as well.
+        /// </remarks>
         private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
             var value = 0.0;
@@ -1042,7 +1054,7 @@ namespace MudBlazor
 
         private void SetScrollButtonVisibility()
         {
-            _showScrollButtons = AlwaysShowScrollButtons || (int)_allTabsSize > (int)_tabBarContentSize || _scrollIndex != 0;
+            _showScrollButtons = AlwaysShowScrollButtons || (int)_allTabsSize > (int)_tabBarContentSize;
         }
 
         private void ScrollPrev()
@@ -1051,10 +1063,7 @@ namespace MudBlazor
                 return;
 
             var scrollAmount = Math.Max(GetVisiblePanels(), 1);
-            _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
-            // when _scrollIndex is set incorrectly this corrects it to the last panel
-            if (_scrollIndex > _panels.Count - 1)
-                _scrollIndex = _panels.Count - 1;
+            _scrollIndex = Math.Clamp(_scrollIndex - scrollAmount, 0, _panels.Count - 1);
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollButtonVisibility();
             SetScrollabilityStates();
@@ -1098,29 +1107,41 @@ namespace MudBlazor
 
         private bool ScrollToItem(MudTabPanel panel, bool isLast = false)
         {
-            var position = GetLengthOfPanelItems(panel, isLast);
+            double position;
+            var maxScroll = Math.Max(0, _allTabsSize - _tabBarContentSize);
             if (isLast)
             {
-                var compare = _tabBarContentSize;
-                if (position - compare > 0)
-                {
-                    if (!AlwaysShowScrollButtons && _showScrollButtons)
-                        compare -= 48 * 2;
-                    position -= compare;
-                }
-                else
-                    return false;
+                // scroll so the right edge of the last tab is flush to the right edge of the mud-tabs-content (visible tab area)
+                position = maxScroll;
             }
-            _scrollPosition = RightToLeft ? -position : position;
-            return true;
-        }
+            else
+            {
+                // normal scroll to center the active tab
+                var preWidth = GetLengthOfPanelItems(panel, false);
+                var exactCenter = _tabBarContentSize / 2;
+                var panelCenter = GetPanelLength(panel) / 2;
+                position = preWidth - exactCenter + panelCenter;
 
-        private bool IsAfterLastPanelIndex(int index) => index >= _panels.Count;
-        private bool IsBeforeFirstPanelIndex(int index) => index < 0;
+                // ensure no extra space past the start or end
+                position = Math.Clamp(position, 0, maxScroll);
+            }
+            position = RightToLeft ? -position : position;
+            if (_scrollPosition != position)
+            {
+                _scrollPosition = position;
+                return true;
+            }
+            else
+                return false;
+        }
 
         private void CenterScrollPositionAroundSelectedItem()
         {
-            if (_showScrollButtons && _activePanelIndexState.Value + 1 == _panels.Count)
+            var activeIndex = _activePanelIndexState.Value;
+            if (activeIndex < 0)
+                return;
+
+            if (activeIndex + 1 == _panels.Count)
             {
                 var lastPanel = _panels.Last();
                 var isScrolled = ScrollToItem(lastPanel, true);
@@ -1131,61 +1152,12 @@ namespace MudBlazor
                 }
             }
 
-            if (ActivePanel is null)
+            // scroll to the panel
+            if (ScrollToItem(ActivePanel!))
             {
-                return;
+                // if we scrolled update index (used for scroll buttons)
+                _scrollIndex = activeIndex;
             }
-
-            var panelToStart = ActivePanel;
-            var length = GetPanelLength(panelToStart);
-            if (length >= _tabBarContentSize)
-            {
-                _scrollIndex = _panels.IndexOf(panelToStart);
-                ScrollToItem(panelToStart);
-                return;
-            }
-
-            var indexCorrection = 1;
-            while (true)
-            {
-                var panelAfterIndex = _activePanelIndexState.Value + indexCorrection;
-                if (!IsAfterLastPanelIndex(panelAfterIndex))
-                {
-                    length += GetPanelLength(_panels[panelAfterIndex]);
-                }
-
-                if (length >= _tabBarContentSize)
-                {
-                    _scrollIndex = _panels.IndexOf(panelToStart);
-                    break;
-                }
-
-                length = _tabBarContentSize - length;
-
-                var panelBeforeindex = _activePanelIndexState.Value - indexCorrection;
-                if (!IsBeforeFirstPanelIndex(panelBeforeindex))
-                {
-                    length -= GetPanelLength(_panels[panelBeforeindex]);
-                }
-                else
-                {
-                    break;
-                }
-
-                if (length < 0)
-                {
-                    _scrollIndex = _panels.IndexOf(panelToStart);
-                    break;
-                }
-
-                length = _tabBarContentSize - length;
-                panelToStart = _panels[_activePanelIndexState.Value - indexCorrection];
-
-                indexCorrection++;
-            }
-
-            _scrollIndex = _panels.IndexOf(panelToStart);
-            ScrollToItem(panelToStart);
         }
 
         private void SetScrollabilityStates()

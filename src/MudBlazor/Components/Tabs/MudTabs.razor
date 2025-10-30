@@ -4,10 +4,10 @@
 <div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         <div class="@TabBarClassnames">
-            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles" id="@_elementId">
+            <div @ref="@_tabsInnerSize" class="mud-tabs-tabbar-inner" style="@MaxHeightStyles" id="@_elementId">
                 @if (HeaderPosition == TabHeaderPosition.Before && Header != null)
                 {
-                    <div class="mud-tabs-header mud-tabs-header-before">
+                    <div @ref="@_headerBefore" class="mud-tabs-header mud-tabs-header-before">
                         @Header(this)
                     </div>
                 }
@@ -59,7 +59,7 @@
                 }
                 @if (HeaderPosition == TabHeaderPosition.After && Header != null)
                 {
-                    <div class="mud-tabs-header mud-tabs-header-after">
+                    <div @ref="@_headerAfter" class="mud-tabs-header mud-tabs-header-after">
                         @Header(this)
                     </div>
                 }
