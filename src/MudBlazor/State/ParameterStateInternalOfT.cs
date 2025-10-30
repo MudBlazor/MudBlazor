@@ -114,7 +114,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     {
         return new ParameterStateInvocationSnapshot<T>(
             Metadata,
-            _parameterChangedEventArgs?.Clone(),
+            HasParameterChangedEventArgs ? _parameterChangedEventArgs.Clone() : null,
             _parameterChangedHandler,
             // We should not cache this value because it may be modified by OnParametersSet.
             // In theory, this could also lead to race conditions if multiple OnParametersSet calls occur with different _lastValue, currentParameterValue values.
