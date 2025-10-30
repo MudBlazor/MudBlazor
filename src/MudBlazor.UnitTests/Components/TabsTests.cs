@@ -1712,5 +1712,24 @@ namespace MudBlazor.UnitTests.Components
 
             result.Should().Be("test-tab-list-id");
         }
+
+        [Test]
+        public void TabPanelCssClassesMatchTest()
+        {
+            var tabButtonClasses = "class1";
+            var panelClasses = "class2";
+
+            var comp = Context.RenderComponent<TabPanelCssClassesMatchTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.TabButtonClass, tabButtonClasses));
+            comp.SetParametersAndRender(x => x.Add(y => y.PanelClass, panelClasses));
+
+            var tabButtonRef = comp.Find(".mud-tab.mud-tab-panel");
+            tabButtonRef.ClassList.Should().Contain(tabButtonClasses);
+            tabButtonRef.ClassList.Should().NotContain(panelClasses);
+            
+            var panelRef = comp.Find(":not(.mud-tab).mud-tab-panel");
+            panelRef.ClassList.Should().Contain(panelClasses);
+            panelRef.ClassList.Should().NotContain(tabButtonClasses);
+        }
     }
 }
