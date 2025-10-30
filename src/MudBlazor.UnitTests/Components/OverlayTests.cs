@@ -388,4 +388,40 @@ public class OverlayTests : BunitTest
             scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.AtMostOnce());
         }
     }
+
+    [Test]
+    public void ShouldApplyClampedOpacityValues()
+    {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+
+        var comp1 = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Opacity, 101));
+        providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("opacity:1");
+
+        var comp2 = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Opacity, -1));
+        providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("opacity:0");
+
+        var comp3 = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Opacity, 0));
+        providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("opacity:0");
+
+        var comp4 = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Opacity, 100));
+        providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("opacity:1");
+
+        var comp5 = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Opacity, 50));
+        providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("opacity:0.5");
+
+        var comp6 = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Opacity, 76));
+        providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("opacity:0.76");
+    }
 }
