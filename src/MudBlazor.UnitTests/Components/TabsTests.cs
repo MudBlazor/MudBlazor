@@ -229,17 +229,17 @@ namespace MudBlazor.UnitTests.Components
             styleAttr.Should().Be("transform:translateX(-800px);");
         }
 
-        [Test]
-        [TestCase(400.0, 100)]
-        [TestCase(300.0, 100)]
-        [TestCase(200.0, 200)]
-        [TestCase(100.0, 200)]
+        [Test] // plus 96 each for scroll buttons
+        [TestCase(496.0, 100)]
+        [TestCase(396.0, 100)]
+        [TestCase(296.0, 150)] // centered tab
+        [TestCase(196.0, 150)] // centered tab
         public void ScrollToItem_CentralizeViewAroundActiveItem(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = totalSize + 10,
+                PanelTotalSize = totalSize,
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -482,7 +482,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 300,
+                PanelTotalSize = 396, // 300 for content, 96 for scrollbars
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -497,9 +497,9 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
 
-            observer.UpdateTotalPanelSize(200.0);
+            observer.UpdateTotalPanelSize(296.0); // 200 for content, 96 for scrollbars
 
-            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+            scrollButtons.First().Instance.Disabled.Should().BeFalse(); // fits 2 tabs, on the 2nd tab centered so both show
             GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
         }
 
@@ -573,7 +573,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 50,
+                PanelTotalSize = 146, // 50 for low width total size + 96 for scroll buttons
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -586,7 +586,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[1].Instance.Disabled.Should().BeFalse();
 
             scrollButtons[1].Find("button").Click();
-            var expectedTranslation = 500.0;
+            var expectedTranslation = 525.0; // (1/4 of a tab + 1 tab for each tab (including active)) 
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -668,7 +668,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 300,
+                PanelTotalSize = 396, // 300 + 96 for scroll buttons
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -682,10 +682,11 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
 
-            observer.UpdatePanelSize(0, 200.0);
+            observer.UpdatePanelSize(0, 200.0); // updates tab size not panel size
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((2.0 / 7.0) * 100.0, 0.01);
+            // 1/6 of the tabs is the exact center of the slider 
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
         }
 
         [Test]
@@ -694,7 +695,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 300,
+                PanelTotalSize = 396, // 300 + 96 for scroll buttons
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -732,7 +733,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 300,
+                PanelTotalSize = 396, // 396 to include scroll buttons for 300 display
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -768,7 +769,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 300,
+                PanelTotalSize = 396, // 396 to include scroll buttons for 300 of display
             };
 
             var factory = new MockResizeObserverFactory(observer);

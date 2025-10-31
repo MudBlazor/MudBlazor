@@ -1142,7 +1142,7 @@ namespace MudBlazor
         /// Calculates the amount of panels that are completely visible inside the toolbar content area. Panels that are just partially visible are not considered here!
         /// </summary>
         /// <returns>The amount of panels visible inside the toolbar area. CAUTION: Might return 0!</returns>
-        private async Task<int> GetVisiblePanels()
+        private async Task GetVisiblePanels()
         {
             var x = 0D;
             var count = 0;
@@ -1158,12 +1158,10 @@ namespace MudBlazor
                 }
                 else
                 {
-                    _scrollAmount = x - result;
+                    _scrollAmount = x <= result ? result : x - result;
                     break;
                 }
             }
-
-            return count;
         }
 
         /// <summary>
@@ -1172,8 +1170,11 @@ namespace MudBlazor
         /// <returns>True if scrolling occured, false if scrolling wasn't necessary.</returns>
         private async Task<bool> ScrollToItem(MudTabPanel panel, bool isLast = false)
         {
+            // set start and max scroll
             double position;
-            var maxScroll = Math.Max(0, _allTabsSize - _tabBarContentSize);
+            var preSize = await GetLengthOfPanelItems(panel, false);
+            var panelSize = await GetPanelLength(panel);
+            var maxScroll = _allTabsSize - _tabBarContentSize;
             if (isLast)
             {
                 // scroll so the right edge of the last tab is flush to the right edge of the mud-tabs-content (visible tab area)
@@ -1182,14 +1183,12 @@ namespace MudBlazor
             else
             {
                 // normal scroll to center the active tab
-                var preWidth = await GetLengthOfPanelItems(panel, false);
-                var exactCenter = _tabBarContentSize / 2;
-                var panelCenter = await GetPanelLength(panel) / 2;
-                position = preWidth - exactCenter + panelCenter;
-
-                // ensure no extra space past the start or end
-                position = Math.Clamp(position, 0, maxScroll);
+                var viewportCenter = _tabBarContentSize / 2;
+                var panelCenter = panelSize / 2;
+                position = preSize - viewportCenter + panelCenter;
             }
+            // ensure no extra space past the start or end
+            position = ScrollEdgeAdjust(position, panelSize);
             position = RightToLeft ? -position : position;
             if (_scrollPosition != position)
             {
@@ -1201,18 +1200,38 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Sets the minimum and maximum scroll position values and clamps scrollposition to it.
+        /// </summary>
+        private double ScrollEdgeAdjust(double position, double panelSize)
+        {
+            var minScroll = 0.0;
+            var maxScroll = Math.Max(0, _allTabsSize - _tabBarContentSize);
+            if (_tabBarContentSize < panelSize)
+            {
+                var tooSmallSize = _tabBarContentSize;
+                maxScroll = Math.Max(0, maxScroll - tooSmallSize);
+                minScroll = Math.Min(maxScroll, _tabBarContentSize);
+            }
+            return Math.Clamp(position, minScroll, maxScroll);
+        }
+
+        /// <summary>
         /// Scroll by page, isNext is true to go right, false to go left.
         /// </summary>
         private async Task ScrollBy(bool isNext)
         {
-            var maxScroll = Math.Max(0, _allTabsSize - _tabBarContentSize);
-            int count = await GetVisiblePanels();
+            if (_panels.Count == 0)
+                return;
+
+            var panel = isNext ? _panels.Last() : _panels.First();
+            var panelSize = await GetPanelLength(panel);
+            var maxScroll = _allTabsSize - _tabBarContentSize;
+            await GetVisiblePanels();
             if (!isNext)
             {
-                count = -count;
                 _scrollAmount = -_scrollAmount;
             }
-            var position = Math.Clamp(_scrollPosition + _scrollAmount, 0, maxScroll);
+            var position = ScrollEdgeAdjust(_scrollPosition + _scrollAmount, panelSize);
             if (position != _scrollPosition)
             {
                 _scrollPosition = position;
@@ -1229,6 +1248,7 @@ namespace MudBlazor
             {
                 var lastPanel = _panels.Last();
                 await ScrollToItem(lastPanel, true);
+                return;
             }
 
             // scroll to the panel
