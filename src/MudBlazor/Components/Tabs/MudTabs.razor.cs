@@ -585,13 +585,22 @@ namespace MudBlazor
 
         #region Children
 
-        internal void AddPanel(MudTabPanel tabPanel)
+        internal async Task AddPanelAsync(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
             SortPanels();
+
+            var activeIndex = _activePanelIndexState.Value;
+
+            if (_panels.Count == activeIndex + 1 || activeIndex == -1 && _panels.Count == 1)
+            {
+                await ActivatePanelAsync(tabPanel);
+            }
+            else
+                StateHasChanged();
         }
 
-        internal async Task SetPanelRef(ElementReference reference)
+        internal async Task SetPanelRefAsync(ElementReference reference)
         {
             if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
             {
@@ -988,7 +997,7 @@ namespace MudBlazor
         private void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
             _redraw = true;
-            StateHasChanged();
+            InvokeAsync(StateHasChanged);
         }
 
         private async Task SetSliderState()
