@@ -698,7 +698,6 @@ namespace MudBlazor.UnitTests.Components
             var date = new DateTime(1404, 1, 1, cal);
 
             var comp = Context.RenderComponent<PersianDatePickerTest>(parameter => parameter.Add(p => p.Date, date).Add(p => p.FixDay, 1));
-            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
 
             comp.FindAll("button.mud-picker-month").Count.Should().Be(0);
             comp.Find("input").Click();
