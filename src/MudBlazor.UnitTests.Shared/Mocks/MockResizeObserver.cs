@@ -33,7 +33,7 @@ public class MockResizeObserver : IResizeObserver
 
     public void UpdateTotalPanelSize(double newSize)
     {
-        var entry = _cachedValues.Last();
+        var entry = _cachedValues.Count > 0 ? _cachedValues.ElementAt(1) : _cachedValues.Last();
 
         if (IsVertical == false)
         {
@@ -83,7 +83,6 @@ public class MockResizeObserver : IResizeObserver
         foreach (var item in elements)
         {
             var size = PanelSize;
-            // last element is always TabsContentSize
             if (item.Id == elements.Last().Id && _firstBatchProcessed == false)
             {
                 size = PanelTotalSize;

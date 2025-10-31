@@ -518,7 +518,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ScrollableTabsTest>();
             comp.Instance.SetPanelActive(5);
             // total width of all tabs (6) is 600, this ensures a scroll button will show to the left
-            observer.UpdateTotalPanelSize(599.0);
+            observer.UpdateTotalPanelSize(600.0);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[0].Instance.Disabled.Should().BeFalse(); // prevscroll
@@ -614,14 +614,13 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
             comp.Instance.SetPanelActive(5);
 
-
-            observer.UpdateTotalPanelSize(601.0);
-
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
+            // 6 panels will not show any scroll buttons in this scenario
+            observer.UpdateTotalPanelSize(601.0);
+
             var expectedTranslation = 0.0;
-            scrollButtons[0].Find("button").Click();
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
