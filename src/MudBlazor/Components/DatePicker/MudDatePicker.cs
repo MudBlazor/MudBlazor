@@ -111,6 +111,7 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
+            await FocusAsync();
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
@@ -130,6 +131,7 @@ namespace MudBlazor
         /// <param name="month"></param>
         protected override async Task OnMonthSelectedAsync(DateTime month)
         {
+            await FocusAsync();
             PickerMonth = month;
             var nextView = GetNextView();
             if (nextView == null)
@@ -161,6 +163,7 @@ namespace MudBlazor
         /// <param name="year"></param>
         protected override async Task OnYearClickedAsync(int year)
         {
+            await FocusAsync();
             var current = GetMonthStart(0);
             PickerMonth = new DateTime(year, Culture.Calendar.GetMonth(current), 1, Culture.Calendar);
             var nextView = GetNextView();
@@ -259,13 +262,60 @@ namespace MudBlazor
                 case "ArrowRight":
                     if (Open)
                     {
+                        switch (CurrentView)
+                        {
+                            case OpenTo.Date:
+                                var currentDay = HighlightedDate ?? GetMonthStart(0);
+                                var newDay = currentDay.AddDays(1);
+                                if (newDay.Month != currentDay.Month || _selectedDate == null)
+                                    newDay = new DateTime(currentDay.Year, currentDay.Month, 1, Culture.Calendar);
+                                HighlightedDate = _selectedDate = newDay;
+                                break;
+                            case OpenTo.Month:
+                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
+                                var newMonth = currentMonth.AddMonths(1);
+                                if (newMonth.Year != currentMonth.Year)
+                                {
+                                    var daysInMonth =
+                                        Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                                    newMonth = new DateTime(currentMonth.Year,
+                                        1,
+                                        Math.Min(currentMonth.Day, daysInMonth),
+                                        Culture.Calendar);
+                                }
 
+                                HighlightedDate = _selectedDate = newMonth;
+                                break;
+                        }
                     }
                     break;
                 case "ArrowLeft":
                     if (Open)
                     {
+                        switch (CurrentView)
+                        {
+                            case OpenTo.Date:
+                                var currentDay = HighlightedDate ?? GetMonthStart(0);
+                                var newDay = currentDay.AddDays(-1);
+                                if (newDay.Month != currentDay.Month || _selectedDate == null)
+                                    newDay = new DateTime(currentDay.Year, currentDay.Month, Culture.Calendar.GetDaysInMonth(currentDay.Year, currentDay.Month), Culture.Calendar);
+                                HighlightedDate = _selectedDate = newDay;
+                                break;
+                            case OpenTo.Month:
+                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
+                                var newMonth = currentMonth.AddMonths(-1);
+                                if (currentMonth.Year != newMonth.Year)
+                                {
+                                    var daysInMonth = Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                                    newMonth = new DateTime(currentMonth.Year,
+                                        Culture.Calendar.GetMonthsInYear(currentMonth.Year),
+                                        Math.Min(currentMonth.Day, daysInMonth),
+                                        Culture.Calendar);
+                                }
 
+                                HighlightedDate = _selectedDate = newMonth;
+                                break;
+                        }
                     }
                     break;
                 case "ArrowUp":
@@ -283,7 +333,16 @@ namespace MudBlazor
                     }
                     else
                     {
-
+                        switch (CurrentView)
+                        {
+                            case OpenTo.Year:
+                                var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(-1);
+                                if (Culture.Calendar.GetYear(newYear) < GetMinYear())
+                                    break;
+                                HighlightedDate = _selectedDate = newYear;
+                                ScrollToYear(HighlightedDate);
+                                break;
+                        }
                     }
                     break;
                 case "ArrowDown":
@@ -297,7 +356,16 @@ namespace MudBlazor
                     }
                     else
                     {
-
+                        switch (CurrentView)
+                        {
+                            case OpenTo.Year:
+                                var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(1);
+                                if (Culture.Calendar.GetYear(newYear) > GetMaxYear())
+                                    break;
+                                HighlightedDate = _selectedDate = newYear;
+                                ScrollToYear(HighlightedDate);
+                                break;
+                        }
                     }
                     break;
                 case "Escape":
@@ -308,12 +376,31 @@ namespace MudBlazor
                     if (!Open)
                     {
                         await OpenAsync();
+                        if (CurrentView == OpenTo.Year)
+                            _scrollToYearAfterRender = true;
                     }
                     else
                     {
-                        await SubmitAsync();
-                        await CloseAsync();
-                        _inputReference?.SetText(Text);
+                        switch (CurrentView)
+                        {
+                            case OpenTo.Date:
+                                if (HighlightedDate != null)
+                                    await OnDayClickedAsync(HighlightedDate.Value);
+                                break;
+                            case OpenTo.Year:
+                                if (HighlightedDate != null)
+                                    await OnYearClickedAsync(Culture.Calendar.GetYear(HighlightedDate.Value));
+                                break;
+                            case OpenTo.Month:
+                                if (HighlightedDate != null)
+                                    await OnMonthSelectedAsync(new DateTime(HighlightedDate.Value.Year, Culture.Calendar.GetMonth(HighlightedDate.Value), 1, Culture.Calendar));
+                                break;
+                            default:
+                                await SubmitAsync();
+                                _inputReference?.SetText(Text);
+                                await CloseAsync();
+                                break;
+                        }
                     }
                     break;
                 case " ":
@@ -322,6 +409,8 @@ namespace MudBlazor
                         if (!Open)
                         {
                             await OpenAsync();
+                            if (CurrentView == OpenTo.Year)
+                                _scrollToYearAfterRender = true;
                         }
                         else
                         {
