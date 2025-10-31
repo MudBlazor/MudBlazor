@@ -1,0 +1,16 @@
+<div style="height: 300px; border: 1px solid #ccc;">
+    <MudTabs Position="Position.Left" MaxHeight="300">
+        @for (int i = 1; i <= 10; i++)
+        {
+            <MudTabPanel Text="@($"Tab {i}")">
+                <MudText>Content for Tab @i</MudText>
+            </MudTabPanel>
+        }
+    </MudTabs>
+</div>
+
+@code
+{
+    public static string __description__ = "Vertical MudTabs with MaxHeight should show scroll buttons when tabs exceed height";
+}
+

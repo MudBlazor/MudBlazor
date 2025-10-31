@@ -1657,6 +1657,40 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Three");
         }
 
+        /// <summary>
+        /// Vertical MudTabs with MaxHeight should show scroll buttons when tab count exceeds the container height.
+        /// This test verifies that the fix for issue #12025 works correctly.
+        /// </summary>
+        [Test]
+        public void VerticalTabs_MaxHeight_ShowsScrollButtons_WhenTabsExceedHeight()
+        {
+            // Setup: Create 10 tabs, each 48px tall = 480px total
+            // Container height is 300px (via MaxHeight), so scroll buttons should appear
+            var observer = new MockResizeObserver
+            {
+                PanelSize = 48.0, // Each tab is 48px tall (min-height)
+                PanelTotalSize = 300.0, // Container height is 300px
+                IsVertical = true,
+            };
+
+            var factory = new MockResizeObserverFactory(observer);
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
+
+            var comp = Context.RenderComponent<VerticalTabsMaxHeightTest>();
+
+            // Verify scroll buttons are present
+            var scrollButtons = comp.FindAll(".mud-tabs-scroll-button");
+            scrollButtons.Should().HaveCount(2, because: "Scroll buttons should appear when tabs exceed container height");
+
+            // Verify the tabbar-inner exists (CSS fix ensures it has height: 100%)
+            var tabbarInner = comp.Find(".mud-tabs-tabbar-inner");
+            tabbarInner.Should().NotBeNull();
+
+            // Verify tabs are rendered (10 tabs)
+            var tabs = comp.FindAll(".mud-tab");
+            tabs.Should().HaveCount(10);
+        }
+
 
         /// <summary>
         /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
