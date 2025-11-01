@@ -985,7 +985,7 @@ namespace MudBlazor
             await CenterScrollPositionAroundSelectedItem();
             await SetScrollabilityStates();
             await SetSliderState();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         private void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)

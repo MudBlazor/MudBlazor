@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 110,
+                PanelTotalSize = 206.0, // 110px + scroll buttons 96px
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -225,12 +225,12 @@ namespace MudBlazor.UnitTests.Components
 
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
-
-            styleAttr.Should().Be("transform:translateX(-800px);");
+            // center tab the leftover is 10 so must adjust by 5 (-800 to -795)
+            styleAttr.Should().Be("transform:translateX(-795px);");
         }
 
         [Test] // plus 96 each for scroll buttons
-        [TestCase(496.0, 100)]
+        [TestCase(496.0, 50)] // centered tab
         [TestCase(396.0, 100)]
         [TestCase(296.0, 150)] // centered tab
         [TestCase(196.0, 150)] // centered tab
@@ -301,7 +301,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 200 + 10,
+                PanelTotalSize = 200 + 10 + 96,
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -357,7 +357,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 200,
+                PanelTotalSize = 296, // 200 px + 96px for scroll buttons
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -373,7 +373,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Instance.SetPanelActive(i);
 
-                var shouldBeDisabled = i >= 4;
+                var shouldBeDisabled = i == 5; // in a two tab showing only the last tab disables next
 
                 scrollButtons.Last().Instance.Disabled.Should().Be(shouldBeDisabled);
             }
@@ -446,7 +446,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 200,
+                PanelTotalSize = 296, // 200 px + 96 px for scroll buttons
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -459,13 +459,14 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(5);
 
-            var expectedTranslation = 500.0;
+            var expectedTranslation = 500.0; // scroll 5 tab buttons for centering
 
             for (var i = 0; i < 2; i++)
             {
-                scrollButtons.First().Find("button").Click();
-                expectedTranslation -= observer.PanelSize;
-
+                scrollButtons.First().Find("button").Click(); // prev click
+                expectedTranslation -= observer.PanelSize * 2; // scroll one page back (2 tabs)
+                // minimum tab position to keep all tabs on screen on left is 200px (2 tabs)
+                expectedTranslation = Math.Max(observer.PanelSize * 2, expectedTranslation);
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
@@ -543,7 +544,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 50,
+                PanelTotalSize = 146 // 50px + 96px for scroll buttons
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -556,7 +557,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
             scrollButtons[0].Find("button").Click();
-            var expectedTranslation = 0.0;
+            var expectedTranslation = 50.0; // 50 px centers the first tab
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -564,7 +565,8 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            scrollButtons[0].Instance.Disabled.Should().BeTrue();
+            scrollButtons[0].Instance.Disabled.Should().BeFalse();
+            // scroll buttons are never disabled when width is too low due to tab centering
         }
 
         [Test]
@@ -586,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[1].Instance.Disabled.Should().BeFalse();
 
             scrollButtons[1].Find("button").Click();
-            var expectedTranslation = 525.0; // (1/4 of a tab + 1 tab for each tab (including active)) 
+            var expectedTranslation = 500.0; // 5 tabs * 100px each translation is exact center of a tab
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -594,7 +596,8 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            scrollButtons[1].Instance.Disabled.Should().BeTrue();
+            scrollButtons[1].Instance.Disabled.Should().BeFalse();
+            // scroll buttons are never disabled when width is too low due to tab centering
         }
 
 
