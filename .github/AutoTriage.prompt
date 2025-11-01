@@ -192,7 +192,7 @@ When NOT to edit:
 - Thread was created in the last 60 minutes <!-- Let the backlog workflow catch it instead as they might still be editing it -->
 - Thread is a draft pull request
 - Not enough information in the body to create an accurate title
-- No substantial new context was added since it was last edited (e.g., new reproduction, logs, confirmations)
+- No new context was added since it was last edited (e.g., new reproduction, logs, confirmations)
 
 ### Format Guidelines
 - Issues Only: 
@@ -202,7 +202,7 @@ When NOT to edit:
   - Prefix with component name + colon for single-component changes (e.g., "MudDataGrid: Fix row selection flicker")
   - Prefix with "Docs: " if labeled with `docs`
 - Prioritize clarity and searchability over brevity
-- Always use the correct spelling for the component ("MudAutocomplete" instead of "MudAutoComplete") when mentioned
+- Always use the correct name and casing for the component ("MudAutocomplete" instead of "MudAutoComplete") when mentioned
 
 ## Inactivity Rules
 
