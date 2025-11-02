@@ -262,10 +262,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(496.0, 100)]
-        [TestCase(396.0, 100)]
-        [TestCase(296.0, 200)]
-        [TestCase(196.0, 200)]
+        [TestCase(464.0, 45)] // vertical scroll buttons are 32px each
+        [TestCase(364.0, 95)] // formula beside edges is presize - half viewport - half panel
+        [TestCase(264.0, 145)] // selected panel 2 so 2 presize panels or 200
+        [TestCase(164.0, 195)] // 200 - (110 / 2 = 55) + (100 / 2 = 50) = 195
         public void ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
@@ -280,7 +280,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
+            comp.Instance.ChangePosition(true);
 
             comp.Instance.SetPanelActive(2);
 
@@ -708,11 +708,13 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(4);
 
-            GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.01);
+            comp.WaitForAssertion(() =>
+                GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.01));
 
             await comp.Instance.AddPanel();
 
-            GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.01);
+            comp.WaitForAssertion(() =>
+                GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.01));
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);

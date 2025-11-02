@@ -1,4 +1,5 @@
-﻿<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position">
+﻿
+<MudTabs Elevation="1" @ref="_tabElement" MaxHeight="@_maxHeight" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position">
     @foreach (var tab in _tabs)
     {
         <MudTabPanel @key="tab" Text="@tab">
@@ -7,18 +8,41 @@
     }
 </MudTabs>
 
+<MudSwitch T="bool" Label="Vertical" Value="@_isVertical" ValueChanged="@ChangePosition" />
+<MudNumericField T="int" Label="Max Height" @bind-Value="_maxHeight" Min="196" Max="696" Step="10" />
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => AddPanel())">
+    Add Tab
+</MudButton>&nbsp;
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => RemovePanel(_tabs.Count - 1))">
+    Remove Tab
+</MudButton>
 @code
 {
     public static string __description__ = "scrolling should work";
 
     private MudTabs _tabElement = null!;
     private readonly List<string> _tabs = ["1", "2", "3", "4", "5", "6"];
+    private bool _isVertical => !(Position is Position.Top or Position.Bottom);
+    private int _maxHeight = 600;
 
-    [Parameter]
-    public Position Position { get; set; } = Position.Top;
+    private Position Position { get; set; } = Position.Top;
 
     [Parameter]
     public bool AlwaysShowScrollButtons { get; set; } = true;
+
+    public void ChangePosition(bool isVertical)
+    {
+        var pos = Position;
+        if (isVertical)
+            pos = Position.Left;
+        else
+            pos = Position.Top;
+        if (pos != Position)
+        {
+            Position = pos;
+        }
+        InvokeAsync(StateHasChanged);
+    }
 
     public void SetPanelActive(int index)
     {

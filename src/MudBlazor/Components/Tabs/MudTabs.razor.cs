@@ -496,9 +496,11 @@ namespace MudBlazor
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var dragAndDropChanged = parameters.TryGetValue<bool>(nameof(EnableDragAndDrop), out var _);
-            if (dragAndDropChanged)
+            var positionChanged = parameters.TryGetValue<Position>(nameof(Position), out var _);
+            if (dragAndDropChanged || positionChanged)
             {
-                // need to recalculate the layout since drag and drop changes the tab structure slightly
+                // need to recalculate the layout since drag and drop and position
+                // changes the tab structure more broadly
                 _redraw = true;
             }
             await base.SetParametersAsync(parameters);
@@ -602,25 +604,18 @@ namespace MudBlazor
                 // if sortpanels changed the index readjust
                 await _activePanelIndexState.SetValueAsync(_panels.IndexOf(activePanel));
             }
-            // queue a redraw if needed
-            if (!_redraw)
-            {
-                _redraw = true;
-                StateHasChanged();
-            }
         }
 
         internal async Task SetPanelRefAsync(ElementReference reference)
         {
             if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
-            {
                 await _resizeObserver!.Observe(reference);
-                // queue a redraw if needed
-                if (!_redraw)
-                {
-                    _redraw = true;
-                    StateHasChanged();
-                }
+
+            // queue a redraw if needed
+            if (!_redraw)
+            {
+                _redraw = true;
+                StateHasChanged();
             }
         }
 
@@ -985,9 +980,6 @@ namespace MudBlazor
         {
             _dropContainer?.Refresh();
 
-            // Record old state to detect changes
-            var oldShowScroll = _showScrollButtons;
-
             await GetAllTabsSize();
             await SetScrollButtonVisibility();
             _tabBarContentSize = await GetTabBarContentSize();
@@ -1010,9 +1002,13 @@ namespace MudBlazor
 
         private void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
-            _redraw = true;
-            InvokeAsync(StateHasChanged);
+            InvokeAsync(() =>
+            {
+                _redraw = true;
+                StateHasChanged();
+            });
         }
+
 
         private async Task SetSliderState()
         {
@@ -1036,8 +1032,11 @@ namespace MudBlazor
             var innerTabSize = await GetRelevantSize(_tabsInnerSize);
             var headerBeforeSize = _headerBefore.HasValue ? await GetRelevantSize(_headerBefore.Value) : 0;
             var headerAfterSize = _headerAfter.HasValue ? await GetRelevantSize(_headerAfter.Value) : 0;
+            // the size of the scroll buttons
+            var scrollSize = !withoutScroll && _showScrollButtons ?
+                IsVerticalTabs() ? 32 * 2 : 48 * 2 : 0;
             return innerTabSize
-                - (!withoutScroll && _showScrollButtons ? 96 : 0)
+                - scrollSize
                 - headerBeforeSize
                 - headerAfterSize;
         }
@@ -1191,6 +1190,7 @@ namespace MudBlazor
         {
             // set start and max scroll
             double position;
+            // all panels before selected panel
             var preSize = await GetLengthOfPanelItems(panel, false);
             var panelSize = await GetPanelLength(panel);
             var maxScroll = _allTabsSize - _tabBarContentSize;
@@ -1208,7 +1208,7 @@ namespace MudBlazor
             }
             // ensure no extra space past the start or end
             position = ScrollEdgeAdjust(position, panelSize);
-            position = RightToLeft ? -position : position;
+            position = RightToLeft && !IsVerticalTabs() ? -position : position;
             if (_scrollPosition != position)
             {
                 _scrollPosition = position;
