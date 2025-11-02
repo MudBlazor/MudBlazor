@@ -22,11 +22,11 @@
                     If they are set after the app has started, they may not take effect until the next page load, or may not take effect at all.
 
                     <MudAlert Class="mt-4" Severity="Severity.Info">
-                        Most styling should be done on a situational basis using component parameters.
-                        <br />
-                        For more in-depth customization, a mix of our theming system and CSS will be the most effective.
-                        <br />
-                        To find more ways to customize your app, refer to our other documentation in the sidebar.
+                        <b>Note:</b> The <CodeInline>MudGlobal</CodeInline> class is being phased out for visual and theming properties.
+                        <br /><br />
+                        Most styling should be done directly through <b>component parameters</b> (for one-off tweaks) or through the <b>theme system</b> and <b>CSS</b> (for app-wide customization).
+                        <br /><br />
+                        See the <MudLink Typo="Typo.inherit" Href="https://github.com/MudBlazor/MudBlazor/issues/12046">removal issue</MudLink>, or feel free to <MudLink Typo="Typo.inherit" Href="https://github.com/MudBlazor/MudBlazor/discussions">share feedback</MudLink> on migration or missing theme hooks.
                     </MudAlert>
                 </Description>
             </SectionHeader>
