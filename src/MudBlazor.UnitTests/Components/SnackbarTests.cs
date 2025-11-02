@@ -862,28 +862,5 @@ namespace MudBlazor.UnitTests.Components
             );
             _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
         }
-
-        [Test]
-        public async Task SnackbarShouldUseEasedAnimationByDefault()
-        {
-            // Act
-            await _provider.InvokeAsync(() => _service.Add("Test message", Severity.Info));
-
-            // Assert: Snackbar should use eased animation timing function by default (check configuration)
-            _service.Configuration.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Ease);
-        }
-
-        [Test]
-        public async Task SnackbarShouldUseLinearAnimationWhenConfigured()
-        {
-            // Arrange
-            _service.Configuration.AnimationTimingFunction = AnimationTimingFunction.Linear;
-
-            // Act
-            await _provider.InvokeAsync(() => _service.Add("Test message", Severity.Info));
-
-            // Assert: Snackbar should use linear animation timing function (check configuration)
-            _service.Configuration.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Linear);
-        }
     }
 }

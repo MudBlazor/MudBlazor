@@ -187,14 +187,6 @@ public static class MudGlobal
         /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition.
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
-
-        /// <summary>
-        /// The timing function used for animations and transitions.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="AnimationTimingFunction.Ease"/> which uses Material Design's standard easing curve (cubic-bezier(0.4, 0, 0.2, 1)).
-        /// </remarks>
-        public static AnimationTimingFunction TimingFunction { get; set; } = AnimationTimingFunction.Ease;
     }
 
     /// <summary>

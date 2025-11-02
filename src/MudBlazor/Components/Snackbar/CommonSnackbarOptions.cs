@@ -22,7 +22,7 @@ public abstract class CommonSnackbarOptions
     /// The time, in milliseconds, to animate showing the snackbar.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>251</c> milliseconds.
+    /// Defaults to <c>251</c> milliseconds, following Material Design motion guidelines.
     /// </remarks>
     public int ShowTransitionDuration { get; set; } = 251;
 
@@ -38,7 +38,7 @@ public abstract class CommonSnackbarOptions
     /// The time, in milliseconds, to hide the snackbar.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>251</c> milliseconds.
+    /// Defaults to <c>251</c> milliseconds, following Material Design motion guidelines.
     /// </remarks>
     public int HideTransitionDuration { get; set; } = 251;
 
@@ -130,14 +130,6 @@ public abstract class CommonSnackbarOptions
     /// </remarks>
     public bool HideIcon { get; set; }
 
-    /// <summary>
-    /// The timing function used for snackbar animations.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="AnimationTimingFunction.Ease"/> which uses Material Design's standard easing curve (cubic-bezier(0.4, 0, 0.2, 1)).
-    /// </remarks>
-    public AnimationTimingFunction AnimationTimingFunction { get; set; } = AnimationTimingFunction.Ease;
-
     protected CommonSnackbarOptions() { }
 
     protected CommonSnackbarOptions(CommonSnackbarOptions options)
@@ -157,6 +149,5 @@ public abstract class CommonSnackbarOptions
         WarningIcon = options.WarningIcon;
         ErrorIcon = options.ErrorIcon;
         HideIcon = options.HideIcon;
-        AnimationTimingFunction = options.AnimationTimingFunction;
     }
 }

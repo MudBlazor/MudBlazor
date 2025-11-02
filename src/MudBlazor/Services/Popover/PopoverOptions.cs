@@ -52,10 +52,4 @@ public class PopoverOptions
     /// The default value is <c>PopoverMode.Default</c>.
     /// </summary>
     public PopoverMode Mode { get; set; } = PopoverMode.Default;
-
-    /// <summary>
-    /// Gets or sets the timing function used for popover animations.
-    /// The default value is <c>AnimationTimingFunction.Ease</c>.
-    /// </summary>
-    public AnimationTimingFunction AnimationTimingFunction { get; set; } = AnimationTimingFunction.Ease;
 }
