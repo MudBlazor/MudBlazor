@@ -590,13 +590,24 @@ namespace MudBlazor
             SortPanels();
 
             var activeIndex = _activePanelIndexState.Value;
+            var activePanel = ActivePanel;
 
-            if (_panels.Count == activeIndex + 1 || activeIndex == -1 && _panels.Count == 1)
+            if (activeIndex == -1)
             {
-                await ActivatePanelAsync(tabPanel);
+                // if no index set
+                await _activePanelIndexState.SetValueAsync(_panels.IndexOf(tabPanel));
             }
-            else
+            else if (activePanel != null && activeIndex != _panels.IndexOf(activePanel))
+            {
+                // if sortpanels changed the index readjust
+                await _activePanelIndexState.SetValueAsync(_panels.IndexOf(activePanel));
+            }
+            // queue a redraw if needed
+            if (!_redraw)
+            {
+                _redraw = true;
                 StateHasChanged();
+            }
         }
 
         internal async Task SetPanelRefAsync(ElementReference reference)
@@ -604,8 +615,12 @@ namespace MudBlazor
             if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
             {
                 await _resizeObserver!.Observe(reference);
-                _redraw = true;
-                StateHasChanged();
+                // queue a redraw if needed
+                if (!_redraw)
+                {
+                    _redraw = true;
+                    StateHasChanged();
+                }
             }
         }
 
@@ -614,33 +629,38 @@ namespace MudBlazor
             if (_isDisposed)
                 return;
 
+            await _resizeObserver!.Unobserve(tabPanel.PanelRef);
+
             var index = _panels.IndexOf(tabPanel);
             var wasActive = _activePanelIndexState.Value == index;
             var activePanel = ActivePanel;
 
             _panels.RemoveAt(index);
-            await _resizeObserver!.Unobserve(tabPanel.PanelRef);
+
             // no panels left that are visible and not disabled
             if (!_panels.Any(x => x.Visible && !x.Disabled))
             {
-                await ActivatePanelAsync(null);
-                return;
+                await _activePanelIndexState.SetValueAsync(-1);
             }
-
-            if (wasActive) // if removed tab was active, choose a new one
+            else if (wasActive) // if removed tab was active, choose a new one
             {
                 // either the last panel or the panel in the existing index whichever is lower
                 var newIndex = FindNearestValidPanelIndex(index);
                 if (!newIndex.HasValue)
-                    await ActivatePanelAsync(null);
+                    await _activePanelIndexState.SetValueAsync(-1);
                 else
-                    await ActivatePanelAsync(newIndex.Value);
+                    await _activePanelIndexState.SetValueAsync(newIndex.Value);
             }
-            else
-                await ActivatePanelAsync(activePanel);
-
-            _redraw = true;
-            StateHasChanged();
+            else if (activePanel != null) // update index
+            {
+                await _activePanelIndexState.SetValueAsync(_panels.IndexOf(activePanel));
+            }
+            // queue a redraw if needed
+            if (!_redraw)
+            {
+                _redraw = true;
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -1036,8 +1056,7 @@ namespace MudBlazor
 
         private async Task<double> GetRelevantSize(ElementReference reference)
         {
-            BoundingClientRect? rect = _resizeObserver!.GetSizeInfo(reference)
-                ?? await reference.MudGetBoundingClientRectAsync();
+            BoundingClientRect? rect = _resizeObserver!.GetSizeInfo(reference);
 
             var height = rect?.Height ?? 0.0;
             var width = rect?.Width ?? 0.0;

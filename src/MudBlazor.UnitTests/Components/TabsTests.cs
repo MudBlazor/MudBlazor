@@ -233,7 +233,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(496.0, 50)] // centered tab
         [TestCase(396.0, 100)]
         [TestCase(296.0, 150)] // centered tab
-        [TestCase(196.0, 150)] // centered tab
+        [TestCase(196.0, 200)] // centered tab
         public void ScrollToItem_CentralizeViewAroundActiveItem(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
@@ -262,10 +262,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(400.0, 100)]
-        [TestCase(300.0, 100)]
-        [TestCase(200.0, 200)]
-        [TestCase(100.0, 200)]
+        [TestCase(496.0, 100)]
+        [TestCase(396.0, 100)]
+        [TestCase(296.0, 200)]
+        [TestCase(196.0, 200)]
         public void ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
@@ -312,12 +312,12 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedTranslations = new Dictionary<int, double>
             {
-                { 0, 0 },
-                { 1, 100 },
-                { 2, 200 },
-                { 3, 300 },
-                { 4, 400 },
-                { 5, 390 },
+                { 0, 0 },  // preSize (tabs before selected) - viewportCenter + panelCenter
+                { 1, 45 }, // 2 tab size so center tab 100 - (210 / 2) + (100 / 2)
+                { 2, 145 }, // 200 - (210 / 2) + (100 / 2)
+                { 3, 245 },
+                { 4, 345 },
+                { 5, 390 }, // end caps snap last tab to edge so maxScroll is all tabs (600) - viewport (210)
             };
 
             for (var i = 0; i < 6; i++)
@@ -749,21 +749,22 @@ namespace MudBlazor.UnitTests.Components
             GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
-
+            // panels 2, 3, 4 should be shown since panel 3 is selected
             scrollButtons.First().Instance.Disabled.Should().BeFalse();
 
             await comp.Instance.RemovePanel(0);
-
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            // panels 1, 2, 3 should be shown since panel 2 is selected (old panel 3)
+            // no scroll bar since 2 is centered puts 1 at left
+            scrollButtons.First().Instance.Disabled.Should().BeTrue();
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
-            styleAttr.Should().Be($"transform:translateX(-100px);");
+            styleAttr.Should().Be($"transform:translateX(-0px);");
 
             var sliderValue = GetSliderValue(comp);
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 5.0) * 100.0, 0.00001);
+            sliderValue.Should().BeApproximately((1.0 / 5.0) * 100.0, 0.00001);
         }
 
         [Test]

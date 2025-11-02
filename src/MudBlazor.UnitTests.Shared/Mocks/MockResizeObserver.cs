@@ -106,7 +106,10 @@ public class MockResizeObserver : IResizeObserver
         return Task.CompletedTask;
     }
 
-    public BoundingClientRect? GetSizeInfo(ElementReference reference) => _cachedValues.GetValueOrDefault(reference);
+    // MudTabs added a fallback for using jsinterop to find a valid value if one is not returned
+    public BoundingClientRect? GetSizeInfo(ElementReference reference) =>
+        _cachedValues.GetValueOrDefault(reference) ??
+        new BoundingClientRect() { Width = !IsVertical ? PanelSize : 0.0, Height = IsVertical ? PanelSize : 0.0 };
 
     public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
 
