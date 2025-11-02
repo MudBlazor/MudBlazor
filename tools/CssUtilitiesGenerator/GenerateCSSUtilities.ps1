@@ -89,7 +89,30 @@ function GenerateUtilities
                 }
             }
 
-            foreach($class in $classDictonary.GetEnumerator() | Where-Object {!$_.Name.StartsWith("mud-") } | Sort-Object -Property Name){
+            # Custom sort function to handle numeric suffixes properly
+            # This sorts classes like gap-1, gap-2, ..., gap-10, gap-11 in numeric order
+            $sortedClasses = $classDictonary.GetEnumerator() | Where-Object {!$_.Name.StartsWith("mud-") } | Sort-Object -Property @{
+                Expression = {
+                    $name = $_.Name
+                    # Split the class name into parts by '-'
+                    $parts = $name -split '-'
+                    
+                    # Create a sort key with zero-padded numbers
+                    $sortKey = ""
+                    foreach ($part in $parts) {
+                        if ($part -match '^\d+$') {
+                            # If the part is a number, pad it with zeros to 5 digits for proper numeric sorting
+                            $sortKey += $part.PadLeft(5, '0') + "-"
+                        } else {
+                            # If it's not a number, keep it as is
+                            $sortKey += $part + "-"
+                        }
+                    }
+                    return $sortKey
+                }
+            }
+            
+            foreach($class in $sortedClasses){
                 $razorOutput += "<tr><td>$($class.Name)</td><td>"
                 $propCount = 1
                 foreach ($property in $class.Value){
