@@ -149,4 +149,21 @@ public partial class Appbar
     }
 
     private void OpenSearchDialog() => IsSearchDialogOpen = true;
+
+    /// <summary>
+    /// Activates the search functionality by either opening the search dialog or focusing the search bar.
+    /// </summary>
+    public async Task ActivateSearchAsync()
+    {
+        if (DisplaySearchBar && _searchAutocomplete != null)
+        {
+            // Focus the search autocomplete for desktop view
+            await _searchAutocomplete.FocusAsync();
+        }
+        else
+        {
+            // Open the search dialog for mobile view
+            OpenSearchDialog();
+        }
+    }
 }
