@@ -91,5 +91,13 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         public string? BackgroundClass { get; init; }
+
+        /// <summary>
+        /// The timing function used for dialog animations.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="AnimationTimingFunction.Ease"/> from <see cref="MudGlobal.TransitionDefaults.TimingFunction"/>.
+        /// </remarks>
+        public AnimationTimingFunction? AnimationTimingFunction { get; init; }
     }
 }

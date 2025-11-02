@@ -33,6 +33,7 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("transition-duration", $"{Duration}ms")
                 .AddStyle("transition-delay", $"{Delay}ms")
+                .AddStyle("transition-timing-function", AnimationTimingFunction.ToDescriptionString())
                 .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
                 .AddStyle(Style)
                 .Build();
@@ -176,5 +177,15 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
+
+        /// <summary>
+        /// The timing function used for popover animations.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="AnimationTimingFunction.Ease"/> from <see cref="MudGlobal.TransitionDefaults.TimingFunction"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public AnimationTimingFunction AnimationTimingFunction { get; set; } = MudGlobal.TransitionDefaults.TimingFunction;
     }
 }

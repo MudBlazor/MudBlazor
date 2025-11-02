@@ -130,6 +130,14 @@ public abstract class CommonSnackbarOptions
     /// </remarks>
     public bool HideIcon { get; set; }
 
+    /// <summary>
+    /// The timing function used for snackbar animations.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="AnimationTimingFunction.Ease"/> which uses Material Design's standard easing curve (cubic-bezier(0.4, 0, 0.2, 1)).
+    /// </remarks>
+    public AnimationTimingFunction AnimationTimingFunction { get; set; } = AnimationTimingFunction.Ease;
+
     protected CommonSnackbarOptions() { }
 
     protected CommonSnackbarOptions(CommonSnackbarOptions options)
@@ -149,5 +157,6 @@ public abstract class CommonSnackbarOptions
         WarningIcon = options.WarningIcon;
         ErrorIcon = options.ErrorIcon;
         HideIcon = options.HideIcon;
+        AnimationTimingFunction = options.AnimationTimingFunction;
     }
 }

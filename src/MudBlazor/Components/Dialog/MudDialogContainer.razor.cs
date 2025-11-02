@@ -118,6 +118,18 @@ namespace MudBlazor
                 .AddClass(_dialog?.Class)
                 .Build();
 
+        protected string DialogStyle
+        {
+            get
+            {
+                var timingFunction = GetAnimationTimingFunction();
+                var builder = new StyleBuilder()
+                    .AddStyle("animation-timing-function", timingFunction.ToDescriptionString())
+                    .AddStyle(Style);
+                return builder.Build();
+            }
+        }
+
         protected string BackgroundClassname =>
             new CssBuilder("mud-overlay-dialog")
                 .AddClass($"mud-skip-overlay-section") // dialog overlay remains outside of Section
@@ -289,6 +301,9 @@ namespace MudBlazor
         private bool GetFullWidth() => GetDialogOptionsOrDefault.FullWidth ?? GlobalDialogOptions.FullWidth ?? false;
 
         private bool GetFullScreen() => GetDialogOptionsOrDefault.FullScreen ?? GlobalDialogOptions.FullScreen ?? false;
+
+        private AnimationTimingFunction GetAnimationTimingFunction() =>
+            GetDialogOptionsOrDefault.AnimationTimingFunction ?? GlobalDialogOptions.AnimationTimingFunction ?? MudGlobal.TransitionDefaults.TimingFunction;
 
         private DialogOptions GetDialogOptionsOrDefault => _dialogOptionsState.Value ?? DialogOptions.Default;
 

@@ -44,17 +44,18 @@ namespace MudBlazor
         {
             get
             {
-                const string Template = "opacity: {0}; animation: {1}ms linear {2};";
+                var timingFunction = Options.AnimationTimingFunction.ToDescriptionString();
+                var template = $"opacity: {{0}}; animation: {{1}}ms {timingFunction} {{2}};";
 
                 switch (SnackbarState)
                 {
                     case SnackbarState.Showing:
                         var showingDuration = RemainingTransitionMilliseconds(Options.ShowTransitionDuration);
-                        return Format(Template, Opacity, showingDuration, AnimationId);
+                        return Format(template, Opacity, showingDuration, AnimationId);
 
                     case SnackbarState.Hiding:
                         var hidingDuration = RemainingTransitionMilliseconds(Options.HideTransitionDuration);
-                        return Format(Template, 0, hidingDuration, AnimationId);
+                        return Format(template, 0, hidingDuration, AnimationId);
 
                     case SnackbarState.Visible:
                         return $"opacity: {Opacity};";
