@@ -34,7 +34,7 @@ public partial class DocsLayout : LayoutComponentBase, IAsyncDisposable
         if (firstRender)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./JS/keyboard-shortcuts.js");
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/MudBlazor.Docs/JS/keyboard-shortcuts.js");
             await _jsModule.InvokeVoidAsync("registerSearchShortcut", _dotNetRef);
         }
     }
