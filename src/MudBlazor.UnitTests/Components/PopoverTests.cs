@@ -415,5 +415,21 @@ namespace MudBlazor.UnitTests.Components
 
             options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Linear);
         }
+
+        [Test]
+        public void PopoverOptions_AnimationTimingFunction_CanBeSetToEaseIn()
+        {
+            var options = new PopoverOptions { AnimationTimingFunction = AnimationTimingFunction.EaseIn };
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.EaseIn);
+        }
+
+        [Test]
+        public void PopoverOptions_AnimationTimingFunction_CanBeSetToEaseOut()
+        {
+            var options = new PopoverOptions { AnimationTimingFunction = AnimationTimingFunction.EaseOut };
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.EaseOut);
+        }
     }
 }

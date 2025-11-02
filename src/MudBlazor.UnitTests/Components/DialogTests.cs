@@ -1474,6 +1474,22 @@ namespace MudBlazor.UnitTests.Components
 
             options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Linear);
         }
+
+        [Test]
+        public void DialogOptions_AnimationTimingFunction_CanBeSetToEaseIn()
+        {
+            var options = new DialogOptions { AnimationTimingFunction = AnimationTimingFunction.EaseIn };
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.EaseIn);
+        }
+
+        [Test]
+        public void DialogOptions_AnimationTimingFunction_CanBeSetToEaseOut()
+        {
+            var options = new DialogOptions { AnimationTimingFunction = AnimationTimingFunction.EaseOut };
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.EaseOut);
+        }
     }
     internal class CustomDialogService : DialogService
     {
