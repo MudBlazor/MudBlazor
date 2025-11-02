@@ -399,5 +399,21 @@ namespace MudBlazor.UnitTests.Components
 
             settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipAlways);
         }
+
+        [Test]
+        public void PopoverOptions_AnimationTimingFunction_DefaultsToEase()
+        {
+            var options = new PopoverOptions();
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Ease);
+        }
+
+        [Test]
+        public void PopoverOptions_AnimationTimingFunction_CanBeSetToLinear()
+        {
+            var options = new PopoverOptions { AnimationTimingFunction = AnimationTimingFunction.Linear };
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Linear);
+        }
     }
 }

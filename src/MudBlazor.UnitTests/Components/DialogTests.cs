@@ -1450,6 +1450,30 @@ namespace MudBlazor.UnitTests.Components
                     args[1] is bool)),
                 Times.AtMost(2)); // Focus should be called once when dialog opens and once for refocus after backdrop click
         }
+
+        [Test]
+        public void DialogOptions_AnimationTimingFunction_DefaultsToNull()
+        {
+            var options = new DialogOptions();
+
+            options.AnimationTimingFunction.Should().BeNull();
+        }
+
+        [Test]
+        public void DialogOptions_AnimationTimingFunction_CanBeSetToEase()
+        {
+            var options = new DialogOptions { AnimationTimingFunction = AnimationTimingFunction.Ease };
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Ease);
+        }
+
+        [Test]
+        public void DialogOptions_AnimationTimingFunction_CanBeSetToLinear()
+        {
+            var options = new DialogOptions { AnimationTimingFunction = AnimationTimingFunction.Linear };
+
+            options.AnimationTimingFunction.Should().Be(AnimationTimingFunction.Linear);
+        }
     }
     internal class CustomDialogService : DialogService
     {

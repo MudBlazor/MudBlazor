@@ -22,9 +22,9 @@ public abstract class CommonSnackbarOptions
     /// The time, in milliseconds, to animate showing the snackbar.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>1000</c> (one second).
+    /// Defaults to <c>251</c> milliseconds.
     /// </remarks>
-    public int ShowTransitionDuration { get; set; } = 1000;
+    public int ShowTransitionDuration { get; set; } = 251;
 
     /// <summary>
     /// The time, in milliseconds, to show the snackbar.
@@ -38,9 +38,9 @@ public abstract class CommonSnackbarOptions
     /// The time, in milliseconds, to hide the snackbar.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>2000</c> (two seconds).
+    /// Defaults to <c>251</c> milliseconds.
     /// </remarks>
-    public int HideTransitionDuration { get; set; } = 2000;
+    public int HideTransitionDuration { get; set; } = 251;
 
     /// <summary>
     /// Displays a close icon for the snackbar.
