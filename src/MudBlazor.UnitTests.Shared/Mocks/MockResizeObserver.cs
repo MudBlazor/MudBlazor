@@ -33,7 +33,7 @@ public class MockResizeObserver : IResizeObserver
 
     public void UpdateTotalPanelSize(double newSize)
     {
-        var entry = _cachedValues.Count > 0 ? _cachedValues.ElementAt(1) : _cachedValues.Last();
+        var entry = _cachedValues.Count > 1 ? _cachedValues.ElementAt(1) : _cachedValues.Last();
 
         if (IsVertical == false)
         {

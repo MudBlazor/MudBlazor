@@ -25,6 +25,7 @@ namespace MudBlazor
         private readonly ParameterState<int> _activePanelIndexState;
         private double _scrollAmount;
         private bool _isRendered;
+        private bool _isVerticalTabs;
         private bool _redraw;
         private bool _isSliderPositionDetermined;
         private bool _prevButtonDisabled;
@@ -502,6 +503,7 @@ namespace MudBlazor
                 // need to recalculate the layout since drag and drop and position
                 // changes the tab structure more broadly
                 _redraw = true;
+                _isVerticalTabs = Position is Position.Left or Position.Right or Position.Start or Position.End;
             }
             await base.SetParametersAsync(parameters);
         }
@@ -800,8 +802,7 @@ namespace MudBlazor
         private async Task ActivatePanelClickAsync(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
         {
             await ActivatePanelAsync(panel, ignoreDisabledState);
-            if (ActivePanel != null)
-                await ActivePanel.OnClick.InvokeAsync(ev);
+            await panel.OnClick.InvokeAsync(ev);
         }
 
         private void SortPanels()
@@ -834,7 +835,7 @@ namespace MudBlazor
                 .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
                 .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
                 .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
                 .AddClass(InternalClassName)
                 .AddClass(Class)
@@ -843,7 +844,7 @@ namespace MudBlazor
         protected string TabBarClassnames =>
             new CssBuilder("mud-tabs-tabbar")
                 .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass($"mud-tabs-tabbar-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
                 .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
@@ -854,7 +855,7 @@ namespace MudBlazor
         protected string WrapperClassnames =>
             new CssBuilder("mud-tabs-tabbar-wrapper")
                 .AddClass($"mud-tabs-centered", Centered)
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .Build();
 
         /// <summary>
@@ -862,13 +863,13 @@ namespace MudBlazor
         /// </summary>
         protected string WrapperScrollStyle =>
             new StyleBuilder()
-                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", !IsVerticalTabs())
-                .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", !_isVerticalTabs)
+                .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", _isVerticalTabs)
                 .Build();
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass(PanelClass)
                 .Build();
 
@@ -876,15 +877,15 @@ namespace MudBlazor
             new CssBuilder("mud-tab-slider")
                 .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
                 .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
-                .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
+                .AddClass($"mud-tab-slider-vertical", _isVerticalTabs)
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
                 .Build();
 
         protected string DropZoneClassnames =>
             new CssBuilder("mud-tabs-dropzone")
-                .AddClass("d-flex", !IsVerticalTabs())
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass("d-flex", !_isVerticalTabs)
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass("flex-grow-1")
                 .Build();
 
@@ -898,23 +899,18 @@ namespace MudBlazor
                 .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("right", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSizePercentage.ToPercent(), IsVerticalTabs())
-                .AddStyle("top", _sliderPositionPercentage.ToPercent(), IsVerticalTabs())
+                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
+                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
+                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
                 .Build()
             : new StyleBuilder()
                 .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("left", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSizePercentage.ToPercent(), IsVerticalTabs())
-                .AddStyle("top", _sliderPositionPercentage.ToPercent(), IsVerticalTabs())
+                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
+                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
+                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
                 .Build();
-
-        private bool IsVerticalTabs()
-        {
-            return Position is Position.Left or Position.Right or Position.Start or Position.End;
-        }
 
         private Position ConvertPosition(Position position)
         {
@@ -1021,7 +1017,6 @@ namespace MudBlazor
             _isSliderPositionDetermined =
                 (_activePanelIndexState.Value > 0 && _sliderPositionPercentage > 0)
                 || IsFirstVisiblePanel(ActivePanel);
-
         }
 
         /// <summary>
@@ -1034,7 +1029,7 @@ namespace MudBlazor
             var headerAfterSize = _headerAfter.HasValue ? await GetRelevantSize(_headerAfter.Value) : 0;
             // the size of the scroll buttons
             var scrollSize = !withoutScroll && _showScrollButtons ?
-                IsVerticalTabs() ? 32 * 2 : 48 * 2 : 0;
+                _isVerticalTabs ? 32 * 2 : 48 * 2 : 0;
             return innerTabSize
                 - scrollSize
                 - headerBeforeSize
@@ -1071,7 +1066,7 @@ namespace MudBlazor
                 }
             }
 
-            return IsVerticalTabs() ? height : width;
+            return _isVerticalTabs ? height : width;
         }
 
 
@@ -1208,7 +1203,7 @@ namespace MudBlazor
             }
             // ensure no extra space past the start or end
             position = ScrollEdgeAdjust(position, panelSize);
-            position = RightToLeft && !IsVerticalTabs() ? -position : position;
+            position = RightToLeft && !_isVerticalTabs ? -position : position;
             if (_scrollPosition != position)
             {
                 _scrollPosition = position;
@@ -1344,28 +1339,28 @@ namespace MudBlazor
                     break;
 
                 case "ArrowLeft":
-                    if (!IsVerticalTabs())
+                    if (!_isVerticalTabs)
                     {
                         await MoveFocusToPreviousTab(panel);
                     }
                     break;
 
                 case "ArrowRight":
-                    if (!IsVerticalTabs())
+                    if (!_isVerticalTabs)
                     {
                         await MoveFocusToNextTab(panel);
                     }
                     break;
 
                 case "ArrowUp":
-                    if (IsVerticalTabs())
+                    if (_isVerticalTabs)
                     {
                         await MoveFocusToPreviousTab(panel);
                     }
                     break;
 
                 case "ArrowDown":
-                    if (IsVerticalTabs())
+                    if (_isVerticalTabs)
                     {
                         await MoveFocusToNextTab(panel);
                     }
