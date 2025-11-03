@@ -594,7 +594,7 @@ namespace MudBlazor
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
-        protected readonly string _componentId = Identifier.Create();
+        private readonly string _componentId = Identifier.Create();
 
         /// <summary>
         /// Is set to true to scroll to the actual year after the next render
@@ -604,7 +604,7 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls to the current year.
         /// </summary>
-        public async void ScrollToYear(DateTime? date = null)
+        public async Task ScrollToYear(DateTime? date = null)
         {
             _scrollToYearAfterRender = false;
             var dateTime = date ?? GetMonthStart(0);
@@ -737,12 +737,12 @@ namespace MudBlazor
 
             if (firstRender && CurrentView == OpenTo.Year)
             {
-                ScrollToYear();
+                ScrollToYear().CatchAndLog();
                 return;
             }
 
             if (_scrollToYearAfterRender)
-                ScrollToYear();
+                ScrollToYear().CatchAndLog();
         }
 
         protected abstract DateTime GetCalendarStartOfMonth();

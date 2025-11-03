@@ -340,7 +340,7 @@ namespace MudBlazor
                                 if (Culture.Calendar.GetYear(newYear) < GetMinYear())
                                     break;
                                 HighlightedDate = _selectedDate = newYear;
-                                ScrollToYear(HighlightedDate);
+                                ScrollToYear(HighlightedDate).CatchAndLog();
                                 break;
                         }
                     }
@@ -363,7 +363,7 @@ namespace MudBlazor
                                 if (Culture.Calendar.GetYear(newYear) > GetMaxYear())
                                     break;
                                 HighlightedDate = _selectedDate = newYear;
-                                ScrollToYear(HighlightedDate);
+                                ScrollToYear(HighlightedDate).CatchAndLog();
                                 break;
                         }
                     }
@@ -436,7 +436,7 @@ namespace MudBlazor
             {
                 PickerMonth = new DateTime(Culture.Calendar.GetYear(Date.Value), Culture.Calendar.GetMonth(Date.Value),
                     1, Culture.Calendar);
-                ScrollToYear();
+                ScrollToYear().CatchAndLog();
             }
         }
 
@@ -450,7 +450,7 @@ namespace MudBlazor
             if (submitDate)
             {
                 await SetDateAsync(date, true);
-                ScrollToYear();
+                ScrollToYear().CatchAndLog();
             }
         }
     }
