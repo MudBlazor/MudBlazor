@@ -1028,5 +1028,20 @@ namespace MudBlazor.UnitTests.Components
             stepper.FindAll(".mud-step")[1].Click();
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Be("step-b");
         }
+
+        [Test]
+        public void StepContext_NullStepper_Throws()
+        {
+            Action act = () => _ = new MudStepContext(null!, new MudStep());
+            act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("stepper");
+        }
+
+        [Test]
+        public void StepContext_NullStep_Throws()
+        {
+            Action act = () => _ = new MudStepContext(new MudStepper(), null!);
+            act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("step");
+        }
+
     }
 }
