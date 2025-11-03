@@ -1007,5 +1007,26 @@ namespace MudBlazor.UnitTests.Components
 
         private static RenderFragment StepContent(Action<RenderTreeBuilder> content)
             => builder => content(builder);
+
+        [Test]
+        public void Stepper_ShouldHandleNullChildContent()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step-b"));
+                });
+            });
+
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().BeEmpty();
+            stepper.FindAll(".mud-step")[1].Click();
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Be("step-b");
+        }
     }
 }
