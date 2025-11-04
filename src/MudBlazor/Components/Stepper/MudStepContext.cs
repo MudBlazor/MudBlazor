@@ -23,7 +23,7 @@ public sealed class MudStepContext
     /// Gets a value indicating whether the associated step is currently active.
     /// </summary>
     public bool IsActive => Stepper.ActiveStep == Step;
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MudStepContext"/> class.
     /// </summary>
