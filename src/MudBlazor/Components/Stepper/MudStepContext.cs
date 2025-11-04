@@ -10,17 +10,6 @@ namespace MudBlazor;
 public sealed class MudStepContext
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MudStepContext"/> class.
-    /// </summary>
-    /// <param name="stepper">The owning stepper.</param>
-    /// <param name="step">The step associated with the context.</param>
-    public MudStepContext(MudStepper stepper, MudStep step)
-    {
-        Stepper = stepper ?? throw new ArgumentNullException(nameof(stepper));
-        Step = step ?? throw new ArgumentNullException(nameof(step));
-    }
-
-    /// <summary>
     /// Gets the owning <see cref="MudStepper"/>.
     /// </summary>
     public MudStepper Stepper { get; }
@@ -34,4 +23,15 @@ public sealed class MudStepContext
     /// Gets a value indicating whether the associated step is currently active.
     /// </summary>
     public bool IsActive => Stepper.ActiveStep == Step;
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MudStepContext"/> class.
+    /// </summary>
+    /// <param name="stepper">The owning stepper.</param>
+    /// <param name="step">The step associated with the context.</param>
+    public MudStepContext(MudStepper stepper, MudStep step)
+    {
+        Stepper = stepper ?? throw new ArgumentNullException(nameof(stepper));
+        Step = step ?? throw new ArgumentNullException(nameof(step));
+    }
 }
