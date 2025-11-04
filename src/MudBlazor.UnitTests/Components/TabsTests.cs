@@ -1738,49 +1738,35 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ClosableTabsWithHeaderTest>();
 
             // Close the tab with the mouse wheel click.
-            await comp.InvokeAsync(async () =>
-            {
-                var tabs = comp.FindAll("div.mud-tab");
-                tabs.Count.Should().Be(6);
+            var tabs = comp.FindAll("div.mud-tab");
+            tabs.Count.Should().Be(6);
 
-                var tab1 = tabs[1];
-                await tab1.TriggerEventAsync("onmousedown", new MouseEventArgs { Button = 1 });
+            await tabs[1].TriggerEventAsync("onmousedown", new MouseEventArgs { Button = 1 });
 
-                tabs = comp.FindAll("div.mud-tab");
-                tabs.Count.Should().Be(5);
-            });
+            comp.FindAll("div.mud-tab").Count
+                .Should().Be(5);
 
             // Close all but the selected tab.
-            await comp.InvokeAsync(async () =>
-            {
-                var tabs = comp.FindAll("div.mud-tab");
-                tabs.Count.Should().Be(5);
+            tabs = comp.FindAll("div.mud-tab");
+            tabs.Count.Should().Be(5);
 
-                var tab1 = tabs[1];
-                await tab1.TriggerEventAsync("oncontextmenu", default);
+            await tabs[1].TriggerEventAsync("oncontextmenu", default);
 
-                var menuItems = comp.FindComponents<MudMenuItem>();
+            var menuItems = comp.FindComponents<MudMenuItem>();
+            menuItems.Count.Should().Be(3);
+            menuItems[2].Find(".mud-menu-item").Click();
 
-                menuItems.Count.Should().Be(3);
-                menuItems[2].Find(".mud-menu-item").Click();
-
-                tabs = comp.FindAll("div.mud-tab");
-                tabs.Count.Should().Be(1);
-            });
+            comp.FindAll("div.mud-tab").Count
+                .Should().Be(1);
 
             // Close All tabs.
-            await comp.InvokeAsync(async () =>
-            {
-                var tabs = comp.FindAll("div.mud-tab");
-                var tab1 = tabs[0];
-                await tab1.TriggerEventAsync("oncontextmenu", default);
+            tabs = comp.FindAll("div.mud-tab");
+            await tabs[0].TriggerEventAsync("oncontextmenu", default);
 
-                var menuItems = comp.FindComponents<MudMenuItem>();
-                menuItems[1].Find(".mud-menu-item").Click();
+            comp.FindComponents<MudMenuItem>()[1].Find(".mud-menu-item").Click();
 
-                tabs = comp.FindAll("div.mud-tab");
-                tabs.Count.Should().Be(0);
-            });
+            comp.FindAll("div.mud-tab").Count
+                .Should().Be(0);
         }
     }
 }
