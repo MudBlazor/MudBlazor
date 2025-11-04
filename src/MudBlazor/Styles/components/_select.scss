@@ -24,8 +24,9 @@
       padding-right: 4.5rem !important;
     }
 
-    // If autocomplete has a progress indicator, the adornment should be hidden when loading
-    & .mud-select-input .mud-icon-button {
+    // hide only when the wrapper does NOT contain mud-input-adornment-start
+    // AND DOES contain .progress-indicator-circular somewhere inside
+    &:not(:has(.mud-input-adornment-start)):has(.progress-indicator-circular) .mud-select-input .mud-icon-button {
       display: none !important;
     }
 

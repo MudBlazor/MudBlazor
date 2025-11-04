@@ -75,11 +75,13 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+#pragma warning disable CS0618 // Type or member is obsolete
         protected string PopoverClassname =>
             new CssBuilder("mud-picker-popover")
                 // We can't use the Elevation parameter because it requires Paper=true; Instead we define the class explicitly.
                 .AddClass($"mud-elevation-{Elevation ?? MudGlobal.PopoverDefaults.Elevation}")
                 .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         protected string ActionsClassname =>
             new CssBuilder("mud-picker-actions")
@@ -164,7 +166,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows rounded corners.
@@ -176,7 +180,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The text displayed below the text field.
@@ -261,6 +267,17 @@ namespace MudBlazor
         public bool Editable { get; set; } = false;
 
         /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// When used with a range picker, the ID is suffixed with <c>-start</c> for the start input and <c>-end</c> for the end input.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? InputId { get; set; }
+
+        /// <summary>
         /// Shows the toolbar.
         /// </summary>
         /// <remarks>
@@ -299,7 +316,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The location of the <see cref="AdornmentIcon"/> for the input.
@@ -398,7 +417,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows the label inside the text input if no <see cref="Text"/> is specified.
@@ -409,7 +430,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The mask to apply to input values when <see cref="Editable"/> is <c>true</c>.

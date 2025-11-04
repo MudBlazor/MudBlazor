@@ -77,17 +77,19 @@
         <DocsPageSection>
             <SectionHeader Title="Editing">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows editing the data passed into it. Setting the <CodeInline>ReadOnly</CodeInline> property
-                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to <CodeInline>DataGridEditMode.Form</CodeInline>
-                    or to <CodeInline>DataGridEditMode.Cell</CodeInline> turns on editing. Edit mode <CodeInline>Form</CodeInline> displays a form in a popup
-                    when editing. Edit mode <CodeInline>Cell</CodeInline> is more like Excel where each cell is ready to edit and as you make edits, they are
-                    applied to the data source. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
-                    To mark a property as not required, set its <CodeInline>Required</CodeInline> property to <CodeInline>false</CodeInline>.
-                    <br><br>
-                    By default, the built-in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overridden
-                    by supplying an <CodeInline>&lt;EditTemplate></CodeInline>. Inside the template, you have full control over the editing. Take a look at the Position
-                    column below.
-
+                    The <CodeInline Tag>MudDataGrid</CodeInline> component supports data editing. To enable it, set <CodeInline>ReadOnly</CodeInline> to 
+                    <CodeInline>false</CodeInline> and choose an <CodeInline>EditMode</CodeInline>: either <CodeInline>DataGridEditMode.Form</CodeInline> 
+                    (popup form) or <CodeInline>DataGridEditMode.Cell</CodeInline> (Excel-style inline editing).
+                    <br /><br />
+                    Changes trigger <CodeInline>CommittedItemChanges</CodeInline> and update the data source <CodeInline>Items</CodeInline>. To disable 
+                    editing for a column, set <CodeInline>IsEditable</CodeInline> to <CodeInline>false</CodeInline>. To make a field optional, set 
+                    <CodeInline>Required</CodeInline> to <CodeInline>false</CodeInline>.
+                    <br /><br />
+                    By default, each editable cell uses a suitable input component. You can override this with an <CodeInline Tag>EditTemplate</CodeInline> 
+                    for full control, see the <CodeInline>Position</CodeInline> column example below.
+                    <br />
+                    To add and edit a new row programmatically, call <CodeInline>SetEditingItemAsync</CodeInline> with an instance of type <CodeInline>T</CodeInline> 
+                    for Form style or just add the item to <CodeInline>Items</CodeInline> for cell style.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridEditingExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -98,21 +100,21 @@
         <DocsPageSection>
             <SectionHeader Title="Grouping">
                 <Description>
-                    The <CodeInline Tag="true">MudDataGrid</CodeInline> allows users to organize data by grouping rows that share common values in 
-                    selected columns. Grouping collapses similar data into expandable sections, making large datasets more manageable. 
+                    The <CodeInline Tag="true">MudDataGrid</CodeInline> allows users to organize data by grouping rows that share common values in
+                    selected columns. Grouping collapses similar data into expandable sections, making large datasets more manageable.
                     <MudText Typo="Typo.h6" Class="mt-2">Enabling Grouping</MudText>
                     <MudText HtmlTag="p">
-                        To enable grouping functionality across the grid set the <CodeInline>Groupable</CodeInline> property on <CodeInline Tag="true">MudDataGrid</CodeInline> 
+                        To enable grouping functionality across the grid set the <CodeInline>Groupable</CodeInline> property on <CodeInline Tag="true">MudDataGrid</CodeInline>
                         to <CodeInline>true</CodeInline>. This activates the grouping feature globally, allowing all columns to be groupable unless explicitly overridden.
-                        Each column also supports its own <CodeInline>Groupable</CodeInline> property. This column-level property takes precedence over the grid-level 
-                        setting. For example, if the grid’s <CodeInline>Groupable</CodeInline> is <CodeInline>true</CodeInline> but a column’s 
+                        Each column also supports its own <CodeInline>Groupable</CodeInline> property. This column-level property takes precedence over the grid-level
+                        setting. For example, if the grid’s <CodeInline>Groupable</CodeInline> is <CodeInline>true</CodeInline> but a column’s
                         <CodeInline>Groupable</CodeInline> is set to <CodeInline>false</CodeInline>, that column will not be groupable via the UI.
                     </MudText>
                     <MudText Typo="Typo.h6" Class="mt-2">Default Grouping State</MudText>
                     <MudText HtmlTag="p">
-                        To define whether a column should start grouped by default, set its <CodeInline>Grouping</CodeInline> property to <CodeInline>true</CodeInline>. 
-                        This property supports two-way binding <CodeInline>@@bind-Grouping</CodeInline>, meaning it updates if the user groups or ungroups the column 
-                        via the grid’s UI.                         
+                        To define whether a column should start grouped by default, set its <CodeInline>Grouping</CodeInline> property to <CodeInline>true</CodeInline>.
+                        This property supports two-way binding <CodeInline>@@bind-Grouping</CodeInline>, meaning it updates if the user groups or ungroups the column
+                        via the grid’s UI.
                     </MudText>
                     <MudAlert Severity="Severity.Info" Dense="true">
                         Note that for <CodeInline>Grouping</CodeInline> to take effect, either the column or grid must have <CodeInline>Groupable</CodeInline> enabled.
@@ -133,7 +135,7 @@
         </DocsPageSection>
 
 
-         <DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Sorting">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to either disable sorting entirely, sort by single column or by multiple columns via
@@ -142,12 +144,12 @@
                     Clicking on the column header while <CodeInline>Alt-Key</CodeInline> is pressed, will un-sort a column (or remove it from the set of sorted columns) when multiple sorting
                     is enabled. In the case of multiple sorting, a small index-number next to the sort direction arrow will indicate the order in which columns are sorted.<br />
                     When mode is set to <CodeInline>SortMode.Single</CodeInline>, only a single column can be used for sorting at a time. Using another column for sorting will automatically
-                    un-sort any former sorted column. In single mode, the number indicator next to the direction arrow will not be shown.<br/><br/>
+                    un-sort any former sorted column. In single mode, the number indicator next to the direction arrow will not be shown.<br /><br />
                     In both <i>active</i> modes, single columns can be excluded from sorting by setting the <CodeInline>Sortable</CodeInline> property to false for that column.
                     When SortMode is set to <CodeInline>SortMode.None</CodeInline> sorting is disabled globally and setting the <CodeInline>Sortable</CodeInline> property on a column has no effect.<br /><br />
                     You can also use the <CodeInline>SortBy</CodeInline> parameter on a <CodeInline>TemplateColumn</CodeInline> to allow sorting on that column.
                     <br /><br />
-                    When using <CodeInline>PropertyColumn</CodeInline>, if the <CodeInline>Property</CodeInline> lambda expression returns a <b>primitive type</b>, 
+                    When using <CodeInline>PropertyColumn</CodeInline>, if the <CodeInline>Property</CodeInline> lambda expression returns a <b>primitive type</b>,
                     the <CodeInline>SortDefinition</CodeInline>'s <CodeInline>SortBy</CodeInline> will return the Property's <CodeInline>nameof</CodeInline> value.
                     Instead, if the Property lamda expression contains a complex value, the SortBy will return the column GUID.
                     In this case, if you need to retrieve the column, you have several options:
@@ -178,7 +180,7 @@
             </SectionContent>
         </DocsPageSection>
 
-         <DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Filtering">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several different <CodeInline>DataGridFilterMode</CodeInline>s by setting the <CodeInline>FilterMode</CodeInline> property.
@@ -194,7 +196,7 @@
             </SectionContent>
         </DocsPageSection>
 
-         <DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Advanced Filtering">
                 <Description>
                     It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate></CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
@@ -410,12 +412,12 @@
             <SectionHeader Title="Other Options">
                 <Description>
                     There are many options available for the <CodeInline>&lt;MudDataGrid></CodeInline> that are not covered in the examples above.
-                    The <CodeInline>&lt;ColGroup></CodeInline> component allows you to apply a span or style property to multiple columns. However, 
-                    the available styles are limited to a few CSS properties, including width, visibility, background, and border. Additionally, the 
-                    `span` property enables a column to extend across multiple columns. The <CodeInline>Loading</CodeInline> property displays a loading 
-                    indicator while the data grid is retrieving data. You can bind this attribute to a `bool` variable set to `true` when initializing 
+                    The <CodeInline>&lt;ColGroup></CodeInline> component allows you to apply a span or style property to multiple columns. However,
+                    the available styles are limited to a few CSS properties, including width, visibility, background, and border. Additionally, the
+                    `span` property enables a column to extend across multiple columns. The <CodeInline>Loading</CodeInline> property displays a loading
+                    indicator while the data grid is retrieving data. You can bind this attribute to a `bool` variable set to `true` when initializing
                     the page and toggle it once the data has loaded. The <CodeInline>FixedHeader</CodeInline> property ensures that the header remains
-                    fixed at the top of the grid, even when scrolling. These are just a few of the many available options. For a complete list and 
+                    fixed at the top of the grid, even when scrolling. These are just a few of the many available options. For a complete list and
                     additional details, refer to the <MudLink Href="components/datagrid#api">API</MudLink> documentation above.
                 </Description>
             </SectionHeader>

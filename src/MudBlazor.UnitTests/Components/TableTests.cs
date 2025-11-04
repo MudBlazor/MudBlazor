@@ -3039,5 +3039,21 @@ namespace MudBlazor.UnitTests.Components
             _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
             jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()), Times.Never);
         }
+
+        [Test]
+        public void TableAriaLabel_RendersOnTable()
+        {
+            var comp = Context.RenderComponent<TableRowClickTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudTable<int>>();
+            table.SetParametersAndRender(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
+
     }
 }
+

@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IScrollManager ScrollManager
+
+<MudStack Row="true">
+    <MudButton OnClick="@ToggleScrollLockAsync" Variant="Variant.Filled" EndIcon="@LockScrollBtIcon">@LockScrollBtText</MudButton>
+    <MudButton OnClick="@(() => ScrollManager.ScrollIntoViewAsync("#iresizeobserver", ScrollBehavior.Smooth))" Variant="Variant.Filled">Scroll to resize observer</MudButton>
+</MudStack>
+
+@code {
+    private bool _scrollIsLocked;
+    private string LockScrollBtText => _scrollIsLocked ? "Unlock scroll" : "Lock scroll";
+    private string LockScrollBtIcon => _scrollIsLocked ? Icons.Material.Outlined.LockOpen : Icons.Material.Outlined.Lock;
+
+    private async Task ToggleScrollLockAsync()
+    {
+        if (_scrollIsLocked) await ScrollManager.UnlockScrollAsync();
+        else await ScrollManager.LockScrollAsync();
+
+        _scrollIsLocked = !_scrollIsLocked;
+    }
+}

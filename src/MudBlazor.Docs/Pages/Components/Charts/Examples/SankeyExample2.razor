@@ -1,0 +1,75 @@
+﻿@using MudBlazor.Utilities
+@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.Sankey" Nodes="@_nodes" Edges="@_edges" Width="@_width" Height="@_height" ChartOptions="@_options" NodeChartOptions="_nodeChartOptions"/>
+</MudPaper>
+
+<MudGrid>
+    <MudItem md="6" xs="12">
+        <MudColorPicker Label="Color good" @bind-Value="@_nodes[^2].Color"/>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudColorPicker Label="Color evil" @bind-Value="@_nodes[^1].Color"/>
+    </MudItem>
+    <MudItem md="3" xs="12">
+        <MudCheckBox @bind-Value="_options.ShowLabels" Label="Show labels"></MudCheckBox>
+    </MudItem>
+    <MudItem sm="3" xs="12">
+        <MudCheckBox @bind-Value="_nodeChartOptions.ShowNodeValues" Label="Show node values"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSelect @bind-Value="_nodeChartOptions.LabelFontSize" Label="Label font size">
+            <MudSelectItem Value="@("0.5rem")">0.5rem</MudSelectItem>
+            <MudSelectItem Value="@("0.75rem")">0.75rem</MudSelectItem>
+            <MudSelectItem Value="@("1rem")">1rem</MudSelectItem>
+            <MudSelectItem Value="@("1.25rem")">1.25rem</MudSelectItem>
+            <MudSelectItem Value="@("1.5rem")">1.5rem</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem md="3" sm="6" xs="12">
+        <MudSwitch T="bool" ValueChanged="LabelSwitchValueChanged" Label="@(_options.ShowLabels ? "Show edge values" : "Show node values")"></MudSwitch>
+    </MudItem>
+    <MudItem md="3" sm="6" xs="12">
+        <MudCheckBox @bind-Value="_nodeChartOptions.HighlightOnHover" Label="Highlight on hover"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudColorPicker Label="Highlighting color" @bind-Text="@_nodeChartOptions.HighlightColor"/>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private ChartOptions _options = new();
+    private NodeChartOptions _nodeChartOptions = new();
+    private string _width = "650px";
+    private string _height = "350px";
+
+    private readonly List<SankeyChartNode> _nodes =
+    [
+        new("Dogs", 0),
+
+        new("Dachshund", 1),
+        new("Bernese", 1),
+        new("Chihuahua", 1),
+
+        new("Good boy", 2),
+        new("Pure evil", 2),
+    ];
+
+    private readonly List<SankeyChartEdge> _edges =
+    [
+        new("Dogs", "Dachshund", 10),
+        new("Dogs", "Bernese", 10),
+        new("Dogs", "Chihuahua", 10),
+
+        new("Dachshund", "Good boy", 10),
+        new("Bernese", "Good boy", 10),
+        new("Chihuahua", "Pure evil", 10),
+    ];
+
+    private void LabelSwitchValueChanged(bool value)
+    {
+        _options.ShowLabels = !value;
+        _nodeChartOptions.ShowEdgeLabels = value;
+    }
+}

@@ -91,7 +91,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows a border between the tab content and tab header.

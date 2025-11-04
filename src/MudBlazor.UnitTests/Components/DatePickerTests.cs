@@ -57,6 +57,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DatePickerInputId()
+        {
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(c => c.InputId, "birthday"));
+
+            comp.Find("input[id='birthday']").Should().NotBeNull();
+        }
+
+        [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void DatePicker_Render_Performance()
         {
@@ -689,6 +698,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button.mud-button-year").TrimmedText().Equals("1403");
             comp.Find("button.mud-button-month").TrimmedText().Should().Contain("1403");
             comp.Find("button.mud-button-date").TrimmedText().Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void PersianCalendarFixedDay()
+        {
+            var cal = new PersianCalendar();
+            var date = new DateTime(1404, 1, 1, cal);
+
+            var comp = Context.RenderComponent<PersianDatePickerTest>(parameter => parameter.Add(p => p.Date, date).Add(p => p.FixDay, 1));
+
+            comp.FindAll("button.mud-picker-month").Count.Should().Be(0);
+            comp.Find("input").Click();
+            comp.FindAll("button.mud-picker-month").Count.Should().Be(12);
+            comp.FindAll("button.mud-picker-month")[0].Click();
+            comp.Instance.Date?.Date.Should().Be(new DateTime(1404, 1, 1, cal));
         }
 
         [Test]

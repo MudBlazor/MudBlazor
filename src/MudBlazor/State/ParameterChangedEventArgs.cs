@@ -51,4 +51,12 @@ public class ParameterChangedEventArgs<T> : EventArgs
 
         return this;
     }
+
+    internal ParameterChangedEventArgs<T> Clone()
+    {
+        return new ParameterChangedEventArgs<T>(ParameterName, LastValue, Value)
+        {
+            IsChildOriginatedChange = IsChildOriginatedChange
+        };
+    }
 }

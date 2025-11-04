@@ -102,7 +102,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The size of the button.
@@ -123,7 +125,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Expands the button to 100% of the container width.

@@ -499,7 +499,7 @@ namespace MudBlazor
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
-            if (firstRender && Value != null)
+            if (firstRender)
             {
                 // we need to render the initial Value which is not possible without the items
                 // which supply the RenderFragment. So in this case, a second render is necessary
@@ -540,7 +540,7 @@ namespace MudBlazor
         {
             get
             {
-                if (MultiSelection || Value == null)
+                if (MultiSelection)
                     return false;
                 if (!_shadowLookup.TryGetValue(Value, out var item))
                     return false;
@@ -552,16 +552,12 @@ namespace MudBlazor
         {
             get
             {
-                if (Value == null)
-                    return false;
                 return _shadowLookup.TryGetValue(Value, out _);
             }
         }
 
         protected RenderFragment? GetSelectedValuePresenter()
         {
-            if (Value == null)
-                return null;
             if (!_shadowLookup.TryGetValue(Value, out var item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return item.ChildContent;
@@ -638,12 +634,9 @@ namespace MudBlazor
             {
                 _items.Add(item);
 
-                if (item.Value is not null)
-                {
-                    _valueLookup[item.Value] = item;
-                    if (item.Value.Equals(Value) && !MultiSelection)
-                        result = true;
-                }
+                _valueLookup[item.Value] = item;
+                if (EqualityComparer<T?>.Default.Equals(item.Value, Value) && !MultiSelection)
+                    result = true;
             }
             UpdateSelectAllChecked();
             if (result.HasValue == false)
@@ -656,10 +649,7 @@ namespace MudBlazor
         internal void Remove(MudSelectItem<T> item)
         {
             _items.Remove(item);
-            if (item.Value is not null)
-            {
-                _valueLookup.Remove(item.Value);
-            }
+            _valueLookup.Remove(item.Value);
         }
 
         /// <summary>
@@ -821,11 +811,6 @@ namespace MudBlazor
 
         private async void HighlightItemForValueAsync(T? value)
         {
-            if (value == null)
-            {
-                HighlightItem(null);
-                return;
-            }
             await WaitForRender();
             _valueLookup.TryGetValue(value, out var item);
             HighlightItem(item);
@@ -1319,7 +1304,7 @@ namespace MudBlazor
         /// <param name="item">The item to add.</param>
         public void RegisterShadowItem(MudSelectItem<T>? item)
         {
-            if (item == null || item.Value == null)
+            if (item == null)
                 return;
 
             _shadowLookup[item.Value] = item;
@@ -1343,7 +1328,7 @@ namespace MudBlazor
         /// <param name="item">The item to remove.</param>
         public void UnregisterShadowItem(MudSelectItem<T>? item)
         {
-            if (item == null || item.Value == null)
+            if (item == null)
                 return;
             _shadowLookup.Remove(item.Value);
         }
