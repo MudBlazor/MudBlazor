@@ -224,15 +224,15 @@ namespace MudBlazor.Charts
                         Source: rectSource,
                         Target: rectTarget,
                         D: BuildSankyEdgePath(
-                            sourceX: startX - 0.1, // -0.1 to prevent a visible edge when setting the edge opacity to 1
+                            sourceX: startX - 0.01, // -0.01 to prevent a visible edge when setting the edge opacity to 1
                             sourceY: startY,
                             sourceHeight: height,
-                            targetX: endX + 0.1, // +0.1 to prevent a visible edge when setting the edge opacity to 1
+                            targetX: endX + 0.01, // +0.01 to prevent a visible edge when setting the edge opacity to 1
                             targetY: endY,
                             targetHeight: height
                         ),
                         CenterX: startX + Math.Abs(startX - endX) / 2,
-                        CenterY: startY + Math.Abs(startY - (endY + height)) / 2
+                        CenterY: startY + (endY - startY) / 2 + height / 2
                     ));
 
                     startYOffset += height;

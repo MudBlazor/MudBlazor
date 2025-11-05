@@ -3,7 +3,7 @@
 @inherits MudCategoryChartBase
 
 @{
-    var glowName = $"glow_{NodeChartOptions.HighlightColor.Replace('(', '_').Replace(')', '_')}";
+    var glowName = $"glow_{Guid.NewGuid()}";
 }
 
 <svg @attributes="UserAttributes" class="mud-chart-sankey mud-ltr" width="@Width" height="@Height" viewBox="0 0 650 350">
