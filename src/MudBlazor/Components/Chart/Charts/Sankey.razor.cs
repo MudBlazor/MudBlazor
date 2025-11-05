@@ -69,6 +69,8 @@ namespace MudBlazor.Charts
             var nodes = Nodes.Where(n => _nodeValues[n.Name] >= NodeChartOptions.HideNodesSmallerThan).ToList();
             _nodeValues = _nodeValues.Where(kv => nodes.Any(n => n.Name == kv.Key)).ToDictionary();
 
+            if (NodeChartOptions.OrderNodesByValue) nodes = nodes.OrderByDescending(n => _nodeValues[n.Name]).ToList();
+            
             return nodes.ToArray();
         }
 

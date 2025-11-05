@@ -32,6 +32,9 @@
             <MudTooltip Text="Hide nodes with no edges">
                 <MudToggleIconButton Icon="@Icons.Material.Filled.DisabledVisible" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_nodeChartOptions.HideNodesWithNoEdges"/>
             </MudTooltip>
+            <MudTooltip Text="Order nodes by value">
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Sort" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_nodeChartOptions.OrderNodesByValue"/>
+            </MudTooltip>
         </MudButtonGroup>
     </MudItem>
     <MudItem xs="12" md="4">
@@ -74,14 +77,14 @@
 @code {
     private List<SankeyChartNode> _nodes = [];
     private List<SankeyChartEdge> _edges = [];
-    private ChartOptions _options = new();
-
-    private NodeChartOptions _nodeChartOptions = new()
+    private readonly ChartOptions _options = new();
+    private readonly NodeChartOptions _nodeChartOptions = new()
     {
         NodeWidth = 5,
         MinVerticalSpacing = 5,
         LabelFontSize = "0.33rem",
-        LabelPadding = 2
+        LabelPadding = 2,
+        OrderNodesByValue = true
     };
 
     private int _width = 650;

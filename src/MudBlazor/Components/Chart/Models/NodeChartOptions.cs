@@ -108,4 +108,12 @@ public class NodeChartOptions
     /// Defaults to <c>⇒</c>.
     /// </remarks>
     public string EdgeLabelSymbol { get; set; } = "⇒";
+    
+    /// <summary>
+    /// Orders the nodes in each column by their corresponding value descending.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool OrderNodesByValue { get; set; } = false;
 }
