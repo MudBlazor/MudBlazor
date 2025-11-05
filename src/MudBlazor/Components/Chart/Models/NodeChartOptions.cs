@@ -92,4 +92,12 @@ public class NodeChartOptions
     /// Defaults to <c>false</c>.
     /// </remarks>
     public bool HideNodesWithNoEdges { get; set; }
+    
+    /// <summary>
+    /// The symbol used to represent edges in chart labels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>⇒</c>.
+    /// </remarks>
+    public string EdgeLabelSymbol { get; set; } = "⇒";
 }

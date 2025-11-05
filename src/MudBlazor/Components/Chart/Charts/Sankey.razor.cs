@@ -48,7 +48,7 @@ namespace MudBlazor.Charts
             var edgeWithInvalidNode = Edges.FirstOrDefault(e => Nodes.All(n => n.Name != e.Source) || Nodes.All(n => n.Name != e.Target));
             if (edgeWithInvalidNode != null)
             {
-                throw new ArgumentException($"Edge {edgeWithInvalidNode.Source} => {edgeWithInvalidNode.Target} specifies an non-existing node");
+                throw new ArgumentException($"Edge {edgeWithInvalidNode.Source} {NodeChartOptions.EdgeLabelSymbol} {edgeWithInvalidNode.Target} specifies an non-existing node");
             }
 
             // Draw
@@ -218,7 +218,7 @@ namespace MudBlazor.Charts
                     var height = edge.Value / maxColumnValue * relativeBoundHeight;
 
                     _edgePaths.Add(new EdgePath(
-                        Name: $"{rectSource.Name} => {rectTarget.Name} ({edge.Value})",
+                        Name: $"{rectSource.Name} {NodeChartOptions.EdgeLabelSymbol} {rectTarget.Name} ({edge.Value})",
                         Source: rectSource,
                         Target: rectTarget,
                         D: BuildSankyEdgePath(
