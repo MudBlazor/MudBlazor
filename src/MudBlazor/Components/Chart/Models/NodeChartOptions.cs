@@ -76,4 +76,20 @@ public class NodeChartOptions
     /// Defaults to <c>var(--mud-palette-text-primary)</c>.
     /// </remarks>
     public string HighlightColor { get; set; } = "var(--mud-palette-text-primary)";
+
+    /// <summary>
+    /// Hides all nodes and their corresponding edges which have a weight of less than the specified one. 
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0</c>.
+    /// </remarks>
+    public int HideNodesSmallerThan { get; set; }
+    
+    /// <summary>
+    /// Whether to hide nodes which have no edges.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool HideNodesWithNoEdges { get; set; }
 }
