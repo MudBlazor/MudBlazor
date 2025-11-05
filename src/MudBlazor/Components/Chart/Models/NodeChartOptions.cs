@@ -52,6 +52,14 @@ public class NodeChartOptions
     /// Defaults to <c>"0.75rem"</c>.
     /// </remarks>
     public string LabelFontSize { get; set; } = "0.75rem";
+    
+    /// <summary>
+    /// The padding of the label background in px.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>5</c>.
+    /// </remarks>
+    public int LabelPadding { get; set; } = 5;
 
     /// <summary>
     /// Whether to constantly show the labels of the edges.
