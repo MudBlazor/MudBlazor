@@ -1043,10 +1043,13 @@ namespace MudBlazor
         private async Task GetAllReferenceSizes()
         {
             _tabSizes.Clear();
-            _tabSizes.TryAdd(_tabsContentSize, await _tabsContentSize.MudGetBoundingClientRectAsync());
-            foreach (var panelRef in _panels.Select(x => x.PanelRef))
+            var panelRefs = _panels.Select(x => x.PanelRef).ToList();
+            panelRefs.Add(_tabsContentSize);
+            var tasks = panelRefs.Select(async panelRef => (panelRef, rect: await panelRef.MudGetBoundingClientRectAsync())).ToList();
+            var results = await Task.WhenAll(tasks);
+            foreach (var result in results)
             {
-                _tabSizes.TryAdd(panelRef, await panelRef.MudGetBoundingClientRectAsync());
+                _tabSizes.TryAdd(result.panelRef, result.rect);
             }
         }
 
@@ -1069,7 +1072,7 @@ namespace MudBlazor
 
             var height = rect?.Height ?? 0.0;
             var width = rect?.Width ?? 0.0;
-            const double epsilon = 0.01;
+            const double epsilon = 0.01; // handles any odd rounding errors
 
             if (Math.Abs(height) < epsilon || Math.Abs(width) < epsilon)
                 success = false;
@@ -1191,6 +1194,7 @@ namespace MudBlazor
             }
             // ensure no extra space past the start or end
             position = ScrollEdgeAdjust(position, panelSize);
+            // right to left uses negative positioning but only when it's horizontal tabs
             position = RightToLeft && !_isVerticalTabs ? -position : position;
             if (_scrollPosition != position)
             {
