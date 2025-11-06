@@ -37,6 +37,7 @@
                        OnClearButtonClick="@(async () => await ClearAsync())"
                        TextUpdateSuppression="@(Editable && !GetReadOnlyState())"
                        ShrinkLabel="@ShrinkLabel"
+                       InputId="@InputId"
                        @onclick="OnClickAsync" />;
 
 #nullable enable

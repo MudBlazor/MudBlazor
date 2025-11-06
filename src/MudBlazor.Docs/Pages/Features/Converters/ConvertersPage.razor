@@ -29,8 +29,8 @@
             <SectionHeader Title="DateConverter">
                 <Description>
                     <MudText>
-                        By default, the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings. If you want to change that, you can either set the <CodeInline>Culture</CodeInline> of individual inputs or converters, or change it globally
-                        by setting <CodeInline>Converters.DefaultCulture</CodeInline> to your desired <CodeInline>CultureInfo</CodeInline> at application start.
+                        By default, the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings (from <CodeInline>CultureInfo.CurrentUICulture</CodeInline>). 
+                        If you want to change that, you can set the <CodeInline>Culture</CodeInline> parameter of individual input components or set the <CodeInline>Culture</CodeInline> property on custom converter instances.
                     </MudText>
                     <MudText Class="mt-4">
                         If you want to configure the date format of a DateTime value, you can set the <CodeInline>Format</CodeInline> parameter of <CodeInline Tag="true">MudTextField</CodeInline>.

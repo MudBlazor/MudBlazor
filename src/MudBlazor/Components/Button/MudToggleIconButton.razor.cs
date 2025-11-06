@@ -52,7 +52,9 @@ public partial class MudToggleIconButton : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Button.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
     public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// An alternative color to use in the toggled state.
@@ -86,7 +88,9 @@ public partial class MudToggleIconButton : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Button.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
     public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// An alternative variant to use in the toggled state.
