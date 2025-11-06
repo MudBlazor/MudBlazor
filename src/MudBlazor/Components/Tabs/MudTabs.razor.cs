@@ -33,8 +33,6 @@ namespace MudBlazor
         private bool _showScrollButtons;
         private ElementReference _tabsContentSize;
         private ElementReference _tabsInnerSize;
-        private ElementReference? _headerBefore;
-        private ElementReference? _headerAfter;
         private double _sliderSizePercentage;
         private double _sliderPositionPercentage;
         private double _tabBarContentSize;
@@ -1145,12 +1143,7 @@ namespace MudBlazor
         /// </summary>
         private void SetScrollButtonVisibility()
         {
-            if (AlwaysShowScrollButtons)
-            {
-                _showScrollButtons = true;
-                return;
-            }
-            _showScrollButtons = (int)_allTabsSize > (int)_tabBarContentSize;
+            _showScrollButtons = AlwaysShowScrollButtons || (int)_allTabsSize > (int)_tabBarContentSize;
         }
 
         private void ScrollPrev()
