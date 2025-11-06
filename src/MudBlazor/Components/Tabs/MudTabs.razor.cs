@@ -24,7 +24,6 @@ namespace MudBlazor
         private MudDropContainer<MudTabPanel>? _dropContainer;
         private readonly ParameterState<int> _activePanelIndexState;
         private bool _isRendered;
-        private SynchronizationContext? _rendererSyncContext;
         private bool _isVerticalTabs;
         private bool _redraw;
         private bool _isSliderPositionDetermined;
@@ -459,8 +458,6 @@ namespace MudBlazor
         private string _elementId = Identifier.Create("tab");
         private string? _tabListId;
 
-        private bool IsOnUiContext => SynchronizationContext.Current == _rendererSyncContext;
-
         #region Life cycle management
 
         /// <inheritdoc />
@@ -479,7 +476,6 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override void OnInitialized()
         {
-            _rendererSyncContext = SynchronizationContext.Current;
             _resizeObserver = _resizeObserverFactory.Create();
             _tabListId = $"tablist-{_componentId}";
             base.OnInitialized();
@@ -563,7 +559,7 @@ namespace MudBlazor
             {
                 _redraw = false;
                 await CalculateLayoutAsync();
-                UpdateVisualStateAsync();
+                await UpdateVisualStateAsync();
             }
         }
 
@@ -800,7 +796,7 @@ namespace MudBlazor
                 await _activePanelIndexState.SetValueAsync(previewArgs.PanelIndex);
             }
             _redraw = true;
-            QueueStateChange();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async Task ActivatePanelClickAsync(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
@@ -973,14 +969,6 @@ namespace MudBlazor
 
         #region Rendering and placement
 
-        private void QueueStateChange()
-        {
-            if (IsOnUiContext)
-                StateHasChanged();
-            else
-                InvokeAsync(StateHasChanged);
-        }
-
         /// <summary>
         /// Calculates the layout sizing of the containers and scroll buttons.
         /// </summary>
@@ -1000,20 +988,20 @@ namespace MudBlazor
         /// Used to update scroll position, scrollability states (scrollprevious and scrollnext buttons), 
         /// and slider state.
         /// </remarks>
-        private void UpdateVisualStateAsync()
+        private Task UpdateVisualStateAsync()
         {
             CenterScrollPositionAroundSelectedItem();
             SetScrollabilityStates();
             SetSliderState();
-            QueueStateChange();
+            return InvokeAsync(StateHasChanged);
         }
 
-        private void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
+        private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
             if (!_redraw)
             {
                 _redraw = true;
-                QueueStateChange();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
