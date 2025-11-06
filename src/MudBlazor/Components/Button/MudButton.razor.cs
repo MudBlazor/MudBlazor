@@ -39,7 +39,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// The buton group which owns this button.
+        /// The button group which owns this button.
         /// </summary>
         [CascadingParameter]
         private MudButtonGroup? ButtonGroup { get; set; }
@@ -177,7 +177,7 @@ namespace MudBlazor
                 return true;
             }
             // If the button is in a group, the group is stretched and none button is explicitly stretched,
-            // then the button need to be streched
+            // then the button need to be stretched
             // See https://github.com/MudBlazor/MudBlazor/issues/9710
             return ButtonGroup != null && ButtonGroup.FullWidth && ButtonGroup.NoneButtonIsStreched();
         }

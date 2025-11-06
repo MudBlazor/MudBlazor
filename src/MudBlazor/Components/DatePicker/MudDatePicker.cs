@@ -145,7 +145,7 @@ namespace MudBlazor
                         Culture.Calendar.GetSecond(_selectedDate.Value),
                         (int)Culture.Calendar.GetMilliseconds(_selectedDate.Value),
                         Culture.Calendar, _selectedDate.Value.Kind)
-                    //We can assume day here, as it was not set yet. If a fix value is set, it will be overriden in Submit
+                    //We can assume day here, as it was not set yet. If a fix value is set, it will be overridden in Submit
                     : new DateTime(Culture.Calendar.GetYear(month), Culture.Calendar.GetMonth(month), 1, Culture.Calendar);
                 await SubmitAndCloseAsync();
             }
