@@ -25,6 +25,7 @@ namespace MudBlazor
         private readonly ParameterState<int> _activePanelIndexState;
         private double _scrollAmount;
         private bool _isRendered;
+        private SynchronizationContext? _rendererSyncContext;
         private bool _isVerticalTabs;
         private bool _redraw;
         private bool _isSliderPositionDetermined;
@@ -40,7 +41,7 @@ namespace MudBlazor
         private double _tabBarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
-
+        private readonly Dictionary<ElementReference, BoundingClientRect> _tabSizes = [];
         private IResizeObserver? _resizeObserver = null;
 
         private readonly ThrottleDispatcher _throttleDispatcher;
@@ -459,6 +460,8 @@ namespace MudBlazor
         private string _elementId = Identifier.Create("tab");
         private string? _tabListId;
 
+        private bool IsOnUiContext => SynchronizationContext.Current == _rendererSyncContext;
+
         #region Life cycle management
 
         /// <inheritdoc />
@@ -477,6 +480,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override void OnInitialized()
         {
+            _rendererSyncContext = SynchronizationContext.Current;
             _resizeObserver = _resizeObserverFactory.Create();
             _tabListId = $"tablist-{_componentId}";
             base.OnInitialized();
@@ -491,6 +495,7 @@ namespace MudBlazor
 
             _nextIcon = RightToLeft ? PrevIcon : NextIcon;
             _prevIcon = RightToLeft ? NextIcon : PrevIcon;
+            _isVerticalTabs = Position is Position.Left or Position.Right or Position.Start or Position.End;
         }
 
         /// <inheritdoc />
@@ -516,10 +521,11 @@ namespace MudBlazor
             if (firstRender)
             {
                 // add observer to inner and outer tab container to detect size changes
-                // specifically for when the browser is resized
+                // specifically for when the browser is resized, we need the inner 
+                // observed since the content is width: 100% it'll bubble size changes to parent
                 var items = new HashSet<ElementReference>();
-                items.Add(_tabsContentSize);
                 items.Add(_tabsInnerSize);
+                items.Add(_tabsContentSize);
 
                 await _resizeObserver!.Observe(items);
 
@@ -558,7 +564,7 @@ namespace MudBlazor
             {
                 _redraw = false;
                 await CalculateLayoutAsync();
-                await UpdateVisualStateAsync();
+                UpdateVisualStateAsync();
             }
         }
 
@@ -606,6 +612,8 @@ namespace MudBlazor
                 // if sortpanels changed the index readjust
                 await _activePanelIndexState.SetValueAsync(_panels.IndexOf(activePanel));
             }
+            _redraw = true;
+            StateHasChanged();
         }
 
         internal async Task SetPanelRefAsync(ElementReference reference)
@@ -613,12 +621,8 @@ namespace MudBlazor
             if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
                 await _resizeObserver!.Observe(reference);
 
-            // queue a redraw if needed
-            if (!_redraw)
-            {
-                _redraw = true;
-                StateHasChanged();
-            }
+            _redraw = true;
+            StateHasChanged();
         }
 
         internal async Task RemovePanel(MudTabPanel tabPanel)
@@ -796,7 +800,8 @@ namespace MudBlazor
 
                 await _activePanelIndexState.SetValueAsync(previewArgs.PanelIndex);
             }
-            await UpdateVisualStateAsync();
+            _redraw = true;
+            QueueStateChange();
         }
 
         private async Task ActivatePanelClickAsync(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
@@ -969,16 +974,24 @@ namespace MudBlazor
 
         #region Rendering and placement
 
+        private void QueueStateChange()
+        {
+            if (IsOnUiContext)
+                StateHasChanged();
+            else
+                InvokeAsync(StateHasChanged);
+        }
+
         /// <summary>
         /// Calculates the layout sizing of the containers and scroll buttons.
         /// </summary>
         private async Task CalculateLayoutAsync()
         {
             _dropContainer?.Refresh();
-
-            await GetAllTabsSize();
-            await SetScrollButtonVisibility();
-            _tabBarContentSize = await GetTabBarContentSize();
+            await GetAllReferenceSizes();
+            GetAllTabsSize();
+            _tabBarContentSize = GetTabBarContentSize();
+            SetScrollButtonVisibility();
         }
 
         /// <summary>
@@ -988,32 +1001,31 @@ namespace MudBlazor
         /// Used to update scroll position, scrollability states (scrollprevious and scrollnext buttons), 
         /// and slider state.
         /// </remarks>
-        private async Task UpdateVisualStateAsync()
+        private void UpdateVisualStateAsync()
         {
-            await CenterScrollPositionAroundSelectedItem();
-            await SetScrollabilityStates();
-            await SetSliderState();
-            await InvokeAsync(StateHasChanged);
+            CenterScrollPositionAroundSelectedItem();
+            SetScrollabilityStates();
+            SetSliderState();
+            QueueStateChange();
         }
 
         private void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
-            InvokeAsync(() =>
+            if (!_redraw)
             {
                 _redraw = true;
-                StateHasChanged();
-            });
+                QueueStateChange();
+            }
         }
 
-
-        private async Task SetSliderState()
+        private void SetSliderState()
         {
             if (ActivePanel is null)
             {
                 return;
             }
-            _sliderPositionPercentage = (await GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
-            _sliderSizePercentage = (await GetPanelLength(ActivePanel) / _allTabsSize) * 100;
+            _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
+            _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
             _isSliderPositionDetermined =
                 (_activePanelIndexState.Value > 0 && _sliderPositionPercentage > 0)
                 || IsFirstVisiblePanel(ActivePanel);
@@ -1022,53 +1034,56 @@ namespace MudBlazor
         /// <summary>
         /// this sets _tabBarContentSize to the total calculated width of the mud-tabs-tabbar-content
         /// </summary>
-        private async Task<double> GetTabBarContentSize(bool withoutScroll = false)
+        private double GetTabBarContentSize(bool withoutScroll = false)
         {
-            var innerTabSize = await GetRelevantSize(_tabsInnerSize);
-            var headerBeforeSize = _headerBefore.HasValue ? await GetRelevantSize(_headerBefore.Value) : 0;
-            var headerAfterSize = _headerAfter.HasValue ? await GetRelevantSize(_headerAfter.Value) : 0;
-            // the size of the scroll buttons
-            var scrollSize = !withoutScroll && _showScrollButtons ?
-                _isVerticalTabs ? 32 * 2 : 48 * 2 : 0;
-            return innerTabSize
-                - scrollSize
-                - headerBeforeSize
-                - headerAfterSize;
+            return GetRelevantSize(_tabsContentSize);
         }
 
-        private async Task GetAllTabsSize()
+        private async Task GetAllReferenceSizes()
+        {
+            _tabSizes.Clear();
+            _tabSizes.TryAdd(_tabsContentSize, await _tabsContentSize.MudGetBoundingClientRectAsync());
+            foreach (var panel in _panels)
+            {
+                _tabSizes.TryAdd(panel.PanelRef, await panel.PanelRef.MudGetBoundingClientRectAsync());
+            }
+        }
+
+        private void GetAllTabsSize()
         {
             double totalTabsSize = 0;
 
             foreach (var panel in _panels)
             {
-                totalTabsSize += await GetRelevantSize(panel.PanelRef);
+                totalTabsSize += GetRelevantSize(panel.PanelRef);
             }
 
             _allTabsSize = totalTabsSize;
         }
 
-        private async Task<double> GetRelevantSize(ElementReference reference)
+        private double GetRelevantSize(ElementReference reference)
         {
-            BoundingClientRect? rect = _resizeObserver!.GetSizeInfo(reference);
+            // _tabSizes get current values using MudGetBoundingClientRectAsync
+            var success = _tabSizes.TryGetValue(reference, out var rect);
 
             var height = rect?.Height ?? 0.0;
             var width = rect?.Width ?? 0.0;
-
             const double epsilon = 0.01;
+
             if (Math.Abs(height) < epsilon || Math.Abs(width) < epsilon)
+                success = false;
+
+            // fallback to resizeobserver values if null or 0
+            if (!success)
             {
-                var backupRect = await reference.MudGetBoundingClientRectAsync();
-                if (backupRect != null)
-                {
-                    height = backupRect.Height;
-                    width = backupRect.Width;
-                }
+                rect = _resizeObserver!.GetSizeInfo(reference);
+                // ensure we don't return a null value
+                height = rect?.Height ?? 0.0;
+                width = rect?.Width ?? 0.0;
             }
 
             return _isVerticalTabs ? height : width;
         }
-
 
         /// <summary>
         /// Returns the width of all a subset of panel items up to the panel item selected.
@@ -1076,7 +1091,7 @@ namespace MudBlazor
         /// <remarks>
         /// If inclusive is true, it returns the width of the panel item selected as well.
         /// </remarks>
-        private async Task<double> GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
+        private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
             var value = 0.0;
             foreach (var item in _panels)
@@ -1085,19 +1100,19 @@ namespace MudBlazor
                 {
                     if (inclusive)
                     {
-                        value += await GetRelevantSize(item.PanelRef);
+                        value += GetRelevantSize(item.PanelRef);
                     }
 
                     break;
                 }
 
-                value += await GetRelevantSize(item.PanelRef);
+                value += GetRelevantSize(item.PanelRef);
             }
 
             return value;
         }
 
-        private async Task<double> GetPanelLength(MudTabPanel? panel) => panel == null ? 0.0 : await GetRelevantSize(panel.PanelRef);
+        private double GetPanelLength(MudTabPanel? panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
 
         private bool IsFirstVisiblePanel(MudTabPanel? activePanel)
         {
@@ -1124,45 +1139,44 @@ namespace MudBlazor
         /// <summary>
         /// By default returns the width
         /// </summary>
-        private async Task SetScrollButtonVisibility()
+        private void SetScrollButtonVisibility()
         {
             if (AlwaysShowScrollButtons)
             {
                 _showScrollButtons = true;
                 return;
             }
-            var tempWidth = await GetTabBarContentSize(true); // calculate width without scroll buttons to see if we need scroll buttons
-            _showScrollButtons = (int)_allTabsSize > (int)tempWidth;
+            _showScrollButtons = (int)_allTabsSize > (int)_tabBarContentSize;
         }
 
-        private async Task ScrollPrev()
+        private void ScrollPrev()
         {
             if (_panels.Count == 0)
                 return;
 
-            await ScrollBy(isNext: false);
-            await SetScrollButtonVisibility();
-            await SetScrollabilityStates();
+            ScrollBy(isNext: false);
+            SetScrollButtonVisibility();
+            SetScrollabilityStates();
         }
 
-        private async Task ScrollNext()
+        private void ScrollNext()
         {
-            await ScrollBy(isNext: true);
-            await SetScrollabilityStates();
+            ScrollBy(isNext: true);
+            SetScrollabilityStates();
         }
 
         /// <summary>
         /// Calculates the amount of panels that are completely visible inside the toolbar content area. Panels that are just partially visible are not considered here!
         /// </summary>
         /// <returns>The amount of panels visible inside the toolbar area. CAUTION: Might return 0!</returns>
-        private async Task GetVisiblePanels()
+        private void GetVisiblePanels()
         {
             var x = 0D;
             var count = 0;
 
             foreach (var panel in _panels)
             {
-                var result = await GetRelevantSize(panel.PanelRef);
+                var result = GetRelevantSize(panel.PanelRef);
                 x += result;
 
                 if (x < _tabBarContentSize)
@@ -1181,13 +1195,13 @@ namespace MudBlazor
         /// Scrolls a <see cref="MudTabPanel" /> to the center of the tab content viewport. Will not scroll beyond the bounds of tabs.
         /// </summary>
         /// <returns>True if scrolling occured, false if scrolling wasn't necessary.</returns>
-        private async Task<bool> ScrollToItem(MudTabPanel panel, bool isLast = false)
+        private bool ScrollToItem(MudTabPanel panel, bool isLast = false)
         {
             // set start and max scroll
             double position;
             // all panels before selected panel
-            var preSize = await GetLengthOfPanelItems(panel, false);
-            var panelSize = await GetPanelLength(panel);
+            var preSize = GetLengthOfPanelItems(panel, false);
+            var panelSize = GetPanelLength(panel);
             var maxScroll = _allTabsSize - _tabBarContentSize;
             if (isLast)
             {
@@ -1232,15 +1246,15 @@ namespace MudBlazor
         /// <summary>
         /// Scroll by page, isNext is true to go right, false to go left.
         /// </summary>
-        private async Task ScrollBy(bool isNext)
+        private void ScrollBy(bool isNext)
         {
             if (_panels.Count == 0)
                 return;
 
             var panel = isNext ? _panels.Last() : _panels.First();
-            var panelSize = await GetPanelLength(panel);
+            var panelSize = GetPanelLength(panel);
             var maxScroll = _allTabsSize - _tabBarContentSize;
-            await GetVisiblePanels();
+            GetVisiblePanels();
             if (!isNext)
             {
                 _scrollAmount = -_scrollAmount;
@@ -1253,7 +1267,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task CenterScrollPositionAroundSelectedItem()
+        private void CenterScrollPositionAroundSelectedItem()
         {
             var activeIndex = _activePanelIndexState.Value;
             if (activeIndex < 0)
@@ -1261,15 +1275,15 @@ namespace MudBlazor
             if (activeIndex + 1 == _panels.Count)
             {
                 var lastPanel = _panels.Last();
-                await ScrollToItem(lastPanel, true);
+                ScrollToItem(lastPanel, true);
                 return;
             }
 
             // scroll to the panel
-            await ScrollToItem(ActivePanel!);
+            ScrollToItem(ActivePanel!);
         }
 
-        private async Task SetScrollabilityStates()
+        private void SetScrollabilityStates()
         {
             var isEnoughSpace = _allTabsSize <= _tabBarContentSize;
 
@@ -1281,7 +1295,7 @@ namespace MudBlazor
             else
             {
                 // Disable next button if the last panel is completely visible
-                _nextButtonDisabled = Math.Abs(_scrollPosition) >= await GetLengthOfPanelItems(_panels.Last(), true) - _tabBarContentSize;
+                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _tabBarContentSize;
                 _prevButtonDisabled = Math.Abs(_scrollPosition) < 0.01;
             }
         }
