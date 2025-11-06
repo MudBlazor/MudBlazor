@@ -52,7 +52,7 @@ public class NodeChartOptions
     /// Defaults to <c>"0.75rem"</c>.
     /// </remarks>
     public string LabelFontSize { get; set; } = "0.75rem";
-    
+
     /// <summary>
     /// The padding of the label background in px.
     /// </summary>
@@ -92,7 +92,7 @@ public class NodeChartOptions
     /// Defaults to <c>0</c>.
     /// </remarks>
     public int HideNodesSmallerThan { get; set; }
-    
+
     /// <summary>
     /// Whether to hide nodes which have no edges.
     /// </summary>
@@ -100,7 +100,7 @@ public class NodeChartOptions
     /// Defaults to <c>false</c>.
     /// </remarks>
     public bool HideNodesWithNoEdges { get; set; }
-    
+
     /// <summary>
     /// The symbol used to represent edges in chart labels.
     /// </summary>
@@ -108,7 +108,7 @@ public class NodeChartOptions
     /// Defaults to <c>⇒</c>.
     /// </remarks>
     public string EdgeLabelSymbol { get; set; } = "⇒";
-    
+
     /// <summary>
     /// Orders the nodes in each column by their corresponding value descending.
     /// </summary>
