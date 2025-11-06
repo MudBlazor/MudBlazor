@@ -19,9 +19,9 @@
 
     public int ActivePanel => _tabElement.ActivePanelIndex;
 
-    public void SetPanelActive(int index)
+    public Task SetPanelActiveAsync(int index)
     {
-        InvokeAsync(async () => await _tabElement.ActivatePanelAsync(index));
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(index));
     }
 
     private static Task OnPreviewTabInteraction(TabInteractionEventArgs args)
