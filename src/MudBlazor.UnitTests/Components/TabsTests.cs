@@ -881,16 +881,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ActivatePanels()
+        public async Task ActivatePanels()
         {
-            var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
-                (x,y) => x.Instance.ActivateTab(y.Index),
-                (x,y) => x.Instance.ActivateTab(y.Panel),
-                (x,y) => x.Instance.ActivateTab(y.Tag),
+            var activator = new Func<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper, Task>[] {
+                (x,y) => x.Instance.ActivateTabAsync(y.Index),
+                (x,y) => x.Instance.ActivateTabAsync(y.Panel),
+                (x,y) => x.Instance.ActivateTabAsync(y.Tag),
 
-                (x,y) => x.Instance.ActivateTab(y.Index, false),
-                (x,y) => x.Instance.ActivateTab(y.Panel, false),
-                (x,y) => x.Instance.ActivateTab(y.Tag, false),
+                (x,y) => x.Instance.ActivateTabAsync(y.Index, false),
+                (x,y) => x.Instance.ActivateTabAsync(y.Panel, false),
+                (x,y) => x.Instance.ActivateTabAsync(y.Tag, false),
             };
 
             foreach (var invoker in activator)
@@ -901,11 +901,11 @@ namespace MudBlazor.UnitTests.Components
 
                     if (k == 0)
                     {
-                        comp.Instance.ActivateAll();
+                        await comp.Instance.ActivateAllAsync();
                     }
                     else
                     {
-                        comp.Instance.EnableTab(0);
+                        await comp.Instance.EnableTabAsync(0);
                     }
 
                     var panels = comp.FindAll(".test-panel-selector");
@@ -918,7 +918,7 @@ namespace MudBlazor.UnitTests.Components
 
                     for (var i = 1; i < comp.Instance.Tabs.Count; i++)
                     {
-                        invoker(comp, comp.Instance.Tabs[i]);
+                        await invoker(comp, comp.Instance.Tabs[i]);
 
                         panels.Refresh();
                         activePanels.Refresh();
@@ -942,9 +942,9 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatePanels_EvenWhenDisabled()
         {
             var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
-                (x,y) => x.Instance.ActivateTab(y.Index, true),
-                (x,y) => x.Instance.ActivateTab(y.Panel, true),
-                (x,y) => x.Instance.ActivateTab(y.Tag, true),
+                (x,y) => x.Instance.ActivateTabAsync(y.Index, true),
+                (x,y) => x.Instance.ActivateTabAsync(y.Panel, true),
+                (x,y) => x.Instance.ActivateTabAsync(y.Tag, true),
             };
 
             foreach (var invoker in activator)
