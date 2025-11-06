@@ -315,7 +315,7 @@ namespace MudBlazor.UnitTests.Components
             switchElement.Change(true);
             comp.FindAll("tr").Count.Should().Be(6);
 
-            // It should be equal to 20 = 4 rows * 5 colmns
+            // It should be equal to 20 = 4 rows * 5 columns
             comp.FindAll(".mud-skeleton").Count.Should().Be(20);
         }
 
