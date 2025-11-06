@@ -1174,10 +1174,7 @@ namespace MudBlazor
             position = ScrollEdgeAdjust(position, panelSize);
             // right to left uses negative positioning but only when it's horizontal tabs
             position = RightToLeft && !_isVerticalTabs ? -position : position;
-            if (_scrollPosition != position)
-            {
-                _scrollPosition = position;
-            }
+            _scrollPosition = position;
         }
 
         /// <summary>
@@ -1212,10 +1209,7 @@ namespace MudBlazor
                 scrollAmount = -scrollAmount;
             }
             var position = ScrollEdgeAdjust(_scrollPosition + scrollAmount, panelSize);
-            if (position != _scrollPosition)
-            {
-                _scrollPosition = position;
-            }
+            _scrollPosition = position;
         }
 
         private void CenterScrollPositionAroundSelectedItem()
