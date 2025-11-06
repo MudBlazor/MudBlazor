@@ -1167,31 +1167,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Calculates the amount of panels that are completely visible inside the toolbar content area. Panels that are just partially visible are not considered here!
-        /// </summary>
-        /// <returns>The amount of panels visible inside the toolbar area. CAUTION: Might return 0!</returns>
-        private void GetVisiblePanels()
-        {
-            var x = 0D;
-            var count = 0;
-
-            foreach (var panel in _panels)
-            {
-                var result = GetRelevantSize(panel.PanelRef);
-                x += result;
-
-                if (x < _tabBarContentSize)
-                {
-                    count++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-        /// <summary>
         /// Scrolls a <see cref="MudTabPanel" /> to the center of the tab content viewport. Will not scroll beyond the bounds of tabs.
         /// </summary>
         private void ScrollToItem(MudTabPanel panel, bool isLast = false)
@@ -1234,7 +1209,7 @@ namespace MudBlazor
             {
                 var tooSmallSize = _tabBarContentSize;
                 maxScroll = Math.Max(0, maxScroll - tooSmallSize);
-                minScroll = Math.Min(maxScroll, _tabBarContentSize);
+                minScroll = Math.Min(maxScroll, tooSmallSize / 2);
             }
             return Math.Clamp(position, minScroll, maxScroll);
         }
@@ -1249,7 +1224,7 @@ namespace MudBlazor
 
             var panel = isNext ? _panels[_panels.Count - 1] : _panels[0];
             var panelSize = GetPanelLength(panel);
-            var scrollAmount = _tabBarContentSize;
+            var scrollAmount = Math.Max(_tabBarContentSize, panelSize); // minimum 1 tab scroll
             if (!isNext)
             {
                 scrollAmount = -scrollAmount;

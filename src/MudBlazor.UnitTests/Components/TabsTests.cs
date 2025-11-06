@@ -428,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 2; i++)
             {
                 scrollButtons.Last().Find("button").Click();
-                expectedTranslation += observer.PanelSize;
+                expectedTranslation += observer.PanelSize * 2;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
@@ -459,14 +459,12 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(5);
 
-            var expectedTranslation = 500.0; // scroll 5 tab buttons for centering
+            var expectedTranslation = 400.0;
 
             for (var i = 0; i < 2; i++)
             {
                 scrollButtons.First().Find("button").Click(); // prev click
                 expectedTranslation -= observer.PanelSize * 2; // scroll one page back (2 tabs)
-                // minimum tab position to keep all tabs on screen on left is 200px (2 tabs)
-                expectedTranslation = Math.Max(observer.PanelSize * 2, expectedTranslation);
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
@@ -556,7 +554,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
             scrollButtons[0].Find("button").Click();
-            var expectedTranslation = 50.0; // 50 px centers the first tab
+            var expectedTranslation = 25.0; // 25 px centers the first tab
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
