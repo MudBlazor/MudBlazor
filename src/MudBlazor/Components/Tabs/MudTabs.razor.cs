@@ -23,7 +23,6 @@ namespace MudBlazor
         private bool _isDisposed;
         private MudDropContainer<MudTabPanel>? _dropContainer;
         private readonly ParameterState<int> _activePanelIndexState;
-        private double _scrollAmount;
         private bool _isRendered;
         private SynchronizationContext? _rendererSyncContext;
         private bool _isVerticalTabs;
@@ -1034,7 +1033,7 @@ namespace MudBlazor
         /// <summary>
         /// this sets _tabBarContentSize to the total calculated width of the mud-tabs-tabbar-content
         /// </summary>
-        private double GetTabBarContentSize(bool withoutScroll = false)
+        private double GetTabBarContentSize()
         {
             return GetRelevantSize(_tabsContentSize);
         }
@@ -1043,9 +1042,9 @@ namespace MudBlazor
         {
             _tabSizes.Clear();
             _tabSizes.TryAdd(_tabsContentSize, await _tabsContentSize.MudGetBoundingClientRectAsync());
-            foreach (var panel in _panels)
+            foreach (var panelRef in _panels.Select(x => x.PanelRef))
             {
-                _tabSizes.TryAdd(panel.PanelRef, await panel.PanelRef.MudGetBoundingClientRectAsync());
+                _tabSizes.TryAdd(panelRef, await panelRef.MudGetBoundingClientRectAsync());
             }
         }
 
@@ -1185,7 +1184,6 @@ namespace MudBlazor
                 }
                 else
                 {
-                    _scrollAmount = x <= result ? result : x - result;
                     break;
                 }
             }
@@ -1194,8 +1192,7 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls a <see cref="MudTabPanel" /> to the center of the tab content viewport. Will not scroll beyond the bounds of tabs.
         /// </summary>
-        /// <returns>True if scrolling occured, false if scrolling wasn't necessary.</returns>
-        private bool ScrollToItem(MudTabPanel panel, bool isLast = false)
+        private void ScrollToItem(MudTabPanel panel, bool isLast = false)
         {
             // set start and max scroll
             double position;
@@ -1221,10 +1218,7 @@ namespace MudBlazor
             if (_scrollPosition != position)
             {
                 _scrollPosition = position;
-                return true;
             }
-            else
-                return false;
         }
 
         /// <summary>
@@ -1251,19 +1245,17 @@ namespace MudBlazor
             if (_panels.Count == 0)
                 return;
 
-            var panel = isNext ? _panels.Last() : _panels.First();
+            var panel = isNext ? _panels[_panels.Count - 1] : _panels[0];
             var panelSize = GetPanelLength(panel);
-            var maxScroll = _allTabsSize - _tabBarContentSize;
-            GetVisiblePanels();
+            var scrollAmount = _tabBarContentSize;
             if (!isNext)
             {
-                _scrollAmount = -_scrollAmount;
+                scrollAmount = -scrollAmount;
             }
-            var position = ScrollEdgeAdjust(_scrollPosition + _scrollAmount, panelSize);
+            var position = ScrollEdgeAdjust(_scrollPosition + scrollAmount, panelSize);
             if (position != _scrollPosition)
             {
                 _scrollPosition = position;
-                _scrollAmount = 0;
             }
         }
 
@@ -1295,7 +1287,7 @@ namespace MudBlazor
             else
             {
                 // Disable next button if the last panel is completely visible
-                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _tabBarContentSize;
+                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels[_panels.Count - 1], true) - _tabBarContentSize;
                 _prevButtonDisabled = Math.Abs(_scrollPosition) < 0.01;
             }
         }

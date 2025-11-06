@@ -9,7 +9,7 @@
 </MudTabs>
 
 <MudSwitch T="bool" Label="Vertical" Value="@_isVertical" ValueChanged="@ChangePosition" />
-<MudNumericField T="int" Label="Max Height" @bind-Value="_maxHeight" Min="196" Max="696" Step="10" />
+<MudNumericField T="int" Label="Max Height" @bind-Value="_maxHeight" @bind-Value:after="StateHasChanged" Min="100" Max="800" Step="100" />
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => AddPanel())">
     Add Tab
 </MudButton>&nbsp;
