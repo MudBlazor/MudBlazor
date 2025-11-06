@@ -73,7 +73,7 @@ public partial class ChartTooltip : ComponentBase
     /// The padding size of the tooltip background in px.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>"5"</c>.
+    /// Defaults to <c>5</c>.
     /// </remarks>
     [Parameter]
     public int PaddingSize { get; set; } = 5;

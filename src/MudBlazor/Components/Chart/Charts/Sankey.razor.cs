@@ -48,7 +48,7 @@ namespace MudBlazor.Charts
             var edgeWithInvalidNode = Edges.FirstOrDefault(e => Nodes.All(n => n.Name != e.Source) || Nodes.All(n => n.Name != e.Target));
             if (edgeWithInvalidNode != null)
             {
-                throw new ArgumentException($"Edge {edgeWithInvalidNode.Source} {NodeChartOptions.EdgeLabelSymbol} {edgeWithInvalidNode.Target} specifies an non-existing node");
+                throw new ArgumentException($"Edge {edgeWithInvalidNode.Source} {NodeChartOptions.EdgeLabelSymbol} {edgeWithInvalidNode.Target} specifies a non-existing node");
             }
 
             // Draw
