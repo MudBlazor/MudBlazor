@@ -73,6 +73,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  Only shown when this step is active.
+    /// Use the <see cref="MudStepContext"/> cascading parameter to access information about the current step inside the template.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]

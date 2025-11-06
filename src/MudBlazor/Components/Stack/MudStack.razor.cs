@@ -117,7 +117,9 @@ public partial class MudStack : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
+#pragma warning disable CS0618 // Type or member is obsolete
     public int Spacing { get; set; } = MudGlobal.StackDefaults.Spacing;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// Defines the distribution of child items.

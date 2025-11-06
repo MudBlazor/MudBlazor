@@ -128,7 +128,7 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
 
         // Assert
         changed.Should().BeTrue();
@@ -160,7 +160,7 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
 
         // Assert
         changed.Should().BeFalse();
@@ -183,7 +183,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act
-        await parameterState.ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
 
         // Assert
         parameterState.HasHandler.Should().BeTrue();
@@ -202,7 +202,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act & Assert
-        await parameterState.ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
         parameterState.HasHandler.Should().BeFalse();
     }
 

@@ -67,7 +67,7 @@
                     See <MudLink Href="@ApiLink.GetApiLinkFor(typeof(MudTablePager))">TablePager API</MudLink> for more informations.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
-                        to be one of the values ​​in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
+                        to be one of the values in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
                     </MudAlert>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2">
                         Specifying <CodeInline>int.MaxValue</CodeInline> in the <CodeInline>@("PageSizeOptions")</CodeInline> will render as "All" in the Page Size dropdown. Use it when you want users to be able to show all items at once, but be careful, as this can lead to poor performance.
@@ -313,8 +313,19 @@
                 <TableMultiGroupingExample />
             </SectionContent>
         </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    Set the <CodeInline>AriaLabel</CodeInline> parameter to provide an accessible name for the HTML <CodeInline>&lt;table&gt;</CodeInline> element. This helps screen readers announce the purpose of the table.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableAriaLabelExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableAriaLabelExample />
+            </SectionContent>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>
+
 
 

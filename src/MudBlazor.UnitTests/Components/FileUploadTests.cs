@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Ensures the underyling input receives the accept attribute
+        /// Ensures the underlying input receives the accept attribute
         /// </summary>
         [Test]
         public void FileUpload_AcceptTest()

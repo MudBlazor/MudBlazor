@@ -474,7 +474,9 @@ namespace MudBlazor
         /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows an outline around this grid.

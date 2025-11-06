@@ -2,11 +2,11 @@ name: AutoTriage (PRs)
 
 on:
   pull_request_target:
-    types: [opened]
+    types: [opened, ready_for_review]
 
 jobs:
   triage_pr:
-    if: ${{ github.event.sender.type != 'Bot' && github.repository_owner == 'MudBlazor' }}
+    if: ${{ github.repository_owner == 'MudBlazor' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate app token

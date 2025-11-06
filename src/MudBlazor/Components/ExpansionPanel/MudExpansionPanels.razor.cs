@@ -28,7 +28,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Allows multiple panels to be expanded at the same time.

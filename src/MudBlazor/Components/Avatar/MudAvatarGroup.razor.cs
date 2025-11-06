@@ -72,7 +72,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool MaxSquare { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows rounded corners when the number of avatars exceeds <see cref="Max"/>.
@@ -84,7 +86,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool MaxRounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The color of the avatar when the number of avatars exceeds <see cref="Max"/>.

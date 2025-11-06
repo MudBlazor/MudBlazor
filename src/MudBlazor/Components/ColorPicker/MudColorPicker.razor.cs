@@ -242,7 +242,7 @@ namespace MudBlazor
         public bool DragEffect { get; set; } = true;
 
         /// <summary>
-        /// The custom icon to dislay for the close button.
+        /// The custom icon to display for the close button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.Close"/>.
