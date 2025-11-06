@@ -397,7 +397,7 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            for (var i = 5; i <= 0; i--)
+            for (var i = 5; i >= 0; i--)
             {
                 await comp.Instance.SetPanelActiveAsync(i);
 
