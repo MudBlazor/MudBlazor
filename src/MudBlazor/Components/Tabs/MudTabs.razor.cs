@@ -857,7 +857,8 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// translateX/Y (or _scrollPosition) is how many tabs are scrolled out of view * tab width
+        /// The pixel-based scroll offset for the tab bar, used as the value for the CSS transform property.
+        /// For horizontal tabs, _scrollPosition is applied to translateX; for vertical tabs, to translateY.
         /// </summary>
         protected string WrapperScrollStyle =>
             new StyleBuilder()
