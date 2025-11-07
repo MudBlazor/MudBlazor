@@ -10,7 +10,7 @@ class MudHotkeyListener {
         return "mudHotkeys"
     };
 
-    static _hotkeys = [];
+    _hotkeys = [];
     _handleKeyEventBound;
 
     constructor() {
@@ -21,7 +21,7 @@ class MudHotkeyListener {
         if (stored) {
             try {
                 const parsed = JSON.parse(stored);
-                parsed.forEach(hk => MudHotkeyListener._hotkeys.push(hk));
+                parsed.forEach(hk => this._hotkeys.push(hk));
             } catch (err) {
                 console.error("[MudBlazor] HotkeyService: Failed to load hotkeys from localStorage", err);
             }
@@ -34,20 +34,20 @@ class MudHotkeyListener {
 
     registerGlobalHotkey(keyCode, modifiers = [], assemblyName, jsInvokableIdentifier) {
         const hotkey = this._createHotkey(keyCode, modifiers, assemblyName, jsInvokableIdentifier);
-        if (!MudHotkeyListener._hotkeys.some(h => this._hotkeyEquals(h, hotkey))) {
-            MudHotkeyListener._hotkeys.push(hotkey);
+        if (!this._hotkeys.some(h => this._hotkeyEquals(h, hotkey))) {
+            this._hotkeys.push(hotkey);
             this._saveHotkeys();
         }
     }
 
     unregisterGlobalHotkey(keyCode, modifiers = [], assemblyName, jsInvokableIdentifier) {
         const hotkey = this._createHotkey(keyCode, modifiers, assemblyName, jsInvokableIdentifier);
-        MudHotkeyListener._hotkeys = MudHotkeyListener._hotkeys.filter(h => !this._hotkeyEquals(h, hotkey));
+        this._hotkeys = this._hotkeys.filter(h => !this._hotkeyEquals(h, hotkey));
         this._saveHotkeys();
     }
 
     unregisterAllGlobalHotkeys() {
-        MudHotkeyListener._hotkeys = []
+        this._hotkeys = []
         this._saveHotkeys();
     }
 
@@ -79,7 +79,7 @@ class MudHotkeyListener {
         if (e.code === "MetaLeft" || e.keyCode === 91) pressedModifierCodes.push(91);
         if (e.code === "MetaRight" || e.keyCode === 92) pressedModifierCodes.push(92);
 
-        for (const {keyCode, modifiers, assemblyName, jsInvokableIdentifier} of MudHotkeyListener._hotkeys) {
+        for (const {keyCode, modifiers, assemblyName, jsInvokableIdentifier} of this._hotkeys) {
             if (pressedKeyCode !== keyCode) continue;
             const allModifiersPressed = modifiers.every(m => pressedModifierCodes.includes(m));
             const noExtraModifiersPressed = pressedModifierCodes.every(m => modifiers.includes(m));
@@ -98,7 +98,7 @@ class MudHotkeyListener {
 
     _saveHotkeys() {
         try {
-            localStorage.setItem(MudHotkeyListener._localStorageKey, JSON.stringify(MudHotkeyListener._hotkeys));
+            localStorage.setItem(MudHotkeyListener._localStorageKey, JSON.stringify(this._hotkeys));
         } catch (err) {
             console.error("Failed to save hotkeys to localStorage", err);
         }
