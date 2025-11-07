@@ -1073,10 +1073,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Returns the width of all a subset of panel items up to the panel item selected.
+        /// Returns the width or height of a subset of panel items up to the panel item selected, depending on tab orientation.
         /// </summary>
         /// <remarks>
-        /// If inclusive is true, it returns the width of the panel item selected as well.
+        /// If inclusive is true, it returns the width or height of the panel item selected as well.
+        /// For horizontal tabs, this is the width; for vertical tabs, this is the height.
         /// </remarks>
         private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
