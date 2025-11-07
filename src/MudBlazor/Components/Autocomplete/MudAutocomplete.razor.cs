@@ -1070,12 +1070,13 @@ namespace MudBlazor
 
         internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            // clear button clicked, let's make sure text is cleared and the menu has focus
-            Open = true;
+            // #1 clear button clicked, let's make sure text is cleared and the menu has focus
+            // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while clearing item.
+
+            _open = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
-            await CloseMenuAsync();
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
