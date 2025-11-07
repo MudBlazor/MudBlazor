@@ -10,10 +10,11 @@ class MudHotkeyListener {
         return "mudHotkeys"
     };
 
-    _hotkeys = [];
+    _hotkeys;
     _handleKeyEventBound;
 
     constructor() {
+        this._hotkeys = [];
         this._handleKeyEventBound = this._handleKeyEvent.bind(this);
         document.addEventListener(MudHotkeyListener._eventType, this._handleKeyEventBound);
 
