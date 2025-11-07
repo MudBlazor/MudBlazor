@@ -1125,7 +1125,8 @@ namespace MudBlazor
         #region scrolling
 
         /// <summary>
-        /// By default, returns the width
+        /// Sets the visibility of scroll buttons based on the total size of all tabs and the tab bar content size.
+        /// Scroll buttons are shown if AlwaysShowScrollButtons is true or if the tabs exceed the available space.
         /// </summary>
         private void SetScrollButtonVisibility()
         {
