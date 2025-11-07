@@ -914,7 +914,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Selected option should be hilighted when drop-down opens
+        /// Selected option should be highlighted when drop-down opens
         /// </summary>
         [Test]
         public async Task Select_Should_HilightSelectedValue()
@@ -950,7 +950,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initially selected option should be hilighted when drop-down opens
+        /// Initially selected option should be highlighted when drop-down opens
         /// </summary>
         [Test]
         public void Select_Should_HilightInitiallySelectedValue()
