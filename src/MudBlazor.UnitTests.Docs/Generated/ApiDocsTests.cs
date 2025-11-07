@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Api;
 using MudBlazor.Docs.Services;
+using MudBlazor.Hotkey;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -43,6 +44,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
             ctx.Services.AddScoped(sp => new HttpClient());
+            ctx.Services.AddTransient<IGlobalHotkeyService, GlobalHotkeyService>();
         }
 
         // This shows how to test a docs page with incremental rendering.
