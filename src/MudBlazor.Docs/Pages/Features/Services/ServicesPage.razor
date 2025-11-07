@@ -1,9 +1,24 @@
 ﻿@page "/features/services"
+@using MudBlazor.Hotkey
 @using MudBlazor.Services
 
 <DocsPage>
     <DocsPageHeader Title="Services" SubTitle="MudBlazor provides several useful services."/>
     <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="@nameof(GlobalHotkeyService)">
+                <Description>
+                    Allows to register global hotkeys which persist after navigations and reloads. Note that you have to add a custom component to your
+                    <CodeInline>MainLayout.razor</CodeInline>
+                    if you want to update your UI when the hotkey is pressed. An example for such a component can be seen below in
+                    <CodeInline>JsInvokable.razor</CodeInline>
+                    .
+                </Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] { new CodeFile("Register.razor", nameof(HotkeyServiceExample)), new CodeFile("JsInvokable.razor", nameof(HotkeyServiceExample_JsInvokable)) })">
+                <HotkeyServiceExample/>
+            </SectionContent>
+        </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="@nameof(BrowserViewportService)">
                 <Description>

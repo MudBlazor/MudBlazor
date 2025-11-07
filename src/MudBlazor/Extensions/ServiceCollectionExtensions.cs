@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MudBlazor.Hotkey;
 
 namespace MudBlazor.Services
 {
@@ -261,6 +262,18 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds IHotkeyService as a transient dependency.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudHotkeyServices(this IServiceCollection services)
+        {
+            services.TryAddTransient<IGlobalHotkeyService, GlobalHotkeyService>();
+
+            return services;
+        }
+
+        /// <summary>
         /// Replaces the default <see cref="ILocalizationInterceptor"/> with custom implementation.
         /// </summary>
         /// <typeparam name="TInterceptor">Custom <see cref="ILocalizationInterceptor"/> implementation.</typeparam>
@@ -337,7 +350,8 @@ namespace MudBlazor.Services
                 .AddMudPopoverService()
                 .AddMudEventManager()
                 .AddMudBlazorPointerEventsNoneService()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddMudHotkeyServices();
         }
 
         /// <summary>
@@ -414,7 +428,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
                 .AddMudBlazorPointerEventsNoneService()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddMudHotkeyServices();
         }
 
         private static IServiceCollection AddCommonServices(this IServiceCollection service)
