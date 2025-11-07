@@ -1196,7 +1196,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scroll by page, isNext is true to go right, false to go left.
+        /// Scroll by page; isNext is true to scroll forward (right or down), false to scroll backward (left or up), depending on tab orientation.
         /// </summary>
         private void ScrollBy(bool isNext)
         {
