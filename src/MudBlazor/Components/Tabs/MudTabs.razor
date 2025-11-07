@@ -101,7 +101,7 @@
          </text>;
 
     private RenderFragment RenderTab(MudTabPanel panel) =>
-        @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@(e => ActivatePanel(panel, e, false))"
+        @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@(e => ActivatePanel(panel, e, false))" @onmousedown="panel.OnMouseDown" @oncontextmenu="panel.OnContextMenu" @oncontextmenu:preventDefault="@(panel.OnContextMenu.HasDelegate)"
               aria-controls="@GetTabPanelId(panel)" role="tab" id="@GetTabId(panel)" aria-selected="@(panel == ActivePanel ? "true" : "false")"
               tabindex="@(panel == ActivePanel ? "0" : "-1")" @onkeydown="@(e => HandleTabKeyDownAsync(e, panel))">
             @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader is not null)

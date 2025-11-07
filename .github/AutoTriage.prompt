@@ -30,7 +30,7 @@ Reproductions:
   3. Public GitHub repository or gist with minimal project
 - try.mudblazor.com runs the latest MudBlazor release.
 
-### Maintainers
+### Project Maintainers
 - A "maintainer" refers to an association of either "COLLABORATOR", "MEMBER", or "OWNER". <!-- "Private" people show as "CONTRIBUTOR": https://github.com/orgs/MudBlazor/people -->
 - Always treat these users as maintainers regardless of association: Anu6is, danielchalmers, digitaldirk, Flaflo, Garderoben, HClausing, henon, igotinfected, ingkor, JonBunator, jperson2000, just-the-benno, lindespang, mckaragoz, meenzen, mikes-gh, Mr-Technician, ralvarezing, ScarletKuro, tjscience, tungi52, vernou, versile2, xC0dex.
 
@@ -183,16 +183,16 @@ Rules:
 ## Title Editing Rules
 
 When to edit:
+- Use `newTitle` field to propose changes
 - Typos, spelling, capitalization, grammar
 - Title is misleading, unclear, or violates format guidelines
-- Use `newTitle` field to propose changes
+- New context was added since it was last edited (e.g., new reproduction, logs, confirmations, commits) that substantially changes the scope, making the current title no longer accurate
 
 When NOT to edit:
-- Thread was created by maintainer
-- Thread was created in the last 60 minutes <!-- Let the backlog workflow catch it instead as they might still be editing it -->
+- Thread was created or updated in the last 10 minutes <!-- Let the backlog workflow catch it instead as they might still be editing it -->
 - Thread is a draft pull request
 - Not enough information in the body to create an accurate title
-- No new context was added since it was last edited (e.g., new reproduction, logs, confirmations)
+- The author or a maintainer has previously criticized a title change you made
 
 ### Format Guidelines
 - Issues Only: 
@@ -200,9 +200,9 @@ When NOT to edit:
   - No version numbers or redundant labels
 - Pull Requests Only:
   - Prefix with component name + colon for single-component changes (e.g., "MudDataGrid: Fix row selection flicker")
+    - Always use the literal name for the component ("MudAutocomplete" instead of "MudAutoComplete", "MudDatePicker" instead of "DatePicker", "SankeyChart" instead of "Sankey chart") if applicable
   - Prefix with "Docs: " if labeled with `docs`
 - Prioritize clarity and searchability over brevity
-- Always use the correct name and casing for the component ("MudAutocomplete" instead of "MudAutoComplete") when mentioned
 
 ## Inactivity Rules
 

@@ -1728,5 +1728,45 @@ namespace MudBlazor.UnitTests.Components
             var tooltipDiv = comp.Find(".mud-tabs-tabbar-content .mud-tooltip-root .mud-popover-cascading-value");
             tooltipDiv.Should().NotBeNull();
         }
+
+        /// <summary>
+        /// Tests the behavior of mouse events on tab headers, including closing tabs via mouse actions.
+        /// </summary>
+        [Test]
+        public async Task TabHeaderMouseDownEvents()
+        {
+            var comp = Context.RenderComponent<ClosableTabsWithHeaderTest>();
+
+            // Close the tab with the mouse wheel click.
+            var tabs = comp.FindAll("div.mud-tab");
+            tabs.Count.Should().Be(6);
+
+            await tabs[1].TriggerEventAsync("onmousedown", new MouseEventArgs { Button = 1 });
+
+            comp.FindAll("div.mud-tab").Count
+                .Should().Be(5);
+
+            // Close all but the selected tab.
+            tabs = comp.FindAll("div.mud-tab");
+            tabs.Count.Should().Be(5);
+
+            await tabs[1].TriggerEventAsync("oncontextmenu", default);
+
+            var menuItems = comp.FindComponents<MudMenuItem>();
+            menuItems.Count.Should().Be(3);
+            menuItems[2].Find(".mud-menu-item").Click();
+
+            comp.FindAll("div.mud-tab").Count
+                .Should().Be(1);
+
+            // Close All tabs.
+            tabs = comp.FindAll("div.mud-tab");
+            await tabs[0].TriggerEventAsync("oncontextmenu", default);
+
+            comp.FindComponents<MudMenuItem>()[1].Find(".mud-menu-item").Click();
+
+            comp.FindAll("div.mud-tab").Count
+                .Should().Be(0);
+        }
     }
 }
