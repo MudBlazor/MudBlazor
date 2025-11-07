@@ -3,17 +3,17 @@
 // noinspection JSUnusedGlobalSymbols
 /** This is the companion class for the MudBlazor.Hotkey.GlobalHotkeyService. */
 class MudHotkeyListener {
-    static _eventType = "keydown";
-    static _localStorageKey = "mudHotkeys";
+    _EVENT_TYPE = "keydown";
+    _LOCAL_STORAGE_KEY = "mudHotkeys";
 
     _hotkeys = [];
     _handleKeyEventBound;
 
     constructor() {
         this._handleKeyEventBound = this._handleKeyEvent.bind(this);
-        document.addEventListener(MudHotkeyListener._eventType, this._handleKeyEventBound);
+        document.addEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
 
-        const stored = localStorage.getItem(MudHotkeyListener._localStorageKey);
+        const stored = localStorage.getItem(this._LOCAL_STORAGE_KEY);
         if (stored) {
             try {
                 const parsed = JSON.parse(stored);
@@ -25,7 +25,7 @@ class MudHotkeyListener {
     }
 
     dispose() {
-        document.removeEventListener(MudHotkeyListener._eventType, this._handleKeyEventBound);
+        document.removeEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
 
     registerGlobalHotkey(keyCode, modifiers = [], assemblyName, jsInvokableIdentifier) {
@@ -83,6 +83,7 @@ class MudHotkeyListener {
             if (allModifiersPressed && noExtraModifiersPressed) {
                 e.preventDefault();
                 try {
+                    // noinspection JSUnresolvedReference
                     DotNet.invokeMethodAsync(assemblyName, jsInvokableIdentifier, keyCode, modifiers);
                 } catch (err) {
                     console.error("[MudBlazor] HotkeyService: DotNet invocation failed", {assemblyName, jsInvokableIdentifier, err});
@@ -94,7 +95,7 @@ class MudHotkeyListener {
 
     _saveHotkeys() {
         try {
-            localStorage.setItem(MudHotkeyListener._localStorageKey, JSON.stringify(this._hotkeys));
+            localStorage.setItem(this._LOCAL_STORAGE_KEY, JSON.stringify(this._hotkeys));
         } catch (err) {
             console.error("Failed to save hotkeys to localStorage", err);
         }
