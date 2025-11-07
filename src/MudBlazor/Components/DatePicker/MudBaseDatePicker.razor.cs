@@ -476,6 +476,7 @@ namespace MudBlazor
             if (nextView != null)
             {
                 CurrentView = (OpenTo)nextView;
+                HighlightedDate = new DateTime(year,1,1);
             }
 
             return Task.CompletedTask;
