@@ -420,6 +420,17 @@ namespace MudBlazor
             return nextView;
         }
 
+        protected virtual OpenTo? GetPreviousView()
+        {
+            OpenTo? previousView = CurrentView switch
+            {
+                OpenTo.Date => !FixMonth.HasValue ? OpenTo.Month : !FixYear.HasValue ? OpenTo.Year : null,
+                OpenTo.Month => !FixYear.HasValue ? OpenTo.Year : null,
+                _ => null,
+            };
+            return previousView;
+        }
+
         protected virtual async Task SubmitAndCloseAsync()
         {
             if (PickerActions == null)
