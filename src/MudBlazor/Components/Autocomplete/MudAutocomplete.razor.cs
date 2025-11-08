@@ -20,6 +20,7 @@ namespace MudBlazor
         private bool _isCleared;
         private bool _isClearing;
         private bool _isProcessingValue;
+        private bool _isHandlingClearButton;
         private int _selectedListItemIndex;
         private int _elementKey = 0;
         private int _returnedItemsCount;
@@ -818,8 +819,8 @@ namespace MudBlazor
                 _isCleared = true;
                 Open = false;
 
-                await SetTextAsync("", updateValue: false);
-                await SetValueAsync(default(T), updateText: false);
+                await SetTextAsync(string.Empty, updateValue: false);
+                await SetValueAsync(default, updateText: false);
 
                 await _elementReference.ResetAsync();
 
@@ -1056,6 +1057,12 @@ namespace MudBlazor
                 await SelectAsync();
             }
 
+            if (_isHandlingClearButton)
+            {
+                // Prevent opening the menu when the clear adornment was clicked.
+                return;
+            }
+
             await OnInputActivatedAsync(OpenOnFocus);
         }
 
@@ -1070,16 +1077,20 @@ namespace MudBlazor
 
         internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            // #1 clear button clicked, let's make sure text is cleared and the menu has focus
-            // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while clearing item.
-
-            _open = true;
-            await SetValueAsync(default, false);
-            await SetTextAsync(default, false);
-            _selectedListItemIndex = default;
-            StateHasChanged();
-            await OnClearButtonClick.InvokeAsync(e);
-            await BeginValidateAsync();
+            // clear button clicked, let's make sure text is cleared and the menu has focus
+            _isHandlingClearButton = true;
+            try
+            {
+                _selectedListItemIndex = default;
+                await ClearAsync();
+                await CloseMenuAsync();
+                await OnClearButtonClick.InvokeAsync(e);
+                await BeginValidateAsync();
+            }
+            finally
+            {
+                _isHandlingClearButton = false;
+            }
         }
 
         internal async Task AdornmentClickHandlerAsync()
