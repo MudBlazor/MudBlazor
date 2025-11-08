@@ -94,7 +94,6 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 │       └── build-test-mudblazor.yml  # Main CI workflow
 ├── CONTRIBUTING.md           # Detailed contribution guidelines
 ├── README.md                 # Project overview and quick start
-├── TESTING.md                # How to test PRs locally
 ├── AGENTS.md                 # This file - AI agent guide
 └── src/MudBlazor.sln         # Main solution file
 ```
@@ -462,7 +461,6 @@ The GitHub Actions workflow (`.github/workflows/build-test-mudblazor.yml`) runs:
 ## Additional Resources
 
 - **CONTRIBUTING.md** - Detailed contribution guidelines
-- **TESTING.md** - How to test PRs locally
 - **README.md** - Quick start and installation
 - **Documentation Site** - https://mudblazor.com
 - **Discord** - https://discord.gg/mudblazor

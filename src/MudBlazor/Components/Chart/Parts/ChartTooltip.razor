@@ -10,7 +10,7 @@
                  stroke-width="@TriangleStrokeWidth"/>
     }
 
-    <!-- Keep this here to prevent the triangle from having a base line -->
+    <!-- Background -->
     <rect x="@ToS(_backgroundBBox.X)"
           y="@ToS(_backgroundBBox.Y)"
           width="@ToS(_backgroundBBox.Width)"
@@ -28,6 +28,7 @@
                  fill="@Color"/>
     }
 
+    <!-- Text -->
     <text @ref="_text"
           x="@ToS(_textBbox.X)"
           y="@ToS(_textBbox.Y - (HasSubtitle ? _textBbox.Height : 0))"
