@@ -6,8 +6,8 @@
     <MudPopoverProvider />
     <MudSnackbarProvider/>
     <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
-    <MudHotkeyProvider>
-        <MudHotkey T="HotkeyServiceExample_Snackbar" Key="JsKey.KeyB" KeyModifiers="[JsKeyModifier.Control]" />
-    </MudHotkeyProvider>
+    <MudHotkey Key="JsKey.KeyB" KeyModifiers="[JsKeyModifier.Control]" HideChildContentOnRepress="true">
+        <HotkeyServiceExample_Snackbar></HotkeyServiceExample_Snackbar>
+    </MudHotkey>
     @Body
 </MudRTLProvider>

@@ -1,8 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@using MudBlazor.Hotkey
 @using MudBlazor.Utilities
-@inject IHotkeyService HotkeyService
 @inject ISnackbar SnackbarService
 
 <MudStack Row="true">
@@ -19,11 +17,14 @@
         }
     </MudSelect>
 </MudStack>
+<MudHotkey Key="_selectedKey" KeyModifiers="_selectedKeyModifiers" OnHotkeyPressed="OnHotkey" />
 
 @code {
-    private const string AssemblyName = "MudBlazor.Docs";
-    private const string JsInvokableIdentifier = "HotkeySnackbar";
     private JsKey _selectedKey = JsKey.KeyA;
     private IEnumerable<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.Control];
-    
+
+    private void OnHotkey()
+    {
+        SnackbarService.Add("Hotkey pressed", Severity.Success);
+    }
 }

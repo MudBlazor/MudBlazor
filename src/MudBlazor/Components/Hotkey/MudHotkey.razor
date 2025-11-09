@@ -1,3 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
-@typeparam T
+
+@if (_childContentIsVisible)
+{
+    @ChildContent
+}

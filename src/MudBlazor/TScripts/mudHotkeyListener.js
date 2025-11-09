@@ -5,70 +5,40 @@
 class MudHotkeyListener {
     constructor() {
         this._EVENT_TYPE = "keydown";
-        this._LOCAL_STORAGE_KEY = "mudHotkeys";
         this._hotkeys = [];
 
         this._handleKeyEventBound = this._handleKeyEvent.bind(this);
         document.addEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
-
-        const stored = localStorage.getItem(this._LOCAL_STORAGE_KEY);
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-                parsed.forEach(hk => this._hotkeys.push(hk));
-            } catch (err) {
-                console.error("[MudBlazor] HotkeyService: Failed to load hotkeys from localStorage", err);
-            }
-        }
     }
 
     dispose() {
         document.removeEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
-    
-    registerCallbackFunction(dotnetRef, dotnetMethodId) {
-        this._dotnetRef = dotnetRef;
-        this._dotnetMethodId = dotnetMethodId;
-    }
 
-    registerGlobalHotkey(keyCode, modifiers, componentName) {
+    registerHotkey(dotnetRef, dotnetMethodId, keyCode, modifiers) {
         modifiers = modifiers || [];
-        const hotkey = this._createHotkey(keyCode, modifiers, componentName);
-        if (!this._hotkeys.some(h => this._hotkeyEquals(h, hotkey))) {
-            this._hotkeys.push(hotkey);
-            this._saveHotkeys();
+        const newHotkey = this._createHotkey(dotnetRef, dotnetMethodId, keyCode, modifiers);
+
+        const existingIndex = this._hotkeys.findIndex(h =>
+            h.dotnetRef === dotnetRef && h.dotnetMethodId === dotnetMethodId
+        );
+
+        if (existingIndex !== -1) {
+            this._hotkeys[existingIndex] = newHotkey;
+        } else {
+            this._hotkeys.push(newHotkey);
         }
     }
 
-    unregisterGlobalHotkey(keyCode, modifiers, componentName) {
-        modifiers = modifiers || [];
-        const hotkey = this._createHotkey(keyCode, modifiers, componentName);
-        this._hotkeys = this._hotkeys.filter(h => !this._hotkeyEquals(h, hotkey));
-        this._saveHotkeys();
-    }
-
-    unregisterAllGlobalHotkeys() {
-        this._hotkeys = []
-        this._saveHotkeys();
-    }
-
-    _createHotkey(keyCode, modifiers, componentName) {
+    _createHotkey(dotnetRef, dotnetMethodId, keyCode, modifiers) {
         return {
+            dotnetRef: dotnetRef,
+            dotnetMethodId: dotnetMethodId,
             keyCode: keyCode,
-            modifiers: modifiers.slice().sort(),
-            componentName: componentName
+            modifiers: modifiers.slice().sort()
         };
     }
-
-    _hotkeyEquals(a, b) {
-        return (
-            a.keyCode === b.keyCode &&
-            a.componentName === b.componentName &&
-            a.modifiers.length === b.modifiers.length &&
-            a.modifiers.every((m, i) => m === b.modifiers[i])
-        );
-    }
-
+    
     _handleKeyEvent(e) {
         const pressedKeyCode = e.keyCode != null ? e.keyCode : e.which;
         const pressedModifierCodes = [];
@@ -91,23 +61,16 @@ class MudHotkeyListener {
 
                 try {
                     // noinspection JSUnresolvedReference
-                    this._dotnetRef.invokeMethodAsync(this._dotnetMethodId, hotkey.componentName);
+                    hotkey.dotnetRef.invokeMethodAsync(hotkey.dotnetMethodId);
                 } catch (err) {
-                    console.error("[MudBlazor] HotkeyService: DotNet invocation failed", {
-                        componentName: hotkey.componentName,
+                    console.error("[MudBlazor] Hotkey: DotNet invocation failed", {
+                        keyCode: hotkey.keyCode,
+                        modifiers: hotkey.modifiers,
                         err: err
                     });
                 }
                 break;
             }
-        }
-    }
-
-    _saveHotkeys() {
-        try {
-            localStorage.setItem(this._LOCAL_STORAGE_KEY, JSON.stringify(this._hotkeys));
-        } catch (err) {
-            console.error("Failed to save hotkeys to localStorage", err);
         }
     }
 }

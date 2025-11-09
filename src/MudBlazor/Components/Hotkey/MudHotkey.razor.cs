@@ -1,21 +1,59 @@
 ﻿#nullable enable
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-public partial class MudHotkey<T> : MudComponentBase
+public partial class MudHotkey : MudComponentBase
 {
+    private const string RegisterJsMethodName = "mudHotkeyListener.registerHotkey";
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public JsKey Key { get; set; }
-    [Parameter] public List<JsKeyModifier> KeyModifiers { get; set; } = [];
-    [Parameter] public bool Rerender { get; set; } = true;
-    [CascadingParameter] private MudHotkeyProvider? Provider { get; set; }
-    
-    public Type TypeofT => typeof(T);
-    
-    protected override void OnInitialized()
+    [Parameter] public IEnumerable<JsKeyModifier> KeyModifiers { get; set; } = [];
+    [Parameter] public EventCallback OnHotkeyPressed { get; set; }
+    [Parameter] public bool HideChildContentOnRepress { get; set; }
+
+    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+    private bool _childContentIsVisible;
+    private bool _isRendered;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Provider?.RegisterHotkeyAsync(this);
+        if (firstRender)
+        {
+            await RegisterHotkeyAsync();
+            _isRendered = true;
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_isRendered) await RegisterHotkeyAsync();
+    }
+
+    private async Task RegisterHotkeyAsync()
+    {
+        await JsRuntime.InvokeVoidAsync(RegisterJsMethodName, DotNetObjectReference.Create(this), nameof(MudHotkeyProviderJsCallback), Key, KeyModifiers);
+    }
+
+    [JSInvokable]
+    public async Task MudHotkeyProviderJsCallback()
+    {
+        if (!_childContentIsVisible)
+        {
+            _childContentIsVisible = true;
+            StateHasChanged();
+        }
+        else if (HideChildContentOnRepress)
+        {
+            _childContentIsVisible = false;
+            StateHasChanged();
+        }
+
+        await OnHotkeyPressed.InvokeAsync();
     }
 }
-
