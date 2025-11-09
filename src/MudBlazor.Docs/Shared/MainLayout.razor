@@ -1,10 +1,13 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazor.Utilities
+@inherits LayoutComponentBase
 
 <MudRTLProvider RightToLeft="@LayoutService.IsRTL">
     <MudThemeProvider @ref="@_mudThemeProvider" Theme="@LayoutService.CurrentTheme" ObserveSystemThemeChange="@LayoutService.ObserveSystemThemeChange" IsDarkMode="@LayoutService.IsDarkMode" IsDarkModeChanged="@((dark) => LayoutService.UpdateDarkModeState(dark))" />
     <MudPopoverProvider />
     <MudSnackbarProvider/>
     <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
-    <HotkeyServiceExample_JsInvokable />
+    <MudHotkeyProvider>
+        <MudHotkey T="HotkeyServiceExample_Snackbar" Key="JsKey.KeyB" KeyModifiers="[JsKeyModifier.Control]" />
+    </MudHotkeyProvider>
     @Body
 </MudRTLProvider>

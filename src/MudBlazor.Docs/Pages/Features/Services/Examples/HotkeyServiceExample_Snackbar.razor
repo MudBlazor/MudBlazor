@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+@code
+{
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) Snackbar.Add("Hotkey pressed", Severity.Info);
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+}

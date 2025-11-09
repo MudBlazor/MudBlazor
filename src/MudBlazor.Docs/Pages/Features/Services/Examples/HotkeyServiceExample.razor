@@ -2,7 +2,7 @@
 
 @using MudBlazor.Hotkey
 @using MudBlazor.Utilities
-@inject IGlobalHotkeyService HotkeyService
+@inject IHotkeyService HotkeyService
 @inject ISnackbar SnackbarService
 
 <MudStack Row="true">
@@ -18,9 +18,6 @@
             <MudSelectItem Value="@keyModifier">@Enum.GetName(typeof(JsKeyModifier), keyModifier)</MudSelectItem>
         }
     </MudSelect>
-    <MudButton OnClick="@RegisterAsync" Variant="Variant.Outlined" Color="Color.Success">Register</MudButton>
-    <MudButton OnClick="@UnregisterAsync" Variant="Variant.Outlined" Color="Color.Error">Unregister</MudButton>
-    <MudButton OnClick="@UnregisterAllAsync" Variant="Variant.Outlined" Color="Color.Info">Unregister all</MudButton>
 </MudStack>
 
 @code {
@@ -28,22 +25,5 @@
     private const string JsInvokableIdentifier = "HotkeySnackbar";
     private JsKey _selectedKey = JsKey.KeyA;
     private IEnumerable<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.Control];
-
-    private async Task RegisterAsync()
-    {
-        await HotkeyService.RegisterHotkeyAsync(AssemblyName, JsInvokableIdentifier, _selectedKey, _selectedKeyModifiers);
-        SnackbarService.Add("Hotkey registered", Severity.Success);
-    }
-
-    private async Task UnregisterAsync()
-    {
-        await HotkeyService.UnregisterHotkeyAsync(AssemblyName, JsInvokableIdentifier, _selectedKey, _selectedKeyModifiers);
-        SnackbarService.Add("Hotkey unregistered");
-    }
-
-    private async Task UnregisterAllAsync()
-    {
-        await HotkeyService.UnregisterAllHotkeysAsync();
-        SnackbarService.Add("All hotkeys unregistered");
-    }
+    
 }

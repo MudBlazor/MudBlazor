@@ -25,19 +25,24 @@ class MudHotkeyListener {
     dispose() {
         document.removeEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
+    
+    registerCallbackFunction(dotnetRef, dotnetMethodId) {
+        this._dotnetRef = dotnetRef;
+        this._dotnetMethodId = dotnetMethodId;
+    }
 
-    registerGlobalHotkey(keyCode, modifiers, assemblyName, jsInvokableIdentifier) {
+    registerGlobalHotkey(keyCode, modifiers, componentName) {
         modifiers = modifiers || [];
-        const hotkey = this._createHotkey(keyCode, modifiers, assemblyName, jsInvokableIdentifier);
+        const hotkey = this._createHotkey(keyCode, modifiers, componentName);
         if (!this._hotkeys.some(h => this._hotkeyEquals(h, hotkey))) {
             this._hotkeys.push(hotkey);
             this._saveHotkeys();
         }
     }
 
-    unregisterGlobalHotkey(keyCode, modifiers, assemblyName, jsInvokableIdentifier) {
+    unregisterGlobalHotkey(keyCode, modifiers, componentName) {
         modifiers = modifiers || [];
-        const hotkey = this._createHotkey(keyCode, modifiers, assemblyName, jsInvokableIdentifier);
+        const hotkey = this._createHotkey(keyCode, modifiers, componentName);
         this._hotkeys = this._hotkeys.filter(h => !this._hotkeyEquals(h, hotkey));
         this._saveHotkeys();
     }
@@ -47,20 +52,18 @@ class MudHotkeyListener {
         this._saveHotkeys();
     }
 
-    _createHotkey(keyCode, modifiers, assemblyName, jsInvokableIdentifier) {
+    _createHotkey(keyCode, modifiers, componentName) {
         return {
             keyCode: keyCode,
             modifiers: modifiers.slice().sort(),
-            assemblyName: assemblyName,
-            jsInvokableIdentifier: jsInvokableIdentifier
+            componentName: componentName
         };
     }
 
     _hotkeyEquals(a, b) {
         return (
             a.keyCode === b.keyCode &&
-            a.assemblyName === b.assemblyName &&
-            a.jsInvokableIdentifier === b.jsInvokableIdentifier &&
+            a.componentName === b.componentName &&
             a.modifiers.length === b.modifiers.length &&
             a.modifiers.every((m, i) => m === b.modifiers[i])
         );
@@ -85,16 +88,13 @@ class MudHotkeyListener {
             const noExtraModifiersPressed = pressedModifierCodes.every(m => hotkey.modifiers.includes(m));
             if (allModifiersPressed && noExtraModifiersPressed) {
                 e.preventDefault();
-                const assemblyName = hotkey.assemblyName;
-                const jsInvokableIdentifier = hotkey.jsInvokableIdentifier;
 
                 try {
                     // noinspection JSUnresolvedReference
-                    DotNet.invokeMethodAsync(assemblyName, jsInvokableIdentifier, keyCode, hotkey.modifiers);
+                    this._dotnetRef.invokeMethodAsync(this._dotnetMethodId, hotkey.componentName);
                 } catch (err) {
                     console.error("[MudBlazor] HotkeyService: DotNet invocation failed", {
-                        assemblyName: assemblyName,
-                        jsInvokableIdentifier: jsInvokableIdentifier,
+                        componentName: hotkey.componentName,
                         err: err
                     });
                 }

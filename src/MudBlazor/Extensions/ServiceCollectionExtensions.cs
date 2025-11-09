@@ -268,7 +268,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudHotkeyServices(this IServiceCollection services)
         {
-            services.TryAddTransient<IGlobalHotkeyService, GlobalHotkeyService>();
+            services.TryAddTransient<IHotkeyService, HotkeyService>();
 
             return services;
         }

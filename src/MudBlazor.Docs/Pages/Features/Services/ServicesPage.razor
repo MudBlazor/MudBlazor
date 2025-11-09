@@ -6,7 +6,7 @@
     <DocsPageHeader Title="Services" SubTitle="MudBlazor provides several useful services."/>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="@nameof(GlobalHotkeyService)">
+            <SectionHeader Title="@nameof(HotkeyService)">
                 <Description>
                     Allows to register global hotkeys which persist after navigations and reloads. Note that you have to add a custom component to your
                     <CodeInline>MainLayout.razor</CodeInline>
@@ -15,7 +15,7 @@
                     .
                 </Description>
             </SectionHeader>
-            <SectionContent Codes="@(new[] { new CodeFile("Register.razor", nameof(HotkeyServiceExample)), new CodeFile("JsInvokable.razor", nameof(HotkeyServiceExample_JsInvokable)) })">
+            <SectionContent Codes="@(new[] { new CodeFile("Register.razor", nameof(HotkeyServiceExample)), new CodeFile("JsInvokable.razor", nameof(HotkeyServiceExample_Snackbar)) })">
                 <HotkeyServiceExample/>
             </SectionContent>
         </DocsPageSection>

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
+using MudBlazor.Hotkey;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Docs.Mocks;
 using MudBlazor.UnitTests.Mocks;
@@ -41,6 +42,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
             ctx.Services.AddTransient<IScrollListener, ScrollListener>();
             ctx.Services.AddTransient<IResizeObserver, ResizeObserver>();
+            ctx.Services.AddTransient<IHotkeyService, HotkeyService>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
