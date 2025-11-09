@@ -16,7 +16,8 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
-        [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
+        [Parameter]
+        public EventCallback<DateTime?> DateChanged { get; set; }
 
         /// <summary>
         /// The currently selected date.
@@ -68,7 +69,10 @@ namespace MudBlazor
                 }
 
                 if (date is not null)
-                    PickerMonth = new DateTime(Culture.Calendar.GetYear(date.Value), Culture.Calendar.GetMonth(date.Value), 1, Culture.Calendar);
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(date.Value),
+                        Culture.Calendar.GetMonth(date.Value),
+                        1,
+                        Culture.Calendar);
 
                 _value = date;
 
@@ -77,6 +81,7 @@ namespace MudBlazor
                     Converter.GetError = false;
                     await SetTextAsync(Converter.Set(_value), false);
                 }
+
                 await DateChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
                 FieldChanged(_value);
@@ -105,7 +110,10 @@ namespace MudBlazor
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             if (day == TimeProvider.GetLocalNow().Date)
-                return b.AddClass("mud-current mud-button-outlined").AddClass($"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text").Build();
+                return b.AddClass("mud-current mud-button-outlined")
+                        .AddClass(
+                            $"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text")
+                        .Build();
             return b.Build();
         }
 
@@ -136,7 +144,8 @@ namespace MudBlazor
             var nextView = GetNextView();
             if (nextView == null)
             {
-                _selectedDate = _selectedDate.HasValue ?
+                _selectedDate = _selectedDate.HasValue
+                    ?
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(
                         Culture.Calendar.GetYear(month),
@@ -146,9 +155,13 @@ namespace MudBlazor
                         Culture.Calendar.GetMinute(_selectedDate.Value),
                         Culture.Calendar.GetSecond(_selectedDate.Value),
                         (int)Culture.Calendar.GetMilliseconds(_selectedDate.Value),
-                        Culture.Calendar, _selectedDate.Value.Kind)
+                        Culture.Calendar,
+                        _selectedDate.Value.Kind)
                     //We can assume day here, as it was not set yet. If a fix value is set, it will be overridden in Submit
-                    : new DateTime(Culture.Calendar.GetYear(month), Culture.Calendar.GetMonth(month), 1, Culture.Calendar);
+                    : new DateTime(Culture.Calendar.GetYear(month),
+                        Culture.Calendar.GetMonth(month),
+                        1,
+                        Culture.Calendar);
                 await SubmitAndCloseAsync();
             }
             else
@@ -169,7 +182,8 @@ namespace MudBlazor
             var nextView = GetNextView();
             if (nextView == null)
             {
-                _selectedDate = _selectedDate.HasValue ?
+                _selectedDate = _selectedDate.HasValue
+                    ?
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(
                         year,
@@ -288,6 +302,7 @@ namespace MudBlazor
                                     break;
                             }
                     }
+
                     break;
                 case "ArrowLeft":
                     if (Open)
@@ -318,9 +333,10 @@ namespace MudBlazor
                                     break;
                             }
                     }
+
                     break;
                 case "ArrowUp":
-                    if (Open == false && Editable == false)
+                    if (!Open && !Editable)
                     {
                         Open = true;
                     }
@@ -351,7 +367,8 @@ namespace MudBlazor
                                 // move to last row months of current year when we overflow to previous year
                                 if (currentMonth.Year != newMonth.Year)
                                 {
-                                    var daysInMonth = Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                                    var daysInMonth =
+                                        Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
                                     var monthsInYear = Culture.Calendar.GetMonthsInYear(currentMonth.Year);
                                     newMonth = new DateTime(currentMonth.Year,
                                         monthsInYear - (3 - currentMonth.Month),
@@ -369,10 +386,12 @@ namespace MudBlazor
                                 {
                                     newDay = currentDay.LastWeekDayOfMonth(currentDay.DayOfWeek, Culture);
                                 }
+
                                 HighlightedDate = _selectedDate = newDay;
                                 break;
                         }
                     }
+
                     break;
                 case "ArrowDown":
                     if (Open == false && Editable == false)
@@ -402,13 +421,15 @@ namespace MudBlazor
                                 // move to first row of months of current year when we overflow to previous year
                                 if (currentMonth.Year != newMonth.Year)
                                 {
-                                    var daysInMonth = Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                                    var daysInMonth =
+                                        Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
                                     var monthsInYear = Culture.Calendar.GetMonthsInYear(currentMonth.Year);
                                     newMonth = new DateTime(currentMonth.Year,
                                         3 - (monthsInYear - currentMonth.Month),
                                         Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
                                         Culture.Calendar);
                                 }
+
                                 HighlightedDate = _selectedDate = newMonth;
                                 break;
                             case OpenTo.Date:
@@ -421,6 +442,7 @@ namespace MudBlazor
                                 break;
                         }
                     }
+
                     break;
                 case "Escape":
                     await ReturnDateBackUpAsync();
@@ -437,6 +459,7 @@ namespace MudBlazor
                     }
                     else
                         await ReturnDateBackUpAsync();
+
                     break;
                 case "Enter":
                 case "NumpadEnter":
@@ -452,6 +475,7 @@ namespace MudBlazor
                     {
                         await CommitView();
                     }
+
                     break;
                 case " ":
                     if (!Editable)
@@ -471,6 +495,7 @@ namespace MudBlazor
                             _inputReference?.SetText(Text);
                         }
                     }
+
                     break;
             }
 
@@ -564,8 +589,10 @@ namespace MudBlazor
         {
             if (Date.HasValue)
             {
-                PickerMonth = new DateTime(Culture.Calendar.GetYear(Date.Value), Culture.Calendar.GetMonth(Date.Value),
-                    1, Culture.Calendar);
+                PickerMonth = new DateTime(Culture.Calendar.GetYear(Date.Value),
+                    Culture.Calendar.GetMonth(Date.Value),
+                    1,
+                    Culture.Calendar);
                 ScrollToYear().CatchAndLog();
             }
         }
@@ -575,7 +602,9 @@ namespace MudBlazor
         /// </summary>
         public async Task GoToDate(DateTime date, bool submitDate = true)
         {
-            PickerMonth = new DateTime(Culture.Calendar.GetYear(date), Culture.Calendar.GetMonth(date), 1,
+            PickerMonth = new DateTime(Culture.Calendar.GetYear(date),
+                Culture.Calendar.GetMonth(date),
+                1,
                 Culture.Calendar);
             if (submitDate)
             {
