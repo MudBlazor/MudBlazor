@@ -3,7 +3,7 @@
 @inherits MudCategoryChartBase
 
 @{
-    var glowName = $"glow_{NodeChartOptions.HighlightColor.Replace('(', '_').Replace(')', '_')}";
+    var glowName = $"glow_{Guid.NewGuid()}";
 }
 
 <svg @attributes="UserAttributes" class="mud-chart-sankey mud-ltr" width="@Width" height="@Height" viewBox="0 0 650 350">
@@ -46,7 +46,7 @@
               @onmouseout="@OnNodeMouseOut"
               @onclick="@(e => OnNodeClick(e, kv.Value))"/>
 
-        if (ChartOptions.ShowLabels)
+        if (ChartOptions.ShowLabels || kv.Key == _activeNode)
         {
             <ChartTooltip Title="@(NodeChartOptions.ShowNodeValues ? $"{kv.Key} ({_nodeValues.GetValueOrDefault(kv.Key!)})" : kv.Key!)"
                           Color="rgba(0,0,0,0.25)"
@@ -56,10 +56,11 @@
                           StrokeWidth="0"
                           FontColor="var(--mud-palette-text-primary)"
                           AnchorPositionX="@(kv.Value.X <= 10 ? ChartTooltipAnchorPositionX.Start : ChartTooltipAnchorPositionX.End)"
-                          FontSize="@NodeChartOptions.LabelFontSize"/>
+                          FontSize="@NodeChartOptions.LabelFontSize"
+                          PaddingSize="@NodeChartOptions.LabelPadding"/>
         }
     }
-    @* Draw edge labels last to have them at the top*@
+    @* Draw edge labels last to have them at the top *@
     @foreach (var edge in _edgePaths.Where(edge => NodeChartOptions.ShowEdgeLabels || edge.Name == _activeEdge))
     {
         <ChartTooltip Title="@edge.Name"
@@ -69,7 +70,8 @@
                       ShowTriangle="false"
                       StrokeWidth="0"
                       FontColor="var(--mud-palette-text-primary)"
-                      FontSize="@NodeChartOptions.LabelFontSize"/>
+                      FontSize="@NodeChartOptions.LabelFontSize"
+                      PaddingSize="@NodeChartOptions.LabelPadding"/>
     }
     @MudChartParent?.CustomGraphics
 </svg>

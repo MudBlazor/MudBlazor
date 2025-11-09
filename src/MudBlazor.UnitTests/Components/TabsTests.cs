@@ -180,13 +180,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ScrollToItem_NoScrollingNeeded()
+        public async Task ScrollToItem_NoScrollingNeeded()
         {
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             for (var i = 0; i < 6; i++)
             {
-                comp.Instance.SetPanelActive(i);
+                await comp.Instance.SetPanelActiveAsync(i);
 
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = 110,
+                PanelTotalSize = 110.0,
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -225,21 +225,21 @@ namespace MudBlazor.UnitTests.Components
 
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
-
-            styleAttr.Should().Be("transform:translateX(-800px);");
+            // center tab the leftover is 10 so must adjust by 5 (-800 to -795)
+            styleAttr.Should().Be("transform:translateX(-795px);");
         }
 
         [Test]
-        [TestCase(400.0, 100)]
+        [TestCase(400.0, 50)] // centered tab
         [TestCase(300.0, 100)]
-        [TestCase(200.0, 200)]
-        [TestCase(100.0, 200)]
-        public void ScrollToItem_CentralizeViewAroundActiveItem(double totalSize, double expectedTranslation)
+        [TestCase(200.0, 150)] // centered tab
+        [TestCase(100.0, 200)] // centered tab
+        public async Task ScrollToItem_CentralizeViewAroundActiveItem(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
-                PanelTotalSize = totalSize + 10,
+                PanelTotalSize = totalSize,
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
-            comp.Instance.SetPanelActive(2);
+            await comp.Instance.SetPanelActiveAsync(2);
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
@@ -262,11 +262,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(400.0, 100)]
-        [TestCase(300.0, 100)]
-        [TestCase(200.0, 200)]
-        [TestCase(100.0, 200)]
-        public void ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(double totalSize, double expectedTranslation)
+        [TestCase(400.0, 45)]
+        [TestCase(300.0, 95)] // formula beside edges is presize - half viewport - half panel
+        [TestCase(200.0, 145)] // selected panel 2 so 2 presize panels (0 and 1) or 200
+        [TestCase(100.0, 195)] // 200 - (110 / 2 = 55) + (100 / 2 = 50) = 195
+        public async Task ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
             {
@@ -280,9 +280,9 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
+            await comp.Instance.ChangePositionAsync(true);
 
-            comp.Instance.SetPanelActive(2);
+            await comp.Instance.SetPanelActiveAsync(2);
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
@@ -296,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ScrollToItem_CentralizeView_ActivateAllItems()
+        public async Task ScrollToItem_CentralizeView_ActivateAllItems()
         {
             var observer = new MockResizeObserver
             {
@@ -312,17 +312,17 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedTranslations = new Dictionary<int, double>
             {
-                { 0, 0 },
-                { 1, 100 },
-                { 2, 200 },
-                { 3, 300 },
-                { 4, 400 },
-                { 5, 390 },
+                { 0, 0 },  // preSize (tabs before selected) - viewportCenter + panelCenter
+                { 1, 45 }, // 2 tab size so center tab 100 - (210 / 2) + (100 / 2)
+                { 2, 145 }, // 200 - (210 / 2) + (100 / 2)
+                { 3, 245 }, // 300 - (210 / 2 = 105) + (100 / 2 = 50)  = 245
+                { 4, 345 },
+                { 5, 390 }, // end caps snap last tab to edge so maxScroll is all tabs (600) - viewport (210)
             };
 
             for (var i = 0; i < 6; i++)
             {
-                comp.Instance.SetPanelActive(i);
+                await comp.Instance.SetPanelActiveAsync(i);
 
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
@@ -352,7 +352,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ScrollNext_EnabledStates()
+        public async Task ScrollNext_EnabledStates()
         {
             var observer = new MockResizeObserver
             {
@@ -371,16 +371,16 @@ namespace MudBlazor.UnitTests.Components
 
             for (var i = 0; i < 6; i++)
             {
-                comp.Instance.SetPanelActive(i);
+                await comp.Instance.SetPanelActiveAsync(i);
 
-                var shouldBeDisabled = i >= 4;
+                var shouldBeDisabled = i == 5; // in a two tab showing only the last tab disables next
 
                 scrollButtons.Last().Instance.Disabled.Should().Be(shouldBeDisabled);
             }
         }
 
         [Test]
-        public void ScrollPrev_EnabledStates()
+        public async Task ScrollPrev_EnabledStates()
         {
             var observer = new MockResizeObserver
             {
@@ -397,9 +397,9 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            for (var i = 5; i <= 0; i--)
+            for (var i = 5; i >= 0; i--)
             {
-                comp.Instance.SetPanelActive(i);
+                await comp.Instance.SetPanelActiveAsync(i);
 
                 var shouldBeDisabled = i == 0;
                 scrollButtons.First().Instance.Disabled.Should().Be(shouldBeDisabled);
@@ -428,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 2; i++)
             {
                 scrollButtons.Last().Find("button").Click();
-                expectedTranslation += observer.PanelSize;
+                expectedTranslation += observer.PanelSize * 2;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
@@ -441,7 +441,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ScrollPrev()
+        public async Task ScrollPrev()
         {
             var observer = new MockResizeObserver
             {
@@ -457,15 +457,14 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            comp.Instance.SetPanelActive(5);
+            await comp.Instance.SetPanelActiveAsync(5);
 
-            var expectedTranslation = 500.0;
+            var expectedTranslation = 400.0;
 
             for (var i = 0; i < 2; i++)
             {
-                scrollButtons.First().Find("button").Click();
-                expectedTranslation -= observer.PanelSize;
-
+                scrollButtons.First().Find("button").Click(); // prev click
+                expectedTranslation -= observer.PanelSize * 2; // scroll one page back (2 tabs)
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
@@ -477,7 +476,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Handle_ResizeOfPanel()
+        public async Task Handle_ResizeOfPanel()
         {
             var observer = new MockResizeObserver
             {
@@ -490,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
-            comp.Instance.SetPanelActive(1);
+            await comp.Instance.SetPanelActiveAsync(1);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -499,12 +498,12 @@ namespace MudBlazor.UnitTests.Components
 
             observer.UpdateTotalPanelSize(200.0);
 
-            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+            scrollButtons.First().Instance.Disabled.Should().BeFalse(); // fits 2 tabs, on the 2nd tab centered so both show
             GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
         }
 
         [Test]
-        public void BackButtonAfterResizing_AlwaysShowScrollButtons()
+        public async Task BackButtonAfterResizing_AlwaysShowScrollButtons()
         {
             var observer = new MockResizeObserver
             {
@@ -516,9 +515,9 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.Instance.SetPanelActive(5);
+            await comp.Instance.SetPanelActiveAsync(5);
 
-            observer.UpdateTotalPanelSize(601.0);
+            observer.UpdateTotalPanelSize(501.0);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
@@ -532,11 +531,12 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            scrollButtons[0].Instance.Disabled.Should().BeTrue();
+            scrollButtons[0].Instance.Disabled.Should().BeTrue(); // left scroll
+            scrollButtons[1].Instance.Disabled.Should().BeFalse(); // right scroll
         }
 
         [Test]
-        public void PrevButtonOnLowWidth()
+        public async Task PrevButtonOnLowWidth()
         {
             var observer = new MockResizeObserver
             {
@@ -548,13 +548,13 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.Instance.SetPanelActive(1);
+            await comp.Instance.SetPanelActiveAsync(1);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
             scrollButtons[0].Find("button").Click();
-            var expectedTranslation = 0.0;
+            var expectedTranslation = 25.0; // 25 px centers the first tab
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -562,11 +562,12 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            scrollButtons[0].Instance.Disabled.Should().BeTrue();
+            scrollButtons[0].Instance.Disabled.Should().BeFalse();
+            // scroll buttons are never disabled when width is too low due to tab centering
         }
 
         [Test]
-        public void NextButtonOnLowWidth()
+        public async Task NextButtonOnLowWidth()
         {
             var observer = new MockResizeObserver
             {
@@ -578,7 +579,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.Instance.SetPanelActive(4);
+            await comp.Instance.SetPanelActiveAsync(4);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[1].Instance.Disabled.Should().BeFalse();
@@ -592,12 +593,13 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            scrollButtons[1].Instance.Disabled.Should().BeTrue();
+            // scroll buttons are never disabled when width is too low due to tab centering
+            scrollButtons[1].Instance.Disabled.Should().BeFalse();
         }
 
 
         [Test]
-        public void BackButtonAfterResizing_Without_AlwaysShowScrollButtons()
+        public async Task BackButtonAfterResizing_Without_AlwaysShowScrollButtons()
         {
             var observer = new MockResizeObserver
             {
@@ -610,16 +612,15 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
-            comp.Instance.SetPanelActive(5);
-
-
-            observer.UpdateTotalPanelSize(601.0);
+            await comp.Instance.SetPanelActiveAsync(5);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
+            // 6 panels will not show any scroll buttons in this scenario
+            observer.UpdateTotalPanelSize(601.0);
+
             var expectedTranslation = 0.0;
-            scrollButtons[0].Find("button").Click();
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -631,7 +632,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ButtonsNotVisibleAfterResizing_Without_AlwaysShowScrollButtons()
+        public async Task ButtonsNotVisibleAfterResizing_Without_AlwaysShowScrollButtons()
         {
             var observer = new MockResizeObserver
             {
@@ -644,11 +645,10 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
-            comp.Instance.SetPanelActive(5);
-
+            await comp.Instance.SetPanelActiveAsync(5);
 
             observer.UpdateTotalPanelSize(601.0);
-            comp.Instance.SetPanelActive(5);
+            await comp.Instance.SetPanelActiveAsync(5);
 
             var expectedTranslation = 0.0;
 
@@ -662,7 +662,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Handle_ResizeOfElement()
+        public async Task Handle_ResizeOfElement()
         {
             var observer = new MockResizeObserver
             {
@@ -675,16 +675,17 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
-            comp.Instance.SetPanelActive(1);
+            await comp.Instance.SetPanelActiveAsync(1);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
 
-            observer.UpdatePanelSize(0, 200.0);
+            observer.UpdatePanelSize(0, 200.0); // updates tab size not panel size
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((2.0 / 7.0) * 100.0, 0.01);
+            // 1/6 of the tabs is the exact center of the slider 
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
         }
 
         [Test]
@@ -701,21 +702,23 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
-            comp.Instance.SetPanelActive(4);
+            await comp.Instance.SetPanelActiveAsync(4);
 
-            GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.01);
+            comp.WaitForAssertion(() =>
+                GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.01));
 
-            await comp.Instance.AddPanel();
+            await comp.Instance.AddPanelAsync();
 
-            GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.01);
+            comp.WaitForAssertion(() =>
+                GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.01));
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
             scrollButtons.Last().Instance.Disabled.Should().BeFalse();
-            comp.Instance.SetPanelActive(5);
+            await comp.Instance.SetPanelActiveAsync(5);
             scrollButtons.Last().Instance.Disabled.Should().BeTrue();
-            comp.Instance.SetPanelActive(6);
+            await comp.Instance.SetPanelActiveAsync(6);
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -739,26 +742,27 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
-            comp.Instance.SetPanelActive(2);
+            await comp.Instance.SetPanelActiveAsync(2);
 
             GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
-
+            // panels 2, 3, 4 should be shown since panel 3 is selected
             scrollButtons.First().Instance.Disabled.Should().BeFalse();
 
-            await comp.Instance.RemovePanel(0);
-
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            await comp.Instance.RemovePanelAsync(0);
+            // panels 1, 2, 3 should be shown since panel 2 is selected (old panel 3)
+            // no scroll bar since 2 is centered puts 1 at left
+            scrollButtons.First().Instance.Disabled.Should().BeTrue();
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
-            styleAttr.Should().Be($"transform:translateX(-100px);");
+            styleAttr.Should().Be($"transform:translateX(-0px);");
 
             var sliderValue = GetSliderValue(comp);
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 5.0) * 100.0, 0.00001);
+            sliderValue.Should().BeApproximately((1.0 / 5.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -775,7 +779,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
-            comp.Instance.SetPanelActive(2);
+            await comp.Instance.SetPanelActiveAsync(2);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -789,7 +793,7 @@ namespace MudBlazor.UnitTests.Components
                 GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
             }
 
-            await comp.Instance.RemovePanel(5);
+            await comp.Instance.RemovePanelAsync(5);
 
             scrollButtons.First().Instance.Disabled.Should().BeFalse();
 
@@ -876,16 +880,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ActivatePanels()
+        public async Task ActivatePanels()
         {
-            var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
-                (x,y) => x.Instance.ActivateTab(y.Index),
-                (x,y) => x.Instance.ActivateTab(y.Panel),
-                (x,y) => x.Instance.ActivateTab(y.Tag),
+            var activator = new Func<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper, Task>[] {
+                (x,y) => x.Instance.ActivateTabAsync(y.Index),
+                (x,y) => x.Instance.ActivateTabAsync(y.Panel),
+                (x,y) => x.Instance.ActivateTabAsync(y.Tag),
 
-                (x,y) => x.Instance.ActivateTab(y.Index, false),
-                (x,y) => x.Instance.ActivateTab(y.Panel, false),
-                (x,y) => x.Instance.ActivateTab(y.Tag, false),
+                (x,y) => x.Instance.ActivateTabAsync(y.Index, false),
+                (x,y) => x.Instance.ActivateTabAsync(y.Panel, false),
+                (x,y) => x.Instance.ActivateTabAsync(y.Tag, false),
             };
 
             foreach (var invoker in activator)
@@ -896,11 +900,11 @@ namespace MudBlazor.UnitTests.Components
 
                     if (k == 0)
                     {
-                        comp.Instance.ActivateAll();
+                        await comp.Instance.ActivateAllAsync();
                     }
                     else
                     {
-                        comp.Instance.EnableTab(0);
+                        await comp.Instance.EnableTabAsync(0);
                     }
 
                     var panels = comp.FindAll(".test-panel-selector");
@@ -913,7 +917,7 @@ namespace MudBlazor.UnitTests.Components
 
                     for (var i = 1; i < comp.Instance.Tabs.Count; i++)
                     {
-                        invoker(comp, comp.Instance.Tabs[i]);
+                        await invoker(comp, comp.Instance.Tabs[i]);
 
                         panels.Refresh();
                         activePanels.Refresh();
@@ -937,9 +941,9 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatePanels_EvenWhenDisabled()
         {
             var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
-                (x,y) => x.Instance.ActivateTab(y.Index, true),
-                (x,y) => x.Instance.ActivateTab(y.Panel, true),
-                (x,y) => x.Instance.ActivateTab(y.Tag, true),
+                (x,y) => x.Instance.ActivateTabAsync(y.Index, true),
+                (x,y) => x.Instance.ActivateTabAsync(y.Panel, true),
+                (x,y) => x.Instance.ActivateTabAsync(y.Tag, true),
             };
 
             foreach (var invoker in activator)
@@ -1230,14 +1234,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CancelPanelActivation()
+        public async Task CancelPanelActivation()
         {
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<CancelActivationTabsTest>();
             comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
 
-            comp.Instance.SetPanelActive(2);
+            await comp.Instance.SetPanelActiveAsync(2);
             comp.Instance.ActivePanel.Should().NotBe(2);
         }
 

@@ -42,5 +42,18 @@ namespace MudBlazor
             Name = name;
             Column = column;
         }
+
+        /// <summary>
+        ///  Initializes a new instance of <see cref="SankeyChartNode"/>.
+        /// </summary>
+        /// <param name="name">The name of this node.</param>
+        /// <param name="column">The column in which to display this node.</param>
+        /// <param name="color">The color in which to display this node.</param>
+        public SankeyChartNode(string name, int column, MudColor color)
+        {
+            Name = name;
+            Column = column;
+            Color = color;
+        }
     }
 }

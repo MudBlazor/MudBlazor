@@ -4,7 +4,7 @@
 <div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         <div class="@TabBarClassnames">
-            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles" id="@_elementId">
+            <div @ref="@_tabsInnerSize" class="mud-tabs-tabbar-inner" style="@MaxHeightStyles" id="@_elementId">
                 @if (HeaderPosition == TabHeaderPosition.Before && Header != null)
                 {
                     <div class="mud-tabs-header mud-tabs-header-before">
@@ -26,7 +26,7 @@
                                               ItemDisabled="@((item) => item.Disabled)" role="tablist">
                                 <ChildContent>
                                     <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true" />
-                                    @if (!HideSlider && IsSliderPositionDetermined)
+                                    @if (!HideSlider && _isSliderPositionDetermined)
                                     {
                                         <div class="@SliderClass" style="@SliderStyle"></div>
                                     }
@@ -43,7 +43,7 @@
                                 {
                                     @RenderTabWrapperSection(panel)
                                 }
-                                @if (!HideSlider && IsSliderPositionDetermined)
+                                @if (!HideSlider && _isSliderPositionDetermined)
                                 {
                                     <div class="@SliderClass" style="@SliderStyle"></div>
                                 }
@@ -101,7 +101,7 @@
          </text>;
 
     private RenderFragment RenderTab(MudTabPanel panel) =>
-        @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@(e => ActivatePanel(panel, e, false))" @onmousedown="panel.OnMouseDown" @oncontextmenu="panel.OnContextMenu" @oncontextmenu:preventDefault="@(panel.OnContextMenu.HasDelegate)"
+        @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@(e => ActivatePanelClickAsync(panel, e, false))" @onmousedown="panel.OnMouseDown" @oncontextmenu="panel.OnContextMenu" @oncontextmenu:preventDefault="@(panel.OnContextMenu.HasDelegate)"
               aria-controls="@GetTabPanelId(panel)" role="tab" id="@GetTabId(panel)" aria-selected="@(panel == ActivePanel ? "true" : "false")"
               tabindex="@(panel == ActivePanel ? "0" : "-1")" @onkeydown="@(e => HandleTabKeyDownAsync(e, panel))">
             @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader is not null)

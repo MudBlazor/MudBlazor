@@ -1,6 +1,8 @@
 name: AutoTriage (PRs)
 
 on:
+  pull_request_review:
+    types: [submitted, dismissed]
   pull_request_target:
     types: [opened, ready_for_review]
 
@@ -29,7 +31,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: triage-artifacts-pr-${{ github.event.pull_request.number }}
           path: |

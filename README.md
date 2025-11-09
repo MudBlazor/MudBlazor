@@ -13,15 +13,15 @@
 [![NuGet version](https://img.shields.io/nuget/v/MudBlazor?color=ff4081&label=nuget%20version&logo=nuget&style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
 [![NuGet downloads](https://img.shields.io/nuget/dt/MudBlazor?color=ff4081&label=nuget%20downloads&logo=nuget&style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
 
-Build stunning, interactive web applications with MudBlazor — the free, open-source Material Design library for Blazor.
+Build stunning, interactive web applications with MudBlazor — the open-source Material Design library for Blazor.
 
 **🌐 [Documentation](https://mudblazor.com/docs/overview) ⚡ [Interactive Playground](https://try.mudblazor.com)**
 
 ## 💎 Why Choose MudBlazor?
 
-🎨 Beautiful, responsive Material Design components  
-💻 Fully written in C# with minimal JavaScript  
 📖 Comprehensive documentation and examples  
+🎨 Beautiful Material Design components  
+💻 Write in C# with minimal JavaScript  
 ✅ Extensive test coverage  
 
 ## 📊 Repo Stats
@@ -30,7 +30,7 @@ Build stunning, interactive web applications with MudBlazor — the free, open-s
 
 ## 🚀 Getting Started
 
-We have ready-to-go templates at the [Templates](https://github.com/MudBlazor/Templates) repository, or follow the quick install guide below:
+Use one of our [templates](https://github.com/MudBlazor/Templates), or follow the quick install guide below:
 
 ### Installation
 
@@ -110,24 +110,21 @@ For more details, see the [complete installation guide](https://mudblazor.com/ge
 ## 🤝 Contributing
 
 Contributions from the community are what makes MudBlazor successful.  
-Whether it's fixing bugs, adding features, or improving documentation, everything counts.
 
 💬 Feel free to chat with us [on Discord](https://discord.gg/mudblazor) to get feedback before diving in.  
 📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.  
-✅ If a PR fixes something you reported, [locally test a preview version](/TESTING.md) to ensure your app works as expected.
+🧪 If a PR fixes something you reported, [locally test it](https://github.com/MudBlazor/MudBlazor/discussions/12085) to ensure your app works as expected.
 
 ## ⚙️ Version Support
 
 | MudBlazor | .NET | Support |
 | :--- | :---: | :---: |
-| 5.x.x | .NET 5 | Ended (Jan 2022) |
-| 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended (Jan 2025) |
+| 5.x.x | .NET 5 | Ended Jan 2022 |
+| 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended Jan 2025 |
 | 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Limited Support |
-| 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | :heavy_check_mark: Full Support |
+| 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | ✅ Full Support |
 
-> [!TIP]
-> Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/blob/dev/MIGRATION.md) for help with breaking changes.  
-
-> [!WARNING]
-> 1. Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
-> 2. Use an up-to-date browser - [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
+> [!NOTE]
+> 1. Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/discussions/12086) for help with breaking changes.  
+> 2. Static rendering is not supported. [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes)
+> 3. Use an up-to-date browser. [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms)

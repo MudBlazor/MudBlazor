@@ -11,11 +11,12 @@
 
 @code
 {
+#nullable disable
     public static string __description__ = "activating tabs should work";
     private MudTabs _tabElement = null!;
 
     [Parameter]
-    public int InitialStartIndex { get; set; } = 0;
+    public int InitialStartIndex { get; set; }
 
     public List<TabBindingHelper> Tabs { get; } = [];
 
@@ -27,9 +28,9 @@
         }
     }
 
-    public void ActivateAll()
+    public Task ActivateAllAsync()
     {
-        InvokeAsync(() =>
+        return InvokeAsync(() =>
         {
             foreach (var item in Tabs)
             {
@@ -47,70 +48,43 @@
         Tabs[InitialStartIndex].Disabled = false;
     }
 
-    public void EnableTab(int index)
+    public Task EnableTabAsync(int index)
     {
-        InvokeAsync(() =>
+        return InvokeAsync(() =>
         {
             Tabs[index].Disabled = false;
             StateHasChanged();
         });
     }
 
-    public void ActivateTab(int index, bool ignoreState)
+    public Task ActivateTabAsync(int index, bool ignoreState)
     {
-        InvokeAsync(() =>
-        {
-            _tabElement.ActivatePanel(index, ignoreState);
-        });
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(index, ignoreState));
     }
 
-    public void ActivateTab(int index)
+    public Task ActivateTabAsync(int index)
     {
-        InvokeAsync(() =>
-        {
-            _tabElement.ActivatePanel(index);
-        });
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(index));
     }
 
-    public void DisableTab(int index)
+    public Task ActivateTabAsync(MudTabPanel panel, bool ignoreState)
     {
-        InvokeAsync(() =>
-        {
-            Tabs[index].Disabled = true;
-            StateHasChanged();
-        });
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(panel, ignoreState));
     }
 
-    public void ActivateTab(MudTabPanel panel, bool ignoreState)
+    public Task ActivateTabAsync(MudTabPanel panel)
     {
-        InvokeAsync(() =>
-        {
-            _tabElement.ActivatePanel(panel, ignoreState);
-        });
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(panel));
     }
 
-    public void ActivateTab(MudTabPanel panel)
+    public Task ActivateTabAsync(DummyPlaceHolder id, bool ignoreState)
     {
-        InvokeAsync(() =>
-        {
-            _tabElement.ActivatePanel(panel);
-        });
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(id, ignoreState));
     }
 
-    public void ActivateTab(DummyPlaceHolder id, bool ignoreState)
+    public Task ActivateTabAsync(DummyPlaceHolder id)
     {
-        InvokeAsync(() =>
-        {
-            _tabElement.ActivatePanel(id, ignoreState);
-        });
-    }
-
-    public void ActivateTab(DummyPlaceHolder id)
-    {
-        InvokeAsync(() =>
-        {
-            _tabElement.ActivatePanel(id);
-        });
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(id));
     }
 
     public class TabBindingHelper
