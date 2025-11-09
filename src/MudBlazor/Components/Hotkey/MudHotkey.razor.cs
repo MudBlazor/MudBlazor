@@ -9,11 +9,11 @@ public partial class MudHotkey : MudComponentBase
 {
     private const string RegisterJsMethodName = "mudHotkeyListener.registerHotkey";
 
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public JsKey Key { get; set; }
-    [Parameter] public IEnumerable<JsKeyModifier> KeyModifiers { get; set; } = [];
-    [Parameter] public EventCallback OnHotkeyPressed { get; set; }
-    [Parameter] public bool HideChildContentOnRepress { get; set; }
+    [Parameter, Category(CategoryTypes.Hotkey.Appearance)] public RenderFragment? ChildContent { get; set; }
+    [Parameter, Category(CategoryTypes.Hotkey.Behavior)] public JsKey Key { get; set; }
+    [Parameter, Category(CategoryTypes.Hotkey.Behavior)] public IEnumerable<JsKeyModifier> KeyModifiers { get; set; } = [];
+    [Parameter, Category(CategoryTypes.Hotkey.Behavior)] public EventCallback OnHotkeyPressed { get; set; }
+    [Parameter, Category(CategoryTypes.Hotkey.Behavior)] public bool HideChildContentOnRepress { get; set; }
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     private bool _childContentIsVisible;

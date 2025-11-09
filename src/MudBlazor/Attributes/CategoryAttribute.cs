@@ -565,5 +565,11 @@
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
+        
+        public static class Hotkey
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
     }
 }
