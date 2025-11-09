@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -11,6 +12,7 @@ namespace MudBlazor;
 public partial class MudHotkey : MudComponentBase
 {
     private const string RegisterJsMethodName = "mudHotkeyListener.registerHotkey";
+    private const string UnregisterJsMethodName = "mudHotkeyListener.unregisterHotkey";
 
     /// <summary>
     /// The optional content to be displayed when the hotkey is pressed.
@@ -38,16 +40,41 @@ public partial class MudHotkey : MudComponentBase
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter, Category(CategoryTypes.Hotkey.Behavior)] public bool HideChildContentOnRepress { get; set; }
+    /// <summary>
+    /// Whether to prevent the key press event from propagating.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.Hotkey.Behavior)] public bool PreventEventPropagation { get; set; } = true;
+    /// <summary>
+    /// Ignores the hotkey when set to true.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.Hotkey.Behavior)] public bool Disabled { get; set; }
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+    private readonly string _hotkeyId = Guid.NewGuid().ToString();
+    private readonly DotNetObjectReference<MudHotkey> _dotNetObjectReference;
     private bool _childContentIsVisible;
     private bool _isRendered;
+
+    public MudHotkey()
+    {
+        _dotNetObjectReference = DotNetObjectReference.Create(this);
+        using var registerScope = CreateRegisterScope();
+        registerScope.RegisterParameter<bool>(nameof(Disabled))
+            .WithParameter(() => Disabled)
+            .WithChangeHandler(OnDisabledChangedAsync);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await RegisterHotkeyAsync();
+            if (!Disabled) await RegisterHotkeyAsync();
             _isRendered = true;
         }
 
@@ -56,12 +83,35 @@ public partial class MudHotkey : MudComponentBase
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_isRendered) await RegisterHotkeyAsync();
+        if (_isRendered && !Disabled) await RegisterHotkeyAsync();
     }
 
     private async Task RegisterHotkeyAsync()
     {
-        await JsRuntime.InvokeVoidAsync(RegisterJsMethodName, DotNetObjectReference.Create(this), nameof(MudHotkeyProviderJsCallback), Key, KeyModifiers);
+        await JsRuntime.InvokeVoidAsync(RegisterJsMethodName,
+            _dotNetObjectReference,
+            nameof(MudHotkeyProviderJsCallback),
+            _hotkeyId,
+            Key,
+            KeyModifiers,
+            PreventEventPropagation);
+    }
+
+    private async Task UnregisterHotkeyAsync()
+    {
+        await JsRuntime.InvokeVoidAsync(UnregisterJsMethodName, _hotkeyId);
+    }
+
+    private async Task OnDisabledChangedAsync(ParameterChangedEventArgs<bool> args)
+    {
+        if (!args.Value)
+        {
+            await RegisterHotkeyAsync();
+        }
+        else
+        {
+            await UnregisterHotkeyAsync();
+        }
     }
 
     [JSInvokable]

@@ -15,14 +15,11 @@ class MudHotkeyListener {
         document.removeEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
 
-    registerHotkey(dotnetRef, dotnetMethodId, keyCode, modifiers) {
-        modifiers = modifiers || [];
-        const newHotkey = this._createHotkey(dotnetRef, dotnetMethodId, keyCode, modifiers);
-
-        const existingIndex = this._hotkeys.findIndex(h =>
-            h.dotnetRef === dotnetRef && h.dotnetMethodId === dotnetMethodId
-        );
-
+    registerHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault) {
+        modifiers = (modifiers || []).slice().sort();
+        const newHotkey = this._createHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault);
+        const existingIndex = this._getHotkeyIndexById(hotkeyId);
+        
         if (existingIndex !== -1) {
             this._hotkeys[existingIndex] = newHotkey;
         } else {
@@ -30,15 +27,31 @@ class MudHotkeyListener {
         }
     }
 
-    _createHotkey(dotnetRef, dotnetMethodId, keyCode, modifiers) {
+    unregisterHotkey(hotkeyId) {
+        const existingIndex = this._getHotkeyIndexById(hotkeyId);
+        
+        if (existingIndex !== -1) {
+            this._hotkeys.splice(existingIndex, 1);
+        } else {
+            console.warn("[MudBlazor] MudHotkey: No matching hotkey found to unregister");
+        }
+    }
+
+    _getHotkeyIndexById(hotkeyId) {
+        return this._hotkeys.findIndex(h => h.hotkeyId === hotkeyId);
+    }
+
+    _createHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault) {
         return {
             dotnetRef: dotnetRef,
             dotnetMethodId: dotnetMethodId,
+            hotkeyId: hotkeyId,
             keyCode: keyCode,
-            modifiers: modifiers.slice().sort()
+            modifiers: modifiers.slice().sort(),
+            preventDefault: preventDefault
         };
     }
-    
+
     _handleKeyEvent(e) {
         const pressedKeyCode = e.keyCode != null ? e.keyCode : e.which;
         const pressedModifierCodes = [];
@@ -57,7 +70,9 @@ class MudHotkeyListener {
             const allModifiersPressed = hotkey.modifiers.every(m => pressedModifierCodes.includes(m));
             const noExtraModifiersPressed = pressedModifierCodes.every(m => hotkey.modifiers.includes(m));
             if (allModifiersPressed && noExtraModifiersPressed) {
-                e.preventDefault();
+                if (hotkey.preventDefault) {
+                    e.preventDefault();
+                }
 
                 try {
                     // noinspection JSUnresolvedReference
@@ -69,6 +84,7 @@ class MudHotkeyListener {
                         err: err
                     });
                 }
+
                 break;
             }
         }
