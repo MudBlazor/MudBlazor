@@ -26,7 +26,7 @@ public partial class MudHotkey : MudComponentBase
             await RegisterHotkeyAsync();
             _isRendered = true;
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 

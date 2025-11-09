@@ -1,7 +1,7 @@
 "use strict";
 
 // noinspection JSUnusedGlobalSymbols
-/** This is the companion class for the MudBlazor.Hotkey.GlobalHotkeyService. */
+/** This is the companion class for the MudBlazor.MudHotkey component. */
 class MudHotkeyListener {
     constructor() {
         this._EVENT_TYPE = "keydown";
@@ -63,7 +63,7 @@ class MudHotkeyListener {
                     // noinspection JSUnresolvedReference
                     hotkey.dotnetRef.invokeMethodAsync(hotkey.dotnetMethodId);
                 } catch (err) {
-                    console.error("[MudBlazor] Hotkey: DotNet invocation failed", {
+                    console.error("[MudBlazor] MudHotkey: DotNet invocation failed", {
                         keyCode: hotkey.keyCode,
                         modifiers: hotkey.modifiers,
                         err: err

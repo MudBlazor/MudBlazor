@@ -5,20 +5,6 @@
     <DocsPageHeader Title="Services" SubTitle="MudBlazor provides several useful services."/>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="TODO">
-                <Description>
-                    Allows to register global hotkeys which persist after navigations and reloads. Note that you have to add a custom component to your
-                    <CodeInline>MainLayout.razor</CodeInline>
-                    if you want to update your UI when the hotkey is pressed. An example for such a component can be seen below in
-                    <CodeInline>JsInvokable.razor</CodeInline>
-                    .
-                </Description>
-            </SectionHeader>
-            <SectionContent Codes="@(new[] { new CodeFile("Register.razor", nameof(HotkeyServiceExample)), new CodeFile("JsInvokable.razor", nameof(HotkeyServiceExample_Snackbar)) })">
-                <HotkeyServiceExample/>
-            </SectionContent>
-        </DocsPageSection>
-        <DocsPageSection>
             <SectionHeader Title="@nameof(BrowserViewportService)">
                 <Description>
                     Provides functionality to get the current view port size, to monitor the browser viewport size for any changes and to get the current breakpoint.
