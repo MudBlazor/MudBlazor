@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor
 {
-
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
     /// </summary>
@@ -565,7 +564,7 @@
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
-        
+
         public static class Hotkey
         {
             public const string Behavior = "Behavior";
