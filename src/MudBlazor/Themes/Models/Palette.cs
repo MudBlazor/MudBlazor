@@ -10,233 +10,233 @@ namespace MudBlazor
     /// <summary>
     /// Represents a palette of colors used throughout the application.
     /// </summary>
-    public abstract class Palette
+    public record class Palette
     {
-        private MudColor? _primaryDarken;
-        private MudColor? _primaryLighten;
-        private MudColor? _secondaryDarken;
-        private MudColor? _secondaryLighten;
-        private MudColor? _tertiaryDarken;
-        private MudColor? _tertiaryLighten;
-        private MudColor? _infoDarken;
-        private MudColor? _infoLighten;
-        private MudColor? _successDarken;
-        private MudColor? _successLighten;
-        private MudColor? _warningDarken;
-        private MudColor? _warningLighten;
-        private MudColor? _errorDarken;
-        private MudColor? _errorLighten;
-        private MudColor? _darkDarken;
-        private MudColor? _darkLighten;
+        private string? _primaryDarken;
+        private string? _primaryLighten;
+        private string? _secondaryDarken;
+        private string? _secondaryLighten;
+        private string? _tertiaryDarken;
+        private string? _tertiaryLighten;
+        private string? _infoDarken;
+        private string? _infoLighten;
+        private string? _successDarken;
+        private string? _successLighten;
+        private string? _warningDarken;
+        private string? _warningLighten;
+        private string? _errorDarken;
+        private string? _errorLighten;
+        private string? _darkDarken;
+        private string? _darkLighten;
 
         /// <summary>
         /// The black color.
         /// </summary>
-        public virtual MudColor Black { get; set; } = "#272c34";
+        public MudColor Black { get; set; } = "#272c34";
 
         /// <summary>
         /// The white color.
         /// </summary>
-        public virtual MudColor White { get; set; } = Colors.Shades.White;
+        public MudColor White { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The primary color.
         /// </summary>
-        public virtual MudColor Primary { get; set; } = "#594AE2";
+        public MudColor Primary { get; set; } = "#594AE2";
 
         /// <summary>
         /// The contrast text color for the primary color.
         /// </summary>
-        public virtual MudColor PrimaryContrastText { get; set; } = Colors.Shades.White;
+        public MudColor PrimaryContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The secondary color.
         /// </summary>
-        public virtual MudColor Secondary { get; set; } = Colors.Pink.Accent2;
+        public MudColor Secondary { get; set; } = Colors.Pink.Accent2;
 
         /// <summary>
         /// The contrast text color for the secondary color.
         /// </summary>
-        public virtual MudColor SecondaryContrastText { get; set; } = Colors.Shades.White;
+        public MudColor SecondaryContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The tertiary color.
         /// </summary>
-        public virtual MudColor Tertiary { get; set; } = "#1EC8A5";
+        public MudColor Tertiary { get; set; } = "#1EC8A5";
 
         /// <summary>
         /// The contrast text color for the tertiary color.
         /// </summary>
-        public virtual MudColor TertiaryContrastText { get; set; } = Colors.Shades.White;
+        public MudColor TertiaryContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The info color.
         /// </summary>
-        public virtual MudColor Info { get; set; } = Colors.Blue.Default;
+        public MudColor Info { get; set; } = Colors.Blue.Default;
 
         /// <summary>
         /// The contrast text color for the info color.
         /// </summary>
-        public virtual MudColor InfoContrastText { get; set; } = Colors.Shades.White;
+        public MudColor InfoContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The success color.
         /// </summary>
-        public virtual MudColor Success { get; set; } = Colors.Green.Accent4;
+        public MudColor Success { get; set; } = Colors.Green.Accent4;
 
         /// <summary>
         /// The contrast text color for the success color.
         /// </summary>
-        public virtual MudColor SuccessContrastText { get; set; } = Colors.Shades.White;
+        public MudColor SuccessContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The warning color.
         /// </summary>
-        public virtual MudColor Warning { get; set; } = Colors.Orange.Default;
+        public MudColor Warning { get; set; } = Colors.Orange.Default;
 
         /// <summary>
         /// The contrast text color for the warning color.
         /// </summary>
-        public virtual MudColor WarningContrastText { get; set; } = Colors.Shades.White;
+        public MudColor WarningContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The error color.
         /// </summary>
-        public virtual MudColor Error { get; set; } = Colors.Red.Default;
+        public MudColor Error { get; set; } = Colors.Red.Default;
 
         /// <summary>
         /// The contrast text color for the error color.
         /// </summary>
-        public virtual MudColor ErrorContrastText { get; set; } = Colors.Shades.White;
+        public MudColor ErrorContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The dark color.
         /// </summary>
-        public virtual MudColor Dark { get; set; } = Colors.Gray.Darken3;
+        public MudColor Dark { get; set; } = Colors.Gray.Darken3;
 
         /// <summary>
         /// The contrast text color for the dark color.
         /// </summary>
-        public virtual MudColor DarkContrastText { get; set; } = Colors.Shades.White;
+        public MudColor DarkContrastText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The primary text color.
         /// </summary>
-        public virtual MudColor TextPrimary { get; set; } = Colors.Gray.Darken3;
+        public MudColor TextPrimary { get; set; } = Colors.Gray.Darken3;
 
         /// <summary>
         /// The secondary text color.
         /// </summary>
-        public virtual MudColor TextSecondary { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TextSecondary { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The disabled text color.
         /// </summary>
-        public virtual MudColor TextDisabled { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.38).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TextDisabled { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.38).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The default action color.
         /// </summary>
-        public virtual MudColor ActionDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
+        public MudColor ActionDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The disabled action color.
         /// </summary>
-        public virtual MudColor ActionDisabled { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.26).ToString(MudColorOutputFormats.RGBA);
+        public MudColor ActionDisabled { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.26).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The background color for disabled actions.
         /// </summary>
-        public virtual MudColor ActionDisabledBackground { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
+        public MudColor ActionDisabledBackground { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The background color.
         /// </summary>
-        public virtual MudColor Background { get; set; } = Colors.Shades.White;
+        public MudColor Background { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The gray background color.
         /// </summary>
-        public virtual MudColor BackgroundGray { get; set; } = Colors.Gray.Lighten4;
+        public MudColor BackgroundGray { get; set; } = Colors.Gray.Lighten4;
 
         /// <summary>
         /// The surface color.
         /// </summary>
-        public virtual MudColor Surface { get; set; } = Colors.Shades.White;
+        public MudColor Surface { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The drawer background color.
         /// </summary>
-        public virtual MudColor DrawerBackground { get; set; } = Colors.Shades.White;
+        public MudColor DrawerBackground { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The drawer text color.
         /// </summary>
-        public virtual MudColor DrawerText { get; set; } = Colors.Gray.Darken3;
+        public MudColor DrawerText { get; set; } = Colors.Gray.Darken3;
 
         /// <summary>
         /// The drawer icon color.
         /// </summary>
-        public virtual MudColor DrawerIcon { get; set; } = Colors.Gray.Darken2;
+        public MudColor DrawerIcon { get; set; } = Colors.Gray.Darken2;
 
         /// <summary>
         /// The appbar background color.
         /// </summary>
-        public virtual MudColor AppbarBackground { get; set; } = "#594AE2";
+        public MudColor AppbarBackground { get; set; } = "#594AE2";
 
         /// <summary>
         /// The appbar text color.
         /// </summary>
-        public virtual MudColor AppbarText { get; set; } = Colors.Shades.White;
+        public MudColor AppbarText { get; set; } = Colors.Shades.White;
 
         /// <summary>
         /// The default color for lines.
         /// </summary>
-        public virtual MudColor LinesDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
+        public MudColor LinesDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The color for input lines.
         /// </summary>
-        public virtual MudColor LinesInputs { get; set; } = Colors.Gray.Lighten1;
+        public MudColor LinesInputs { get; set; } = Colors.Gray.Lighten1;
 
         /// <summary>
         /// The color for table lines.
         /// </summary>
-        public virtual MudColor TableLines { get; set; } = new MudColor(Colors.Gray.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TableLines { get; set; } = new MudColor(Colors.Gray.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The color for striped rows in a table.
         /// </summary>
-        public virtual MudColor TableStriped { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TableStriped { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The color for table rows on hover.
         /// </summary>
-        public virtual MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The color for dividers.
         /// </summary>
-        public virtual MudColor Divider { get; set; } = Colors.Gray.Lighten2;
+        public MudColor Divider { get; set; } = Colors.Gray.Lighten2;
 
         /// <summary>
         /// The light color for dividers.
         /// </summary>
-        public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        public MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
 
 
         /// <summary>
         /// The color for skeletons.
         /// </summary>
-        public virtual MudColor Skeleton { get; set; } = new MudColor("rgba(0, 0, 0, 0.11)").ToString(MudColorOutputFormats.RGBA);
+        public MudColor Skeleton { get; set; } = new MudColor("rgba(0, 0, 0, 0.11)").ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The darkened value of the primary color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string PrimaryDarken
+        public string PrimaryDarken
         {
-            get => (_primaryDarken ??= Primary.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _primaryDarken ?? Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _primaryDarken = value;
         }
 
@@ -244,9 +244,9 @@ namespace MudBlazor
         /// The lightened value of the primary color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string PrimaryLighten
+        public string PrimaryLighten
         {
-            get => (_primaryLighten ??= Primary.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _primaryLighten ?? Primary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _primaryLighten = value;
         }
 
@@ -254,9 +254,9 @@ namespace MudBlazor
         /// The darkened value of the secondary color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string SecondaryDarken
+        public string SecondaryDarken
         {
-            get => (_secondaryDarken ??= Secondary.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _secondaryDarken ?? Secondary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _secondaryDarken = value;
         }
 
@@ -264,9 +264,9 @@ namespace MudBlazor
         /// The lightened value of the secondary color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string SecondaryLighten
+        public string SecondaryLighten
         {
-            get => (_secondaryLighten ??= Secondary.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _secondaryLighten ?? Secondary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _secondaryLighten = value;
         }
 
@@ -274,9 +274,9 @@ namespace MudBlazor
         /// The darkened value of the tertiary color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string TertiaryDarken
+        public string TertiaryDarken
         {
-            get => (_tertiaryDarken ??= Tertiary.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _tertiaryDarken ?? Tertiary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _tertiaryDarken = value;
         }
 
@@ -284,9 +284,9 @@ namespace MudBlazor
         /// The lightened value of the tertiary color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string TertiaryLighten
+        public string TertiaryLighten
         {
-            get => (_tertiaryLighten ??= Tertiary.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _tertiaryLighten ?? Tertiary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _tertiaryLighten = value;
         }
 
@@ -294,9 +294,9 @@ namespace MudBlazor
         /// The darkened value of the info color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string InfoDarken
+        public string InfoDarken
         {
-            get => (_infoDarken ??= Info.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _infoDarken ?? Info.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _infoDarken = value;
         }
 
@@ -304,9 +304,9 @@ namespace MudBlazor
         /// The lightened value of the info color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string InfoLighten
+        public string InfoLighten
         {
-            get => (_infoLighten ??= Info.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _infoLighten ?? Info.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _infoLighten = value;
         }
 
@@ -314,9 +314,9 @@ namespace MudBlazor
         /// The darkened value of the success color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string SuccessDarken
+        public string SuccessDarken
         {
-            get => (_successDarken ??= Success.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _successDarken ?? Success.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _successDarken = value;
         }
 
@@ -324,9 +324,9 @@ namespace MudBlazor
         /// The lightened value of the success color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string SuccessLighten
+        public string SuccessLighten
         {
-            get => (_successLighten ??= Success.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _successLighten ?? Success.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _successLighten = value;
         }
 
@@ -334,9 +334,9 @@ namespace MudBlazor
         /// The darkened value of the warning color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string WarningDarken
+        public string WarningDarken
         {
-            get => (_warningDarken ??= Warning.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _warningDarken ?? Warning.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _warningDarken = value;
         }
 
@@ -344,9 +344,9 @@ namespace MudBlazor
         /// The lightened value of the warning color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string WarningLighten
+        public string WarningLighten
         {
-            get => (_warningLighten ??= Warning.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _warningLighten ?? Warning.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _warningLighten = value;
         }
 
@@ -354,9 +354,9 @@ namespace MudBlazor
         /// The darkened value of the error color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string ErrorDarken
+        public string ErrorDarken
         {
-            get => (_errorDarken ??= Error.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _errorDarken ?? Error.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _errorDarken = value;
         }
 
@@ -364,9 +364,9 @@ namespace MudBlazor
         /// The lightened value of the error color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string ErrorLighten
+        public string ErrorLighten
         {
-            get => (_errorLighten ??= Error.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _errorLighten ?? Error.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _errorLighten = value;
         }
 
@@ -374,9 +374,9 @@ namespace MudBlazor
         /// The darkened value of the dark color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
-        public virtual string DarkDarken
+        public string DarkDarken
         {
-            get => (_darkDarken ??= Dark.ColorRgbDarken()).ToString(MudColorOutputFormats.RGB);
+            get => _darkDarken ?? Dark.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _darkDarken = value;
         }
 
@@ -384,65 +384,65 @@ namespace MudBlazor
         /// The lightened value of the dark color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
-        public virtual string DarkLighten
+        public string DarkLighten
         {
-            get => (_darkLighten ??= Dark.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
+            get => _darkLighten ?? Dark.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _darkLighten = value;
         }
 
         /// <summary>
         /// The opacity value for most borders.
         /// </summary>
-        public virtual double BorderOpacity { get; set; } = 1.0;
+        public double BorderOpacity { get; set; } = 1.0;
 
         /// <summary>
         /// The opacity value for hover effect.
         /// </summary>
-        public virtual double HoverOpacity { get; set; } = 0.06;
+        public double HoverOpacity { get; set; } = 0.06;
 
         /// <summary>
         /// The opacity for the ripple effect.
         /// </summary>
-        public virtual double RippleOpacity { get; set; } = 0.1;
+        public double RippleOpacity { get; set; } = 0.1;
 
         /// <summary>
         /// The opacity for the ripple effect on specific elements like filled buttons.
         /// </summary>
-        public virtual double RippleOpacitySecondary { get; set; } = 0.2;
+        public double RippleOpacitySecondary { get; set; } = 0.2;
 
         /// <summary>
         /// The default gray color.
         /// </summary>
-        public virtual string GrayDefault { get; set; } = Colors.Gray.Default;
+        public string GrayDefault { get; set; } = Colors.Gray.Default;
 
         /// <summary>
         /// The lightened gray color.
         /// </summary>
-        public virtual string GrayLight { get; set; } = Colors.Gray.Lighten1;
+        public string GrayLight { get; set; } = Colors.Gray.Lighten1;
 
         /// <summary>
         /// The further lightened gray color.
         /// </summary>
-        public virtual string GrayLighter { get; set; } = Colors.Gray.Lighten2;
+        public string GrayLighter { get; set; } = Colors.Gray.Lighten2;
 
         /// <summary>
         /// The darkened gray color.
         /// </summary>
-        public virtual string GrayDark { get; set; } = Colors.Gray.Darken1;
+        public string GrayDark { get; set; } = Colors.Gray.Darken1;
 
         /// <summary>
         /// The further darkened gray color.
         /// </summary>
-        public virtual string GrayDarker { get; set; } = Colors.Gray.Darken2;
+        public string GrayDarker { get; set; } = Colors.Gray.Darken2;
 
         /// <summary>
         /// The dark overlay color.
         /// </summary>
-        public virtual string OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+        public string OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The light overlay color.
         /// </summary>
-        public virtual string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+        public string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
     }
 }

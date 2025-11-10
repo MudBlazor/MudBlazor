@@ -10,12 +10,12 @@
         /// The palette for the light theme.
         /// </summary>
         /// <remarks>Renamed from <c>Palette</c> to <c>PaletteLight</c> in v7.</remarks>
-        public PaletteLight PaletteLight { get; set; }
+        public Palette PaletteLight { get; set; }
 
         /// <summary>
         /// The palette for the dark theme.
         /// </summary>
-        public PaletteDark PaletteDark { get; set; }
+        public Palette PaletteDark { get; set; }
 
         /// <summary>
         /// The shadow settings.
