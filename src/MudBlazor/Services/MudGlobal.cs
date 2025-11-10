@@ -105,7 +105,7 @@ public static class MudGlobal
         /// The typography variant to use for <see cref="MudLink"/>.
         /// </summary>
         [Obsolete("https://github.com/MudBlazor/MudBlazor/issues/12046")]
-        public static Typo Typo { get; set; } = Typo.body1;
+        public static Typo Typo { get; set; } = Typo.inherit;
 
         /// <summary>
         /// Applies an underline to the <see cref="MudLink"/>.
