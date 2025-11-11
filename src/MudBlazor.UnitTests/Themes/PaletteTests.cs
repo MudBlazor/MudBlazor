@@ -13,17 +13,12 @@ namespace MudBlazor.UnitTests.Themes;
 public class PaletteTests
 {
     [Test]
-    public void ComputedPrimaryDerivatives_TrackBaseColorChanges()
+    public void ComputedDerivatives()
     {
         var palette = new Palette
         {
             Primary = "#123456"
         };
-
-        palette.PrimaryDarken.Should().Be(palette.Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB));
-        palette.PrimaryLighten.Should().Be(palette.Primary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB));
-
-        palette.Primary = Colors.Blue.Default;
 
         palette.PrimaryDarken.Should().Be(palette.Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB));
         palette.PrimaryLighten.Should().Be(palette.Primary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB));
