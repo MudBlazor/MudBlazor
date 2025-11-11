@@ -4,6 +4,7 @@
 
 using FluentAssertions;
 using MudBlazor.UnitTests.Dummy;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Themes;
@@ -31,5 +32,43 @@ public class MudThemeTests
 
         deserializeMudTheme.ZIndex.Drawer.Should().Be(originalMudTheme.ZIndex.Drawer);
         deserializeMudTheme.Should().NotBeSameAs(originalMudTheme, "Objects have same values, but instances are different and has on custom Equals");
+    }
+
+    [Test]
+    public void MudTheme_AllowsAssigningBasePaletteToLightPalette()
+    {
+        var basePalette = new Palette
+        {
+            Primary = Colors.Cyan.Default,
+            Secondary = Colors.Orange.Accent2
+        };
+
+        var theme = new MudTheme
+        {
+            PaletteLight = basePalette
+        };
+
+        theme.PaletteLight.Should().BeSameAs(basePalette);
+        theme.PaletteLight.PrimaryDarken.Should().Be(basePalette.Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB));
+        theme.PaletteLight.SecondaryLighten.Should().Be(basePalette.Secondary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB));
+    }
+
+    [Test]
+    public void MudTheme_AllowsAssigningBasePaletteToDarkPalette()
+    {
+        var basePalette = new Palette
+        {
+            Primary = Colors.Green.Darken1,
+            Info = Colors.Blue.Accent2
+        };
+
+        var theme = new MudTheme
+        {
+            PaletteDark = basePalette
+        };
+
+        theme.PaletteDark.Should().BeSameAs(basePalette);
+        theme.PaletteDark.PrimaryDarken.Should().Be(basePalette.Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB));
+        theme.PaletteDark.InfoLighten.Should().Be(basePalette.Info.ColorRgbLighten().ToString(MudColorOutputFormats.RGB));
     }
 }
