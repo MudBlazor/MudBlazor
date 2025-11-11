@@ -63,10 +63,10 @@ public class PaletteTests
         };
 
         clone.Should().NotBeSameAs(palette);
-        clone.Primary.Should().Be(Colors.Green.Default);
+        clone.Primary.Should().Be(new MudColor(Colors.Green.Default));
         clone.PrimaryDarken.Should().Be(clone.Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB));
 
-        palette.Primary.Should().Be(Colors.Blue.Default);
+        palette.Primary.Should().Be(new MudColor(Colors.Blue.Default));
         palette.PrimaryDarken.Should().Be(palette.Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB));
     }
 }
