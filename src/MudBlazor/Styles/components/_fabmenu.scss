@@ -1,0 +1,71 @@
+.mud-fab-menu-container {
+  position: relative;
+
+  .mud-fab-menu {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding-bottom: calc(100% + 12px);
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 12px;
+    z-index: calc(var(--mud-zindex-appbar) - 2);
+    width: 100%;
+    pointer-events: none;
+
+    &.dampen {
+      .mud-fab-menu-item {
+        position: relative;
+        z-index: 1;
+      }
+
+      .mud-fab-menu-item::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: inherit;
+        filter: saturate(0.5) brightness(1.25);
+        z-index: -1;
+      }
+    }
+
+    .mud-fab-menu-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    &.open {
+      pointer-events: auto;
+
+      .mud-fab-menu-item {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @for $i from 1 through 10 {
+      .mud-fab-menu-item:nth-child(#{$i}) {
+        transition-delay: (10 - $i) * 0.05s;
+      }
+    }
+  }
+
+  &:not(.open) {
+    @for $i from 1 through 10 {
+      .mud-fab-menu-item:nth-child(#{$i}) {
+        transition-delay: $i * 0.05s;
+      }
+    }
+  }
+
+  .mud-fab-menu-button {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: calc(var(--mud-zindex-appbar) - 1);
+
+    &.open {
+      transform: rotate(45deg);
+    }
+  }
+}
