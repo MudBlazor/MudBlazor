@@ -9,6 +9,10 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
+using Moq;
 using MudBlazor.Examples.Data;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
@@ -1255,6 +1259,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// When a user clicks on the adornment icon, the input should get focused so they can start typing
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_FocusInputOnAdornmentClick()
+        {
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus", It.IsAny<object[]>()));
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<AutocompleteStates>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+
+            var adornment = comp.Find(".mud-input-adornment-icon-button");
+            adornment.Click();
+
+            // verifies FocusAsync was called
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus",
+                It.Is<object[]>(args =>
+                    args.Length == 2 &&
+                    args[0] is ElementReference &&
+                    args[1] is bool)),
+                Times.AtMost(1));
+
+            var input = comp.Find("input");
+            await input.InputAsync(new ChangeEventArgs { Value = "Wyo" });
+
+            await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            autocompleteComponent.Instance.Value.Should().Be("Wyoming");
+        }
+
+        /// <summary>
         /// The adornment icon should change live without having to re-open the autocomplete
         /// This test a bugfix where changing the icon property would not cause the icon to visually change until the autocomplete was opened or closed
         /// </summary>
@@ -2198,7 +2234,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Instance.Open.Should().Be(openOnFocus, $"OpenOnFocus should set Open to {openOnFocus} after input Focus"));
         }
 
-
         [Test]
         public void Autocomplete_OpenTwiceInMenu()
         {
@@ -2230,6 +2265,42 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".autocomplete input").Focus();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Both menu & autocomplete should be opened again"));
             // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1303");
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_OpenMenuAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            comp.Instance.OpenedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_CloseMenuAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+            comp.Instance.ClosedCount.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_OpenClose()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_SelectOptionAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.SelectOptionAsync("Alabama"));
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(1);
         }
     }
 }
