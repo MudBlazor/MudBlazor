@@ -236,7 +236,7 @@ namespace MudBlazor
         /// </summary>
         public string PrimaryDarken
         {
-            get => _primaryDarken ?? Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _primaryDarken ??= Primary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _primaryDarken = value;
         }
 
@@ -246,7 +246,7 @@ namespace MudBlazor
         /// </summary>
         public string PrimaryLighten
         {
-            get => _primaryLighten ?? Primary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _primaryLighten ??= Primary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _primaryLighten = value;
         }
 
@@ -256,7 +256,7 @@ namespace MudBlazor
         /// </summary>
         public string SecondaryDarken
         {
-            get => _secondaryDarken ?? Secondary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _secondaryDarken ??= Secondary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _secondaryDarken = value;
         }
 
@@ -266,7 +266,7 @@ namespace MudBlazor
         /// </summary>
         public string SecondaryLighten
         {
-            get => _secondaryLighten ?? Secondary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _secondaryLighten ??= Secondary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _secondaryLighten = value;
         }
 
@@ -276,7 +276,7 @@ namespace MudBlazor
         /// </summary>
         public string TertiaryDarken
         {
-            get => _tertiaryDarken ?? Tertiary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _tertiaryDarken ??= Tertiary.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _tertiaryDarken = value;
         }
 
@@ -286,7 +286,7 @@ namespace MudBlazor
         /// </summary>
         public string TertiaryLighten
         {
-            get => _tertiaryLighten ?? Tertiary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _tertiaryLighten ??= Tertiary.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _tertiaryLighten = value;
         }
 
@@ -296,7 +296,7 @@ namespace MudBlazor
         /// </summary>
         public string InfoDarken
         {
-            get => _infoDarken ?? Info.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _infoDarken ??= Info.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _infoDarken = value;
         }
 
@@ -306,7 +306,7 @@ namespace MudBlazor
         /// </summary>
         public string InfoLighten
         {
-            get => _infoLighten ?? Info.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _infoLighten ??= Info.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _infoLighten = value;
         }
 
@@ -316,7 +316,7 @@ namespace MudBlazor
         /// </summary>
         public string SuccessDarken
         {
-            get => _successDarken ?? Success.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _successDarken ??= Success.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _successDarken = value;
         }
 
@@ -326,7 +326,7 @@ namespace MudBlazor
         /// </summary>
         public string SuccessLighten
         {
-            get => _successLighten ?? Success.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _successLighten ??= Success.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _successLighten = value;
         }
 
@@ -336,7 +336,7 @@ namespace MudBlazor
         /// </summary>
         public string WarningDarken
         {
-            get => _warningDarken ?? Warning.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _warningDarken ??= Warning.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _warningDarken = value;
         }
 
@@ -346,7 +346,7 @@ namespace MudBlazor
         /// </summary>
         public string WarningLighten
         {
-            get => _warningLighten ?? Warning.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _warningLighten ??= Warning.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _warningLighten = value;
         }
 
@@ -356,7 +356,7 @@ namespace MudBlazor
         /// </summary>
         public string ErrorDarken
         {
-            get => _errorDarken ?? Error.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _errorDarken ??= Error.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _errorDarken = value;
         }
 
@@ -366,7 +366,7 @@ namespace MudBlazor
         /// </summary>
         public string ErrorLighten
         {
-            get => _errorLighten ?? Error.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _errorLighten ??= Error.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _errorLighten = value;
         }
 
@@ -376,7 +376,7 @@ namespace MudBlazor
         /// </summary>
         public string DarkDarken
         {
-            get => _darkDarken ?? Dark.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
+            get => _darkDarken ??= Dark.ColorRgbDarken().ToString(MudColorOutputFormats.RGB);
             set => _darkDarken = value;
         }
 
@@ -386,7 +386,7 @@ namespace MudBlazor
         /// </summary>
         public string DarkLighten
         {
-            get => _darkLighten ?? Dark.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
+            get => _darkLighten ??= Dark.ColorRgbLighten().ToString(MudColorOutputFormats.RGB);
             set => _darkLighten = value;
         }
 
