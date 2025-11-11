@@ -678,7 +678,7 @@ namespace MudBlazor
         {
             CancelToken();
             _debounceTimer?.Dispose();
-            Open = false; // Before restoing position and triggering changes, make sure that we close the popover
+            Open = false; // Before restoring position and triggering changes, make sure that we close the popover
             StateHasChanged();
             await RestoreScrollPositionAsync();
             await CoerceTextToValueAsync();
