@@ -6,6 +6,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+/// <summary>
+/// A menu appearing from a <see cref="MudFab"/> that displays a list of items.
+/// </summary>
+/// <seealso cref="MudFabMenuItem" />
 public partial class MudFabMenu : MudFab
 {
     private new string Classname => new CssBuilder("mud-fab-menu-container")
@@ -41,6 +45,7 @@ public partial class MudFabMenu : MudFab
     private string? _startIcon;
     private string? _endIcon;
     private int _menuPaddingBottomCorrection;
+    private bool _lastInteractionWasTouch;
 
     /// <summary>
     /// The CSS classes applied to the menu button.
@@ -208,7 +213,6 @@ public partial class MudFabMenu : MudFab
         if (CloseOnMenuItemClicked) await ToggleOpenAsync(false);
     }
 
-    private bool _lastInteractionWasTouch;
     private void OnTouchStart()
     {
         _lastInteractionWasTouch = true;

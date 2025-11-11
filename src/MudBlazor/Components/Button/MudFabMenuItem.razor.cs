@@ -4,6 +4,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Represents an item for the <see cref="MudFabMenu"/>.
+/// </summary>
 public partial class MudFabMenuItem : MudFab
 {
     private new string Classname => new CssBuilder(base.Classname)
