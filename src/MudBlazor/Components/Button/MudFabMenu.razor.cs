@@ -128,6 +128,14 @@ public partial class MudFabMenu : MudFab
     /// </remarks>
     [Parameter, Category(CategoryTypes.Menu.Behavior)] public bool OpenOnMouseHover { get; set; } = true;
 
+    /// <summary>
+    /// Whether to close the menu when a menu item is clicked.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.Menu.Behavior)] public bool CloseOnMenuItemClicked { get; set; } = true;
+
     public MudFabMenu()
     {
         using var registerScope = CreateRegisterScope();
@@ -191,5 +199,10 @@ public partial class MudFabMenu : MudFab
     private void OnMouseEnterLeave(bool enter)
     {
         if (OpenOnMouseHover) ToggleOpen(enter);
+    }
+
+    private void OnMenuClick()
+    {
+        if (CloseOnMenuItemClicked) ToggleOpen(false);
     }
 }

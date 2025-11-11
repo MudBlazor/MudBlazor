@@ -2,7 +2,7 @@
 @inherits MudFab
 
 <div class="@Classname" style="@Stylename" @onmouseenter="@(() => OnMouseEnterLeave(true))" @onmouseleave="@(() => OnMouseEnterLeave(false))">
-    <div class="@ClassnameMenu" style="@StylenameMenu">
+    <div class="@ClassnameMenu" style="@StylenameMenu" @onclick="@OnMenuClick">
         <CascadingValue Value="@this">
             @ChildContent
         </CascadingValue>
