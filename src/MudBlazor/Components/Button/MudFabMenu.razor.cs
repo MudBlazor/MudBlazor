@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -31,7 +32,7 @@ public partial class MudFabMenu : MudFab
         .AddStyle("z-index: 2000;", Fixed)
         .AddStyle(Style)
         .Build();
-    
+
     private string StylenameMenu => new StyleBuilder()
         .AddStyle($"padding-bottom: {_menuPaddingBottomCorrection}px;", _menuPaddingBottomCorrection != 0)
         .AddStyle(MenuStyle)
@@ -182,27 +183,31 @@ public partial class MudFabMenu : MudFab
         }
     }
 
-    private void ToggleOpen(bool? open = null)
+    private async Task ToggleOpenAsync(bool? open = null)
     {
         Open = open ?? !Open;
-        OpenChanged.InvokeAsync(Open);
-        OnClick.InvokeAsync();
+        await OpenChanged.InvokeAsync(Open);
 
         OnOpenChanged(new ParameterChangedEventArgs<bool>(nameof(Open), !Open, Open));
     }
 
-    private void OnMenuButtonClick()
+    private async Task OnMenuButtonClickAsync(MouseEventArgs args)
     {
-        if (!OpenOnMouseHover) ToggleOpen();
+        if (!OpenOnMouseHover)
+        {
+            await ToggleOpenAsync();
+        }
+
+        await OnClickHandler(args);
     }
 
-    private void OnMouseEnterLeave(bool enter)
+    private async Task OnMouseEnterLeaveAsync(bool enter)
     {
-        if (OpenOnMouseHover) ToggleOpen(enter);
+        if (OpenOnMouseHover) await ToggleOpenAsync(enter);
     }
 
-    private void OnMenuClick()
+    private async Task OnMenuClickAsync()
     {
-        if (CloseOnMenuItemClicked) ToggleOpen(false);
+        if (CloseOnMenuItemClicked) await ToggleOpenAsync(false);
     }
 }

@@ -10,4 +10,6 @@
         IconColor="@IconColor"
         IconSize="@IconSize"
         Label="@Label"
-        ClickPropagation="true"/>
+        ClickPropagation="true"
+        @attributes="UserAttributes"
+        @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"/>

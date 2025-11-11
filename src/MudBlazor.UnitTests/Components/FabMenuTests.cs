@@ -15,10 +15,10 @@ public class FabMenuTests : BunitTest
         comp.FindAll(".mud-fab-menu").Count.Should().Be(1);
         comp.FindAll(".mud-fab-menu.open").Count.Should().Be(0);
         comp.FindAll(".mud-fab-menu-item").Count.Should().Be(3);
-        
+
         comp.FindAll(".mud-fab-menu-button")[0].Click();
         comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.open").Count.Should().Be(1); });
-        
+
         comp.FindAll(".mud-fab-menu-item")[0].Click();
         comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.open").Count.Should().Be(0); });
     }
