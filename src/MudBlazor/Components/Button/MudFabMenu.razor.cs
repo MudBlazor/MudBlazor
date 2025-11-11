@@ -193,21 +193,24 @@ public partial class MudFabMenu : MudFab
 
     private async Task OnMenuButtonClickAsync(MouseEventArgs args)
     {
-        if (!OpenOnMouseHover)
-        {
-            await ToggleOpenAsync();
-        }
-
+        await ToggleOpenAsync();
         await OnClickHandler(args);
     }
 
     private async Task OnMouseEnterLeaveAsync(bool enter)
     {
-        if (OpenOnMouseHover) await ToggleOpenAsync(enter);
+        if (OpenOnMouseHover && !_lastInteractionWasTouch) await ToggleOpenAsync(enter);
+        _lastInteractionWasTouch = false;
     }
 
     private async Task OnMenuClickAsync()
     {
         if (CloseOnMenuItemClicked) await ToggleOpenAsync(false);
+    }
+
+    private bool _lastInteractionWasTouch;
+    private void OnTouchStart()
+    {
+        _lastInteractionWasTouch = true;
     }
 }
