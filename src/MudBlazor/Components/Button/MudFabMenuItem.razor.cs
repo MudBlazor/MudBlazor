@@ -20,6 +20,7 @@ public partial class MudFabMenuItem : MudFab
     /// <remarks>
     /// Defaults to <see cref="Size.Medium"/>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    [Parameter]
+    [Category(CategoryTypes.Button.Appearance)]
     public override Size Size { get; set; } = Size.Medium;
 }
