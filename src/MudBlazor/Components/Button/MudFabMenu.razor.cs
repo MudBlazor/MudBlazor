@@ -180,15 +180,17 @@ public partial class MudFabMenu : MudFab
         }
     }
 
-    private void OnOpenChanged(ParameterChangedEventArgs<bool> args)
+    private void OnOpenChanged(ParameterChangedEventArgs<bool> args) => OnOpenChanged(args.Value);
+
+    private void OnOpenChanged(bool open)
     {
-        if (args.Value && UseCloseIcon)
+        if (open && UseCloseIcon)
         {
             if (StartIcon != null) _startIcon = Icons.Material.Outlined.Add;
             if (EndIcon != null) _endIcon = Icons.Material.Outlined.Add;
         }
 
-        if (!args.Value)
+        if (!open)
         {
             _startIcon = StartIcon;
             _endIcon = EndIcon;
@@ -197,7 +199,9 @@ public partial class MudFabMenu : MudFab
 
     private async Task ToggleOpenAsync(bool? open = null)
     {
-        await _openState.SetValueAsync(open ?? !_openState.Value);
+        var isOpen = open ?? !_openState.Value;
+        await _openState.SetValueAsync(isOpen);
+        OnOpenChanged(isOpen);
     }
 
     private async Task OnMenuButtonClickAsync(MouseEventArgs args)
