@@ -19,22 +19,15 @@ public partial class MudFabMenu : MudFab
         .Build();
 
     private string ClassnameMenu => new CssBuilder("mud-fab-menu")
-        .AddClass("open", Open)
+        .AddClass("open", _openState.Value)
         .AddClass("dampen", DampenItemColors)
         .AddClass($"align-{AlignItems.ToDescriptionString()}")
         .AddClass(MenuClass)
         .Build();
 
     private string ClassnameFab => new CssBuilder("mud-fab-menu-button")
-        .AddClass("open", Open && string.IsNullOrEmpty(Label))
+        .AddClass("open", _openState.Value && string.IsNullOrEmpty(Label))
         .AddClass(ButtonClass)
-        .Build();
-
-    private string Stylename => new StyleBuilder()
-        .AddStyle("right: 16px;", Fixed)
-        .AddStyle("bottom: 16px;", Fixed)
-        .AddStyle("z-index: 2000;", Fixed)
-        .AddStyle(Style)
         .Build();
 
     private string StylenameMenu => new StyleBuilder()
@@ -42,6 +35,7 @@ public partial class MudFabMenu : MudFab
         .AddStyle(MenuStyle)
         .Build();
 
+    private readonly ParameterState<bool> _openState;
     private string? _startIcon;
     private string? _endIcon;
     private int _menuPaddingBottomCorrection;
@@ -53,12 +47,14 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Multiple classes must be separated by spaces.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] public string? ButtonClass { get; set; }
+    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    public string? ButtonClass { get; set; }
 
     /// <summary>
     /// The CSS style applied to the menu button.
     /// </summary>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] public string? ButtonStyle { get; set; }
+    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    public string? ButtonStyle { get; set; }
 
     /// <summary>
     /// The CSS classes applied to the item list.
@@ -66,12 +62,14 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Multiple classes must be separated by spaces.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] public string? MenuClass { get; set; }
+    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    public string? MenuClass { get; set; }
 
     /// <summary>
     /// The CSS style applied to the  item list.
     /// </summary>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] public string? MenuStyle { get; set; }
+    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    public string? MenuStyle { get; set; }
 
     /// <summary>
     /// The <see cref="MudFabMenuItem" /> components within this menu.
@@ -79,7 +77,8 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Note that you can add any component you like as long as it has the <c>mud-fab-menu-item</c> class.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] public RenderFragment? ChildContent { get; set; }
+    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] 
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Whether this menu is open and the menu items are visible.
@@ -87,12 +86,14 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// When this property changes, <see cref="OpenChanged"/> occurs.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] public bool Open { get; set; }
+    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] 
+    public bool Open { get; set; }
 
     /// <summary>
     /// Occurs when <see cref="Open"/> has changed.
     /// </summary>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] public EventCallback<bool> OpenChanged { get; set; }
+    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] 
+    public EventCallback<bool> OpenChanged { get; set; }
 
     /// <summary>
     /// Sets the menu to a fixed position in the bottom right corner of the screen with padding of 16 px towards each screen edge.
@@ -100,7 +101,8 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] public bool Fixed { get; set; }
+    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    public bool Fixed { get; set; }
 
     /// <summary>
     /// Whether to replace the set icon with a close icon when the menu is open.
@@ -108,7 +110,8 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] public bool UseCloseIcon { get; set; } = true;
+    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    public bool UseCloseIcon { get; set; } = true;
 
     /// <summary>
     /// Dampens the background color of the menu items when set to true.
@@ -116,7 +119,8 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] public bool DampenItemColors { get; set; } = true;
+    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    public bool DampenItemColors { get; set; } = true;
 
     /// <summary>
     /// The alignment of the menu items in respect to the menu button.
@@ -124,7 +128,8 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>AlignItems.Center</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] public AlignItems AlignItems { get; set; } = AlignItems.Center;
+    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    public AlignItems AlignItems { get; set; } = AlignItems.Center;
 
     /// <summary>
     /// Whether to open the menu on mouse hover.
@@ -132,7 +137,8 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.Behavior)] public bool OpenOnMouseHover { get; set; } = true;
+    [Parameter, Category(CategoryTypes.Menu.Behavior)] 
+    public bool OpenOnMouseHover { get; set; } = true;
 
     /// <summary>
     /// Whether to close the menu when a menu item is clicked.
@@ -140,12 +146,13 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.Behavior)] public bool CloseOnMenuItemClicked { get; set; } = true;
-
+    [Parameter, Category(CategoryTypes.Menu.Behavior)] 
+    public bool CloseOnMenuItemClicked { get; set; } = true;
+    
     public MudFabMenu()
     {
         using var registerScope = CreateRegisterScope();
-        registerScope.RegisterParameter<bool>(nameof(Open))
+        _openState = registerScope.RegisterParameter<bool>(nameof(Open))
             .WithParameter(() => Open)
             .WithEventCallback(() => OpenChanged)
             .WithChangeHandler(OnOpenChanged);
@@ -155,7 +162,7 @@ public partial class MudFabMenu : MudFab
     {
         base.OnParametersSet();
 
-        if (!Open || !UseCloseIcon)
+        if (!_openState.Value || !UseCloseIcon)
         {
             _startIcon = StartIcon;
             _endIcon = EndIcon;
@@ -190,10 +197,7 @@ public partial class MudFabMenu : MudFab
 
     private async Task ToggleOpenAsync(bool? open = null)
     {
-        Open = open ?? !Open;
-        await OpenChanged.InvokeAsync(Open);
-
-        OnOpenChanged(new ParameterChangedEventArgs<bool>(nameof(Open), !Open, Open));
+        await _openState.SetValueAsync(open ?? !_openState.Value);
     }
 
     private async Task OnMenuButtonClickAsync(MouseEventArgs args)

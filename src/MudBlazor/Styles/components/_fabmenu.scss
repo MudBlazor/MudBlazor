@@ -1,6 +1,13 @@
 .mud-fab-menu-container {
   position: relative;
 
+  &.fixed {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 2000;
+  }
+
   .mud-fab-menu {
     position: absolute;
     bottom: 0;
