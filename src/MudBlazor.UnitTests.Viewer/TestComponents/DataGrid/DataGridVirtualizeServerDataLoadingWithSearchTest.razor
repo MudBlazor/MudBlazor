@@ -191,7 +191,7 @@
         };
         var result = await ServerDataFunc(state, request.CancellationToken);
 
-        return new ItemsProviderResult<Model>(result.Items, result.TotalItems);
+        return new ItemsProviderResult<Model>(result.Items, (int)result.TotalItems);
     }
 
     public record Model(int Index, string Column2);

@@ -78,6 +78,6 @@ namespace MudBlazor
         /// <remarks>
         /// This property is used to determine the number of pages of data.
         /// </remarks>
-        public int TotalItems { get; set; }
+        public long TotalItems { get; set; }
     }
 }

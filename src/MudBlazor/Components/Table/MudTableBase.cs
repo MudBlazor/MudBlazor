@@ -581,7 +581,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public int TotalItems { get; set; }
+        public long TotalItems { get; set; }
 
         /// <summary>
         /// The CSS classes applied to each row.
@@ -724,7 +724,7 @@ namespace MudBlazor
         /// Gets the number of items after applying filters.
         /// </summary>
         /// <returns>The number of filtered items.</returns>
-        public abstract int GetFilteredItemsCount();
+        public abstract long GetFilteredItemsCount();
 
         /// <summary>
         /// Changes the currently selected item.

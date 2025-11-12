@@ -1207,7 +1207,7 @@ namespace MudBlazor
                     if (filteredItemCount == 0)
                         lastPageNo = 0;
                     else
-                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                        lastPageNo = (int)((filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0));
                     CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
                 }
 
@@ -1829,7 +1829,7 @@ namespace MudBlazor
         /// <returns>
         /// The number of items remaining after applying filters.  When <see cref="ServerData"/> is in use, the <see cref="GridData{T}.TotalItems"/> value is returned.
         /// </returns>
-        public int GetFilteredItemsCount()
+        public long GetFilteredItemsCount()
         {
             if (HasServerData)
                 return _serverData.TotalItems;
@@ -2009,7 +2009,7 @@ namespace MudBlazor
 
                 return new ItemsProviderResult<IndexBag<T>>(
                     _serverData.Items.Select((item, index) => new IndexBag<T>(request.StartIndex + index, item)),
-                    _serverData.TotalItems);
+                    (int)_serverData.TotalItems);
             };
         }
 

@@ -521,7 +521,7 @@ namespace MudBlazor
                     if (filteredItemCount == 0)
                         lastPageNo = 0;
                     else
-                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                        lastPageNo = (int)((filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0));
                     CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
                 }
 
@@ -555,7 +555,7 @@ namespace MudBlazor
         /// Gets the number of filtered items.
         /// </summary>
         /// <returns>When <see cref="ServerData"/> is set, the total number of items, otherwise the number of <see cref="FilteredItems"/>.</returns>
-        public override int GetFilteredItemsCount()
+        public override long GetFilteredItemsCount()
         {
             if (HasServerData)
                 return _serverData.TotalItems;

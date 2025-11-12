@@ -56,6 +56,6 @@ namespace MudBlazor
         /// <remarks>
         /// This number is used to calculate the total number of pages in the table.
         /// </remarks>
-        public int TotalItems { get; set; }
+        public long TotalItems { get; set; }
     }
 }
