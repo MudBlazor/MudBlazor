@@ -8,6 +8,9 @@ using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.Services.UserPreferences;
 using MudBlazor.Examples.Data;
 using MudBlazor.Services;
+#if DEBUG
+using AspNetCore.SassCompiler;
+#endif
 
 namespace MudBlazor.Docs.Extensions
 {
@@ -47,6 +50,12 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
+
+#if DEBUG
+            // Enable the Sass compiler watcher in debug mode so local SCSS changes are picked up.
+            builder.Services.AddSassCompiler();
+#endif
+
             services.AddGoogleAnalytics("G-PRYNCB61NV");
             services.AddCookieConsent(options =>
             {
