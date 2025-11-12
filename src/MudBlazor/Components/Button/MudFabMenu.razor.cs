@@ -47,13 +47,13 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Multiple classes must be separated by spaces.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    [Parameter, Category(CategoryTypes.Button.Appearance)]
     public string? ButtonClass { get; set; }
 
     /// <summary>
     /// The CSS style applied to the menu button.
     /// </summary>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    [Parameter, Category(CategoryTypes.Button.Appearance)]
     public string? ButtonStyle { get; set; }
 
     /// <summary>
@@ -62,13 +62,13 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Multiple classes must be separated by spaces.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    [Parameter, Category(CategoryTypes.Button.Appearance)]
     public string? MenuClass { get; set; }
 
     /// <summary>
     /// The CSS style applied to the  item list.
     /// </summary>
-    [Parameter, Category(CategoryTypes.Button.Appearance)] 
+    [Parameter, Category(CategoryTypes.Button.Appearance)]
     public string? MenuStyle { get; set; }
 
     /// <summary>
@@ -77,7 +77,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Note that you can add any component you like as long as it has the <c>mud-fab-menu-item</c> class.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] 
+    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)]
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
@@ -86,13 +86,13 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// When this property changes, <see cref="OpenChanged"/> occurs.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] 
+    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)]
     public bool Open { get; set; }
 
     /// <summary>
     /// Occurs when <see cref="Open"/> has changed.
     /// </summary>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)] 
+    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)]
     public EventCallback<bool> OpenChanged { get; set; }
 
     /// <summary>
@@ -101,7 +101,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    [Parameter, Category(CategoryTypes.Button.Behavior)]
     public bool Fixed { get; set; }
 
     /// <summary>
@@ -110,7 +110,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    [Parameter, Category(CategoryTypes.Button.Behavior)]
     public bool UseCloseIcon { get; set; } = true;
 
     /// <summary>
@@ -119,7 +119,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    [Parameter, Category(CategoryTypes.Button.Behavior)]
     public bool DampenItemColors { get; set; } = true;
 
     /// <summary>
@@ -128,7 +128,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>AlignItems.Center</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Button.Behavior)] 
+    [Parameter, Category(CategoryTypes.Button.Behavior)]
     public AlignItems AlignItems { get; set; } = AlignItems.Center;
 
     /// <summary>
@@ -137,7 +137,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.Behavior)] 
+    [Parameter, Category(CategoryTypes.Menu.Behavior)]
     public bool OpenOnMouseHover { get; set; } = true;
 
     /// <summary>
@@ -146,9 +146,9 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.Behavior)] 
+    [Parameter, Category(CategoryTypes.Menu.Behavior)]
     public bool CloseOnMenuItemClicked { get; set; } = true;
-    
+
     public MudFabMenu()
     {
         using var registerScope = CreateRegisterScope();
