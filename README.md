@@ -109,7 +109,7 @@ For more details, see the [complete installation guide](https://mudblazor.com/ge
 
 ## 🤝 Contributing
 
-Contributions from the community are what makes MudBlazor successful.  
+Contributions from the community are what make MudBlazor successful.  
 
 💬 Feel free to chat with us [on Discord](https://discord.gg/mudblazor) to get feedback before diving in.  
 📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.  
