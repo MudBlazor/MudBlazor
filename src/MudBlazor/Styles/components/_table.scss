@@ -532,7 +532,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
 @mixin table-display-smalldevices ($breakpoint) {
   .mud-#{$breakpoint}table {
-    .mud-table-root .mud-table-head,
+    .mud-table-root .mud-table-head .mud-table-row,
     .mud-table-root .mud-table-foot {
       display: none;
     }
