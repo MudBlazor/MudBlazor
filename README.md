@@ -40,13 +40,13 @@ Install Package:
 dotnet add package MudBlazor
 ```
 
-`_Imports.razor`:
+Add to `_Imports.razor`:
 
 ```razor
 @using MudBlazor
 ```
 
-`MainLayout.razor` or `App.razor`:
+Add to `MainLayout.razor` or `App.razor`:
 
 ```razor
 <MudThemeProvider/>
@@ -55,20 +55,20 @@ dotnet add package MudBlazor
 <MudSnackbarProvider/>
 ```
 
-HTML `head` section (`index.html`/`_Layout.cshtml`/`_Host.cshtml`/`App.razor`):
+Add to HTML `head` section (`index.html`/`_Layout.cshtml`/`_Host.cshtml`/`App.razor`):
 
 ```razor
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 ```
 
-The default Blazor script at the end of the `body`:
+Add to the default Blazor script at the end of the HTML `body` section:
 
 ```razor
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 ```
 
-`Program.cs`:
+Add to `Program.cs`:
 
 ```c#
 using MudBlazor.Services;
@@ -105,11 +105,11 @@ builder.Services.AddMudServices();
 }
 ```
 
-For more details, see the [complete installation guide](https://mudblazor.com/getting-started/installation) on our website.
+For more details, see the [full installation guide](https://mudblazor.com/getting-started/installation).
 
 ## 🤝 Contributing
 
-Contributions from the community are what makes MudBlazor successful.  
+Contributions from the community are what make MudBlazor successful.  
 
 💬 Feel free to chat with us [on Discord](https://discord.gg/mudblazor) to get feedback before diving in.  
 📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.  
