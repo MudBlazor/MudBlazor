@@ -1,0 +1,26 @@
+.mud-split-panel {
+  display: flex;
+
+  .child-panel {
+    overflow: hidden;
+    background-color: var(--mud-palette-surface);
+    border-radius: var(--mud-default-borderradius);
+    padding: 16px;
+    height: 100%;
+    width: 100%;
+
+    &.transparent {
+      background: transparent;
+    }
+  }
+
+  .divider {
+    min-height: 4px;
+    min-width: 4px;
+    cursor: e-resize;
+
+    &.horizontal {
+      cursor: n-resize;
+    }
+  }
+}

@@ -80,6 +80,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
+            .AddItem("Split panel", typeof(MudSplitPanel))
 
             //GROUPS
 
@@ -120,7 +121,7 @@ namespace MudBlazor.Docs.Services
             .AddNavGroup("Charts", false, new DocsComponents()
                 .AddItem("Donut Chart", typeof(Donut))
                 .AddItem("Line Chart", typeof(Line), typeof(Legend))
-                .AddItem("Sankey Chart", typeof(Sankey), typeof(Legend))
+                .AddItem("Sankey Chart", typeof(Sankey), typeof(SankeyChartNode), typeof(SankeyChartEdge))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
                 .AddItem("Heat Map Chart", typeof(HeatMap))
