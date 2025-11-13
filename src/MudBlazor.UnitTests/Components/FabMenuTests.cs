@@ -42,7 +42,7 @@ public class FabMenuTests : BunitTest
         compNoHover.FindAll(".mud-fab-menu-button")[0].TouchStart();
         compNoHover.FindAll(".mud-fab-menu-item")[0].Click();
         compNoHover.WaitForAssertion(() => { compNoHover.FindAll(".mud-fab-menu.open").Count.Should().Be(0); });
-        
+
         var compHover = Context.RenderComponent<FabMenuTest>(ComponentParameter.CreateParameter("OpenOnMouseHover", true));
 
         compHover.FindAll(".mud-fab-menu-button")[0].TouchStart();
@@ -64,10 +64,10 @@ public class FabMenuTests : BunitTest
 
         comp.FindAll(".mud-fab-menu-item")[0].Click();
         comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.open").Count.Should().Be(0); });
-        
+
         comp.FindAll(".mud-fab-menu-container")[0].TriggerEvent("onmouseenter", new MouseEventArgs());
         comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.open").Count.Should().Be(1); });
-        
+
         comp.FindAll(".mud-fab-menu-container")[0].TriggerEvent("onmouseleave", new MouseEventArgs());
         comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.open").Count.Should().Be(0); });
     }
