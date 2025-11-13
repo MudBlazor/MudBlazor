@@ -1076,7 +1076,6 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
             if (_items?.Length > 0)
                 _items = [];
-            
             _open = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
