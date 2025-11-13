@@ -5,7 +5,7 @@
     position: fixed;
     right: 16px;
     bottom: 16px;
-    z-index: 2000;
+    z-index: calc(var(--mud-zindex-appbar) + 1);
   }
 
   .mud-fab-menu {
@@ -20,6 +20,18 @@
     z-index: calc(var(--mud-zindex-appbar) - 2);
     width: 100%;
     pointer-events: none;
+
+    &.padding-bottom-small {
+      padding-bottom: 48px;
+    }
+
+    &.padding-bottom-medium {
+      padding-bottom: 52px;
+    }
+
+    &.padding-bottom-large {
+      padding-bottom: 60px;
+    }
 
     &.dampen {
       .mud-fab-menu-item {

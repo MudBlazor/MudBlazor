@@ -1,13 +1,14 @@
 ﻿@namespace MudBlazor
 @inherits MudFab
 
-<div class="@Classname" 
-     style="@Style" 
-     @onmouseenter="@(() => OnMouseEnterLeaveAsync(true))" 
-     @onmouseleave="@(() => OnMouseEnterLeaveAsync(false))" 
+<div class="@Classname"
+     style="@Style"
+     @onmouseenter="@(() => OnMouseEnterLeaveAsync(true))"
+     @onmouseleave="@(() => OnMouseEnterLeaveAsync(false))"
      @ontouchstart="@OnTouchStart"
-     @attributes="UserAttributes">
-    <div class="@ClassnameMenu" style="@StylenameMenu" @onclick="@OnMenuClickAsync">
+     @attributes="UserAttributes"
+     role="menu">
+    <div class="@ClassnameMenu" style="@MenuStyle" @onclick="@OnMenuClickAsync">
         <CascadingValue Value="@this">
             @ChildContent
         </CascadingValue>

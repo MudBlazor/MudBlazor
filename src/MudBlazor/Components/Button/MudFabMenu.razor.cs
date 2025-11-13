@@ -22,6 +22,7 @@ public partial class MudFabMenu : MudFab
         .AddClass("open", _openState.Value)
         .AddClass("dampen", DampenItemColors)
         .AddClass($"align-{AlignItems.ToDescriptionString()}")
+        .AddClass($"padding-bottom-{Size.ToString().ToLower()}", !string.IsNullOrEmpty(Label))
         .AddClass(MenuClass)
         .Build();
 
@@ -30,15 +31,9 @@ public partial class MudFabMenu : MudFab
         .AddClass(ButtonClass)
         .Build();
 
-    private string StylenameMenu => new StyleBuilder()
-        .AddStyle($"padding-bottom: {_menuPaddingBottomCorrection}px;", _menuPaddingBottomCorrection != 0)
-        .AddStyle(MenuStyle)
-        .Build();
-
     private readonly ParameterState<bool> _openState;
     private string? _startIcon;
     private string? _endIcon;
-    private int _menuPaddingBottomCorrection;
     private bool _lastInteractionWasTouch;
 
     /// <summary>
@@ -155,7 +150,7 @@ public partial class MudFabMenu : MudFab
         _openState = registerScope.RegisterParameter<bool>(nameof(Open))
             .WithParameter(() => Open)
             .WithEventCallback(() => OpenChanged)
-            .WithChangeHandler(OnOpenChanged);
+            .WithChangeHandler(HandleOpenChanged);
     }
 
     protected override void OnParametersSet()
@@ -167,22 +162,11 @@ public partial class MudFabMenu : MudFab
             _startIcon = StartIcon;
             _endIcon = EndIcon;
         }
-
-        if (!string.IsNullOrEmpty(Label))
-        {
-            _menuPaddingBottomCorrection = Size switch
-            {
-                Size.Large => 60,
-                Size.Medium => 52,
-                Size.Small => 48,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
     }
 
-    private void OnOpenChanged(ParameterChangedEventArgs<bool> args) => OnOpenChanged(args.Value);
+    private void HandleOpenChanged(ParameterChangedEventArgs<bool> args) => HandleOpenChanged(args.Value);
 
-    private void OnOpenChanged(bool open)
+    private void HandleOpenChanged(bool open)
     {
         if (open && UseCloseIcon)
         {
@@ -197,28 +181,28 @@ public partial class MudFabMenu : MudFab
         }
     }
 
-    private async Task ToggleOpenAsync(bool? open = null)
+    private async Task ToggleMenuAsync(bool? open = null)
     {
         var isOpen = open ?? !_openState.Value;
         await _openState.SetValueAsync(isOpen);
-        OnOpenChanged(isOpen);
+        HandleOpenChanged(isOpen);
     }
 
     private async Task OnMenuButtonClickAsync(MouseEventArgs args)
     {
-        await ToggleOpenAsync();
+        await ToggleMenuAsync();
         await OnClickHandler(args);
     }
 
     private async Task OnMouseEnterLeaveAsync(bool enter)
     {
-        if (OpenOnMouseHover && !_lastInteractionWasTouch) await ToggleOpenAsync(enter);
+        if (OpenOnMouseHover && !_lastInteractionWasTouch) await ToggleMenuAsync(enter);
         _lastInteractionWasTouch = false;
     }
 
     private async Task OnMenuClickAsync()
     {
-        if (CloseOnMenuItemClicked) await ToggleOpenAsync(false);
+        if (CloseOnMenuItemClicked) await ToggleMenuAsync(false);
     }
 
     private void OnTouchStart()
