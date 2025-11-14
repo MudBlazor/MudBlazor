@@ -13,64 +13,121 @@ public partial class MudSplitPanel : MudComponentBase
 {
     private string Classname => new CssBuilder("mud-split-panel")
         .AddClass("flex-column", Horizontal)
+        .AddClass("absolute", UseAsOverlay)
         .AddClass(Class)
         .Build();
 
-    private string ClassnamePanel => new CssBuilder("child-panel")
-        .AddClass("transparent", TransparentBackground)
-        .AddClass(ClassPanel)
+    private string ClassnameFirstPanel => new CssBuilder("child-panel")
+        .AddClass("transparent", TransparentBackground || FirstPanel == null)
+        .AddClass(ClassFirstPanel)
+        .Build();
+
+    private string ClassnameSecondPanel => new CssBuilder("child-panel")
+        .AddClass("transparent", TransparentBackground || SecondPanel == null)
+        .AddClass(ClassSecondPanel)
         .Build();
 
     private string ClassnameDivider => new CssBuilder("divider")
         .AddClass("horizontal", Horizontal)
         .AddClass(ClassDivider)
         .Build();
-    
+
     /// <summary>
-    /// 
+    /// The CSS styles applied to the first panel.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
-    public string? StylePanel { get; set; }
-    
+    public string? StyleFirstPanel { get; set; }
+
     /// <summary>
-    /// 
+    /// The CSS styles applied to the second panel.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
-    public string? ClassPanel { get; set; }
-    
+    public string? StyleSecondPanel { get; set; }
+
     /// <summary>
-    /// 
+    /// The CSS classes applied to the first panel.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public string? ClassFirstPanel { get; set; }
+
+    /// <summary>
+    /// The CSS classes applied to the second panel.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public string? ClassSecondPanel { get; set; }
+
+    /// <summary>
+    /// The CSS styles applied to the divider.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     public string? StyleDivider { get; set; }
-    
+
     /// <summary>
-    /// 
+    /// The CSS classes applied to the divider.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     public string? ClassDivider { get; set; }
 
     /// <summary>
-    /// 
+    /// Whether the panels should be divided horizontally instead of vertically. 
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     public bool Horizontal { get; set; }
-    
+
     /// <summary>
-    /// 
+    /// Removes the background color of both panels if set to true.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     public bool TransparentBackground { get; set; }
 
     /// <summary>
-    /// 
+    /// Positions this panel absolute and above other content.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    public bool UseAsOverlay { get; set; }
+
+    /// <summary>
+    /// The contents of the first i.e. left/upper panel.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     public RenderFragment? FirstPanel { get; set; }
 
     /// <summary>
-    /// 
+    /// The contents of the second i.e. right/lower panel.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     public RenderFragment? SecondPanel { get; set; }
 
@@ -86,6 +143,7 @@ public partial class MudSplitPanel : MudComponentBase
 
         if (firstRender)
         {
+            await Task.Delay(100); // TODO: Fix
             _isRendered = true;
             await JsRuntime.InvokeVoidAsync("mudSplitPanel.startListening", ContainerId, Horizontal);
         }

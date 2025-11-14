@@ -4,7 +4,6 @@
     // noinspection JSUnusedGlobalSymbols
     startListening(containerId, horizontal) {
         this.container = document.getElementById(containerId);
-        this.horizontal = horizontal;
 
         if (!this.container) {
             console.warn(`MudSplitPanel: Container '${containerId}' not found.`);
@@ -21,6 +20,7 @@
         this.divider = children[1];
         this.secondPanel = children[2];
 
+        this.setHorizontal(horizontal);
         this.isDragging = false;
         this.startPos = 0;
         this.startFirstSize = 0;
@@ -36,10 +36,14 @@
     // noinspection JSUnusedGlobalSymbols
     setHorizontal(horizontal) {
         this.horizontal = horizontal;
-        this.firstPanel.style.height = "100%";
-        this.secondPanel.style.height = "100%";
-        this.firstPanel.style.width = "100%";
-        this.secondPanel.style.width = "100%";
+
+        if (horizontal) {
+            this.firstPanel.style.width = "100%";
+            this.secondPanel.style.width = "100%";
+        } else {
+            this.firstPanel.style.height = "100%";
+            this.secondPanel.style.height = "100%";
+        }
     }
 
     _onMouseDown(e) {

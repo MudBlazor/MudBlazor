@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSplitPanel Class="mud-width-full mud-height-full" TransparentBackground="true">
+    <FirstPanel>
+        <MudSplitPanel StyleFirstPanel="@PANEL_STYLE" StyleSecondPanel="@PANEL_STYLE">
+            <FirstPanel>
+                <MudSplitPanel StyleFirstPanel="@PANEL_STYLE" StyleSecondPanel="@PANEL_STYLE" Horizontal="true">
+                    <FirstPanel>
+                        <MudText>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus consectetur diam vel semper lacinia. Proin dictum lobortis nibh a laoreet. Nullam ac iaculis nibh. Nunc
+                            bibendum lorem non dictum consectetur. Sed est orci, cursus consectetur dui ac, commodo interdum urna. Suspendisse consequat vulputate molestie.
+                        </MudText>
+                    </FirstPanel>
+                    <SecondPanel>
+                        <MudText>
+                            Quisque a diam ac nunc tristique viverra faucibus nec ipsum. Vivamus rutrum, libero vel semper ornare, justo magna egestas leo, eu commodo tellus leo ac purus. Morbi augue
+                            orci, tristique a ultrices vitae, faucibus id leo. Nam maximus erat elit, vel congue erat vestibulum ac.
+                        </MudText>
+                    </SecondPanel>
+                </MudSplitPanel>
+            </FirstPanel>
+            <SecondPanel>
+                <MudText>
+                    Vivamus condimentum facilisis enim, id fermentum quam pharetra aliquet. Mauris nunc nibh, dictum non vulputate gravida, lobortis eget nisi. In commodo efficitur eros in elementum.
+                    Donec nec venenatis ex, ac congue arcu. In blandit nulla vitae pellentesque fermentum. Mauris tincidunt, urna at vulputate commodo, ligula mi pellentesque dolor, quis commodo urna
+                    mauris non dui. Pellentesque in magna dignissim, dapibus risus in, mattis dui.
+                </MudText>
+            </SecondPanel>
+        </MudSplitPanel>
+    </FirstPanel>
+    <SecondPanel>
+        <MudSplitPanel StyleFirstPanel="@PANEL_STYLE" StyleSecondPanel="@PANEL_STYLE">
+            <FirstPanel>
+                <MudText>
+                    Nulla facilisi. Curabitur ut mauris auctor, euismod mi non, dignissim lorem. Nullam a rutrum magna. Vivamus rhoncus consectetur mi ut ultrices. Cras neque felis, fringilla suscipit
+                    turpis sed, pretium porta est. Pellentesque molestie, ligula et condimentum congue, dolor sem accumsan turpis, quis posuere leo diam eu erat. Sed id lorem a diam volutpat mollis
+                    sed eget velit. In blandit nisl quis purus viverra, a elementum elit eleifend.
+                </MudText>
+            </FirstPanel>
+            <SecondPanel>
+                <MudText>
+                    Quisque quis facilisis risus, id volutpat mi. Duis scelerisque orci quis pharetra interdum. Suspendisse gravida quam non malesuada aliquet.
+                </MudText>
+            </SecondPanel>
+        </MudSplitPanel>
+    </SecondPanel>
+</MudSplitPanel>
+
+@code {
+    private const string PANEL_STYLE = "background-color: var(--mud-palette-background-gray);";
+}

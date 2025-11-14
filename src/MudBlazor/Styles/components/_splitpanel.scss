@@ -1,13 +1,21 @@
 .mud-split-panel {
   display: flex;
 
+  &.absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+  }
+
   .child-panel {
+    flex: 1 1 auto;
     overflow: hidden;
     background-color: var(--mud-palette-surface);
     border-radius: var(--mud-default-borderradius);
     padding: 16px;
-    height: 100%;
-    width: 100%;
 
     &.transparent {
       background: transparent;
@@ -17,7 +25,7 @@
   .divider {
     min-height: 4px;
     min-width: 4px;
-    cursor: e-resize;
+    cursor: ew-resize;
 
     &.horizontal {
       cursor: n-resize;
