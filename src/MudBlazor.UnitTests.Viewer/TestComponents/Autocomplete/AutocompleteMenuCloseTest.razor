@@ -1,0 +1,61 @@
+@using System.Threading
+@using MudBlazor
+
+<MudPopoverProvider />
+
+<MudMenu Label="Open Menu">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" id="menu-open">OPEN MENU</MudButton>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem AutoClose="false">
+            <MudAutocomplete Class="autocomplete" OpenOnFocus="true" Label="Autocomplete" @bind-Value="_value" SearchFunc="Search" />
+        </MudMenuItem>
+        <MudMenuItem AutoClose="false">
+            <MudSelect T="int" Label="Select">
+                <MudSelectItem Value="1">
+                    one
+                </MudSelectItem>
+                <MudSelectItem Value="2">
+                    two
+                </MudSelectItem>
+                <MudSelectItem Value="3">
+                    three
+                </MudSelectItem>
+            </MudSelect>
+        </MudMenuItem>
+        <MudMenuItem>Sign out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
+@code {
+    public static string __description__ = "Opening the menu, opening the autocomplete, closing the autocomplete, ** Trying to open it again should open autocomplete and not close the menu **";
+    
+    string? _value;
+    private string[] _states =
+    {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+        "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+        "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+        "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+        "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+        "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+        "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+        "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+        "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    };
+
+    private async Task<IEnumerable<string?>> Search(string? value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an API.
+        await Task.Delay(5, token);
+
+        // If text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _states;
+
+        // Filter the states
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

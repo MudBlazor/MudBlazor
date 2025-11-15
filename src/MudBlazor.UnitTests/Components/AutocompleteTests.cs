@@ -2235,6 +2235,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Autocomplete_OpenTwiceInMenu()
+        {
+            var comp = Context.RenderComponent<AutocompleteMenuCloseTest>();
+            // Open the menu
+            comp.Find("#menu-open").Click();
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Menu should be open");
+                // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("1302", "Overlay should be present with 1302 as z-index");
+            });
+
+
+            // Focus on the autocomplete, which opens the autocomplete popover
+            comp.Find(".autocomplete input").Focus();
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Both menu & autocomplete should be open");
+                // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1303");
+            });
+
+
+            // Click on the backdrop, closes the autocomplete
+            comp.Find(".mud-overlay").Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Only menu should be open"));
+            // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1302");
+
+            // Click the autocomplete again, this will actually work even before the fix but clicking in this spot is will close the menu before fix.
+            comp.Find(".autocomplete input").Focus();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Both menu & autocomplete should be opened again"));
+            // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1303");
+        }
+
+        [Test]
         public async Task Autocomplete_OpenChanged_OpenMenuAsync()
         {
             var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
