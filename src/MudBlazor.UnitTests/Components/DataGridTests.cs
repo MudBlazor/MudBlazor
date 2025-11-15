@@ -5581,5 +5581,97 @@ namespace MudBlazor.UnitTests.Components
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
         }
+
+        [Test]
+        public async Task DataGridColumnOrderTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnOrderTest>();
+            var grid = comp.FindComponent<MudDataGrid<DataGridColumnOrderTest.Model>>().Instance;
+
+            // Test default order (no Order set)
+            var columns = grid.RenderedColumns.ToList();
+            columns[0].Tag.Should().Be("hierarchy-column");
+            columns[1].Tag.Should().Be("select-column");
+            columns[2].Title.Should().Be("Name");
+            columns[3].Title.Should().Be("Position");
+            columns[4].Title.Should().Be("Number");
+
+            // Test overriding special column order
+            await comp.InvokeAsync(() =>
+            {
+                comp.SetParametersAndRender(parameters =>
+                {
+                    parameters.Add(p => p.SelectColumnOrder, 3);
+                    parameters.Add(p => p.HierarchyColumnOrder, 4);
+                });
+            });
+            columns = grid.RenderedColumns.ToList();
+            columns[0].Title.Should().Be("Name");
+            columns[1].Title.Should().Be("Position");
+            columns[2].Title.Should().Be("Number");
+            columns[3].Tag.Should().Be("select-column");
+            columns[4].Tag.Should().Be("hierarchy-column");
+
+            // Test placing a regular column first
+            await comp.InvokeAsync(() =>
+            {
+                comp.SetParametersAndRender(parameters =>
+                {
+                    parameters.Add(p => p.PositionColumnOrder, -1);
+                    parameters.Add(p => p.SelectColumnOrder, (int?)null);
+                    parameters.Add(p => p.HierarchyColumnOrder, (int?)null);
+                });
+            });
+            columns = grid.RenderedColumns.ToList();
+            columns[0].Title.Should().Be("Position");
+            columns[1].Tag.Should().Be("hierarchy-column");
+            columns[2].Tag.Should().Be("select-column");
+            columns[3].Title.Should().Be("Name");
+            columns[4].Title.Should().Be("Number");
+        }
+
+        [Test]
+        public async Task DataGridColumnDragAndDropNullsOrderTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnDragAndDropNullsOrderTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnDragAndDropNullsOrderTest.Model>>();
+            var grid = dataGrid.Instance;
+
+            // Verify initial Order values
+            var nameColumn = grid.RenderedColumns.First(c => c.Title == "Name");
+            var ageColumn = grid.RenderedColumns.First(c => c.Title == "Age");
+            var positionColumn = grid.RenderedColumns.First(c => c.Title == "Position");
+
+            nameColumn.Order.Should().Be(1, "Name column should start with Order=1");
+            ageColumn.Order.Should().Be(2, "Age column should start with Order=2");
+            positionColumn.Order.Should().BeNull("Position column should start with no Order");
+
+            // Verify initial order in UI
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Position");
+
+            // Perform drag-and-drop: drag Name to Age's position
+            var dropZones = dataGrid.FindAll(".mud-drop-zone");
+            var nameDropItem = dropZones[0].Children[0];
+            var ageDropItem = dropZones[1].Children[0];
+
+            await nameDropItem.DragStartAsync(new DragEventArgs());
+            await ageDropItem.DropAsync(new DragEventArgs());
+
+            // Verify columns swapped in UI
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues[0].InnerHtml.Should().Be("Age");
+            newHeaderValues[1].InnerHtml.Should().Be("Name");
+            newHeaderValues[2].InnerHtml.Should().Be("Position");
+
+            // Verify Order values were nulled for dragged columns
+            nameColumn.Order.Should().BeNull("Name column Order should be null after drag-and-drop");
+            ageColumn.Order.Should().BeNull("Age column Order should be null after drag-and-drop");
+
+            // Verify Position column (not involved) keeps its null Order
+            positionColumn.Order.Should().BeNull("Position column Order should remain null");
+        }
     }
 }

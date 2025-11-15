@@ -24,6 +24,7 @@ namespace MudBlazor
         internal ParameterState<bool> GroupingState { get; }
         internal ParameterState<bool> _groupExpandedState;
         internal ParameterState<int> _groupByOrderState;
+        internal ParameterState<int?> OrderState { get; }
 
         /// <summary>
         /// The data grid which owns this column.
@@ -361,6 +362,22 @@ namespace MudBlazor
         /// </summary>
         public string Identifier { get; set; }
 
+        /// <summary>
+        /// Specifies the display order of this column within the DataGrid.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. When set, determines the column's relative position during rendering.
+        /// Lower values appear earlier. Columns without this value default to priority 2; <c>SelectColumn</c> and <c>HierarchyColumn</c> default to priorities 1 and 0 respectively, unless overridden.
+        /// </remarks>
+        [Parameter]
+        public int? Order { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="Order"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int?> OrderChanged { get; set; }
+
 
         private CultureInfo _culture;
 
@@ -591,6 +608,10 @@ namespace MudBlazor
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
+            OrderState = registerScope.RegisterParameter<int?>(nameof(Order))
+                .WithParameter(() => Order)
+                .WithEventCallback(() => OrderChanged)
+                .WithChangeHandler(OnOrderChangedAsync);
         }
 
         private void OnGroupingParameterChangedAsync() => DataGrid?.GroupItems();
@@ -598,6 +619,13 @@ namespace MudBlazor
         private void OnGroupByOrderChangedAsync() => DataGrid?.GroupItems();
 
         private void OnGroupExpandedChangedAsync() => DataGrid?.GroupItems();
+
+        private void OnOrderChangedAsync()
+        {
+            DataGrid?.SortColumnsByOrder();
+            DataGrid?.DropContainerHasChanged();
+            ((IMudStateHasChanged)DataGrid)?.StateHasChanged();
+        }
 
         protected override void OnInitialized()
         {

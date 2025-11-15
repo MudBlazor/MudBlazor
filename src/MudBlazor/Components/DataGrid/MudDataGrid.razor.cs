@@ -234,6 +234,10 @@ namespace MudBlazor
                 dragAndDropSource.HeaderCell.Width = dest;
                 dragAndDropDestination.HeaderCell.Width = src;
 
+                // Null both Order values on drag-and-drop
+                dragAndDropSource.OrderState.SetValueAsync(null).CatchAndLog();
+                dragAndDropDestination.OrderState.SetValueAsync(null).CatchAndLog();
+
                 StateHasChanged();
             }
             return Task.CompletedTask;
@@ -243,6 +247,34 @@ namespace MudBlazor
         /// The columns currently being displayed.
         /// </summary>
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
+
+        /// <summary>
+        /// Sorts columns by their <see cref="Column{T}.Order"/> parameter when at least one column has an explicit Order value.
+        /// </summary>
+        /// <remarks>
+        /// Columns without an explicit Order use fallback priorities: hierarchy=0, select=1, others=2. Lower values appear earlier.
+        /// </remarks>
+        internal void SortColumnsByOrder()
+        {
+            // Only sort if any column has an explicit Order set
+            if (RenderedColumns.Any(c => c.Order.HasValue))
+            {
+                var sorted = RenderedColumns
+                    .OrderBy(x =>
+                    {
+                        if (x.Order.HasValue)
+                            return x.Order.Value;
+
+                        // Default priorities: hierarchy=0, select=1, others=2
+                        return x.Tag?.ToString() == "hierarchy-column" ? 0 :
+                            x.Tag?.ToString() == "select-column" ? 1 : 2;
+                    })
+                    .ToList();
+
+                RenderedColumns.Clear();
+                RenderedColumns.AddRange(sorted);
+            }
+        }
 
         internal T _editingItem;
 
@@ -284,6 +316,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public EventCallback<T> SelectedItemChanged { get; set; }
+
 
         /// <summary>
         /// Occurs when the <see cref="SelectedItems"/> have changed.
