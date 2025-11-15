@@ -19,10 +19,10 @@ public partial class MudFabMenu : MudFab
         .Build();
 
     private string ClassnameMenu => new CssBuilder("mud-fab-menu")
-        .AddClass("open", _openState.Value)
-        .AddClass("dampen", DampenItemColors)
+        .AddClass("mud-fab-menu-open", _openState.Value)
+        .AddClass("mud-fab-menu-dampen", DampenItemColors)
         .AddClass($"align-{AlignItems.ToDescriptionString()}")
-        .AddClass($"padding-bottom-{Size.ToString().ToLower()}", !string.IsNullOrEmpty(Label))
+        .AddClass($"mud-fab-menu-{Size.ToString().ToLower()}", !string.IsNullOrEmpty(Label))
         .AddClass(MenuClass)
         .Build();
 
@@ -100,7 +100,7 @@ public partial class MudFabMenu : MudFab
     public bool Fixed { get; set; }
 
     /// <summary>
-    /// Whether to replace the set icon with a close icon when the menu is open.
+    /// Replaces the set icon with a close icon when the menu is open.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.
@@ -127,7 +127,7 @@ public partial class MudFabMenu : MudFab
     public AlignItems AlignItems { get; set; } = AlignItems.Center;
 
     /// <summary>
-    /// Whether to open the menu on mouse hover.
+    /// Opens the menu on mouse hover.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.
@@ -136,7 +136,7 @@ public partial class MudFabMenu : MudFab
     public bool OpenOnMouseHover { get; set; } = true;
 
     /// <summary>
-    /// Whether to close the menu when a menu item is clicked.
+    /// Closes the menu when a menu item is clicked.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.
@@ -170,8 +170,15 @@ public partial class MudFabMenu : MudFab
     {
         if (open && UseCloseIcon)
         {
-            if (StartIcon != null) _startIcon = Icons.Material.Outlined.Add;
-            if (EndIcon != null) _endIcon = Icons.Material.Outlined.Add;
+            if (StartIcon != null)
+            {
+                _startIcon = Icons.Material.Outlined.Add;
+            }
+
+            if (EndIcon != null)
+            {
+                _endIcon = Icons.Material.Outlined.Add;
+            }
         }
 
         if (!open)
@@ -196,13 +203,20 @@ public partial class MudFabMenu : MudFab
 
     private async Task OnMouseEnterLeaveAsync(bool enter)
     {
-        if (OpenOnMouseHover && !_lastInteractionWasTouch) await ToggleMenuAsync(enter);
+        if (OpenOnMouseHover && !_lastInteractionWasTouch)
+        {
+            await ToggleMenuAsync(enter);
+        }
+
         _lastInteractionWasTouch = false;
     }
 
     private async Task OnMenuClickAsync()
     {
-        if (CloseOnMenuItemClicked) await ToggleMenuAsync(false);
+        if (CloseOnMenuItemClicked)
+        {
+            await ToggleMenuAsync(false);
+        }
     }
 
     private void OnTouchStart()

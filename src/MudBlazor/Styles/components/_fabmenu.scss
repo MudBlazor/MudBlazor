@@ -18,23 +18,23 @@
     flex-direction: column-reverse;
     align-items: center;
     gap: 12px;
-    z-index: calc(var(--mud-zindex-appbar) - 2);
+    z-index: calc(var(--mud-zindex-popover) - 2);
     width: 100%;
     pointer-events: none;
 
-    &.padding-bottom-small {
+    &.mud-fab-menu-small {
       padding-bottom: 48px;
     }
 
-    &.padding-bottom-medium {
+    &.mud-fab-menu-medium {
       padding-bottom: 52px;
     }
 
-    &.padding-bottom-large {
+    &.mud-fab-menu-large {
       padding-bottom: 60px;
     }
 
-    &.dampen {
+    &.mud-fab-menu-dampen {
       .mud-fab-menu-item {
         position: relative;
         z-index: 1;
@@ -56,7 +56,7 @@
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
-    &.open {
+    &.mud-fab-menu-open {
       pointer-events: auto;
 
       .mud-fab-menu-item {
@@ -82,7 +82,7 @@
 
   .mud-fab-menu-button {
     transition: transform 0.3s ease, opacity 0.3s ease;
-    z-index: calc(var(--mud-zindex-appbar) - 1);
+    z-index: calc(var(--mud-zindex-popover) - 1);
 
     &.open {
       transform: rotate(45deg);
