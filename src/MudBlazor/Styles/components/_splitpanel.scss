@@ -15,7 +15,6 @@
     overflow: hidden;
     background-color: var(--mud-palette-surface);
     border-radius: var(--mud-default-borderradius);
-    padding: 16px;
 
     &.transparent {
       background: transparent;
@@ -26,9 +25,19 @@
     min-height: 4px;
     min-width: 4px;
     cursor: ew-resize;
+    position: relative;
 
     &.horizontal {
       cursor: n-resize;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      left: -6px;
+      right: -6px;
     }
   }
 }

@@ -1,9 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack Class="mud-width-full mud-height-full" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 500px;">
-    <MudSwitch @bind-Value="_horizontal" Label="Horizontal" Color="Color.Primary" />
-    <MudSplitPanel Class="mud-width-full mud-height-full" Horizontal="_horizontal" StyleFirstPanel="background-color: var(--mud-palette-background-gray);" 
-                   StyleSecondPanel="background-color: var(--mud-palette-background-gray);">
+    <MudSwitch @bind-Value="_horizontal" Label="Horizontal" Color="Color.Primary"/>
+    <MudSplitPanel Class="mud-width-full mud-height-full" Horizontal="_horizontal" StyleFirstPanel="@BackgroundColor" StyleSecondPanel="@BackgroundColor">
         <FirstPanel>
             <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mud-width-full mud-height-full">
                 <MudText Typo="Typo.h6">First Panel</MudText>
@@ -18,5 +17,6 @@
 </MudStack>
 
 @code {
+    private const string BackgroundColor = "background-color: var(--mud-palette-background-gray);";
     private bool _horizontal;
 }

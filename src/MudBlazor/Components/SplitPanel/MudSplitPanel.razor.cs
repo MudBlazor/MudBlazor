@@ -19,11 +19,13 @@ public partial class MudSplitPanel : MudComponentBase
 
     private string ClassnameFirstPanel => new CssBuilder("child-panel")
         .AddClass("transparent", TransparentBackground || FirstPanel == null)
+        .AddClass($"mud-elevation-{Elevation}", Elevation != 0 && FirstPanel != null)
         .AddClass(ClassFirstPanel)
         .Build();
-
+    
     private string ClassnameSecondPanel => new CssBuilder("child-panel")
         .AddClass("transparent", TransparentBackground || SecondPanel == null)
+        .AddClass($"mud-elevation-{Elevation}", Elevation != 0 && SecondPanel != null)
         .AddClass(ClassSecondPanel)
         .Build();
 
@@ -106,12 +108,40 @@ public partial class MudSplitPanel : MudComponentBase
 
     /// <summary>
     /// Positions this panel absolute and above other content.
+    /// Note that you have to set <c>position: relative</c> on the parent element.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter]
     public bool UseAsOverlay { get; set; }
+
+    /// <summary>
+    /// The size of the drop shadow.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0</c> (no shadow). A higher number creates a heavier drop shadow.
+    /// </remarks>
+    [Parameter]
+    public int Elevation { get; set; }
+
+    /// <summary>
+    /// Sets the initial height or width of the first panel in pixels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public int? FirstPanelInitialSize { get; set; }
+
+    /// <summary>
+    /// The height and width in pixrl each panel can't be made smaller than.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>50</c>.
+    /// </remarks>
+    [Parameter]
+    public int MinPanelSize { get; set; } = 50;
 
     /// <summary>
     /// The contents of the first i.e. left/upper panel.
@@ -134,7 +164,7 @@ public partial class MudSplitPanel : MudComponentBase
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-    private static readonly string ContainerId = Guid.NewGuid().ToString();
+    private readonly string _containerId = Guid.NewGuid().ToString();
     private bool _isRendered;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -143,15 +173,14 @@ public partial class MudSplitPanel : MudComponentBase
 
         if (firstRender)
         {
-            await Task.Delay(100); // TODO: Fix
             _isRendered = true;
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel.startListening", ContainerId, Horizontal);
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, MinPanelSize, FirstPanelInitialSize);
         }
     }
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        if (_isRendered) await JsRuntime.InvokeVoidAsync("mudSplitPanel.setHorizontal", Horizontal);
+        if (_isRendered) await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, MinPanelSize);
     }
 }

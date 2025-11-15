@@ -1,26 +1,35 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSplitPanel Class="mud-height-full" StyleFirstPanel="background-color: var(--mud-palette-background-gray);" UseAsOverlay="true">
-    <FirstPanel>
-        <MudStack Class="mud-width-full mud-height-full">
-            <MudText Typo="Typo.h6">Toolbox</MudText>
-            <MudText>Label</MudText>
-            <MudText>Button</MudText>
-            <MudText>Switch</MudText>
-            <MudText>Progress</MudText>
-            <MudText>Rating</MudText>
-        </MudStack>
-    </FirstPanel>
-</MudSplitPanel>
-<MudStack>
-    <MudText Typo="Typo.h6">Content</MudText>
-    <MudText>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-        duo
-        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-        tempor
-        invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-        ipsum
-        dolor sit amet.
-    </MudText>
-</MudStack>
+<MudPaper Class="mud-width-full mud-height-full relative">
+    <MudSplitPanel Class="mud-height-full"
+                   StyleFirstPanel="background-color: var(--mud-palette-background-gray);"
+                   UseAsOverlay="true"
+                   Elevation="8"
+                   FirstPanelInitialSize="150"
+                   MinPanelSize="150">
+        <FirstPanel>
+            <div style="display: grid; grid-template-rows: auto 1fr;" class="mud-height-full pa-4">
+                <MudText Typo="Typo.h6">Toolbox</MudText>
+                <MudStack Row="true" Wrap="Wrap.Wrap" Class="overflow-y-auto mt-2" AlignItems="AlignItems.Start" Style="align-content: flex-start;">
+                    @for (var i = 0; i < 20; i++)
+                    {
+                        var iLocal = i;
+                        <MudText>Some item @iLocal</MudText>
+                    }
+                </MudStack>
+            </div>
+        </FirstPanel>
+    </MudSplitPanel>
+    <MudStack Style="margin-left: 150px;" Class="pa-4">
+        <MudText Typo="Typo.h6">Content</MudText>
+        <MudText>
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+            duo
+            dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+            tempor
+            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+            ipsum
+            dolor sit amet.
+        </MudText>
+    </MudStack>
+</MudPaper>
