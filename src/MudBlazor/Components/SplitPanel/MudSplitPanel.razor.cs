@@ -18,15 +18,29 @@ public partial class MudSplitPanel : MudComponentBase
         .Build();
 
     private string ClassnameFirstPanel => new CssBuilder("child-panel")
-        .AddClass("transparent", TransparentBackground || FirstPanel == null)
         .AddClass($"mud-elevation-{Elevation}", Elevation != 0 && FirstPanel != null)
+        .AddClass("transparent", FirstPanel == null)
+        .AddClass($"pa-{Padding}", Padding != 0)
+        .AddClass("rounded", Rounded)
         .AddClass(ClassFirstPanel)
         .Build();
-    
+
+    private string StylenameFirstPanel => new StyleBuilder()
+        .AddStyle($"background-color: {BackgroundColor}", FirstPanel != null)
+        .AddStyle(StyleFirstPanel)
+        .Build();
+
     private string ClassnameSecondPanel => new CssBuilder("child-panel")
-        .AddClass("transparent", TransparentBackground || SecondPanel == null)
         .AddClass($"mud-elevation-{Elevation}", Elevation != 0 && SecondPanel != null)
+        .AddClass("transparent", SecondPanel == null)
+        .AddClass($"pa-{Padding}", Padding != 0)
+        .AddClass("rounded", Rounded)
         .AddClass(ClassSecondPanel)
+        .Build();
+
+    private string StylenameSecondPanel => new StyleBuilder()
+        .AddStyle($"background-color: {BackgroundColor}", SecondPanel != null)
+        .AddStyle(StyleFirstPanel)
         .Build();
 
     private string ClassnameDivider => new CssBuilder("divider")
@@ -98,15 +112,6 @@ public partial class MudSplitPanel : MudComponentBase
     public bool Horizontal { get; set; }
 
     /// <summary>
-    /// Removes the background color of both panels if set to true.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
-    [Parameter]
-    public bool TransparentBackground { get; set; }
-
-    /// <summary>
     /// Positions this panel absolute and above other content.
     /// Note that you have to set <c>position: relative</c> on the parent element.
     /// </summary>
@@ -117,13 +122,24 @@ public partial class MudSplitPanel : MudComponentBase
     public bool UseAsOverlay { get; set; }
 
     /// <summary>
+    /// Whether to use rounded corners for the panels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    public bool Rounded { get; set; } = true;
+
+    /// <summary>
     /// The size of the drop shadow.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>0</c> (no shadow). A higher number creates a heavier drop shadow.
+    /// Defaults to <c>1</c>.
+    /// A higher number creates a heavier drop shadow.
+    /// Set to <c>0</c> to disable the drop shadow.
     /// </remarks>
     [Parameter]
-    public int Elevation { get; set; }
+    public int Elevation { get; set; } = 1;
 
     /// <summary>
     /// Sets the initial height or width of the first panel in pixels.
@@ -135,13 +151,31 @@ public partial class MudSplitPanel : MudComponentBase
     public int? FirstPanelInitialSize { get; set; }
 
     /// <summary>
-    /// The height and width in pixrl each panel can't be made smaller than.
+    /// The height and width in pixel each panel can't be made smaller than.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>50</c>.
     /// </remarks>
     [Parameter]
     public int MinPanelSize { get; set; } = 50;
+
+    /// <summary>
+    /// The padding of the pannels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0</c>.
+    /// </remarks>
+    [Parameter]
+    public int Padding { get; set; }
+
+    /// <summary>
+    /// The padding of the pannels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0</c>.
+    /// </remarks>
+    [Parameter]
+    public string? BackgroundColor { get; set; }
 
     /// <summary>
     /// The contents of the first i.e. left/upper panel.

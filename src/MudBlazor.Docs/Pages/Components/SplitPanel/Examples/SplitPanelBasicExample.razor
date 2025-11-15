@@ -1,8 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack Class="mud-width-full mud-height-full" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 500px;">
-    <MudSwitch @bind-Value="_horizontal" Label="Horizontal" Color="Color.Primary"/>
-    <MudSplitPanel Class="mud-width-full mud-height-full" Horizontal="_horizontal" StyleFirstPanel="@BackgroundColor" StyleSecondPanel="@BackgroundColor">
+    <MudSplitPanel Class="mud-width-full mud-height-full" BackgroundColor="var(--mud-palette-background-gray)" 
+                   Horizontal="_horizontal"
+                   Rounded="_rounded"
+                   Elevation="@(_elevation ? 1 : 0)">
         <FirstPanel>
             <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mud-width-full mud-height-full">
                 <MudText Typo="Typo.h6">First Panel</MudText>
@@ -14,9 +16,21 @@
             </MudStack>
         </SecondPanel>
     </MudSplitPanel>
+    <MudButtonGroup Variant="Variant.Filled">
+        <MudTooltip Text="Horizontal">
+            <MudToggleIconButton @bind-Toggled="_horizontal" Icon="@Icons.Material.Filled.HorizontalRule" ToggledColor="@Color.Primary"/>
+        </MudTooltip>
+        <MudTooltip Text="Rounded">
+            <MudToggleIconButton @bind-Toggled="_rounded" Icon="@Icons.Material.Filled.RoundedCorner" ToggledColor="@Color.Primary"/>
+        </MudTooltip>
+        <MudTooltip Text="Elevation">
+            <MudToggleIconButton @bind-Toggled="_elevation" Icon="@Icons.Material.Filled.Landscape" ToggledColor="@Color.Primary"/>
+        </MudTooltip>
+    </MudButtonGroup>
 </MudStack>
 
 @code {
-    private const string BackgroundColor = "background-color: var(--mud-palette-background-gray);";
     private bool _horizontal;
+    private bool _rounded = true;
+    private bool _elevation = true;
 }

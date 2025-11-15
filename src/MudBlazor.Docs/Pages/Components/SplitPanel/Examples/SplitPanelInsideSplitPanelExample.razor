@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSplitPanel Class="mud-width-full mud-height-full" TransparentBackground="true" Horizontal="true" StyleSecondPanel="@BackgroundColor">
+<MudSplitPanel Class="mud-width-full mud-height-full" Horizontal="true" BackgroundColor="transparent">
     <FirstPanel>
-        <MudSplitPanel Class="mud-width-full mud-height-full" StyleFirstPanel="@BackgroundColor" StyleSecondPanel="@BackgroundColor">
+        <MudSplitPanel Class="mud-width-full mud-height-full" BackgroundColor="var(--mud-palette-background-gray)">
             <FirstPanel>
                 <MudStack Style="height: 100%; min-height: 200px;" AlignItems="AlignItems.Center" Justify="Justify.Center">
                     <MudText Typo="Typo.h6">Content 1</MudText>
@@ -16,12 +16,10 @@
         </MudSplitPanel>
     </FirstPanel>
     <SecondPanel>
-        <MudStack Style="height: 100%; min-height: 200px;" AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudText Typo="Typo.h6">Content 3</MudText>
-        </MudStack>
+        <MudPaper Class="mud-height-full mud-width-full" Style="background-color: var(--mud-palette-background-gray);">
+            <MudStack Style="height: 100%; min-height: 200px;" AlignItems="AlignItems.Center" Justify="Justify.Center">
+                <MudText Typo="Typo.h6">Content 3</MudText>
+            </MudStack>
+        </MudPaper>
     </SecondPanel>
 </MudSplitPanel>
-
-@code {
-    private const string BackgroundColor = "background-color: var(--mud-palette-background-gray);";
-}
