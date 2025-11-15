@@ -125,21 +125,21 @@ public partial class MudSplitPanel : MudComponentBase
     /// Whether to use rounded corners for the panels.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>true</c>.
+    /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter]
-    public bool Rounded { get; set; } = true;
+    public bool Rounded { get; set; }
 
     /// <summary>
     /// The size of the drop shadow.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>1</c>.
+    /// Defaults to <c>0</c>.
     /// A higher number creates a heavier drop shadow.
     /// Set to <c>0</c> to disable the drop shadow.
     /// </remarks>
     [Parameter]
-    public int Elevation { get; set; } = 1;
+    public int Elevation { get; set; } = 0;
 
     /// <summary>
     /// Sets the initial height or width of the first panel in pixels.
