@@ -18,7 +18,7 @@ public class SplitPanelTests : BunitTest
         childPanels.Count.Should().Be(2);
         childPanels[0].ToMarkup().Should().BeEquivalentTo(childPanels[1].ToMarkup());
     }
-    
+
     [Test]
     public void RendersCorrectlyHorizontal()
     {
