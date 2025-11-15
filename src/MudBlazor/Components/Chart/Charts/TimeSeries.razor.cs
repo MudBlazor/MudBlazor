@@ -110,7 +110,10 @@ namespace MudBlazor.Charts
         private void RebuildChart()
         {
             if (MudChartParent != null)
+            {
                 _series = MudChartParent.ChartSeries;
+                ChartOptions = MudChartParent.ChartOptions;
+            }
 
             SetBounds();
             ComputeMinAndMaxDateTimes();

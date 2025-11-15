@@ -3292,6 +3292,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGrid_RowDetail_ExpandCollapseAllWithOneTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(p => p
+                .Add(x => x.LimitRowsToOne, true)
+                .Add(x => x.EnableHeaderToggle, true)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            var headerToggle = dataGrid.Find("th button.mud-hierarchy-toggle-button");
+            headerToggle.Click();
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(1));
+            headerToggle.Click();
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
@@ -3488,16 +3505,18 @@ namespace MudBlazor.UnitTests.Components
             {
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnHamburger[2].Click();
-
                 var listItems = popoverProvider.FindComponents<MudMenuItem>();
                 listItems.Count.Should().Be(2);
                 var clickablePopover = listItems[1].Find(".mud-menu-item");
                 clickablePopover.Click();
-
-                //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
+
+            dataGrid.WaitForAssertion(() =>
+            {
+                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
+            });
+
             await comp.InvokeAsync(() =>
             {
                 var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
@@ -3508,34 +3527,42 @@ namespace MudBlazor.UnitTests.Components
                 listItems.Count.Should().Be(1);
                 var clickablePopover = listItems[0].Find(".mud-menu-item");
                 clickablePopover.Click();
+            });
 
+            // Wait for switches, icons and buttons to appear
+            comp.WaitForAssertion(() =>
+            {
                 var switches = comp.FindComponents<MudSwitch<bool>>();
                 switches.Count.Should().Be(6);
-
                 var iconbuttons = comp.FindComponents<MudIconButton>();
                 iconbuttons.Count.Should().Be(29);
-
-
                 var buttons = comp.FindComponents<MudButton>();
-                // this is the show all button
+                buttons.Count.Should().BeGreaterThan(1);
                 buttons[1].Find("button").Click();
-                // 2 columns, 1 hidden
-                comp.FindAll(".mud-table-head th").Count.Should().Be(7);
-
-                //dataGrid.Instance._columns[0].Hide();
-                ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            comp.FindAll(".mud-table-head th").Count.Should().Be(7);
+
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll(".mud-table-head th").Count.Should().Be(7);
+            });
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
+
             await comp.InvokeAsync(() => dataGrid.Instance.HideColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
+            dataGrid.WaitForAssertion(() =>
+            {
+                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
+            });
+
             await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            dataGrid.WaitForAssertion(() =>
+            {
+                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            });
         }
 
         [Test]
@@ -3594,7 +3621,7 @@ namespace MudBlazor.UnitTests.Components
             // 6 columns, 0 hidden (1 permanently collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
 
-            //programatically changing the hidden which overrides hideable
+            //programmatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
             {
                 foreach (var column in dataGrid.Instance.RenderedColumns)
@@ -3608,7 +3635,7 @@ namespace MudBlazor.UnitTests.Components
             // 6 columns, 6 hidden (1 permanently collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
 
-            //programatically changing the hidden which overrides hideable
+            //programmatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
             {
                 foreach (var column in dataGrid.Instance.RenderedColumns)
@@ -3621,7 +3648,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
         }
 
-        // This is not easily convertable to the new property expression.
+        // This is not easily convertible to the new property expression.
         //[Test]
         //public async Task DataGridFilterRowHiddenTest()
         //{
@@ -5515,6 +5542,44 @@ namespace MudBlazor.UnitTests.Components
             testComponent.ToggledEvents.Should().HaveCount(3);
             testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
             testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public void DataGridFilterIconsTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterIconsTest>();
+            MudIconButton FirstFilterButton() =>
+                comp.FindComponents<MudIconButton>().FirstOrDefault(x => x.Markup.Contains("filter-button"))?.Instance;
+
+            // Check filter buttons when no filter applied
+            var mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+
+            // Check filter buttons when filter applied
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
+            comp.Find("button.filter-button").Click();
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+
+            // Check filter buttons when FilterMode is ColumnFilterRow
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow));
+
+            var mudMenu = comp.FindComponents<MudMenu>().FirstOrDefault(x => x.Markup.Contains("column-filter-menu"))?.Instance;
+            mudMenu.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
         }
     }
 }

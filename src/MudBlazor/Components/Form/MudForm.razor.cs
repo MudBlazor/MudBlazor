@@ -389,7 +389,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                Console.WriteLine($@"An error occured while executing {nameof(OnEvaluateForm)}: {e.Message}");
+                Console.WriteLine($@"An error occurred while executing {nameof(OnEvaluateForm)}: {e.Message}");
             }
         }
 

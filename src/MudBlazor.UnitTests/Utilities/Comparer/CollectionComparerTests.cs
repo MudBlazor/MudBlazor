@@ -23,7 +23,7 @@ public class CollectionComparerTests
         comparer.Equals([1, 2, 1], [1, 2, 2, 2, 1]).Should().Be(true);
         comparer.Equals([1], [1, 1, 1]).Should().Be(true);
 
-        // check unequality
+        // check inequality
         comparer.Equals(null, []).Should().Be(false);
         comparer.Equals([], null).Should().Be(false);
         comparer.Equals(null, [1]).Should().Be(false);
@@ -74,7 +74,7 @@ public class CollectionComparerTests
         comparer.Equals(["a", "B", "c"], ["c", "A", "b", "a", "C", "b", "b"]).Should().Be(true);
         comparer.Equals(["a", "b", "c"], ["a", "b", "c"]).Should().Be(true);
 
-        // check unequality
+        // check inequality
         comparer.Equals(null, []).Should().Be(false);
         comparer.Equals([], null).Should().Be(false);
         comparer.Equals(null, ["A"]).Should().Be(false);

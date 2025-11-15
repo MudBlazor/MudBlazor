@@ -6,9 +6,14 @@
 
 <MudDatePicker Label="Date Format" @bind-Date="Date"
                HelperText="Persian" DateFormat="yyyy/MM/dd"
+               FixDay="FixDay"
                Culture="@CultureInfo.GetCultureInfo("fa-Ir")" />
 
 @code {
     [Parameter]
     public DateTime? Date { get; set; } = new DateTime(2021, 02, 14); 
+
+    [Parameter]
+    public int? FixDay { get; set; } = null;
+
 }

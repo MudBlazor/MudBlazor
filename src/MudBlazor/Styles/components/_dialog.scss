@@ -86,8 +86,13 @@
     flex: 0 0 auto;
     margin: 0;
     padding: 16px 24px;
+    overflow-wrap: anywhere;
     border-top-left-radius: var(--mud-default-borderradius);
     border-top-right-radius: var(--mud-default-borderradius);
+
+    &:has(.mud-button-close) {
+      padding-inline-end: 64px;
+    }
 
     + * > .mud-dialog-content {
       border-radius: 0
@@ -104,15 +109,15 @@
     position: relative;
     flex: 1 1 auto;
     overflow: auto;
-    padding: 0px 24px;
-    margin: 8px 0px;
+    padding: 8px 24px;
+    margin: 0;
     -webkit-overflow-scrolling: touch;
     border-top-left-radius: var(--mud-default-borderradius);
     border-top-right-radius: var(--mud-default-borderradius);
 
     &.mud-dialog-no-side-padding {
-      padding: 0px;
-      margin: 12px 0px;
+      padding: 12px 0px;
+      margin: 0;
     }
   }
 
@@ -125,6 +130,10 @@
     justify-content: flex-end;
     border-bottom-left-radius: var(--mud-default-borderradius);
     border-bottom-right-radius: var(--mud-default-borderradius);
+
+    &:empty {
+      display: none;
+    }
   }
 }
 

@@ -116,7 +116,7 @@ namespace MudBlazor
 
         #region Computed Properties and Functions
 
-        private bool Expanded => Column?.DataGrid._openHierarchies.Count > 1;
+        private bool Expanded => DataGrid?._openHierarchies.Count > 0;
 
         internal bool IncludeHierarchyToggle => Column?.HeaderClass?.Contains("mud-header-togglehierarchy") ?? false;
 

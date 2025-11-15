@@ -48,6 +48,17 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
+        /// The aria-label for the HTML table element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to null. When set, renders as the table's <c>aria-label</c> attribute for accessibility.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public string? AriaLabel { get; set; }
+
+
+        /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.
         /// </summary>
         /// <remarks>
@@ -76,7 +87,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows borders around the table.
@@ -296,7 +309,7 @@ namespace MudBlazor
         /// Displays a loading animation while <c>ServerData</c> executes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> is set.
+        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -306,7 +319,7 @@ namespace MudBlazor
         /// The color of the <see cref="MudProgressLinear"/> while <see cref="Loading"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> is set.
+        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -789,3 +802,4 @@ namespace MudBlazor
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }
 }
+

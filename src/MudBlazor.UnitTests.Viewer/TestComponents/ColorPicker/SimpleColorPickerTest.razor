@@ -7,6 +7,7 @@
                 TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })"
                 Palette="@Palette"
                 ShowToolbar="@ShowToolbar"
+                ShowTooltips="@ShowTooltips"
                 ShowColorField="@ShowColorField"
                 ShowPreview="@ShowPreview"
                 ShowSliders="@ShowSliders"
@@ -17,7 +18,8 @@
                 ColorPickerView="@ViewMode"
                 ColorPickerMode="@ColorPickerMode"
                 PickerVariant="@Variant"
-                Required="@Required" />
+                Required="@Required"
+                InputId="@InputId" />
 
 @code {
     private MudColorPicker _picker = null!;
@@ -55,6 +57,9 @@
     public bool ShowModeSwitch { get; set; } = true;
 
     [Parameter]
+    public bool ShowTooltips { get; set; } = true;
+
+    [Parameter]
     public bool ShowAlpha { get; set; } = true;
 
     [Parameter]
@@ -68,6 +73,9 @@
 
     [Parameter]
     public bool Required { get; set; }
+
+    [Parameter]
+    public string? InputId { get; set; }
 
     public Task OpenPicker()
     {

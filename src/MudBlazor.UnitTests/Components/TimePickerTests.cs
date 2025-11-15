@@ -350,5 +350,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
             comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
+
+        [Test]
+        public void TimePickerInputId()
+        {
+            var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters => parameters
+                .Add(c => c.InputId, "start-time"));
+
+            comp.Find("input[id='start-time']").Should().NotBeNull();
+        }
     }
 }

@@ -28,6 +28,13 @@ public abstract class MudChartBase : MudComponentBase
     public AxisChartOptions AxisChartOptions { get; set; } = new();
 
     /// <summary>
+    /// Display options for node-based charts.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public NodeChartOptions NodeChartOptions { get; set; } = new();
+
+    /// <summary>
     /// The custom graphics within this chart.
     /// </summary>
     [Parameter]

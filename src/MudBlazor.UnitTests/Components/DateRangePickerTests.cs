@@ -619,7 +619,7 @@ namespace MudBlazor.UnitTests.Components
             // set a value
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Text = RangeConverter<DateTime>.Join(startDate.ToShortDateString(), endDate.ToShortDateString()));
 
-            // asert new values have been applied
+            // assert new values have been applied
             dateRangePickerInstance.DateRange.Start.Should().Be(startDate);
             dateRangePickerInstance.DateRange.End.Should().Be(endDate);
             dateRangePickerInstance.Error.Should().BeFalse("Value has been set and should be handled as valid");
@@ -1221,6 +1221,16 @@ namespace MudBlazor.UnitTests.Components
             await comp.Instance.BlurAsync();
 
             comp.Find("input").IsFocused.Should().BeFalse();
+        }
+
+        [Test]
+        public void DateRangePickerInputId()
+        {
+            var comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>(parameters => parameters
+                .Add(c => c.InputId, "event-range"));
+
+            comp.Find("input[id='event-range-start']").Should().NotBeNull();
+            comp.Find("input[id='event-range-end']").Should().NotBeNull();
         }
     }
 

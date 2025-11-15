@@ -63,8 +63,8 @@
         <DocsPageSection>
             <SectionHeader Title="Validation">
                 <Description>
-                    Below there are different examples of validation with the MudAutocomplete control. The validation uses an EditForm or a MudForm. The result and display will vary if the
-                    <CodeInline Tag="true">CoerceValue</CodeInline> option is set to <CodeInline Tag="true">true</CodeInline>. But also if characters are typed into the control instead of a selection from the dropdown list.<br />
+                    Below are different validation examples for the MudAutocomplete control. They use an EditForm or a MudForm, and the result and display vary if the
+                    <CodeInline Tag="true">CoerceValue</CodeInline> option is set to <CodeInline Tag="true">true</CodeInline> or if characters are typed into the control instead of choosing from the dropdown list.<br />
                     For more info on form validation, check out <MudLink Href="/components/form">Form</MudLink>.
                 </Description>
             </SectionHeader>
@@ -76,7 +76,7 @@
         <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
-                    <MudText>MudAutocomplete accepts keys to keyboard navigation.</MudText>
+                    <MudText>MudAutocomplete supports keyboard navigation.</MudText>
                     <br />
                     <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
                     <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowDown</CodeInline> or <CodeInline>ArrowUp</CodeInline> keys to open dropdown</MudText>
@@ -84,7 +84,7 @@
                     <MudText><CodeInline>ArrowDown</CodeInline> key to select/navigate next item</MudText>
                     <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to select item</MudText>
                     <br />
-                    <MudText>*If search func didn't return any value, keys can't open the dropdown.</MudText>
+                    <MudText>*If the search function doesn't return any values, keyboard shortcuts can't open the dropdown.</MudText>
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
@@ -95,7 +95,7 @@
         <DocsPageSection>
             <SectionHeader Title="Progress">
                 <Description>
-                    <MudText>When fetching data from a remote datasource MudAutocomplete can visually indicate that it is awaiting results. Following settings are available:</MudText>
+                    <MudText>When fetching data from a remote data source MudAutocomplete can visually indicate that it is awaiting results. The following settings are available:</MudText>
                     <br />
                     <MudText><CodeInline>ShowProgressIndicator</CodeInline>: show circular progress indicator.</MudText>
                     <MudText><CodeInline>ProgressIndicatorTemplate</CodeInline>: replace the default circular progress indicator with a custom one.</MudText>
@@ -128,7 +128,7 @@
         <DocsPageSection>
             <SectionHeader Title="Cancellation Token">
                 <Description>
-                    <MudText>Autocomplete can cancel request if the user types new input</MudText>
+                    <MudText>Autocomplete can cancel the request if the user types new input</MudText>
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(AutocompleteCancellationTokenExample)">

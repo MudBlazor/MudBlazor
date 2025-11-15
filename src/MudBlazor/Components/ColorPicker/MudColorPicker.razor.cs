@@ -242,7 +242,7 @@ namespace MudBlazor
         public bool DragEffect { get; set; } = true;
 
         /// <summary>
-        /// The custom icon to dislay for the close button.
+        /// The custom icon to display for the close button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.Close"/>.
@@ -300,6 +300,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ThrottleInterval { get; set; } = 50;
+
+        /// <summary>
+        /// Enables tooltips for icon buttons.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowTooltips { get; set; } = true;
 
         /// <inheritdoc />
         protected override void OnInitialized()

@@ -46,6 +46,26 @@ namespace MudBlazor
         public List<ChartSeries> ChartSeries { get; set; } = [];
 
         /// <summary>
+        /// The nodes to be displayed.
+        /// </summary>
+        /// <remarks>
+        /// Applies only to <c>Sankey</c> charts.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public List<SankeyChartNode> Nodes { get; set; } = [];
+
+        /// <summary>
+        /// The edges to be displayed.
+        /// </summary>
+        /// <remarks>
+        /// Applies only to <c>Sankey</c> charts.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public List<SankeyChartEdge> Edges { get; set; } = [];
+
+        /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
         protected double[] GetNormalizedData()

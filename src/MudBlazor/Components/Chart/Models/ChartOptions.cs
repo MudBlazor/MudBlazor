@@ -133,9 +133,11 @@ namespace MudBlazor
         public bool ShowToolTips { get; set; } = true;
 
         /// <summary>
-        /// Enables labels for every box in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to <c>true</c>
+        /// Enables labels for every box in a <see cref="ChartType.HeatMap"/> or every node in a <see cref="ChartType.Sankey"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         public bool ShowLabels { get; set; } = true;
 
         /// <summary>
