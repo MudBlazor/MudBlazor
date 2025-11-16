@@ -3,6 +3,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.CheckBox;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
@@ -168,7 +169,8 @@ namespace MudBlazor.UnitTests.Components
             // click the checkbox to make the form invalid again because the checkbox is required
             checkbox.Find("input").Change(false);
             checkbox.Instance.Error.Should().BeTrue();
-            checkbox.Instance.ErrorText.Should().Be("You must agree");
+            checkbox.Find(".mud-input-helper-text.mud-input-error").TextContent.Should().Be("You must agree");
+            checkbox.Instance.GetState(x=> x.ErrorText).Should().Be("You must agree");
             form.IsValid.Should().BeFalse();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("You must agree");
