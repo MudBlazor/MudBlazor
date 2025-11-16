@@ -46,6 +46,11 @@ public partial class MudSplitPanel : MudComponentBase
         .AddClass(ClassDivider)
         .Build();
 
+    private string StylenameDivider => new StyleBuilder()
+        .AddStyle($"min-height: {PanelGap}px")
+        .AddStyle($"min-width: {PanelGap}px")
+        .Build();
+
     /// <summary>
     /// The CSS classes applied to the first panel.
     /// </summary>
@@ -129,6 +134,15 @@ public partial class MudSplitPanel : MudComponentBase
     /// </remarks>
     [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public int MinPanelSize { get; set; } = 50;
+
+    /// <summary>
+    /// The height or width of the divider between the panels in pixel.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>4</c>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
+    public int PanelGap { get; set; } = 4;
 
     /// <summary>
     /// The padding of the panels.
