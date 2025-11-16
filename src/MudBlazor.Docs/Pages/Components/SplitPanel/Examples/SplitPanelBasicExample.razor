@@ -3,6 +3,7 @@
 <MudStack Class="mud-width-full mud-height-full" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 500px;">
     <MudSplitPanel Class="mud-width-full mud-height-full" BackgroundColor="var(--mud-palette-background-gray)" 
                    Horizontal="_horizontal"
+                   ResetOnDoubleClick="_resetOnDoubleClick"
                    Rounded="_rounded"
                    Elevation="@(_elevation ? 1 : 0)">
         <FirstPanel>
@@ -20,6 +21,9 @@
         <MudTooltip Text="Horizontal">
             <MudToggleIconButton @bind-Toggled="_horizontal" Icon="@Icons.Material.Filled.HorizontalRule" ToggledColor="@Color.Primary"/>
         </MudTooltip>
+        <MudTooltip Text="Reset on double click">
+            <MudToggleIconButton @bind-Toggled="_resetOnDoubleClick" Icon="@Icons.Material.Filled.RestartAlt" ToggledColor="@Color.Primary"/>
+        </MudTooltip>
         <MudTooltip Text="Rounded">
             <MudToggleIconButton @bind-Toggled="_rounded" Icon="@Icons.Material.Filled.RoundedCorner" ToggledColor="@Color.Primary"/>
         </MudTooltip>
@@ -31,6 +35,7 @@
 
 @code {
     private bool _horizontal;
+    private bool _resetOnDoubleClick = true;
     private bool _rounded;
     private bool _elevation;
 }

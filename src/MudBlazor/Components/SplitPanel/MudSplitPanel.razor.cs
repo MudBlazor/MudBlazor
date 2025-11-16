@@ -27,7 +27,6 @@ public partial class MudSplitPanel : MudComponentBase
 
     private string StylenameFirstPanel => new StyleBuilder()
         .AddStyle($"background-color: {BackgroundColor}", FirstPanel != null)
-        .AddStyle(StyleFirstPanel)
         .Build();
 
     private string ClassnameSecondPanel => new CssBuilder("child-panel")
@@ -40,7 +39,6 @@ public partial class MudSplitPanel : MudComponentBase
 
     private string StylenameSecondPanel => new StyleBuilder()
         .AddStyle($"background-color: {BackgroundColor}", SecondPanel != null)
-        .AddStyle(StyleFirstPanel)
         .Build();
 
     private string ClassnameDivider => new CssBuilder("divider")
@@ -49,30 +47,12 @@ public partial class MudSplitPanel : MudComponentBase
         .Build();
 
     /// <summary>
-    /// The CSS styles applied to the first panel.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    public string? StyleFirstPanel { get; set; }
-
-    /// <summary>
-    /// The CSS styles applied to the second panel.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    public string? StyleSecondPanel { get; set; }
-
-    /// <summary>
     /// The CSS classes applied to the first panel.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
     public string? ClassFirstPanel { get; set; }
 
     /// <summary>
@@ -81,17 +61,8 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
     public string? ClassSecondPanel { get; set; }
-
-    /// <summary>
-    /// The CSS styles applied to the divider.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    public string? StyleDivider { get; set; }
 
     /// <summary>
     /// The CSS classes applied to the divider.
@@ -99,7 +70,7 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
     public string? ClassDivider { get; set; }
 
     /// <summary>
@@ -108,7 +79,7 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public bool Horizontal { get; set; }
 
     /// <summary>
@@ -118,7 +89,7 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public bool UseAsOverlay { get; set; }
 
     /// <summary>
@@ -127,7 +98,7 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
     public bool Rounded { get; set; }
 
     /// <summary>
@@ -138,8 +109,8 @@ public partial class MudSplitPanel : MudComponentBase
     /// A higher number creates a heavier drop shadow.
     /// Set to <c>0</c> to disable the drop shadow.
     /// </remarks>
-    [Parameter]
-    public int Elevation { get; set; } = 0;
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
+    public int Elevation { get; set; }
 
     /// <summary>
     /// Sets the initial height or width of the first panel in pixels.
@@ -147,7 +118,7 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public int? FirstPanelInitialSize { get; set; }
 
     /// <summary>
@@ -156,26 +127,35 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>50</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public int MinPanelSize { get; set; } = 50;
 
     /// <summary>
-    /// The padding of the pannels.
+    /// The padding of the panels.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>0</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
     public int Padding { get; set; }
 
     /// <summary>
-    /// The padding of the pannels.
+    /// The padding of the panels.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>0</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
     public string? BackgroundColor { get; set; }
+
+    /// <summary>
+    /// If enabled resets the panel sizes to their initial values on double-clicking the divider.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
+    public bool ResetOnDoubleClick { get; set; } = true;
 
     /// <summary>
     /// The contents of the first i.e. left/upper panel.
@@ -183,7 +163,7 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public RenderFragment? FirstPanel { get; set; }
 
     /// <summary>
@@ -192,14 +172,13 @@ public partial class MudSplitPanel : MudComponentBase
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public RenderFragment? SecondPanel { get; set; }
 
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     private readonly string _containerId = Guid.NewGuid().ToString();
-    private bool _isRendered;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -207,14 +186,17 @@ public partial class MudSplitPanel : MudComponentBase
 
         if (firstRender)
         {
-            _isRendered = true;
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, MinPanelSize, FirstPanelInitialSize);
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize);
         }
     }
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        if (_isRendered) await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, MinPanelSize);
+        
+        if (IsJSRuntimeAvailable)
+        {
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize);
+        }
     }
 }

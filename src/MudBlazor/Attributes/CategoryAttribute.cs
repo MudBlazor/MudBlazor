@@ -497,6 +497,12 @@
             public const string Appearance = "Appearance";
         }
 
+        public static class SplitPanel
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class SwipeArea
         {
             public const string Behavior = "Behavior";

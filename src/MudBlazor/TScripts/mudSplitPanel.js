@@ -1,10 +1,10 @@
 ﻿// noinspection JSUnusedGlobalSymbols
 class MudSplitPanel {
-    static build(containerId, horizontal, minPanelSize, firstPanelInitialSize) {
-        window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, minPanelSize, firstPanelInitialSize);
+    static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize) {
+        window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize);
     }
 
-    constructor(containerId, horizontal, minPanelSize, firstPanelInitialSize) {
+    constructor(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize) {
         this.container = document.getElementById(containerId);
         if (!this.container) {
             console.warn(`MudSplitPanel: Container with id '${containerId}' not found.`);
@@ -21,37 +21,50 @@ class MudSplitPanel {
         this.divider = children[1];
         this.secondPanel = children[2];
 
-        this.update(horizontal, minPanelSize);
         this.isDragging = false;
         this.startPos = 0;
         this.startFirstSize = 0;
+        this.firstPanelInitialSize = firstPanelInitialSize;
 
         this._onMouseDown = this._onMouseDown.bind(this);
         this._onMouseMove = this._onMouseMove.bind(this);
         this._onMouseUp = this._onMouseUp.bind(this);
+        this._onDoubleClick = this._onDoubleClick.bind(this);
 
         this.divider.addEventListener("mousedown", this._onMouseDown);
         this.divider.addEventListener("touchstart", this._onMouseDown);
-
-        if (firstPanelInitialSize) {
-            const containerSize = this.horizontal
-                ? this.container.offsetHeight
-                : this.container.offsetWidth;
-            this._setPanelSizes(firstPanelInitialSize, containerSize);
-        }
+        this.divider.addEventListener("dblclick", this._onDoubleClick);
+        let lastTap = 0;
+        this.divider.addEventListener("touchend", (e) => {
+            const now = Date.now();
+            if (now - lastTap < 300) {
+                this._onDoubleClick();
+            }
+            lastTap = now;
+        });
+        
+        this.update(horizontal, resetOnDoubleClick, minPanelSize);
     }
 
     // noinspection JSUnusedGlobalSymbols
-    update(horizontal, minPanelSize) {
+    update(horizontal, resetOnDoubleClick, minPanelSize) {
+        let shouldRecalculateSize = horizontal !== this.horizontal;
         this.horizontal = horizontal;
         this.minPanelSize = minPanelSize;
+        this.resetOnDoubleClick = resetOnDoubleClick
 
-        if (horizontal) {
+        if (shouldRecalculateSize) {
             this.firstPanel.style.width = "100%";
             this.secondPanel.style.width = "100%";
-        } else {
             this.firstPanel.style.height = "100%";
             this.secondPanel.style.height = "100%";
+
+            if (this.firstPanelInitialSize !== null) {
+                const containerSize = this.horizontal
+                    ? this.container.offsetHeight
+                    : this.container.offsetWidth;
+                this._setPanelSizes(this.firstPanelInitialSize, containerSize);
+            }
         }
     }
 
@@ -125,6 +138,21 @@ class MudSplitPanel {
         document.removeEventListener("mouseup", this._onMouseUp);
         document.removeEventListener("touchend", this._onMouseUp);
     }
+
+    _onDoubleClick() {
+        if (!this.resetOnDoubleClick) return;
+
+        const containerSize = this.horizontal
+            ? this.container.offsetHeight
+            : this.container.offsetWidth;
+
+        let firstPanelSize = this.firstPanelInitialSize;
+        if (!firstPanelSize) {
+            firstPanelSize = containerSize / 2;
+        }
+
+        this._setPanelSizes(firstPanelSize, containerSize);
+    }
 }
 
 if (!window.mudSplitPanel) {
@@ -132,6 +160,6 @@ if (!window.mudSplitPanel) {
     window.splitPanels = {};
 }
 
-window.mudSplitPanel_update = function (id, horizontal, minPanelSize) {
-    window.splitPanels[id].update(horizontal, minPanelSize);
+window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minPanelSize) {
+    window.splitPanels[id].update(horizontal, resetOnDoubleClick, minPanelSize);
 };
