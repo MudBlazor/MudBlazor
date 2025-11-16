@@ -193,7 +193,7 @@ public partial class MudSplitPanel : MudComponentBase
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        
+
         if (IsJSRuntimeAvailable)
         {
             await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize);
