@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
             // click the checkbox to make the form invalid again because the checkbox is required
             checkbox.Find("input").Change(false);
             checkbox.Instance.Error.Should().BeTrue();
-            checkbox.Find(".mud-input-helper-text.mud-input-error").TextContent.Should().Be("You must agree");
+            checkbox.Markup.Should().Contain("You must agree");
             checkbox.Instance.GetState(x=> x.ErrorText).Should().Be("You must agree");
             form.IsValid.Should().BeFalse();
             form.Errors.Length.Should().Be(1);
@@ -199,7 +199,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Validate());
             form.IsValid.Should().BeFalse();
             checkbox.Instance.Error.Should().BeTrue();
-            checkbox.Instance.ErrorText.Should().Be("You must select a value");
+            checkbox.Markup.Should().Contain("You must select a value");
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must select a value");
 
             // state: true, form should be valid
             checkbox.Find("input").Change(true);
@@ -220,7 +221,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Validate());
             form.IsValid.Should().BeFalse();
             checkbox.Instance.Error.Should().BeTrue();
-            checkbox.Instance.ErrorText.Should().Be("You must select a value");
+            checkbox.Markup.Should().Contain("You must select a value");
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must select a value");
         }
 
         /// <summary>
