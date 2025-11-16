@@ -199,4 +199,12 @@ public partial class MudSplitPanel : MudComponentBase
             await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize);
         }
     }
+
+    /// <summary>
+    /// Resets the sizes of the panels to their initial values.
+    /// </summary>
+    public async Task ResetSizesAsync()
+    {
+        await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetSizes", _containerId);
+    }
 }

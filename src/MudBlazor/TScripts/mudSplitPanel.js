@@ -35,14 +35,14 @@ class MudSplitPanel {
         this.divider.addEventListener("touchstart", this._onMouseDown);
         this.divider.addEventListener("dblclick", this._onDoubleClick);
         let lastTap = 0;
-        this.divider.addEventListener("touchend", (e) => {
+        this.divider.addEventListener("touchend", (_) => {
             const now = Date.now();
             if (now - lastTap < 300) {
                 this._onDoubleClick();
             }
             lastTap = now;
         });
-        
+
         this.update(horizontal, resetOnDoubleClick, minPanelSize);
     }
 
@@ -54,17 +54,21 @@ class MudSplitPanel {
         this.resetOnDoubleClick = resetOnDoubleClick
 
         if (shouldRecalculateSize) {
-            this.firstPanel.style.width = "100%";
-            this.secondPanel.style.width = "100%";
-            this.firstPanel.style.height = "100%";
-            this.secondPanel.style.height = "100%";
+            this.resetSizes();
+        }
+    }
 
-            if (this.firstPanelInitialSize !== null) {
-                const containerSize = this.horizontal
-                    ? this.container.offsetHeight
-                    : this.container.offsetWidth;
-                this._setPanelSizes(this.firstPanelInitialSize, containerSize);
-            }
+    resetSizes() {
+        this.firstPanel.style.width = "100%";
+        this.secondPanel.style.width = "100%";
+        this.firstPanel.style.height = "100%";
+        this.secondPanel.style.height = "100%";
+
+        if (this.firstPanelInitialSize !== null) {
+            const containerSize = this.horizontal
+                ? this.container.offsetHeight
+                : this.container.offsetWidth;
+            this._setPanelSizes(this.firstPanelInitialSize, containerSize);
         }
     }
 
@@ -162,4 +166,8 @@ if (!window.mudSplitPanel) {
 
 window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minPanelSize) {
     window.splitPanels[id].update(horizontal, resetOnDoubleClick, minPanelSize);
+};
+
+window.mudSplitPanel_resetSizes = function (id) {
+    window.splitPanels[id].resetSizes();
 };
