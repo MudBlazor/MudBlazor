@@ -82,9 +82,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            @switch.Instance.Value = true;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await comp.InvokeAsync(() => @switch.Instance.ValueChanged.InvokeAsync(true));
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
