@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Find("input").Change(false);
             checkbox.Instance.Error.Should().BeTrue();
             checkbox.Markup.Should().Contain("You must agree");
-            checkbox.Instance.GetState(x=> x.ErrorText).Should().Be("You must agree");
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must agree");
             form.IsValid.Should().BeFalse();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("You must agree");
