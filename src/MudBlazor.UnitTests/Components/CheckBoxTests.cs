@@ -178,7 +178,7 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Find("input").Change(true);
             form.IsValid.Should().BeTrue();
             checkbox.Instance.Error.Should().BeFalse();
-            checkbox.Instance.ErrorText.Should().Be(null);
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be(null);
         }
 
         /// <summary>
@@ -207,14 +207,14 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Validate());
             form.IsValid.Should().BeTrue();
             checkbox.Instance.Error.Should().BeFalse();
-            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+            checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // state: false, form should be valid
             checkbox.Find("input").Change(false);
             await comp.InvokeAsync(() => form.Validate());
             form.IsValid.Should().BeTrue();
             checkbox.Instance.Error.Should().BeFalse();
-            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+            checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // state: null, form should be invalid again
             checkbox.Find("input").Change(null);

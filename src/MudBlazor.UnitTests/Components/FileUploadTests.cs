@@ -476,7 +476,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.File.Name.Should().Be("test.txt");
             comp.Instance.File.Size.Should().Be(200);
             fileUpload.Error.Should().BeFalse();
-            fileUpload.ErrorText.Should().BeNullOrEmpty();
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -497,7 +497,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Files[0].Name.Should().Be("test1.txt");
             comp.Instance.Files[1].Name.Should().Be("test2.txt");
             fileUpload.Error.Should().BeFalse();
-            fileUpload.ErrorText.Should().BeNullOrEmpty();
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -564,7 +564,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Files[0].Name.Should().Be("test1.txt");
             comp.Instance.Files[1].Name.Should().Be("test2.txt");
             fileUpload.Error.Should().BeFalse();
-            fileUpload.ErrorText.Should().BeNullOrEmpty();
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -618,7 +618,7 @@ namespace MudBlazor.UnitTests.Components
             // Assert cleared state
             comp.Instance.File.Should().BeNull();
             fileUpload.Error.Should().BeFalse(); // Errors should be cleared
-            fileUpload.ErrorText.Should().BeNullOrEmpty(); // ErrorText should be cleared
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty(); // ErrorText should be cleared
             fileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
         }
     }

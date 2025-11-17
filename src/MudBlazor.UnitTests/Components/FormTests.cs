@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be valid, but text field does not display an error initially!
             form.IsValid.Should().Be(false);
             textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
@@ -266,7 +266,7 @@ namespace MudBlazor.UnitTests.Components
             //form.IsValid.Should().Be(true);
             //form.Errors.Length.Should().Be(0);
             //textField.Error.Should().BeFalse();
-            //textField.ErrorText.Should().BeNullOrEmpty();
+            //textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // ok, not a rock star, but a star nonetheless
             textFieldcomp.Find("input").Change("Marilyn Monroe");
@@ -1233,28 +1233,28 @@ namespace MudBlazor.UnitTests.Components
             var numericFields = comp.FindComponents<MudNumericField<decimal>>();
 
             textfields[0].Instance.HasErrors.Should().BeFalse();
-            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[1].Instance.HasErrors.Should().BeFalse();
-            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[2].Instance.HasErrors.Should().BeFalse();
-            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[3].Instance.HasErrors.Should().BeFalse();
-            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[4].Instance.HasErrors.Should().BeFalse();
-            textfields[4].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[4].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[5].Instance.HasErrors.Should().BeFalse();
-            textfields[5].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[5].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             //Nested Forms
             textfields[6].Instance.HasErrors.Should().BeFalse();
-            textfields[6].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[6].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericFields[0].Instance.HasErrors.Should().BeFalse();
-            numericFields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             textfields[7].Instance.HasErrors.Should().BeFalse();
-            textfields[7].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[7].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericFields[1].Instance.HasErrors.Should().BeFalse();
-            numericFields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -1826,12 +1826,12 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be valid, but text field does not display an error initially!
             parentForm.IsValid.Should().Be(false);
             parentTextField.Error.Should().BeFalse();
-            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            parentTextField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             parentTextFieldCmp.Find("input").Change("Marilyn Manson");
             parentForm.IsValid.Should().Be(true);
             parentForm.Errors.Length.Should().Be(0);
             parentTextField.Error.Should().BeFalse();
-            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            parentTextField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // display the child form
             childFormSwitch.Change(true);
             var forms = comp.FindComponents<MudForm>();

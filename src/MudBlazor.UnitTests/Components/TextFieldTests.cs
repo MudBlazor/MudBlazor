@@ -313,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TextFieldRequiredTest>();
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Touched.Should().BeFalse();
-            textfield.ErrorText.Should().BeNullOrEmpty();
+            textfield.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfield.HasErrors.Should().Be(false);
         }
 
