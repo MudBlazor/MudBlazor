@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -1862,6 +1863,34 @@ namespace MudBlazor.UnitTests.Components
             await validator.InvokeAsync(() => validator.Instance.ClearErrors());
 
             tf.Instance.ValidationErrors.Should().HaveCount(0);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Test]
+        public void FormComponentTest_ErrorTextTwoWayBinding()
+        {
+            var comp = Context.RenderComponent<FormWithErrorTextTwoWayBindingTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var textInput = comp.Find("input");
+
+            // check initial state: ErrorText and bound Property should be the default value defined inside the component property.
+            comp.Instance.BoundErrorText.Should().Be("Default value not changed by binding");
+            textField.GetState(x => x.ErrorText).Should().Be("Default value not changed by binding");
+
+            // call validation on the textfield: now the error text should be null and the bound property aswell
+            textField.Validate();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            comp.Instance.BoundErrorText.Should().BeNullOrEmpty();
+
+            // empty the input text and call validation: now the error text and the bound property should be the validation error message.
+            textInput.Change("");
+            textField.Validate();
+            textField.GetState(x => x.ErrorText).Should().Be("EmptyOrWhitespace!");
+            comp.Instance.BoundErrorText.Should().Be("EmptyOrWhitespace!");
+            comp.Markup.Should().Contain("EmptyOrWhitespace!");
         }
 
         /// <summary>
