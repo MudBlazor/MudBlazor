@@ -20,7 +20,7 @@ public partial class MudFabMenu : MudFab
 
     private string ClassnameMenu => new CssBuilder("mud-fab-menu")
         .AddClass("mud-fab-menu-open", _openState.Value)
-        .AddClass("mud-fab-menu-dampen", DampenItemColors)
+        .AddClass("mud-fab-menu-dampen", DampenItemsBackgroundColor)
         .AddClass($"align-{AlignItems.ToDescriptionString()}")
         .AddClass($"mud-fab-menu-{Size.ToString().ToLower()}", !string.IsNullOrEmpty(Label))
         .AddClass(MenuClass)
@@ -109,13 +109,14 @@ public partial class MudFabMenu : MudFab
     public bool UseCloseIcon { get; set; } = true;
 
     /// <summary>
-    /// Dampens the background color of the menu items when set to true.
+    /// Dampens the background color of the menu items when set to true to increase the contrast between the menu FAB and the menu items
+    /// to archive a similar effect as described in the <a href="https://m3.material.io/components/fab-menu/overview">Material Design guidelines</a>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
     [Parameter, Category(CategoryTypes.Button.Behavior)]
-    public bool DampenItemColors { get; set; } = true;
+    public bool DampenItemsBackgroundColor { get; set; } = true;
 
     /// <summary>
     /// The alignment of the menu items in respect to the menu button.
