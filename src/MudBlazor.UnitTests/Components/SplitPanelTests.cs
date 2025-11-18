@@ -22,8 +22,9 @@ public class SplitPanelTests : BunitTest
     [Test]
     public void RendersCorrectlyHorizontal()
     {
-        var comp = Context.RenderComponent<SplitPanelTest>(
-            ComponentParameter.CreateParameter("Horizontal", true));
+        var comp = Context.RenderComponent<SplitPanelTest>(parameters => parameters
+            .Add(p => p.Horizontal, true)
+        );
         comp.FindAll(".mud-split-panel.flex-column").Count.Should().Be(1);
 
         var childPanels = comp.FindAll(".child-panel");
