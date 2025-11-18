@@ -46,11 +46,6 @@ public partial class MudSplitPanel : MudComponentBase
         .AddClass(ClassDivider)
         .Build();
 
-    private string StylenameDivider => new StyleBuilder()
-        .AddStyle($"min-height: {PanelGap}px")
-        .AddStyle($"min-width: {PanelGap}px")
-        .Build();
-
     /// <summary>
     /// The CSS classes applied to the first panel.
     /// </summary>
@@ -200,7 +195,7 @@ public partial class MudSplitPanel : MudComponentBase
 
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize);
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
         }
     }
 
@@ -210,7 +205,7 @@ public partial class MudSplitPanel : MudComponentBase
 
         if (IsJSRuntimeAvailable)
         {
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize);
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, PanelGap);
         }
     }
 

@@ -1,10 +1,10 @@
 ﻿// noinspection JSUnusedGlobalSymbols
 class MudSplitPanel {
-    static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize) {
-        window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize);
+    static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
+        window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap);
     }
 
-    constructor(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize) {
+    constructor(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
         this.container = document.getElementById(containerId);
         if (!this.container) {
             console.warn(`MudSplitPanel: Container with id '${containerId}' not found.`);
@@ -43,15 +43,19 @@ class MudSplitPanel {
             lastTap = now;
         });
 
-        this.update(horizontal, resetOnDoubleClick, minPanelSize);
+        this.update(horizontal, resetOnDoubleClick, minPanelSize, panelGap);
     }
 
     // noinspection JSUnusedGlobalSymbols
-    update(horizontal, resetOnDoubleClick, minPanelSize) {
+    update(horizontal, resetOnDoubleClick, minPanelSize, panelGap) {
         let shouldRecalculateSize = horizontal !== this.horizontal;
         this.horizontal = horizontal;
         this.minPanelSize = minPanelSize;
-        this.resetOnDoubleClick = resetOnDoubleClick
+        this.panelGap = panelGap;
+        this.resetOnDoubleClick = resetOnDoubleClick;
+
+        this.divider.style.minWidth = this.horizontal ? null : `${panelGap}px`;
+        this.divider.style.minHeight = this.horizontal ? `${panelGap}px` : null;
 
         if (shouldRecalculateSize) {
             this.resetSizes();
@@ -110,7 +114,7 @@ class MudSplitPanel {
         const newFirstSize = this.startFirstSize + delta;
 
         const min = this.minPanelSize;
-        const max = containerSize - min;
+        const max = containerSize - this.panelGap - min;
 
         if (newFirstSize > min && newFirstSize < max) {
             this._setPanelSizes(newFirstSize, containerSize);
@@ -118,17 +122,12 @@ class MudSplitPanel {
     }
 
     _setPanelSizes(newFirstSize, containerSize) {
-        if (this.horizontal) {
-            this.firstPanel.style.height = `${newFirstSize}px`;
-            this.secondPanel.style.height = `${containerSize - newFirstSize - this.divider.offsetHeight}px`;
-            this.firstPanel.style.width = "100%";
-            this.secondPanel.style.width = "100%";
-        } else {
-            this.firstPanel.style.width = `${newFirstSize}px`;
-            this.secondPanel.style.width = `${containerSize - newFirstSize - this.divider.offsetWidth}px`;
-            this.firstPanel.style.height = "100%";
-            this.secondPanel.style.height = "100%";
-        }
+        const newSecondSize = containerSize - newFirstSize - this.panelGap;
+
+        this.firstPanel.style.height = this.horizontal ? `${newFirstSize}px` : "100%";
+        this.secondPanel.style.height = this.horizontal ? `${newSecondSize}px` : "100%";
+        this.firstPanel.style.width = this.horizontal ? "100%" : `${newFirstSize}px`;
+        this.secondPanel.style.width = this.horizontal ? "100%" : `${newSecondSize}px`;
     }
 
     _onMouseUp() {
@@ -164,8 +163,8 @@ if (!window.mudSplitPanel) {
     window.splitPanels = {};
 }
 
-window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minPanelSize) {
-    window.splitPanels[id].update(horizontal, resetOnDoubleClick, minPanelSize);
+window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minPanelSize, panelGap) {
+    window.splitPanels[id].update(horizontal, resetOnDoubleClick, minPanelSize, panelGap);
 };
 
 window.mudSplitPanel_resetSizes = function (id) {
