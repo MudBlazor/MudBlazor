@@ -58,7 +58,7 @@ namespace MudBlazor
         /// The Aria Label to be assigned to the checkbox.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Theme colors are supported.
+        /// Defaults to <c>null</c>.  Used to improve accessibility for screen readers. Adds an aria-labelledby to <c>UserAttributes"</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
