@@ -25,15 +25,19 @@ class MudSplitPanel {
         this.startPos = 0;
         this.startFirstSize = 0;
         this.firstPanelInitialSize = firstPanelInitialSize;
+        this.keyboardStep = 10;
 
         this._onMouseDown = this._onMouseDown.bind(this);
         this._onMouseMove = this._onMouseMove.bind(this);
         this._onMouseUp = this._onMouseUp.bind(this);
         this._onDoubleClick = this._onDoubleClick.bind(this);
+        this._onKeyDown = this._onKeyDown.bind(this);
 
         this.divider.addEventListener("mousedown", this._onMouseDown);
         this.divider.addEventListener("touchstart", this._onMouseDown);
         this.divider.addEventListener("dblclick", this._onDoubleClick);
+        this.divider.addEventListener("keydown", this._onKeyDown);
+
         let lastTap = 0;
         this.divider.addEventListener("touchend", (_) => {
             const now = Date.now();
@@ -43,12 +47,26 @@ class MudSplitPanel {
             lastTap = now;
         });
 
-        this.update(horizontal, resetOnDoubleClick, minPanelSize, panelGap);
+        this.update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, true);
+    }
+
+    destroy() {
+        this.divider.removeEventListener("mousedown", this._onMouseDown);
+        this.divider.removeEventListener("touchstart", this._onMouseDown);
+        this.divider.removeEventListener("dblclick", this._onDoubleClick);
+        this.divider.removeEventListener("keydown", this._onKeyDown);
+        this.divider.removeEventListener("touchend", this._onKeyDown);
+        
+        if (this.isDragging) {
+            this._onMouseUp();
+        }
+        
+        delete window.splitPanels[this.container.id];
     }
 
     // noinspection JSUnusedGlobalSymbols
-    update(horizontal, resetOnDoubleClick, minPanelSize, panelGap) {
-        let shouldRecalculateSize = horizontal !== this.horizontal;
+    update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, forceRecalculateSize = false) {
+        let shouldRecalculateSize = horizontal !== this.horizontal || forceRecalculateSize;
         this.horizontal = horizontal;
         this.minPanelSize = minPanelSize;
         this.panelGap = panelGap;
@@ -56,6 +74,12 @@ class MudSplitPanel {
 
         this.divider.style.minWidth = this.horizontal ? null : `${panelGap}px`;
         this.divider.style.minHeight = this.horizontal ? `${panelGap}px` : null;
+        this.divider.ariaOrientation = this.horizontal ? "horizontal" : "vertical";
+        this.divider.ariaValueMin = this.minPanelSize;
+        this.divider.ariaValueMax = (this.horizontal
+            ? this.container.offsetHeight - panelGap - this.minPanelSize
+            : this.container.offsetWidth - panelGap - this.minPanelSize)
+            .toString();
 
         if (shouldRecalculateSize) {
             this.resetSizes();
@@ -69,11 +93,14 @@ class MudSplitPanel {
         this.secondPanel.style.height = "100%";
 
         if (this.firstPanelInitialSize !== null) {
-            const containerSize = this.horizontal
-                ? this.container.offsetHeight
-                : this.container.offsetWidth;
-            this._setPanelSizes(this.firstPanelInitialSize, containerSize);
+            this._setPanelSizes(this.firstPanelInitialSize, this._getContainerSize());
+        } else {
+            this.divider.ariaValueNow = (this._getContainerSize() / 2).toString();
         }
+    }
+    
+    _getContainerSize() {
+        return this.horizontal ? this.container.offsetHeight : this.container.offsetWidth;
     }
 
     _onMouseDown(e) {
@@ -105,22 +132,18 @@ class MudSplitPanel {
 
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-        const containerSize = this.horizontal
-            ? this.container.offsetHeight
-            : this.container.offsetWidth;
-
         const delta = this.horizontal ? clientY - this.startPos : clientX - this.startPos;
         const newFirstSize = this.startFirstSize + delta;
 
+        const containerSize = this._getContainerSize();
         const min = this.minPanelSize;
         const max = containerSize - this.panelGap - min;
 
-        if (newFirstSize > min && newFirstSize < max) {
+        if (newFirstSize >= min && newFirstSize <= max) {
             this._setPanelSizes(newFirstSize, containerSize);
         }
     }
-
+    
     _setPanelSizes(newFirstSize, containerSize) {
         const newSecondSize = containerSize - newFirstSize - this.panelGap;
 
@@ -128,6 +151,8 @@ class MudSplitPanel {
         this.secondPanel.style.height = this.horizontal ? `${newSecondSize}px` : "100%";
         this.firstPanel.style.width = this.horizontal ? "100%" : `${newFirstSize}px`;
         this.secondPanel.style.width = this.horizontal ? "100%" : `${newSecondSize}px`;
+
+        this.divider.ariaValueNow = newFirstSize;
     }
 
     _onMouseUp() {
@@ -155,6 +180,51 @@ class MudSplitPanel {
         }
 
         this._setPanelSizes(firstPanelSize, containerSize);
+    }
+
+    _onKeyDown(e) {
+        const key = e.key;
+        let delta = 0;
+        const containerSize = this._getContainerSize();
+
+        if (key.startsWith("Arrow") || key === "Home" || key === "End") {
+            e.preventDefault();
+        }
+
+        if (this.horizontal) {
+            if (key === "ArrowUp") {
+                delta = -this.keyboardStep;
+            } else if (key === "ArrowDown") {
+                delta = this.keyboardStep;
+            } else if (key === "Home") {
+                this._setPanelSizes(this.minPanelSize, containerSize);
+            } else if (key === "End") {
+                this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
+            }
+        } else {
+            if (key === "ArrowLeft") {
+                delta = -this.keyboardStep;
+            } else if (key === "ArrowRight") {
+                delta = this.keyboardStep;
+            } else if (key === "Home") {
+                this._setPanelSizes(this.minPanelSize, containerSize);
+            } else if (key === "End") {
+                this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
+            }
+        }
+
+        if (delta !== 0) {
+            const firstPanelSize = this.horizontal
+                ? this.firstPanel.offsetHeight
+                : this.firstPanel.offsetWidth;
+            const newFirstPanelSize = firstPanelSize + delta;
+            const min = this.minPanelSize;
+            const max = containerSize - this.panelGap - min;
+
+            if (newFirstPanelSize >= min && newFirstPanelSize <= max) {
+                this._setPanelSizes(newFirstPanelSize, containerSize);
+            }
+        }
     }
 }
 

@@ -23,6 +23,7 @@
   .divider {
     cursor: ew-resize;
     position: relative;
+    outline: none;
 
     &.horizontal {
       cursor: n-resize;
