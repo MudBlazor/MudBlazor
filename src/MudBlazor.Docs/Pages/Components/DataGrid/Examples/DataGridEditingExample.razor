@@ -3,9 +3,19 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements.Take(4)" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
+<MudDataGrid @ref="_elementGrid" T="Element" Items="@_elements" ReadOnly="@_readOnly" 
+    EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
     StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
     Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudButtonGroup Class="ma-0 pa-0" Color="Color.Success" Variant="Variant.Filled">
+            <MudButton OnClick="NewItemAsync">
+                Add New Item
+            </MudButton>
+        </MudButtonGroup>
+    </ToolBarContent>
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Editable="false" />
         <PropertyColumn Property="x => x.Sign" />
@@ -20,21 +30,32 @@
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
-        <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
+        <TemplateColumn Hidden="@_readOnly" CellClass="d-flex justify-between">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    @if (!_isCellEditMode && !_editTriggerRowClick)
+                    {
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    }
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
             </CellTemplate>
+            <EditTemplate>
+                    @if (!_isCellEditMode && !_editTriggerRowClick)
+                    {
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    }
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
+            </EditTemplate>
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Value="_readOnly" Color="Color.Primary">Read Only</MudSwitch>
-    <div class="d-flex justify-start align-center">
+    <div class="d-flex justify-start align-center ml-4">
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">Form</p>
         <MudSwitch @bind-Value="_isCellEditMode" Color="Color.Primary">Cell</MudSwitch>
     </div>
-    <div class="d-flex justify-start align-center">
+    <div class="d-flex justify-start align-center ml-4">
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">Manual</p>
         <MudSwitch @bind-Value="_editTriggerRowClick" Color="Color.Primary">On Row Click</MudSwitch>
     </div>
@@ -57,30 +78,68 @@
 </MudExpansionPanels>
 
 @code {
-    private IEnumerable<Element> Elements = new List<Element>();
+    private IEnumerable<Element> _elementMasterList = [];
+    private List<Element> _elements = [];
     private bool _readOnly;
     private bool _isCellEditMode;
     private List<string> _events = new();
     private bool _editTriggerRowClick;
+    private MudDataGrid<Element> _elementGrid = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        _elementMasterList = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        _elements = _elementMasterList.Take(4).ToList();
+    }
+
+    private async Task NewItemAsync()
+    {
+        var elem = new Element();
+        if (_isCellEditMode)
+        {
+            _elements.Insert(0, elem);
+        }
+        else
+        {
+            await _elementGrid.SetEditingItemAsync(elem);
+        }        
+    }
+
+    private void DeleteItem(Element item)
+    {
+        _elements.Remove(item);
     }
 
     // events
-    void StartedEditingItem(Element item)
-    {
+    private void StartedEditingItem(Element item)
+    {        
         _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    void CanceledEditingItem(Element item)
+    private void CanceledEditingItem(Element item)
     {
+        // update code for backing data here if needed
         _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    void CommittedItemChanges(Element item)
+    private void CommittedItemChanges(Element item)
     {
+        // update code for the backing data here
+        if (item.Number == 0) // new item
+        {
+            bool cellMode = _elements.Remove(item); // for cell mode
+            var maxMaster = _elementMasterList.Any() ? _elementMasterList.Max(x => x.Number) : 0;
+            var maxElements = _elements.Any() ? _elements.Max(x => x.Number) : 0;
+            item.Number = Math.Max(maxMaster, maxElements) + 1;          
+            if (cellMode)
+            {
+                _elements.Insert(0, item);
+            }
+            else
+            {
+                _elements.Add(item);
+            }            
+        }   
         _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 }

@@ -8,6 +8,7 @@ using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -226,11 +227,11 @@ namespace MudBlazor.UnitTests.Components
             // first try a valid credit card number
             comp.Find("input").Change("4012 8888 8888 1881");
             textfield.Error.Should().BeFalse(because: "The number is a valid VISA test credit card number");
-            textfield.ErrorText.Should().BeNullOrEmpty();
+            textfield.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // now try something that produces a validation error
             comp.Find("input").Change("0000 1111 2222 3333");
             textfield.Error.Should().BeTrue(because: "The credit card number is fake");
-            textfield.ErrorText.Should().NotBeNullOrEmpty();
+            textfield.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
         }
 
 
@@ -299,7 +300,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Blur();
             textfield.Text.Should().Be("A");
             textfield.HasErrors.Should().Be(true);
-            textfield.ErrorText.Should().Be("Not a valid number");
+            textfield.GetState(x => x.ErrorText).Should().Be("Not a valid number");
         }
 
         /// <summary>
@@ -312,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TextFieldRequiredTest>();
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Touched.Should().BeFalse();
-            textfield.ErrorText.Should().BeNullOrEmpty();
+            textfield.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfield.HasErrors.Should().Be(false);
         }
 

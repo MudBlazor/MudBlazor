@@ -1,36 +1,16 @@
-﻿@namespace MudBlazor.Docs.Examples
-@using MudBlazor.Charts
+﻿@using MudBlazor.Charts
+
+@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Sankey" Width="@_width" Height="@_height" ChartSeries="@_series" ChartOptions="@_options" />
+    <MudChart ChartType="ChartType.Sankey" Width="650px" Height="350px" ChartSeries="@_series"/>
 </MudPaper>
 
-<MudGrid>
-    <MudItem md="6" xs="12">
-        <MudTextField @bind-Value="_width" Label="Chart Width"></MudTextField>
-    </MudItem>
-    <MudItem md="6" xs="12">
-        <MudTextField @bind-Value="_height" Label="Chart Height"></MudTextField>
-    </MudItem>
-    <MudItem md="4" xs="12">
-        <MudSlider @bind-Value="_options.NodeWidth" Max="50" ValueLabel="true">Node width</MudSlider>
-    </MudItem>
-    <MudItem md="4" xs="12">
-        <MudSlider @bind-Value="_options.MinVerticalSpacing" Max="30" ValueLabel="true">Min. vertical spacing</MudSlider>
-    </MudItem>
-    <MudItem md="4" xs="12">
-        <MudSlider @bind-Value="_options.EdgeOpacity" Step="0.01" Max="1" ValueLabel="true">Edge opacity</MudSlider>
-    </MudItem>
-</MudGrid>
-
 @code {
-    private SankeyChartOptions _options = new();
-    private string _width = "650px";
-    private string _height = "350px";
 
     private List<ChartSeries<int>> _series = new()
     {
-        new() 
+        new()
         { 
             Name = "Income Flow", 
             Data = new List<SankeyEdge<int>> 

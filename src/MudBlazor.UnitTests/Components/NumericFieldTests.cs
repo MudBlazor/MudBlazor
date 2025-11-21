@@ -10,6 +10,7 @@ using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
@@ -202,12 +203,12 @@ namespace MudBlazor.UnitTests.Components
             // first try a valid value
             comp.Find("input").Change(99);
             numericField.Error.Should().BeFalse(because: "The value is < 100");
-            numericField.ErrorText.Should().BeNullOrEmpty();
+            numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // now try something that's outside of range
             comp.Find("input").Change("100.1");
             numericField.Error.Should().BeFalse(because: "The value should be set to Max (100)");
             numericField.Value.Should().Be(100M);
-            numericField.ErrorText.Should().BeNullOrEmpty();
+            numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -222,12 +223,12 @@ namespace MudBlazor.UnitTests.Components
             // first try set max decimal value
             comp.Find("input").Change(decimal.MaxValue);
             numericField.Value.Should().Be(decimal.MaxValue);
-            numericField.ErrorText.Should().BeNullOrEmpty();
+            numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // next try set minimum decimal value
             comp.Find("input").Change(decimal.MinValue);
             numericField.Value.Should().Be(decimal.MinValue);
-            numericField.ErrorText.Should().BeNullOrEmpty();
+            numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -297,7 +298,7 @@ namespace MudBlazor.UnitTests.Components
         //    comp.Find("input").Blur();
         //    numericField.Value.Should().BeNull();
         //    numericField.HasErrors.Should().Be(true);
-        //    numericField.ErrorText.Should().Be("Not a valid number");
+        //    numericField.GetState(x => x.ErrorText).Should().Be("Not a valid number");
         //}
 
         /// <summary>
@@ -311,7 +312,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<NumericFieldRequiredTest>();
             var numericField = comp.FindComponent<MudNumericField<int?>>().Instance;
             numericField.Touched.Should().BeFalse();
-            numericField.ErrorText.Should().BeNullOrEmpty();
+            numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericField.HasErrors.Should().Be(false);
         }
 

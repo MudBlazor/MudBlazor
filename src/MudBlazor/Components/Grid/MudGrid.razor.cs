@@ -32,7 +32,9 @@ public partial class MudGrid : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Grid.Behavior)]
+#pragma warning disable CS0618 // Type or member is obsolete
     public int Spacing { set; get; } = MudGlobal.GridDefaults.Spacing;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// Defines the distribution of children along the main axis within a <see cref="MudStack"/> component.
