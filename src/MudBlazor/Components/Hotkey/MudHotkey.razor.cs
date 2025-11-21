@@ -16,7 +16,6 @@ public partial class MudHotkey : MudComponentBase, IDisposable
     private const string UnregisterJsMethodName = "mudHotkeyListener.unregisterHotkey";
 
     private bool _disposed;
-    private bool _isRendered;
     private bool _childContentIsVisible;
     private readonly string _hotkeyId = Guid.NewGuid().ToString();
     private readonly DotNetObjectReference<MudHotkey> _dotNetObjectReference;
@@ -96,15 +95,13 @@ public partial class MudHotkey : MudComponentBase, IDisposable
             {
                 await RegisterHotkeyAsync();
             }
-
-            _isRendered = true;
         }
     }
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        if (_isRendered && !Disabled)
+        if (IsJSRuntimeAvailable && !Disabled)
         {
             await RegisterHotkeyAsync();
         }
