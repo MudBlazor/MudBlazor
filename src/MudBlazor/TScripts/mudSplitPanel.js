@@ -24,6 +24,7 @@ class MudSplitPanel {
         this.isDragging = false;
         this.startPos = 0;
         this.startFirstSize = 0;
+        this.lastTap = 0;
         this.firstPanelInitialSize = firstPanelInitialSize;
         this.keyboardStep = 10;
 
@@ -31,21 +32,14 @@ class MudSplitPanel {
         this._onMouseMove = this._onMouseMove.bind(this);
         this._onMouseUp = this._onMouseUp.bind(this);
         this._onDoubleClick = this._onDoubleClick.bind(this);
+        this._onTouchEnd = this._onTouchEnd.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
 
         this.divider.addEventListener("mousedown", this._onMouseDown);
         this.divider.addEventListener("touchstart", this._onMouseDown);
         this.divider.addEventListener("dblclick", this._onDoubleClick);
+        this.divider.addEventListener("touchend", this._onTouchEnd);
         this.divider.addEventListener("keydown", this._onKeyDown);
-
-        let lastTap = 0;
-        this.divider.addEventListener("touchend", (_) => {
-            const now = Date.now();
-            if (now - lastTap < 300) {
-                this._onDoubleClick();
-            }
-            lastTap = now;
-        });
 
         this.update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, true);
     }
@@ -54,8 +48,8 @@ class MudSplitPanel {
         this.divider.removeEventListener("mousedown", this._onMouseDown);
         this.divider.removeEventListener("touchstart", this._onMouseDown);
         this.divider.removeEventListener("dblclick", this._onDoubleClick);
+        this.divider.removeEventListener("touchend", this._onTouchEnd);
         this.divider.removeEventListener("keydown", this._onKeyDown);
-        this.divider.removeEventListener("touchend", this._onKeyDown);
         
         if (this.isDragging) {
             this._onMouseUp();
@@ -180,6 +174,14 @@ class MudSplitPanel {
         }
 
         this._setPanelSizes(firstPanelSize, containerSize);
+    }
+    
+    _onTouchEnd() {
+        const now = Date.now();
+        if (now - this.lastTap < 300) {
+            this._onDoubleClick();
+        }
+        this.lastTap = now;
     }
 
     _onKeyDown(e) {
