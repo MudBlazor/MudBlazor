@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
-            await comp.InvokeAsync(async () => await select.SetParam("ListClass", "my-list-class"));
+            await comp.InvokeAsync(async () => await select.SetParam(x => x.ListClass, "my-list-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
         }
 
@@ -27,9 +27,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectTest_CheckLayerClass()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
-            await comp.InvokeAsync(async () => await comp.SetParam("OuterClass", "my-outer-class"));
-            await comp.InvokeAsync(async () => await comp.SetParam("Class", "my-main-class"));
-            await comp.InvokeAsync(async () => await comp.SetParam("InputClass", "my-input-class"));
+            await comp.InvokeAsync(async () => await comp.SetParam(x => x.OuterClass, "my-outer-class"));
+            await comp.InvokeAsync(async () => await comp.SetParam(x => x.Class, "my-main-class"));
+            await comp.InvokeAsync(async () => await comp.SetParam(x => x.InputClass, "my-input-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-outer-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-main-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-input-class"));
@@ -937,7 +937,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
             await comp.InvokeAsync(() => select.Instance.CloseMenu());
-            await select.SetParam(nameof(MudSelect<string>.Value), null);
+            await select.SetParam(x => x.Value, null);
             await comp.InvokeAsync(() => select.Instance.OpenMenu());
             // no option should be hilited
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
@@ -1028,18 +1028,18 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await select.SetParam("Disabled", true);
+            await select.SetParam(x => x.Disabled, true);
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Try to add null item and check the value should not changed.
             await comp.InvokeAsync(() => select.Instance.Add(null));
             comp.WaitForAssertion(() => select.Instance._items.Count.Should().Be(4));
 
-            await select.SetParam("Disabled", false);
+            await select.SetParam(x => x.Disabled, false);
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
-            await select.SetParam("Disabled", true);
+            await select.SetParam(x => x.Disabled, true);
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
@@ -1161,11 +1161,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
 
-            await select.SetParam("Disabled", true);
+            await select.SetParam(x => x.Disabled, true);
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
 
-            await select.SetParam("Disabled", false);
+            await select.SetParam(x => x.Disabled, false);
             //Test the keyup event
             await comp.InvokeAsync(() => select.Instance.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keyup", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
@@ -1258,7 +1258,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValueChangeCount.Should().Be(0);
             comp.Instance.ValuesChangeCount.Should().Be(0);
 
-            await comp.InvokeAsync(async () => await select.SetParam("Value", "1"));
+            await comp.InvokeAsync(async () => await select.SetParam(x => x.Value, "1"));
             await comp.InvokeAsync(() => select.Instance.ForceUpdate());
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
@@ -1266,7 +1266,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Changing value programmatically without ForceUpdate should change value, but should not fire change events
             // Its by design, so this part can be change if design changes
-            await comp.InvokeAsync(async () => await select.SetParam("Value", "2"));
+            await comp.InvokeAsync(async () => await select.SetParam(x => x.Value, "2"));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
             select.Instance.Value.Should().Be("2");

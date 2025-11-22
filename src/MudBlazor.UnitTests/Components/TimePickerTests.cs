@@ -237,7 +237,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            await comp.SetParam("Time", new TimeSpan(02, 00, 00));
+            await comp.SetParam(x => x.Time, new TimeSpan(02, 00, 00));
             comp.WaitForAssertion(() => comp.Instance.Time.Should().Be(new TimeSpan(02, 00, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
@@ -275,7 +275,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", CtrlKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 00, 00)));
 
-            await comp.SetParam("Time", new TimeSpan(03, 56, 00));
+            await comp.SetParam(x => x.Time, new TimeSpan(03, 56, 00));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(04, 01, 00)));
 

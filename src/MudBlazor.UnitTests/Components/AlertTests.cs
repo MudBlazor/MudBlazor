@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudAlert>();
             try
             {
-                await comp.SetParam("Severity", "abc");
+                await comp.SetParam(x => x.Severity, "abc");
             }
             catch (Exception ex)
             {

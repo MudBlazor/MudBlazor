@@ -274,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_FireTextAndValueChangedOnTextInput()
+        public void TextField_Should_FireTextAndValueChangedOnTextInput()
         {
             string changed_value = null;
             string changed_text = null;
@@ -454,10 +454,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TextField_ClearButton_TabIndex_Test()
         {
-            var comp = Context.RenderComponent<MudTextField<string>>(
-                Parameter(nameof(MudTextField<string>.Clearable), true),
-                Parameter(nameof(MudTextField<string>.Text), "Test")
-            );
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(parameter => parameter.Clearable, true)
+                .Add(x => x.Text, "Test"));
 
             // Button should have tabindex -1
             comp.Find(".mud-input-clear-button").GetAttribute("tabindex").Should().Be("-1");
@@ -581,7 +580,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_ClearTest1()
         {
             var comp = Context.RenderComponent<MudTextField<int>>();
-            await comp.SetParam("Text", "17");
+            await comp.SetParam(x => x.Text, "17");
             var textfield = comp.Instance;
             textfield.Value.Should().Be(17);
             textfield.Text.Should().Be("17");
@@ -646,22 +645,22 @@ namespace MudBlazor.UnitTests.Components
             textfield.Text.Should().Be("Vat of acid");
 
             // let's try to set the text directly on the input, TextUpdateSuppression should prevent it because we are focused
-            await input.SetParam("Value", "");
+            await input.SetParam(x => x.Value, "");
             input.Instance.Value.Should().Be("");
             input.Instance.Text.Should().Be("Vat of acid");
 
             // turn it off
-            await comp.SetParam(nameof(MudBaseInput<string>.TextUpdateSuppression), false);
+            await comp.SetParam(x => x.TextUpdateSuppression, false);
 
             // now the input text should get overwritten
-            await input.SetParam("Value", "In case of ladle");
+            await input.SetParam(x => x.Value, "In case of ladle");
             input.Instance.Value.Should().Be("In case of ladle");
             input.Instance.Text.Should().Be("In case of ladle");
 
             // turn it on again
-            await comp.SetParam(nameof(MudBaseInput<string>.TextUpdateSuppression), true);
+            await comp.SetParam(x => x.TextUpdateSuppression, true);
 
-            await input.SetParam("Value", "");
+            await input.SetParam(x => x.Value, "");
             input.Instance.Value.Should().Be("");
             input.Instance.Text.Should().Be("In case of ladle");
 

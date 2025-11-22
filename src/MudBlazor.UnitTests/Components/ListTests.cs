@@ -21,8 +21,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("Sparkling Water");
             comp.Markup.Should().NotContain("Roger Waters");
             comp.Markup.Should().NotContain("High Hopes");
-            await listItem.SetParam("Text", "Roger Waters");
-            await listItem.SetParam("SecondaryText", "High Hopes");
+            await listItem.SetParam(x => x.Text, "Roger Waters");
+            await listItem.SetParam(x => x.SecondaryText, "High Hopes");
             comp.Markup.Should().NotContain("Sparkling Water");
             comp.Markup.Should().Contain("Roger Waters");
             comp.Markup.Should().Contain("High Hopes");

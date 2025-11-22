@@ -560,7 +560,7 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(MudDateRangePicker.DateRange), dr1),
                 EventCallback(nameof(MudDateRangePicker.DateRangeChanged), (DateRange _) => wasEventCallbackCalled = true));
 
-            await comp.SetParam(nameof(MudDateRangePicker.DateRange), dr2);
+            await comp.SetParam(x => x.DateRange, dr2);
 
             comp.Instance.DateRange.Should().Be(dr2);
             wasEventCallbackCalled.Should().BeFalse();

@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
-            await comp.SetParam("Disabled", true);
+            await comp.SetParam(x => x.Disabled, true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
         }
@@ -342,7 +342,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
-            await comp.SetParam("Disabled", true);
+            await comp.SetParam(x => x.Disabled, true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
         }

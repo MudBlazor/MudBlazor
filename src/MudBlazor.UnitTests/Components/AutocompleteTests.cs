@@ -109,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
         /// Autocomplete should show 'Assam' (using ToStringFunc)
         /// </summary>
         [Test]
-        public async Task AutocompleteTest3()
+        public void AutocompleteTest3()
         {
             var comp = Context.RenderComponent<AutocompleteTest3>();
             var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest3.State>>().Instance;
@@ -808,7 +808,7 @@ namespace MudBlazor.UnitTests.Components
         /// </para>
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_NotCloseDropdownOnInputBlur()
+        public void Autocomplete_Should_NotCloseDropdownOnInputBlur()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             // select elements needed for the test
@@ -1207,7 +1207,7 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
 
-                await autocompleteComponent.SetParam("SelectValueOnTab", true);
+                await autocompleteComponent.SetParam(x => x.SelectValueOnTab, true);
                 await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
                 await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));

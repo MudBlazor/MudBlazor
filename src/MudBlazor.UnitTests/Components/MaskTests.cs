@@ -377,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>();
             var maskField = comp.Instance;
 
-            await comp.InvokeAsync(async () => await comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
+            await comp.InvokeAsync(async () => await comp.SetParam(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
@@ -621,7 +621,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
             comp.WaitForAssertion(() => impl.CaretPos.Should().Be(2));
 
-            await comp.SetParam("Mask", new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
+            await comp.SetParam(x => x.Mask, new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
 
             await comp.InvokeAsync(() => maskField.OnCopy());
             await comp.InvokeAsync(async () => await maskField.FocusAsync());
@@ -639,26 +639,26 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(0));
             await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
-            await comp.SetParam("Text", "123");
+            await comp.SetParam(x => x.Text, "123");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("123 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("123"));
-            await comp.SetParam("Text", "123 ___");
+            await comp.SetParam(x => x.Text, "123 ___");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("123 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("123"));
-            await comp.SetParam("Value", "321");
+            await comp.SetParam(x => x.Value, "321");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("321 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("321"));
-            await comp.SetParam("Value", "321");
+            await comp.SetParam(x => x.Value, "321");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("321 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("321"));
             await comp.InvokeAsync(() => maskField.OnBlurredAsync(new FocusEventArgs()));
 
-            await comp.SetParam("Clearable", true);
+            await comp.SetParam(x => x.Clearable, true);
             maskField.Clearable.Should().Be(true);
             // Param Mask is impossible to null out
-            await comp.SetParam("Mask", null);
+            await comp.SetParam(x => x.Mask, null);
             comp.WaitForAssertion(() => maskField.Mask.Should().NotBeNull());
-            await comp.SetParam("Mask", new PatternMask("*00 000") { CleanDelimiters = true });
+            await comp.SetParam(x => x.Mask, new PatternMask("*00 000") { CleanDelimiters = true });
 
             // selection is not cleared by caret on edge of selection
             await comp.InvokeAsync(() => maskField.OnSelect(0, 1));
@@ -934,12 +934,12 @@ namespace MudBlazor.UnitTests.Components
             var maskField = comp.Instance;
             maskField.Clearable.Should().Be(false);
             maskField.ReadOnly.Should().Be(false);
-            await comp.SetParam(nameof(MudMask.Mask), new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
+            await comp.SetParam(x => x.Mask, new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
 
             // mask is not clearable, no clear button should show up
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
 
-            await comp.SetParam(nameof(MudMask.Clearable), true);
+            await comp.SetParam(x => x.Clearable, true);
             maskField.Clearable.Should().Be(true);
 
             // mask is now clearable but contains no text so, no clear button should show up
@@ -952,7 +952,7 @@ namespace MudBlazor.UnitTests.Components
             // mask is clearable and contains text so the clear button should show up
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
-            await comp.SetParam(nameof(MudMask.ReadOnly), true);
+            await comp.SetParam(x => x.ReadOnly, true);
 
             // mask is clearable and contains text but is readonly so the clear button should not show up
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
