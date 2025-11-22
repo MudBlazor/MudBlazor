@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using System.Diagnostics;
+using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Dummy;
@@ -82,9 +83,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            @switch.Instance.Value = true;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await @switch.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Value, true));
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
@@ -176,12 +175,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
                 comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@checked);
                 // now check how setting the SelectedValues makes items checked or unchecked
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-                await comp.InvokeAsync(() =>
-                {
-                    select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
-                });
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+                await select.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.SelectedValues, new HashSet<string>() { "1", "2" }));
                 comp.WaitForAssertion(() =>
                     comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@checked));
                 comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
