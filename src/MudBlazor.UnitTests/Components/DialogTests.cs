@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task LifecycleTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task SimpleTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -101,12 +101,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InlineDialogTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            var comp1 = Context.Render<TestInlineDialog>();
             comp1.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
             comp1.Find("button").Click();
@@ -127,12 +127,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InlineDialogShowMethodTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
 
-            var comp1 = Context.RenderComponent<InlineDialogShowMethod>();
+            var comp1 = Context.Render<InlineDialogShowMethod>();
 
             comp.Markup.Should().NotContain("Here be dragons");
 
@@ -165,8 +165,8 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            var sup = Context.RenderComponent<InlineDialogShowMethodTest>();
+            var comp = Context.Render<MudDialogProvider>();
+            var sup = Context.Render<InlineDialogShowMethodTest>();
 
             // Assert : Initial state, dialog should be closed
 
@@ -203,12 +203,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NestedInlineDialogTest()
         {
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             provider.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp = Context.RenderComponent<TestNestedInlineDialog>();
+            var comp = Context.Render<TestNestedInlineDialog>();
             comp.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
             comp.Find("button").Click();
@@ -236,12 +236,12 @@ namespace MudBlazor.UnitTests.Components
         {
             await ImproveChanceOfSuccess(() =>
             {
-                var comp = Context.RenderComponent<MudDialogProvider>();
+                var comp = Context.Render<MudDialogProvider>();
                 comp.Markup.Trim().Should().BeEmpty();
                 var service = Context.Services.GetRequiredService<IDialogService>();
                 service.Should().NotBe(null);
                 // displaying the component with the inline dialog only renders the open button
-                var comp1 = Context.RenderComponent<InlineDialogIsVisibleStateTest>();
+                var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
                 // open the dialog
                 comp1.Find("button").Click();
                 comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
@@ -268,12 +268,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InlineDialogShouldNotCloseAfterStateHasChanged()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            var comp1 = Context.Render<TestInlineDialog>();
             // open the dialog
             comp1.Find("button").Click();
             // rate star
@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task DialogShouldUpdateTitleContent()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -316,7 +316,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task DialogShouldNotOverwriteParameters()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -348,12 +348,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PassingEventCallbackToDialogViaParameters()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
 
-            var testComp = Context.RenderComponent<DialogWithEventCallbackTest>();
+            var testComp = Context.Render<DialogWithEventCallbackTest>();
             // open dialog
             testComp.Find("button").Click();
             // in the opened dialog find the text field
@@ -376,7 +376,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddScoped<IDialogService>(sp => new CustomDialogService());
 
             //Render our dialog provider and make sure everything is fine
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             //Try to get the current service instance for the type IDialogService and make sure it is our custom implementation
@@ -415,7 +415,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task DialogShouldReturnTheReturnValue()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -439,7 +439,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task DialogKeyboardNavigation()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -466,7 +466,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task DialogKeyboardEvents()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -490,7 +490,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task DialogHandlesOnBackdropClickEvent()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             var service = Context.Services.GetRequiredService<IDialogService>();
@@ -515,12 +515,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InlineDialogBug4871Test()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            var comp1 = Context.Render<TestInlineDialog>();
             comp1.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
             comp1.Find("button").Click();
@@ -541,7 +541,7 @@ namespace MudBlazor.UnitTests.Components
         [Obsolete]
         public async Task DialogToggleFullscreenOptions()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             var service = Context.Services.GetRequiredService<IDialogService>();
@@ -565,7 +565,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncLifecycleTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             await comp.InvokeAsync(async () =>
@@ -591,7 +591,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ComponentThatOpensAndClosesDialog>();
+            var comp = Context.Render<ComponentThatOpensAndClosesDialog>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBeNull();
 
@@ -606,7 +606,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncSimpleTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -658,7 +658,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineAsyncDialogShouldHonorClass()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -685,7 +685,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogShouldUpdateTitleContent()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -709,7 +709,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogShouldNotOverwriteParameters()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -746,7 +746,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogShouldHonorClass()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -770,7 +770,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddScoped<IDialogService>(sp => new CustomDialogService());
 
             //Render our dialog provider and make sure everything is fine
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             //Try to get the current service instance for the type IDialogService and make sure it is our custom implementation
@@ -809,7 +809,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogShouldReturnTheReturnValue()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -835,7 +835,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogKeyboardNavigation()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -864,7 +864,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogHandlesOnBackdropClickEvent()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             var service = Context.Services.GetRequiredService<IDialogService>();
@@ -886,7 +886,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogToggleFullscreenOptions()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             var service = Context.Services.GetRequiredService<IDialogService>();
@@ -907,7 +907,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShowAsyncRenderCompleteTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
 
             var service = Context.Services.GetRequiredService<IDialogService>();
 
@@ -931,7 +931,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AsyncDialogParametersGenericShouldPassParameters()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
@@ -955,7 +955,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowGeneric_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -979,7 +979,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowGeneric_ShouldProvideCorrectOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -995,7 +995,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Show_ShouldRenderComponent()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1010,7 +1010,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Show_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1034,7 +1034,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Show_ShouldProvideCorrectOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1050,7 +1050,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Show_ShouldPassDialogParametersToDialog()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1067,7 +1067,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowGenericAsync_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1090,7 +1090,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowGenericAsync_ShouldProvideCorrectOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1105,7 +1105,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Close_ShouldCloseDialogAndInvokeOnDialogCloseRequested()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             var reference = service.CreateReference();
             var invoked = false;
@@ -1129,7 +1129,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
             var service = Context.Services.GetRequiredService<IDialogService>();
-            _ = Context.RenderComponent<MudDialogProvider>();
+            _ = Context.Render<MudDialogProvider>();
             var invoked = false;
             service.DialogInstanceAddedAsync += _ =>
             {
@@ -1149,7 +1149,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowAsync_ShouldProvideDefaultOption()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1171,7 +1171,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowAsync_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1194,7 +1194,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowAsync_ShouldProvideCorrectOptions_WhenOverloadIsCalled()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1209,7 +1209,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShowAsync_ShouldPassDialogParametersToDialog()
         {
             // Arrange
-            var provider = Context.RenderComponent<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
             // Act
@@ -1228,7 +1228,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("my-class", true, "mud-dialog-content mud-dialog-no-side-padding my-class")]
         public async Task DialogWithContentClassValueShouldRenderExpectedClassname(string contentClass, bool disablePadding, string expectedClassname)
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBeNull();
@@ -1250,7 +1250,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("my-class", "mud-dialog-actions my-class")]
         public async Task DialogWithActionsClassValueShouldRenderExpectedClassname(string actionsClass, string expectedClassname)
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBeNull();
@@ -1271,7 +1271,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("my-title-class my-second-class", "mud-dialog-title my-title-class my-second-class")]
         public async Task DialogWithTitleClassValueShouldRenderExpectedClassname(string titleClass, string expectedClassname)
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBeNull();
@@ -1291,7 +1291,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogWithNestedDialogOptionShouldNotReset()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
@@ -1324,10 +1324,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DuplicateDialogTest()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
-            var comp1 = Context.RenderComponent<InlineDialogDuplicateTest>();
+            var comp1 = Context.Render<InlineDialogDuplicateTest>();
             // open the dialog
             comp1.Find("button").Click();
             await Task.Delay(1000);
@@ -1337,12 +1337,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Dialog_TitleContent_And_ProgressBar_ShouldUpdate()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            var comp1 = Context.RenderComponent<InlineDialogTitleRefreshTest>();
+            var comp1 = Context.Render<InlineDialogTitleRefreshTest>();
 
             comp1.Find("button").Click();
 
@@ -1383,7 +1383,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton(jsRuntimeMock.Object);
 
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             var dialogOptions = new DialogOptions { BackdropClick = false, CloseOnEscapeKey = true };
 
@@ -1421,10 +1421,10 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton(jsRuntimeMock.Object);
 
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
 
             // Create a dialog component with OnBackdropClick delegate
-            var dialogComponent = Context.RenderComponent<DialogCloseOnEscapeTest>();
+            var dialogComponent = Context.Render<DialogCloseOnEscapeTest>();
 
             // Act
             await dialogComponent.FindComponent<MudButton>().Find("button").ClickAsync(new MouseEventArgs()); // Open the dialog

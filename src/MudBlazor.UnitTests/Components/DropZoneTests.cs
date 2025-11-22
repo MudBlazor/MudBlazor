@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DropZone_GeneralView()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             var container = comp.Find(".mud-drop-container");
 
@@ -109,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
             jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1)))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
 
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             jsRuntimeMock.Verify();
         }
@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DropZone_DropZoneOverrideContainerRendered()
         {
-            var comp = Context.RenderComponent<DropzoneCustomItemSelectorTest>();
+            var comp = Context.Render<DropzoneCustomItemSelectorTest>();
 
             var container = comp.Find(".mud-drop-container");
 
@@ -140,7 +140,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_SimpleDragAndDrop()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_DragAndDropDraggingClass_DragCanceled()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_DragAndDropDraggingClass_DragFinished()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
@@ -285,7 +285,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_DragAndDropDraggingClass_DragFinished_DropNotAllowed()
         {
-            var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
+            var comp = Context.Render<DropzoneDraggingTestCantDropSecondZoneTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
@@ -323,7 +323,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_DropItem_DragEnterNotTrackedItem()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             var tempContainer = comp.Find(".mud-drop-container");
             tempContainer.Children.Should().HaveCount(2);
@@ -341,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_DropNotTrackedItem()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
             {
                 var tempContainer = comp.Find(".mud-drop-container");
                 tempContainer.Children.Should().HaveCount(2);
@@ -359,7 +359,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_NotApplyOnDragStarted()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>();
+            var comp = Context.Render<DropzoneCanDropTest>();
 
             var firstDropZone = comp.Find(".first-drop-zone");
             var secondDropZone = comp.Find(".second-drop-zone");
@@ -406,7 +406,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_TransactionNotStarted()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>();
+            var comp = Context.Render<DropzoneCanDropTest>();
 
             var firstDropZone = comp.Find(".first-drop-zone");
             var secondDropZone = comp.Find(".second-drop-zone");
@@ -443,7 +443,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_ApplyOnDrag_OnlySecondZone()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>(
+            var comp = Context.Render<DropzoneCanDropTest>(
                 p => p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, true));
 
             var firstDropZone = comp.Find(".first-drop-zone");
@@ -502,7 +502,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            var comp = Context.Render<DropzoneCanDropTest>(p =>
             {
                 p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
                 p.Add(x => x.ApplyDropClassesOnDragStarted, true);
@@ -625,7 +625,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragFinished()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            var comp = Context.Render<DropzoneCanDropTest>(p =>
             {
                 p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
                 p.Add(x => x.ApplyDropClassesOnDragStarted, true);
@@ -662,7 +662,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragCanceled()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            var comp = Context.Render<DropzoneCanDropTest>(p =>
             {
                 p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
                 p.Add(x => x.ApplyDropClassesOnDragStarted, true);
@@ -696,7 +696,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DropZone_CheckDropClasses_DisabledItems()
         {
-            var comp = Context.RenderComponent<DropzoneDisableTest>();
+            var comp = Context.Render<DropzoneDisableTest>();
 
             var firstDropZone = comp.Find(".first-drop-zone");
             var secondDropZone = comp.Find(".second-drop-zone");
@@ -735,7 +735,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_DynamicItemsChanges()
         {
-            var comp = Context.RenderComponent<DropzoneDynamicItemCollectionTest>();
+            var comp = Context.Render<DropzoneDynamicItemCollectionTest>();
 
             var firstDropZone = comp.Find(".first-drop-zone");
             var secondDropZone = comp.Find(".second-drop-zone");
@@ -770,7 +770,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DropZone_OnlyZone()
         {
-            var comp = Context.RenderComponent<DropzoneVisbilityTest>();
+            var comp = Context.Render<DropzoneVisbilityTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
@@ -798,7 +798,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_PlaceIntoEmptyZone()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -838,7 +838,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_MoveWithinContainer_Down()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -875,7 +875,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_MoveWithinContainer_Up()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -913,7 +913,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_MoveWithinContainer_ToBottom()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -951,7 +951,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_MoveWithinContainer_Top()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -988,7 +988,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_MoveWithinContainer_NoChange()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -1018,7 +1018,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_MoveBetweenZones()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -1131,7 +1131,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Item_ClassSelector()
         {
-            var comp = Context.RenderComponent<DropzoneItemClassSelectorTest>();
+            var comp = Context.Render<DropzoneItemClassSelectorTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -1157,7 +1157,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Item_OnItemPicked()
         {
-            var comp = Context.RenderComponent<DropzoneItemOnItemPickedTest>();
+            var comp = Context.Render<DropzoneItemOnItemPickedTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -1180,7 +1180,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_Reorder_NoPreviewOnSameItem()
         {
-            var comp = Context.RenderComponent<DropzoneReorderTest>();
+            var comp = Context.Render<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
             var firstDropZone = comp.Find(".dropzone-1");
@@ -1223,7 +1223,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_DragFinished_DropNotAllowed_KeepOrder()
         {
-            var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
+            var comp = Context.Render<DropzoneDraggingTestCantDropSecondZoneTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
@@ -1255,7 +1255,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_IsOriginTest()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
@@ -1275,7 +1275,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_GetTransactionOriginZoneIdentifierTest()
         {
-            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            var comp = Context.Render<DropzoneBasicTest>();
 
             var container = comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);

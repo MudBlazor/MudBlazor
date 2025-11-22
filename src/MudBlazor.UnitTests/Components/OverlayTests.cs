@@ -16,8 +16,8 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldNotRenderByDefault()
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>();
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>();
         comp.Markup.Should().BeEmpty();
         providerComp.FindAll("div.mud-overlay").Count.Should().Be(0);
     }
@@ -25,8 +25,8 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldRenderWhenVisibleIsTrue()
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
         );
 
@@ -38,8 +38,8 @@ public class OverlayTests : BunitTest
     [TestCase(false)]
     public async Task AutoClose_OnClick(bool autoClose)
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.AutoClose, autoClose)
         );
@@ -61,8 +61,8 @@ public class OverlayTests : BunitTest
     {
         var counter = 0;
         void CloseHandler() => counter++;
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.AutoClose, true)
             .Add(p => p.OnClosed, CloseHandler)
@@ -76,8 +76,8 @@ public class OverlayTests : BunitTest
     [Test]
     public async Task AutoClose_VisibleBinding()
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<OverlayVisibleBindingWithAutoCloseTest>();
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<OverlayVisibleBindingWithAutoCloseTest>();
         IElement Button() => comp.Find("#showBtn");
 
         comp.Instance.Visible.Should().BeFalse();
@@ -92,8 +92,8 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldApplyCorrectZIndex()
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.ZIndex, 10)
         );
@@ -108,8 +108,8 @@ public class OverlayTests : BunitTest
     [TestCase(false, false)]
     public void ShouldApplyBackgroundColor(bool darkBackground, bool lightBackground)
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.DarkBackground, darkBackground)
             .Add(p => p.LightBackground, lightBackground)
@@ -138,8 +138,8 @@ public class OverlayTests : BunitTest
     [TestCase(false)]
     public void ShouldApplyAbsoluteClass(bool absolute)
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.Absolute, absolute)
         );
@@ -159,8 +159,8 @@ public class OverlayTests : BunitTest
     [TestCase(false)]
     public void ShouldApplyCorrectPointerEvents(bool modal)
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.Modal, modal)
         );
@@ -178,8 +178,8 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldHaveId()
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
         );
         providerComp.Find("div.mud-overlay").Attributes["id"].Value.Should().NotBeNullOrEmpty();
@@ -193,11 +193,11 @@ public class OverlayTests : BunitTest
     public void ShouldRender_SectionLocation(bool absolute, string expectedClass, bool hasChildContent, int testNum)
     {
         var childContent = "<div class='child-content'>Hello World</div>";
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var providerComp = Context.Render<MudPopoverProvider>();
         IRenderedComponent<MudOverlay> comp;
         if (hasChildContent)
         {
-            comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.Class, expectedClass)
             .Add(p => p.Absolute, absolute)
@@ -206,7 +206,7 @@ public class OverlayTests : BunitTest
         }
         else
         {
-            comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.Class, expectedClass)
             .Add(p => p.Absolute, absolute)
@@ -250,7 +250,7 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldRenderChildContent()
     {
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .AddChildContent("<div class='child-content'>Hello World</div>")
         );
@@ -277,7 +277,7 @@ public class OverlayTests : BunitTest
             .Verifiable();
         Context.Services.AddScoped(_ => serviceMock.Object);
 
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, visible)
             .Add(p => p.AutoClose, autoClose)
             .Add(p => p.Modal, modal)
@@ -290,8 +290,8 @@ public class OverlayTests : BunitTest
     public void Overlay_ShouldHaveElementId_AndMatchRenderedDivId()
     {
         // Arrange
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var providerComp = Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
         );
 
@@ -317,7 +317,7 @@ public class OverlayTests : BunitTest
         var visible = true;
 
         // === Initial: Visible = true, should lock scroll if conditions match ===
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var comp = Context.Render<MudOverlay>(parameters => parameters
             .Add(p => p.Absolute, absolute)
             .Bind(p => p.Visible, visible, p => visible = p)
             .Add(p => p.LockScroll, lockscroll)
@@ -410,8 +410,8 @@ public class OverlayTests : BunitTest
                 It.IsAny<object[]>()))
             .Throws(new Exception("unlockScroll should not be called!"));
 
-        var dialog = Context.RenderComponent<MudDialogProvider>();
-        var comp = Context.RenderComponent<OverlayScrollLockedTest>();
+        var dialog = Context.Render<MudDialogProvider>();
+        var comp = Context.Render<OverlayScrollLockedTest>();
         // click the button opening dialog
         var button = comp.Find("button");
         button.Click();

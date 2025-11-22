@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupTest()
         {
-            var comp = Context.RenderComponent<AvatarGroupTest>();
+            var comp = Context.Render<AvatarGroupTest>();
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupMaxDefaultTest()
         {
-            var comp = Context.RenderComponent<AvatarGroupMaxDefaultTest>();
+            var comp = Context.Render<AvatarGroupMaxDefaultTest>();
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = group.FindAll(".mud-avatar").ToArray();
@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupChangeMaxTest()
         {
-            var comp = Context.RenderComponent<AvatarGroupChangeMaxTest>();
+            var comp = Context.Render<AvatarGroupChangeMaxTest>();
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -144,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupRemoveTest()
         {
-            var comp = Context.RenderComponent<AvatarGroupRemoveTest>();
+            var comp = Context.Render<AvatarGroupRemoveTest>();
 
             comp.Find("#empty-button").Click();
 
@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupMaxAvatarsTemplateTest()
         {
-            var comp = Context.RenderComponent<AvatarGroupMaxAvatarsTemplateTest>();
+            var comp = Context.Render<AvatarGroupMaxAvatarsTemplateTest>();
 
             comp.FindComponent<MudButton>().Should().NotBeNull();
 

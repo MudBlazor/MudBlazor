@@ -2,7 +2,7 @@
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.ButtonGroup;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
+using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtons>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, false)
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtons>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, true)
@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtons>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, true)

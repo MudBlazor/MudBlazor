@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Components;
 using MudBlazor.UnitTests.TestComponents.Utilities;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
+using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Utilities
 {
@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void EventUtil_ShouldPreventRenderCycle()
         {
-            var comp = Context.RenderComponent<EventUtil1Test>();
+            var comp = Context.Render<EventUtil1Test>();
             comp.Find("#clicks").TrimmedText().Should().Be("Clicks: 0/0/0");
             comp.RenderCount.Should().Be(1);
             // normal click handler causes a re-render automatically (normal Blazor behavior)

@@ -13,7 +13,7 @@ public class VirtualizeTests : BunitTest
     [Test]
     public void VirtualizeRenderTest()
     {
-        var comp = Context.RenderComponent<VirtualizeTest>();
+        var comp = Context.Render<VirtualizeTest>();
         var virtualize = comp.FindComponent<MudVirtualize<string>>();
         virtualize.Instance.ChildContent.Should().NotBeNull();
         comp.FindComponents<MudText>().Count.Should().Be(1);
@@ -22,7 +22,7 @@ public class VirtualizeTests : BunitTest
     [Test]
     public void VirtualizeNoRecordTest()
     {
-        var comp = Context.RenderComponent<VirtualizeNoRecordsContentTest>();
+        var comp = Context.Render<VirtualizeNoRecordsContentTest>();
 
         IElement ItemNoData() => comp.Find("#items_nodata");
         IElement ItemVirtualizedNoData() => comp.Find("#items_virtualized_nodata");

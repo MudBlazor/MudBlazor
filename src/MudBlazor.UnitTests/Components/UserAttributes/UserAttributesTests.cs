@@ -8,7 +8,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using NUnit.Framework;
-using TestContext = Bunit.TestContext;
+using BunitContext = Bunit.BunitContext;
 
 namespace MudBlazor.UnitTests.UserAttributes
 {
@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.UserAttributes
         public void AllMudComponents_ShouldForwardUserAttributes()
         {
             // Arrange
-            using var testContext = new TestContext();
+            using var testContext = new BunitContext();
             testContext.AddTestServices();
             testContext.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 

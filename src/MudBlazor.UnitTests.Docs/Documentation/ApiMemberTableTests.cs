@@ -6,7 +6,7 @@ using FluentAssertions;
 using MudBlazor.Docs.Components;
 using MudBlazor.Docs.Models;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
+using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Docs.Documentation;
 
@@ -22,7 +22,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderMissingType()
     {
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", null));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", null));
         // There should be a message saying no members are found
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
     }
@@ -34,7 +34,7 @@ public sealed class ApiMemberTableTests : BunitTest
     public void ApiMemberTable_RenderNoneMode()
     {
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.None));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.None));
         // There should be a message saying no members are found
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
     }
@@ -47,7 +47,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type with protected properties
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Properties), Parameter("ShowProtected", true));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Properties), Parameter("ShowProtected", true));
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
@@ -64,7 +64,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type without protected properties
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Properties), Parameter("ShowProtected", false));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Properties), Parameter("ShowProtected", false));
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
@@ -81,7 +81,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type without protected methods
         var mudAutocomplete = ApiDocumentation.GetType("MudBlazor.MudAutocomplete`1");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAutocomplete), Parameter("Mode", ApiMemberTableMode.Methods), Parameter("ShowProtected", true));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudAutocomplete), Parameter("Mode", ApiMemberTableMode.Methods), Parameter("ShowProtected", true));
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
@@ -98,7 +98,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type without protected methods
         var mudAutocomplete = ApiDocumentation.GetType("MudBlazor.MudAutocomplete`1");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAutocomplete), Parameter("Mode", ApiMemberTableMode.Methods), Parameter("ShowProtected", false));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudAutocomplete), Parameter("Mode", ApiMemberTableMode.Methods), Parameter("ShowProtected", false));
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
@@ -115,7 +115,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type with protected fields
         var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudBaseDatePicker), Parameter("Mode", ApiMemberTableMode.Fields), Parameter("ShowProtected", true));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudBaseDatePicker), Parameter("Mode", ApiMemberTableMode.Fields), Parameter("ShowProtected", true));
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
@@ -132,7 +132,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type without protected fields
         var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudBaseDatePicker), Parameter("Mode", ApiMemberTableMode.Fields), Parameter("ShowProtected", false));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudBaseDatePicker), Parameter("Mode", ApiMemberTableMode.Fields), Parameter("ShowProtected", false));
         // There should be a message saying no members are found  (since the protected field was the ONLY field)
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
@@ -152,7 +152,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type with events
         var mudDataGrid = ApiDocumentation.GetType("MudBlazor.MudDataGrid`1");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudDataGrid), Parameter("Mode", ApiMemberTableMode.Events));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudDataGrid), Parameter("Mode", ApiMemberTableMode.Events));
         // There should NOT be a message saying no members are found  
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
     }
@@ -168,7 +168,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type with globals
         var mudButton = ApiDocumentation.GetType("MudBlazor.MudButton");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudButton), Parameter("Mode", ApiMemberTableMode.Globals));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudButton), Parameter("Mode", ApiMemberTableMode.Globals));
         // There should NOT be a message saying no members are found  
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
     }
@@ -184,7 +184,7 @@ public sealed class ApiMemberTableTests : BunitTest
     {
         // Get a type with no globals
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
-        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Globals));
+        using var comp = Context.Render<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Globals));
         // There should be a message saying no members are found  
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
     }

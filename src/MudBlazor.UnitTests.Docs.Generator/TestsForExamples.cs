@@ -48,7 +48,7 @@ public class TestsForExamples
                 cb.AddLine($"public void {componentName}_Test()");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                cb.AddLine($"ctx.RenderComponent<{componentName}>();");
+                cb.AddLine($"ctx.Render<{componentName}>();");
                 cb.IndentLevel--;
                 cb.AddLine("}");
             }
