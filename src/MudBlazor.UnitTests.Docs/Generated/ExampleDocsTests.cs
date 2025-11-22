@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
+#pragma warning disable CS0619 // Type or member is obsolete
 using MudBlazor.UnitTests.Docs.Mocks;
+#pragma warning disable CS0619 // Type or member is obsolete
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
+using MudBlazor.UnitTests.Shared.Extensions;
 
 namespace MudBlazor.UnitTests.Docs.Generated
 {

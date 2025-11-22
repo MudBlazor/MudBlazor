@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadiGroup_CheckClassTest()
         {
-            var comp = Context.Render<RadioGroupTest1>();
+            var comp = Context.RenderComponent<RadioGroupTest1>();
 
             var inputControl = comp.FindComponent<MudInputControl>();
             inputControl.Instance.InputContent.Should().NotBeNull();
@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest1()
         {
-            var comp = Context.Render<RadioGroupTest1>();
+            var comp = Context.RenderComponent<RadioGroupTest1>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest2()
         {
-            var comp = Context.Render<RadioGroupTest2>();
+            var comp = Context.RenderComponent<RadioGroupTest2>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             // check initial state, should be initialized to second radio by default
@@ -91,7 +91,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest3()
         {
-            var comp = Context.Render<RadioGroupTest3>();
+            var comp = Context.RenderComponent<RadioGroupTest3>();
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest4()
         {
-            var comp = Context.Render<RadioGroupTest4>();
+            var comp = Context.RenderComponent<RadioGroupTest4>();
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
 
@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest5()
         {
-            var comp = Context.Render<RadioGroupTest5>();
+            var comp = Context.RenderComponent<RadioGroupTest5>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             // check initial state
@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest6()
         {
-            var comp = Context.Render<RadioGroupTest6>();
+            var comp = Context.RenderComponent<RadioGroupTest6>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             // check dense
@@ -205,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioTest_BindAfter()
         {
-            var comp = Context.Render<RadioGroupTest5>();
+            var comp = Context.RenderComponent<RadioGroupTest5>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -224,7 +224,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioTest_KeyboardInput()
         {
-            var comp = Context.Render<RadioGroupTest1>();
+            var comp = Context.RenderComponent<RadioGroupTest1>();
             // print the generated html
             // select elements needed for the test
             var radio = comp.FindComponent<MudRadioGroup<string>>();
@@ -242,7 +242,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RadioTest_Other()
         {
-            var comp = Context.Render<RadioGroupTest1>();
+            var comp = Context.RenderComponent<RadioGroupTest1>();
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var radio = comp.FindComponent<MudRadio<string>>();
 
@@ -264,7 +264,7 @@ namespace MudBlazor.UnitTests.Components
         {
             try
             {
-                var comp = Context.Render<RadioGroupExceptionTest>();
+                var comp = Context.RenderComponent<RadioGroupExceptionTest>();
             }
             catch (Exception ex)
             {
@@ -278,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioDisabledTest()
         {
-            var comp = Context.Render<RadioGroupTest7>();
+            var comp = Context.RenderComponent<RadioGroupTest7>();
             comp.Instance.SelectedOption.Should().BeNull();
 
             comp.FindAll("input")[2].Click(); //click enabled radio
@@ -295,7 +295,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupDisabledTest()
         {
-            var comp = Context.Render<RadioReadOnlyDisabledTest>();
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[1];
 
             var radios = radioGroup.FindComponents<MudRadio<string>>();
@@ -312,7 +312,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupReadOnlyTest()
         {
-            var comp = Context.Render<RadioReadOnlyDisabledTest>();
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[0];
 
             var radios = radioGroup.FindComponents<MudRadio<string>>();
@@ -329,7 +329,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OptionalRadioGroup_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
-            var comp = Context.Render<RadioGroupRequiredTest>();
+            var comp = Context.RenderComponent<RadioGroupRequiredTest>();
 
             comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
@@ -341,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RequiredRadioGroup_Should_HaveRequiredAndAriaRequiredAttributes()
         {
-            var comp = Context.Render<RadioGroupRequiredTest>(parameters => parameters
+            var comp = Context.RenderComponent<RadioGroupRequiredTest>(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
@@ -354,7 +354,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RequiredAndAriaRequiredRadioGroupAttributes_Should_BeDynamic()
         {
-            var comp = Context.Render<RadioGroupRequiredTest>();
+            var comp = Context.RenderComponent<RadioGroupRequiredTest>();
 
 
             comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
@@ -370,7 +370,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ReadOnlyDisabled_ShouldNot_Ripple()
         {
-            var create = (bool readOnly, bool disabled) => Context.Render<MudRadioGroup<bool>>(self => self
+            var create = (bool readOnly, bool disabled) => Context.RenderComponent<MudRadioGroup<bool>>(self => self
                 .Add(x => x.Disabled, disabled)
                 .Add(x => x.ReadOnly, readOnly)
                 .AddChildContent<MudRadio<bool>>(self => self.Add(x => x.Ripple, true)));
@@ -386,7 +386,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
-            var create = (bool readOnly, bool disabled) => Context.Render<MudRadioGroup<bool>>(self => self
+            var create = (bool readOnly, bool disabled) => Context.RenderComponent<MudRadioGroup<bool>>(self => self
                 .Add(x => x.Disabled, disabled)
                 .Add(x => x.ReadOnly, readOnly)
                 .AddChildContent<MudRadio<bool>>(self => self.Add(x => x.UncheckedColor, Color.Default)));

@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultState()
         {
-            var comp = Context.Render<MudToggleIconButton>();
+            var comp = Context.RenderComponent<MudToggleIconButton>();
             comp.Instance.Toggled.Should().BeFalse();
             comp.Instance.Icon.Should().BeNull();
             comp.Instance.ToggledIcon.Should().BeNull();
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldToggleOnClick()
         {
             var boundValue = false;
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Toggled, boundValue)
                 .Add(p => p.ToggledChanged, (toggleValue) => boundValue = toggleValue)
             );
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldSetAriaPressedAttribute()
         {
-            var comp = Context.Render<MudToggleIconButton>();
+            var comp = Context.RenderComponent<MudToggleIconButton>();
 
             comp.Find("button").GetAttribute("aria-pressed").Should().Be("false");
 
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldSynchronizeStateWithOtherComponent()
         {
-            var comp = Context.Render<ToggleIconButtonTest1>();
+            var comp = Context.RenderComponent<ToggleIconButtonTest1>();
             // select elements needed for the test
             var group = comp.FindComponents<MudToggleIconButton>();
             var comp1 = group[0];
@@ -82,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Disabled_ShouldPreventInteraction()
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Disabled, true)
             );
 
@@ -101,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("icon-default", null, "icon-default", "icon-default")]
         public void GetIcon_ShouldReturnCorrectValue(string icon, string toggledIcon, string expectedIcon, string expectedToggledIcon)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Icon, icon)
                 .Add(p => p.ToggledIcon, toggledIcon)
             );
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Small, null, Size.Small, Size.Small)]
         public void GetSize_ShouldReturnCorrectValue(Size size, Size? toggledSize, Size expectedSize, Size expectedToggledSize)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Size, size)
                 .Add(p => p.ToggledSize, toggledSize)
             );
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Tertiary, null, Color.Tertiary, Color.Tertiary)]
         public void GetColor_ShouldReturnCorrectValue(Color color, Color? toggledColor, Color expectedColor, Color expectedToggledColor)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Color, color)
                 .Add(p => p.ToggledColor, toggledColor)
             );
@@ -158,7 +158,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Variant.Outlined, null, Variant.Outlined, Variant.Outlined)]
         public void GetVariant_ShouldReturnCorrectValue(Variant variant, Variant? toggledVariant, Variant expectedVariant, Variant expectedToggledVariant)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Variant, variant)
                 .Add(p => p.ToggledVariant, toggledVariant)
             );

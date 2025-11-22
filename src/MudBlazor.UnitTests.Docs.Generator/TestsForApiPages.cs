@@ -181,6 +181,7 @@ public partial class TestsForApiPages
             cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
             cb.AddLine("using MudBlazor.Docs.Pages.Api;");
             cb.AddLine("using MudBlazor.Docs.Services;");
+            cb.AddLine("using MudBlazor.UnitTests.Shared.Extensions;");
             cb.AddLine("using NUnit.Framework;");
             cb.AddLine("using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;");
             cb.AddLine();
@@ -250,7 +251,7 @@ public partial class TestsForApiPages
             cb.IndentLevel++;
             // Create Api.razor with a type
             cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
-            cb.AddLine(@$"var comp = ctx.Render<Api>(Parameter(""TypeName"", ""{type.Name}""));");
+            cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(Parameter(""TypeName"", ""{type.Name}""));");
             cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
             // Make sure docs for the type were actually found
             cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {type.Name} was not found"");");
@@ -281,7 +282,7 @@ public partial class TestsForApiPages
             cb.IndentLevel++;
             // Create Api.razor with a type
             cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{url}""));");
-            cb.AddLine(@$"var comp = ctx.Render<Api>(Parameter(""TypeName"", ""{component}""));");
+            cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(Parameter(""TypeName"", ""{component}""));");
             cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
             // Make sure docs for the type were actually found
             cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {component} was not found"");");

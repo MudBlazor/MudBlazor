@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest1()
         {
-            var comp = Context.Render<MudRating>();
+            var comp = Context.RenderComponent<MudRating>();
             // select elements needed for the test
             IRefreshableElementCollection<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
             IRefreshableElementCollection<IElement> Inputs() => comp.FindAll("input[type=\"radio\"].mud-rating-input");
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest2()
         {
-            var comp = Context.Render<MudRating>();
+            var comp = Context.RenderComponent<MudRating>();
             // select elements needed for the test
             IRefreshableElementCollection<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
             // check initial state
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest3()
         {
-            var comp = Context.Render<MudRating>(parameters => parameters
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
                 .Add(p => p.SelectedValue, 3));
             // print the generated html
             // check initial state
@@ -109,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest4()
         {
-            var comp = Context.Render<MudRating>(parameters => parameters
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
                 .Add(p => p.Disabled, true)
                 .Add(p => p.SelectedValue, 2));
             // print the generated html
@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RatingTest5()
         {
-            var comp = Context.Render<MudRating>(parameters => parameters
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
                 .Add(p => p.MaxValue, 12));
             // print the generated html
             // select elements needed for the test
@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTestIconColors()
         {
-            var comp = Context.Render<MudRating>(parameters => parameters
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
                 .Add(p => p.SelectedValue, 2)
                 .Add(p => p.EmptyIconColor, Color.Tertiary)
                 .Add(p => p.FullIconColor, Color.Primary));
@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RatingTest_KeyboardNavigation()
         {
-            var comp = Context.Render<MudRating>(parameters => parameters
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
                 .Add(p => p.MaxValue, 12));
             var item = comp.FindComponent<MudRatingItem>();
             // print the generated html

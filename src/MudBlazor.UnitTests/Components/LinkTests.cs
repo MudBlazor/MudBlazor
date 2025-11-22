@@ -15,7 +15,7 @@ public class LinkTests : BunitTest
     [Test]
     public void DefaultPropertyValues()
     {
-        var comp = Context.Render<MudLink>();
+        var comp = Context.RenderComponent<MudLink>();
 
         comp.Instance.Color.Should().Be(Color.Primary);
         comp.Instance.Typo.Should().Be(Typo.body1);
@@ -28,7 +28,7 @@ public class LinkTests : BunitTest
     [Test]
     public void DisabledProperty_DisplaysAsDisabled()
     {
-        var comp = Context.Render<MudLink>(
+        var comp = Context.RenderComponent<MudLink>(
             Parameter(nameof(MudLink.Href), "#"),
             Parameter(nameof(MudLink.Disabled), true));
 
@@ -43,7 +43,7 @@ public class LinkTests : BunitTest
     public async Task ShouldExecute_OnClick(bool disabled)
     {
         var calls = 0;
-        var comp = Context.Render<MudLink>(builder => builder
+        var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.OnClick, e => calls++)
             .Add(p => p.Disabled, disabled)
         );
@@ -63,7 +63,7 @@ public class LinkTests : BunitTest
     [Test]
     public async Task OnClickErrorContentCaughtException()
     {
-        var comp = Context.Render<LinkErrorContenCaughtException>();
+        var comp = Context.RenderComponent<LinkErrorContenCaughtException>();
         IElement AlertText() => MudAlert().Find("div.mud-alert-message");
         IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
         IRefreshableElementCollection<IElement> Links() => comp.FindAll("a.mud-link");
@@ -79,7 +79,7 @@ public class LinkTests : BunitTest
     [TestCase(Color.Tertiary, "mud-tertiary-text")]
     public void ColorProperty_AppliesCorrectClass(Color color, string expectedClass)
     {
-        var comp = Context.Render<MudLink>(builder => builder
+        var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.Color, color)
         );
 
@@ -92,7 +92,7 @@ public class LinkTests : BunitTest
     [TestCase(Typo.caption, "mud-typography-caption")]
     public void TypoProperty_AppliesCorrectClass(Typo typo, string expectedClass)
     {
-        var comp = Context.Render<MudLink>(builder => builder
+        var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.Typo, typo)
         );
 
@@ -105,7 +105,7 @@ public class LinkTests : BunitTest
     [TestCase(Underline.Always, "mud-link-underline-always")]
     public void UnderlineProperty_AppliesCorrectClass(Underline underline, string expectedClass)
     {
-        var comp = Context.Render<MudLink>(builder => builder
+        var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.Underline, underline)
         );
 
@@ -119,7 +119,7 @@ public class LinkTests : BunitTest
     [TestCase("_top")]
     public void TargetProperty_AppliesCorrectAttribute(string target)
     {
-        var comp = Context.Render<MudLink>(builder => builder
+        var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.Href, "#")
             .Add(p => p.Target, target)
         );
@@ -131,7 +131,7 @@ public class LinkTests : BunitTest
     [Test]
     public void ChildContent_IsRenderedCorrectly()
     {
-        var comp = Context.Render<MudLink>(builder => builder
+        var comp = Context.RenderComponent<MudLink>(builder => builder
             .AddChildContent("<span>Test content</span>")
         );
 
@@ -142,7 +142,7 @@ public class LinkTests : BunitTest
     [Test]
     public void UserAttributes_OverrideDefaultAttributes()
     {
-        var comp = Context.Render<MudLink>(builder => builder
+        var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.Href, "#")
             .Add(p => p.Target, "_self")
             .Add(p => p.UserAttributes, new()

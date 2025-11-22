@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Collapse_TwoWayBinding_Test1()
         {
-            var comp = Context.Render<CollapseBindingTest>();
+            var comp = Context.RenderComponent<CollapseBindingTest>();
             var collapse = comp.FindComponent<MudCollapse>();
 
             collapse.Markup.Should().Contain("mud-collapse-entered");

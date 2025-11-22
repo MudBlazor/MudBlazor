@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AddingAndRemovingTabPanels()
         {
-            var comp = Context.Render<TabsAddingRemovingTabsTest>();
+            var comp = Context.RenderComponent<TabsAddingRemovingTabsTest>();
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
             comp.FindAll("div.mud-tab").Should().BeEmpty();
             comp.Instance.Tabs.Panels.Should().NotBeNull().And.BeEmpty();
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void KeepTabsAliveTest()
         {
-            var comp = Context.Render<TabsKeepAliveTest>();
+            var comp = Context.RenderComponent<TabsKeepAliveTest>();
             // all panels should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(3);
             // every panel should be rendered first exactly once throughout the test:
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void KeepTabs_Not_AliveTest()
         {
-            var comp = Context.Render<TabsKeepAliveTest>(Parameter("KeepPanelsAlive", false));
+            var comp = Context.RenderComponent<TabsKeepAliveTest>(Parameter("KeepPanelsAlive", false));
             // only one panel should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
@@ -172,7 +172,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TabHeaderClassPropagated()
         {
-            var comp = Context.Render<MudTabs>();
+            var comp = Context.RenderComponent<MudTabs>();
 
             comp.SetParametersAndRender(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
 
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ScrollToItem_NoScrollingNeeded()
         {
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             for (var i = 0; i < 6; i++)
             {
@@ -213,7 +213,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.AddTransient<IResizeObserverFactory>(_ => factory);
 
-            var comp = Context.Render<ScrollableTabsRenderTest>();
+            var comp = Context.RenderComponent<ScrollableTabsRenderTest>();
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             var tabs = comp.FindAll(".mud-tab");
@@ -246,7 +246,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             await comp.Instance.SetPanelActiveAsync(2);
 
@@ -279,7 +279,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
             await comp.Instance.ChangePositionAsync(true);
 
             await comp.Instance.SetPanelActiveAsync(2);
@@ -308,7 +308,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             var expectedTranslations = new Dictionary<int, double>
             {
@@ -339,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Scroll_NotEnabled_EnoughSpace()
         {
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -364,7 +364,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -392,7 +392,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -418,7 +418,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -452,7 +452,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -487,7 +487,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             await comp.Instance.SetPanelActiveAsync(1);
 
@@ -514,7 +514,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
             await comp.Instance.SetPanelActiveAsync(5);
 
             observer.UpdateTotalPanelSize(501.0);
@@ -547,7 +547,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
             await comp.Instance.SetPanelActiveAsync(1);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
@@ -578,7 +578,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
             await comp.Instance.SetPanelActiveAsync(4);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
@@ -610,7 +610,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
             await comp.Instance.SetPanelActiveAsync(5);
 
@@ -643,7 +643,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
             await comp.Instance.SetPanelActiveAsync(5);
 
@@ -673,7 +673,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             await comp.Instance.SetPanelActiveAsync(1);
 
@@ -700,7 +700,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             await comp.Instance.SetPanelActiveAsync(4);
 
@@ -740,7 +740,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             await comp.Instance.SetPanelActiveAsync(2);
 
@@ -777,7 +777,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<ScrollableTabsTest>();
+            var comp = Context.RenderComponent<ScrollableTabsTest>();
 
             await comp.Instance.SetPanelActiveAsync(2);
 
@@ -819,7 +819,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<SimplifiedScrollableTabsTest>();
+            var comp = Context.RenderComponent<SimplifiedScrollableTabsTest>();
 
             var buttonContainer = comp.FindAll(".mud-tabs-scroll-button");
             buttonContainer.Should().HaveCount(0);
@@ -855,7 +855,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.Render<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount, 5));
+            var comp = Context.RenderComponent<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount, 5));
 
             var buttonContainer = comp.FindAll(".mud-tabs-scroll-button");
             buttonContainer.Should().HaveCount(2);
@@ -896,7 +896,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 for (var k = 0; k < 2; k++)
                 {
-                    var comp = Context.Render<ActivateDisabledTabsTest>();
+                    var comp = Context.RenderComponent<ActivateDisabledTabsTest>();
 
                     if (k == 0)
                     {
@@ -948,7 +948,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var invoker in activator)
             {
-                var comp = Context.Render<ActivateDisabledTabsTest>();
+                var comp = Context.RenderComponent<ActivateDisabledTabsTest>();
 
                 var panels = comp.FindAll(".test-panel-selector");
 
@@ -977,7 +977,7 @@ namespace MudBlazor.UnitTests.Components
         public void SelectedIndex_Binding()
         {
             //starting with index 1:
-            var comp = Context.Render<SelectedIndexTabsTest>();
+            var comp = Context.RenderComponent<SelectedIndexTabsTest>();
             comp.Instance.Tabs.ActivePanelIndex.Should().Be(1);
             var panels = comp.FindAll(".mud-tab");
             var activePanels = comp.FindAll(".mud-tab-active");
@@ -986,7 +986,7 @@ namespace MudBlazor.UnitTests.Components
 
             //starting with index 2:
             SelectedIndexTabsTest.SelectedTab = 2;
-            comp = Context.Render<SelectedIndexTabsTest>();
+            comp = Context.RenderComponent<SelectedIndexTabsTest>();
             comp.Instance.Tabs.ActivePanelIndex.Should().Be(2);
             panels = comp.FindAll(".mud-tab");
             activePanels = comp.FindAll(".mud-tab-active");
@@ -995,7 +995,7 @@ namespace MudBlazor.UnitTests.Components
 
             //starting with index 0:
             SelectedIndexTabsTest.SelectedTab = 0;
-            comp = Context.Render<SelectedIndexTabsTest>();
+            comp = Context.RenderComponent<SelectedIndexTabsTest>();
             comp.Instance.Tabs.ActivePanelIndex.Should().Be(0);
             panels = comp.FindAll(".mud-tab");
             activePanels = comp.FindAll(".mud-tab-active");
@@ -1025,7 +1025,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(TabHeaderPosition.Before)]
         public void RenderHeaderBasedOnPosition(TabHeaderPosition position)
         {
-            var comp = Context.Render<TabsWithHeaderTest>();
+            var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, position));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
@@ -1055,7 +1055,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RenderHeaderBasedOnPosition_None()
         {
-            var comp = Context.Render<TabsWithHeaderTest>();
+            var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
@@ -1071,7 +1071,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(TabHeaderPosition.Before)]
         public void RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
         {
-            var comp = Context.Render<TabsWithHeaderTest>();
+            var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, position));
 
@@ -1106,7 +1106,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RenderHeaderPanelBasedOnPosition_None()
         {
-            var comp = Context.Render<TabsWithHeaderTest>();
+            var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
@@ -1117,7 +1117,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TabPanelIconColorOverridesTabIconColor()
         {
-            var comp = Context.Render<TabPanelIconColorTest>();
+            var comp = Context.RenderComponent<TabPanelIconColorTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
             var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
@@ -1127,7 +1127,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
         {
-            var comp = Context.Render<TabPanelIconColorTest>();
+            var comp = Context.RenderComponent<TabPanelIconColorTest>();
             comp.SetParam("DisableTab", true);
             comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
@@ -1139,7 +1139,7 @@ namespace MudBlazor.UnitTests.Components
         public void HtmlTextTabs()
         {
             // get the tab panels, we must have 2 tabs, one with html text and one without
-            var comp = Context.Render<HtmlTextTabsTest>();
+            var comp = Context.RenderComponent<HtmlTextTabsTest>();
             var panels = comp.FindAll(".mud-tab");
             panels.Should().HaveCount(2);
 
@@ -1160,7 +1160,7 @@ namespace MudBlazor.UnitTests.Components
         {
             //The first tab should be active because for the rest the slider position is calculated by JS
             //and before the calculation the slider is hidden to avoid movement on first load
-            var comp = Context.Render<ToggleTabsSlideAnimationTest>(p => p.Add(x => x.SelectedTab, 0));
+            var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>(p => p.Add(x => x.SelectedTab, 0));
 
             //Set SliderAnimation to true
             //Check if style attr does not contain transform: none
@@ -1182,7 +1182,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MinimumTabWidth()
         {
-            var comp = Context.Render<MinimumWidthTabs>();
+            var comp = Context.RenderComponent<MinimumWidthTabs>();
 
             //Check if style respects minimum width from test
             comp.Find(".mud-tab").GetAttribute("style").Contains("min-width").Should().BeTrue();
@@ -1196,7 +1196,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MenuInHeaderPanelCloseOnClickOutside()
         {
-            var comp = Context.Render<TabsWithMenuInHeader>();
+            var comp = Context.RenderComponent<TabsWithMenuInHeader>();
 
             //open the menu
             comp.Find("button").Click();
@@ -1214,7 +1214,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PrePanelContent()
         {
-            var comp = Context.Render<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
+            var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
 
             var content = comp.Find(".pre-panel-content-custom");
 
@@ -1238,7 +1238,7 @@ namespace MudBlazor.UnitTests.Components
         {
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = Context.Render<CancelActivationTabsTest>();
+            var comp = Context.RenderComponent<CancelActivationTabsTest>();
             comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
 
             await comp.Instance.SetPanelActiveAsync(2);
@@ -1266,7 +1266,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DynamicTabs_CollectionRenderSyncTest()
         {
-            var comp = Context.Render<DynamicTabsSimpleTest>();
+            var comp = Context.RenderComponent<DynamicTabsSimpleTest>();
 
             var userTabs = comp.Instance.UserTabs;
             var mudTabs = comp.FindComponent<MudDynamicTabs>();
@@ -1306,7 +1306,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TabPanel_ShowCloseIconTest()
         {
-            var comp = Context.Render<DynamicTabsSimpleTest>();
+            var comp = Context.RenderComponent<DynamicTabsSimpleTest>();
             var tabs = comp.FindAll("div.mud-tab");
             tabs[0].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
             tabs[1].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeFalse(); // The close icon is not shown.
@@ -1316,7 +1316,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Tabs_HaveRipple_WhenRippleIsTrue()
         {
-            var comp = Context.Render<TabsRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
+            var comp = Context.RenderComponent<TabsRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
@@ -1327,7 +1327,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void TabPanel_Hidden_Class(bool visible)
         {
-            var comp = Context.Render<TabsVisibleTest>(parameters => parameters.Add(x => x.Visible, visible));
+            var comp = Context.RenderComponent<TabsVisibleTest>(parameters => parameters.Add(x => x.Visible, visible));
 
             var panel = comp.FindAll(".mud-tab-panel")[1];
             if (visible)
@@ -1347,7 +1347,7 @@ namespace MudBlazor.UnitTests.Components
             bool onItemDroppedCalled = false;
             MudItemDropInfo<MudTabPanel>? finalDropInfo = null;
 
-            var comp = Context.Render<TabsDragAndDropTest>(
+            var comp = Context.RenderComponent<TabsDragAndDropTest>(
                 parameters => parameters.Add(p => p.ItemDroppedFired, (MudItemDropInfo<MudTabPanel> info) =>
                 {
                     onItemDroppedCalled = true;
@@ -1383,7 +1383,7 @@ namespace MudBlazor.UnitTests.Components
         public void LabelSorting_NaturalOrderIfSortingUnspecified()
         {
             // all parameters unspecified
-            var comp = Context.Render<LabelSortTest>();
+            var comp = Context.RenderComponent<LabelSortTest>();
 
             // all labels should be present and in natural order
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
@@ -1398,7 +1398,7 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in natural order
              */
-            var comp = Context.Render<LabelSortTest>(
+            var comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortDirection", SortDirection.None)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
@@ -1409,7 +1409,7 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically ascending order
              */
-            comp = Context.Render<LabelSortTest>(
+            comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortDirection", SortDirection.Ascending)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
@@ -1420,7 +1420,7 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically descending order
              */
-            comp = Context.Render<LabelSortTest>(
+            comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortDirection", SortDirection.Descending)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
@@ -1438,7 +1438,7 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in natural order
              */
-            var comp = Context.Render<LabelSortTest>(
+            var comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortDirection", SortDirection.None),
                 Parameter("SortKeys", sortKeys)
             );
@@ -1452,7 +1452,7 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically ascending order
              */
-            comp = Context.Render<LabelSortTest>(
+            comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortDirection", SortDirection.Ascending),
                 Parameter("SortKeys", sortKeys)
             );
@@ -1466,7 +1466,7 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically descending order
              */
-            comp = Context.Render<LabelSortTest>(
+            comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortDirection", SortDirection.Descending),
                 Parameter("SortKeys", sortKeys)
             );
@@ -1487,7 +1487,7 @@ namespace MudBlazor.UnitTests.Components
              * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
-            var comp = Context.Render<LabelSortTest>(
+            var comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortComparer", new LabelSortTest.TestComparer()),
                 Parameter("SortDirection", SortDirection.Descending)
             );
@@ -1506,7 +1506,7 @@ namespace MudBlazor.UnitTests.Components
              * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
-            var comp = Context.Render<LabelSortTest>(
+            var comp = Context.RenderComponent<LabelSortTest>(
                 Parameter("SortComparer", new LabelSortTest.TestComparer()),
                 Parameter("SortDirection", null)
             );
@@ -1522,7 +1522,7 @@ namespace MudBlazor.UnitTests.Components
             // defaulting the ActiveIndex to something other than 0 caused a display issue where it tried to make
             // that tab the FIRST tab putting any leading tabs underneath an arrow to "go left" (or right if rtl)
             // https://github.com/MudBlazor/MudBlazor/issues/11519
-            var comp = Context.Render<ActivatePanelDragAndDropTest>();
+            var comp = Context.RenderComponent<ActivatePanelDragAndDropTest>();
             var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // no drop container
             comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
@@ -1558,7 +1558,7 @@ namespace MudBlazor.UnitTests.Components
             // and calling .Refresh() on ActivatePanel (clicking, drag and drop, etc). Basically the changes were too deep
             // for blazor to know it should update state
             // https://github.com/MudBlazor/MudBlazor/issues/11549
-            var comp = Context.Render<ActivatePanelDragAndDropTest>();
+            var comp = Context.RenderComponent<ActivatePanelDragAndDropTest>();
             var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // no drop container
             comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
@@ -1599,7 +1599,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task KeyboardActivation_DisablesDisabledTab_LeftRight()
         {
-            var comp = Context.Render<TabsKeyboardAccessibilityTest>();
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
 
             await comp.InvokeAsync(async () =>
@@ -1633,7 +1633,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task VerticalTabs_SupportsArrowUpDownNavigation()
         {
-            var comp = Context.Render<VerticalTabsKeyboardAccessibilityTest>();
+            var comp = Context.RenderComponent<VerticalTabsKeyboardAccessibilityTest>();
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
@@ -1668,7 +1668,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task KeyboardNavigation_LeftArrow_WrapsToLastEnabledTab()
         {
-            var comp = Context.Render<TabsKeyboardAccessibilityTest>();
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
@@ -1702,7 +1702,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TabListId_ReturnsCorrectId()
         {
-            var comp = Context.Render<MudTabs>();
+            var comp = Context.RenderComponent<MudTabs>();
             var instance = comp.Instance;
 
             // Use reflection to set the internal field _tabListId
@@ -1726,7 +1726,7 @@ namespace MudBlazor.UnitTests.Components
         public void TabWrapperTest(bool enableDrag)
         {
             // initial pass at false fail at true, github issue 12006
-            var comp = Context.Render<TabWrapperContentTest>(t => t.Add(x => x.EnableDragAndDrop, enableDrag));
+            var comp = Context.RenderComponent<TabWrapperContentTest>(t => t.Add(x => x.EnableDragAndDrop, enableDrag));
             var wrapperDiv = comp.Find(".wrapper-class-content");
             wrapperDiv.Should().NotBeNull();
             var tooltipDiv = comp.Find(".mud-tabs-tabbar-content .mud-tooltip-root .mud-popover-cascading-value");
@@ -1739,7 +1739,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TabHeaderMouseDownEvents()
         {
-            var comp = Context.Render<ClosableTabsWithHeaderTest>();
+            var comp = Context.RenderComponent<ClosableTabsWithHeaderTest>();
 
             // Close the tab with the mouse wheel click.
             var tabs = comp.FindAll("div.mud-tab");

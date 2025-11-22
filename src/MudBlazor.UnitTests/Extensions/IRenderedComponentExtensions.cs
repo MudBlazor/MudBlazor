@@ -43,5 +43,21 @@ namespace MudBlazor.UnitTests
             var name = (exp.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)exp.Body).Operand).Member.Name;
             self.SetParametersAndRender(Parameter(name, new EventCallback<U>(null, callback)));
         }
+
+        /// <summary>
+        /// SetParametersAndRender extension for bUnit 2.x compatibility.
+        /// </summary>
+        public static void SetParametersAndRender<T>(this IRenderedComponent<T> self, params object[] parameters) where T : IComponent
+        {
+            self.Render(builder =>
+            {
+                foreach (var param in parameters)
+                {
+                    // Use reflection to call Add on the builder with the internal ComponentParameter
+                    var addMethod = builder.GetType().GetMethod("Add", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, null, new[] { param.GetType() }, null);
+                    addMethod?.Invoke(builder, new[] { param });
+                }
+            });
+        }
     }
 }

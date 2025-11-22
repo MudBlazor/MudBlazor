@@ -10,21 +10,21 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TimePickerTests : BunitTest
     {
-        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter parameter)
+        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(object parameter)
         {
             return OpenPicker([parameter]);
         }
 
-        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter[] parameters = null)
+        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(object[] parameters = null)
         {
             IRenderedComponent<SimpleTimePickerTest> comp;
             if (parameters is null)
             {
-                comp = Context.Render<SimpleTimePickerTest>();
+                comp = Context.RenderComponent<SimpleTimePickerTest>();
             }
             else
             {
-                comp = Context.Render<SimpleTimePickerTest>(parameters);
+                comp = Context.RenderComponent<SimpleTimePickerTest>(parameters);
             }
 
             // should not be open
@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerOpenButtonDefaultAriaLabel()
         {
-            var comp = Context.Render<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePicker_Should_Clear()
         {
-            var comp = Context.Render<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
@@ -164,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = Context.Render<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
 
             // valid time
@@ -202,7 +202,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = Context.Render<SimpleTimePickerTest>();
+            var comp = Context.RenderComponent<SimpleTimePickerTest>();
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
             await comp.Instance.Open();
@@ -216,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TimePickerTest_KeyboardNavigation()
         {
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            var comp = Context.Render<SimpleTimePickerTest>();
+            var comp = Context.RenderComponent<SimpleTimePickerTest>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
@@ -323,7 +323,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
-            var comp = Context.Render<MudTimePicker>(parameters
+            var comp = Context.RenderComponent<MudTimePicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
             comp.Find("input").Id.Should().NotBeNullOrEmpty();
@@ -338,7 +338,7 @@ namespace MudBlazor.UnitTests.Components
         public void DatePickerWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
             var expectedId = "test-id";
-            var comp = Context.Render<MudTimePicker>(parameters
+            var comp = Context.RenderComponent<MudTimePicker>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
@@ -354,7 +354,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerInputId()
         {
-            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters
+            var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters => parameters
                 .Add(c => c.InputId, "start-time"));
 
             comp.Find("input[id='start-time']").Should().NotBeNull();

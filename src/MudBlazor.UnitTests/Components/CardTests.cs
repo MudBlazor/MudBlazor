@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CardChildContent()
         {
             //Card header with child content should be render successfully
-            var comp = Context.Render<CardChildContentTest>();
+            var comp = Context.RenderComponent<CardChildContentTest>();
             var button = comp.FindComponent<MudButton>();
             var numeric = comp.FindComponent<MudNumericField<int>>();
             comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));

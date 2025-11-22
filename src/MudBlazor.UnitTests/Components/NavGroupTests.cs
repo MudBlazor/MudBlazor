@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Two_Way_Bindable_Disabled()
         {
-            var comp = Context.Render<NavMenuGroupDisabledTest>();
+            var comp = Context.RenderComponent<NavMenuGroupDisabledTest>();
 
             comp.Markup.Should().NotContain("mud-nav-group-disabled");
             comp.Markup.Should().NotContain("mud-expanded");
@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
         public void NavGroup_Should_UseNavTag()
         {
             var expectedTitle = "navgroup-title";
-            var comp = Context.Render<MudNavGroup>(parameters =>
+            var comp = Context.RenderComponent<MudNavGroup>(parameters =>
                     parameters.Add(p => p.Title, expectedTitle));
 
             comp.FindAll("nav").Should().Contain(navNode => navNode.GetAttribute("aria-label") == expectedTitle);
@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavGroup_Should_Expand_Via_Expanded_Binding()
         {
-            var comp = Context.Render<NavGroupWithExpandedBindingTest>();
+            var comp = Context.RenderComponent<NavGroupWithExpandedBindingTest>();
             GetExpandedState().Should().BeFalse();
 
             await comp.InvokeAsync(() => comp.Find("#navgroup-switch").Change(true));
