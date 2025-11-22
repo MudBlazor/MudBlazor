@@ -53,7 +53,7 @@ public class MudHotkeyTests : BunitTest
 
 
     [Test]
-    public void Hotkey_JsTest()
+    public async Task Hotkey_JsTest()
     {
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
@@ -69,7 +69,7 @@ public class MudHotkeyTests : BunitTest
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Never);
 
         // Act
-        comp.SetParametersAndRender(p => p.Add(x => x.Disabled, true));
+        await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, true));
 
         // Assert
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerHotkey", It.IsAny<object[]>()), Times.Exactly(1));
