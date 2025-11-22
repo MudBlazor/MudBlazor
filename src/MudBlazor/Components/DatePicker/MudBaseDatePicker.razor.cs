@@ -615,7 +615,7 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls to the current year.
         /// </summary>
-        public async Task ScrollToYear(DateTime? date = null)
+        public async Task ScrollToYearAsync(DateTime? date = null)
         {
             _scrollToYearAfterRender = false;
             var dateTime = date ?? GetMonthStart(0);
@@ -748,12 +748,12 @@ namespace MudBlazor
 
             if (firstRender && CurrentView == OpenTo.Year)
             {
-                ScrollToYear().CatchAndLog();
+                ScrollToYearAsync().CatchAndLog();
                 return;
             }
 
             if (_scrollToYearAfterRender)
-                ScrollToYear().CatchAndLog();
+                ScrollToYearAsync().CatchAndLog();
         }
 
         protected abstract DateTime GetCalendarStartOfMonth();

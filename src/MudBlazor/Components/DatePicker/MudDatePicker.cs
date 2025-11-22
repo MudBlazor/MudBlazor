@@ -274,66 +274,52 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "ArrowRight":
-                    if (Open)
+                    if (!Open)
+                        break;
+                    if (args.ShiftKey && CurrentView is OpenTo.Date or OpenTo.Month)
                     {
-                        if (args.ShiftKey)
-                        {
-                            switch (CurrentView)
-                            {
-                                case OpenTo.Date or OpenTo.Month:
-                                    MoveToNextMonth();
-                                    PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
-                                    break;
-                            }
-                        }
-                        else
-                            switch (CurrentView)
-                            {
-                                case OpenTo.Date:
-                                    var currentDay = HighlightedDate ?? GetMonthStart(0);
-                                    var newDay = currentDay.AddDays(1);
-                                    // move to first day of current month when we overflow to next month
-                                    if (newDay.Month != currentDay.Month || _selectedDate == null)
-                                        newDay = currentDay.StartOfMonth(Culture);
-                                    HighlightedDate = _selectedDate = newDay;
-                                    break;
-                                case OpenTo.Month:
-                                    MoveToNextMonth();
-                                    break;
-                            }
+                        MoveToNextMonth();
+                        PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
                     }
-
+                    else
+                        switch (CurrentView)
+                        {
+                            case OpenTo.Date:
+                                var currentDay = HighlightedDate ?? GetMonthStart(0);
+                                var newDay = currentDay.AddDays(1);
+                                // move to first day of current month when we overflow to next month
+                                if (newDay.Month != currentDay.Month || _selectedDate == null)
+                                    newDay = currentDay.StartOfMonth(Culture);
+                                HighlightedDate = _selectedDate = newDay;
+                                break;
+                            case OpenTo.Month:
+                                MoveToNextMonth();
+                                break;
+                        }
                     break;
                 case "ArrowLeft":
-                    if (Open)
+                    if (!Open)
+                        break;
+                    if (args.ShiftKey && CurrentView is OpenTo.Date or OpenTo.Month)
                     {
-                        if (args.ShiftKey)
-                        {
-                            switch (CurrentView)
-                            {
-                                case OpenTo.Date or OpenTo.Month:
-                                    MoveToPreviousMonth();
-                                    PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
-                                    break;
-                            }
-                        }
-                        else
-                            switch (CurrentView)
-                            {
-                                case OpenTo.Date:
-                                    var currentDay = HighlightedDate ?? GetMonthStart(0);
-                                    var newDay = currentDay.AddDays(-1);
-                                    // move to last day of current month when we overflow to previous month
-                                    if (newDay.Month != currentDay.Month || _selectedDate == null)
-                                        newDay = currentDay.EndOfMonth(Culture);
-                                    HighlightedDate = _selectedDate = newDay;
-                                    break;
-                                case OpenTo.Month:
-                                    MoveToPreviousMonth();
-                                    break;
-                            }
+                        MoveToPreviousMonth();
+                        PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
                     }
-
+                    else
+                        switch (CurrentView)
+                        {
+                            case OpenTo.Date:
+                                var currentDay = HighlightedDate ?? GetMonthStart(0);
+                                var newDay = currentDay.AddDays(-1);
+                                // move to last day of current month when we overflow to previous month
+                                if (newDay.Month != currentDay.Month || _selectedDate == null)
+                                    newDay = currentDay.EndOfMonth(Culture);
+                                HighlightedDate = _selectedDate = newDay;
+                                break;
+                            case OpenTo.Month:
+                                MoveToPreviousMonth();
+                                break;
+                        }
                     break;
                 case "ArrowUp":
                     if (!Open && !Editable)
@@ -344,15 +330,10 @@ namespace MudBlazor
                     {
                         Open = false;
                     }
-                    else if (args.ShiftKey)
+                    else if (args.ShiftKey && CurrentView is OpenTo.Month or OpenTo.Date)
                     {
-                        switch (CurrentView)
-                        {
-                            case OpenTo.Month or OpenTo.Date:
-                                MoveToPreviousYear();
-                                PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
-                                break;
-                        }
+                        MoveToPreviousYear();
+                        PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
                     }
                     else
                     {
@@ -398,15 +379,10 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (args.ShiftKey)
+                    else if (args.ShiftKey && CurrentView is OpenTo.Month or OpenTo.Date)
                     {
-                        switch (CurrentView)
-                        {
-                            case OpenTo.Month or OpenTo.Date:
-                                MoveToNextYear();
-                                PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
-                                break;
-                        }
+                        MoveToNextYear();
+                        PickerMonth = HighlightedDate!.Value.StartOfMonth(Culture);
                     }
                     else
                     {
@@ -568,7 +544,7 @@ namespace MudBlazor
             if (Culture.Calendar.GetYear(newYear) > GetMaxYear())
                 return;
             HighlightedDate = _selectedDate = newYear;
-            ScrollToYear(HighlightedDate).CatchAndLog();
+            ScrollToYearAsync(HighlightedDate).CatchAndLog();
         }
 
         private void MoveToPreviousYear()
@@ -577,7 +553,7 @@ namespace MudBlazor
             if (Culture.Calendar.GetYear(newYear) < GetMinYear())
                 return;
             HighlightedDate = _selectedDate = newYear;
-            ScrollToYear(HighlightedDate).CatchAndLog();
+            ScrollToYearAsync(HighlightedDate).CatchAndLog();
         }
 
         private Task ReturnDateBackUpAsync() => CloseAsync(false);
@@ -593,7 +569,7 @@ namespace MudBlazor
                     Culture.Calendar.GetMonth(Date.Value),
                     1,
                     Culture.Calendar);
-                ScrollToYear().CatchAndLog();
+                ScrollToYearAsync().CatchAndLog();
             }
         }
 
@@ -609,7 +585,7 @@ namespace MudBlazor
             if (submitDate)
             {
                 await SetDateAsync(date, true);
-                ScrollToYear().CatchAndLog();
+                ScrollToYearAsync().CatchAndLog();
             }
         }
     }
