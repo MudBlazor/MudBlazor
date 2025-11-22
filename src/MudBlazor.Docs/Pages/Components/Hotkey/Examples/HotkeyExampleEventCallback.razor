@@ -21,13 +21,13 @@
     <MudAlert Severity="Severity.Info">Press the selected key-combination to show the snackbar.</MudAlert>
 </MudStack>
 
-<MudHotkey Key="_selectedKey" KeyModifiers="_selectedKeyModifiers" OnHotkeyPressed="OnHotkey" />
+<MudHotkey Key="_selectedKey" KeyModifiers="_selectedKeyModifiers" OnHotkeyPressed="OnHotKey" />
 
 @code {
     private JsKey _selectedKey = JsKey.KeyB;
     private IEnumerable<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.Control];
 
-    private void OnHotkey()
+    private void OnHotKey()
     {
         SnackbarService.Add("Hotkey pressed", Severity.Success);
     }

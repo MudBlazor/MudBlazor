@@ -43,6 +43,7 @@ public partial class MudHotkey : MudComponentBase, IDisposable
     /// </remarks>
     [Parameter, Category(CategoryTypes.Hotkey.Behavior)]
     public IEnumerable<JsKeyModifier> KeyModifiers { get; set; } = [];
+
     /// <summary>
     /// Occurs when <see cref="Key"/> and <see cref="KeyModifiers"/> are pressed.
     /// </summary>
