@@ -570,7 +570,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Disabled_SelectItem_Should_Be_Respected()
+        public void Disabled_SelectItem_Should_Be_Respected()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -652,7 +652,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MultiSelect_SelectAll2()
+        public void MultiSelect_SelectAll2()
         {
             var comp = Context.RenderComponent<MultiSelectTest3>();
             // select element needed for the test
@@ -831,7 +831,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reselect an already selected value should not call SelectedValuesChanged event.
         /// </summary>
         [Test]
-        public async Task SelectReselectTest()
+        public void SelectReselectTest()
         {
             var comp = Context.RenderComponent<ReselectValueTest>();
             // print the generated html
@@ -982,7 +982,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Select_Should_AllowReloadingItems()
+        public void Select_Should_AllowReloadingItems()
         {
             var comp = Context.RenderComponent<ReloadSelectItemsTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1240,7 +1240,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Select_Item_Collection_Should_Match_Number_Of_Select_Options()
+        public void Select_Item_Collection_Should_Match_Number_Of_Select_Options()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var sut = comp.FindComponent<MudSelect<string>>();

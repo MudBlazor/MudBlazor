@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public async Task PieChartEmptyData()
+        public void PieChartEmptyData()
         {
             var comp = Context.RenderComponent<Pie>(parameters => parameters
                 .Add(p => p.InputData, null));

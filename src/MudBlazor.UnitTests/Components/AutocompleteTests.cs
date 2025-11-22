@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Components
         /// Autocomplete should show 'Assam' (using state.ToString())
         /// </summary>
         [Test]
-        public async Task AutocompleteTest4()
+        public void AutocompleteTest4()
         {
             var comp = Context.RenderComponent<AutocompleteTest4>();
             var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest4.State>>().Instance;
@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnEnter()
+        public void NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnEnter()
         {
             // Arrange
 
