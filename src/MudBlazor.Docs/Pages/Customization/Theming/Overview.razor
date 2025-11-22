@@ -7,8 +7,8 @@
         <DocsPageSection>
             <SectionHeader Title="Theme Provider">
                 <Description>
-                    The Theme provider specifies all the colors, shapes, sizes and shadows to your layout.
-                    No configuration or theme is needed, by default it will use MudBlazor's default theme.
+                    The ThemeProvider specifies all the colors, shapes, sizes, and shadows for your layout.
+                    No configuration or theme is needed. By default, it will use MudBlazor's default theme.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverviewThemesDefaultExample)" />
@@ -32,14 +32,14 @@
         
         <DocsPageSection>
             <SectionHeader Title="Scrollbar">
-                <Description>The MudBlazor styled scrollbar can be turned off in the themeprovider with the <CodeInline>DefaultScrollbar</CodeInline> property.</Description>
+                <Description>The MudBlazor styled scrollbar can be turned off in the ThemeProvider with the <CodeInline>DefaultScrollbar</CodeInline> property.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverviewThemesScrollbarExample)" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Dark Palette">
-                <Description>Dark palettes are integrated in <CodeInline>MudTheme</CodeInline>. Just set <CodeInline>IsDarkMode</CodeInline> to <CodeInline>true</CodeInline>.</Description>
+                <Description>Dark palettes are integrated into <CodeInline>MudTheme</CodeInline>. Just set <CodeInline>IsDarkMode</CodeInline> to <CodeInline>true</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverviewThemesDarkPaletteExampleSource)">
                 <OverviewThemesDarkPaletteExample/>
@@ -48,14 +48,14 @@
 
         <DocsPageSection>
             <SectionHeader Title="System preference">
-                <Description>With <CodeInline>GetSystemPreference()</CodeInline> you can get the user defined dark theme preference. Returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
+                <Description>With <CodeInline>GetSystemPreference()</CodeInline> you can get the user-defined dark theme preference. Returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverviewThemesSystemPreferenceExample)"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Watch system preference">
-                <Description><CodeInline>WatchSystemPreference(Func)</CodeInline> calls Func when the system preferences change. <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
+                <Description><CodeInline>WatchSystemPreference(Func)</CodeInline> calls Func when the system preferences change. It returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverviewThemesWatchSystemPreferenceExample)"/>
         </DocsPageSection>

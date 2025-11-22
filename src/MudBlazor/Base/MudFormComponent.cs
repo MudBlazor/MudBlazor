@@ -2,18 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using static System.String;
 
 namespace MudBlazor
@@ -26,6 +22,8 @@ namespace MudBlazor
     /// <typeparam name="U">The value type managed by this input.</typeparam>
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
+        protected readonly ParameterState<string?> ErrorTextState;
+
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
@@ -33,6 +31,10 @@ namespace MudBlazor
 
         protected MudFormComponent(Converter<T, U> converter)
         {
+            using var registerScope = CreateRegisterScope();
+            ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
+                .WithParameter(() => ErrorText)
+                .WithEventCallback(() => ErrorTextChanged);
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
             _converter.OnError = OnConversionError;
         }
@@ -73,6 +75,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorText { get; set; }
+
+        /// <summary>
+        /// Occurs when <see cref="ErrorText"/> has changed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public EventCallback<string?> ErrorTextChanged { get; set; }
 
         /// <summary>
         /// Displays an error.
@@ -205,9 +214,9 @@ namespace MudBlazor
         public string? GetErrorText()
         {
             // ErrorText is either set from outside or the first validation error
-            if (!IsNullOrWhiteSpace(ErrorText))
+            if (!IsNullOrWhiteSpace(ErrorTextState.Value))
             {
-                return ErrorText;
+                return ErrorTextState.Value;
             }
 
             if (!IsNullOrWhiteSpace(ConversionErrorMessage))
@@ -407,7 +416,7 @@ namespace MudBlazor
                     // if Error, create an error id that can be used by aria-describedby on input control
                     ValidationErrors = errors;
                     Error = errors.Count > 0;
-                    ErrorText = errors.FirstOrDefault();
+                    await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
                     ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
                     StateHasChanged();
@@ -654,7 +663,8 @@ namespace MudBlazor
         {
             Error = false;
             ValidationErrors.Clear();
-            ErrorText = null;
+            //TODO: v9 make the method async
+            ErrorTextState.SetValueAsync(null).CatchAndLog();
             ResetConverterErrors();
             StateHasChanged();
         }
@@ -716,7 +726,8 @@ namespace MudBlazor
             {
                 var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = errorMessages.Length > 0;
-                ErrorText = Error ? errorMessages[0] : null;
+                //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
+                ErrorTextState.SetValueAsync(Error ? errorMessages[0] : null).CatchAndLog();
 
                 ValidationErrors.Clear();
                 ValidationErrors.AddRange(errorMessages);

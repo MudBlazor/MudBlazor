@@ -10,11 +10,10 @@ body:
     id: expected-behavior
     attributes:
       label: Describe your idea
-      description: Explain the problem this feature would solve and how it should work.
     validations:
       required: true
   - type: textarea
     id: examples
     attributes:
-      label: Alternatives or examples
-      description: Other solutions you tried, or links/screenshots of similar features.
+      label: Example code and screenshots
+      description: Have you seen this feature elsewhere, or do you have a mockup? How would you implement it?

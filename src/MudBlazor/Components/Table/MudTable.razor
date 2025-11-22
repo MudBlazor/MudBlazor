@@ -59,7 +59,7 @@
                         }
                         @if (Loading)
                         {
-                            <tr class="mud-table-row">
+                            <tr>
                                 <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
                                     <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                                 </th>

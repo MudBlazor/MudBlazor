@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Charts
         [Theory]
         [TestCase(new double[] { 77, 25, 20, 5 })]
         [TestCase(new double[] { 77, 25, 20, 5, 8 })]
-        public void PieChartExampleData(double[] data)
+        public async Task PieChartExampleData(double[] data)
         {
             string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
                 "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
@@ -90,14 +90,14 @@ namespace MudBlazor.UnitTests.Charts
                     .Contain("d=\"M -34.2796 -135.7384 A 140 140 0 0 1 -0 -140 L 0 0 Z\"");
             }
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
 
         [Test]
-        public void PieChartColoring()
+        public async Task PieChartColoring()
         {
             double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
 
@@ -114,7 +114,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"{"#1E9AB0"}\""));
             count.Should().Be(22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

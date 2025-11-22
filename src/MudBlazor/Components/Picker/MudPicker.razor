@@ -32,7 +32,7 @@
                        Required="@Required"
                        RequiredError="@RequiredError"
                        Error="@Error"
-                       ErrorText="@ErrorText"
+                       ErrorText="@ErrorTextState.Value"
                        Clearable="@(Clearable && !GetReadOnlyState())"
                        OnClearButtonClick="@(async () => await ClearAsync())"
                        TextUpdateSuppression="@(Editable && !GetReadOnlyState())"
