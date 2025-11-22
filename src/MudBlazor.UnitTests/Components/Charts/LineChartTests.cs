@@ -37,13 +37,13 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [SetUp]
-        public async Task Init()
+        public void Init()
         {
 
         }
 
         [Test]
-        public async Task LineChartEmptyData()
+        public void LineChartEmptyData()
         {
             var comp = Context.RenderComponent<Bar>();
             comp.Markup.Should().Contain("mud-chart");
@@ -128,14 +128,14 @@ namespace MudBlazor.UnitTests.Charts
             {
                 var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
-                await comp.InvokeAsync(async () =>
+                comp.InvokeAsync(() =>
                 {
                     seriesCheckboxes[0].Change(false);
                 });
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
-                await comp.InvokeAsync(async () =>
+                comp.InvokeAsync(() =>
                 {
                     seriesCheckboxes[2].Change(true);
                 });

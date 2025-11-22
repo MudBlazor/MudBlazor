@@ -31,13 +31,13 @@ namespace MudBlazor.UnitTests.Charts
         };
 
         [SetUp]
-        public async Task Init()
+        public void Init()
         {
 
         }
 
         [Test]
-        public async Task PieChartEmptyData()
+        public void PieChartEmptyData()
         {
             var comp = Context.RenderComponent<Pie>(parameters => parameters
                 .Add(p => p.InputData, null));
@@ -134,7 +134,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public async Task PieChart100Percent()
+        public void PieChart100Percent()
         {
             double[] data = { 50, 0, 0 };
 

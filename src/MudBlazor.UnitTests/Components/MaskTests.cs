@@ -377,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>();
             var maskField = comp.Instance;
 
-            await comp.InvokeAsync(async () => await comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
+            await comp.InvokeAsync(() => await comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
@@ -797,7 +797,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DifferentMaskImplementationTests()
+        public void DifferentMaskImplementationTests()
         {
             // arrange
             var comp = Context.RenderComponent<DifferentMaskImplementationTest>();
@@ -842,7 +842,7 @@ namespace MudBlazor.UnitTests.Components
         /// Optional Mask should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
-        public async Task OptionalMask_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalMask_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
             var comp = Context.RenderComponent<MudMask>();
 
@@ -854,7 +854,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required Mask should have required and aria-required attributes.
         /// </summary>
         [Test]
-        public async Task RequiredMask_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredMask_Should_HaveRequiredAndAriaRequiredAttributes()
         {
             var comp = Context.RenderComponent<MudMask>(parameters => parameters
                 .Add(p => p.Required, true));
@@ -885,7 +885,7 @@ namespace MudBlazor.UnitTests.Components
         /// Optional Mask with multiple lines should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
-        public async Task OptionalMaskWithMultipleLines_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalMaskWithMultipleLines_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
             var comp = Context.RenderComponent<MudMask>(parameters => parameters
                 .Add(p => p.Lines, 5));
@@ -898,7 +898,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required Mask with multiple lines  should have required and aria-required attributes.
         /// </summary>
         [Test]
-        public async Task RequiredMaskWithMultipleLines_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredMaskWithMultipleLines_Should_HaveRequiredAndAriaRequiredAttributes()
         {
             var comp = Context.RenderComponent<MudMask>(parameters => parameters
                 .Add(p => p.Required, true)
