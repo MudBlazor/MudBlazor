@@ -819,7 +819,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test updating the treeview root.
             comp.Instance.SimulateUpdateRoot = true;
-            await treeView.SetParam(x => x.Items, await comp.Instance.LoadServerData(null));
+            await treeView.SetParamAsync(x => x.Items, await comp.Instance.LoadServerData(null));
             comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
 
             // Test reloading the treeview item.

@@ -149,21 +149,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
             // playing with params
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 items
-            await comp.SetParam(p => p.ShowArrows, false);
+            await comp.SetParamAsync(p => p.ShowArrows, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(3);
-            await comp.SetParam(p => p.ShowBullets, false);
+            await comp.SetParamAsync(p => p.ShowBullets, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(0);
-            await comp.SetParam(p => p.ShowArrows, true);
+            await comp.SetParamAsync(p => p.ShowArrows, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2);
-            await comp.SetParam(p => p.ShowBullets, true);
+            await comp.SetParamAsync(p => p.ShowBullets, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5);
             // Custom classes for navigation elements
-            await comp.SetParam(p => p.BulletsClass, "fake-delimiter-class");
-            await comp.SetParam(p => p.NavigationButtonsClass, "fake-navigation-class");
+            await comp.SetParamAsync(p => p.BulletsClass, "fake-delimiter-class");
+            await comp.SetParamAsync(p => p.NavigationButtonsClass, "fake-navigation-class");
             comp.FindAll("button.fake-delimiter-class").Count.Should().Be(3);
             comp.FindAll("button.fake-navigation-class").Count.Should().Be(2);
-            await comp.SetParam(p => p.BulletsClass, null);
-            await comp.SetParam(p => p.NavigationButtonsClass, null);
+            await comp.SetParamAsync(p => p.BulletsClass, null);
+            await comp.SetParamAsync(p => p.NavigationButtonsClass, null);
             comp.FindAll("button.fake-delimiter-class").Count.Should().Be(0);
             comp.FindAll("button.fake-navigation-class").Count.Should().Be(0);
         }
@@ -181,13 +181,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
 
-            await comp.SetParam(p => p.AutoCycle, true);
+            await comp.SetParamAsync(p => p.AutoCycle, true);
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
             comp.Render();
             //// playing with autoCycle
             for (var interval = 150; interval <= 300; interval += 150)
             {
-                await comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
+                await comp.SetParamAsync(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
                 await Task.Delay(interval);
                 comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(3000));
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);

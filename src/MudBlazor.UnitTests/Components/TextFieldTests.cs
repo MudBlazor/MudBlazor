@@ -365,7 +365,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Blur();
             textfield.Text.Should().Be("A");
             textfield.Value.Should().Be("A");
-            await comp.SetParam(x => x.Lines, 2);
+            await comp.SetParamAsync(x => x.Lines, 2);
             comp.Find("textarea").Change("B\nC");
             comp.Find("textarea").Blur();
             textfield.Text.Should().Be("B\nC");
@@ -580,7 +580,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_ClearTest1()
         {
             var comp = Context.RenderComponent<MudTextField<int>>();
-            await comp.SetParam(x => x.Text, "17");
+            await comp.SetParamAsync(x => x.Text, "17");
             var textfield = comp.Instance;
             textfield.Value.Should().Be(17);
             textfield.Text.Should().Be("17");
@@ -645,22 +645,22 @@ namespace MudBlazor.UnitTests.Components
             textfield.Text.Should().Be("Vat of acid");
 
             // let's try to set the text directly on the input, TextUpdateSuppression should prevent it because we are focused
-            await input.SetParam(x => x.Value, "");
+            await input.SetParamAsync(x => x.Value, "");
             input.Instance.Value.Should().Be("");
             input.Instance.Text.Should().Be("Vat of acid");
 
             // turn it off
-            await comp.SetParam(x => x.TextUpdateSuppression, false);
+            await comp.SetParamAsync(x => x.TextUpdateSuppression, false);
 
             // now the input text should get overwritten
-            await input.SetParam(x => x.Value, "In case of ladle");
+            await input.SetParamAsync(x => x.Value, "In case of ladle");
             input.Instance.Value.Should().Be("In case of ladle");
             input.Instance.Text.Should().Be("In case of ladle");
 
             // turn it on again
-            await comp.SetParam(x => x.TextUpdateSuppression, true);
+            await comp.SetParamAsync(x => x.TextUpdateSuppression, true);
 
-            await input.SetParam(x => x.Value, "");
+            await input.SetParamAsync(x => x.Value, "");
             input.Instance.Value.Should().Be("");
             input.Instance.Text.Should().Be("In case of ladle");
 

@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = Context.JSInterop.SetupVoid(invocation => invocation.Identifier == "mudElementRef.removeDefaultPreventingHandlers")
                 .SetVoidResult();
 
-            await comp.SetParam(x => x.PreventDefault, false);
+            await comp.SetParamAsync(x => x.PreventDefault, false);
 
             comp.Instance.PreventDefault.Should().Be(false);
             comp.Instance._listenerIds.Should().BeNull();

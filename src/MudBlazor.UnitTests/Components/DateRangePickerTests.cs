@@ -472,7 +472,7 @@ namespace MudBlazor.UnitTests.Components
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );
 
-            await comp.SetParam(picker => picker.DateRange, new DateRange(twoDaysAgo, today));
+            await comp.SetParamAsync(picker => picker.DateRange, new DateRange(twoDaysAgo, today));
 
             comp.Instance.DateRange.Should().BeNull();
             wasEventCallbackCalled.Should().BeFalse();
@@ -493,7 +493,7 @@ namespace MudBlazor.UnitTests.Components
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );
 
-            await comp.SetParam(picker => picker.DateRange, range);
+            await comp.SetParamAsync(picker => picker.DateRange, range);
 
             comp.Instance.DateRange.Should().Be(range);
             wasEventCallbackCalled.Should().BeTrue();
@@ -560,7 +560,7 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(MudDateRangePicker.DateRange), dr1),
                 EventCallback(nameof(MudDateRangePicker.DateRangeChanged), (DateRange _) => wasEventCallbackCalled = true));
 
-            await comp.SetParam(x => x.DateRange, dr2);
+            await comp.SetParamAsync(x => x.DateRange, dr2);
 
             comp.Instance.DateRange.Should().Be(dr2);
             wasEventCallbackCalled.Should().BeFalse();
@@ -746,8 +746,8 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateRange.Should().Be(null);
-            await comp.SetParam(p => p.Clearable, true);
-            await comp.SetParam(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
+            await comp.SetParamAsync(p => p.Clearable, true);
+            await comp.SetParamAsync(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
             picker.DateRange.Should().Be(new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
 
             comp.Find("button").Click(); //clear the input
@@ -932,7 +932,7 @@ namespace MudBlazor.UnitTests.Components
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );
 
-            await comp.SetParam(picker => picker.DateRange, new DateRange(twoDaysAgo, today));
+            await comp.SetParamAsync(picker => picker.DateRange, new DateRange(twoDaysAgo, today));
 
             comp.Instance.DateRange.Should().Be(range);
             wasEventCallbackCalled.Should().BeTrue();
