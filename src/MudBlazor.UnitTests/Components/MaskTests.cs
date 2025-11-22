@@ -377,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>();
             var maskField = comp.Instance;
 
-            await comp.InvokeAsync(() => await comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
+            await comp.InvokeAsync(async () => await comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));

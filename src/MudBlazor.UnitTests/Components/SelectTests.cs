@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
-            await comp.InvokeAsync(() => await select.SetParam("ListClass", "my-list-class"));
+            await comp.InvokeAsync(async () => await select.SetParam("ListClass", "my-list-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
         }
 
@@ -26,9 +26,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectTest_CheckLayerClass()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
-            await comp.InvokeAsync(() => await comp.SetParam("OuterClass", "my-outer-class"));
-            await comp.InvokeAsync(() => await comp.SetParam("Class", "my-main-class"));
-            await comp.InvokeAsync(() => await comp.SetParam("InputClass", "my-input-class"));
+            await comp.InvokeAsync(async () => await comp.SetParam("OuterClass", "my-outer-class"));
+            await comp.InvokeAsync(async () => await comp.SetParam("Class", "my-main-class"));
+            await comp.InvokeAsync(async () => await comp.SetParam("InputClass", "my-input-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-outer-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-main-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-input-class"));
@@ -408,12 +408,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Select_Should_FireTextChangedWithNewValue()
+        public async Task Select_Should_FireTextChangedWithNewValue()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            select.SetCallback(s => s.TextChanged, x => text = x);
+            await select.SetCallback(s => s.TextChanged, x => text = x);
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -449,7 +449,7 @@ namespace MudBlazor.UnitTests.Components
         /// find an even counter value, the second must always find an odd value.
         /// </summary>
         [Test]
-        public void SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        public async Task SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -458,12 +458,12 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            select.SetCallback(s => s.TextChanged, x =>
+            await select.SetCallback(s => s.TextChanged, x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
               });
-            select.SetCallback(s => s.SelectedValuesChanged, x =>
+            await select.SetCallback(s => s.SelectedValuesChanged, x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
@@ -519,12 +519,12 @@ namespace MudBlazor.UnitTests.Components
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
             await select.SetParam(s => s.MultiSelection, true);
-            select.SetCallback(s => s.TextChanged, x =>
+            await select.SetCallback(s => s.TextChanged, x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
               });
-            select.SetCallback(s => s.SelectedValuesChanged, x =>
+            await select.SetCallback(s => s.SelectedValuesChanged, x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
@@ -560,7 +560,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
-            select.SetCallback(s => s.OnBlur, x => eventCounter++);
+            await select.SetCallback(s => s.OnBlur, x => eventCounter++);
             await comp.InvokeAsync(async () =>
             {
                 await select.Instance.OpenMenu();
@@ -570,7 +570,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Disabled_SelectItem_Should_Be_Respected()
+        public async Task Disabled_SelectItem_Should_Be_Respected()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -586,7 +586,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelect_ShouldCallValidationFunc()
         {
-            ImproveChanceOfSuccess(() =>
+            await ImproveChanceOfSuccess(async () =>
             {
                 var comp = Context.RenderComponent<MultiSelectTest1>();
                 // print the generated html
@@ -652,7 +652,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MultiSelect_SelectAll2()
+        public async Task MultiSelect_SelectAll2()
         {
             var comp = Context.RenderComponent<MultiSelectTest3>();
             // select element needed for the test
@@ -831,7 +831,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reselect an already selected value should not call SelectedValuesChanged event.
         /// </summary>
         [Test]
-        public void SelectReselectTest()
+        public async Task SelectReselectTest()
         {
             var comp = Context.RenderComponent<ReselectValueTest>();
             // print the generated html
@@ -982,7 +982,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Select_Should_AllowReloadingItems()
+        public async Task Select_Should_AllowReloadingItems()
         {
             var comp = Context.RenderComponent<ReloadSelectItemsTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1240,7 +1240,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Select_Item_Collection_Should_Match_Number_Of_Select_Options()
+        public async Task Select_Item_Collection_Should_Match_Number_Of_Select_Options()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var sut = comp.FindComponent<MudSelect<string>>();
@@ -1264,7 +1264,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValueChangeCount.Should().Be(0);
             comp.Instance.ValuesChangeCount.Should().Be(0);
 
-            await comp.InvokeAsync(() => await select.SetParam("Value", "1"));
+            await comp.InvokeAsync(async () => await select.SetParam("Value", "1"));
             await comp.InvokeAsync(() => select.Instance.ForceUpdate());
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
@@ -1272,7 +1272,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Changing value programmatically without ForceUpdate should change value, but should not fire change events
             // Its by design, so this part can be change if design changes
-            await comp.InvokeAsync(() => await select.SetParam("Value", "2"));
+            await comp.InvokeAsync(async () => await select.SetParam("Value", "2"));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
             select.Instance.Value.Should().Be("2");

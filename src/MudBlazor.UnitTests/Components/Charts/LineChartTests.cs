@@ -128,14 +128,14 @@ namespace MudBlazor.UnitTests.Charts
             {
                 var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
-                comp.InvokeAsync(() =>
+                await comp.InvokeAsync(async () =>
                 {
                     seriesCheckboxes[0].Change(false);
                 });
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
-                comp.InvokeAsync(() =>
+                await comp.InvokeAsync(async () =>
                 {
                     seriesCheckboxes[2].Change(true);
                 });
