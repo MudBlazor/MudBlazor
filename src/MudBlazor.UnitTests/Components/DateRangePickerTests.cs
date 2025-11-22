@@ -8,6 +8,7 @@ using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -614,7 +615,9 @@ namespace MudBlazor.UnitTests.Components
             // validated the picker
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Validate());
             dateRangePickerInstance.Error.Should().BeTrue("Value is required and should be handled as invalid");
-            dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
+            dateRangePickerComponent.Markup.Should().Contain(errorMessage);
+            dateRangePickerInstance.GetState(x => x.ErrorText).Should().Be(errorMessage);
+
 
             // set a value
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Text = RangeConverter<DateTime>.Join(startDate.ToShortDateString(), endDate.ToShortDateString()));
@@ -623,16 +626,18 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.DateRange.Start.Should().Be(startDate);
             dateRangePickerInstance.DateRange.End.Should().Be(endDate);
             dateRangePickerInstance.Error.Should().BeFalse("Value has been set and should be handled as valid");
-            dateRangePickerInstance.ErrorText.Should().BeNullOrWhiteSpace();
+            dateRangePickerComponent.Markup.Should().NotContain(errorMessage);
+            dateRangePickerInstance.GetState(x => x.ErrorText).Should().BeNull();
 
             // reset value
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.ClearAsync());
 
-            // assert values have benn nulled
+            // assert values have been nulled
             dateRangePickerInstance.Text.Should().BeNullOrEmpty();
             dateRangePickerInstance.DateRange.Should().Be(null);
             dateRangePickerInstance.Error.Should().BeTrue("Value has been cleared and should be handled as invalid");
-            dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
+            dateRangePickerComponent.Markup.Should().Contain(errorMessage);
+            dateRangePickerInstance.GetState(x => x.ErrorText).Should().Be(errorMessage);
         }
 
         [Test]

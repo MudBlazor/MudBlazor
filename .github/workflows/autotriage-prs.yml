@@ -1,8 +1,6 @@
 name: AutoTriage (PRs)
 
 on:
-  pull_request_review:
-    types: [submitted, dismissed]
   pull_request_target:
     types: [opened, ready_for_review]
 

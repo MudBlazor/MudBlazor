@@ -317,7 +317,7 @@ namespace MudBlazor
 
             ValidationErrors = [.. ValidationErrors, .. _validationErrors];
             Error = ValidationErrors.Count > 0;
-            ErrorText = ValidationErrors.FirstOrDefault();
+            await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
         }
 
         public override void ResetValidation()
