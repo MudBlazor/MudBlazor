@@ -7,6 +7,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents the primary content displayed within a <see cref="MudCard"/>.
     /// </summary>
+    /// <seealso cref="MudCard" />
+    /// <seealso cref="MudCardActions" />
+    /// <seealso cref="MudCardHeader" />
+    /// <seealso cref="MudCardMedia" />
     public partial class MudCardContent : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-content")

@@ -7,6 +7,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a group of connected <see cref="MudButton"/> components.
     /// </summary>
+    /// <seealso cref="MudButton" />
     public partial class MudButtonGroup : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-button-group-root")
@@ -39,7 +40,7 @@ namespace MudBlazor
         /// The custom content within this group.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the group, but it is not required.
+        /// This property allows for custom content to displayed inside of the group, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Behavior)]

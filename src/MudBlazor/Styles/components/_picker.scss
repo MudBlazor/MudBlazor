@@ -15,6 +15,10 @@
       margin-inline-start: 8px;
       margin-inline-end: unset;
     }
+
+    &:empty {
+      display: none;
+    }
   }
 }
 
@@ -95,7 +99,6 @@
 
 .mud-picker-content {
   display: flex;
-  //max-width: 325px;
   max-width: 100%;
   min-width: 310px;
   min-height: 305px;

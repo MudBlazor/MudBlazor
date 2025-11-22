@@ -1,7 +1,6 @@
 ﻿using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
 
@@ -15,7 +14,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var options = new PopoverOptions();
 
-            options.ContainerClass.Should().Be("mudblazor-main-content");
+            options.OverflowPadding.Should().Be(24);
+            options.ContainerClass.Should().Be("mud-popover-provider");
             options.FlipMargin.Should().Be(0);
             options.ThrowOnDuplicateProvider.Should().Be(true);
         }
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
             popover.Fixed.Should().BeFalse();
             popover.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
-            popover.RelativeWidth.Should().BeNull();
+            popover.RelativeWidth.Should().Be(DropdownWidth.Ignore);
             popover.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
             popover.Duration.Should().Be(251);
         }
@@ -326,17 +326,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudPopoverProvider_RenderElementsBasedOnEnableState()
+        public async Task MudPopoverProvider_RenderElementsBasedOnEnableState()
         {
             var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, true));
             comp.Find("#my-content").TextContent.Should().Be("Popover content");
 
             for (var i = 0; i < 3; i++)
             {
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, false));
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, false));
                 Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
 
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, true));
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, true));
                 comp.Find("#my-content").TextContent.Should().Be("Popover content");
             }
         }
@@ -348,7 +348,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
-        [TestCase(false)]
+        //[TestCase(false)] always blocks duplicate provider with latest change
         [TestCase(true)]
         public async Task MudPopoverProvider_ThrowOnDuplicate(bool throwOnDuplicateProvider)
         {
@@ -371,6 +371,33 @@ namespace MudBlazor.UnitTests.Components
                 await comp.Instance.Open();
                 await comp.Instance.Close();
             }
+        }
+
+        [Test]
+        public void MudPopoverProvider_DropdownSettings_SetsDefaultValues()
+        {
+            var settings = new DropdownSettings();
+
+            settings.Fixed.Should().BeFalse();
+            settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MudPopoverProvider_DropdownSettings_Fixed_CanBeSetCorrectly(bool fixedValue)
+        {
+            var settings = new DropdownSettings { Fixed = fixedValue };
+
+            settings.Fixed.Should().Be(fixedValue);
+        }
+
+        [Test]
+        public void MudPopoverProvider_DropdownSettings_OverflowBehavior_CanBeSetCorrectly()
+        {
+            var settings = new DropdownSettings { OverflowBehavior = OverflowBehavior.FlipAlways };
+
+            settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipAlways);
         }
     }
 }

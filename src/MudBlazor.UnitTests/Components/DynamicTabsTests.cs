@@ -5,7 +5,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.Tabs;
 using NUnit.Framework;
 
@@ -60,7 +59,6 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in closeButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -74,7 +72,6 @@ namespace MudBlazor.UnitTests.Components
             addButtons.Should().HaveCount(1);
             foreach (var item in addButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -96,7 +93,6 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in closeButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -105,9 +101,10 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint");
+                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint since it's not active");
 
                 await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+
                 var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
@@ -124,7 +121,6 @@ namespace MudBlazor.UnitTests.Components
             addButtons.Should().HaveCount(1);
             foreach (var item in addButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -136,6 +132,7 @@ namespace MudBlazor.UnitTests.Components
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
                 await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+
                 var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");

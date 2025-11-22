@@ -7,6 +7,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents a block of content which can include a header, image, content, and actions.
     /// </summary>
+    /// <seealso cref="MudCardActions" />
+    /// <seealso cref="MudCardContent" />
+    /// <seealso cref="MudCardHeader" />
+    /// <seealso cref="MudCardMedia" />
     public partial class MudCard : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card")
@@ -21,17 +25,20 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public int Elevation { set; get; } = MudGlobal.CardDefaults.Elevation;
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
         /// Disables rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public bool Square { get; set; } = MudGlobal.CardDefaults.Square;
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Displays an outline.
@@ -41,7 +48,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public bool Outlined { get; set; } = MudGlobal.CardDefaults.Outlined;
+        public bool Outlined { get; set; }
 
         /// <summary>
         /// The content within this component.

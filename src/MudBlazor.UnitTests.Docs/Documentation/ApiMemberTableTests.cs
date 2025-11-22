@@ -53,7 +53,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should be a switch for protected properties
         comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
         // The "Classname" protected property should be visible
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"Classname\">");
+        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"Classname\">");
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderProperties_WithoutProtected()
     {
-        // Get a type with protected properties
+        // Get a type without protected properties
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Properties), Parameter("ShowProtected", false));
         // There should NOT be a message saying no members are found
@@ -79,7 +79,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderMethods_WithProtected()
     {
-        // Get a type with protected methods
+        // Get a type without protected methods
         var mudAutocomplete = ApiDocumentation.GetType("MudBlazor.MudAutocomplete`1");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAutocomplete), Parameter("Mode", ApiMemberTableMode.Methods), Parameter("ShowProtected", true));
         // There should NOT be a message saying no members are found
@@ -87,7 +87,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should be a switch for protected properties
         comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
         // The "BeginValidateAsync" protected method should be visible
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"BeginValidateAsync\">");
+        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"BeginValidateAsync\">");
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderMethods_WithoutProtected()
     {
-        // Get a type with protected methods
+        // Get a type without protected methods
         var mudAutocomplete = ApiDocumentation.GetType("MudBlazor.MudAutocomplete`1");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAutocomplete), Parameter("Mode", ApiMemberTableMode.Methods), Parameter("ShowProtected", false));
         // There should NOT be a message saying no members are found
@@ -113,7 +113,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderFields_WithProtected()
     {
-        // Get a type with protected methods
+        // Get a type with protected fields
         var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudBaseDatePicker), Parameter("Mode", ApiMemberTableMode.Fields), Parameter("ShowProtected", true));
         // There should NOT be a message saying no members are found
@@ -121,7 +121,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should be a switch for protected properties
         comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
         // The "CurrentView" protected field should be visible
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"CurrentView\">");
+        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"CurrentView\">");
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderFields_WithoutProtected()
     {
-        // Get a type with protected methods
+        // Get a type without protected fields
         var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudBaseDatePicker), Parameter("Mode", ApiMemberTableMode.Fields), Parameter("ShowProtected", false));
         // There should be a message saying no members are found  (since the protected field was the ONLY field)
@@ -150,7 +150,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderEvents()
     {
-        // Get a type with protected methods
+        // Get a type with events
         var mudDataGrid = ApiDocumentation.GetType("MudBlazor.MudDataGrid`1");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudDataGrid), Parameter("Mode", ApiMemberTableMode.Events));
         // There should NOT be a message saying no members are found  
@@ -166,7 +166,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderGlobals_WhenExisting()
     {
-        // Get a type with protected methods
+        // Get a type with globals
         var mudButton = ApiDocumentation.GetType("MudBlazor.MudButton");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudButton), Parameter("Mode", ApiMemberTableMode.Globals));
         // There should NOT be a message saying no members are found  
@@ -182,7 +182,7 @@ public sealed class ApiMemberTableTests : BunitTest
     [Test]
     public void ApiMemberTable_RenderGlobals_WhenNotExisting()
     {
-        // Get a type with protected methods
+        // Get a type with no globals
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
         using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Globals));
         // There should be a message saying no members are found  

@@ -1,0 +1,51 @@
+@using MudBlazor.Utilities
+<MudPopoverProvider />
+
+<MudForm FieldChanged="v => FormFieldChangedEventArgs = v">
+<MudSelect T="State" Label="US States" MultiSelection="true" @bind-SelectedValues="_options">
+    @foreach (var state in States)
+    {
+        <MudSelectItem T="State" Value="@state">@state</MudSelectItem>
+    }
+</MudSelect>
+</MudForm>
+
+@code {
+    public static string __description__ = "FieldChanged should trigger when T != string and MultiSelect=true";
+    private IEnumerable<State> _options = new HashSet<State> { new("Alaska") };
+
+    public State[] States { get; init; } =
+    [
+        new("Alabama"), new("Alaska"), new("Arizona"), new("Arkansas"), new("California"),
+        new("Colorado"), new("Connecticut"), new("Delaware"), new("Florida"), new("Georgia"),
+        new("Hawaii"), new("Idaho"), new("Illinois"), new("Indiana"), new("Iowa"), new("Kansas"),
+        new("Kentucky"), new("Louisiana"), new("Maine"), new("Maryland"), new("Massachusetts"),
+        new("Michigan"), new("Minnesota"), new("Mississippi"), new("Missouri"), new("Montana"),
+        new("Nebraska"), new("Nevada"), new("New Hampshire"), new("New Jersey"), new("New Mexico"),
+        new("New York"), new("North Carolina"), new("North Dakota"), new("Ohio"), new("Oklahoma"),
+        new("Oregon"), new("Pennsylvania"), new("Rhode Island"), new("South Carolina"), new("South Dakota"),
+        new("Tennessee"), new("Texas"), new("Utah"), new("Vermont"), new("Virginia"),
+        new("Washington"), new("West Virginia"), new("Wisconsin"), new("Wyoming")
+    ];
+
+    public class State(string name) : IEquatable<State>
+    {
+
+        public string Name { get; } = name;
+
+        public bool Equals(State? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name;
+        }
+
+        public override bool Equals(object? obj) => obj is State state && Equals(state);
+
+        public override int GetHashCode() => Name.GetHashCode();
+
+        public override string ToString() => Name;
+    }
+
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
+}

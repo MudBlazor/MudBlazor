@@ -12,6 +12,9 @@ namespace MudBlazor;
 /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
 /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
 /// </remarks>
+/// <seealso cref="MudButton" />
+/// <seealso cref="MudFab" />
+/// <seealso cref="MudIconButton" />
 public partial class MudToggleIconButton : MudComponentBase
 {
     /// <summary>
@@ -42,14 +45,16 @@ public partial class MudToggleIconButton : MudComponentBase
     public string? ToggledIcon { get; set; }
 
     /// <summary>
-    /// The color of the icon.
+    /// The color of the button.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Default"/>.
+    /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Button.Appearance)]
-    public Color Color { get; set; } = Color.Default;
+#pragma warning disable CS0618 // Type or member is obsolete
+    public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// An alternative color to use in the toggled state.
@@ -76,14 +81,16 @@ public partial class MudToggleIconButton : MudComponentBase
     public Size? ToggledSize { get; set; }
 
     /// <summary>
-    /// The variant to use in the regular state.
+    /// The display variation to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Variant.Text"/>.
+    /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Button.Appearance)]
-    public Variant Variant { get; set; } = Variant.Text;
+#pragma warning disable CS0618 // Type or member is obsolete
+    public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// An alternative variant to use in the toggled state.

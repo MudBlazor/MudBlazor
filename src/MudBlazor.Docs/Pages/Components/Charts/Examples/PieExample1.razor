@@ -13,7 +13,7 @@
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
     int dataSize = 4;
-    double[] data = { 77, 25, 20, 5 };
+    double[] data = { 77 };
     string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
                         "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
                         "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
@@ -37,6 +37,7 @@
             RandomizeData();
         }
     }
+
     void RemoveDataSize()
     {
         if (dataSize > 0)

@@ -1,8 +1,8 @@
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
   - name: GitHub Discussions
     url: https://github.com/MudBlazor/MudBlazor/discussions
-    about: Please ask and answer questions here
+    about: Discuss this on GitHub
   - name: Discord
     url: https://discord.gg/mudblazor
-    about: You can also ask and answer questions here
+    about: Chat with us on Discord

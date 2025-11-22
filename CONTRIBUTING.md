@@ -1,8 +1,12 @@
-# ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
+﻿<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="content/MudBlazor-GitHub-NoBg-Dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="content/MudBlazor-GitHub-NoBg.png">
+    <img alt="MudBlazor" src="content/MudBlazor-GitHub-NoBg.png">
+  </picture>
+</h1>
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
-
-- [](#)
 - [Information and Guidelines for Contributors](#information-and-guidelines-for-contributors)
   - [Code of Conduct](#code-of-conduct)
   - [Minimal Prerequisites to Compile from Source](#minimal-prerequisites-to-compile-from-source)
@@ -434,6 +438,12 @@ cs files start with an underscore.
 
 ### Continuous Integration
 
-We have an Azure DevOps pipeline which will automatically execute the entire
-test suite on all pushes and PRs. If your commit or PR breaks the tests
-you'll be notified.
+We have a GitHub action which runs against all Pull Requests.
+
+It performs the following checks.
+- Builds the project.
+- Runs the test suite.
+- Checks the code coverage.
+- Checks the code quality.
+
+We generally require all these checks to pass before merging contributions.

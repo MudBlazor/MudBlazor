@@ -72,13 +72,15 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay-{_breakpointState.Value.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
+                .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
+                .AddClass($"mud-skip-overlay-section") // drawer overlay remains outside of Section
                 .Build();
 
         protected string Stylename =>
             new StyleBuilder()
                 .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!IsFixed || Variant == DrawerVariant.Temporary))
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-                .AddStyle("--mud-drawer-content-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
+                .AddStyle("--mud-drawer-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
                 .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
                 .AddStyle(Style)
                 .Build();
@@ -160,7 +162,7 @@ namespace MudBlazor
         public bool Overlay { get; set; } = true;
 
         /// <summary>
-        /// Sets a value indicating whether the overlay should automatically close when clicked.
+        /// Automatically closes the drawer when clicking on the overlay.
         /// </summary>
         /// <remarks>
         /// If the <see cref="Variant"/> is set to <see cref="DrawerVariant.Temporary"/>, an overlay will be displayed. 
@@ -286,7 +288,7 @@ namespace MudBlazor
                 await UpdateHeightAsync();
                 if (!_disposed)
                 {
-                    await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                    _ = BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
                 }
 
                 _isRendered = true;

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -40,6 +41,9 @@ namespace MudBlazor
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
         }
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// Allows the component to receive input.
@@ -198,7 +202,7 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Occurs when the adornment text or icon has been clicked.
+        /// Occurs when the adornment icon (but not the text) has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
@@ -207,21 +211,25 @@ namespace MudBlazor
         /// The appearance variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.  Other options are <c>Outlined</c> and <c>Filled</c>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.InputDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The amount of vertical spacing for this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Margin.None"/>.
+        /// Defaults to <see cref="Margin.None"/> in <see cref="MudGlobal.InputDefaults.Margin"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Typography for the input text.
@@ -328,11 +336,14 @@ namespace MudBlazor
         /// Shows the label inside the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the label will not move into the input when the input is empty.
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
@@ -439,7 +450,7 @@ namespace MudBlazor
                 Text = text;
                 _validated = false;
 
-                if (!string.IsNullOrWhiteSpace(Text))
+                if (!string.IsNullOrEmpty(Text))
                 {
                     Touched = true;
                 }
@@ -492,23 +503,38 @@ namespace MudBlazor
 
         protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
         {
+            _isFocused = false;
+
             if (ReadOnly)
             {
                 return;
             }
 
-            _isFocused = false;
+            // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
+            // which causes this method to be fired repeatedly, we can use the obj.Type of FocusedEventArgs to track it
 
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
                 {
-                    await OnBlur.InvokeAsync(obj);
+                    if (OnBlur.HasDelegate)
+                    {
+                        obj.Type += ".additional";
+                        await OnBlur.InvokeAsync(obj);
+                    }
                 }
                 else
                 {
-                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                    if (OnBlur.HasDelegate)
+                    {
+                        obj.Type += ".additional";
+                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                    }
+                    else
+                    {
+                        await BeginValidateAsync();
+                    }
                 }
             }
         }
@@ -655,10 +681,10 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-            await base.SetParametersAsync(parameters);
-
             var hasText = parameters.Contains<string>(nameof(Text));
             var hasValue = parameters.Contains<T>(nameof(Value));
+
+            await base.SetParametersAsync(parameters);
 
             // Refresh Value from Text
             if (hasText && !hasValue)

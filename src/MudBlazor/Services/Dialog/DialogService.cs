@@ -23,6 +23,38 @@ namespace MudBlazor
     /// <seealso cref="DialogReference"/>
     public class DialogService : IDialogService
     {
+        /// <summary>
+        /// This internal wrapper components prevents overwriting parameters of once
+        /// instantiated dialog instances
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
+        /// </summary>
+        private class DialogHelperComponent : IComponent
+        {
+            private const string ChildContent = nameof(ChildContent);
+            private RenderFragment? _renderFragment;
+            private RenderHandle _renderHandle;
+            void IComponent.Attach(RenderHandle renderHandle) => _renderHandle = renderHandle;
+
+            Task IComponent.SetParametersAsync(ParameterView parameters)
+            {
+                if (_renderFragment is null && parameters.TryGetValue<RenderFragment>(ChildContent, out var renderFragment))
+                {
+                    _renderFragment = renderFragment;
+                    _renderHandle.Render(_renderFragment);
+                }
+
+                return Task.CompletedTask;
+            }
+
+            public static RenderFragment Wrap(RenderFragment renderFragment)
+                => builder =>
+                {
+                    builder.OpenComponent<DialogHelperComponent>(1);
+                    builder.AddAttribute(2, ChildContent, renderFragment);
+                    builder.CloseComponent();
+                };
+        }
+
         /// <inheritdoc />
         public event Func<IDialogReference, Task>? DialogInstanceAddedAsync;
 
@@ -105,7 +137,7 @@ namespace MudBlazor
 
             var dialogReference = CreateReference();
 
-            var dialogContent = new RenderFragment(builder =>
+            var dialogContent = DialogHelperComponent.Wrap(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
@@ -289,7 +321,7 @@ namespace MudBlazor
 
             var dialogReference = CreateReference();
 
-            var dialogContent = new RenderFragment(builder =>
+            var dialogContent = DialogHelperComponent.Wrap(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);

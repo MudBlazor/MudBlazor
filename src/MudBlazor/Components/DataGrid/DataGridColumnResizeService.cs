@@ -33,9 +33,9 @@ namespace MudBlazor
         }
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX, IList<Column<T>> columns,
-            ResizeMode columnResizeMode, bool rightToLeft)
+                                                    ResizeMode columnResizeMode, bool rightToLeft)
         {
-            if ((headerCell.Column?.Resizable ?? false) || columnResizeMode == ResizeMode.None ||
+            if (headerCell.Column?.Resizable is false || columnResizeMode == ResizeMode.None ||
                 _pointerMoveSubscriptionId != default || _pointerUpSubscriptionId != default)
                 return false;
 

@@ -1,38 +1,24 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu FullWidth="true">
+<MudMenu>
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">Button</MudButton>
     </ActivatorContent>
     <ChildContent>
-        <MudMenuItem>Profile</MudMenuItem>
-        <MudMenuItem>Theme</MudMenuItem>
-        <MudMenuItem>Usage</MudMenuItem>
-        <MudMenuItem>Sign Out</MudMenuItem>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
     </ChildContent>
 </MudMenu>
 
-<MudMenu FullWidth="true">
+<MudMenu>
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Chip</MudChip>
     </ActivatorContent>
     <ChildContent>
-        <MudMenuItem>Profile</MudMenuItem>
-        <MudMenuItem>Theme</MudMenuItem>
-        <MudMenuItem>Usage</MudMenuItem>
-        <MudMenuItem>Sign Out</MudMenuItem>
-    </ChildContent>
-</MudMenu>
-
-<MudMenu FullWidth="true" Disabled="true">
-    <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Disabled="true" Color="Color.Primary">Disabled</MudChip>
-    </ActivatorContent>
-    <ChildContent>
-        <MudMenuItem>Profile</MudMenuItem>
-        <MudMenuItem>Theme</MudMenuItem>
-        <MudMenuItem>Usage</MudMenuItem>
-        <MudMenuItem>Sign Out</MudMenuItem>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
     </ChildContent>
 </MudMenu>
 
@@ -43,24 +29,9 @@
         </MudAvatar>
     </ActivatorContent>
     <ChildContent>
-        <MudMenuItem>Profile</MudMenuItem>
-        <MudMenuItem>Theme</MudMenuItem>
-        <MudMenuItem>Usage</MudMenuItem>
-        <MudMenuItem>Sign Out</MudMenuItem>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
     </ChildContent>
 </MudMenu>
-
-<MudMenu FullWidth="true">
-    <ActivatorContent>
-        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Dense="true">Dense Error</MudAlert>
-    </ActivatorContent>
-    <ChildContent>
-        <MudMenuItem>Profile</MudMenuItem>
-        <MudMenuItem>Theme</MudMenuItem>
-        <MudMenuItem>Usage</MudMenuItem>
-        <MudMenuItem>Sign Out</MudMenuItem>
-    </ChildContent>
-</MudMenu>
-
-
 

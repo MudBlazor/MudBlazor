@@ -246,7 +246,7 @@ public class RegexMask : BaseMask
     /// <param name="mask">Defaults to <c>Ex. user@domain.com</c>.  The mask to display.</param>
     public static RegexMask Email(string mask = "Ex. user@domain.com")
     {
-        const string Regex = $"^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+\\.)*(\\w+)?{WhiteSpaceFilter}$";
+        const string Regex = $"^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+[\\.-])*([a-zA-Z0-9]+)?{WhiteSpaceFilter}$";
         const string Delimiters = "@.";
         var regexMask = new RegexMask(Regex, mask) { Delimiters = Delimiters };
         return regexMask;

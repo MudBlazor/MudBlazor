@@ -1,0 +1,15 @@
+@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    @if (ChildContent is not null)
+    {
+        <CascadingValue Name="MudChatBubbleVariant" Value="@Variant">
+            <CascadingValue Name="MudChatBubbleColor" Value="@Color">
+                <CascadingValue Name="MudChatArrowPosition" Value="@ArrowPosition">
+                    @ChildContent
+                </CascadingValue>                
+            </CascadingValue>            
+        </CascadingValue>    
+    }
+</div>

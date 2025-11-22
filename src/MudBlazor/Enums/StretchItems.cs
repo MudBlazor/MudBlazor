@@ -7,42 +7,42 @@ using System.ComponentModel;
 namespace MudBlazor;
 
 /// <summary>
-/// Specifies how children of a flex container are stretched along the main axis.
+/// Specifies how items in a flex container are stretched along the main axis.
 /// </summary>
 public enum StretchItems
 {
     /// <summary>
-    /// No stretching is applied to children.
+    /// No stretching is applied.
     /// </summary>
     [Description("none")]
     None,
 
     /// <summary>
-    /// The first child is stretched.
+    /// The first item is stretched.
     /// </summary>
     [Description("start")]
     Start,
 
     /// <summary>
-    /// The last child is stretched.
+    /// The last item is stretched.
     /// </summary>
     [Description("end")]
     End,
 
     /// <summary>
-    /// The first and last children are stretched.
+    /// The first and last items are stretched.
     /// </summary>
     [Description("start-and-end")]
     StartAndEnd,
 
     /// <summary>
-    /// All children except for the first and last are stretched.
+    /// All items except for the first and last are stretched.
     /// </summary>
     [Description("middle")]
     Middle,
 
     /// <summary>
-    /// All children are stretched.
+    /// All items are stretched evenly.
     /// </summary>
     [Description("all")]
     All,

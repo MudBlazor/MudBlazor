@@ -12,11 +12,13 @@ namespace MudBlazor.Charts
 {
     partial class HeatMap : MudCategoryChartBase
     {
+        private readonly List<HeatMapCell> _heatMapCells = [];
+
         private const double BoundWidth = 650.0;
 
         private const double BoundHeight = 350.0;
 
-        private Position _legendPosition = Position.Bottom;
+        internal Position _legendPosition = Position.Bottom;
 
         // the minimum size a cell can shrink to (height and width)
         private const int CellMinSize = 8;
@@ -51,10 +53,10 @@ namespace MudBlazor.Charts
         private double _verticalEndSpace = HeatMapPadding;
 
         // the minimum value in all series
-        private double _minValue = 0.0;
+        internal double _minValue = double.MaxValue;
 
         // the maximum value in all series
-        private double _maxValue = 1.0;
+        internal double _maxValue = double.MinValue;
 
         private string[] _colorPalette = ["#587934"];
 
@@ -82,7 +84,7 @@ namespace MudBlazor.Charts
 
         private List<(double value, string color)> _legends = [];
 
-        private List<HeatMapCell> _heatMapCells = [];
+        internal List<MudHeatMapCell> _customHeatMapCells = [];
 
         /// <summary>
         /// The chart, if any, containing this component.
@@ -96,37 +98,62 @@ namespace MudBlazor.Charts
 
             if (MudChartParent != null)
             {
-                if (_options == null || _options != MudChartParent.ChartOptions)
-                {
-                    _options = MudChartParent.ChartOptions;
-                    _colorPalette = _options.ChartPalette.Any() ? _options.ChartPalette : _colorPalette;
-                    _legendPosition = MudChartParent.LegendPosition switch
-                    {
-                        Position.Center => Position.Bottom,
-                        Position.Start => Position.Left,
-                        Position.End => Position.Right,
-                        _ => MudChartParent.LegendPosition
-                    };
-                }
-                if (_series.Count == 0 ||
-                    (MudChartParent.ChartSeries.Count > 0 &&
-                    _series != MudChartParent.ChartSeries))
-                {
-                    _series.Clear();
-                    _series = MudChartParent.ChartSeries;
-                }
+                UpdateLegendPosition(MudChartParent.LegendPosition);
+                UpdateChartOptions(MudChartParent.ChartOptions);
+                UpdateChartSeries(MudChartParent.ChartSeries);
+                UpdateHeatMapCells(MudChartParent.MudHeatMapCells);
             }
 
             InitializeHeatmap();
+        }
+
+        private void UpdateLegendPosition(Position position)
+        {
+            _legendPosition = position switch
+            {
+                Position.Center => Position.Bottom,
+                Position.Start => Position.Left,
+                Position.End => Position.Right,
+                _ => position
+            };
+        }
+
+        private void UpdateChartOptions(ChartOptions chartOptions)
+        {
+            if (_options == null || _options != chartOptions)
+            {
+                _options = chartOptions;
+                _colorPalette = _options.ChartPalette.Any() ? _options.ChartPalette : _colorPalette;
+            }
+        }
+
+        private void UpdateChartSeries(List<ChartSeries> chartSeriesList)
+        {
+            if (_series.Count == 0 ||
+                (chartSeriesList.Count > 0 &&
+                _series != chartSeriesList))
+            {
+                _series.Clear();
+                _series = chartSeriesList;
+            }
+        }
+
+        private void UpdateHeatMapCells(List<MudHeatMapCell> mudHeatMapCellsList)
+        {
+            if (_customHeatMapCells.Count == 0 ||
+                (mudHeatMapCellsList.Count > 0 &&
+                _customHeatMapCells != mudHeatMapCellsList))
+            {
+                _customHeatMapCells.Clear();
+                _customHeatMapCells = mudHeatMapCellsList;
+            }
         }
 
         private void InitializeHeatmap()
         {
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatMapCells.Clear();
-            _minValue = 0;
-            _maxValue = 1;
-
+            var hasValues = false;
             // # of rows
             var rows = _series.Count;
             // cols should be the max number of data[] in all series
@@ -136,20 +163,34 @@ namespace MudBlazor.Charts
             {
                 for (var col = 0; col < cols; col++)
                 {
-                    var value = GetDataValue(row, col); // Method to retrieve the value for each cell
+                    var mudHeatMapOverride = _customHeatMapCells.FirstOrDefault(x => x.Row == row && x.Column == col);
+                    var value = mudHeatMapOverride?.Value
+                        ?? GetDataValue(row, col); // Method to retrieve the value for each cell                    
                     _heatMapCells.Add(new HeatMapCell
                     {
                         Row = row,
                         Column = col,
                         Value = value,
+                        CustomFragment = mudHeatMapOverride?.ChildContent,
+                        Width = mudHeatMapOverride?.Width,
+                        Height = mudHeatMapOverride?.Height,
+                        MudColor = mudHeatMapOverride?.MudColor,
                     });
-                    if (value != null)
+                    if (value.HasValue)
                     {
                         _minValue = Math.Min(_minValue, value.Value);
                         _maxValue = Math.Max(_maxValue, value.Value);
+                        hasValues = true;
                     }
                 }
             }
+
+            var overrideMinValue = _customHeatMapCells.LastOrDefault(x => x.MinValue.HasValue)?.MinValue;
+            var overrideMaxValue = _customHeatMapCells.LastOrDefault(x => x.MaxValue.HasValue)?.MaxValue;
+
+            _minValue = overrideMinValue ?? (hasValues ? _minValue : 0.0);
+            _maxValue = overrideMaxValue ?? (hasValues ? _maxValue : 1.0);
+
             CalculateAreas();
             BuildLegends();
         }
@@ -312,22 +353,22 @@ namespace MudBlazor.Charts
 
             // Calculates the horizontal position for the legend when it is placed on the right.
             double GetRightPosition() =>
-                _horizontalStartSpace + HeatmapWidth + HeatMapPadding + CellPadding +
-                (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? _yAxisLabelWidth : 0);
+                _horizontalStartSpace + HeatmapWidth + HeatMapPadding +
+                (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? _yAxisLabelWidth + CellPadding : 0);
 
             // Calculates the horizontal position for the legend when it is placed on the left.
             double GetLeftPosition() =>
-                _horizontalStartSpace - HeatMapPadding - LegendBox - CellPadding -
-                (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? _yAxisLabelWidth : 0);
+                _horizontalStartSpace - HeatMapPadding - LegendBox -
+                (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? _yAxisLabelWidth + CellPadding : 0);
 
             // Calculates the vertical position for the legend when it is placed at the bottom.
             double GetBottomPosition() =>
-                _verticalStartSpace + HeatmapHeight + LegendBox + CellPadding +
-                (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? _dynamicFontSize + CellPadding : 0);
+                _verticalStartSpace + HeatmapHeight + HeatMapPadding + CellPadding + CellPadding +
+                (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? _dynamicFontSize : 0);
 
             // Calculates the vertical position for the legend when it is placed at the top.
             double GetTopPosition() =>
-                _verticalStartSpace - CellPadding - LegendBox - CellPadding -
+                _verticalStartSpace - CellPadding - LegendBox -
                 (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? _dynamicFontSize + CellPadding : 0);
         }
     }

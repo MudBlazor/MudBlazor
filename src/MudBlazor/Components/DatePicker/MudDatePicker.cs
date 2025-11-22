@@ -8,12 +8,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents a picker for dates.
     /// </summary>
+    /// <seealso cref="MudDateRangePicker"/>
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
-
-        [Inject]
-        protected TimeProvider TimeProvider { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Date"/> has changed.
@@ -61,13 +59,19 @@ namespace MudBlazor
             {
                 Touched = true;
 
+                HighlightedDate = date;
+
                 if (date is not null && IsDateDisabledFunc(date.Value.Date))
                 {
                     await SetTextAsync(null, false);
                     return;
                 }
 
+                if (date is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(date.Value), Culture.Calendar.GetMonth(date.Value), 1, Culture.Calendar);
+
                 _value = date;
+
                 if (updateValue)
                 {
                     Converter.GetError = false;
@@ -132,9 +136,17 @@ namespace MudBlazor
             {
                 _selectedDate = _selectedDate.HasValue ?
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
-                    new DateTime(month.Year, month.Month, _selectedDate.Value.Day, _selectedDate.Value.Hour, _selectedDate.Value.Minute, _selectedDate.Value.Second, _selectedDate.Value.Millisecond, _selectedDate.Value.Kind)
-                    //We can assume day here, as it was not set yet. If a fix value is set, it will be overriden in Submit
-                    : new DateTime(month.Year, month.Month, 1);
+                    new DateTime(
+                        Culture.Calendar.GetYear(month),
+                        Culture.Calendar.GetMonth(month),
+                        Culture.Calendar.GetDayOfMonth(_selectedDate.Value),
+                        Culture.Calendar.GetHour(_selectedDate.Value),
+                        Culture.Calendar.GetMinute(_selectedDate.Value),
+                        Culture.Calendar.GetSecond(_selectedDate.Value),
+                        (int)Culture.Calendar.GetMilliseconds(_selectedDate.Value),
+                        Culture.Calendar, _selectedDate.Value.Kind)
+                    //We can assume day here, as it was not set yet. If a fix value is set, it will be overridden in Submit
+                    : new DateTime(Culture.Calendar.GetYear(month), Culture.Calendar.GetMonth(month), 1, Culture.Calendar);
                 await SubmitAndCloseAsync();
             }
             else
@@ -156,7 +168,16 @@ namespace MudBlazor
             {
                 _selectedDate = _selectedDate.HasValue ?
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
-                    new DateTime(_selectedDate.Value.Year, _selectedDate.Value.Month, _selectedDate.Value.Day, _selectedDate.Value.Hour, _selectedDate.Value.Minute, _selectedDate.Value.Second, _selectedDate.Value.Millisecond, _selectedDate.Value.Kind)
+                    new DateTime(
+                        year,
+                        Culture.Calendar.GetMonth(_selectedDate.Value),
+                        Culture.Calendar.GetDayOfMonth(_selectedDate.Value),
+                        Culture.Calendar.GetHour(_selectedDate.Value),
+                        Culture.Calendar.GetMinute(_selectedDate.Value),
+                        Culture.Calendar.GetSecond(_selectedDate.Value),
+                        (int)Culture.Calendar.GetMilliseconds(_selectedDate.Value),
+                        Culture.Calendar,
+                        _selectedDate.Value.Kind)
                     //We can assume month and day here, as they were not set yet
                     : new DateTime(year, 1, 1, Culture.Calendar);
                 await SubmitAndCloseAsync();
@@ -181,14 +202,16 @@ namespace MudBlazor
             if (_selectedDate == null)
                 return;
 
-            if (FixYear.HasValue || FixMonth.HasValue || FixDay.HasValue)
-                _selectedDate = new DateTime(FixYear ?? _selectedDate.Value.Year,
-                    FixMonth ?? _selectedDate.Value.Month,
-                    FixDay ?? _selectedDate.Value.Day,
-                    _selectedDate.Value.Hour,
-                    _selectedDate.Value.Minute,
-                    _selectedDate.Value.Second,
-                    _selectedDate.Value.Millisecond);
+            if (FixYear.HasValue ||
+                FixMonth.HasValue || FixDay.HasValue)
+                _selectedDate = new DateTime(FixYear ?? Culture.Calendar.GetYear(_selectedDate.Value),
+                    FixMonth ?? Culture.Calendar.GetMonth(_selectedDate.Value),
+                    FixDay ?? Culture.Calendar.GetDayOfMonth(_selectedDate.Value),
+                    Culture.Calendar.GetHour(_selectedDate.Value),
+                    Culture.Calendar.GetMinute(_selectedDate.Value),
+                    Culture.Calendar.GetSecond(_selectedDate.Value),
+                    (int)Culture.Calendar.GetMilliseconds(_selectedDate.Value),
+                    Culture.Calendar);
 
             await SetDateAsync(_selectedDate, true);
             _selectedDate = null;

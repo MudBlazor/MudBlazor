@@ -8,6 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a component which displays circular user profile pictures, icons or text.
     /// </summary>
+    /// <seealso cref="MudAvatarGroup" />
     partial class MudAvatar : MudComponentBase, IDisposable
     {
         [CascadingParameter]
@@ -44,20 +45,27 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public bool Square { get; set; }
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
-        /// Shows rounded corners.
+        /// Uses rounded corners instead of a circle.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>.
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public bool Rounded { get; set; }
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The color of the avatar.
@@ -93,7 +101,7 @@ namespace MudBlazor
         /// The content within the avatar.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the avatar, but it is not required.
+        /// This property allows for custom content to displayed inside of the avatar, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Behavior)]

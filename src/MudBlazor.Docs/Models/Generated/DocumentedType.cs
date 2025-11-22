@@ -93,4 +93,9 @@ public sealed class DocumentedType
     /// The properties in this type (including inherited properties).
     /// </summary>
     public Dictionary<string, DocumentedProperty> GlobalSettings { get; init; } = [];
+
+    /// <summary>
+    /// The see-also links for this type.
+    /// </summary>
+    public List<DocumentedLink> Links { get; init; } = [];
 }

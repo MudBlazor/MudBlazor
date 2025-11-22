@@ -1,193 +1,307 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Throttle;
 
 #nullable enable
 namespace MudBlazor
 {
+    /// <summary>
+    /// A set of views organized into one or more <see cref="MudTabPanel" /> components.
+    /// </summary>
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
+        internal List<MudTabPanel> _panels;
         private bool _isDisposed;
-
-        private int _activePanelIndex = 0;
-        private int _scrollIndex = 0;
-
-        private bool _isRendered = false;
+        private string? _prevIcon;
+        private string? _nextIcon;
+        private bool _isRendered;
+        private bool _isVerticalTabs;
+        private bool _redraw;
+        private bool _isSliderPositionDetermined;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
         private ElementReference _tabsContentSize;
-        private double _sliderSize;
-        private double _sliderPosition;
+        private ElementReference _tabsInnerSize;
+        private double _sliderSizePercentage;
+        private double _sliderPositionPercentage;
         private double _tabBarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
+        private IResizeObserver? _resizeObserver;
+        private MudDropContainer<MudTabPanel>? _dropContainer;
+        private readonly ThrottleDispatcher _throttleDispatcher;
+        private readonly ParameterState<int> _activePanelIndexState;
+        private readonly Dictionary<ElementReference, BoundingClientRect> _tabSizes = [];
+        /// <summary>
+        /// Unique identifier for this MudTabs component instance.
+        /// Used to generate stable, unique IDs for tabs and panels to ensure ARIA compliance.
+        /// Prevents ID conflicts when multiple tab components exist on the same page.
+        /// </summary>
+        private readonly string _componentId = Identifier.Create();
+        private readonly string _elementId = Identifier.Create("tab");
+        private string? _tabListId;
 
-        private IResizeObserver? _resizeObserver = null;
-
+        /// <summary>
+        /// Displays text right-to-left.
+        /// </summary>
+        /// <remarks>
+        /// Controlled via the <see cref="MudRTLProvider"/> component.
+        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         [Inject]
         private IResizeObserverFactory _resizeObserverFactory { get; set; } = null!;
 
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
         /// <summary>
-        /// If true, render all tabs and hide (display:none) every non-active.
+        /// Enables drag-and-drop re-ordering of tabs.
         /// </summary>
+        /// <remarks>Defaults to <c>false</c>.</remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
-        public bool KeepPanelsAlive { get; set; } = false;
+        public bool EnableDragAndDrop { get; set; }
 
         /// <summary>
-        /// If true, sets the border-radius to theme default.
+        /// When <see cref="EnableDragAndDrop" /> is set to true, this event will be raised when an item is dropped.
+        /// The dropped item is provided in the <see cref="MudItemDropInfo{T}"/> and will have already been moved to its new position.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Rounded { get; set; } = MudGlobal.TabDefaults.Rounded;
+        public EventCallback<MudItemDropInfo<MudTabPanel>> OnItemDropped { get; set; }
 
         /// <summary>
-        /// If true, sets a border between the content and the tabHeader depending on the position.
+        /// Persists the content of tabs when they are not visible.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, selecting a tab will initialize its content each time the tab is visited.<br />
+        /// When <c>true</c>, a tab's content is initialized only once and is hidden via <c>display:none</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool KeepPanelsAlive { get; set; }
+
+        /// <summary>
+        /// Uses rounded corners on the tab's edges.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>.
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Border { get; set; } = MudGlobal.TabDefaults.Border;
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
-        /// If true, tabHeader will be outlined.
+        /// Shows a border between the tab content and tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Outlined { get; set; } = false;
+        public bool Border { get; set; }
 
         /// <summary>
-        /// If true, centers the tabitems.
+        /// Shows an outline around the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Centered { get; set; } = MudGlobal.TabDefaults.Centered;
+        public bool Outlined { get; set; }
 
         /// <summary>
-        /// Hides the active tab slider.
+        /// Centers tabs horizontally in the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool HideSlider { get; set; } = MudGlobal.TabDefaults.HideSlider;
+        public bool Centered { get; set; }
 
         /// <summary>
-        /// Icon to use for left pagination.
+        /// Hides the slider underneath the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool HideSlider { get; set; }
+
+        /// <summary>
+        /// The icon for scrolling to the previous page of tabs.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ChevronLeft"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string PrevIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
-        /// Icon to use for right pagination.
+        /// The icon for scrolling to the next page of tabs.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
-        /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
+        /// Shows the scroll buttons even if all tabs are visible.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool AlwaysShowScrollButtons { get; set; } = MudGlobal.TabDefaults.AlwaysShowScrollButtons;
+        public bool AlwaysShowScrollButtons { get; set; }
 
         /// <summary>
-        /// Sets the maxheight the component can have.
+        /// The maximum height for this component, in pixels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public int? MaxHeight { get; set; } = MudGlobal.TabDefaults.MaxHeight;
+        public int? MaxHeight { get; set; }
 
         /// <summary>
-        /// Sets the min-wdth of the tabs. 160px by default.
+        /// The minimum width of each tab panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>160px</c>. Can be a CSS width or a percentage (e.g. <c>30%</c>).
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string MinimumTabWidth { get; set; } = MudGlobal.TabDefaults.MinimumTabWidth;
+        public string MinimumTabWidth { get; set; } = "160px";
 
         /// <summary>
-        /// Sets the position of the tabs itself.
+        /// The location of the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Position.Top"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
-        public Position Position { get; set; } = MudGlobal.TabDefaults.Position;
+        public Position Position { get; set; } = Position.Top;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public Color Color { get; set; } = MudGlobal.TabDefaults.Color;
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The color of the tab slider. It supports the theme colors.
+        /// The color of the tab slider.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public Color SliderColor { get; set; } = MudGlobal.TabDefaults.SliderColor;
+        public Color SliderColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The color of the icon. It supports the theme colors.
+        /// The color of each tab panel's icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The color of the next/prev icons. It supports the theme colors.
+        /// The color of the scroll icon buttons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public Color ScrollIconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow, applies around the whole component.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>. Use a higher number for a larger drop shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public int Elevation { set; get; } = MudGlobal.TabDefaults.Elevation;
+        public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just tabHeader.
+        /// Applies the <see cref="Elevation"/>, <see cref="Rounded"/> and <see cref="Outlined"/> effects to the tab panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, effects are only applied to the header.<br />
+        /// When <c>true</c>, effects are applied to both the tab header and panel.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool ApplyEffectsToContainer { get; set; } = MudGlobal.TabDefaults.ApplyEffectsToContainer;
+        public bool ApplyEffectsToContainer { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when a tab is clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, displays slider animation
+        /// Shows an animated line which slides to the selected tab.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool SliderAnimation { get; set; } = true;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this component.
         /// </summary>
+        /// <remarks>
+        /// Typically a set of <see cref="MudTabPanel"/> components.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// This fragment is placed between tabHeader and panels. 
+        /// This fragment is placed between tabHeader and panels.
         /// It can be used to display additional content like an address line in a browser.
         /// The active tab will be the content of this RenderFragement
         /// </summary>
@@ -196,163 +310,259 @@ namespace MudBlazor
         public RenderFragment<MudTabPanel>? PrePanelContent { get; set; }
 
         /// <summary>
-        /// Custom class/classes for TabPanel
+        /// The CSS classes applied to tab panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? TabPanelClass { get; set; }
 
         /// <summary>
-        /// Custom class/classes for TabHeader
+        /// The CSS classes applied to the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.<br />
+        /// The "header" is the set of tab names which users click on to change the active tab.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? TabHeaderClass { get; set; }
 
         /// <summary>
-        /// Custom class/classes for the active tab
+        /// The CSS classes applied to the currently selected tab.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? ActiveTabClass { get; set; }
 
         /// <summary>
-        /// Custom class/classes for Selected Content Panel
+        /// The CSS classes applied to all tab panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? PanelClass { get; set; }
 
-        public MudTabPanel? ActivePanel { get; private set; }
+        /// <summary>
+        /// The currently selected tab panel.
+        /// </summary>
+        public MudTabPanel? ActivePanel => _activePanelIndexState.Value >= 0 && _activePanelIndexState.Value < _panels.Count ?
+            _panels[_activePanelIndexState.Value] : null;
 
         /// <summary>
-        /// The current active panel index. Also with Bidirectional Binding
+        /// The index of the currently selected tab panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c> (the first tab). When this value changes, <see cref="ActivePanelIndexChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
-        public int ActivePanelIndex
-        {
-            get => _activePanelIndex;
-            set
-            {
-                var validPanel = _panels.Count > 0 && value != -1 && value <= _panels.Count - 1;
-
-                if (_activePanelIndex != value)
-                {
-                    _activePanelIndex = value;
-                    if (_isRendered)
-                    {
-                        ActivePanel = validPanel ? _panels[value] : null;
-                        ActivePanelIndexChanged.InvokeAsync(value);
-                    }
-                }
-                else if (validPanel)
-                    ActivePanel = _panels[value];
-            }
-        }
+        public int ActivePanelIndex { get; set; }
 
         /// <summary>
-        /// Fired when ActivePanelIndex changes.
+        /// Occurs when <see cref="ActivePanelIndex"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
         /// <summary>
-        /// A readonly list of the current panels. Panels should be added or removed through the RenderTree use this collection to get informations about the current panels
+        /// A read-only list of the panels within this component.
         /// </summary>
+        /// <remarks>
+        /// Tab panels are controlled by either adding more <see cref="MudTabPanel"/> components in the Razor page, or by using the <see cref="MudDynamicTabs"/> component instead.
+        /// </remarks>
         public IReadOnlyList<MudTabPanel> Panels { get; private set; }
 
-        private List<MudTabPanel> _panels;
-
         /// <summary>
-        /// A render fragment that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
+        /// The custom content added before or after the list of tabs.
         /// </summary>
+        /// <remarks>
+        /// The location of this header is controlled via the <see cref="HeaderPosition"/> parameter.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabs>? Header { get; set; }
 
         /// <summary>
-        /// Additional content specified by Header is placed either before the tabs, after or not at all
+        /// The location of custom header content provided in <see cref="Header"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TabHeaderPosition.After"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition HeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// A render fragment that is added before or after (based on the value of HeaderPosition) inside each tab panel
+        /// Custom content added before or after each tab panel.
         /// </summary>
+        /// <remarks>
+        /// The location of this header is controlled via the <see cref="TabPanelHeaderPosition"/> parameter.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabPanel>? TabPanelHeader { get; set; }
 
         /// <summary>
-        /// Additional content specified by Header is placed either before the tabs, after or not at all
+        /// The location of custom tab panel content provided in <see cref="TabPanelHeader"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// Fired when a panel gets activated. Returned Task will be awaited.
+        /// Occurs before a panel is activated.
         /// </summary>
+        /// <remarks>
+        /// Set <see cref="TabInteractionEventArgs.Cancel"/> to <c>true</c> to prevent the tab from being activated.<br />
+        /// The returned <c>Task</c> will be awaited.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public Func<TabInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
+
+        /// <summary>
+        /// Sort tab labels lexicographically by <see cref="MudTabPanel.Text"/> or <see cref="MudTabPanel.SortKey"/>. Ignored if <see cref="SortComparer" /> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.None"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public SortDirection SortDirection { get; set; } = SortDirection.None;
+
+        /// <summary>
+        /// Specify a custom Comparer to sort tabs. When set, <see cref="SortDirection" /> is not used.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public IComparer<MudTabPanel>? SortComparer { get; set; }
 
         /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
         protected virtual string InternalClassName { get; } = string.Empty;
 
-        private string? _prevIcon;
-
-        private string? _nextIcon;
-
         #region Life cycle management
 
+        /// <inheritdoc />
         public MudTabs()
         {
+            _throttleDispatcher = new ThrottleDispatcher(500);
             _panels = new List<MudTabPanel>();
             Panels = _panels.AsReadOnly();
+            using var registerScope = CreateRegisterScope();
+            _activePanelIndexState = registerScope.RegisterParameter<int>(nameof(ActivePanelIndex))
+                .WithParameter(() => ActivePanelIndex)
+                .WithEventCallback(() => ActivePanelIndexChanged)
+                .WithChangeHandler(HandleActivePanelIndexChanged);
         }
 
+        /// <inheritdoc />
         protected override void OnInitialized()
         {
             _resizeObserver = _resizeObserverFactory.Create();
+            _tabListId = $"tablist-{_componentId}";
             base.OnInitialized();
         }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
             _resizeObserver ??= _resizeObserverFactory.Create();
 
-            Rerender();
+            _nextIcon = RightToLeft ? PrevIcon : NextIcon;
+            _prevIcon = RightToLeft ? NextIcon : PrevIcon;
+            _isVerticalTabs = Position is Position.Left or Position.Right or Position.Start or Position.End;
         }
 
+        /// <inheritdoc />
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            var dragAndDropChanged = parameters.TryGetValue<bool>(nameof(EnableDragAndDrop), out var _);
+            var positionChanged = parameters.TryGetValue<Position>(nameof(Position), out var _);
+            if (dragAndDropChanged || positionChanged)
+            {
+                // need to recalculate the layout since drag and drop and position
+                // changes the tab structure more broadly
+                _redraw = true;
+                _isVerticalTabs = Position is Position.Left or Position.Right or Position.Start or Position.End;
+            }
+            await base.SetParametersAsync(parameters);
+        }
+
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
+
             if (firstRender)
             {
-                var items = _panels.Select(x => x.PanelRef).ToList();
-                items.Add(_tabsContentSize);
-
-                if (_activePanelIndex != -1 && _panels.Count > 0)
-                    ActivePanel = _panels[_activePanelIndex];
+                // add observer to inner and outer tab container to detect size changes
+                // specifically for when the browser is resized, we need the inner 
+                // observed since the content is width: 100% it'll bubble size changes to parent
+                var items = new HashSet<ElementReference>(ResizeObserver.ElementReferenceComparer.Default)
+                {
+                    _tabsInnerSize,
+                    _tabsContentSize
+                };
 
                 await _resizeObserver!.Observe(items);
 
                 _resizeObserver.OnResized += OnResized;
 
-                Rerender();
-                StateHasChanged();
-                ActivatePanel(ActivePanelIndex);
+                // fix ActivePanelIndex on initial render
+                // https://github.com/MudBlazor/MudBlazor/issues/11519
+                // must have an active panel to set scroll states                
+
+                var startingIndex = _activePanelIndexState.Value;
+                var index = FindNearestValidPanelIndex(startingIndex);
+
+                if (index.HasValue && index.Value != startingIndex)
+                {
+                    // update the ActivePanelIndex to be valid
+                    await _activePanelIndexState.SetValueAsync(index.Value);
+                }
 
                 _isRendered = true;
+
+                var options = new KeyInterceptorOptions(
+                    "mud-tab",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
+                _redraw = true;
+                await InvokeAsync(StateHasChanged);
+            }
+            else if (_redraw)
+            {
+                _redraw = false;
+                await CalculateLayoutAsync();
+                await UpdateVisualStateAsync();
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
         public async ValueTask DisposeAsync()
         {
             if (_isDisposed)
@@ -366,28 +576,45 @@ namespace MudBlazor
                     await _resizeObserver.DisposeAsync();
                 }
             }
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+            }
         }
 
         #endregion
 
         #region Children
 
-        internal void AddPanel(MudTabPanel tabPanel)
+        internal async Task AddPanelAsync(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
-            if (_panels.Count == _activePanelIndex + 1 || _activePanelIndex == -1 && _panels.Count == 1)
-                ActivePanel = tabPanel;
-            StateHasChanged();
+            SortPanels();
+
+            var activeIndex = _activePanelIndexState.Value;
+            var activePanel = ActivePanel;
+
+            if (activeIndex == -1)
+            {
+                // if no index set
+                await _activePanelIndexState.SetValueAsync(_panels.IndexOf(tabPanel));
+            }
+            else if (activePanel != null && activeIndex != _panels.IndexOf(activePanel))
+            {
+                // if sortpanels changed the index readjust
+                await _activePanelIndexState.SetValueAsync(_panels.IndexOf(activePanel));
+            }
+            _redraw = true;
+            await InvokeAsync(StateHasChanged);
         }
 
-        internal async Task SetPanelRef(ElementReference reference)
+        internal async Task SetPanelRefAsync(ElementReference reference)
         {
             if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
-            {
-                await _resizeObserver.Observe(reference);
-                Rerender();
-                StateHasChanged();
-            }
+                await _resizeObserver!.Observe(reference);
+
+            _redraw = true;
+            await InvokeAsync(StateHasChanged);
         }
 
         internal async Task RemovePanel(MudTabPanel tabPanel)
@@ -395,54 +622,162 @@ namespace MudBlazor
             if (_isDisposed)
                 return;
 
-            var index = _panels.IndexOf(tabPanel);
-
-            // We're at the right-most tab.
-            if (_activePanelIndex == index && index == _panels.Count - 1)
-            {
-                if (_panels.Count == 1)
-                    ActivePanelIndex = -1;
-                else if (index > 0)
-                    ActivePanelIndex = index - 1;
-                else
-                    ActivePanelIndex = 0;
-            }
-
-            // Active tab is not necessarily the tab being closed.
-            else if (_activePanelIndex > index)
-            {
-                _activePanelIndex--;
-                await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
-            }
-
-            _panels.Remove(tabPanel);
             await _resizeObserver!.Unobserve(tabPanel.PanelRef);
-            Rerender();
-            StateHasChanged();
+
+            var index = _panels.IndexOf(tabPanel);
+            var wasActive = _activePanelIndexState.Value == index;
+            var activePanel = ActivePanel;
+
+            _panels.RemoveAt(index);
+
+            // no panels left that are visible and not disabled
+            if (!_panels.Any(x => x.Visible && !x.Disabled))
+            {
+                await _activePanelIndexState.SetValueAsync(-1);
+            }
+            else if (wasActive) // if removed tab was active, choose a new one
+            {
+                // either the last panel or the panel in the existing index whichever is lower
+                var newIndex = FindNearestValidPanelIndex(index);
+                if (!newIndex.HasValue)
+                    await _activePanelIndexState.SetValueAsync(-1);
+                else
+                    await _activePanelIndexState.SetValueAsync(newIndex.Value);
+            }
+            else if (activePanel != null) // update index
+            {
+                await _activePanelIndexState.SetValueAsync(_panels.IndexOf(activePanel));
+            }
+            // queue a redraw if needed
+            if (!_redraw)
+            {
+                _redraw = true;
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
+        /// <summary>
+        /// Finds the nearest valid panel index that is Visible and not Disabled.
+        /// Preference is given to panels to the left (previous tabs).
+        /// </summary>
+        private int? FindNearestValidPanelIndex(int startIndex)
+        {
+            if (!_panels.Any())
+            {
+                // nothing to find if no panels
+                return null;
+            }
+            // Clamp starting point
+            startIndex = Math.Clamp(startIndex, 0, _panels.Count - 1);
+            // If the provided index is good stop here.
+            if (_panels[startIndex] is { Visible: true, Disabled: false })
+                return startIndex;
+
+            // Search to the left
+            for (int i = startIndex; i >= 0; i--)
+            {
+                if (_panels[i].Visible && !_panels[i].Disabled)
+                    return i;
+            }
+            // Search to the right
+            for (int i = startIndex + 1; i < _panels.Count; i++)
+            {
+                if (_panels[i].Visible && !_panels[i].Disabled)
+                    return i;
+            }
+            return null;
+        }
+
+
+        /// <summary>
+        /// Handles when ActivePanelIndex is changed outside of the component
+        /// </summary>
+        private Task HandleActivePanelIndexChanged(ParameterChangedEventArgs<int> args)
+        {
+            return ActivatePanelAsync(args.Value);
+        }
+
+        /// <summary>
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided panel. 
+        /// A <c>null</c> panel deactivates all panels.
+        /// </summary>
+        /// <param name="panel">The panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
+        [Obsolete("Use ActivatePanelAsync instead.")]
         public void ActivatePanel(MudTabPanel? panel, bool ignoreDisabledState = false)
         {
             if (panel is not null && _panels.IndexOf(panel) > -1)
-                ActivatePanel(panel, null, ignoreDisabledState);
+                ActivatePanelAsync(panel, ignoreDisabledState).CatchAndLog();
         }
 
+        /// <summary>
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided index. 
+        /// An invalid index is discarded and no changes are made.
+        /// </summary>
+        /// <param name="index">The index of the panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
+        [Obsolete("Use ActivatePanelAsync instead.")]
         public void ActivatePanel(int index, bool ignoreDisabledState = false)
         {
             if (index > -1 && index <= _panels.Count - 1)
-                ActivatePanel(_panels[index], null, ignoreDisabledState);
+                ActivatePanelAsync(_panels[index], ignoreDisabledState).CatchAndLog();
         }
 
+        /// <summary>
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided unique id. 
+        /// An invalid id is discarded and no changes are made.
+        /// </summary>
+        /// <param name="id">The unique ID of the panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
+        [Obsolete("Use ActivatePanelAsync instead.")]
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
             var panel = _panels.FirstOrDefault(p => Equals(p.ID, id));
             if (panel != null)
-                ActivatePanel(panel, null, ignoreDisabledState);
+                ActivatePanelAsync(panel, ignoreDisabledState).CatchAndLog();
         }
 
-        private async void ActivatePanel(MudTabPanel panel, MouseEventArgs? ev, bool ignoreDisabledState = false)
+        /// <summary>
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided index. 
+        /// An invalid index is discarded and no changes are made.
+        /// </summary>
+        /// <param name="index">The index of the panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
+        public Task ActivatePanelAsync(int index, bool ignoreDisabledState = false)
         {
-            if (!panel.Disabled || ignoreDisabledState)
+            if (index < 0 || index >= _panels.Count)
+                return Task.CompletedTask;
+
+            return ActivatePanelAsync(_panels[index], ignoreDisabledState);
+        }
+
+        /// <summary>
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided unique id. 
+        /// An invalid id is discarded and no changes are made.
+        /// </summary>
+        /// <param name="id">The unique ID of the panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
+        public Task ActivatePanelAsync(object id, bool ignoreDisabledState = false)
+        {
+            var panel = _panels.FirstOrDefault(p => Equals(p.ID, id));
+            return panel is null
+                ? Task.CompletedTask
+                : ActivatePanelAsync(panel, ignoreDisabledState);
+        }
+
+        /// <summary>
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided panel. 
+        /// A <c>null</c> panel deactivates all panels.
+        /// </summary>
+        /// <param name="panel">The panel to activate. <c>null</c> to deactivate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
+        public async Task ActivatePanelAsync(MudTabPanel? panel, bool ignoreDisabledState = false)
+        {
+            if (panel == null)
+            {
+                await _activePanelIndexState.SetValueAsync(-1);
+            }
+            else if (panel.Visible && (!panel.Disabled || ignoreDisabledState))
             {
                 var index = _panels.IndexOf(panel);
                 var previewArgs = new TabInteractionEventArgs
@@ -456,21 +791,38 @@ namespace MudBlazor
 
                 if (previewArgs.Cancel) return;
 
-                ActivePanelIndex = previewArgs.PanelIndex;
-                if (ActivePanel is not null)
-                {
-                    await ActivePanel.OnClick.InvokeAsync(ev);
-                }
-
-                CenterScrollPositionAroundSelectedItem();
-                SetScrollabilityStates();
-                SetSliderState();
-                SetScrollButtonVisibility();
-                SetScrollabilityStates();
-                StateHasChanged();
+                await _activePanelIndexState.SetValueAsync(previewArgs.PanelIndex);
             }
+            _redraw = true;
+            await InvokeAsync(StateHasChanged);
         }
 
+        private async Task ActivatePanelClickAsync(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
+        {
+            await ActivatePanelAsync(panel, ignoreDisabledState);
+            await panel.OnClick.InvokeAsync(ev);
+        }
+
+        private void SortPanels()
+        {
+            if (_panels.Count == 0 || (SortDirection == SortDirection.None && SortComparer is null))
+                return;
+
+            _panels.Sort(GetTabSortExpression);
+        }
+
+        private int GetTabSortExpression(MudTabPanel a, MudTabPanel b)
+        {
+            if (SortComparer is not null)
+            {
+                return SortComparer.Compare(a, b);
+            }
+
+            var dir = SortDirection is SortDirection.Ascending ? 1 : -1;
+            return Comparer.Default.Compare(GetTabSortKey(a), GetTabSortKey(b)) * dir;
+        }
+
+        private static string? GetTabSortKey(MudTabPanel panel) => panel.SortKey ?? panel.Text;
         #endregion
 
         #region Style and classes
@@ -481,7 +833,7 @@ namespace MudBlazor
                 .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
                 .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
                 .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
                 .AddClass(InternalClassName)
                 .AddClass(Class)
@@ -490,7 +842,7 @@ namespace MudBlazor
         protected string TabBarClassnames =>
             new CssBuilder("mud-tabs-tabbar")
                 .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass($"mud-tabs-tabbar-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
                 .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
@@ -501,18 +853,22 @@ namespace MudBlazor
         protected string WrapperClassnames =>
             new CssBuilder("mud-tabs-tabbar-wrapper")
                 .AddClass($"mud-tabs-centered", Centered)
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .Build();
 
+        /// <summary>
+        /// The pixel-based scroll offset for the tab bar, used as the value for the CSS transform property.
+        /// For horizontal tabs, _scrollPosition is applied to translateX; for vertical tabs, to translateY.
+        /// </summary>
         protected string WrapperScrollStyle =>
             new StyleBuilder()
-                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
-                .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", !_isVerticalTabs)
+                .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", _isVerticalTabs)
                 .Build();
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass(PanelClass)
                 .Build();
 
@@ -520,9 +876,16 @@ namespace MudBlazor
             new CssBuilder("mud-tab-slider")
                 .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
                 .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
-                .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
+                .AddClass($"mud-tab-slider-vertical", _isVerticalTabs)
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
+                .Build();
+
+        protected string DropZoneClassnames =>
+            new CssBuilder("mud-tabs-dropzone")
+                .AddClass("d-flex", !_isVerticalTabs)
+                .AddClass($"mud-tabs-vertical", _isVerticalTabs)
+                .AddClass("flex-grow-1")
                 .Build();
 
         protected string MaxHeightStyles =>
@@ -532,26 +895,21 @@ namespace MudBlazor
 
         protected string SliderStyle => RightToLeft
             ? new StyleBuilder()
-                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-                .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                .AddStyle("right", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
+                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
+                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
                 .Build()
             : new StyleBuilder()
-                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-                .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                .AddStyle("left", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
+                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
+                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
                 .Build();
-
-        private bool IsVerticalTabs()
-        {
-            return Position is Position.Left or Position.Right or Position.Start or Position.End;
-        }
 
         private Position ConvertPosition(Position position)
         {
@@ -563,7 +921,7 @@ namespace MudBlazor
             };
         }
 
-        string GetTabClass(MudTabPanel panel)
+        private string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
@@ -571,7 +929,7 @@ namespace MudBlazor
               .AddClass($"mud-ripple", Ripple)
               .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
               .AddClass(TabPanelClass)
-              .AddClass(panel.Class)
+              .AddClass(panel.Classname)
               .Build();
 
             return tabClass;
@@ -579,22 +937,21 @@ namespace MudBlazor
 
         private Placement GetTooltipPlacement()
         {
-            if (Position == Position.Right)
-                return Placement.Left;
-            else if (Position == Position.Left)
-                return Placement.Right;
-            else if (Position == Position.Bottom)
-                return Placement.Top;
-            else
-                return Placement.Bottom;
+            return Position switch
+            {
+                Position.Right => Placement.Left,
+                Position.Left => Placement.Right,
+                Position.Bottom => Placement.Top,
+                _ => Placement.Bottom
+            };
         }
 
-        string GetTabStyle(MudTabPanel panel)
+        private string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
-            .AddStyle("min-width", MinimumTabWidth)
-            .AddStyle(panel.Style)
-            .Build();
+                .AddStyle("min-width", MinimumTabWidth)
+                .AddStyle(panel.Style)
+                .Build();
 
             return tabStyle;
         }
@@ -610,22 +967,40 @@ namespace MudBlazor
 
         #region Rendering and placement
 
-        private void Rerender()
+        /// <summary>
+        /// Calculates the layout sizing of the containers and scroll buttons.
+        /// </summary>
+        private async Task CalculateLayoutAsync()
         {
-            _nextIcon = RightToLeft ? PrevIcon : NextIcon;
-            _prevIcon = RightToLeft ? NextIcon : PrevIcon;
-
-            GetTabBarContentSize();
+            _dropContainer?.Refresh();
+            await GetAllReferenceSizes();
             GetAllTabsSize();
+            _tabBarContentSize = GetTabBarContentSize();
             SetScrollButtonVisibility();
-            SetSliderState();
+        }
+
+        /// <summary>
+        /// Determines the visual state of the component after rendering.
+        /// </summary>
+        /// <remarks>
+        /// Used to update scroll position, scrollability states (scrollprevious and scrollnext buttons), 
+        /// and slider state.
+        /// </remarks>
+        private Task UpdateVisualStateAsync()
+        {
+            CenterScrollPositionAroundSelectedItem();
             SetScrollabilityStates();
+            SetSliderState();
+            return InvokeAsync(StateHasChanged);
         }
 
         private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
-            Rerender();
-            await InvokeAsync(StateHasChanged);
+            if (!_redraw)
+            {
+                _redraw = true;
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         private void SetSliderState()
@@ -634,15 +1009,33 @@ namespace MudBlazor
             {
                 return;
             }
-
-            _sliderPosition = GetLengthOfPanelItems(ActivePanel);
-            _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
+            _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
+            _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
+            _isSliderPositionDetermined =
+                (_activePanelIndexState.Value > 0 && _sliderPositionPercentage > 0)
+                || IsFirstVisiblePanel(ActivePanel);
         }
 
-        private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
-                                                   _activePanelIndex <= 0;
+        /// <summary>
+        /// this sets _tabBarContentSize to the total calculated width of the mud-tabs-tabbar-content
+        /// </summary>
+        private double GetTabBarContentSize()
+        {
+            return GetRelevantSize(_tabsContentSize);
+        }
 
-        private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
+        private async Task GetAllReferenceSizes()
+        {
+            _tabSizes.Clear();
+            var panelRefs = _panels.Select(x => x.PanelRef).ToList();
+            panelRefs.Add(_tabsContentSize);
+            var tasks = panelRefs.Select(async panelRef => (panelRef, rect: await panelRef.MudGetBoundingClientRectAsync())).ToList();
+            var results = await Task.WhenAll(tasks);
+            foreach (var result in results)
+            {
+                _tabSizes.TryAdd(result.panelRef, result.rect);
+            }
+        }
 
         private void GetAllTabsSize()
         {
@@ -656,13 +1049,37 @@ namespace MudBlazor
             _allTabsSize = totalTabsSize;
         }
 
-        private double GetRelevantSize(ElementReference reference) =>
-            Position switch
-            {
-                Position.Top or Position.Bottom => _resizeObserver!.GetWidth(reference),
-                _ => _resizeObserver!.GetHeight(reference)
-            };
+        private double GetRelevantSize(ElementReference reference)
+        {
+            // _tabSizes get current values using MudGetBoundingClientRectAsync
+            var success = _tabSizes.TryGetValue(reference, out var rect);
 
+            var height = rect?.Height ?? 0.0;
+            var width = rect?.Width ?? 0.0;
+            const double epsilon = 0.01; // handles any odd rounding errors
+
+            if (Math.Abs(height) < epsilon || Math.Abs(width) < epsilon)
+                success = false;
+
+            // fallback to resizeobserver values if null or 0
+            if (!success)
+            {
+                rect = _resizeObserver!.GetSizeInfo(reference);
+                // ensure we don't return a null value
+                height = rect?.Height ?? 0.0;
+                width = rect?.Width ?? 0.0;
+            }
+
+            return _isVerticalTabs ? height : width;
+        }
+
+        /// <summary>
+        /// Returns the width or height of a subset of panel items up to the panel item selected, depending on tab orientation.
+        /// </summary>
+        /// <remarks>
+        /// If inclusive is true, it returns the width or height of the panel item selected as well.
+        /// For horizontal tabs, this is the width; for vertical tabs, this is the height.
+        /// </remarks>
         private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
             var value = 0.0;
@@ -686,150 +1103,132 @@ namespace MudBlazor
 
         private double GetPanelLength(MudTabPanel? panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
 
+        private bool IsFirstVisiblePanel(MudTabPanel? activePanel)
+        {
+            foreach (var panel in _panels)
+            {
+                if (activePanel == panel)
+                {
+                    return true;
+                }
+
+                if (panel.Visible)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region scrolling
 
+        /// <summary>
+        /// Sets the visibility of scroll buttons based on the total size of all tabs and the tab bar content size.
+        /// Scroll buttons are shown if AlwaysShowScrollButtons is true or if the tabs exceed the available space.
+        /// </summary>
         private void SetScrollButtonVisibility()
         {
-            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _tabBarContentSize || _scrollIndex != 0;
+            _showScrollButtons = AlwaysShowScrollButtons || (int)_allTabsSize > (int)_tabBarContentSize;
         }
 
         private void ScrollPrev()
         {
-            var scrollAmount = Math.Max(GetVisiblePanels(), 1);
-            _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
-            ScrollToItem(_panels[_scrollIndex]);
+            if (_panels.Count == 0)
+                return;
+
+            ScrollBy(isNext: false);
             SetScrollButtonVisibility();
             SetScrollabilityStates();
         }
 
         private void ScrollNext()
         {
-            var scrollAmount = Math.Max(GetVisiblePanels(), 1);
-            _scrollIndex = Math.Min(_scrollIndex + scrollAmount, _panels.Count - 1);
-            ScrollToItem(_panels[_scrollIndex]);
+            ScrollBy(isNext: true);
             SetScrollabilityStates();
         }
 
         /// <summary>
-        /// Calculates the amount of panels that are completely visible inside the toolbar content area. Panels that are just partially visible are not considered here!
+        /// Scrolls a <see cref="MudTabPanel" /> to the center of the tab content viewport. Will not scroll beyond the bounds of tabs.
         /// </summary>
-        /// <returns>The amount of panels visible inside the toolbar area. CAUTION: Might return 0!</returns>
-        private int GetVisiblePanels()
+        private void ScrollToItem(MudTabPanel panel, bool isLast = false)
         {
-            var x = 0D;
-            var count = 0;
-
-            var toolbarContentSize = GetRelevantSize(_tabsContentSize);
-
-            foreach (var panel in _panels)
-            {
-                x += GetRelevantSize(panel.PanelRef);
-
-                if (x < toolbarContentSize)
-                {
-                    count++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return count;
-        }
-
-        private bool ScrollToItem(MudTabPanel panel, bool isLast = false)
-        {
-            var position = GetLengthOfPanelItems(panel, isLast);
+            // set start and max scroll
+            double position;
+            // all panels before selected panel
+            var preSize = GetLengthOfPanelItems(panel, false);
+            var panelSize = GetPanelLength(panel);
+            var maxScroll = _allTabsSize - _tabBarContentSize;
             if (isLast)
             {
-                var compare = _tabBarContentSize;
-                if (position - compare > 0)
-                {
-                    if (!AlwaysShowScrollButtons && _showScrollButtons)
-                        compare -= 48 * 2;
-                    position -= compare;
-                }
-                else
-                    return false;
+                // scroll so the right edge of the last tab is flush to the right edge of the mud-tabs-content (visible tab area)
+                position = maxScroll;
             }
-            _scrollPosition = RightToLeft ? -position : position;
-            return true;
+            else
+            {
+                // normal scroll to center the active tab
+                var viewportCenter = _tabBarContentSize / 2;
+                var panelCenter = panelSize / 2;
+                position = preSize - viewportCenter + panelCenter;
+            }
+            // ensure no extra space past the start or end
+            position = ScrollEdgeAdjust(position, panelSize);
+            // right to left uses negative positioning but only when it's horizontal tabs
+            position = RightToLeft && !_isVerticalTabs ? -position : position;
+            _scrollPosition = position;
         }
 
-        private bool IsAfterLastPanelIndex(int index) => index >= _panels.Count;
-        private bool IsBeforeFirstPanelIndex(int index) => index < 0;
+        /// <summary>
+        /// Sets the minimum and maximum scroll position values and clamps scrollposition to it.
+        /// </summary>
+        private double ScrollEdgeAdjust(double position, double panelSize)
+        {
+            var minScroll = 0.0;
+            var maxScroll = Math.Max(0, _allTabsSize - _tabBarContentSize);
+            if (_tabBarContentSize < panelSize)
+            {
+                var tooSmallSize = _tabBarContentSize;
+                maxScroll = Math.Max(0, maxScroll - tooSmallSize);
+                minScroll = Math.Min(maxScroll, tooSmallSize / 2);
+            }
+            return Math.Clamp(position, minScroll, maxScroll);
+        }
+
+        /// <summary>
+        /// Scroll by page; isNext is true to scroll forward (right or down), false to scroll backward (left or up), depending on tab orientation.
+        /// </summary>
+        private void ScrollBy(bool isNext)
+        {
+            if (_panels.Count == 0)
+                return;
+
+            var panel = isNext ? _panels[^1] : _panels[0];
+            var panelSize = GetPanelLength(panel);
+            var scrollAmount = Math.Max(_tabBarContentSize, panelSize); // minimum 1 tab scroll
+            if (!isNext)
+            {
+                scrollAmount = -scrollAmount;
+            }
+            var position = ScrollEdgeAdjust(_scrollPosition + scrollAmount, panelSize);
+            _scrollPosition = position;
+        }
 
         private void CenterScrollPositionAroundSelectedItem()
         {
-            if (_showScrollButtons && ActivePanelIndex + 1 == _panels.Count)
+            var activeIndex = _activePanelIndexState.Value;
+            if (activeIndex < 0)
+                return;
+            if (activeIndex + 1 == _panels.Count)
             {
                 var lastPanel = _panels.Last();
-                var isScrolled = ScrollToItem(lastPanel, true);
-                if (isScrolled)
-                {
-                    _scrollIndex = _panels.IndexOf(lastPanel);
-                    return;
-                }
-            }
-
-            if (ActivePanel is null)
-            {
+                ScrollToItem(lastPanel, true);
                 return;
             }
 
-            var panelToStart = ActivePanel;
-            var length = GetPanelLength(panelToStart);
-            if (length >= _tabBarContentSize)
-            {
-                _scrollIndex = _panels.IndexOf(panelToStart);
-                ScrollToItem(panelToStart);
-                return;
-            }
-
-            var indexCorrection = 1;
-            while (true)
-            {
-                var panelAfterIndex = _activePanelIndex + indexCorrection;
-                if (!IsAfterLastPanelIndex(panelAfterIndex))
-                {
-                    length += GetPanelLength(_panels[panelAfterIndex]);
-                }
-
-                if (length >= _tabBarContentSize)
-                {
-                    _scrollIndex = _panels.IndexOf(panelToStart);
-                    break;
-                }
-
-                length = _tabBarContentSize - length;
-
-                var panelBeforeindex = _activePanelIndex - indexCorrection;
-                if (!IsBeforeFirstPanelIndex(panelBeforeindex))
-                {
-                    length -= GetPanelLength(_panels[panelBeforeindex]);
-                }
-                else
-                {
-                    break;
-                }
-
-                if (length < 0)
-                {
-                    _scrollIndex = _panels.IndexOf(panelToStart);
-                    break;
-                }
-
-                length = _tabBarContentSize - length;
-                panelToStart = _panels[_activePanelIndex - indexCorrection];
-
-                indexCorrection++;
-            }
-
-            _scrollIndex = _panels.IndexOf(panelToStart);
-            ScrollToItem(panelToStart);
+            // scroll to the panel
+            ScrollToItem(ActivePanel!);
         }
 
         private void SetScrollabilityStates()
@@ -839,16 +1238,173 @@ namespace MudBlazor
             if (isEnoughSpace)
             {
                 _nextButtonDisabled = true;
-                _prevButtonDisabled = _scrollIndex == 0;
+                _prevButtonDisabled = Math.Abs(_scrollPosition) < 0.01;
             }
             else
             {
                 // Disable next button if the last panel is completely visible
-                _nextButtonDisabled = _scrollIndex == _panels.Count - 1 || Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _tabBarContentSize;
-                _prevButtonDisabled = _scrollIndex == 0;
+                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels[^1], true) - _tabBarContentSize;
+                _prevButtonDisabled = Math.Abs(_scrollPosition) < 0.01;
             }
         }
 
         #endregion
+
+        internal async Task ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
+        {
+            if (dropItem.Item is null)
+            {
+                return;
+            }
+
+            // get the old index where this item was at
+            var oldIndex = _panels.IndexOf(dropItem.Item);
+            // get the new index in _panels using IndexInZone
+            var newIndex = dropItem.IndexInZone;
+
+            // remove the item from the old index
+            _panels.RemoveAt(oldIndex);
+
+            // insert the item at the new index
+            if (newIndex < _panels.Count)
+            {
+                _panels.Insert(newIndex, dropItem.Item);
+            }
+            else
+            {
+                _panels.Add(dropItem.Item);
+            }
+
+            // Set the dragged tab as active
+            await ActivatePanelAsync(dropItem.Item);
+
+            if (OnItemDropped.HasDelegate)
+            {
+                await OnItemDropped.InvokeAsync(dropItem);
+            }
+        }
+
+
+        /// <summary>
+        /// Handles keyboard navigation for tabs according to W3C accessibility guidelines
+        /// Supports Enter/Space for activation and arrow keys for navigation
+        /// </summary>
+        protected virtual async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
+        {
+            switch (e.Key)
+            {
+                case "Enter":
+                case " ":
+                    // considered a click
+                    var args = new MouseEventArgs() { Type = e.Key, Detail = 1, ClientX = 0, ClientY = 0 };
+                    await ActivatePanelClickAsync(panel, args);
+                    break;
+
+                case "ArrowLeft":
+                    if (!_isVerticalTabs)
+                    {
+                        await MoveFocusToPreviousTab(panel);
+                    }
+                    break;
+
+                case "ArrowRight":
+                    if (!_isVerticalTabs)
+                    {
+                        await MoveFocusToNextTab(panel);
+                    }
+                    break;
+
+                case "ArrowUp":
+                    if (_isVerticalTabs)
+                    {
+                        await MoveFocusToPreviousTab(panel);
+                    }
+                    break;
+
+                case "ArrowDown":
+                    if (_isVerticalTabs)
+                    {
+                        await MoveFocusToNextTab(panel);
+                    }
+                    break;
+            }
+        }
+
+        private async Task HandleKeyInterceptorAsync(KeyboardEventArgs e)
+        {
+            var focusedPanel = ActivePanel;
+            if (focusedPanel != null)
+            {
+                await HandleTabKeyDownAsync(e, focusedPanel);
+            }
+        }
+
+        /// <summary>
+        /// Allows the user to move to the previous tab using key arrow
+        /// </summary>
+        private async Task MoveFocusToPreviousTab(MudTabPanel currentPanel)
+        {
+            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            if (enabledPanels.Count <= 1) return;
+
+            var currentIndex = enabledPanels.IndexOf(currentPanel);
+            var previousIndex = currentIndex <= 0 ? enabledPanels.Count - 1 : currentIndex - 1;
+            var previousPanel = enabledPanels[previousIndex];
+
+            await FocusPanel(previousPanel);
+        }
+
+        /// <summary>
+        /// Allows the user to move to the next tab using KeyArrow
+        /// </summary>
+        private async Task MoveFocusToNextTab(MudTabPanel currentPanel)
+        {
+            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            if (enabledPanels.Count <= 1) return;
+
+            var currentIndex = enabledPanels.IndexOf(currentPanel);
+            var nextIndex = currentIndex >= enabledPanels.Count - 1 ? 0 : currentIndex + 1;
+            var nextPanel = enabledPanels[nextIndex];
+
+            await FocusPanel(nextPanel);
+        }
+
+        /// <summary>
+        /// Focuses user onto selected panel
+        /// </summary>
+        private static async Task FocusPanel(MudTabPanel panel)
+        {
+            if (panel.PanelRef.Context != null)
+            {
+                await panel.PanelRef.FocusAsync();
+            }
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab element using the tab panels field id.
+        /// Required for aria-controls attribute to link tab to its panel.
+        /// </summary>
+        internal string GetTabId(MudTabPanel panel)
+        {
+            return $"tablist-{_componentId}-tab-{panel.FieldId}";
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab panel element using the tab panels field id.
+        /// Required for aria-controls attribute to link tab panel to its tab.
+        /// </summary>
+        internal string GetTabPanelId(MudTabPanel panel)
+        {
+            return $"tablist-{_componentId}-tabpanel-{panel.FieldId}";
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab list. 
+        /// Required for aria-controls attribute to identify each tablist.
+        /// </summary>
+        internal string GetTabListId()
+        {
+            return _tabListId!;
+        }
     }
 }

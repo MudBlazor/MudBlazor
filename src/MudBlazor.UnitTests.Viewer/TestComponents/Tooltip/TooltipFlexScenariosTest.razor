@@ -1,0 +1,138 @@
+﻿<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabPanel Text="Simple Tooltip">
+        <MudTooltip Text="Delete">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" />
+        </MudTooltip>
+        <MudTooltip Text="Add" Placement="Placement.Top" Arrow>
+            <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Secondary" />
+        </MudTooltip>
+    </MudTabPanel>
+    <MudTabPanel Text="Grid TextField">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudTextField T="string" Text="Fully expanded - No Tooltip" Variant="Variant.Outlined" HelperText="https://github.com/MudBlazor/MudBlazor/issues/7685#issue-1960816701" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTooltip Text="Issue 7685" Inline="true">
+                    <MudTextField T="string" Text="Tooltip - Inline True" Variant="Variant.Outlined"></MudTextField>
+                </MudTooltip>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTooltip Text="Issue 7685" Inline="false">
+                    <MudTextField T="string" Text="Tooltip - Inline False" Variant="Variant.Outlined"></MudTextField>
+                </MudTooltip>
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Grid DatePicker">
+        <MudGrid>
+            <MudItem xs="6">
+                <MudTooltip Text="Issue 1167" Color="Color.Primary" Arrow>
+                    <MudDatePicker Label="Tooltip - Inline True" AutoClose/>
+                </MudTooltip>
+            </MudItem>
+            <MudItem xs="6">
+                <MudDatePicker Label="End date" AutoClose />
+            </MudItem>
+        </MudGrid>
+        <MudGrid>
+            <MudItem xs="6">
+                <MudTooltip Text="Issue 1167" Color="Color.Primary" Inline="false" Arrow>
+                    <MudDatePicker Label="Tooltip - Inline False" AutoClose/>
+                </MudTooltip>
+            </MudItem>
+            <MudItem xs="6">
+                <MudDatePicker Label="End date" AutoClose HelperText="https://github.com/MudBlazor/MudBlazor/issues/1167#issuecomment-968830224" />
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="MudList Direction">
+        <MudPaper Width="fit-content">
+            <MudList T="string">
+                <MudTooltip Text="Inline False" Inline="false">
+                    <MudListItem Text="Inbox" />
+                </MudTooltip>
+                <MudTooltip Text="Inline False" Inline="false">
+                    <MudListItem Text="Sent" />
+                </MudTooltip>
+                <MudTooltip Text="Inline False" Inline="false">
+                    <MudListItem Text="Spam" />
+                </MudTooltip>
+                <MudDivider />
+                <MudTooltip Text="List renders horizontally if Inline=true" Inline="false">
+                    <MudListItem Text="Issue 3844" SecondaryText="https://github.com/MudBlazor/MudBlazor/issues/3844#issue-1119522527" />
+                </MudTooltip>
+            </MudList>
+        </MudPaper>
+    </MudTabPanel>
+    <MudTabPanel Text="Grid Chip">
+        <MudDataGrid Items="@([("updated", Color.Secondary), ("in progress", Color.Warning), ("submitted", Color.Info), ("approved", Color.Success)])">
+            <Columns>
+                <TemplateColumn Title="GitHub Issue">
+                    <CellTemplate>
+                        <MudText>Issue #1167</MudText>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Inline True">
+                    <CellTemplate>
+                        <MudTooltip Text="Inline True" Color="Color.Primary" Arrow Placement="Placement.Bottom" Inline="true">
+                            <MudChip T="string" Class="mud-width-full ma-0" Color="@context.Item.Item2" Size="Size.Small">
+                                @context.Item.Item1
+                            </MudChip>
+                        </MudTooltip>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Inline False">
+                    <CellTemplate>
+                        <MudTooltip Text="Inline False" Color="Color.Primary" Arrow Placement="Placement.Bottom" Inline="false">
+                            <MudChip T="string" Class="mud-width-full ma-0" Color="@context.Item.Item2" Size="Size.Small">
+                                @context.Item.Item1
+                            </MudChip>
+                        </MudTooltip>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Comment">
+                    <CellTemplate>
+                        <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/1167#issuecomment-2611085518">MudChip inside DataGrid workaround</MudLink>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Grid Stack" BadgeDot BadgeColor="Color.Error">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudStack>
+                    <MudStack Row>
+                        <MudTextField T="string" Text="Fully expanded - No Tooltip" Variant="Variant.Outlined" HelperText="https://github.com/MudBlazor/MudBlazor/issues/1167#issuecomment-1915676589" />
+                        <MudButton>Text</MudButton>
+                    </MudStack>
+                    <MudStack Row>
+                        <MudTooltip Text="Issue 1167" RootClass="mud-width-full">
+                            <MudTextField T="string" Text="Tooltip - requires RootClass='mud-width-full'" Variant="Variant.Outlined"></MudTextField>
+                        </MudTooltip>
+                        <MudButton>Text</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Table Data" BadgeDot BadgeColor="Color.Error">
+        <MudTable T="string" Items="@(["one", "two", "three", "four"])">
+            <HeaderContent>
+                <MudTh>Issue</MudTh>
+                <MudTh>Data</MudTh>
+                <MudTh>Comment</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Issue">Discord Help</MudTd>
+                <MudTd DataLabel="Data">
+                    <MudTooltip Text="RootClass='mud-width-full'" RootClass="mud-width-full">
+                        @context
+                    </MudTooltip>
+                </MudTd>
+                <MudTd DataLabel="Comment">User was wrapping outside 'MudTd', wrap inside instead</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudTabPanel>
+</MudTabs>

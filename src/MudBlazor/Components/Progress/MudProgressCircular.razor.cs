@@ -19,6 +19,9 @@ namespace MudBlazor
         private int _svgValue;
         private readonly ParameterState<double> _valueState;
         private const int MagicNumber = 126; // weird, but required for the SVG to work
+        private string _viewBox = string.Empty;
+        private const double CircleRadius = 20.0;
+        private const double CircleCenter = 44.0;
 
         protected string Classname =>
             new CssBuilder("mud-progress-circular")
@@ -33,6 +36,7 @@ namespace MudBlazor
             new CssBuilder("mud-progress-circular-circle")
                 .AddClass("mud-progress-indeterminate", Indeterminate)
                 .AddClass("mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-circular-circle-rounded", Rounded)
                 .Build();
 
         /// <summary>
@@ -64,6 +68,20 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public bool Indeterminate { get; set; }
+
+        /// <summary>
+        /// Displays a rounded border.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>.
+        /// When <c>true</c>, the CSS <c>stroke-linecap</c> is set to <c>round</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The lowest possible value.
@@ -105,6 +123,13 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
 
+        /// <summary>
+        /// RenderFragment for rendering custom content
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public RenderFragment? ChildContent { get; set; }
+
         public MudProgressCircular()
         {
             using var registerScope = CreateRegisterScope();
@@ -125,6 +150,20 @@ namespace MudBlazor
         {
             base.OnInitialized();
             _svgValue = ToSvgValue(_valueState.Value);
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            var strokeWidth = Math.Max(0, StrokeWidth);
+            var viewBoxSize = (2 * CircleRadius) + strokeWidth;
+            var viewBoxMin = CircleCenter - (viewBoxSize / 2.0);
+
+            var size = ToS(viewBoxSize);
+            var min = ToS(viewBoxMin);
+
+            _viewBox = $"{min} {min} {size} {size}";
         }
 
         private int ToSvgValue(double value)

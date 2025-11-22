@@ -56,7 +56,7 @@ public class DebounceDispatcherTests
         {
             await Task.Delay(delay).ConfigureAwait(false);
             await debounceDispatcher.DebounceAsync(Invoke);
-        };
+        }
 
         // Act
         var tasks = new[]

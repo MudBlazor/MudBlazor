@@ -236,9 +236,21 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds IPointerEventsNoneService as a scoped dependency.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBlazorPointerEventsNoneService(this IServiceCollection services)
+        {
+            services.TryAddScoped<IPointerEventsNoneService, PointerEventsNoneService>();
+
+            return services;
+        }
+
+        /// <summary>
         /// Adds the services required for translations.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudLocalization(this IServiceCollection services)
         {
             services.TryAddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
@@ -324,6 +336,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
                 .AddMudEventManager()
+                .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
 
@@ -364,6 +377,7 @@ namespace MudBlazor.Services
                     snackBarConfiguration.SuccessIcon = options.SnackbarConfiguration.SuccessIcon;
                     snackBarConfiguration.WarningIcon = options.SnackbarConfiguration.WarningIcon;
                     snackBarConfiguration.ErrorIcon = options.SnackbarConfiguration.ErrorIcon;
+                    snackBarConfiguration.HideIcon = options.SnackbarConfiguration.HideIcon;
                 })
                 .AddMudBlazorResizeListener(resizeOptions =>
                 {
@@ -396,9 +410,11 @@ namespace MudBlazor.Services
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                     popoverOptions.Mode = options.PopoverOptions.Mode;
+                    popoverOptions.OverflowPadding = options.PopoverOptions.OverflowPadding;
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
+                .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
 

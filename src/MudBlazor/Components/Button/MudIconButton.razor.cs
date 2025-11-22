@@ -13,6 +13,10 @@ namespace MudBlazor
     /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
+    /// <seealso cref="MudButton" />
+    /// <seealso cref="MudFab" />
+    /// <seealso cref="MudToggleIconButton" />
+    /// <seealso cref="MudIcon"/>
     public partial class MudIconButton : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
@@ -45,11 +49,13 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+#pragma warning disable CS0618 // Type or member is obsolete
+        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The size of the button.
@@ -72,14 +78,16 @@ namespace MudBlazor
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// The variation to use.
+        /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.  Other values include <see cref="Variant.Filled"/> and <see cref="Variant.Outlined"/>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+#pragma warning disable CS0618 // Type or member is obsolete
+        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The custom content within this button.

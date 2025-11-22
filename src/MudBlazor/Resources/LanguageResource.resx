@@ -124,7 +124,7 @@
     <value>Clear</value>
   </data>
   <data name="MudDataGrid_AddFilter" xml:space="preserve">
-    <value>Add Filter</value>
+    <value>Add filter</value>
   </data>
   <data name="MudDataGrid_Cancel" xml:space="preserve">
     <value>Cancel</value>
@@ -136,22 +136,22 @@
     <value>Save</value>
   </data>
   <data name="MudDataGrid_HideAll" xml:space="preserve">
-    <value>Hide All</value>
+    <value>Hide all</value>
   </data>
   <data name="MudDataGrid_ShowAll" xml:space="preserve">
-    <value>Show All</value>
+    <value>Show all</value>
   </data>
   <data name="MudDataGrid_Columns" xml:space="preserve">
     <value>Columns</value>
   </data>
   <data name="MudDataGrid_ExpandAllGroups" xml:space="preserve">
-    <value>Expand All Groups</value>
+    <value>Expand all groups</value>
   </data>
   <data name="MudDataGrid_CollapseAllGroups" xml:space="preserve">
-    <value>Collapse All Groups</value>
+    <value>Collapse all groups</value>
   </data>
   <data name="MudDataGrid_RefreshData" xml:space="preserve">
-    <value>Refresh Data</value>
+    <value>Refresh data</value>
   </data>
   <data name="MudDataGrid_True" xml:space="preserve">
     <value>true</value>
@@ -247,10 +247,10 @@
     <value>Value</value>
   </data>
   <data name="MudDataGrid_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>Move down</value>
   </data>
   <data name="MudDataGrid_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>Move up</value>
   </data>
   <data name="MudDataGrid_Sort" xml:space="preserve">
     <value>Sort</value>
@@ -259,37 +259,37 @@
     <value>Toggle {0}</value>
   </data>
   <data name="MudAlert_Close" xml:space="preserve">
-    <value>Close Alert</value>
+    <value>Close</value>
   </data>
   <data name="MudChip_Close" xml:space="preserve">
-    <value>Close Chip</value>
+    <value>Close</value>
   </data>
   <data name="MudColorPicker_Close" xml:space="preserve">
-    <value>Close Picker</value>
+    <value>Close</value>
   </data>
   <data name="MudColorPicker_SpectrumView" xml:space="preserve">
-    <value>Switch to Spectrum View</value>
+    <value>Spectrum</value>
   </data>
   <data name="MudColorPicker_GridView" xml:space="preserve">
-    <value>Switch to Grid View</value>
+    <value>Grid</value>
   </data>
   <data name="MudColorPicker_PaletteView" xml:space="preserve">
-    <value>Switch to Palette View</value>
+    <value>Palette</value>
   </data>
-  <data name="MudColorPicker_ToggleCurrentColor" xml:space="preserve">
-    <value>Toggle Current Color</value>
+  <data name="MudColorPicker_ShowSwatches" xml:space="preserve">
+    <value>Show swatches</value>
+  </data>
+  <data name="MudColorPicker_HideSwatches" xml:space="preserve">
+    <value>Hide swatches</value>
   </data>
   <data name="MudColorPicker_HueSlider" xml:space="preserve">
-    <value>Hue Slider</value>
+    <value>Hue slider</value>
   </data>
   <data name="MudColorPicker_AlphaSlider" xml:space="preserve">
-    <value>Alpha Slider</value>
-  </data>
-  <data name="MudColorPicker_PaletteColor" xml:space="preserve">
-    <value>Select Palette Color</value>
+    <value>Alpha slider</value>
   </data>
   <data name="MudColorPicker_ModeSwitch" xml:space="preserve">
-    <value>Switch Mode</value>
+    <value>Switch mode</value>
   </data>
   <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
     <value>Previous year {0}</value>
@@ -322,7 +322,7 @@
     <value>Previous page</value>
   </data>
   <data name="MudRatingItem_Label" xml:space="preserve">
-    <value>{0} Rating</value>
+    <value>{0} rating</value>
   </data>
   <data name="MudCarousel_Index" xml:space="preserve">
     <value>Index {0}</value>
@@ -333,11 +333,8 @@
   <data name="MudCarousel_Previous" xml:space="preserve">
     <value>Previous</value>
   </data>
-  <data name="MudColorPicker_ColorDot" xml:space="preserve">
-    <value>Select Color Dot</value>
-  </data>
   <data name="MudDialog_Close" xml:space="preserve">
-    <value>Close dialog</value>
+    <value>Close</value>
   </data>
   <data name="MudInput_Clear" xml:space="preserve">
     <value>Clear</value>
@@ -349,7 +346,7 @@
     <value>Increment</value>
   </data>
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
-    <value>Table of Contents</value>
+    <value>Contents</value>
   </data>
   <data name="MudTablePager_FirstPage" xml:space="preserve">
     <value>First page</value>
@@ -364,7 +361,7 @@
     <value>Previous page</value>
   </data>
   <data name="MudSnackbar_Close" xml:space="preserve">
-    <value>Close snackbar</value>
+    <value>Close</value>
   </data>
   <data name="MudDataGridPager_RowsPerPage" xml:space="preserve">
     <value>Rows per page:</value>
@@ -391,30 +388,87 @@
     <value>Complete</value>
   </data>
   <data name="MudDataGrid_ClearFilter" xml:space="preserve">
-    <value>Clear Filter</value>
+    <value>Clear filter</value>
   </data>
   <data name="MudDataGrid_OpenFilters" xml:space="preserve">
-    <value>Open Filters</value>
+    <value>Open filters</value>
   </data>
   <data name="MudDataGrid_ToggleGroupExpansion" xml:space="preserve">
-    <value>Toggle Group Expansion</value>
+    <value>Toggle group</value>
   </data>
   <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
-    <value>Remove Filter</value>
+    <value>Remove filter</value>
   </data>
   <data name="MudDataGridPager_FirstPage" xml:space="preserve">
-    <value>First Page</value>
+    <value>First page</value>
   </data>
   <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
-    <value>Previous Page</value>
+    <value>Previous page</value>
   </data>
   <data name="MudDataGridPager_NextPage" xml:space="preserve">
-    <value>Next Page</value>
+    <value>Next page</value>
   </data>
   <data name="MudDataGridPager_LastPage" xml:space="preserve">
-    <value>Last Page</value>
+    <value>Last page</value>
   </data>
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
-    <value>Show Column Options</value>
+    <value>Column options</value>
+  </data>
+  <data name="Converter_InvalidBoolean" xml:space="preserve">
+    <value>Not a valid boolean</value>
+  </data>
+  <data name="Converter_InvalidNumber" xml:space="preserve">
+    <value>Not a valid number</value>
+  </data>
+  <data name="Converter_InvalidGUID" xml:space="preserve">
+    <value>Not a valid GUID</value>
+  </data>
+  <data name="Converter_NotValueOf" xml:space="preserve">
+    <value>Not a value of {0}</value>
+  </data>
+  <data name="Converter_InvalidDateTime" xml:space="preserve">
+    <value>Not a valid date time</value>
+  </data>
+  <data name="Converter_InvalidTimeSpan" xml:space="preserve">
+    <value>Not a valid time span</value>
+  </data>
+  <data name="Converter_InvalidType" xml:space="preserve">
+    <value>Not a valid {0}</value>
+  </data>
+  <data name="Converter_ConversionNotImplemented" xml:space="preserve">
+    <value>Conversion to type {0} not implemented</value>
+  </data>
+  <data name="Converter_ConversionError" xml:space="preserve">
+    <value>Conversion error: {0}</value>
+  </data>
+  <data name="Converter_ConversionFailed" xml:space="preserve">
+    <value>Conversion from {0} to {1} failed: {2}</value>
+  </data>
+  <data name="Converter_UnableToConvert" xml:space="preserve">
+    <value>Unable to convert to {0} from type {1}</value>
+  </data>
+  <data name="HeatMap_Less" xml:space="preserve">
+    <value>Less</value>
+  </data>
+  <data name="HeatMap_More" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="MudTreeView_ExpandItem" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="MudTreeView_CollapseItem" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="MudTimePicker_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MudBaseDatePicker_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MudColorPicker_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MudFileUpload_FileSizeError" xml:space="preserve">
+    <value>File '{0}' exceeds the maximum allowed size of {1} bytes.</value>
   </data>
 </root>

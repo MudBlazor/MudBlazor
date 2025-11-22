@@ -1,12 +1,13 @@
 ﻿@page "/"
 @using System.Reflection
+@inject NavigationManager NavManager
+
+<MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
         <MudAppBar Elevation="0">
-            <MudTooltip Delay="500" Text="Toggle drawer">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
-            </MudTooltip>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
             <MudSpacer />
             <MudAutocomplete @ref="_autocomplete" T="Type" Placeholder="Search all tests" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentAriaLabel="Search">
                 <ItemTemplate Context="result">
@@ -14,7 +15,10 @@
                 </ItemTemplate>
             </MudAutocomplete>
             <MudSpacer />
-            <MudTooltip Delay="500" Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
+            <MudTooltip Text="@ThemeLabel">
+                <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
+            </MudTooltip>
+            <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
                 <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
             </MudTooltip>
         </MudAppBar>
@@ -40,7 +44,7 @@
                     <MudTextField T="string" @bind-Value="@_currentSearchText" Immediate="true" FullWidth="true"
                                   Typo="Typo.subtitle1" Placeholder="Search by component" Clearable DebounceInterval="200" />
 
-                    <MudTooltip Delay="500" Text="@(_expandedState ? "Collapse all" : "Expand all")">
+                    <MudTooltip Text="@(_expandedState ? "Collapse all" : "Expand all")">
                         <MudIconButton Icon="@(_expandedState ? CollapseAllIcon : ExpandAllIcon)" Size="Size.Small"
                                        OnClick="@(() => ToggleExpanded())" />
                     </MudTooltip>
@@ -99,10 +103,6 @@
     </MudRTLProvider>
 </MudLayout>
 <style>
-    :root {
-        --mud-drawer-width-left: 400px;
-    }
-
     .docs-search-bar .mud-input {
         height: 42px;
     }
@@ -114,9 +114,9 @@
         border-radius: var(--mud-default-borderradius);
     }
 
-        .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
-            color: #fafafa;
-        }
+    .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
+        color: #fafafa;
+    }
 
     .docs-search-bar .mud-input.mud-input-outlined .mud-input-outlined-border {
         border: none;
@@ -125,7 +125,7 @@
 
     .mode-links.active {
         color: var(--mud-palette-primary);
-        background-color: var(--mud-palette-primary-hover)
+        background-color: var(--mud-palette-primary-hover);
     }
 
     .mud-nav-link {
@@ -142,6 +142,7 @@
 </style>
 
 @code {
+
     private const string ExpandAllIcon = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>expand-all-outline</title><path d="M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H17V19H15V17H13V15H15V13H17V15H19V17Z" /></svg>""";
     private const string CollapseAllIcon = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>collapse-all-outline</title><path d="M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H13V15H19V17Z" /></svg>""";
 
@@ -155,8 +156,22 @@
     private string _currentSearchText = string.Empty;
     private Dictionary<Type, string>? _typeDirectories;
     private MudAutocomplete<Type> _autocomplete = null!;
+    private bool _isDarkMode;
+    private readonly MudTheme _customTheme = new()
+    {
+        LayoutProperties = new LayoutProperties
+        {
+            DrawerWidthLeft = "400px"
+        }
+    };
 
     private bool ShouldFilter => !string.IsNullOrWhiteSpace(_currentSearchText) && _currentSearchText.Length > 2;
+
+    private void ToggleTheme() => _isDarkMode = !_isDarkMode;
+
+    private string ThemeIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
+
+    private string ThemeLabel => _isDarkMode ? "Light mode" : "Dark mode";
 
     private void DocsDrawerToggle() => _drawerOpen = !_drawerOpen;
 
@@ -183,6 +198,71 @@
             type => type,
             type => type.Namespace?.Split('.').LastOrDefault() ?? string.Empty
         );
+
+        ParseQueryString();
+        NavManager.LocationChanged += HandleLocationChanged;
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        ParseQueryString();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
+    }
+
+    private void ParseQueryString()
+    {
+        var uri = new Uri(NavManager.Uri);
+        var query = uri.Query;
+
+        if (string.IsNullOrEmpty(query))
+            return;
+
+        if (query.StartsWith('?'))
+            query = query.Substring(1);
+
+        var queryParams = query.Split('&');
+
+        foreach (var param in queryParams)
+        {
+            var parts = param.Split('=');
+            if (parts.Length == 2)
+            {
+                var key = parts[0];
+                var value = Uri.UnescapeDataString(parts[1]);
+
+                if (string.Equals(key, "component", StringComparison.OrdinalIgnoreCase))
+                {
+                    var componentType = _availableComponentTypes.FirstOrDefault(t =>
+                        t.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
+
+                    if (componentType != null)
+                    {
+                        _selectedType = componentType;
+                        StateHasChanged();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void UpdateQueryString(Type componentType)
+    {
+        if (componentType == null) return;
+
+        var uri = new Uri(NavManager.Uri);
+        var baseUrl = uri.GetLeftPart(UriPartial.Path);
+
+        // Create the new query string
+        var newUrl = $"{baseUrl}?component={componentType.Name}";
+
+        // Update URL without navigation (false parameter)
+        NavManager.NavigateTo(newUrl, false);
     }
 
     private RenderFragment TestComponent() => builder =>
@@ -239,6 +319,7 @@
         }
 
         _selectedType = entry;
+        UpdateQueryString(entry);
         await Task.Yield();
         await _autocomplete.ClearAsync();
     }

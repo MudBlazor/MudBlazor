@@ -5,7 +5,9 @@
     }
     <MudChip Value="@("Primary")" Default="true"/>
 </MudChipSet>
-Add chips <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="Enable">Enable</MudIconButton>
+
+Add chips
+<MudIconButton id="enable-button" Icon="@Icons.Material.Filled.Add" OnClick="Enable">Enable</MudIconButton>
 
 <br />
 @if (_selectedValues is { Count: > 0 }) {

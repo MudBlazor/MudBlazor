@@ -21,8 +21,7 @@ namespace MudBlazor
                 .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
                 .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
                 .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
-                .AddClass($"mud-popover-relative-width", RelativeWidth is true)
-                .AddClass($"mud-popover-adaptive-width", RelativeWidth is false)
+                .AddClass($"mud-popover-{RelativeWidth.ToDescriptionString()}-width", RelativeWidth != DropdownWidth.Ignore)
                 .AddClass($"mud-paper", Paper)
                 .AddClass($"mud-paper-square", Paper && Square)
                 .AddClass($"mud-elevation-{Elevation}", Paper && DropShadow)
@@ -88,24 +87,30 @@ namespace MudBlazor
         /// The amount of drop shadow to apply.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.PopoverDefaults.Elevation"/>.
+        /// Defaults to 8 in <see cref="MudGlobal.PopoverDefaults.Elevation"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public int Elevation { set; get; } = MudGlobal.PopoverDefaults.Elevation;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Displays square borders around this popover.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the CSS <c>border-radius</c> is set to <c>0</c>.
+        /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>..
+        /// When <c>true</c>, the CSS <c>border-radius</c> is set to <c>0</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public bool Square { get; set; }
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
-        /// Displays this popover in a fixed position.
+        /// Displays this popover in a fixed position, even through scrolling.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>False</c>.
@@ -118,7 +123,7 @@ namespace MudBlazor
         /// The length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.TransitionDefaults.Duration"/>.
+        /// Defaults to 251ms in <see cref="MudGlobal.TransitionDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
@@ -128,7 +133,7 @@ namespace MudBlazor
         /// The amount of time, in milliseconds, from opening the popover to beginning the transition. 
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.TransitionDefaults.Delay"/>.
+        /// Defaults to 0ms in <see cref="MudGlobal.TransitionDefaults.Delay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
@@ -168,12 +173,12 @@ namespace MudBlazor
         /// Determines the width of this popover in relation the parent container.
         /// </summary>
         /// <remarks>
-        /// <para>Defaults to <c>null</c>. </para>
-        /// <para>When <c>true</c>, restricts the max-width of the component to the width of the parent container</para>
-        /// <para>When <c>false</c>, restricts the min-width of the component to the width of the parent container</para>
+        /// <para>Defaults to <see cref="DropdownWidth.Ignore" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public bool? RelativeWidth { get; set; }
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
     }
 }

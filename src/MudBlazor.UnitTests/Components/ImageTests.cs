@@ -2,10 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -53,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
             img.GetAttribute("width").Should().Be("120");
             img.GetAttribute("style").Should().Be("background:gray");
 
-            img.ClassList.Should().BeEquivalentTo(new[] { "my-custom-class", "mud-elevation-25", "object-bottom", "object-cover", "mud-image", "fluid" });
+            img.ClassList.Should().BeEquivalentTo("my-custom-class", "mud-elevation-25", "object-bottom", "object-cover", "mud-image", "fluid");
         }
 
         [Test]
@@ -93,7 +91,43 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var img = comp.Find("img");
-            img.ClassList.Should().Contain(new[] { "mud-image", $"object-{expectedClass}" });
+            img.ClassList.Should().Contain(["mud-image", $"object-{expectedClass}"]);
+        }
+
+        [Test]
+        public void SwitchesToFallbackSrcOnError()
+        {
+            var initialSrc = "primary-image.jpg";
+            var fallbackSrc = "fallback-image.jpg";
+
+            var comp = Context.RenderComponent<MudImage>(parameters => parameters
+                .Add(p => p.Src, initialSrc)
+                .Add(p => p.FallbackSrc, fallbackSrc)
+            );
+
+            // Trigger the `onerror` event
+            comp.Find("img").TriggerEvent("onerror", EventArgs.Empty);
+
+            var img = comp.Find("img");
+
+            img.GetAttribute("src").Should().Be(fallbackSrc);
+        }
+
+        [Test]
+        public void FallbackMissingOnError()
+        {
+            var initialSrc = "primary-image.jpg";
+
+            var comp = Context.RenderComponent<MudImage>(parameters => parameters
+                .Add(p => p.Src, initialSrc)
+            );
+
+            // Trigger the `onerror` event
+            comp.Find("img").TriggerEvent("onerror", EventArgs.Empty);
+
+            var img = comp.Find("img");
+
+            img.GetAttribute("src").Should().Be(initialSrc);
         }
     }
 }

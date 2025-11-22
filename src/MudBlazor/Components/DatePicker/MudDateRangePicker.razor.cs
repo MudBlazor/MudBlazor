@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,9 +8,11 @@ namespace MudBlazor
     /// <summary>
     /// Represents a picker for a range of dates.
     /// </summary>
+    /// <seealso cref="MudDatePicker"/>
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
-        private DateTime? _firstDate = null, _secondDate;
+        private readonly ParameterState<bool> _allowDisabledDatesInCountState;
+        private DateTime? _firstDate = null, _secondDate, _minValidDate, _maxValidDate;
         private DateRange _dateRange;
         private Range<string> _rangeText;
 
@@ -23,9 +23,44 @@ namespace MudBlazor
         /// </summary>
         public MudDateRangePicker()
         {
+            using var registerScope = CreateRegisterScope();
+            _allowDisabledDatesInCountState = registerScope.RegisterParameter<bool>(nameof(AllowDisabledDatesInCount))
+                .WithParameter(() => AllowDisabledDatesInCount)
+                .WithChangeHandler(RecalculateValidDays);
+
             DisplayMonths = 2;
-            AdornmentAriaLabel = "Open Date Range Picker";
         }
+
+        /// <summary>
+        /// The maximum number of selectable days.
+        /// </summary>
+        /// <remarks>
+        /// Inclusive of the selected date.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public int? MaxDays { get; set; }
+
+        /// <summary>
+        /// The minimum number of selectable days.
+        /// </summary>
+        /// <remarks>
+        /// Inclusive of the selected date.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public int? MinDays { get; set; }
+
+        /// <summary>
+        /// Include disabled dates within the valid min/max days range.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
+        /// This parameter will take effect when <see cref="MinDays"/> or <see cref="MaxDays"/> is set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool AllowDisabledDatesInCount { get; set; } = true;
 
         /// <summary>
         /// The text displayed in the start input if no date is specified.
@@ -103,13 +138,17 @@ namespace MudBlazor
 
                 Touched = true;
 
+                if (range?.Start is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+
                 _dateRange = range;
                 _value = range?.End;
+                HighlightedDate = range?.Start;
 
                 if (updateValue)
                 {
                     Converter.GetError = false;
-                    if (_dateRange == null)
+                    if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
                         await SetTextAsync(null, false);
@@ -172,6 +211,8 @@ namespace MudBlazor
         /// </summary>
         public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
 
+        public override ValueTask BlurAsync() => _rangeInput.BlurAsync();
+
         /// <summary>
         /// Selects a portion of the end input text.
         /// </summary>
@@ -182,9 +223,14 @@ namespace MudBlazor
         protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
-            _rangeText = new Range<string>(
-                Converter.Set(_dateRange?.Start),
-                Converter.Set(_dateRange?.End));
+            _rangeText = null;
+            if (_dateRange?.Start != null || _dateRange?.End != null)
+            {
+                _rangeText = new Range<string>(
+                    Converter.Set(_dateRange.Start),
+                    Converter.Set(_dateRange.End));
+            }
+
             return SetTextAsync(_dateRange?.ToString(Converter), false);
         }
 
@@ -196,6 +242,91 @@ namespace MudBlazor
         }
 
         protected override bool HasValue(DateTime? value) => value is not null;
+
+        protected override bool IsDayDisabled(DateTime date)
+        {
+            if (_firstDate is null || _secondDate is not null)
+            {
+                return base.IsDayDisabled(date);
+            }
+
+            var selectedDate = _firstDate.Value;
+            var validDateRange = GetValidDateRange(selectedDate);
+
+            return base.IsDayDisabled(date) || MudDateRangePicker.IsDateOutOfRange(date, selectedDate, validDateRange);
+        }
+
+        private DateRange GetValidDateRange(DateTime selectedDate)
+        {
+            var start = MinDays switch
+            {
+                null => MinDate ?? DateTime.MinValue,
+                _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MinDays.Value - 1),
+                _ => _minValidDate
+            };
+
+            var end = MaxDays switch
+            {
+                null => MaxDate ?? DateTime.MaxValue,
+                _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MaxDays.Value - 1),
+                _ => _maxValidDate
+            };
+
+            return new DateRange(start, end);
+        }
+
+        private static bool IsDateOutOfRange(DateTime date, DateTime selectedDate, DateRange validRange)
+        {
+            var isNotSelectedDate = date < selectedDate || date > selectedDate;
+            var isOutsideValidRange = date < validRange.Start || date > validRange.End;
+
+            return isNotSelectedDate && isOutsideValidRange;
+        }
+
+        private DateTime GetMaxSelectableDate(DateTime startDate, int maxDays)
+        {
+            var validDayCount = 1;
+            var lastValidDate = startDate;
+            var maxDate = startDate.AddDays(1);
+
+            while (validDayCount < maxDays)
+            {
+                if (!IsDateDisabledFunc(maxDate))
+                {
+                    validDayCount++;
+                    lastValidDate = maxDate;
+                }
+
+                if (validDayCount == maxDays)
+                    break;
+
+                if (maxDate.Date > MaxDate.GetValueOrDefault(startDate.AddYears(50)).Date)
+                    break;
+
+                if (maxDate.Date == DateTime.MaxValue.Date)
+                    break;
+
+                maxDate = maxDate.AddDays(1);
+            }
+
+            return lastValidDate;
+        }
+
+        /// <summary>
+        /// Recalculate the valid days in relation to the <see cref="MinDays"/> and <see cref="MaxDays"/> allowed
+        /// </summary>
+        public void RecalculateValidDays()
+        {
+            if (_firstDate is null) return;
+
+            if (MinDays is not null)
+                _minValidDate = GetMaxSelectableDate(_firstDate.Value, MinDays.Value);
+
+            if (MaxDays is not null)
+                _maxValidDate = GetMaxSelectableDate(_firstDate.Value, MaxDays.Value);
+
+            StateHasChanged();
+        }
 
         private DateRange ParseDateRangeValue(string value)
         {
@@ -246,6 +377,13 @@ namespace MudBlazor
                     .Build();
             }
 
+            if (_firstDate?.Date == day && _secondDate?.Date == day)
+            {
+                return b.AddClass("mud-selected")
+                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+                    .Build();
+            }
+
             if (_firstDate?.Date == day || CheckDateRange(day, compareStart: isEqualTo, compareEnd: isNotEqualTo))
             {
                 return b.AddClass("mud-selected")
@@ -291,14 +429,24 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
-            if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
+            if (_firstDate == null || _secondDate != null)
             {
                 _secondDate = null;
                 _firstDate = dateTime;
+
+                RecalculateValidDays();
+
                 return;
             }
-
-            _secondDate = dateTime;
+            if (_firstDate > dateTime)
+            {
+                _secondDate = _firstDate;
+                _firstDate = dateTime;
+            }
+            else
+            {
+                _secondDate = dateTime;
+            }
             if (PickerActions == null || AutoClose)
             {
                 await SubmitAsync();

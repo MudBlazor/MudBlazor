@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A text input which conforms user input to a specific format while typing. 
+    /// A text input which conforms user input to a specific format while typing.
     /// <remarks>
     /// Note that MudMask is recommended to be used in WASM projects only because it has known problems
     /// in BSS, especially with high network latency.
@@ -105,7 +105,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The type of the underlying input. 
+        /// The type of the underlying input.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.
@@ -195,11 +195,27 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        protected internal async Task OnInputAsync(ChangeEventArgs e)
+        {
+            var inputValue = e.Value?.ToString();
+
+            if (inputValue == null)
+                return;
+
+            Mask.SetText(inputValue);
+            await UpdateAsync();
+        }
+
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
+                if (e.CtrlKey && e.Key != "Backspace"
+                    // on macOS, the copy-paste command is Cmd + V
+                    // cmd is identified using the MetaKey property
+                    || e.MetaKey && e.Key != "Backspace"
+                    || e.AltKey
+                    || GetReadOnlyState())
                     return;
                 switch (e.Key)
                 {
@@ -282,13 +298,19 @@ namespace MudBlazor
                 return;
             var text = Converter.Set(Value);
             var cleanText = Mask.GetCleanText();
-            if (cleanText == text || string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
-            var maskText = Mask.Text;
-            Mask.SetText(text);
-            if (maskText == Mask.Text)
-                return; // no change, stop update loop
-            await UpdateAsync();
+
+            if (cleanText != text)
+            {
+                var maskText = Mask.Text;
+                Mask.SetText(text);
+                if (maskText == Mask.Text)
+                    return;
+            }
+
+            if (Text != Mask.Text)
+                await UpdateAsync();
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -358,15 +380,7 @@ namespace MudBlazor
         }
 
         internal void OnCopy()
-        {
-            var text = Text;
-            if (Mask.Selection != null)
-            {
-                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
-            }
-
-            JsApiService.CopyToClipboardAsync(text);
-        }
+            => CopySelectionToClipboard();
 
         internal async void OnPaste(string? text)
         {
@@ -417,7 +431,7 @@ namespace MudBlazor
             }
         }
 
-        // from JS event     
+        // from JS event
         internal void OnCaretPositionChanged(int pos)
         {
             if (Mask.Selection != null)
@@ -461,6 +475,7 @@ namespace MudBlazor
             if (GetReadOnlyState())
                 return;
 
+            CopySelectionToClipboard();
             if (_selection != null)
                 Mask.Delete();
             await UpdateAsync();
@@ -482,6 +497,20 @@ namespace MudBlazor
                     await _jsEvent.DisposeAsync();
                 }
             }
+        }
+
+        /// <summary>
+        /// Copies the currently selected text (or the entire text if nothing is selected) to the clipboard.
+        /// </summary>
+        private void CopySelectionToClipboard()
+        {
+            var text = Text;
+            if (Mask.Selection != null)
+            {
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
+            }
+
+            JsApiService.CopyToClipboardAsync(text);
         }
 
         [GeneratedRegex(@"^.$")]

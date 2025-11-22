@@ -9,6 +9,10 @@ namespace MudBlazor;
 
 #nullable enable
 
+/// <summary>
+/// A contextual app bar.
+/// </summary>
+/// <seealso cref="MudAppBar"/>
 public partial class MudContextualActionBar : MudAppBar
 {
     private new bool Contextual { get; set; }

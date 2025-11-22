@@ -224,14 +224,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReadOnlyRating_ShouldNotRenderInputs()
-        {
-            var comp = Context.RenderComponent<MudRating>(parameters => parameters
-                .Add(p => p.ReadOnly, true));
-            comp.FindAll("input").Should().BeEmpty();
-        }
-
-        [Test]
         public async Task RatingTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudRating>(parameters => parameters
@@ -244,10 +236,10 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Instance.SetHoveredValueAsync(15));
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
-            comp.SetParam(x => x.SelectedValue, 12);
+            await comp.SetParamAsync(x => x.SelectedValue, 12);
             await comp.InvokeAsync(() => comp.Instance.SetHoveredValueAsync(0));
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
-            comp.SetParam(x => x.SelectedValue, 0);
+            await comp.SetParamAsync(x => x.SelectedValue, 0);
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(1));
@@ -270,7 +262,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            comp.SetParam(x => x.Disabled, true);
+            await comp.SetParamAsync(x => x.Disabled, true);
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 

@@ -58,31 +58,37 @@ public partial class MudLink : MudComponentBase
     /// The color of the link.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Primary"/>.
+    /// Defaults to <see cref="Color.Primary"/> in <see cref="MudGlobal.LinkDefaults.Color"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
     public Color Color { get; set; } = MudGlobal.LinkDefaults.Color;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// The typography variant to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Typo.body1"/>.
+    /// Defaults to <see cref="Typo.body1"/> in <see cref="MudGlobal.LinkDefaults.Typo"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
     public Typo Typo { get; set; } = MudGlobal.LinkDefaults.Typo;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// Applies an underline to the link.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Underline.Hover"/>.
+    /// Defaults to <see cref="Underline.Hover"/> in <see cref="MudGlobal.LinkDefaults.Underline"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
     public Underline Underline { get; set; } = MudGlobal.LinkDefaults.Underline;
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// The URL to navigate to upon click.

@@ -26,6 +26,7 @@ namespace MudBlazor
     {
         private bool _disposed;
         private MudDialog? _dialog;
+        private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
         private readonly string _elementId = Identifier.Create("dialog");
@@ -119,6 +120,8 @@ namespace MudBlazor
 
         protected string BackgroundClassname =>
             new CssBuilder("mud-overlay-dialog")
+                .AddClass($"mud-skip-overlay-section") // dialog overlay remains outside of Section
+                .AddClass("mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior if a user puts the dialog provider above the popover provider
                 .AddClass(GetDialogOptionsOrDefault.BackgroundClass)
                 .Build();
 
@@ -155,6 +158,12 @@ namespace MudBlazor
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
                 await InvokeAsync(StateHasChanged);
             }
+        }
+
+        public async void OnMouseUp(MouseEventArgs args)
+        {
+            if (args.Button > 0)
+                await RefocusDialogAsync();
         }
 
         internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
@@ -215,15 +224,28 @@ namespace MudBlazor
         private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
             if (!GetBackdropClick())
-                return;
-
-            if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
             {
-                ((IMudDialogInstance)this).Cancel();
+                await RefocusDialogAsync();
                 return;
             }
 
-            await _dialog.OnBackdropClick.InvokeAsync(args);
+            if (_dialog is not null && _dialog.OnBackdropClick.HasDelegate)
+            {
+                await _dialog.OnBackdropClick.InvokeAsync(args);
+                await RefocusDialogAsync();
+            }
+            else
+            {
+                ((IMudDialogInstance)this).Cancel();
+            }
+        }
+
+        private async Task RefocusDialogAsync()
+        {
+            if (GetCloseOnEscapeKey() && !_disposed)
+            {
+                await _dialogContainerReference.FocusAsync();
+            }
         }
 
         private string GetPosition()

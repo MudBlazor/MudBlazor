@@ -15,28 +15,20 @@
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
-  <!--Cleanup old generated files (can removed at a later date)-->
-  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean">
-    <ItemGroup>
-      <FilesToClean Include="./Generated/*.generated.cs" />
-    </ItemGroup>
-    <Delete Files="@(FilesToClean)" />
-  </Target>
-
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.12.2" />
+    <PackageReference Include="AwesomeAssertions" Version="7.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.36" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.11.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.11.0" />
-    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.10.0" />
-    <PackageReference Include="Moq" Version="4.20.71" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="ReportGenerator" Version="5.4.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.10.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="ReportGenerator" Version="5.4.18" />
   </ItemGroup>
 
   <ItemGroup>

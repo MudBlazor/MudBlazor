@@ -8,6 +8,9 @@ namespace MudBlazor
     /// <summary>
     /// Represents a series of links used to show the user's current location.
     /// </summary>
+    /// <seealso cref="BreadcrumbItem" />
+    /// <seealso cref="BreadcrumbLink" />
+    /// <seealso cref="BreadcrumbSeparator" />
     public partial class MudBreadcrumbs : MudComponentBase
     {
         private string Classname => new CssBuilder("mud-breadcrumbs")

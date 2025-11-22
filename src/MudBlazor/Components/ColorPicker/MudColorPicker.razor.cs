@@ -69,7 +69,6 @@ namespace MudBlazor
                 .WithChangeHandler(OnThrottleIntervalParameterChanged);
             AdornmentIcon = Icons.Material.Outlined.Palette;
             ShowToolbar = false;
-            AdornmentAriaLabel = "Open Color Picker";
         }
 
         protected override async Task OnInitializedAsync()
@@ -321,17 +320,25 @@ namespace MudBlazor
         /// The delay, in milliseconds, between updates to the selected color when <see cref="DragEffect"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>300</c> milliseconds between updates.
+        /// Defaults to <c>50</c> milliseconds between updates.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int ThrottleInterval { get; set; } = 300;
+        public int ThrottleInterval { get; set; } = 50;
+
+        /// <summary>
+        /// Enables tooltips for icon buttons.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowTooltips { get; set; } = true;
 
         /// <inheritdoc />
         protected override void OnInitialized()
         {
             base.OnInitialized();
             SetThrottle(_throttleIntervalState.Value);
+            AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudColorPicker_Open];
         }
 
         private void OnThrottleIntervalParameterChanged(ParameterChangedEventArgs<int> args) => SetThrottle(args.Value);

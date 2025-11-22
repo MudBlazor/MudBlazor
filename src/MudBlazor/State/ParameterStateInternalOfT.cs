@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
+using MudBlazor.State.Invocation;
 using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
@@ -25,6 +26,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 {
     private T? _value;
     private T? _lastValue;
+    private bool _isChildOriginatedChange;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
     private readonly Func<T> _getParameterValueFunc;
@@ -101,26 +103,23 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         var currentParameterValue = _getParameterValueFunc();
         if (!_comparer.Equals(_lastValue, currentParameterValue))
         {
+            _isChildOriginatedChange = _comparer.Equals(_value, currentParameterValue);
             _value = currentParameterValue;
             _lastValue = currentParameterValue;
         }
     }
 
-    /// <inheritdoc />
-    public Task ParameterChangeHandleAsync()
+    /// <inheritdoc/>
+    public IParameterStateInvocationSnapshot CreateInvocationSnapshot()
     {
-        if (HasHandler)
-        {
-            if (HasParameterChangedEventArgs)
-            {
-                // Since the ParameterSet lifecycles control all operations, it is acceptable to trigger the handler only when
-                // HasParameterChanged has been invoked and stored the ParameterChangedEventArgs.
-                // Direct invocation of this method by external callers is discouraged, so we shouldn't worry about it.
-                return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs);
-            }
-        }
-
-        return Task.CompletedTask;
+        return new ParameterStateInvocationSnapshot<T>(
+            Metadata,
+            HasParameterChangedEventArgs ? _parameterChangedEventArgs.Clone() : null,
+            _parameterChangedHandler,
+            // We should not cache this value because it may be modified by OnParametersSet.
+            // In theory, this could also lead to race conditions if multiple OnParametersSet calls occur with different _lastValue, currentParameterValue values.
+            // For now, we'll leave it as-is since properly fixing this would be complex, it should be fixed only if it happens in practise.
+            () => _isChildOriginatedChange);
     }
 
     /// <inheritdoc />

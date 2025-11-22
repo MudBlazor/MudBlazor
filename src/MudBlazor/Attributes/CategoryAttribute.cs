@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MudBlazor
+﻿namespace MudBlazor
 {
 
     /// <summary>
@@ -227,6 +224,12 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class Chat
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class Chip
         {
             public const string Behavior = "Behavior";
@@ -243,6 +246,22 @@ namespace MudBlazor
         public static class Container
         {
             public const string Behavior = "Behavior";
+        }
+
+        public static class DataGrid
+        {
+            public const string Data = "Data";
+            public const string Behavior = "Behavior";
+            public const string Header = "Header";
+            public const string Rows = "Rows";
+            public const string Footer = "Footer";
+            public const string Filtering = "Filtering";
+            public const string Grouping = "Grouping";
+            public const string Sorting = "Sorting";
+            public const string Pagination = "Pagination";
+            public const string Selecting = "Selecting";
+            public const string Editing = "Editing";
+            public const string Appearance = "Appearance";
         }
 
         public static class Dialog

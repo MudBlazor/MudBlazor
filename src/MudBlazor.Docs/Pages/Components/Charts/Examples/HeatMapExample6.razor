@@ -1,0 +1,74 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<MudPaper Class="pa-4">
+    <MudChart ChartType="ChartType.HeatMap" ChartSeries="@_series" ChartOptions="@_options"
+    XAxisLabels="@_xLabels" Width="100%" Height="300px">
+    <!-- Setting Value for weekend to 0 and weekday to 1 to let Color Palette do the magic -->
+        <MudHeatMapCell Row="0" Column="0" Value="0">
+            <MudIcon Icon="material-symbols-outlined/rainy" Color="Color.Secondary" />
+        </MudHeatMapCell>
+        <MudHeatMapCell Row="0" Column="1" Value="1">
+            <MudIcon Icon="material-symbols-outlined/sunny" Color="Color.Secondary" />
+        </MudHeatMapCell>
+        <MudHeatMapCell Row="0" Column="2" Value="1">
+            <MudIcon Icon="material-symbols-outlined/foggy" Color="Color.Secondary" />
+        </MudHeatMapCell>
+        <MudHeatMapCell Row="0" Column="3" Value="1" Width="24" MudColor="@(new Utilities.MudColor("#FF5733"))">
+            <MudIcon Icon="@Icons.Material.Outlined.Thunderstorm" Color="Color.Dark" />
+        </MudHeatMapCell>
+        <MudHeatMapCell Row="0" Column="4" Value="1" >
+            <MudIcon Icon="material-symbols-outlined/rainy" Color="Color.Secondary" />
+        </MudHeatMapCell>
+        <MudHeatMapCell Row="0" Column="5" Value="1">
+            <MudIcon Icon="material-symbols-outlined/sunny" Color="Color.Secondary" />
+        </MudHeatMapCell>
+        <MudHeatMapCell Row="0" Column="6" Value="0">
+            <MudIcon Icon="material-symbols-outlined/sunny" Color="Color.Secondary" />
+        </MudHeatMapCell>
+    </MudChart>
+</MudPaper>
+
+@code {
+    private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
+    private List<ChartSeries> _series = [];
+    private ChartOptions _options = new();
+    private string[] _xLabels = [];
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        WeeklyData();
+        BuildOptions();
+    }
+
+    private void BuildOptions()
+    {
+        var options = new ChartOptions
+        {
+            ChartPalette = _colors,
+            YAxisLabelPosition = YAxisLabelPosition.None,
+            ShowLegend = false,
+            XAxisLabelPosition = XAxisLabelPosition.Top,
+            ShowToolTips = false,
+            ShowLabels = false
+        };
+        _options = options;
+    }
+
+    private void WeeklyData()
+    {
+        string[] xaxis = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",];
+        var heatMapSeries = new List<ChartSeries>();
+        var dataPoints = xaxis.Length;
+        var data = new double[dataPoints];
+        for (int i = 0; i < dataPoints; i++)
+        {
+            data[i] = i;
+        }
+        heatMapSeries.Add(new ChartSeries { Name = string.Empty, Data = data });
+        _xLabels = xaxis;
+        _series = heatMapSeries;
+    }
+}

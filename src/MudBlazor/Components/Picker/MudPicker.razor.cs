@@ -75,11 +75,13 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+#pragma warning disable CS0618 // Type or member is obsolete
         protected string PopoverClassname =>
             new CssBuilder("mud-picker-popover")
                 // We can't use the Elevation parameter because it requires Paper=true; Instead we define the class explicitly.
                 .AddClass($"mud-elevation-{Elevation ?? MudGlobal.PopoverDefaults.Elevation}")
                 .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         protected string ActionsClassname =>
             new CssBuilder("mud-picker-actions")
@@ -160,21 +162,27 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Square { get; set; }
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows rounded corners.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.<br />
+        /// Defaults to <c>false</c>.
+        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Rounded { get; set; }
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The text displayed below the text field.
@@ -259,6 +267,17 @@ namespace MudBlazor
         public bool Editable { get; set; } = false;
 
         /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// When used with a range picker, the ID is suffixed with <c>-start</c> for the start input and <c>-end</c> for the end input.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? InputId { get; set; }
+
+        /// <summary>
         /// Shows the toolbar.
         /// </summary>
         /// <remarks>
@@ -293,11 +312,13 @@ namespace MudBlazor
         /// The display variant of the text input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.InputDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+#pragma warning disable CS0618 // Type or member is obsolete
+        public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The location of the <see cref="AdornmentIcon"/> for the input.
@@ -389,11 +410,29 @@ namespace MudBlazor
         public RenderFragment<MudPicker<T>>? PickerActions { get; set; }
 
         /// <summary>
-        /// Applies vertical spacing.
+        /// The amount of vertical spacing for the text input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Margin.None"/> in <see cref="MudGlobal.InputDefaults.Margin"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+#pragma warning disable CS0618 // Type or member is obsolete
+        public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        /// <summary>
+        /// Shows the label inside the text input if no <see cref="Text"/> is specified.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// When <c>true</c>, the label will not move into the input when the input is empty.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
+        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The mask to apply to input values when <see cref="Editable"/> is <c>true</c>.
@@ -405,6 +444,17 @@ namespace MudBlazor
             get => _mask;
             set => _mask = value;
         }
+
+        /// <summary>
+        /// Prevents interaction with background elements while the picker is open.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <c>true</c>.</para>
+        /// <para>Only possible to set to <c>false</c> when <see cref="PickerVariant"/> is <see cref="PickerVariant.Inline"/>.</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
 
         /// <summary>
         /// The location the popover opens, relative to its container.
@@ -435,6 +485,18 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+
+        /// <summary>
+        /// Determines the width of the Popover dropdown in relation the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Ignore" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
 
         protected IMask? _mask = null;
 

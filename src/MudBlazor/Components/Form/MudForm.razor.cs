@@ -241,7 +241,13 @@ namespace MudBlazor
                 SetIsValid(valid);
                 await ErrorsChanged.InvokeAsync(Errors);
                 if (oldTouched != _touched)
+                {
                     await IsTouchedChanged.InvokeAsync(_touched);
+                    if (ParentMudForm != null)
+                    {
+                        await ParentMudForm.IsTouchedChanged.InvokeAsync(_touched);
+                    }
+                }
             }
             finally
             {
@@ -383,7 +389,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                Console.WriteLine($@"An error occured while executing {nameof(OnEvaluateForm)}: {e.Message}");
+                Console.WriteLine($@"An error occurred while executing {nameof(OnEvaluateForm)}: {e.Message}");
             }
         }
 

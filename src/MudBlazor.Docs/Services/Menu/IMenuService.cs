@@ -27,4 +27,11 @@ public interface IMenuService
     IEnumerable<DocsLink> Customization { get; }
 
     IEnumerable<DocsLink> Utilities { get; }
+
+    /// <summary>
+    /// Gets the menu for example for the specified type.
+    /// </summary>
+    /// <param name="type">The type to examine.</param>
+    /// <returns>When <c>true</c>, the menu service has a record of this type.</returns>
+    MudComponent? GetExample(DocumentedType type);
 }

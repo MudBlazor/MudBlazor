@@ -13,6 +13,7 @@ namespace MudBlazor
     /// <remarks>
     /// You can use the <see cref="Icons"/> class and <see href="https://mudblazor.com/features/icons#icons">Icons Reference</see> for SVG paths, or a <see href="https://fontawesome.com/icons">Font Awesome CSS Class</see>.
     /// </remarks>
+    /// <seealso cref="MudIconButton"/>
     public partial class MudIcon : MudComponentBase
     {
         protected string Classname =>

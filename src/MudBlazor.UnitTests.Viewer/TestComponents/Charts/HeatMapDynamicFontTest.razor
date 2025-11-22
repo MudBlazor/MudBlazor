@@ -2,7 +2,14 @@
 
 <MudPaper Class="pa-4">
     <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" ChartOptions="@Options"
-              XAxisLabels="@_xLabels" Width="100%" Height="350px"></MudChart>
+              XAxisLabels="@_xLabels" Width="100%" Height="350px">
+        <MudHeatMapCell Row="0" Column="0" Value="2.5">
+            <div>test</div>
+        </MudHeatMapCell>
+        <MudHeatMapCell Row="0" Column="1" Value="10.5">
+            <div>test</div>
+        </MudHeatMapCell>
+          </MudChart>
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudGrid Spacing="2" Class="d-flex">

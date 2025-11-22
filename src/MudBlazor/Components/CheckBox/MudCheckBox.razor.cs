@@ -10,6 +10,7 @@ namespace MudBlazor
     /// Represents a form input for boolean values or selecting multiple items in a list.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
+    /// <seealso cref="MudRadio{T}"/>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         private string _elementId = Identifier.Create("checkbox");
@@ -212,6 +213,26 @@ namespace MudBlazor
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        /// <summary>
+        /// Determines whether the checkbox is considered to have a value.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if a value is considered present; otherwise, <c>false</c>.<br/>
+        /// When <see cref="TriState"/> is <c>true</c>, this returns <c>true</c> if <paramref name="value"/> is not <c>null</c>.
+        /// Otherwise, it defers to the base implementation.
+        /// </returns>
+        protected override bool HasValue(T? value)
+        {
+            if (TriState)
+            {
+                return BoolValue is not null;
+            }
+            else
+            {
+                return base.HasValue(value);
+            }
         }
 
         /// <inheritdoc />
