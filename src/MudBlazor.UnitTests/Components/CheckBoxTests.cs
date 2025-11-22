@@ -251,10 +251,10 @@ namespace MudBlazor.UnitTests.Components
         /// Change state with several keys
         /// </summary>
         [Test]
-        public void CheckBoxTest_KeyboardInput()
+        public async Task CheckBoxTest_KeyboardInput()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            comp.SetParam(x => x.TriState, true);
+            await comp.SetParamAsync(x => x.TriState, true);
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -282,7 +282,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
             //Backspace should not change state on non-tristate checkbox
-            comp.SetParam(x => x.TriState, false);
+            await comp.SetParamAsync(x => x.TriState, false);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
             //Check tristate space key
@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
-            comp.SetParam("Disabled", true);
+            await comp.SetParamAsync(x => x.Disabled, true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
         }
@@ -300,11 +300,11 @@ namespace MudBlazor.UnitTests.Components
         /// Test if the keyboard-disabling switch works
         /// </summary>
         [Test]
-        public void CheckBoxTest_KeyboardDisabled()
+        public async Task CheckBoxTest_KeyboardDisabled()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            comp.SetParam(x => x.TriState, true);
-            comp.SetParam(x => x.KeyboardEnabled, false);
+            await comp.SetParamAsync(x => x.TriState, true);
+            await comp.SetParamAsync(x => x.KeyboardEnabled, false);
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -332,7 +332,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             //Backspace should not change state on non-tristate checkbox
-            comp.SetParam(x => x.TriState, null);
+            await comp.SetParamAsync(x => x.TriState, null);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
             //Check tristate space key
@@ -342,7 +342,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
-            comp.SetParam("Disabled", true);
+            await comp.SetParamAsync(x => x.Disabled, true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
         }
@@ -426,14 +426,14 @@ namespace MudBlazor.UnitTests.Components
         /// Required CheckBox attribute should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredCheckBoxAttributes_Should_BeDynamic()
+        public async Task RequiredCheckBoxAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool>>();
 
             var input = () => comp.Find("input");
             input().HasAttribute("required").Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             input().HasAttribute("required").Should().BeTrue();

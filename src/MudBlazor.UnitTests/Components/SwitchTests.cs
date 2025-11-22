@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
-            comp.SetParam("Disabled", true);
+            await comp.SetParamAsync(x => x.Disabled, true);
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
         }
@@ -150,13 +150,13 @@ namespace MudBlazor.UnitTests.Components
         /// Required Switch attribute should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredSwitchAttribute_Should_BeDynamic()
+        public async Task RequiredSwitchAttribute_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();

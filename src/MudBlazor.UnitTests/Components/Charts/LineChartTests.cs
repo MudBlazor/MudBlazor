@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Charts
 
         [Theory]
         [TestCaseSource("GetInterpolationOptions")]
-        public void LineChartExampleData(InterpolationOption opt)
+        public async Task LineChartExampleData(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries>()
             {
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Charts
                 d.Should().Contain("M 30 127.1154 L 103.75 91.9423 L 177.5 98.75 L 251.25 80.5962 L 325 82.8654 L 398.75 68.1154 L 472.5 216.75 L 546.25 35.2115 L 620 306.3846");
             }
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.CanHideSeries, true)
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
 
@@ -128,14 +128,14 @@ namespace MudBlazor.UnitTests.Charts
             {
                 var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
-                comp.InvokeAsync(() =>
+                await comp.InvokeAsync(() =>
                 {
                     seriesCheckboxes[0].Change(false);
                 });
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
-                comp.InvokeAsync(() =>
+                await comp.InvokeAsync(() =>
                 {
                     seriesCheckboxes[2].Change(true);
                 });
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Charts
 
         [Theory]
         [TestCaseSource("GetInterpolationOptions")]
-        public void LineChartExampleZeroValues(InterpolationOption opt)
+        public async Task LineChartExampleZeroValues(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries>()
             {
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Charts
                     break;
             }
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
             comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void LineChartColoring()
+        public async Task LineChartColoring()
         {
             var chartSeries = new List<ChartSeries>()
             {
@@ -242,7 +242,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

@@ -18,11 +18,11 @@ namespace MudBlazor.UnitTests.Components
     public class TableTests : BunitTest
     {
         [Test]
-        public void CustomTableClass()
+        public async Task CustomTableClass()
         {
             var comp = Context.RenderComponent<TableRowClickTest>();
             var table = comp.FindComponent<MudTable<int>>();
-            table.SetParametersAndRender(parameters => parameters.Add(x => x.TableClass, "table-custom-class"));
+            await table.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TableClass, "table-custom-class"));
             table.Markup.Should().Contain("class=\"mud-table-root table-custom-class\"");
         }
 
@@ -1448,7 +1448,7 @@ namespace MudBlazor.UnitTests.Components
             // Make a task completion source
             var first = new TaskCompletionSource<TableData<int>>();
             // Set the ServerData function
-            table.SetParam(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            await table.SetParamAsync(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
             {
                 // Remember the cancellation token
                 cancelToken = cancellationToken;
@@ -1466,7 +1466,7 @@ namespace MudBlazor.UnitTests.Components
             // Arrange a table refresh
             var second = new TaskCompletionSource<TableData<int>>();
             // Set the ServerData function to a new method...
-            table.SetParam(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            await table.SetParamAsync(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
             {
                 // ... which returns the second task.
                 return second.Task;
@@ -2642,7 +2642,7 @@ namespace MudBlazor.UnitTests.Components
         /// Using a virtualized table with multiselection must preserve checked items
         /// </summary>
         [Test]
-        public void TestVirtualizedTableWithMultiSelection()
+        public async Task TestVirtualizedTableWithMultiSelection()
         {
             var comp = Context.RenderComponent<TableMultiSelectionVirtualizedTest>();
             var table = comp.FindComponent<MudTable<TableMultiSelectionVirtualizedTest.TestItem>>();
@@ -2654,14 +2654,14 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
 
             // scroll down
-            virtualized.SetParam(
+            await virtualized.SetParamAsync(
                 v => v.Items,
                 table.Instance.Items.ToList().GetRange(1000, 100));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_1000");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(false);
 
             // scroll up
-            virtualized.SetParam(
+            await virtualized.SetParamAsync(
                 v => v.Items,
                 table.Instance.Items.ToList().GetRange(0, 100));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
@@ -3041,14 +3041,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TableAriaLabel_RendersOnTable()
+        public async Task TableAriaLabel_RendersOnTable()
         {
             var comp = Context.RenderComponent<TableRowClickTest>();
             var tableEl = comp.Find("table");
             tableEl.HasAttribute("aria-label").Should().BeFalse();
 
             var table = comp.FindComponent<MudTable<int>>();
-            table.SetParametersAndRender(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
 
             tableEl = comp.Find("table");
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");

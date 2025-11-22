@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void BarChartExampleData()
+        public async Task BarChartExampleData()
         {
             var chartSeries = new List<ChartSeries>()
             {
@@ -93,14 +93,14 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should()
                 .Contain("d=\"M 587.7 206.9167 L 587.7 162.1667\"");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
 
         [Test]
-        public void StackedBarChartColoring()
+        public async Task StackedBarChartColoring()
         {
             var chartSeries = new List<ChartSeries>()
             {
@@ -141,7 +141,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"none\"") && p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(5 * 22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

@@ -289,14 +289,14 @@ namespace MudBlazor.UnitTests.Components
         /// Makes sure the file upload is disabled
         /// </summary>
         [Test]
-        public void FileUploadDisabledTest()
+        public async Task FileUploadDisabledTest()
         {
             var comp = Context.RenderComponent<FileUploadDisabledTest>();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeFalse();
 
 
-            comp.SetParametersAndRender(parameters =>
+            await comp.SetParametersAndRenderAsync(parameters =>
                 parameters.Add(x => x.Disabled,
                     true)); //The input and child button should be disabled when file upload is disabled
 
@@ -358,14 +358,14 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required FileUpload attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();

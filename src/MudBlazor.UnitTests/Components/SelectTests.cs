@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using System.Diagnostics;
+using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Dummy;
@@ -18,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
-            await comp.InvokeAsync(() => select.SetParam("ListClass", "my-list-class"));
+            await comp.InvokeAsync(async () => await select.SetParamAsync(x => x.ListClass, "my-list-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
         }
 
@@ -26,9 +27,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectTest_CheckLayerClass()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
-            await comp.InvokeAsync(() => comp.SetParam("OuterClass", "my-outer-class"));
-            await comp.InvokeAsync(() => comp.SetParam("Class", "my-main-class"));
-            await comp.InvokeAsync(() => comp.SetParam("InputClass", "my-input-class"));
+            await comp.InvokeAsync(async () => await comp.SetParamAsync(x => x.OuterClass, "my-outer-class"));
+            await comp.InvokeAsync(async () => await comp.SetParamAsync(x => x.Class, "my-main-class"));
+            await comp.InvokeAsync(async () => await comp.SetParamAsync(x => x.InputClass, "my-input-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-outer-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-main-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-input-class"));
@@ -82,9 +83,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            @switch.Instance.Value = true;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await @switch.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Value, true));
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
@@ -176,12 +175,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
                 comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@checked);
                 // now check how setting the SelectedValues makes items checked or unchecked
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-                await comp.InvokeAsync(() =>
-                {
-                    select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
-                });
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+                await select.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.SelectedValues, new HashSet<string>() { "1", "2" }));
                 comp.WaitForAssertion(() =>
                     comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@checked));
                 comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
@@ -408,12 +402,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Select_Should_FireTextChangedWithNewValue()
+        public async Task Select_Should_FireTextChangedWithNewValue()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            select.SetCallback(s => s.TextChanged, x => text = x);
+            await select.SetCallbackAsync(s => s.TextChanged, x => text = x);
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -449,7 +443,7 @@ namespace MudBlazor.UnitTests.Components
         /// find an even counter value, the second must always find an odd value.
         /// </summary>
         [Test]
-        public void SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        public async Task SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -458,12 +452,12 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            select.SetCallback(s => s.TextChanged, x =>
+            await select.SetCallbackAsync(s => s.TextChanged, x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
               });
-            select.SetCallback(s => s.SelectedValuesChanged, x =>
+            await select.SetCallbackAsync(s => s.SelectedValuesChanged, x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
@@ -509,7 +503,7 @@ namespace MudBlazor.UnitTests.Components
         /// find an even counter value, the second must always find an odd value.
         /// </summary>
         [Test]
-        public void MulitSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        public async Task MulitSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -518,13 +512,13 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            select.SetParam(s => s.MultiSelection, true);
-            select.SetCallback(s => s.TextChanged, x =>
+            await select.SetParamAsync(s => s.MultiSelection, true);
+            await select.SetCallbackAsync(s => s.TextChanged, x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
               });
-            select.SetCallback(s => s.SelectedValuesChanged, x =>
+            await select.SetCallbackAsync(s => s.SelectedValuesChanged, x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
@@ -560,7 +554,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
-            select.SetCallback(s => s.OnBlur, x => eventCounter++);
+            await select.SetCallbackAsync(s => s.OnBlur, x => eventCounter++);
             await comp.InvokeAsync(async () =>
             {
                 await select.Instance.OpenMenu();
@@ -584,16 +578,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MultiSelect_ShouldCallValidationFunc()
+        public async Task MultiSelect_ShouldCallValidationFunc()
         {
-            ImproveChanceOfSuccess(() =>
+            await ImproveChanceOfSuccess(async () =>
             {
                 var comp = Context.RenderComponent<MultiSelectTest1>();
                 // print the generated html
                 // select elements needed for the test
                 var select = comp.FindComponent<MudSelect<string>>();
                 string validatedValue = null;
-                select.SetParam(x => x.Validation, new Func<string, bool>(value =>
+                await select.SetParamAsync(x => x.Validation, new Func<string, bool>(value =>
                 {
                     validatedValue = value; // NOTE: select does only update the value for T string
                     return true;
@@ -628,13 +622,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MultiSelect_SelectAll()
+        public async Task MultiSelect_SelectAll()
         {
             var comp = Context.RenderComponent<MultiSelectTest2>();
             // select element needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            await select.SetParamAsync(x => x.Validation, (object)new Func<string, bool>(value =>
             {
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
@@ -728,12 +722,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SingleSelect_Should_CallValidationFunc()
+        public async Task SingleSelect_Should_CallValidationFunc()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            await select.SetParamAsync(x => x.Validation, (object)new Func<string, bool>(value =>
             {
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
@@ -943,7 +937,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
             await comp.InvokeAsync(() => select.Instance.CloseMenu());
-            select.SetParam(nameof(MudSelect<string>.Value), null);
+            await select.SetParamAsync(x => x.Value, null);
             await comp.InvokeAsync(() => select.Instance.OpenMenu());
             // no option should be hilited
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
@@ -1034,18 +1028,18 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            select.SetParam("Disabled", true);
+            await select.SetParamAsync(x => x.Disabled, true);
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Try to add null item and check the value should not changed.
             await comp.InvokeAsync(() => select.Instance.Add(null));
             comp.WaitForAssertion(() => select.Instance._items.Count.Should().Be(4));
 
-            select.SetParam("Disabled", false);
+            await select.SetParamAsync(x => x.Disabled, false);
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
-            select.SetParam("Disabled", true);
+            await select.SetParamAsync(x => x.Disabled, true);
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
@@ -1167,11 +1161,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
 
-            select.SetParam("Disabled", true);
+            await select.SetParamAsync(x => x.Disabled, true);
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
 
-            select.SetParam("Disabled", false);
+            await select.SetParamAsync(x => x.Disabled, false);
             //Test the keyup event
             await comp.InvokeAsync(() => select.Instance.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keyup", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
@@ -1264,7 +1258,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValueChangeCount.Should().Be(0);
             comp.Instance.ValuesChangeCount.Should().Be(0);
 
-            await comp.InvokeAsync(() => select.SetParam("Value", "1"));
+            await comp.InvokeAsync(async () => await select.SetParamAsync(x => x.Value, "1"));
             await comp.InvokeAsync(() => select.Instance.ForceUpdate());
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
@@ -1272,7 +1266,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Changing value programmatically without ForceUpdate should change value, but should not fire change events
             // Its by design, so this part can be change if design changes
-            await comp.InvokeAsync(() => select.SetParam("Value", "2"));
+            await comp.InvokeAsync(async () => await select.SetParamAsync(x => x.Value, "2"));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
             select.Instance.Value.Should().Be("2");
@@ -1505,14 +1499,14 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required Select attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredSelectAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredSelectAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
@@ -1556,7 +1550,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, false)]
         // with user helper id and helper text, should always favour user helper id
         [TestCase(true, true)]
-        public void Should_pass_various_aria_describedby_tests(
+        public async Task Should_pass_various_aria_describedby_tests(
             bool withUserHelperId,
             bool withHelperText)
         {
@@ -1596,7 +1590,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
             }
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Error, true));
             var secondExpectedAriaDescribedBy = withUserHelperId ? $"{errorId} {helperId}" : errorId;
 
@@ -1608,7 +1602,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReadOnlyShouldNotHaveClearButton()
+        public async Task ReadOnlyShouldNotHaveClearButton()
         {
             var comp = Context.RenderComponent<MudSelect<string>>(p => p
                 .Add(x => x.Text, "some value")
@@ -1617,7 +1611,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
 
@@ -1647,7 +1641,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectFitContentTest()
+        public async Task SelectFitContentTest()
         {
             var comp = Context.RenderComponent<SelectFitContentTest>();
 
@@ -1660,7 +1654,7 @@ namespace MudBlazor.UnitTests.Components
             select.ClassList.Should().NotContain("mud-width-content");
 
             //set fit content
-            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FitContent, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(c => c.FitContent, true));
 
             comp.Instance.FullWidth.Should().BeFalse();
             comp.Instance.FitContent.Should().BeTrue();
@@ -1673,7 +1667,7 @@ namespace MudBlazor.UnitTests.Components
             filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
 
             //set full width
-            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FullWidth, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(c => c.FullWidth, true));
 
             comp.Instance.FullWidth.Should().BeTrue();
             comp.Instance.FitContent.Should().BeTrue();

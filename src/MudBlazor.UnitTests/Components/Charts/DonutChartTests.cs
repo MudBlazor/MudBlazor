@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         [TestCase(new double[] { 50, 25, 20, 5 })]
         [TestCase(new double[] { 50, 25, 20, 5, 12 })]
-        public void DonutChartExampleData(double[] data)
+        public async Task DonutChartExampleData(double[] data)
         {
             string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
@@ -89,7 +89,7 @@ namespace MudBlazor.UnitTests.Charts
                     .ContainEquivalentOf("fill=\"#FF9100\" d=\"M -43.2624 -133.1479 A 140 140 0 0 1 -0 -140 L -0 -105 A 105 105 0 0 0 -32.4468 -99.8609 Z\"");
             }
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void DonutChartColoring()
+        public async Task DonutChartColoring()
         {
             double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
 
@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Charts
             count = circles1.Count(p => p.OuterHtml.Contains($"fill=\"{"#1E9AB0"}\""));
             count.Should().Be(22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var circles2 = comp.FindAll("path");
