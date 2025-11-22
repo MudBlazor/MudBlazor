@@ -25,12 +25,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AlertTest2()
+        public async Task AlertTest2()
         {
             var comp = Context.RenderComponent<MudAlert>();
             try
             {
-                comp.SetParam("Severity", "abc");
+                await comp.SetParam("Severity", "abc");
             }
             catch (Exception ex)
             {

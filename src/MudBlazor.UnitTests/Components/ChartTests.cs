@@ -84,7 +84,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(ChartType.Bar)]
         [TestCase(ChartType.Line)]
         [TestCase(ChartType.StackedBar)]
-        public void ChartYAxisFormat(ChartType chartType)
+        public async Task ChartYAxisFormat(ChartType chartType)
         {
             var options = new ChartOptions();
             var series = new List<ChartSeries>()
@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Components
 
             // now, we will apply currency format
             options.YAxisFormat = "c2";
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.XAxisLabels, xAxis)
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
 
             //number format
             options.YAxisFormat = "n6";
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.XAxisLabels, xAxis)

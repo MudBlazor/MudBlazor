@@ -351,7 +351,7 @@ public class OverlayTests : BunitTest
 
         // === Toggle visible to false, expect unlock ===
         visible = false;
-        comp.SetParametersAndRender(p => p.Add(p => p.Visible, visible));
+        await comp.SetParametersAndRenderAsync(p => p.Add(p => p.Visible, visible));
 
         if (!absolute && lockscroll)
         {
@@ -364,7 +364,7 @@ public class OverlayTests : BunitTest
 
         // open it
         visible = true;
-        comp.SetParametersAndRender(p => p.Add(p => p.Visible, visible));
+        await comp.SetParametersAndRenderAsync(p => p.Add(p => p.Visible, visible));
 
         // close it by method
         await mudOverlay.CloseOverlayAsync();
