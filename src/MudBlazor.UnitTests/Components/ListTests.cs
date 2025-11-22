@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The child lists should honor the Dense property of their parent list if not overriden.
+        /// The child lists should honor the Dense property of their parent list if not overridden.
         /// </summary>
         [Test]
         [TestCase(true, null, 9)]

@@ -3621,7 +3621,7 @@ namespace MudBlazor.UnitTests.Components
             // 6 columns, 0 hidden (1 permanently collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
 
-            //programatically changing the hidden which overrides hideable
+            //programmatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
             {
                 foreach (var column in dataGrid.Instance.RenderedColumns)
@@ -3635,7 +3635,7 @@ namespace MudBlazor.UnitTests.Components
             // 6 columns, 6 hidden (1 permanently collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
 
-            //programatically changing the hidden which overrides hideable
+            //programmatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
             {
                 foreach (var column in dataGrid.Instance.RenderedColumns)
@@ -3648,7 +3648,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
         }
 
-        // This is not easily convertable to the new property expression.
+        // This is not easily convertible to the new property expression.
         //[Test]
         //public async Task DataGridFilterRowHiddenTest()
         //{

@@ -54,6 +54,14 @@ public class NodeChartOptions
     public string LabelFontSize { get; set; } = "0.75rem";
 
     /// <summary>
+    /// The padding of the label background in px.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>5</c>.
+    /// </remarks>
+    public int LabelPadding { get; set; } = 5;
+
+    /// <summary>
     /// Whether to constantly show the labels of the edges.
     /// </summary>
     /// <remarks>
@@ -76,4 +84,36 @@ public class NodeChartOptions
     /// Defaults to <c>var(--mud-palette-text-primary)</c>.
     /// </remarks>
     public string HighlightColor { get; set; } = "var(--mud-palette-text-primary)";
+
+    /// <summary>
+    /// Hides all nodes and their corresponding edges which have a weight of less than the specified one. 
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0</c>.
+    /// </remarks>
+    public int HideNodesSmallerThan { get; set; }
+
+    /// <summary>
+    /// Whether to hide nodes which have no edges.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool HideNodesWithNoEdges { get; set; }
+
+    /// <summary>
+    /// The symbol used to represent edges in chart labels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>⇒</c>.
+    /// </remarks>
+    public string EdgeLabelSymbol { get; set; } = "⇒";
+
+    /// <summary>
+    /// Orders the nodes in each column by their corresponding value descending.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool OrderNodesByValue { get; set; } = false;
 }

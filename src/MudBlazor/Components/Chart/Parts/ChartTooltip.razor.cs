@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 #nullable enable
+
 namespace MudBlazor.Charts;
 
 public partial class ChartTooltip : ComponentBase
 {
     private record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
 
-    private const int Padding = 5;
     private const double TriangleWidth = 16;
     private const double TriangleHeight = 8;
 
@@ -68,6 +68,15 @@ public partial class ChartTooltip : ComponentBase
     /// </remarks>
     [Parameter]
     public string FontSize { get; set; } = "12px";
+
+    /// <summary>
+    /// The padding size of the tooltip background in px.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>5</c>.
+    /// </remarks>
+    [Parameter]
+    public int PaddingSize { get; set; } = 5;
 
     /// <summary>
     /// The color of the <see cref="Title"/> and <see cref="Subtitle"/>.
@@ -131,9 +140,9 @@ public partial class ChartTooltip : ComponentBase
 
         var xText = AnchorPositionX switch
         {
-            ChartTooltipAnchorPositionX.Start => X + textWidth / 2 + Padding,
+            ChartTooltipAnchorPositionX.Start => X + textWidth / 2 + PaddingSize,
             ChartTooltipAnchorPositionX.Center => X,
-            ChartTooltipAnchorPositionX.End => X - textWidth / 2 - Padding,
+            ChartTooltipAnchorPositionX.End => X - textWidth / 2 - PaddingSize,
             _ => throw new ArgumentException($"Unknown relative position {AnchorPositionX}")
         };
         if (ShowTriangle) textWidth = Math.Max(textWidth, TriangleWidth);
@@ -145,7 +154,7 @@ public partial class ChartTooltip : ComponentBase
             Height: textHeight
         );
 
-        var backgroundWidth = textWidth + Padding * 2;
+        var backgroundWidth = textWidth + PaddingSize * 2;
         var xBackground = AnchorPositionX switch
         {
             ChartTooltipAnchorPositionX.Start => X,
@@ -153,7 +162,7 @@ public partial class ChartTooltip : ComponentBase
             ChartTooltipAnchorPositionX.End => X - backgroundWidth,
             _ => throw new ArgumentException($"Unknown relative position {AnchorPositionX}")
         };
-        var backgroundHeight = textHeight + Padding * 2;
+        var backgroundHeight = textHeight + PaddingSize * 2;
         _backgroundBBox = new BBox(
             X: xBackground,
             Y: Y - backgroundHeight / 2 * (HasSubtitle ? 2.1 : 1) - triangleOffsetY,

@@ -39,7 +39,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// The buton group which owns this button.
+        /// The button group which owns this button.
         /// </summary>
         [CascadingParameter]
         private MudButtonGroup? ButtonGroup { get; set; }
@@ -102,7 +102,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The size of the button.
@@ -123,7 +125,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Expands the button to 100% of the container width.
@@ -173,7 +177,7 @@ namespace MudBlazor
                 return true;
             }
             // If the button is in a group, the group is stretched and none button is explicitly stretched,
-            // then the button need to be streched
+            // then the button need to be stretched
             // See https://github.com/MudBlazor/MudBlazor/issues/9710
             return ButtonGroup != null && ButtonGroup.FullWidth && ButtonGroup.NoneButtonIsStreched();
         }

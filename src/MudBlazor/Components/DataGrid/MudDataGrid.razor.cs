@@ -474,7 +474,9 @@ namespace MudBlazor
         /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Shows an outline around this grid.
@@ -946,6 +948,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public RenderFragment<CellContext<T>> ChildRowContent { get; set; }
+
+        /// <summary>
+        /// The custom renderer function for child row content.
+        /// </summary>
+        /// <remarks>
+        /// This provides an alternative to <see cref="ChildRowContent"/> with more control over the rendering.
+        /// </remarks>
+        [Parameter]
+        public RenderFragment<CellContext<T>> ChildRowRenderer { get; set; }
 
         /// <summary>
         /// The content shown when there are no rows to display.
