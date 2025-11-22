@@ -526,7 +526,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ActionRequiresInteractionByDefault()
         {
-            Snackbar? snackbar = null;
+            Snackbar snackbar = null;
 
             await _provider.InvokeAsync(() =>
                 snackbar = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
