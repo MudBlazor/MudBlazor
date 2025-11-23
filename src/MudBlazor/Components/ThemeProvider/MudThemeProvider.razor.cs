@@ -178,7 +178,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     // <inheritdoc />
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         var themeChanged = false;
         if (Theme is not null)
@@ -190,14 +190,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             }
         }
 
-        // Update CurrentPalette if theme changed or this is the first time
+        // Update CurrentPalette on first initialization or when theme changes
         if (themeChanged || !_currentPaletteInitialized)
         {
             _currentPaletteInitialized = true;
-            UpdateCurrentPalette();
+            await UpdateCurrentPaletteAsync();
         }
 
-        base.OnParametersSet();
+        await base.OnParametersSetAsync();
     }
 
     /// <summary>
@@ -585,21 +585,17 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
-    private async Task OnIsDarkModeChangedAsync(ParameterChangedEventArgs<bool> arg)
+    private Task OnIsDarkModeChangedAsync(ParameterChangedEventArgs<bool> arg)
     {
-        await _currentPaletteState.SetValueAsync(GetCurrentPalette());
+        return _currentPaletteState.SetValueAsync(GetCurrentPalette());
     }
 
     /// <summary>
     /// Updates the current palette based on the current dark mode setting.
-    /// Uses fire-and-forget pattern as this is called during synchronous lifecycle methods.
     /// </summary>
-    private void UpdateCurrentPalette()
+    private Task UpdateCurrentPaletteAsync()
     {
-        var newPalette = GetCurrentPalette();
-        // Fire-and-forget is intentional here as this is called from synchronous lifecycle methods (OnParametersSet).
-        // The ParameterState framework handles the async update safely.
-        _ = _currentPaletteState.SetValueAsync(newPalette);
+        return _currentPaletteState.SetValueAsync(GetCurrentPalette());
     }
 
     private Palette? GetCurrentPalette()
