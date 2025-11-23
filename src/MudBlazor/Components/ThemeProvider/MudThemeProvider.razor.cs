@@ -29,6 +29,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     private MudTheme? _theme;
     private readonly ParameterState<bool> _isDarkModeState;
     private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
+    private readonly ParameterState<Palette?> _currentPaletteState;
     private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
     private event Func<bool, Task>? _darkLightModeChanged;
@@ -77,17 +78,37 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
+    /// <summary>
+    /// Gets the currently active palette based on the <see cref="IsDarkMode"/> setting.
+    /// </summary>
+    /// <remarks>
+    /// Returns <see cref="MudTheme.PaletteDark"/> when <see cref="IsDarkMode"/> is <c>true</c>; otherwise, returns <see cref="MudTheme.PaletteLight"/>.
+    /// When this value changes, <see cref="CurrentPaletteChanged"/> occurs.
+    /// </remarks>
+    [Parameter]
+    public Palette? CurrentPalette { get; set; }
+
+    /// <summary>
+    /// Occurs when <see cref="CurrentPalette"/> has changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<Palette?> CurrentPaletteChanged { get; set; }
+
     [DynamicDependency(nameof(SystemDarkModeChangedAsync))]
     public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
-            .WithEventCallback(() => IsDarkModeChanged);
+            .WithEventCallback(() => IsDarkModeChanged)
+            .WithChangeHandler(OnIsDarkModeChangedAsync);
         _observeSystemDarkModeChangeState = registerScope
             .RegisterParameter<bool>(nameof(ObserveSystemDarkModeChange))
             .WithParameter(() => ObserveSystemDarkModeChange)
             .WithChangeHandler(OnObserveSystemDarkModeChangeChanged);
+        _currentPaletteState = registerScope.RegisterParameter<Palette?>(nameof(CurrentPalette))
+            .WithParameter(() => CurrentPalette)
+            .WithEventCallback(() => CurrentPaletteChanged);
         _lazyDotNetRef = new Lazy<DotNetObjectReference<MudThemeProvider>>(CreateDotNetObjectReference);
     }
 
@@ -158,12 +179,20 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     // <inheritdoc />
     protected override void OnParametersSet()
     {
+        var themeChanged = false;
         if (Theme is not null)
         {
             if (!ReferenceEquals(_theme, Theme))
             {
                 _theme = Theme;
+                themeChanged = true;
             }
+        }
+
+        // Update CurrentPalette if theme changed or this is the first time
+        if (themeChanged || _currentPaletteState.Value is null)
+        {
+            UpdateCurrentPalette();
         }
 
         base.OnParametersSet();
@@ -552,6 +581,27 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
                 _ = StopWatchingDarkThemeMedia();
             }
         }
+    }
+
+    private async Task OnIsDarkModeChangedAsync(ParameterChangedEventArgs<bool> arg)
+    {
+        await _currentPaletteState.SetValueAsync(GetCurrentPalette());
+    }
+
+    private void UpdateCurrentPalette()
+    {
+        var newPalette = GetCurrentPalette();
+        _ = _currentPaletteState.SetValueAsync(newPalette);
+    }
+
+    private Palette? GetCurrentPalette()
+    {
+        if (_theme is null)
+        {
+            return null;
+        }
+
+        return _isDarkModeState.Value ? _theme.PaletteDark : _theme.PaletteLight;
     }
 
     private async Task OnObserveSystemDarkModeChangeChanged(ParameterChangedEventArgs<bool> arg)
