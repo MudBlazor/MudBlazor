@@ -871,7 +871,7 @@ namespace MudBlazor.UnitTests.Components
             select.Value.Should().Be("Quux");
             select.Text.Should().Be("Quux");
             // check validity
-            await comp.InvokeAsync(() => select.Validate());
+            await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.Should().NotBeEmpty();
             select.ValidationErrors.Should().HaveCount(1);
             select.ValidationErrors[0].Should().Be("Should not be longer than 3");
@@ -889,7 +889,7 @@ namespace MudBlazor.UnitTests.Components
             select.Value.Should().Be("Qux");
             select.Text.Should().Be("Qux");
             // check validity
-            await comp.InvokeAsync(() => select.Validate());
+            await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.Should().BeEmpty();
         }
         #endregion
@@ -903,7 +903,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
-            await comp.InvokeAsync(() => select.Validate());
+            await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.First().Should().Be("Required");
         }
 
@@ -1283,13 +1283,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectTestRequiredValue>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
-            await comp.InvokeAsync(() => select.Validate());
+            await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.First().Should().Be("Required");
 
             //1b. Check on T type - MultiSelect of T(e.g. class object)
             var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             selectWithT.Required.Should().BeTrue();
-            await comp.InvokeAsync(() => selectWithT.Validate());
+            await comp.InvokeAsync(() => selectWithT.ValidateAsync());
             selectWithT.ValidationErrors.First().Should().Be("Required");
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
@@ -1297,7 +1297,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].MouseDown();//The 2nd one is the
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            await comp.InvokeAsync(() => select.Validate());
+            await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.Count.Should().Be(0);
 
             //2b.
@@ -1306,7 +1306,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForState(() => comp.FindAll("div.mud-list-item").Count == 5);
             items = comp.FindAll("div.mud-list-item").ToArray();
             items[3].Click();
-            await comp.InvokeAsync(() => selectWithT.Validate());
+            await comp.InvokeAsync(() => selectWithT.ValidateAsync());
             selectWithT.ValidationErrors.Count.Should().Be(0);
         }
 
@@ -1316,7 +1316,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectTestRequiredValue>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
-            await comp.InvokeAsync(() => select.Validate());
+            await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.First().Should().Be("Required");
 
             await comp.Find("#clear-string").ClickAsync(new MouseEventArgs());
@@ -1359,7 +1359,7 @@ namespace MudBlazor.UnitTests.Components
             //test clearing object values
             var select2 = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             select2.Required.Should().BeTrue();
-            await comp.InvokeAsync(() => select2.Validate());
+            await comp.InvokeAsync(() => select2.ValidateAsync());
             select2.ValidationErrors.First().Should().Be("Required");
 
             await comp.Find("#clear-object").ClickAsync(new MouseEventArgs());
