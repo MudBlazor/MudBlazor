@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Interfaces
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes"
@@ -18,7 +17,7 @@
     else if (ActivatorContent is not null)
     {
         <CascadingValue 
-            Value="@((IActivatable)this)" 
+            Value="@_menuContext" 
             IsFixed="true">
             @if (ParentMenu is null)
             {

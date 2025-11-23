@@ -7,7 +7,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -19,7 +18,7 @@ namespace MudBlazor
     /// An interactive menu that displays a list of options.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
-    public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
+    public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;
         private readonly List<MudMenu> _subMenus = [];
@@ -37,6 +36,7 @@ namespace MudBlazor
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
         private DateTime _lastKeyboardActivation = DateTime.MinValue;
+        private MenuContext? _menuContext;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -48,6 +48,7 @@ namespace MudBlazor
                 .WithParameter(() => Open)
                 .WithEventCallback(() => OpenChanged)
                 .WithChangeHandler(OnOpenChanged);
+            _menuContext = new MenuContext(this);
         }
 
         /// <summary>
@@ -750,25 +751,6 @@ namespace MudBlazor
             _hoverCts?.Cancel();
             // ReSharper restore MethodHasAsyncOverload
         }
-
-        /// <summary>
-        /// Implementation of IActivatable.Activate, toggles the menu.
-        /// </summary>
-        /// <remarks>
-        /// This method serves as the entry point for activating the menu via an external activator.
-        /// </remarks>
-        void IActivatable.Activate(object activator, MouseEventArgs args)
-        {
-            // Prevent activation if the activator button has a specific CSS class that marks it as non-activatable.
-            if (activator is MudBaseButton activatorButton &&
-                (activatorButton.Class?.Contains("mud-no-activator") ?? false))
-            {
-                return;
-            }
-
-            ToggleMenuAsync(args).CatchAndLog();
-        }
-
 
         /// <summary>
         /// Disposes managed and unmanaged resources.

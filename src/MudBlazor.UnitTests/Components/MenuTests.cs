@@ -615,7 +615,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task IActivatable_Activate_Should_ToggleMenu_Except_For_InputAdornmentIconButton()
+        public async Task MenuContext_Activate_Should_ToggleMenu_Except_For_InputAdornmentIconButton()
         {
             // Arrange
             var comp = Context.RenderComponent<MudMenu>(parameters => parameters
@@ -626,24 +626,24 @@ namespace MudBlazor.UnitTests.Components
                     builder.CloseComponent();
                 }));
             var menu = comp.Instance;
-            var activatable = (Interfaces.IActivatable)menu;
+            var menuContext = new MenuContext(menu);
 
             // Normal case
-            activatable.Activate(new object(), new MouseEventArgs());
+            menuContext.Activate(new object(), new MouseEventArgs());
             comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when Activate is called with a regular object"));
 
             // Close Menu
-            activatable.Activate(new object(), new MouseEventArgs());
+            menuContext.Activate(new object(), new MouseEventArgs());
             comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should be closed after calling Activate again"));
 
             // Special case with icon button
             var classButton = comp.FindComponent<MudIconButton>().Instance;
-            activatable.Activate(classButton, new MouseEventArgs());
+            menuContext.Activate(classButton, new MouseEventArgs());
             comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should not open when Activate is called with an mud-no-activator selector"));
 
             // Special case with regular button
             var compButton = Context.RenderComponent<MudButton>(p => p.Add(p => p.Class, "mud-no-activator")).Instance;
-            activatable.Activate(compButton, new MouseEventArgs());
+            menuContext.Activate(compButton, new MouseEventArgs());
             comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should not open when Activate is called with an mud-no-activator selector"));
 
             // Clean up
