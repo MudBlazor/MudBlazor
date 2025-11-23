@@ -3,10 +3,10 @@
 <MudStack Class="mud-width-full mud-height-full" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 500px;">
     <MudSplitPanel @ref="_splitPanel"
                    Class="mud-width-full mud-height-full"
-                   BackgroundColor="var(--mud-palette-background-gray)"
                    Horizontal="_horizontal"
                    ResetOnDoubleClick="_resetOnDoubleClick"
                    Rounded="_rounded"
+                   Transparent="_transparent"
                    Elevation="@(_elevation ? 1 : 0)">
         <FirstPanel>
             <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mud-width-full mud-height-full">
@@ -32,6 +32,9 @@
         <MudTooltip Text="Elevation">
             <MudToggleIconButton @bind-Toggled="_elevation" Icon="@Icons.Material.Outlined.Landscape" ToggledColor="@Color.Primary"/>
         </MudTooltip>
+        <MudTooltip Text="Transparent">
+            <MudToggleIconButton @bind-Toggled="_transparent" Icon="@Icons.Material.Outlined.Visibility" ToggledColor="@Color.Primary"/>
+        </MudTooltip>
         <MudTooltip Text="Reset sizes">
             <MudIconButton OnClick="@_splitPanel.ResetSizesAsync" Icon="@Icons.Material.Outlined.Replay" Variant="Variant.Filled"/>
         </MudTooltip>
@@ -42,6 +45,7 @@
     private MudSplitPanel _splitPanel;
     private bool _horizontal;
     private bool _resetOnDoubleClick = true;
-    private bool _rounded;
-    private bool _elevation;
+    private bool _rounded = true;
+    private bool _elevation = true;
+    private bool _transparent;
 }

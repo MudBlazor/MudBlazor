@@ -19,26 +19,18 @@ public partial class MudSplitPanel : MudComponentBase
 
     private string ClassnameFirstPanel => new CssBuilder("child-panel")
         .AddClass($"mud-elevation-{Elevation}", Elevation != 0 && FirstPanel != null)
-        .AddClass("transparent", FirstPanel == null)
+        .AddClass("transparent", FirstPanel == null || Transparent)
         .AddClass($"pa-{Padding}", Padding != 0)
         .AddClass("rounded", Rounded)
         .AddClass(ClassFirstPanel)
         .Build();
 
-    private string StylenameFirstPanel => new StyleBuilder()
-        .AddStyle($"background-color: {BackgroundColor}", FirstPanel != null)
-        .Build();
-
     private string ClassnameSecondPanel => new CssBuilder("child-panel")
         .AddClass($"mud-elevation-{Elevation}", Elevation != 0 && SecondPanel != null)
-        .AddClass("transparent", SecondPanel == null)
+        .AddClass("transparent", SecondPanel == null || Transparent)
         .AddClass($"pa-{Padding}", Padding != 0)
         .AddClass("rounded", Rounded)
         .AddClass(ClassSecondPanel)
-        .Build();
-
-    private string StylenameSecondPanel => new StyleBuilder()
-        .AddStyle($"background-color: {BackgroundColor}", SecondPanel != null)
         .Build();
 
     private string ClassnameDivider => new CssBuilder("divider")
@@ -149,15 +141,6 @@ public partial class MudSplitPanel : MudComponentBase
     public int Padding { get; set; }
 
     /// <summary>
-    /// The padding of the panels.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>0</c>.
-    /// </remarks>
-    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
-    public string? BackgroundColor { get; set; }
-
-    /// <summary>
     /// If enabled resets the panel sizes to their initial values on double-clicking the divider.
     /// </summary>
     /// <remarks>
@@ -165,6 +148,15 @@ public partial class MudSplitPanel : MudComponentBase
     /// </remarks>
     [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
     public bool ResetOnDoubleClick { get; set; } = true;
+
+    /// <summary>
+    /// Makes the panels backgrounds transparent.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
+    public bool Transparent { get; set; }
 
     /// <summary>
     /// The contents of the first i.e. left/upper panel.
