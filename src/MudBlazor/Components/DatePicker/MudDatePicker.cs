@@ -343,6 +343,8 @@ namespace MudBlazor
                                 MoveToPreviousYear();
                                 break;
                             case OpenTo.Month:
+                                if (FixMonth != null)
+                                    break;
                                 var currentMonth = HighlightedDate ?? GetMonthStart(0);
                                 var newMonth = currentMonth.AddMonths(-3);
                                 // move to last row months of current year when we overflow to previous year
@@ -392,6 +394,8 @@ namespace MudBlazor
                                 MoveToNextYear();
                                 break;
                             case OpenTo.Month:
+                                if (FixMonth != null)
+                                    break;
                                 var currentMonth = HighlightedDate ?? GetMonthStart(0);
                                 var newMonth = currentMonth.AddMonths(3);
                                 // move to first row of months of current year when we overflow to previous year
@@ -504,6 +508,8 @@ namespace MudBlazor
 
         private void MoveToNextMonth()
         {
+            if (FixMonth != null)
+                return;
             var currentMonth = HighlightedDate ?? GetMonthStart(0);
             var newMonth = currentMonth.AddMonths(1);
             // move to first month of current year when we overflow to next year
@@ -522,6 +528,8 @@ namespace MudBlazor
 
         private void MoveToPreviousMonth()
         {
+            if (FixMonth != null)
+                return;
             var currentMonth = HighlightedDate ?? GetMonthStart(0);
             var newMonth = currentMonth.AddMonths(-1);
             // move to last month of current year when we overflow to previous year
@@ -540,6 +548,8 @@ namespace MudBlazor
 
         private void MoveToNextYear()
         {
+            if (FixYear != null)
+                return;
             var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(1);
             if (GetCulture().Calendar.GetYear(newYear) > GetMaxYear())
                 return;
@@ -549,6 +559,8 @@ namespace MudBlazor
 
         private void MoveToPreviousYear()
         {
+            if (FixYear != null)
+                return;
             var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(-1);
             if (GetCulture().Calendar.GetYear(newYear) < GetMinYear())
                 return;
