@@ -5,7 +5,6 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System.Globalization;
-using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
@@ -507,8 +506,7 @@ namespace MudBlazor.UnitTests.Components
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0));
-            // In .NET 10, Blazor changed how input elements are rendered and the value may not be accessible via DOM attributes or properties.
-            // The important check is that the Text and Value properties are correct, which is tested above.
+            comp.Markup.Should().Contain("type=\"text\" value=\"1.234,00\""); //ensure the numeric field continues to displays the value after blur
             notImmediate.Change("0");
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("0,00"));
@@ -522,8 +520,7 @@ namespace MudBlazor.UnitTests.Components
             immediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.00"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.0));
-            // In .NET 10, Blazor changed how input elements are rendered and the value may not be accessible via DOM attributes or properties.
-            // The important check is that the Text and Value properties are correct, which is tested above.
+            comp.Markup.Should().Contain("type=\"text\" value=\"1,234.00\""); //ensure the numeric field continues to displays the value after blur
             immediate.Input("0");
             immediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("0.00"));

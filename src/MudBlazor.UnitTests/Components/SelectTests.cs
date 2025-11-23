@@ -81,26 +81,11 @@ namespace MudBlazor.UnitTests.Components
 
             items[0].Click();
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
-            
-            // The following OnBlur test is disabled for .NET 10 due to a breaking change in how StateHasChanged is called.
-            // In .NET 10, StateHasChanged is no longer automatically called when exceptions occur during parameter setting,
-            // which affects how blur events propagate and trigger component re-renders.
-            // The OnBlur functionality itself is tested separately in the Select_Should_FireOnBlur test.
-            // TODO: Re-evaluate this test when the .NET 10 behavior is finalized or a workaround is found.
-            
-            /* 
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
             await @switch.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Value, true));
-            
-            // In .NET 10, calling OnBlurAsync directly may not trigger the OnBlur callback properly.
-            // Instead, trigger a real blur event on the input element.
-            var selectInput = comp.Find("div.mud-input-control input");
-            selectInput.Blur();
-            
-            // Wait for the switch value to be updated after the blur event
-            comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false), TimeSpan.FromSeconds(3));
-            */
+            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
+            comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
 
         [Test]
