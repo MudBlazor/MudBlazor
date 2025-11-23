@@ -35,11 +35,15 @@ namespace MudBlazor.UnitTests.Components
             tabs.CloseTabIcon.Should().Be(Icons.Material.Filled.Close);
 
             tabs.AddIconClass.Should().BeNullOrEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
             tabs.AddIconStyle.Should().BeNullOrEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
             tabs.AddIconToolTip.Should().BeNullOrEmpty();
 
             tabs.CloseIconClass.Should().BeNullOrEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
             tabs.CloseIconStyle.Should().BeNullOrEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
             tabs.CloseIconToolTip.Should().BeNullOrEmpty();
 
             comp.Nodes.Should().ContainSingle();

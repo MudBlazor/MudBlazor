@@ -12,7 +12,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// A layer that can be used for various purposes such as displaying loading indicators, modals, or blocking user interaction with underlying content.
+/// Renders a translucent layer over content, typically used for modals, popovers, progress bars, or blocking interactions.
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
@@ -218,11 +218,17 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         {
             _previousLockScroll = LockScroll;
             _previousAbsolute = Absolute;
-            await HandleLockScrollChange();
+
+            // Calling HandleLockScrollChange when the overlay isn't intially set to
+            // visible will incorrectly decrement the lock count
+            if (_visibleState.Value)
+            {
+                await HandleLockScrollChange();
+            }
 
             // If the overlay is initially visible and modeless auto-close is enabled,
             // then start tracking pointer down events.
-            if (Visible && !Modal && AutoClose)
+            if (_visibleState.Value && !Modal && AutoClose)
             {
                 await StartModelessAutoCloseTrackingAsync();
             }
@@ -244,7 +250,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             return;
         }
 
-        if (Visible)
+        if (_visibleState.Value)
         {
             await StartModelessAutoCloseTrackingAsync();
         }

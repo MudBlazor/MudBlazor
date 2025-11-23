@@ -1,6 +1,5 @@
-﻿using System.Text;
+﻿using System.Numerics;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interpolation;
 
 #nullable enable
@@ -9,89 +8,122 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays series values as connected lines.
     /// </summary>
-    /// <seealso cref="Bar"/>
-    /// <seealso cref="Donut"/>
-    /// <seealso cref="Pie"/>
-    /// <seealso cref="StackedBar"/>
-    /// <seealso cref="TimeSeries"/>
-    partial class Line : MudCategoryAxisChartBase
+    /// <seealso cref="Bar{T}"/>
+    /// <seealso cref="Donut{T}"/>
+    /// <seealso cref="Pie{T}"/>
+    /// <seealso cref="StackedBar{T}"/>
+    /// <seealso cref="TimeSeries{T}"/>
+    partial class Line<T> : MudAxisLineChartBase<T, LineChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        private readonly List<SvgPath> _horizontalLines = [];
-        private readonly List<SvgText> _horizontalValues = [];
+        public override RenderFragment? OverlayContent { get; set; }
 
-        private readonly List<SvgPath> _verticalLines = [];
-        private readonly List<SvgText> _verticalValues = [];
+        protected override bool ShouldInterpolate => true;
 
-        private readonly List<SvgLegend> _legends = [];
-        private List<ChartSeries> _series = [];
-
-        private readonly List<SvgPath> _chartLines = [];
-        private readonly Dictionary<int, SvgPath> _chartAreas = [];
-        private readonly Dictionary<int, List<SvgCircle>> _chartDataPoints = [];
-        private SvgCircle? _hoveredDataPoint;
-        private SvgPath? _hoverDataPointChartLine;
-
-        protected override void OnParametersSet()
+        protected override void OnInitialized()
         {
-            base.OnParametersSet();
+            ChartType = ChartType.Line;
+            ChartOptions ??= new LineChartOptions();
 
-            RebuildChart();
-        }
-
-        protected override void RebuildChart()
-        {
-            if (MudChartParent != null)
+            if (ChartReference is IMudAxisChart<T> axisChart)
             {
-                _series = MudChartParent.ChartSeries;
-                ChartOptions = MudChartParent.ChartOptions;
+                axisChart.OverlayChart = this;
+                axisChart.OverlayContent = this.Chart;
             }
 
-            SetBounds();
-            ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
-
-            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
-
-            GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
-            GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
-            GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+            base.OnInitialized();
         }
 
-        private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
+        public override void RebuildChart()
         {
-            gridXUnits = 30;
+            if (IsOverlayChart && SharedData is null) return;
 
-            gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
-            if (gridYUnits <= 0)
-                gridYUnits = 20;
+            Series = (ChartContainer != null && ChartReference is MudChart<T>)
+                ? ChartContainer.ChartSeries
+                : ChartSeries;
 
-            if (_series.SelectMany(series => series.Data).Any())
+            GeneratePlotArea(out var gridYUnits, out var lowestHorizontalLine, out var numHorizontalLines, out var horizontalSpace, out var verticalSpace);
+
+            if (!IsOverlayChart)
             {
-                var minY = _series.SelectMany(series => series.Data).Min();
-                var maxY = _series.SelectMany(series => series.Data).Max();
+                // If this is not an overlay chart, we generate the shared plot points if an overlay exists
+                SharedData = OverlayChart is IMudAxisChart<T> ? new AxisGridData<T>(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
+            }
+            else
+            {
+                // If this is an overlay chart, we use the shared plot points from the main chart
+                var area = SharedData!.Value;
 
-                var includeYAxisZeroPoint = MudChartParent?.ChartOptions.YAxisRequireZeroPoint ?? false;
+                lowestHorizontalLine = SharedData.Value.LowestHorizontalLine;
+                gridYUnits = SharedData.Value.YAxisTicks;
+
+                _boundWidth = area.BoundWidth;
+                _boundHeight = area.BoundHeight;
+            }
+
+            GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+            GenerateLegends();
+            RenderOverlay();
+        }
+
+        private void GeneratePlotArea(out T gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
+        {
+            SetBounds();
+            ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
+
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+
+            horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
+            verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
+
+            // If this is an overlay chart, we do not generate the grid lines
+            if (IsOverlayChart) return;
+
+            GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
+            GenerateVerticalGridLines(numVerticalLines, 0, horizontalSpace);
+        }
+
+        private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
+        {
+            var yAxisTicks = ChartOptions?.YAxisTicks;
+            if (yAxisTicks.HasValue && yAxisTicks.Value > 0)
+                gridYUnits = T.CreateSaturating(yAxisTicks.Value);
+            else
+                gridYUnits = T.CreateSaturating(20);
+
+            var visibleSeries = Series.Where(series => series.Visible).ToArray();
+            var values = visibleSeries.SelectMany(series => series.Data.Values);
+
+            if (visibleSeries.Length > 0 && values.Any())
+            {
+                var minY = values.Min();
+                var maxY = ChartOptions?.YAxisSuggestedMax is null
+                    ? values.Max()
+                    : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), values.Max());
+
+                var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || visibleSeries.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
+                var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
+
                 if (includeYAxisZeroPoint)
                 {
-                    minY = Math.Min(minY, 0); // we want to include the 0 in the grid
-                    maxY = Math.Max(maxY, 0); // we want to include the 0 in the grid
+                    minY = T.Min(minY, T.Zero); // we want to include the 0 in the grid
+                    maxY = T.Max(maxY, T.Zero); // we want to include the 0 in the grid
                 }
 
-                lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
-                var highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
+                lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
+                var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
-                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+                var maxYTicks = ChartOptions?.MaxNumYAxisTicks ?? 100;
                 while (numHorizontalLines > maxYTicks)
                 {
-                    gridYUnits *= 2;
-                    lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
-                    highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
+                    gridYUnits *= T.CreateSaturating(2);
+                    lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
+                    highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = _series.Max(series => series.Data.Length);
+                numVerticalLines = visibleSeries.Max(series => series.Data.Values.Count);
             }
             else
             {
@@ -101,272 +133,56 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void GenerateHorizontalGridLines(int numHorizontalLines, int lowestHorizontalLine, double gridYUnits, double verticalSpace)
+        protected override string GetVerticalGridLineLabel(int index)
         {
-            _horizontalLines.Clear();
-            _horizontalValues.Clear();
+            return index < ChartLabels.Length ? ChartLabels[index] : "";
+        }
 
-            for (var i = 0; i < numHorizontalLines; i++)
+        protected override TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex)
+        {
+            return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.Values[dataPointIndex], typeof(T));
+        }
+
+        protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
+        {
+            return ChartLabels.Length > dataPointIndex ? ChartLabels[dataPointIndex] : string.Empty;
+        }
+
+        protected override (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
+        {
+            var data = Series[seriesIndex].Data;
+            var x = HorizontalStartSpace + (dataPointIndex * horizontalSpace);
+            var gridValue = (double.CreateSaturating(data[dataPointIndex].Y / gridYUnits) - lowestHorizontalLine) * verticalSpace;
+            var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
+            return (x, y);
+        }
+
+        internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
+        {
+            var series = Series[seriesIndex];
+            var data = series.Data;
+            var interpolationResolution = 10;
+
+            var xValues = new double[data.Values.Count];
+            var yValues = new double[data.Values.Count];
+
+            for (var j = 0; j < data.Values.Count; j++)
             {
-                var y = VerticalStartSpace + (i * verticalSpace);
-                var line = new SvgPath()
-                {
-                    Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
-                };
-                _horizontalLines.Add(line);
-
-                var startGridY = (lowestHorizontalLine + i) * gridYUnits;
-                var lineValue = new SvgText()
-                {
-                    X = HorizontalStartSpace - 10,
-                    Y = _boundHeight - y + 5,
-                    Value = BuildYAxisValueString(startGridY)
-                };
-                _horizontalValues.Add(lineValue);
+                (xValues[j], yValues[j]) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
             }
-        }
 
-        private void GenerateVerticalGridLines(int numVerticalLines, double gridXUnits, double horizontalSpace)
-        {
-            _verticalLines.Clear();
-            _verticalValues.Clear();
+            var overrideSettings = GetSeriesDisplayOverride(series);
+            var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
 
-            for (var i = 0; i < numVerticalLines; i++)
+            ILineInterpolator interpolator = interpolationOption switch
             {
-                var x = HorizontalStartSpace + (i * horizontalSpace);
-                var line = new SvgPath()
-                {
-                    Index = i,
-                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
-                };
-                _verticalLines.Add(line);
+                InterpolationOption.NaturalSpline => new NaturalSpline(xValues, yValues, interpolationResolution),
+                InterpolationOption.EndSlope => new EndSlopeSpline(xValues, yValues, interpolationResolution),
+                InterpolationOption.Periodic => new PeriodicSpline(xValues, yValues, interpolationResolution),
+                _ => throw new NotImplementedException("Interpolation option not implemented yet")
+            };
 
-                var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : string.Empty;
-                var lineValue = new SvgText()
-                {
-                    X = x,
-                    Y = _boundHeight - 10,
-                    Value = xLabels
-                };
-                _verticalValues.Add(lineValue);
-            }
-        }
-
-        private void GenerateChartLines(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
-        {
-            _legends.Clear();
-            _chartLines.Clear();
-            _chartAreas.Clear();
-            _chartDataPoints.Clear();
-
-            for (var i = 0; i < _series.Count; i++)
-            {
-                var series = _series[i];
-
-                if (series.Visible)
-                {
-                    var chartLine = new StringBuilder();
-                    var data = series.Data;
-                    var chartDataCircles = _chartDataPoints[i] = [];
-
-                    (double x, double y) GetXYForDataPoint(int index)
-                    {
-                        var x = HorizontalStartSpace + (index * horizontalSpace);
-                        var gridValue = ((data[index] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
-                        var y = _boundHeight - VerticalStartSpace - gridValue;
-                        return (x, y);
-                    }
-                    double GetYForZeroPoint()
-                    {
-                        var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                        var y = _boundHeight - VerticalStartSpace - gridValue;
-
-                        return y;
-                    }
-
-                    var zeroPointY = GetYForZeroPoint();
-                    double firstPointX = 0;
-                    double firstPointY = 0;
-                    double lastPointX = 0;
-
-                    var interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
-                    if (interpolationEnabled)
-                    {
-                        var interpolationResolution = 10;
-                        var XValues = new double[data.Length];
-                        var YValues = new double[data.Length];
-                        for (var j = 0; j < data.Length; j++)
-                        {
-                            var (x, y) = (XValues[j], YValues[j]) = GetXYForDataPoint(j);
-
-                            var dataValue = data[j];
-
-                            if (MudChartParent?.ChartOptions.ShowToolTips != true)
-                            {
-                                continue;
-                            }
-
-                            var index = j / interpolationResolution;
-                            var xLabels = index < XAxisLabels.Length ? XAxisLabels[index] : string.Empty;
-
-                            chartDataCircles.Add(new()
-                            {
-                                Index = j,
-                                CX = x,
-                                CY = y,
-                                LabelX = x,
-                                LabelXValue = xLabels,
-                                LabelY = y,
-                                LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
-                            });
-                        }
-
-                        ILineInterpolator interpolator = MudChartParent?.ChartOptions.InterpolationOption switch
-                        {
-                            InterpolationOption.NaturalSpline => new NaturalSpline(XValues, YValues, interpolationResolution),
-                            InterpolationOption.EndSlope => new EndSlopeSpline(XValues, YValues, interpolationResolution),
-                            InterpolationOption.Periodic => new PeriodicSpline(XValues, YValues, interpolationResolution),
-                            _ => throw new NotImplementedException("Interpolation option not implemented yet")
-                        };
-
-                        var horizontalSpaceInterpolated = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (interpolator.InterpolatedXs.Length - 1);
-
-                        for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
-                        {
-                            var x = HorizontalStartSpace + (j * horizontalSpaceInterpolated);
-                            var y = interpolator.InterpolatedYs[j];
-
-                            if (j == 0)
-                            {
-                                chartLine.Append("M ");
-                                firstPointX = x;
-                                firstPointY = y;
-                            }
-                            else
-                                chartLine.Append(" L ");
-
-                            if (j == interpolator.InterpolatedYs.Length - 1)
-                            {
-                                lastPointX = x;
-                            }
-
-                            chartLine.Append(ToS(x));
-                            chartLine.Append(' ');
-                            chartLine.Append(ToS(y));
-                        }
-                    }
-                    else
-                    {
-                        for (var j = 0; j < data.Length; j++)
-                        {
-                            var (x, y) = GetXYForDataPoint(j);
-
-                            if (j == 0)
-                            {
-                                chartLine.Append("M ");
-                                firstPointX = x;
-                                firstPointY = y;
-                            }
-                            else
-                                chartLine.Append(" L ");
-
-                            if (j == data.Length - 1)
-                            {
-                                lastPointX = x;
-                            }
-
-                            chartLine.Append(ToS(x));
-                            chartLine.Append(' ');
-                            chartLine.Append(ToS(y));
-
-                            var dataValue = data[j];
-
-                            if (MudChartParent?.ChartOptions.ShowToolTips == true)
-                            {
-                                chartDataCircles.Add(new()
-                                {
-                                    Index = j,
-                                    CX = x,
-                                    CY = y,
-                                    LabelX = x,
-                                    LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                                    LabelY = y,
-                                    LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
-                                });
-                            }
-                        }
-                    }
-                    var line = new SvgPath()
-                    {
-                        Index = i,
-                        Data = chartLine.ToString()
-                    };
-                    _chartLines.Add(line);
-
-                    if (series.LineDisplayType == LineDisplayType.Area)
-                    {
-                        var chartArea = new StringBuilder();
-
-                        chartArea.Append(chartLine.ToString()); // the line up to this point is the same as the area, so we can reuse it
-
-                        // add an extra point based on the x of the last point and 0 to add the area to the bottom
-
-                        chartArea.Append(" L ");
-                        chartArea.Append(ToS(lastPointX));
-                        chartArea.Append(' ');
-                        chartArea.Append(ToS(zeroPointY));
-
-                        // add an extra point based on the x of the first point and 0 to close the area
-
-                        chartArea.Append(" L ");
-                        chartArea.Append(ToS(firstPointX));
-                        chartArea.Append(' ');
-                        chartArea.Append(ToS(zeroPointY));
-
-                        // add an the first point again to close the area
-                        chartArea.Append(" L ");
-                        chartArea.Append(ToS(firstPointX));
-                        chartArea.Append(' ');
-                        chartArea.Append(ToS(firstPointY));
-
-                        var area = new SvgPath()
-                        {
-                            Index = i,
-                            Data = chartArea.ToString()
-                        };
-                        _chartAreas.Add(i, area);
-                    }
-                }
-
-                var legend = new SvgLegend()
-                {
-                    Index = i,
-                    Labels = series.Name,
-                    Visible = series.Visible,
-                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
-                };
-                _legends.Add(legend);
-            }
-        }
-
-        private void HandleLegendVisibilityChanged(SvgLegend legend)
-        {
-            var series = _series[legend.Index];
-            series.Visible = legend.Visible;
-            RebuildChart();
-        }
-
-        private void OnDataPointMouseOver(MouseEventArgs _, SvgCircle dataPoint, SvgPath seriesPath)
-        {
-            _hoveredDataPoint = dataPoint;
-            _hoverDataPointChartLine = seriesPath;
-        }
-
-        private void OnDataPointMouseOut(MouseEventArgs _)
-        {
-            _hoveredDataPoint = null;
-            _hoverDataPointChartLine = null;
+            return interpolator;
         }
     }
 }

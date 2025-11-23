@@ -49,6 +49,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.
         /// </remarks>
+        [Obsolete("Prefer the RatingItemsClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string? RatingItemsStyle { get; set; }

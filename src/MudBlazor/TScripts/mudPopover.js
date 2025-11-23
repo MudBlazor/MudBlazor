@@ -278,8 +278,10 @@ window.mudpopoverHelper = {
             const classListArray = Array.from(classList);
 
             if (isPositionOverride) {
-                const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y')) || boundingRect.top;
-                const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x')) || boundingRect.left;
+                const attrY = popoverContentNode.getAttribute('data-pc-y');
+                const positiontop = attrY == null ? boundingRect.top : parseInt(attrY, 10);
+                const attrX = popoverContentNode.getAttribute('data-pc-x');
+                const positionleft = attrX == null ? boundingRect.left : parseInt(attrX, 10);
                 const scrollLeft = window.scrollX;
                 const scrollTop = window.scrollY;
 
@@ -599,7 +601,7 @@ window.mudpopoverHelper = {
             }
             else if (!classList.contains('mud-popover-fixed')) {
                 offsetX += window.scrollX;
-                offsetY += window.scrollY
+                offsetY += window.scrollY;
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';

@@ -31,9 +31,9 @@ namespace MudBlazor
         private bool _stepHasValue = false;
         private bool _cultureHasValue = false;
         private MudInput<string> _elementReference = null!;
-        private string _elementId = Identifier.Create("numericField");
+        private readonly string _elementId = Identifier.Create("numericField");
 
-        private Comparer _comparer = new(CultureInfo.InvariantCulture);
+        private readonly Comparer _comparer = new(CultureInfo.InvariantCulture);
         private readonly ParameterState<CultureInfo> _cultureInfo;
 
         [Inject]

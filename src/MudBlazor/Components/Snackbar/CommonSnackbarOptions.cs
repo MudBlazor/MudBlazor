@@ -54,9 +54,10 @@ public abstract class CommonSnackbarOptions
     /// Shows the snackbar until a user manually closes it.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
+    /// Defaults to <c>null</c>.  When <c>null</c>, snackbars that define an
+    /// <see cref="SnackbarOptions.Action"/> will require user interaction by default.
     /// </remarks>
-    public bool RequireInteraction { get; set; } = false;
+    public bool? RequireInteraction { get; set; }
 
     /// <summary>
     /// Blurs the background of the snackbar.
@@ -122,6 +123,14 @@ public abstract class CommonSnackbarOptions
     /// </remarks>
     public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
 
+    /// <summary>
+    /// Hides the icon for the snackbar.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool HideIcon { get; set; }
+
     protected CommonSnackbarOptions() { }
 
     protected CommonSnackbarOptions(CommonSnackbarOptions options)
@@ -140,5 +149,6 @@ public abstract class CommonSnackbarOptions
         SuccessIcon = options.SuccessIcon;
         WarningIcon = options.WarningIcon;
         ErrorIcon = options.ErrorIcon;
+        HideIcon = options.HideIcon;
     }
 }

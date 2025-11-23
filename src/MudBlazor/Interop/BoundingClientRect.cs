@@ -1,5 +1,6 @@
 ﻿namespace MudBlazor.Interop
 {
+#nullable enable
     public class BoundingClientRect
     {
         public double Top { get; set; }
@@ -68,7 +69,7 @@
     }
     public static class BoundingClientRectExtensions
     {
-        public static bool IsEqualTo(this BoundingClientRect sourceRect, BoundingClientRect targetRect)
+        public static bool IsEqualTo(this BoundingClientRect? sourceRect, BoundingClientRect? targetRect)
         {
             if (sourceRect is null || targetRect is null) return false;
             return sourceRect.Top == targetRect.Top

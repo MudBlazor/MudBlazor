@@ -57,5 +57,7 @@
         public ValueTask ScrollToYearAsync(string elementId) => ValueTask.CompletedTask;
 
         public ValueTask UnlockScrollAsync(string elementId, string cssClass) => ValueTask.CompletedTask;
+
+        public ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;
     }
 }

@@ -3,6 +3,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.CheckBox;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
@@ -167,16 +168,61 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeTrue();
             // click the checkbox to make the form invalid again because the checkbox is required
             checkbox.Find("input").Change(false);
-            checkbox.Instance.Error.Should().BeTrue();
-            checkbox.Instance.ErrorText.Should().Be("You must agree");
+            checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
+            checkbox.Markup.Should().Contain("You must agree");
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must agree");
             form.IsValid.Should().BeFalse();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("You must agree");
             // click the checkbox to make the form valid again
             checkbox.Find("input").Change(true);
             form.IsValid.Should().BeTrue();
-            checkbox.Instance.Error.Should().BeFalse();
-            checkbox.Instance.ErrorText.Should().Be(null);
+            checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be(null);
+        }
+
+        /// <summary>
+        /// A required tristate checkbox must have a value of true or false, but not null.
+        /// </summary>
+        [Test]
+        public async Task TriStateCheckBoxFormTest()
+        {
+            var comp = Context.RenderComponent<CheckBoxFormTest2>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var checkbox = comp.FindComponent<MudCheckBox<bool?>>();
+
+            // initial state: null, form should be invalid without errors
+            form.IsValid.Should().BeFalse();
+            form.Errors.Length.Should().Be(0);
+
+            // after validating, the form should be invalid with errors
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeFalse();
+            checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
+            checkbox.Markup.Should().Contain("You must select a value");
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must select a value");
+
+            // state: true, form should be valid
+            checkbox.Find("input").Change(true);
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeTrue();
+            checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
+            checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+
+            // state: false, form should be valid
+            checkbox.Find("input").Change(false);
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeTrue();
+            checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
+            checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+
+            // state: null, form should be invalid again
+            checkbox.Find("input").Change(null);
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeFalse();
+            checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
+            checkbox.Markup.Should().Contain("You must select a value");
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must select a value");
         }
 
         /// <summary>
@@ -205,10 +251,10 @@ namespace MudBlazor.UnitTests.Components
         /// Change state with several keys
         /// </summary>
         [Test]
-        public void CheckBoxTest_KeyboardInput()
+        public async Task CheckBoxTest_KeyboardInput()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            comp.SetParam(x => x.TriState, true);
+            await comp.SetParamAsync(x => x.TriState, true);
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -236,7 +282,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
             //Backspace should not change state on non-tristate checkbox
-            comp.SetParam(x => x.TriState, false);
+            await comp.SetParamAsync(x => x.TriState, false);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
             //Check tristate space key
@@ -246,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
-            comp.SetParam("Disabled", true);
+            await comp.SetParamAsync(x => x.Disabled, true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
         }
@@ -254,11 +300,11 @@ namespace MudBlazor.UnitTests.Components
         /// Test if the keyboard-disabling switch works
         /// </summary>
         [Test]
-        public void CheckBoxTest_KeyboardDisabled()
+        public async Task CheckBoxTest_KeyboardDisabled()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            comp.SetParam(x => x.TriState, true);
-            comp.SetParam(x => x.KeyboardEnabled, false);
+            await comp.SetParamAsync(x => x.TriState, true);
+            await comp.SetParamAsync(x => x.KeyboardEnabled, false);
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -286,7 +332,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             //Backspace should not change state on non-tristate checkbox
-            comp.SetParam(x => x.TriState, null);
+            await comp.SetParamAsync(x => x.TriState, null);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
             //Check tristate space key
@@ -296,7 +342,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
-            comp.SetParam("Disabled", true);
+            await comp.SetParamAsync(x => x.Disabled, true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
         }
@@ -380,14 +426,14 @@ namespace MudBlazor.UnitTests.Components
         /// Required CheckBox attribute should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredCheckBoxAttributes_Should_BeDynamic()
+        public async Task RequiredCheckBoxAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool>>();
 
             var input = () => comp.Find("input");
             input().HasAttribute("required").Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             input().HasAttribute("required").Should().BeTrue();

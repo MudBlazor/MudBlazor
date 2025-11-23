@@ -524,6 +524,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ActionRequiresInteractionByDefault()
+        {
+            Snackbar snackbar = null;
+
+            await _provider.InvokeAsync(() =>
+                snackbar = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 0;
+                    c.HideTransitionDuration = 0;
+                    c.VisibleStateDuration = 10;
+                    c.Action = "Close";
+                    c.OnClick = _ => Task.CompletedTask;
+                })
+            );
+
+            snackbar.Should().NotBeNull();
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            await Task.Delay(200);
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            _provider.Find(".mud-snackbar-action-button").Click();
+
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task ActionAllowsAutoDismissWhenDisabled()
+        {
+            await _provider.InvokeAsync(() =>
+                _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 0;
+                    c.HideTransitionDuration = 0;
+                    c.VisibleStateDuration = 10;
+                    c.Action = "Close";
+                    c.RequireInteraction = false;
+                })
+            );
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
         public async Task CannotStopCloseTransition()
         {
             // Set up the snackbar.
@@ -811,6 +858,56 @@ namespace MudBlazor.UnitTests.Components
 
             // Only one click should have been successful and multiple clicks should have been attempted.
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
+        }
+
+        [Test]
+        public async Task SnackbarShouldNotRenderIconWhenGlobalHideIconIsTrue()
+        {
+            // Arrange: set global via configuration
+            _service.Configuration.HideIcon = true;
+
+            // Act
+            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Success));
+
+            // Assert: Snackbar is rendered, but no icon element
+            _provider.WaitForAssertion(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task SnackbarShouldRenderIconWhenPerSnackbarOverrideIsFalse()
+        {
+            // Arrange: globally hide icons
+            _service.Configuration.HideIcon = true;
+
+            // Act: override for this one snackbar
+            await _provider.InvokeAsync(() =>
+                _service.Add("Hello world", Severity.Success, opts => opts.HideIcon = false)
+            );
+
+            // Assert: Snackbar is rendered and icon appears due to per-snackbar override
+            _provider.WaitForAssertion(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task SnackbarShouldRenderIconByDefault()
+        {
+            // Arrange: globally hide icons
+            _service.Configuration.HideIcon = false;
+
+            // Act
+            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Info));
+
+            // Assert: Snackbar is rendered and icon appears as default
+            _provider.WaitForAssertion(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
         }
     }
 }

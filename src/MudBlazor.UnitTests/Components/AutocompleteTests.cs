@@ -9,6 +9,11 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
+using Moq;
+using MudBlazor.Examples.Data;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
@@ -20,6 +25,27 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
+        [Test]
+        public void Autocomplete_Should_Handle_Converter_WithStrict()
+        {
+            var comp = Context.RenderComponent<AutocompleteConverterStrictTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteConverterStrictTest.ConverterElement>>();
+            comp.Markup.Should().NotContain("mud-popover-open");
+
+            autocompleteComponent.Find(".mud-button-root.mud-no-activator").Click(); // open popover
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
+            items.Length.Should().Be(10, "The popover should contain 10 items."); // default maxitems is 10
+            comp.Find(".mud-button-root.mud-no-activator").Click(); // close popover
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            // set search
+            autocompleteComponent.Find("input").Input("he");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
+            filteredItems.Length.Should().Be(4, "The popover should contain 4 items.");
+        }
+
         /// <summary>
         /// Initial value should be shown and popup should not open.
         /// </summary>
@@ -99,7 +125,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest8>();
             var autocompleteContainerComp = comp.FindComponent<AutoCompleteContainer>();
             var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
-            autocompleteComp.SetParam(a => a.Text, "Alabama");
+            await autocompleteComp.SetParamAsync(a => a.Text, "Alabama");
             await Task.Delay(500);
             comp.Instance.MustBeShown = false;
             await Task.Delay(500);
@@ -140,12 +166,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            autocompleteComponent.SetParam(x => x.DebounceInterval, 0);
+            await autocompleteComponent.SetParamAsync(x => x.DebounceInterval, 0);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompleteComponent.SetParam(a => a.Text, "Austria"); // not part of the U.S.
+            await autocompleteComponent.SetParamAsync(a => a.Text, "Austria"); // not part of the U.S.
             // Open must be true to properly simulate a user clicking outside of the component, which is what the next ToggleMenu call below does.
             autocompleteComponent.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
             // now trigger the coercion by closing the menu
@@ -164,13 +190,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            autocompleteComponent.SetParam(x => x.DebounceInterval, 0);
-            autocompleteComponent.SetParam(x => x.CoerceValue, true); // if CoerceValue==true CoerceText will be ignored
+            await autocompleteComponent.SetParamAsync(x => x.DebounceInterval, 0);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceValue, true); // if CoerceValue==true CoerceText will be ignored
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompleteComponent.SetParam(p => p.Text, "Austria"); // not part of the U.S.
+            await autocompleteComponent.SetParamAsync(p => p.Text, "Austria"); // not part of the U.S.
 
             // now trigger the coercion by toggling the the menu (it won't even open for invalid values, but it will coerce)
             await comp.InvokeAsync(autocomplete.ToggleMenuAsync);
@@ -182,20 +208,20 @@ namespace MudBlazor.UnitTests.Components
         /// Test to cover issue #5993.
         /// </summary>
         [Test]
-        public void AutocompleteImmediateCoerceValueTest()
+        public async Task AutocompleteImmediateCoerceValueTest()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            autocompleteComponent.SetParam(x => x.DebounceInterval, 0);
-            autocompleteComponent.SetParam(x => x.CoerceValue, true);
-            autocompleteComponent.SetParam(x => x.CoerceText, false);
-            autocompleteComponent.SetParam(x => x.Immediate, true);
+            await autocompleteComponent.SetParamAsync(x => x.DebounceInterval, 0);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceValue, true);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceText, false);
+            await autocompleteComponent.SetParamAsync(x => x.Immediate, true);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompleteComponent.SetParam(p => p.Text, "Austria"); // not part of the U.S.
+            await autocompleteComponent.SetParamAsync(p => p.Text, "Austria"); // not part of the U.S.
 
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
@@ -452,13 +478,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTestCoersionAndBlur>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            autocompleteComponent.SetParam(x => x.CoerceText, false);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceText, false);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
             await comp.InvokeAsync(autocomplete.ToggleMenuAsync);
-            autocompleteComponent.SetParam(a => a.Text, "Austria");
+            await autocompleteComponent.SetParamAsync(a => a.Text, "Austria");
             // now trigger the coercion by closing the menu
             await comp.InvokeAsync(autocomplete.ToggleMenuAsync);
             autocomplete.Value.Should().Be("Alabama");
@@ -466,19 +492,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AutocompleteTextCoercionOnTabKeyTest()
+        public async Task AutocompleteTextCoercionOnTabKeyTest()
         {
             var comp = Context.RenderComponent<AutocompleteTestCoersionAndBlur>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            autocompleteComponent.SetParam(x => x.CoerceText, true);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceText, true);
 
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
 
             // set a value the search won't find
-            autocompleteComponent.SetParam(a => a.Text, "Austria");
+            await autocompleteComponent.SetParamAsync(a => a.Text, "Austria");
             autocomplete.Text.Should().Be("Austria");
 
             // now trigger the coercion by call MudInput.BlurAsync
@@ -488,20 +514,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AutocompleteTextCoercionAndResetIfEmptyTextTest()
+        public async Task AutocompleteTextCoercionAndResetIfEmptyTextTest()
         {
             var comp = Context.RenderComponent<AutocompleteTestCoersionAndBlur>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            autocompleteComponent.SetParam(x => x.CoerceText, true);
-            autocompleteComponent.SetParam(x => x.ResetValueOnEmptyText, true);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceText, true);
+            await autocompleteComponent.SetParamAsync(x => x.ResetValueOnEmptyText, true);
 
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
 
             // set a value the search won't find
-            autocompleteComponent.SetParam(a => a.Text, "");
+            await autocompleteComponent.SetParamAsync(a => a.Text, "");
             autocomplete.Text.Should().Be(null);
 
             // now trigger the coercion by call MudInput.BlurAsync
@@ -511,7 +537,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_TolerateNullFromSearchFunc()
+        public async Task Autocomplete_Should_TolerateNullFromSearchFunc()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
             {
@@ -519,13 +545,13 @@ namespace MudBlazor.UnitTests.Components
                 a.Add(x => x.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(null)); // <--- searchfunc returns null instead of sequence
             });
             // enter a text so the search func will return null, and it shouldn't throw an exception
-            var setText1 = () => comp.SetParam(a => a.Text, "Do not throw");
-            var setSearchFunc = () => comp.SetParam(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((_, _) => null)); // <-- search func returns null instead of task!
-            var setText2 = () => comp.SetParam(a => a.Text, "Don't throw here neither");
+            var setText1 = async () => await comp.SetParamAsync(a => a.Text, "Do not throw");
+            var setSearchFunc = async () => await comp.SetParamAsync(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((_, _) => null)); // <-- search func returns null instead of task!
+            var setText2 = async () => await comp.SetParamAsync(a => a.Text, "Don't throw here neither");
 
-            setText1.Should().NotThrow();
-            setSearchFunc.Should().NotThrow();
-            setText2.Should().NotThrow();
+            await setText1.Should().NotThrowAsync();
+            await setSearchFunc.Should().NotThrowAsync();
+            await setText2.Should().NotThrowAsync();
         }
 
         [Test]
@@ -537,7 +563,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AutocompleteReadOnlyShouldNotHaveClearButton()
+        public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>(p => p
                 .Add(x => x.Text, "some value")
@@ -546,7 +572,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
 
@@ -679,7 +705,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Quux");
             autocomplete.Text.Should().Be("Quux");
             // check validity
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
             autocomplete.ValidationErrors.Should().NotBeEmpty();
             autocomplete.ValidationErrors.Should().HaveCount(1);
             autocomplete.ValidationErrors[0].Should().Be("Should not be longer than 3");
@@ -698,7 +724,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Qux");
             autocomplete.Text.Should().Be("Qux");
             // check validity
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
             autocomplete.ValidationErrors.Should().BeEmpty();
         }
 
@@ -714,7 +740,7 @@ namespace MudBlazor.UnitTests.Components
 
             autocomplete.Required.Should().BeTrue();
 
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
 
             autocomplete.ValidationErrors.First().Should().Be("Required");
         }
@@ -747,12 +773,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_SelectValue_On_Tab_With_SelectValueOnTab()
+        public async Task Autocomplete_Should_SelectValue_On_Tab_With_SelectValueOnTab()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             // select elements needed for the test
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
-            autocompleteComponent.SetParam(x => x.SelectValueOnTab, true);
+            await autocompleteComponent.SetParamAsync(x => x.SelectValueOnTab, true);
             var autocomplete = autocompleteComponent.Instance;
 
             // Should be closed
@@ -817,7 +843,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             // select elements needed for the test
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
-            autocompleteComponent.SetParam(x => x.CoerceValue, true);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceValue, true);
             var autocomplete = autocompleteComponent.Instance;
 
             //No popover-open, due it's closed
@@ -852,7 +878,7 @@ namespace MudBlazor.UnitTests.Components
         /// When calling Clear(), menu should closed, Value and Text should be cleared.
         /// </summary>
         [Test]
-        public void Autocomplete_CheckTextValueCleared_OnClear()
+        public async Task Autocomplete_CheckTextValueCleared_OnClear()
         {
             // define some constant values
             var alaskaString = "Alaska";
@@ -867,7 +893,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
 
             // Set the clear function on value changed
-            autocompleteComponent.SetCallback(x => x.ValueChanged, async x => await autocompleteComponent.Instance.ClearAsync());
+            await autocompleteComponent.SetCallbackAsync(x => x.ValueChanged, async x => await autocompleteComponent.Instance.ClearAsync());
 
             // get the instance
             var autocompleteInstance = autocompleteComponent.Instance;
@@ -895,7 +921,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             // select elements needed for the test
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
-            autocompleteComponent.SetParam(x => x.CoerceValue, true);
+            await autocompleteComponent.SetParamAsync(x => x.CoerceValue, true);
             var autocomplete = autocompleteComponent.Instance;
 
             //No popover-open, due it's closed
@@ -1100,11 +1126,11 @@ namespace MudBlazor.UnitTests.Components
                 var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
                 var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
                 var autocomplete = autocompleteComponent.Instance;
-                autocompleteComponent.SetParametersAndRender(parameters => parameters.Add(p => p.DebounceInterval, 0));
-                autocompleteComponent.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
+                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 0));
+                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.CoerceText, true));
                 // this needs to be false because in the unit test the autocomplete's input does not lose focus state on click of another button.
                 // TextUpdateSuppression is used to avoid binding to change the input text while typing.
-                autocompleteComponent.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, false));
+                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.TextUpdateSuppression, false));
                 // check initial state
                 comp.WaitForAssertion(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Florida"));
                 autocomplete.Value.Should().Be("Florida");
@@ -1181,7 +1207,7 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
 
-                autocompleteComponent.SetParam("SelectValueOnTab", true);
+                await autocompleteComponent.SetParamAsync(x => x.SelectValueOnTab, true);
                 await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
                 await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
@@ -1233,6 +1259,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// When a user clicks on the adornment icon, the input should get focused so they can start typing
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_FocusInputOnAdornmentClick()
+        {
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus", It.IsAny<object[]>()));
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<AutocompleteStates>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+
+            var adornment = comp.Find(".mud-input-adornment-icon-button");
+            adornment.Click();
+
+            // verifies FocusAsync was called
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus",
+                It.Is<object[]>(args =>
+                    args.Length == 2 &&
+                    args[0] is ElementReference &&
+                    args[1] is bool)),
+                Times.AtMost(1));
+
+            var input = comp.Find("input");
+            await input.InputAsync(new ChangeEventArgs { Value = "Wyo" });
+
+            await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            autocompleteComponent.Instance.Value.Should().Be("Wyoming");
+        }
+
+        /// <summary>
         /// The adornment icon should change live without having to re-open the autocomplete
         /// This test a bugfix where changing the icon property would not cause the icon to visually change until the autocomplete was opened or closed
         /// </summary>
@@ -1271,7 +1329,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_IndicateLoadingWithCircularProgressIndicator()
+        public async Task Autocomplete_Should_IndicateLoadingWithCircularProgressIndicator()
         {
             // TODO: use a TaskCompletionSource that allows control over the search task
             // for reliable testing.  Applies to other tests like this one.
@@ -1280,9 +1338,9 @@ namespace MudBlazor.UnitTests.Components
             // Arrange
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
-            autocompleteComponent.SetParam(x => x.ShowProgressIndicator, true);
-            autocompleteComponent.SetParam(x => x.Adornment, null);
-            autocompleteComponent.SetParam(x => x.Adornment, null);
+            await autocompleteComponent.SetParamAsync(x => x.ShowProgressIndicator, true);
+            await autocompleteComponent.SetParamAsync(x => x.Adornment, null);
+            await autocompleteComponent.SetParamAsync(x => x.Adornment, null);
 
             comp.Markup.Should().NotContain("progress-indicator-circular");
             autocompleteComponent.Find("input").Input("Calif");
@@ -1298,14 +1356,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_IndicateLoadingWithCircularProgressIndicatorAndAdornmentAdjustment()
+        public async Task Autocomplete_Should_IndicateLoadingWithCircularProgressIndicatorAndAdornmentAdjustment()
         {
             // Arrange
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
-            autocompleteComponent.SetParam(x => x.ShowProgressIndicator, true);
-            autocompleteComponent.SetParam(x => x.AdornmentIcon, Icons.Material.Filled.Info);
-            autocompleteComponent.SetParam(x => x.Adornment, Adornment.End);
+            await autocompleteComponent.SetParamAsync(x => x.ShowProgressIndicator, true);
+            await autocompleteComponent.SetParamAsync(x => x.AdornmentIcon, Icons.Material.Filled.Info);
+            await autocompleteComponent.SetParamAsync(x => x.Adornment, Adornment.End);
 
             comp.Markup.Should().NotContain("progress-indicator-circular");
             autocompleteComponent.Find("input").Input("Calif");
@@ -1323,7 +1381,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_IndicateLoadingWithCustomProgressIndicator()
+        public async Task Autocomplete_Should_IndicateLoadingWithCustomProgressIndicator()
         {
             // Arrange
             RenderFragment fragment = builder =>
@@ -1334,8 +1392,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
 
-            autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
-            autocompletecomp.SetParam(p => p.ProgressIndicatorTemplate, fragment);
+            await autocompletecomp.SetParamAsync(x => x.ShowProgressIndicator, true);
+            await autocompletecomp.SetParamAsync(p => p.ProgressIndicatorTemplate, fragment);
 
             comp.Markup.Should().NotContain("Loading...");
             autocompletecomp.Find("input").Input("Calif");
@@ -1350,7 +1408,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_IndicateLoadingWithProgressIndicatorInsidePopover()
+        public async Task Autocomplete_Should_IndicateLoadingWithProgressIndicatorInsidePopover()
         {
             // Arrange
             RenderFragment fragment = builder =>
@@ -1361,8 +1419,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
 
-            autocompleteComponent.SetParam(x => x.ShowProgressIndicator, true);
-            autocompleteComponent.SetParam(p => p.ProgressIndicatorInPopoverTemplate, fragment);
+            await autocompleteComponent.SetParamAsync(x => x.ShowProgressIndicator, true);
+            await autocompleteComponent.SetParamAsync(p => p.ProgressIndicatorInPopoverTemplate, fragment);
 
             comp.Markup.Should().NotContain("Loading...");
             autocompleteComponent.Find("input").Input("Calif");
@@ -1388,7 +1446,7 @@ namespace MudBlazor.UnitTests.Components
 
             var first = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompleteComponent.SetParam(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
+            await autocompleteComponent.SetParamAsync(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
                 cancelToken = cancellationToken;
                 // Return task that never completes.
@@ -1407,7 +1465,7 @@ namespace MudBlazor.UnitTests.Components
 
             var second = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompleteComponent.SetParam(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
+            await autocompleteComponent.SetParamAsync(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
                 return second.Task;
             }));
@@ -1428,7 +1486,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_FullWidth()
+        public async Task Autocomplete_FullWidth()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComp = comp.FindComponent<MudAutocomplete<string>>();
@@ -1436,14 +1494,14 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
             autocompleteComp.Find("div.mud-select").ClassList.Should().NotContain("mud-width-full");
 
-            autocompleteComp.SetParam(p => p.FullWidth, true);
+            await autocompleteComp.SetParamAsync(p => p.FullWidth, true);
 
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
         }
 
         [Test]
-        public void Autocomplete_Should_HaveValueWithTextChangedEvent()
+        public async Task Autocomplete_Should_HaveValueWithTextChangedEvent()
         {
             // Arrange
             var comp = Context.RenderComponent<AutocompleteTest1>();
@@ -1458,7 +1516,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
             // enter a text so the TextChanged event will fire
-            autocompleteComponent.SetParam(a => a.Text, testText);
+            await autocompleteComponent.SetParamAsync(a => a.Text, testText);
 
             // Assert
             autocompleteComponent.WaitForAssertion(() => eventText.Should().Be(testText));
@@ -1522,7 +1580,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
 
-            autocompleteComponent.SetParam(p => p.SearchFunc, null);
+            await autocompleteComponent.SetParamAsync(p => p.SearchFunc, null);
 
             comp.Find("input").Input("Foo");
 
@@ -1532,7 +1590,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_Raise_KeyDown_KeyUp_Event()
+        public async Task Autocomplete_Should_Raise_KeyDown_KeyUp_Event()
         {
             //Create comp
             var comp = Context.RenderComponent<AutocompleteTest1>();
@@ -1544,8 +1602,8 @@ namespace MudBlazor.UnitTests.Components
             //set eventCallback
             //SetCallback also possible
             //autocompletecomp.SetCallback(p => p.OnKeyDown, (KeyboardEventArgs e ) => result.Add("keyevent thrown"));
-            autocompleteComponent.SetParam(p => p.OnKeyDown, customEvent);
-            autocompleteComponent.SetParam(p => p.OnKeyUp, customEvent);
+            await autocompleteComponent.SetParamAsync(p => p.OnKeyDown, customEvent);
+            await autocompleteComponent.SetParamAsync(p => p.OnKeyUp, customEvent);
 
             result.Should().BeEmpty();
             //Act
@@ -1682,13 +1740,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_ApplyListItemClass()
+        public async Task Autocomplete_Should_ApplyListItemClass()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var listItemClassTest = "list-item-class-test";
 
-            autocompleteComponent.SetParam(a => a.ListItemClass, listItemClassTest);
+            await autocompleteComponent.SetParamAsync(a => a.ListItemClass, listItemClassTest);
             comp.Find("div.mud-input-control").Focus();
 
             comp.WaitForAssertion(() => comp.Find("div.mud-list-item").ClassList.Should().Contain(listItemClassTest));
@@ -1697,10 +1755,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void Autocomplete_Should_OpenMenuOnFocus(bool openOnFocus)
+        public async Task Autocomplete_Should_OpenMenuOnFocus(bool openOnFocus)
         {
             var comp = Context.RenderComponent<AutocompleteFocusTest>();
-            comp.SetParam(a => a.OpenOnFocus, openOnFocus);
+            await comp.SetParamAsync(a => a.OpenOnFocus, openOnFocus);
 
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
@@ -1717,10 +1775,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_Should_OpenMenuOnFocus_AlwaysOnClick()
+        public async Task Autocomplete_Should_OpenMenuOnFocus_AlwaysOnClick()
         {
             var comp = Context.RenderComponent<AutocompleteFocusTest>();
-            comp.SetParam(a => a.OpenOnFocus, false);
+            await comp.SetParamAsync(a => a.OpenOnFocus, false);
 
             comp.Find("div.mud-input-control").Focus(); // Browser would focus first.
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -1732,7 +1790,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
+        public async Task Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
         {
             Task<IEnumerable<string>> Search(string value, CancellationToken token)
             {
@@ -1741,7 +1799,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
-            comp.SetParametersAndRender(p => p
+            await comp.SetParametersAndRenderAsync(p => p
                 .Add(x => x.Value, "nothing will ever match this")
                 .Add(x => x.SearchFunc, Search)
                 .Add(x => x.DebounceInterval, 0));
@@ -1842,14 +1900,14 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required Autocomplete attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredAutocompleteAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredAutocompleteAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
@@ -1983,7 +2041,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, false)]
         // with user helper id and helper text, should always favour user helper id
         [TestCase(true, true)]
-        public void Should_pass_various_aria_describedby_tests(
+        public async Task Should_pass_various_aria_describedby_tests(
             bool withUserHelperId,
             bool withHelperText)
         {
@@ -2023,7 +2081,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
             }
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Error, true));
             var secondExpectedAriaDescribedBy = withUserHelperId ? $"{errorId} {helperId}" : errorId;
 
@@ -2174,6 +2232,85 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Focus();
 
             comp.WaitForAssertion(() => comp.Instance.Open.Should().Be(openOnFocus, $"OpenOnFocus should set Open to {openOnFocus} after input Focus"));
+        }
+
+        [Test]
+        public void Autocomplete_OpenTwiceInMenu()
+        {
+            var comp = Context.RenderComponent<AutocompleteMenuCloseTest>();
+            // Open the menu
+            comp.Find("#menu-open").Click();
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Menu should be open");
+                // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("1302", "Overlay should be present with 1302 as z-index");
+            });
+
+
+            // Focus on the autocomplete, which opens the autocomplete popover
+            comp.Find(".autocomplete input").Focus();
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Both menu & autocomplete should be open");
+                // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1303");
+            });
+
+
+            // Click on the backdrop, closes the autocomplete
+            comp.Find(".mud-overlay").Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Only menu should be open"));
+            // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1302");
+
+            // Click the autocomplete again, this will actually work even before the fix but clicking in this spot is will close the menu before fix.
+            comp.Find(".autocomplete input").Focus();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Both menu & autocomplete should be opened again"));
+            // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1303");
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_OpenMenuAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            comp.Instance.OpenedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_CloseMenuAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+            comp.Instance.ClosedCount.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_OpenClose()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_SelectOptionAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.SelectOptionAsync("Alabama"));
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_HandleClearButtonAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteHandleClearButtonAsyncTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
         }
     }
 }

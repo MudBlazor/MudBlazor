@@ -321,15 +321,31 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.IsProfessionGrouped.Should().Be(false);
             comp.Instance.IsNameGrouped.Should().Be(false);
 
-            //click age grouping in grid
             var headerOption = comp.Find("th.age .mud-menu button");
             headerOption.Click();
+
+            comp.WaitForAssertion(() =>
+            {
+                var items = popoverProvider.FindComponents<MudMenuItem>();
+                items.Count.Should().BeGreaterThan(0);
+            });
+
             var listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
+            var expectedMenuTexts = new[] { "Unsort", "Group" };
+
+            listItems.Count.Should().Be(expectedMenuTexts.Length);
+
+            for (int i = 0; i < listItems.Count; i++)
+            {
+                var itemText = listItems[i].Find(".mud-menu-item-text").TextContent.Trim();
+                itemText.Should().Be(expectedMenuTexts[i]);
+            }
+
             var clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsAgeGrouped.Should().Be(true);
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+            var rowCount = Rows().Count;
+            rowCount.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
             ungroup.Click();
             comp.Instance.IsAgeGrouped.Should().Be(false);
@@ -573,7 +589,7 @@ namespace MudBlazor.UnitTests.Components
             // by default has a groupdefinition
             dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
             // turn off grouping for the whole grid
-            dataGrid.SetParam(x => x.Groupable, false);
+            await dataGrid.SetParamAsync(x => x.Groupable, false);
             dataGrid.Render();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
 
@@ -620,7 +636,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_IsGrouping()
+        public async Task DataGrid_IsGrouping()
         {
             // Tests the IsGrouping property of MudDataGrid to ensure it handles a change properly
             // and ensures the correct UI is rendered for column options
@@ -638,7 +654,7 @@ namespace MudBlazor.UnitTests.Components
             var overlay = provider.Find(".mud-overlay");
             overlay.Click(); // close the menu
 
-            comp.SetParametersAndRender(x => x.Add(x => x.Groupable, false));
+            await comp.SetParametersAndRenderAsync(x => x.Add(x => x.Groupable, false));
             // no change in grid rows since Grouping did not change
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
 
@@ -677,6 +693,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public async Task DataGridGroupingTemplateSetAtGridLevel()
         {
             var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
@@ -689,7 +706,7 @@ namespace MudBlazor.UnitTests.Components
             groupingTemplateSwitch.Find("input").Change(true);
             dataGrid.Render();
 
-            //current grouping should use the defined template  
+            //current grouping should use the defined template
             var groupRow = component.FindComponent<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>().Find(".mud-datagrid-group");
             var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Manufacturing1states");

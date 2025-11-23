@@ -26,13 +26,13 @@ public partial class MudGrid : MudComponentBase
     /// The gap between items, measured in increments of <c>4px</c>.
     /// </summary>
     /// <remarks>
-    /// <para>Defaults to 6 in <see cref="MudGlobal.GridDefaults.Spacing"/>.</para>
+    /// <para>Defaults to 6.</para>
     /// <para>Maximum is 20.</para>
     /// <para>The increment was halved in v7, so the default is now 6 instead of 3.</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Grid.Behavior)]
-    public int Spacing { set; get; } = MudGlobal.GridDefaults.Spacing;
+    public int Spacing { set; get; } = 6;
 
     /// <summary>
     /// Defines the distribution of children along the main axis within a <see cref="MudStack"/> component.

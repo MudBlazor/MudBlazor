@@ -1,0 +1,17 @@
+﻿<MudThemeProvider ObserveSystemDarkModeChange="@_observeSystemDarkModeChange" />
+
+@code {
+    private bool _observeSystemDarkModeChange;
+
+    public void EnableObserve()
+    {
+        _observeSystemDarkModeChange = true;
+        StateHasChanged();
+    }
+
+    public void DisableObserve()
+    {
+        _observeSystemDarkModeChange = false;
+        StateHasChanged();
+    }
+}

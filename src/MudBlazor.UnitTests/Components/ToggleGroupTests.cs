@@ -245,7 +245,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(SelectionMode.SingleSelection, "b")]
         [TestCase(SelectionMode.MultiSelection, "b")]
         [TestCase(SelectionMode.ToggleSelection, "b")]
-        public void ToggleGroup_SetSelectedFromValuesTest(SelectionMode selMode, string selectedValues)
+        public async Task ToggleGroup_SetSelectedFromValuesTest(SelectionMode selMode, string selectedValues)
         {
             // Arrange
             var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
@@ -261,11 +261,11 @@ namespace MudBlazor.UnitTests.Components
             // Act
             if (selMode == SelectionMode.MultiSelection)
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, [selectedValues]));
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Values, [selectedValues]));
             }
             else
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Value, selectedValues));
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, selectedValues));
             }
 
             // Assert
@@ -329,7 +329,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(SelectionMode.SingleSelection, "b")]
         [TestCase(SelectionMode.MultiSelection, "b")]
         [TestCase(SelectionMode.ToggleSelection, "b")]
-        public void ToggleGroup_SetSelectedFromValuesTest_WithAsyncItems(SelectionMode selMode, string selectedValues)
+        public async Task ToggleGroup_SetSelectedFromValuesTest_WithAsyncItems(SelectionMode selMode, string selectedValues)
         {
             // Arrange
             var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
@@ -347,11 +347,11 @@ namespace MudBlazor.UnitTests.Components
             // Act
             if (selMode == SelectionMode.MultiSelection)
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, [selectedValues]));
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Values, [selectedValues]));
             }
             else
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Value, selectedValues));
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, selectedValues));
             }
 
             // Assert
@@ -403,7 +403,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_VerticalTest()
+        public async Task ToggleGroup_VerticalTest()
         {
             // Arrange & Act
             var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
@@ -418,7 +418,7 @@ namespace MudBlazor.UnitTests.Components
             group.ClassList.Should().NotContain("mud-toggle-group-horizontal");
 
             // Act - set to false
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Vertical, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Vertical, false));
 
             // Assert
             group = comp.Find(".mud-toggle-group");
@@ -427,7 +427,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_FixedContentTest()
+        public async Task ToggleGroup_FixedContentTest()
         {
             // Arrange & Act
             var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
@@ -440,14 +440,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-toggle-item").ClassList.Should().Contain("mud-toggle-item-fixed");
 
             // Act - disable fixed content
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FixedContent, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FixedContent, false));
 
             // Assert
             comp.Find(".mud-toggle-item").ClassList.Should().NotContain("mud-toggle-item-fixed");
         }
 
         [Test]
-        public void ToggleGroup_MultipleSelectionTest()
+        public async Task ToggleGroup_MultipleSelectionTest()
         {
             // Arrange
             var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
@@ -461,7 +461,7 @@ namespace MudBlazor.UnitTests.Components
             var items = toggleGroup.GetItems().ToList();
 
             // Act - select multiple items
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, ["a", "c"]));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Values, ["a", "c"]));
 
             // Assert
             // Verify correct items are selected
@@ -480,7 +480,7 @@ namespace MudBlazor.UnitTests.Components
             toggleGroup.Value.Should().BeNull();
 
             // Act - deselect an item
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, ["a"]));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Values, ["a"]));
 
             // Assert
             items.First(x => x.Value == "a").Selected.Should().BeTrue();

@@ -5,10 +5,10 @@
 namespace MudBlazor.Docs.Models
 {
     /// <summary>
-    /// The content for the team page
+    /// The content for the team page.
     /// </summary>
     /// <remarks>
-    /// Data is taken from GitHub and updated manually. In the future this could be automated.
+    /// Data is copied from GitHub manually. In the future this could be automated as a build step.
     /// </remarks>
     public class TeamMemberData
     {
@@ -19,6 +19,7 @@ namespace MudBlazor.Docs.Models
                 Name = "Jonny Larsson (Creator)",
                 From = "Örebro, Sweden",
                 GitHub = "Garderoben",
+                GitHubSponsor = true,
                 LinkedIn = "https://www.linkedin.com/in/jonny-larsson-b72480161/",
                 Bio = "DevOps Engineer.\r\nRecently been doing more developing in free time and for in house applications for my company to automate processes.",
             },
@@ -27,6 +28,7 @@ namespace MudBlazor.Docs.Models
                 Name = "Meinrad Recheis (Co-Creator)",
                 From = "Vienna, Austria",
                 GitHub = "henon",
+                GitHubSponsor = true,
                 LinkedIn = "https://www.linkedin.com/in/meinrad-recheis-6a9885171/",
                 Bio = "Entrepreneur and Open Source contributor. Co-founder of MudBlazor. Creator of Numpy.NET and Python.Included. ",
             },
@@ -85,7 +87,7 @@ namespace MudBlazor.Docs.Models
                 From = "Texas, United States",
                 GitHub = "danielchalmers",
                 LinkedIn = "https://www.linkedin.com/in/daniel-c-5799252b1",
-                Bio = "Full stack engineer specializing in .NET, Blazor, CSS, WPF. Building accessible apps with a focus on modern UI/UX",
+                Bio = "Full Stack Engineer | AI, .NET, Blazor, WPF",
             },
         ];
 

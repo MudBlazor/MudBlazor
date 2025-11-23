@@ -25,6 +25,7 @@ namespace MudBlazor
         private int _returnedItemsCount;
         private bool _open;
         private bool _opening;
+        private bool _isValueCoerced;
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
@@ -547,13 +548,14 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
-                // needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
-                Open = false;
+                // #1 needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
+                // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
+                _open = false;
 
                 await SetValueAsync(value);
 
                 // needs to be open to run the rest of the code
-                Open = true;
+                _open = true;
 
                 if (_items != null)
                     _selectedListItemIndex = Array.IndexOf(_items, value);
@@ -676,10 +678,10 @@ namespace MudBlazor
         {
             CancelToken();
             _debounceTimer?.Dispose();
+            Open = false; // Before restoring position and triggering changes, make sure that we close the popover
+            StateHasChanged();
             await RestoreScrollPositionAsync();
             await CoerceTextToValueAsync();
-            Open = false;
-            StateHasChanged();
         }
 
         /// <summary>
@@ -710,7 +712,7 @@ namespace MudBlazor
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
-                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
+                searchingWhileSelected = !_isValueCoerced && !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
                 _cancellationTokenSrc ??= new CancellationTokenSource();
                 var searchText = searchingWhileSelected ? string.Empty : Text;
                 var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
@@ -799,6 +801,12 @@ namespace MudBlazor
             }
         }
 
+        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        {
+            _isValueCoerced = false;
+            return base.SetValueAsync(value, updateText, force);
+        }
+
         /// <summary>
         /// Resets the Text and Value, and closes the drop-down if it is open.
         /// </summary>
@@ -810,8 +818,8 @@ namespace MudBlazor
                 _isCleared = true;
                 Open = false;
 
-                await SetTextAsync("", updateValue: false);
-                await SetValueAsync(default(T), updateText: false);
+                await SetTextAsync(string.Empty, updateValue: false);
+                await SetValueAsync(default, updateText: false);
 
                 await _elementReference.ResetAsync();
 
@@ -1063,16 +1071,19 @@ namespace MudBlazor
         internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             // clear button clicked, let's make sure text is cleared and the menu has focus
-            Open = true;
+
+            // These lines prevent the menu from opening when OpenOnFocus is true, which is the default.
+            _debounceTimer?.Dispose();
+            if (_items?.Length > 0)
+                _items = [];
+            _open = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
-            await CloseMenuAsync();
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
         }
-
         internal async Task AdornmentClickHandlerAsync()
         {
             if (OnAdornmentClick.HasDelegate)
@@ -1083,6 +1094,8 @@ namespace MudBlazor
             else
             {
                 await ToggleMenuAsync();
+                if (Open)
+                    await FocusAsync();
             }
         }
 
@@ -1133,15 +1146,19 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private Task CoerceValueToTextAsync()
+        private async Task CoerceValueToTextAsync()
         {
             if (!CoerceValue)
-                return Task.CompletedTask;
+                return;
 
             _debounceTimer?.Dispose();
 
             var value = Converter.Get(Text);
-            return SetValueAsync(value, updateText: false);
+            await SetValueAsync(value, updateText: false);
+
+            // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
+            // CoerceValue is always true at this point, so we can set the value to true rather than checking the property again
+            _isValueCoerced = true;
         }
 
         /// <inheritdoc />

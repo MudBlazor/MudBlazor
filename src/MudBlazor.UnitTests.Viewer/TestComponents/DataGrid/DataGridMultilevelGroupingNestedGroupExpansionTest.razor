@@ -17,7 +17,7 @@
         new Model("B", "X"),
     };
 
-    private Task<GridData<Model>> ServerReload(GridState<Model> state)
+    private Task<GridData<Model>> ServerReload(GridState<Model> state, CancellationToken token)
     {
         return Task.FromResult(new GridData<Model>
         {

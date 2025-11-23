@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void WithFullWidth_WhenButtonWithFullWidthIsRemoved_ThenOtherButtonsAreStreched()
+        public async Task WithFullWidth_WhenButtonWithFullWidthIsRemoved_ThenOtherButtonsAreStreched()
         {
             // Arrange
 
@@ -65,7 +65,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            comp.SetParam(c => c.Button1Displayed, false);
+            await comp.SetParamAsync(c => c.Button1Displayed, false);
 
             // Assert
 

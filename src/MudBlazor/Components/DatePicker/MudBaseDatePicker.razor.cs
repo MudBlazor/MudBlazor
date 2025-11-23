@@ -181,7 +181,7 @@ namespace MudBlazor
         public int? MaxMonthColumns { get; set; }
 
         /// <summary>
-        /// The start month when opening the picker. 
+        /// The start month when opening the picker.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -271,7 +271,7 @@ namespace MudBlazor
         /// The year to use, which cannot be changed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -309,7 +309,7 @@ namespace MudBlazor
                 var a = Converter.Get(Text);
                 if (a.HasValue)
                 {
-                    a = new DateTime(a.Value.Year, a.Value.Month, 1);
+                    a = new DateTime(Culture.Calendar.GetYear(a.Value), Culture.Calendar.GetMonth(a.Value), 1, Culture.Calendar);
                     PickerMonth = a;
                 }
             }
@@ -332,9 +332,9 @@ namespace MudBlazor
         protected DateTime GetMonthStart(int month)
         {
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
-            var correctYear = FixYear ?? monthStartDate.Year;
-            var correctMonth = FixMonth ?? monthStartDate.Month;
-            monthStartDate = new DateTime(correctYear, correctMonth, monthStartDate.Day, 0, 0, 0, DateTimeKind.Utc);
+            var correctYear = FixYear ?? Culture.Calendar.GetYear(monthStartDate);
+            var correctMonth = FixMonth ?? Culture.Calendar.GetMonth(monthStartDate);
+            monthStartDate = new DateTime(correctYear, correctMonth, Culture.Calendar.GetDayOfMonth(monthStartDate), 0, 0, 0, 0, Culture.Calendar, DateTimeKind.Utc);
 
             // Return the min supported datetime of the calendar when this is year 1 and first month!
             if (_picker_month is { Year: 1, Month: 1 })
@@ -342,7 +342,9 @@ namespace MudBlazor
                 return Culture.Calendar.MinSupportedDateTime;
             }
 
-            if (_picker_month.HasValue && _picker_month.Value.Year == 9999 && _picker_month.Value.Month == 12 && month >= 1)
+            if (_picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 9999
+                && Culture.Calendar.GetMonth(_picker_month.Value) == Culture.Calendar.GetMonthsInYear(Culture.Calendar.GetYear(_picker_month.Value))
+                && month >= 1)
             {
                 return Culture.Calendar.MaxSupportedDateTime;
             }
@@ -366,7 +368,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets the n-th week of the currently displayed month. 
+        /// Gets the n-th week of the currently displayed month.
         /// </summary>
         /// <param name="month">offset from _picker_month</param>
         /// <param name="index">between 0 and 4</param>
@@ -416,6 +418,17 @@ namespace MudBlazor
                 _ => null,
             };
             return nextView;
+        }
+
+        protected virtual OpenTo? GetPreviousView()
+        {
+            OpenTo? previousView = CurrentView switch
+            {
+                OpenTo.Date => !FixMonth.HasValue ? OpenTo.Month : !FixYear.HasValue ? OpenTo.Year : null,
+                OpenTo.Month => !FixYear.HasValue ? OpenTo.Year : null,
+                _ => null,
+            };
+            return previousView;
         }
 
         protected virtual async Task SubmitAndCloseAsync()
@@ -500,7 +513,7 @@ namespace MudBlazor
             {
                 return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
             }
-            if (DateTime.DaysInMonth(month.Year, month.Month) < FixDay!.Value)
+            if (Culture.Calendar.GetDaysInMonth(Culture.Calendar.GetYear(month), Culture.Calendar.GetMonth(month)) < FixDay!.Value)
             {
                 return true;
             }
@@ -551,7 +564,7 @@ namespace MudBlazor
         private void OnPreviousMonthClick()
         {
             // It is impossible to go further into the past after the first year and the first month!
-            if (PickerMonth.HasValue && PickerMonth.Value.Year == 1 && PickerMonth.Value.Month == 1)
+            if (PickerMonth.HasValue && Culture.Calendar.GetYear(PickerMonth.Value) == 1 && Culture.Calendar.GetMonth(PickerMonth.Value) == 1)
             {
                 return;
             }
@@ -597,27 +610,28 @@ namespace MudBlazor
         /// <summary>
         /// Is set to true to scroll to the actual year after the next render
         /// </summary>
-        private bool _scrollToYearAfterRender = false;
+        protected bool _scrollToYearAfterRender = false;
 
         /// <summary>
         /// Scrolls to the current year.
         /// </summary>
-        public async void ScrollToYear()
+        public async Task ScrollToYearAsync(DateTime? date = null)
         {
             _scrollToYearAfterRender = false;
-            var id = $"{_componentId}{Culture.Calendar.GetYear(GetMonthStart(0))}";
+            var dateTime = date ?? GetMonthStart(0);
+            var id = $"{_componentId}{Culture.Calendar.GetYear(dateTime)}";
             await ScrollManager.ScrollToYearAsync(id);
             StateHasChanged();
         }
 
-        private int GetMinYear()
+        protected int GetMinYear()
         {
             if (MinDate.HasValue)
                 return Culture.Calendar.GetYear(MinDate.Value);
             return Culture.Calendar.GetYear(DateTime.Today) - 100;
         }
 
-        private int GetMaxYear()
+        protected int GetMaxYear()
         {
             if (MaxDate.HasValue)
                 return Culture.Calendar.GetYear(MaxDate.Value);
@@ -713,11 +727,11 @@ namespace MudBlazor
 
             var today = TimeProvider.GetLocalNow().Date;
 
-            var year = FixYear ?? today.Year;
-            var month = FixMonth ?? (year == today.Year ? today.Month : 1);
+            var year = FixYear ?? Culture.Calendar.GetYear(today);
+            var month = FixMonth ?? (year == Culture.Calendar.GetYear(today) ? Culture.Calendar.GetMonth(today) : 1);
             var day = FixDay ?? 1;
 
-            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", Culture, DateTimeStyles.None, out var date))
             {
                 HighlightedDate = date;
             }
@@ -734,12 +748,12 @@ namespace MudBlazor
 
             if (firstRender && CurrentView == OpenTo.Year)
             {
-                ScrollToYear();
+                ScrollToYearAsync().CatchAndLog();
                 return;
             }
 
             if (_scrollToYearAfterRender)
-                ScrollToYear();
+                ScrollToYearAsync().CatchAndLog();
         }
 
         protected abstract DateTime GetCalendarStartOfMonth();

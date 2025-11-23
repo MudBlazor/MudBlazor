@@ -377,6 +377,7 @@ namespace MudBlazor.Services
                     snackBarConfiguration.SuccessIcon = options.SnackbarConfiguration.SuccessIcon;
                     snackBarConfiguration.WarningIcon = options.SnackbarConfiguration.WarningIcon;
                     snackBarConfiguration.ErrorIcon = options.SnackbarConfiguration.ErrorIcon;
+                    snackBarConfiguration.HideIcon = options.SnackbarConfiguration.HideIcon;
                 })
                 .AddMudBlazorResizeListener(resizeOptions =>
                 {
@@ -409,6 +410,7 @@ namespace MudBlazor.Services
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                     popoverOptions.Mode = options.PopoverOptions.Mode;
+                    popoverOptions.OverflowPadding = options.PopoverOptions.OverflowPadding;
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
