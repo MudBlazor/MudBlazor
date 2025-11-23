@@ -8,9 +8,9 @@ namespace MudBlazor
     /// Represents the footer of a <see cref="MudChat"/>.
     /// </summary>
     /// <remarks>
-    /// This component is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/
+    /// This component has moved to https://github.com/MudXtra/MudX and will be removed in v10
     /// </remarks>
-    [Obsolete("MudChatFooter is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/")]
+    [Obsolete("MudChatFooter has moved to https://github.com/MudXtra/MudX and will be removed in v10")]
     public partial class MudChatFooter : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-chat-footer")

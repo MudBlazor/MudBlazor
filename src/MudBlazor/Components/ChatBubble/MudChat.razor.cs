@@ -12,9 +12,9 @@ namespace MudBlazor
     /// Represents a chat component for displaying chat bubbles.
     /// </summary>
     /// <remarks>
-    /// This component is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/
+    /// This component has moved to https://github.com/MudXtra/MudX and will be removed in v10
     /// </remarks>
-    [Obsolete("MudChat is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/")]
+    [Obsolete("MudChat has moved to https://github.com/MudXtra/MudX and will be removed in v10")]
     public partial class MudChat : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-chat")

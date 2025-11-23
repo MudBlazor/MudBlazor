@@ -9,9 +9,9 @@ namespace MudBlazor
     /// Represents the content displayed within a <see cref="MudChat"/>.
     /// </summary>
     /// <remarks>
-    /// This component is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/
+    /// This component has moved to https://github.com/MudXtra/MudX and will be removed in v10
     /// </remarks>
-    [Obsolete("MudChatBubble is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/")]
+    [Obsolete("MudChatBubble has moved to https://github.com/MudXtra/MudX and will be removed in v10")]
     public partial class MudChatBubble : MudComponentBase
     {
         private Color GetBubbleColor => Color != null ? Color.Value : ParentColor;
