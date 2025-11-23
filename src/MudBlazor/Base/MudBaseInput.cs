@@ -732,6 +732,17 @@ namespace MudBlazor
             {
                 base.OnParametersSet();
             }
+            else
+            {
+                // MudBlazor uses an unconventional SubscribeToParentForm mechanism whose behavior is not fully understandable.
+                // Because of this, we must manually call OnParametersSet on the ParameterContainer to ensure ParameterState fields update correctly.
+                //
+                // Without this manual call, scenarios involving inherited components can fall out of sync. For example:
+                // - Component1 inherits a base component that defines a state parameter.
+                // - Component2 also inherits that same base component, wraps Component1, and forwards its base parameters to Component1.
+                // In this case, ParameterState will not remain properly synchronized since base.OnParametersSet is called conditionally.
+                ParameterContainer.OnParametersSet();
+            }
         }
 
         /// <inheritdoc />
