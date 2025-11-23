@@ -471,12 +471,9 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Square { get; set; }
 
         /// <summary>
         /// Shows an outline around this grid.
@@ -986,7 +983,7 @@ namespace MudBlazor
         /// The function accepts a <see cref="GridState{T}"/> with current sorting, filtering, and pagination parameters.  Then, return a <see cref="GridData{T}"/> with a page of values, and the total (unpaginated) items set in <see cref="GridData{T}.TotalItems"/>.  When set, the <see cref="Items"/> property cannot be set.
         /// </remarks>
         [Parameter]
-        public Func<GridState<T>, Task<GridData<T>>> ServerData { get; set; }
+        public Func<GridState<T>, CancellationToken, Task<GridData<T>>> ServerData { get; set; }
 
         /// <summary>
         /// The function which gets data for this grid.
@@ -1501,7 +1498,10 @@ namespace MudBlazor
                     FilterDefinitions = FilterDefinitions.ToList()
                 };
 
-                _serverData = await ServerData(state);
+                // Cancel any prior request
+                CancelServerDataToken();
+
+                _serverData = await ServerData(state, _serverDataCancellationTokenSource.Token);
                 _currentRenderFilteredItemsCache = null;
 
                 if (CurrentPage * RowsPerPage > _serverData.TotalItems)
@@ -1570,6 +1570,7 @@ namespace MudBlazor
             try
             {
                 _serverDataCancellationTokenSource?.Cancel();
+                _serverDataCancellationTokenSource?.Dispose();
             }
             catch { /*ignored*/ }
             finally

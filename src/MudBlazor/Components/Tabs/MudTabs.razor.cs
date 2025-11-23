@@ -99,14 +99,11 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// Shows a border between the tab content and tab header.

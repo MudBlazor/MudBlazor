@@ -3,13 +3,13 @@
 @page "/components/sankey"
 
 <DocsPage>
-    <DocsPageHeader Title="Sankey Chart" Component="@nameof(MudBlazor.Charts.Sankey)" />
+    <DocsPageHeader Title="Sankey Chart" Component="@nameof(MudBlazor.Charts.Sankey<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic Usage">
                 <Description>
-                    To get a Sankey Chart use <CodeInline>ChartType="ChartType.Sankey"</CodeInline> to render the configured <CodeInline>Nodes</CodeInline> and <CodeInline>Edges</CodeInline>.
+                    To get a Sankey Chart use <CodeInline>ChartType="ChartType.Sankey"</CodeInline> to render the configured <CodeInline>ChartSeries</CodeInline> as <CodeInline>Nodes</CodeInline> and <CodeInline>Edges</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(SankeyExample1)">
@@ -19,8 +19,7 @@
         
         <DocsPageSection>
             <SectionHeader Title="Customization">
-                <Description>The Sankey Chart can be further customised using <CodeInline>ChartOptions</CodeInline>, <CodeInline>NodeChartOptions</CodeInline> or the options within the 
-                    <CodeInline>SankeyChartNode</CodeInline> class.</Description>
+                <Description>The Sankey Chart can be further customised using <CodeInline>SankeyChartOptions</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(SankeyExample2)">
                 <SankeyExample2 />

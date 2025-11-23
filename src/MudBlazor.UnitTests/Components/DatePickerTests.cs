@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -275,7 +276,7 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(null);
             await comp.SetParamAsync(p => p.Text, "INVALID_DATE");
 
-            picker.Error.Should().BeTrue();
+            picker.GetState(x => x.Error).Should().BeTrue();
         }
 
         [Test]

@@ -248,7 +248,7 @@ namespace MudBlazor
 
             await NotifyValueChangedAsync(value);
 
-            if (!Error || !SuppressOnChangeWhenInvalid)
+            if (!ErrorState.Value || !SuppressOnChangeWhenInvalid)
                 await OnFilesChanged.InvokeAsync(args);
         }
 
@@ -317,7 +317,7 @@ namespace MudBlazor
             await base.ValidateValue();
 
             ValidationErrors = [.. ValidationErrors, .. _validationErrors];
-            Error = ValidationErrors.Count > 0;
+            await ErrorState.SetValueAsync(ValidationErrors.Count > 0);
             await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
         }
 

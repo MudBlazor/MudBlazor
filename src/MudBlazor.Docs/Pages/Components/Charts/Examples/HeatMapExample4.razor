@@ -42,8 +42,8 @@
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="10">
-        <MudChart ChartType="ChartType.HeatMap" ChartSeries="@_series" Height="400px" Width="100%"
-                  XAxisLabels="@_xAxisLabels" ChartOptions="@_options" LegendPosition="_showLegendPosition">
+        <MudChart T="double" ChartType="ChartType.HeatMap" ChartSeries="@_series" Height="400px" Width="100%"
+                  ChartLabels="@_xAxisLabels" ChartOptions="@_options" LegendPosition="_showLegendPosition">
             <MudHeatMapCell Row="0" Column="0">
                 <!-- Font Icons act differently and should resize dynamically without specifying width/height -->
                 <MudIcon Icon="material-symbols-outlined/database" Color="Color.Primary" />
@@ -125,8 +125,8 @@
 </MudGrid>
 
 @code {
-    private ChartOptions _options = new();
-    private List<ChartSeries> _series = [];
+    private HeatMapChartOptions _options = new();
+    private List<ChartSeries<double>> _series = [];
     private XAxisLabelPosition _xAxisLabelPosition = XAxisLabelPosition.Bottom;
     private YAxisLabelPosition _yAxisLabelPosition = YAxisLabelPosition.Left;
     private bool _enableGradient = false;
@@ -138,15 +138,15 @@
     private Origin _anchorOrigin = Origin.BottomCenter;
     private int _colorCount = 5;
     private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF", "#FFCC00", "#e03131"];
-    private readonly List<ChartSeries> _heatMapSeries =
-    [
-        new() { Name = "Mo", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
-        new() { Name = "Te", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
-        new() { Name = "We", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] },
-        new() { Name = "Th", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
-        new() { Name = "Fr", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] },
-        new() { Name = "Sa", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
-        new() { Name = "Su", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] }
+    private readonly List<ChartSeries<double>> _heatMapSeries =
+        [
+        new() { Name = "Mo", Data = new([90, 79, 72, 69, 62, 62, 55, 65, 70]) },
+        new() { Name = "Te", Data = new([35, 41, 35, 51, 49, 62, 69, 91, 148]) },
+        new() { Name = "We", Data = new([22, 90, 62, 32, 05, 42, 63, 43, 155]) },
+        new() { Name = "Th", Data = new([35, 41, 35, 51, 49, 62, 69, 91, 148]) },
+        new() { Name = "Fr", Data = new([22, 90, 62, 32, 05, 42, 63, 43, 155]) },
+        new() { Name = "Sa", Data = new([35, 41, 35, 51, 49, 62, 69, 91, 148]) },
+        new() { Name = "Su", Data = new([22, 90, 62, 32, 05, 42, 63, 43, 155]) }
     ];
     private string[] _xAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 
@@ -173,7 +173,7 @@
 
     private void BuildOptions()
     {
-        _options = new ChartOptions
+        _options = new HeatMapChartOptions
         {
             XAxisLabelPosition = _xAxisLabelPosition,
             YAxisLabelPosition = _yAxisLabelPosition,
@@ -181,14 +181,15 @@
             ChartPalette = _colors.Take(_colorCount).ToArray(),
             ShowLabels = _showValueLabels,
             ShowLegend = _legendVisible,
-            ShowLegendLabels = _showLegendValues
+            ShowLegendLabels = _showLegendValues,
+            ShowToolTips = _showValueToolTips,
         };
         StateHasChanged();
     }
 
     private void RandomizeData()
     {
-        var newSeries = new List<ChartSeries>();
+        var newSeries = new List<ChartSeries<double>>();
         string[] days = ["Mo", "Te", "We", "Th", "Fr", "Sa", "Su"];
         const int DataPoints = 9;
 
@@ -199,7 +200,7 @@
             {
                 data[i] = Random.Shared.NextDouble() * 100;
             }
-            newSeries.Add(new ChartSeries { Name = day, Data = data });
+            newSeries.Add(new() { Name = day, Data = data });
         }
 
         _series = newSeries;
