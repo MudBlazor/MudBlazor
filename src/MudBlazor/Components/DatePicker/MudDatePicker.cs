@@ -343,23 +343,7 @@ namespace MudBlazor
                                 MoveToPreviousYear();
                                 break;
                             case OpenTo.Month:
-                                if (FixMonth != null)
-                                    break;
-                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
-                                var newMonth = currentMonth.AddMonths(-3);
-                                // move to last row months of current year when we overflow to previous year
-                                if (currentMonth.Year != newMonth.Year)
-                                {
-                                    var daysInMonth =
-                                        GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                                    var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
-                                    newMonth = new DateTime(currentMonth.Year,
-                                        monthsInYear - (3 - currentMonth.Month),
-                                        Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                                        GetCulture().Calendar);
-                                }
-
-                                HighlightedDate = _selectedDate = newMonth;
+                                MoveToPreviousMonth(3);
                                 break;
                             case OpenTo.Date:
                                 var currentDay = HighlightedDate ?? GetMonthStart(0);
@@ -394,23 +378,7 @@ namespace MudBlazor
                                 MoveToNextYear();
                                 break;
                             case OpenTo.Month:
-                                if (FixMonth != null)
-                                    break;
-                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
-                                var newMonth = currentMonth.AddMonths(3);
-                                // move to first row of months of current year when we overflow to previous year
-                                if (currentMonth.Year != newMonth.Year)
-                                {
-                                    var daysInMonth =
-                                        GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                                    var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
-                                    newMonth = new DateTime(currentMonth.Year,
-                                        3 - (monthsInYear - currentMonth.Month),
-                                        Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                                        GetCulture().Calendar);
-                                }
-
-                                HighlightedDate = _selectedDate = newMonth;
+                                MoveToNextMonth(3);
                                 break;
                             case OpenTo.Date:
                                 var currentDay = HighlightedDate ?? GetMonthStart(0);
@@ -506,19 +474,20 @@ namespace MudBlazor
             }
         }
 
-        private void MoveToNextMonth()
+        private void MoveToNextMonth(int numberOfMonths = 1)
         {
             if (FixMonth != null)
                 return;
             var currentMonth = HighlightedDate ?? GetMonthStart(0);
-            var newMonth = currentMonth.AddMonths(1);
+            var newMonth = currentMonth.AddMonths(numberOfMonths);
             // move to first month of current year when we overflow to next year
             if (newMonth.Year != currentMonth.Year)
             {
                 var daysInMonth =
-                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                    Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                var monthsInYear = Culture.Calendar.GetMonthsInYear(currentMonth.Year);
                 newMonth = new DateTime(currentMonth.Year,
-                    1,
+                    numberOfMonths - (monthsInYear - currentMonth.Month),
                     Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
                     GetCulture().Calendar);
             }
@@ -526,19 +495,21 @@ namespace MudBlazor
             HighlightedDate = _selectedDate = newMonth;
         }
 
-        private void MoveToPreviousMonth()
+        private void MoveToPreviousMonth(int numberOfMonths = 1)
+
         {
             if (FixMonth != null)
                 return;
             var currentMonth = HighlightedDate ?? GetMonthStart(0);
-            var newMonth = currentMonth.AddMonths(-1);
+            var newMonth = currentMonth.AddMonths(-numberOfMonths);
             // move to last month of current year when we overflow to previous year
             if (currentMonth.Year != newMonth.Year)
             {
                 var daysInMonth =
-                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                    Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                var monthsInYear = Culture.Calendar.GetMonthsInYear(currentMonth.Year);
                 newMonth = new DateTime(currentMonth.Year,
-                    GetCulture().Calendar.GetMonthsInYear(currentMonth.Year),
+                    monthsInYear - (numberOfMonths - currentMonth.Month),
                     Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
                     GetCulture().Calendar);
             }
