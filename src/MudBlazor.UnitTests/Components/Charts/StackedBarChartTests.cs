@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Dynamic_AddSeries_ShouldUpdateChart()
+        public async Task StackedBarChart_Dynamic_AddSeries_ShouldUpdateChart()
         {
             var initialSeries = new List<ChartSeries<double>>()
             {
@@ -162,7 +162,7 @@ namespace MudBlazor.UnitTests.Charts
             {
                 new () { Name = "Series 2", Data = new double[] { 15, 25 } }
             };
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartSeries, updatedSeries));
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(4); // 2 from Series 1 + 2 from Series 2
@@ -892,14 +892,14 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should()
                 .Contain("d=\"M 656 223.0714 L 656 184.6429\"");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
 
         [Test]
-        public void StackedBarChartColoring()
+        public async Task StackedBarChartColoring()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -940,7 +940,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"none\"") && p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(5 * 22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

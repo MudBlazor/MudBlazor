@@ -114,6 +114,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Icon Button", typeof(MudIconButton))
                 .AddItem("Toggle Icon Button", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
+                .AddItem("Button FAB Menu", typeof(MudFabMenu))
             )
 
             //Charts

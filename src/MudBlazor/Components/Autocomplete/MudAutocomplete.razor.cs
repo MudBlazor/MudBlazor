@@ -818,8 +818,8 @@ namespace MudBlazor
                 _isCleared = true;
                 Open = false;
 
-                await SetTextAsync("", updateValue: false);
-                await SetValueAsync(default(T), updateText: false);
+                await SetTextAsync(string.Empty, updateValue: false);
+                await SetValueAsync(default, updateText: false);
 
                 await _elementReference.ResetAsync();
 
@@ -1071,16 +1071,19 @@ namespace MudBlazor
         internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             // clear button clicked, let's make sure text is cleared and the menu has focus
-            Open = true;
+
+            // These lines prevent the menu from opening when OpenOnFocus is true, which is the default.
+            _debounceTimer?.Dispose();
+            if (_items?.Length > 0)
+                _items = [];
+            _open = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
-            await CloseMenuAsync();
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
         }
-
         internal async Task AdornmentClickHandlerAsync()
         {
             if (OnAdornmentClick.HasDelegate)

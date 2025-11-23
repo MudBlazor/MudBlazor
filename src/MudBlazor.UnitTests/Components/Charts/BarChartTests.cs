@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void BarChartExampleData()
+        public async Task BarChartExampleData()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -104,14 +104,14 @@ namespace MudBlazor.UnitTests.Charts
                     .Contain("d=\"M 569.5 270.8333 L 569.5 74.1667\"");
             }
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
 
         [Test]
-        public void BarChartExampleSingleXAxis()
+        public async Task BarChartExampleSingleXAxis()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -162,13 +162,13 @@ namespace MudBlazor.UnitTests.Charts
                     .Contain("d=\"M 569.2941 270.8333 L 569.2941 74.1667\"");
             }
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
 
         [Test]
-        public void BarChartColoring()
+        public async Task BarChartColoring()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -209,7 +209,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"{"#1E9AB0"}\"") && p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(5 * 22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

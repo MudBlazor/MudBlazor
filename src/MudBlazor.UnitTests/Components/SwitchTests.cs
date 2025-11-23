@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
-            comp.SetParam("Disabled", true);
+            await comp.SetParamAsync(x => x.Disabled, true);
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
         }
@@ -97,32 +97,6 @@ namespace MudBlazor.UnitTests.Components
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
 
-        [Test]
-        public void SwitchLabelTextSizeTest()
-        {
-            var comp = Context.RenderComponent<MudSwitchTest>();
-
-            comp.FindAll("label.mud-switch", true)[3].Children[1].ClassList.Should().Contain("mud-switch-label-medium"); //4th switch doesn't have size set, it should be at default values
-            comp.FindAll("label.mud-switch", true)[3].Children[0].ClassList.Should().Contain("mud-switch-span-medium");
-
-            comp.FindAll("label.mud-switch", true)[4].Children[1].ClassList.Should().Contain("mud-switch-label-small"); //5th switch is a small switch with corresponding label text size
-            comp.FindAll("label.mud-switch", true)[4].Children[0].ClassList.Should().Contain("mud-switch-span-small");
-
-            comp.FindAll("label.mud-switch", true)[5].Children[1].ClassList.Should().Contain("mud-switch-label-medium"); //6th switch is a medium switch with corresponding label text size
-            comp.FindAll("label.mud-switch", true)[5].Children[0].ClassList.Should().Contain("mud-switch-span-medium");
-
-            comp.FindAll("label.mud-switch", true)[6].Children[1].ClassList.Should().Contain("mud-switch-label-large"); //7th switch is a large switch with corresponding label text size
-            comp.FindAll("label.mud-switch", true)[6].Children[0].ClassList.Should().Contain("mud-switch-span-large");
-
-            comp.FindAll("label.mud-switch", true)[7].Children[1].ClassList.Should().Contain("mud-switch-label-small"); //8th switch is a small switch that changes to large when unchecked
-            comp.FindAll("label.mud-switch", true)[7].Children[0].ClassList.Should().Contain("mud-switch-span-small");
-
-            // 8th switch Size is tied to the Label_Switch2 bool, if it's false, it should become large
-            comp.FindAll("input")[7].Change(false);
-            comp.FindAll("label.mud-switch", true)[7].Children[1].ClassList.Should().Contain("mud-switch-label-large");
-            comp.FindAll("label.mud-switch", true)[7].Children[0].ClassList.Should().Contain("mud-switch-span-large");
-        }
-
         /// <summary>
         /// Optional Switch should not have required attribute should be false.
         /// </summary>
@@ -150,13 +124,13 @@ namespace MudBlazor.UnitTests.Components
         /// Required Switch attribute should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredSwitchAttribute_Should_BeDynamic()
+        public async Task RequiredSwitchAttribute_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();

@@ -51,7 +51,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
-        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
+        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</p>");
         // The "Classname" protected property should be visible
         comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"Classname\">");
     }
@@ -68,7 +68,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
-        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
+        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</p>");
         // The "Classname" protected property should NOT be visible
         comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"Classname\">");
     }
@@ -85,7 +85,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
-        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
+        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</p>");
         // The "BeginValidateAsync" protected method should be visible
         comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"BeginValidateAsync\">");
     }
@@ -102,7 +102,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
-        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
+        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</p>");
         // The "BeginValidateAsync" protected method should NOT be visible
         comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"BeginValidateAsync\">");
     }
@@ -119,7 +119,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should NOT be a message saying no members are found
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
-        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
+        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</p>");
         // The "CurrentView" protected field should be visible
         comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"CurrentView\">");
     }
@@ -136,7 +136,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should be a message saying no members are found  (since the protected field was the ONLY field)
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
         // There should be a switch for protected properties
-        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
+        comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</p>");
         // The "CurrentView" protected field should NOT be visible
         comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"CurrentView\">");
     }

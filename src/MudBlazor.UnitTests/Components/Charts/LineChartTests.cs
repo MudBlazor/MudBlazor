@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Charts
 
         [Theory]
         [TestCaseSource("GetInterpolationOptions")]
-        public void LineChartExampleData(InterpolationOption opt)
+        public async Task LineChartExampleData(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Charts
                 d.Should().Contain("M 30 127.1154 L 110 91.9423 L 190 98.75 L 270 80.5962 L 350 82.8654 L 430 68.1154 L 510 216.75 L 590 35.2115 L 670 306.3846");
             }
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.CanHideSeries, true)
                 .Add(p => p.ChartOptions, new LineChartOptions() { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
 
@@ -139,33 +139,40 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path expected to be visible");
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path expected to be hidden");
 
+
                 // Hide Series 1
-                comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+                await comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox hidden");
                 chartSeries[0].Visible.Should().BeFalse("Series 1 data Visible false");
+                
                 comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(0, "Series 1 path hidden");
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path still visible");
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path still hidden");
 
                 // Show Series 1 again
-                comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+                await comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox visible again");
                 chartSeries[0].Visible.Should().BeTrue("Series 1 data Visible true");
                 comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Series 1 path visible again");
 
                 // Show Series 3 (was initially hidden)
-                comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+                await comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+                
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox visible");
                 chartSeries[2].Visible.Should().BeTrue("Series 3 data Visible true");
+
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(1, "Series 3 path visible");
                 comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Series 1 path still visible (after Series 3 shown)");
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path still visible (after Series 3 shown)");
 
                 // Hide Series 3 again
-                comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+                await comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[2].IsChecked().Should().BeFalse("Series 3 checkbox hidden again");
                 chartSeries[2].Visible.Should().BeFalse("Series 3 data Visible false again");
@@ -180,7 +187,7 @@ namespace MudBlazor.UnitTests.Charts
 
         [Theory]
         [TestCaseSource("GetInterpolationOptions")]
-        public void LineChartExampleZeroValues(InterpolationOption opt)
+        public async Task LineChartExampleZeroValues(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -222,7 +229,7 @@ namespace MudBlazor.UnitTests.Charts
                     break;
             }
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
             comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
@@ -231,7 +238,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void LineChartColoring()
+        public async Task LineChartColoring()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -272,7 +279,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

@@ -768,7 +768,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DropZone_OnlyZone()
+        public async Task DropZone_OnlyZone()
         {
             var comp = Context.RenderComponent<DropzoneVisbilityTest>();
 
@@ -786,7 +786,7 @@ namespace MudBlazor.UnitTests.Components
             secondDropZone.Children[1].TextContent.Should().Be("Second Item");
             secondDropZone.Children[2].TextContent.Should().Be("Third Item");
 
-            comp.SetParametersAndRender(x => x.Add(p => p.HideItemsInFirstDropZone, false));
+            await comp.SetParametersAndRenderAsync(x => x.Add(p => p.HideItemsInFirstDropZone, false));
 
             container = comp.Find(".mud-drop-container");
             firstDropZone = container.Children[0];
