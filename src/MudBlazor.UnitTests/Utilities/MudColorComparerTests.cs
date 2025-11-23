@@ -59,7 +59,7 @@ public class MudColorComparerTests
 
     [Test]
     [TestCaseSource(nameof(AllComparers))]
-    public void Equals_ShouldReturnTrue_WhenBothNull(IEqualityComparer<MudColor> comparer)
+    public void Equals_ShouldReturnTrue_WhenBothNull(MudColor.MudColorComparer comparer)
     {
         // Arrange & Act
         var result = comparer.Equals(null, null);
@@ -70,7 +70,7 @@ public class MudColorComparerTests
 
     [Test]
     [TestCaseSource(nameof(AllComparers))]
-    public void Equals_ShouldReturnFalse_WhenOneNull(IEqualityComparer<MudColor> comparer)
+    public void Equals_ShouldReturnFalse_WhenOneNull(MudColor.MudColorComparer comparer)
     {
         // Arrange
         var color = new MudColor("#ff0000");
@@ -86,7 +86,7 @@ public class MudColorComparerTests
 
     [Test]
     [TestCaseSource(nameof(AllComparers))]
-    public void Equals_ShouldReturnTrue_WhenSameReference(IEqualityComparer<MudColor> comparer)
+    public void Equals_ShouldReturnTrue_WhenSameReference(MudColor.MudColorComparer comparer)
     {
         // Arrange
         var color = new MudColor("#ff0000");
@@ -136,6 +136,18 @@ public class MudColorComparerTests
         // Act
         var h1 = MudColor.MudColorComparer.Rgba.GetHashCode(color1);
         var h2 = MudColor.MudColorComparer.Rgba.GetHashCode(color2);
+
+        // Assert
+        h1.Should().Be(h2);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(AllComparers))]
+    public void GetHashCode_NullObject(MudColor.MudColorComparer comparer)
+    {
+        // Arrange & Act
+        var h1 = comparer.GetHashCode(null);
+        var h2 = comparer.GetHashCode(null);
 
         // Assert
         h1.Should().Be(h2);
@@ -317,7 +329,7 @@ public class MudColorComparerTests
         return comparer;
     }
 
-    private static IEnumerable<IEqualityComparer<MudColor>> AllComparers()
+    private static IEnumerable<MudColor.MudColorComparer> AllComparers()
     {
         yield return MudColor.MudColorComparer.Rgba;
         yield return MudColor.MudColorComparer.Hsl;

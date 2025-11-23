@@ -847,8 +847,13 @@ namespace MudBlazor.Utilities
             }
 
             /// <inheritdoc />
-            public int GetHashCode(MudColor mudColor)
+            public int GetHashCode(MudColor? mudColor)
             {
+                if (mudColor is null)
+                {
+                    return 0;
+                }
+
                 return Comparison switch
                 {
                     MudColorComparison.Rgba => mudColor._rgba.GetHashCode(),
