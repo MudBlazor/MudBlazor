@@ -653,5 +653,27 @@ namespace MudBlazor.UnitTests.Components
             // Assert - should use dark palette
             comp.Instance.GetState(x => x.CurrentPalette)!.Primary.Should().Be(new MudColor(Colors.Green.Default));
         }
+
+        [Test]
+        public async Task CurrentPalette_Binding_ShouldWorkInTestComponent()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<ThemeProviderCurrentPaletteTest>();
+
+            // Initial state - light mode
+            comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
+
+            // Act - toggle to dark mode
+            await comp.InvokeAsync(() => comp.Find("button").Click());
+
+            // Assert - should be dark palette
+            comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteDark>();
+
+            // Act - toggle back to light mode
+            await comp.InvokeAsync(() => comp.Find("button").Click());
+
+            // Assert - should be light palette again
+            comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
+        }
     }
 }

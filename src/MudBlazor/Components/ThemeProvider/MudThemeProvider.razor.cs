@@ -19,6 +19,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
     private bool _observing;
+    private bool _currentPaletteInitialized;
     private const string Palette = "mud-palette";
     private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
@@ -190,8 +191,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
 
         // Update CurrentPalette if theme changed or this is the first time
-        if (themeChanged || _currentPaletteState.Value is null)
+        if (themeChanged || !_currentPaletteInitialized)
         {
+            _currentPaletteInitialized = true;
             UpdateCurrentPalette();
         }
 
@@ -588,9 +590,15 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         await _currentPaletteState.SetValueAsync(GetCurrentPalette());
     }
 
+    /// <summary>
+    /// Updates the current palette based on the current dark mode setting.
+    /// Uses fire-and-forget pattern as this is called during synchronous lifecycle methods.
+    /// </summary>
     private void UpdateCurrentPalette()
     {
         var newPalette = GetCurrentPalette();
+        // Fire-and-forget is intentional here as this is called from synchronous lifecycle methods (OnParametersSet).
+        // The ParameterState framework handles the async update safely.
         _ = _currentPaletteState.SetValueAsync(newPalette);
     }
 
