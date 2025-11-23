@@ -87,7 +87,9 @@ namespace MudBlazor
 
         private Task OnValueChangeHandlerAsync(ParameterChangedEventArgs<MudColor?> args)
         {
-            return SetColorAsync(args.Value ?? args.LastValue);
+            // TODO: Revisit this when the state of input components / validation improves, for now mimic old behavior
+            var forceUpdate = _valueState.IsInitialized && HasRendered;
+            return SetColorAsync(args.Value ?? args.LastValue, forceUpdate);
         }
 
         private async Task OnAlphaChangeHandlerAsync(ParameterChangedEventArgs<bool> args)
@@ -390,7 +392,7 @@ namespace MudBlazor
             return _colorPickerViewState.SetValueAsync(value);
         }
 
-        private async Task SetColorAsync(MudColor? newColor)
+        private async Task SetColorAsync(MudColor? newColor, bool forceUpdate = false)
         {
             if (newColor is null)
             {
@@ -410,7 +412,7 @@ namespace MudBlazor
                 _selectorY = y;
             }
 
-            if (shouldUpdateBinding)
+            if (shouldUpdateBinding || forceUpdate)
             {
                 Touched = true;
                 await SetTextAsync(GetColorTextValue(newColor), false);

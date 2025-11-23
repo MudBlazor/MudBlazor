@@ -22,7 +22,7 @@ namespace MudBlazor
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
         private bool _keyInterceptorObserving = false;
-        private string _elementId = Identifier.Create("picker");
+        private readonly string _elementId = Identifier.Create("picker");
 
         public MudPicker() : base(new Converter<T, string>()) { }
 
