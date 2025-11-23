@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using MudBlazor.Utilities;
+using System.Text.Json.Serialization;
 
 namespace MudBlazor
 {
@@ -10,6 +10,8 @@ namespace MudBlazor
     /// <summary>
     /// Represents a palette of colors used throughout the application.
     /// </summary>
+    [JsonDerivedType(typeof(PaletteLight), typeDiscriminator: nameof(PaletteLight))]
+    [JsonDerivedType(typeof(PaletteDark), typeDiscriminator: nameof(PaletteDark))]
     public abstract class Palette
     {
         private MudColor? _primaryDarken;
