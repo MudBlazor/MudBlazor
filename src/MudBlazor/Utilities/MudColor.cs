@@ -808,7 +808,7 @@ namespace MudBlazor.Utilities
         /// Provides comparison and hashing capabilities for <see cref="MudColor"/> using the
         /// specified <see cref="MudColorComparison"/> mode.
         /// </summary>
-        public sealed class MudColorComparer : IEqualityComparer<MudColor>
+        public sealed class MudColorComparer : IEqualityComparer<MudColor?>
         {
             /// <summary>
             /// Gets the comparison mode used by this comparer.

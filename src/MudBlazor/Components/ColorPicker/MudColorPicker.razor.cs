@@ -55,7 +55,8 @@ namespace MudBlazor
             _valueState = registerScope.RegisterParameter<MudColor?>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithEventCallback(() => ValueChanged)
-                .WithChangeHandler(OnValueChangeHandlerAsync);
+                .WithChangeHandler(OnValueChangeHandlerAsync)
+                .WithComparer(MudColor.MudColorComparer.RgbaAndHsl);
             _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
                 .WithEventCallback(() => TextChanged);
