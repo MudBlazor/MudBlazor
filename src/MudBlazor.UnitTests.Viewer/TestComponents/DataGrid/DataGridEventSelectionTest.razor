@@ -24,7 +24,7 @@
         _message = "OnSelectedItemsChanged was called. " + _selectedDocuments.Count() + " items selected";
     }
 
-    private static Task<GridData<DocumentChecklistItem>> ServerReload(GridState<DocumentChecklistItem> state)
+    private static Task<GridData<DocumentChecklistItem>> ServerReload(GridState<DocumentChecklistItem> state, CancellationToken token)
     {
         List<DocumentChecklistItem> items =
         [

@@ -8,7 +8,7 @@ namespace MudBlazor.UnitTests.Components
     public class SkeletonTests : BunitTest
     {
         [Test]
-        public void SkeletonStyleIsAppliedAfterInitialRendering()
+        public async Task SkeletonStyleIsAppliedAfterInitialRendering()
         {
             var comp = Context.RenderComponent<MudSkeleton>();
 
@@ -22,13 +22,13 @@ namespace MudBlazor.UnitTests.Components
             skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
 
             // add new style and check if it was applied
-            comp.SetParametersAndRender(p => p.Add(x => x.Style, "background:blue"));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Style, "background:blue"));
             span = comp.Find("span");
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("background:blue;");
         }
 
         [Test]
-        public void SkeletonHeightIsAppliedAfterInitialRendering()
+        public async Task SkeletonHeightIsAppliedAfterInitialRendering()
         {
             var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Height, "100px"));
 
@@ -42,13 +42,13 @@ namespace MudBlazor.UnitTests.Components
             skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
 
             // add new style and check if it was applied
-            comp.SetParametersAndRender(p => p.Add(x => x.Height, "50px"));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Height, "50px"));
             span = comp.Find("span");
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("height:50px;");
         }
 
         [Test]
-        public void SkeletonWidthIsAppliedAfterInitialRendering()
+        public async Task SkeletonWidthIsAppliedAfterInitialRendering()
         {
             var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Width, "300px"));
 
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
             skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
 
             // add new style and check if it was applied
-            comp.SetParametersAndRender(p => p.Add(x => x.Width, "500px"));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Width, "500px"));
             span = comp.Find("span");
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("width:500px;");
         }

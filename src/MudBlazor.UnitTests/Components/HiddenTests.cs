@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void InvertChangedAfterInitializing()
+        public async Task InvertChangedAfterInitializing()
         {
             BrowserWindowSize GetBrowserSize()
             {
@@ -122,7 +122,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Invert, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Invert, true));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
 
@@ -130,7 +130,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReferenceBreakpointChangedAfterInitializing()
+        public async Task ReferenceBreakpointChangedAfterInitializing()
         {
             BrowserWindowSize GetBrowserSize()
             {
@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
 
             component.Find("p").TextContent.Should().Be("MudHidden content");
 
-            component.SetParametersAndRender(parameter => parameter.Add(x => x.Breakpoint, Breakpoint.Md));
+            await component.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Breakpoint, Breakpoint.Md));
 
             Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
 
