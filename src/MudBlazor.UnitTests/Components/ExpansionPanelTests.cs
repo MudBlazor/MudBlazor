@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ExpansionPanelStartExpandedTest>();
             var panel = comp.FindComponent<MudExpansionPanel>();
-            panel.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Disabled, true));
+            await panel.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Disabled, true));
 
             comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse());
             comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());

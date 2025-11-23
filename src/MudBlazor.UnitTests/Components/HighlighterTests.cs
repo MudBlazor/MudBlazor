@@ -379,7 +379,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with property 
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupCaseSensitiveTest()
+        public async Task MudHighlighterMarkupCaseSensitiveTest()
         {
             var text = Parameter(nameof(MudHighlighter.Text), "This is this");
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "this");
@@ -390,7 +390,7 @@ namespace MudBlazor.UnitTests.Components
             //Case sensitive
             comp.MarkupMatches("This is <mark>this</mark>");
             //Case insensitive
-            comp.SetParametersAndRender(text, highlightedText, caseInSensitive);
+            await comp.SetParametersAndRenderAsync(text, highlightedText, caseInSensitive);
             comp.MarkupMatches("<mark>This</mark> is <mark>this</mark>");
         }
 
@@ -604,7 +604,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudHighlighter_MarkupFalse_AfterMarkupTrue_ClearsHtmlAwareFragmentsAndRendersCorrectly()
+        public async Task MudHighlighter_MarkupFalse_AfterMarkupTrue_ClearsHtmlAwareFragmentsAndRendersCorrectly()
         {
             var initialText = "Test with <b>HTML</b> and highlight";
             var initialHighlightedText = "highlight";
@@ -619,7 +619,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("Test with <b>HTML</b> and <mark>highlight</mark>");
 
             // 2. Re-render with Markup = false
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Markup, false)
             );
 

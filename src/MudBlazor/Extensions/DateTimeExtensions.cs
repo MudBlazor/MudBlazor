@@ -80,4 +80,38 @@ public static class DateTimeExtensions
 
         return self.AddDays(-1 * diff).Date;
     }
+
+    /// <summary>
+    /// Gets the last occurrence of a specific day of the week in the month for this date
+    /// </summary>
+    /// <param name="self">The date to use as month for calculation.</param>
+    /// <param name="dayOfWeek">The day of the week to find.</param>
+    /// <param name="culture">The culture to use for formatting the date.</param>
+    public static DateTime LastWeekDayOfMonth(this DateTime self, DayOfWeek dayOfWeek, CultureInfo culture)
+    {
+        var lastDay = self.EndOfMonth(culture);
+        while (lastDay.DayOfWeek != dayOfWeek)
+        {
+            lastDay = lastDay.AddDays(-1);
+        }
+
+        return lastDay;
+    }
+
+    /// <summary>
+    /// Gets the first occurrence of a specific day of the week in the month for this date
+    /// </summary>
+    /// <param name="self">The date to use as month for calculation.</param>
+    /// <param name="dayOfWeek">The day of the week to find.</param>
+    /// <param name="culture">The culture to use for formatting the date.</param>
+    public static DateTime FirstWeekDayOfMonth(this DateTime self, DayOfWeek dayOfWeek, CultureInfo culture)
+    {
+        var firstDay = self.StartOfMonth(culture);
+        while (firstDay.DayOfWeek != dayOfWeek)
+        {
+            firstDay = firstDay.AddDays(1);
+        }
+
+        return firstDay;
+    }
 }
