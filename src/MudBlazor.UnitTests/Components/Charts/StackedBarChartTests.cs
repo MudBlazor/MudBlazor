@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Charts
                 new () { Name = "Series 2", Data = new double[] { 15, 25 } }
             };
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.ChartSeries, updatedSeries));
+                      .Add(p => p.ChartSeries, updatedSeries));
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(4); // 2 from Series 1 + 2 from Series 2
             comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(2);
@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Dynamic_RemoveSeries_ShouldUpdateChart()
+        public async Task StackedBarChart_Dynamic_RemoveSeries_ShouldUpdateChart()
         {
             var initialSeries = new List<ChartSeries<double>>()
             {
@@ -192,8 +192,9 @@ namespace MudBlazor.UnitTests.Charts
             {
                 initialSeries[0] // Keep only Series 1
             };
-            comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartSeries, updatedSeries));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                      .Add(p => p.ChartSeries, updatedSeries));
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(2); // Only Series 1's bars
             comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(1);
@@ -201,7 +202,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Dynamic_ChangeSeriesData_ShouldUpdateChart()
+        public async Task StackedBarChart_Dynamic_ChangeSeriesData_ShouldUpdateChart()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -219,15 +220,15 @@ namespace MudBlazor.UnitTests.Charts
 
             // Modify data
             chartSeries[0].Data = new double[] { 30, 40 };
-            comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartSeries, new List<ChartSeries<double>>(chartSeries))); // Re-pass to trigger update
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                      .Add(p => p.ChartSeries, new List<ChartSeries<double>>(chartSeries))); // Re-pass to trigger update
 
             var updatedPaths = comp.FindAll("path.mud-chart-bar");
             updatedPaths.Count.Should().Be(2);
         }
 
         [Test]
-        public void StackedBarChart_Dynamic_ChangeLabels_ShouldUpdateChart()
+        public async Task StackedBarChart_Dynamic_ChangeLabels_ShouldUpdateChart()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -244,8 +245,8 @@ namespace MudBlazor.UnitTests.Charts
             initialLabels.Should().BeEquivalentTo(initialXAxisLabels);
 
             string[] updatedXAxisLabels = { "X", "Y" };
-            comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartLabels, updatedXAxisLabels));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                      .Add(p => p.ChartLabels, updatedXAxisLabels));
 
             var updatedLabels = comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).ToArray();
             updatedLabels.Should().BeEquivalentTo(updatedXAxisLabels);
@@ -351,7 +352,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_RightToLeft_True_ShouldAdjustLegendPositionStartEnd()
+        public async Task StackedBarChart_RightToLeft_True_ShouldAdjustLegendPositionStartEnd()
         {
             var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
@@ -364,7 +365,7 @@ namespace MudBlazor.UnitTests.Charts
             var chartElement = comp.Find(".mud-chart");
             chartElement.ClassList.Should().Contain("mud-chart-legend-right");
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.LegendPosition, Position.End)); // Should become Left in RTL
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.LegendPosition, Position.End)); // Should become Left in RTL
             chartElement = comp.Find(".mud-chart");
             chartElement.ClassList.Should().Contain("mud-chart-legend-left");
         }
@@ -612,7 +613,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Selection_ProgrammaticChange_ShouldReflectInLegend()
+        public async Task StackedBarChart_Selection_ProgrammaticChange_ShouldReflectInLegend()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -630,7 +631,7 @@ namespace MudBlazor.UnitTests.Charts
             );
 
             // Programmatically change SelectedIndex
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedIndex, 1));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedIndex, 1));
 
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1);
         }
@@ -747,7 +748,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Options_YAxisTicks_And_MaxNumYAxisTicks_ShouldControlYAxisGrid()
+        public async Task StackedBarChart_Options_YAxisTicks_And_MaxNumYAxisTicks_ShouldControlYAxisGrid()
         {
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 0.0, 100.0 } } };
             string[] xAxisLabels = { "A" };
@@ -765,7 +766,7 @@ namespace MudBlazor.UnitTests.Charts
             yAxisLabels1.Should().ContainInOrder("0", "20", "40", "60", "80", "100");
 
             // Test with MaxNumYAxisTicks forcing fewer, larger ticks
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 10, MaxNumYAxisTicks = 3 })); // Max 3 ticks, initial step 10
 
             var yAxisLabels2 = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
@@ -775,7 +776,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Options_YAxisSuggestedMax_ShouldInfluenceScale()
+        public async Task StackedBarChart_Options_YAxisSuggestedMax_ShouldInfluenceScale()
         {
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0, 50.0 } } };
             string[] xAxisLabels = { "A", "B" };
@@ -790,8 +791,8 @@ namespace MudBlazor.UnitTests.Charts
             yAxisLabels.Should().Contain("100"); // The suggested max
 
             // If actual max is higher, suggestedMax is ignored
-            comp.SetParametersAndRender(parameters => parameters
-                 .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisSuggestedMax = 30, YAxisTicks = 10 }));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                      .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisSuggestedMax = 30, YAxisTicks = 10 }));
 
             yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
             yAxisLabels.Should().Contain("50"); // Actual max 50
@@ -840,7 +841,7 @@ namespace MudBlazor.UnitTests.Charts
 
 
         [Test]
-        public void BarChartExampleData()
+        public async Task BarChartExampleData()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -893,7 +894,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Contain("d=\"M 656 223.0714 L 656 184.6429\"");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
+                      .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
@@ -941,7 +942,7 @@ namespace MudBlazor.UnitTests.Charts
             count.Should().Be(5 * 22);
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
+                      .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");
 
