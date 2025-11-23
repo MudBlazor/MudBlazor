@@ -952,7 +952,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ShowTooltip_OnDataMarkerHover()
+    public async Task RadarChart_Should_ShowTooltip_OnDataMarkerHover()
     {
         Context.JSInterop.Mode = JSRuntimeMode.Loose;
         var seriesName = "Marker Series";
@@ -990,9 +990,8 @@ public class RadarChartTests : BunitTest
             builder.CloseElement();
         };
 
-        comp.SetParametersAndRender(parameters => parameters
-            .Add(p => p.TooltipTemplate, CustomTooltip)
-        );
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+                  .Add(p => p.TooltipTemplate, CustomTooltip));
 
         // Re-find marker and re-trigger hover after re-render
         dataMarkers = comp.FindAll("circle.mud-chart-series-point");
@@ -1042,7 +1041,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ReRender_WhenChartSeriesIsUpdated()
+    public async Task RadarChart_Should_ReRender_WhenChartSeriesIsUpdated()
     {
         var initialSeries = new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } };
         var chartLabels = new[] { "A", "B", "C" };
@@ -1067,9 +1066,8 @@ public class RadarChartTests : BunitTest
             new() { Name = "Series2", Data = new double[] { 15, 25, 35 } }  // New series
         };
 
-        comp.SetParametersAndRender(parameters => parameters
-            .Add(p => p.ChartSeries, updatedSeries)
-        );
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+                  .Add(p => p.ChartSeries, updatedSeries));
 
         seriesPaths = comp.FindAll("path.mud-chart-serie");
         seriesPaths.Count.Should().Be(2, "After update, should have two series paths.");
@@ -1084,7 +1082,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ReRender_WhenChartLabelsAreUpdated()
+    public async Task RadarChart_Should_ReRender_WhenChartLabelsAreUpdated()
     {
         var initialLabels = new[] { "Cost", "Performance", "Usability" };
         var seriesData = new List<ChartSeries<double>> { new() { Name = "ProductX", Data = new double[] { 10, 20, 30 } } };
@@ -1106,7 +1104,7 @@ public class RadarChartTests : BunitTest
         var updatedSeriesData = new List<ChartSeries<double>> { new() { Name = "ProductX", Data = new double[] { 10, 20, 30, 40 } } };
 
 
-        comp.SetParametersAndRender(parameters => parameters
+        await comp.SetParametersAndRenderAsync(parameters => parameters
             .Add(p => p.ChartLabels, newLabels)
             .Add(p => p.ChartSeries, updatedSeriesData));
 
@@ -1117,7 +1115,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ReRender_WhenChartOptionsAreUpdated()
+    public async Task RadarChart_Should_ReRender_WhenChartOptionsAreUpdated()
     {
         var initialOptions = new RadarChartOptions
         {
@@ -1148,9 +1146,8 @@ public class RadarChartTests : BunitTest
             AggregationOption = AggregationOption.GroupByDataSet
         };
 
-        comp.SetParametersAndRender(parameters => parameters
-            .Add(p => p.ChartOptions, newOptions)
-        );
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+                  .Add(p => p.ChartOptions, newOptions));
 
         comp.FindAll("path.mud-chart-grid-line").Count.Should().Be(0, "Grid lines should be hidden after option update.");
 
@@ -1167,9 +1164,8 @@ public class RadarChartTests : BunitTest
             AngleOffset = 45,
             AggregationOption = AggregationOption.GroupByDataSet
         };
-        comp.SetParametersAndRender(parameters => parameters
-            .Add(p => p.ChartOptions, optionsGridLevelsTest)
-        );
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+                  .Add(p => p.ChartOptions, optionsGridLevelsTest));
         comp.FindAll("path.mud-chart-grid-line").Count.Should().Be(5, "Grid lines should update to new count when shown.");
     }
 
