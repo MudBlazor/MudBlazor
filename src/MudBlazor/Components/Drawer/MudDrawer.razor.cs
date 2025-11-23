@@ -316,7 +316,7 @@ namespace MudBlazor
 
         private async Task OnOpenParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
         {
-            if (IsRendered && _initial && !_keepInitialState)
+            if (HasRendered && _initial && !_keepInitialState)
             {
                 _initial = false;
             }
@@ -324,7 +324,7 @@ namespace MudBlazor
             {
                 _keepInitialState = false;
             }
-            if (IsRendered && arg.Value && Anchor is Anchor.Top or Anchor.Bottom)
+            if (HasRendered && arg.Value && Anchor is Anchor.Top or Anchor.Bottom)
             {
                 await UpdateHeightAsync();
             }
@@ -334,7 +334,7 @@ namespace MudBlazor
 
         private async Task OnBreakpointParameterChangedAsync(ParameterChangedEventArgs<Breakpoint> arg)
         {
-            if (IsRendered)
+            if (HasRendered)
             {
                 await UpdateBreakpointStateAsync(_lastUpdatedBreakpoint);
             }
@@ -480,7 +480,7 @@ namespace MudBlazor
                 return;
             }
 
-            if (!IsRendered)
+            if (!HasRendered)
             {
                 return;
             }

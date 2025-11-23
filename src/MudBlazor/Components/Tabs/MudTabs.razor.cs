@@ -604,7 +604,7 @@ namespace MudBlazor
 
         internal async Task SetPanelRefAsync(ElementReference reference)
         {
-            if (IsRendered && _resizeObserver!.IsElementObserved(reference) == false)
+            if (HasRendered && _resizeObserver!.IsElementObserved(reference) == false)
                 await _resizeObserver!.Observe(reference);
 
             _redraw = true;

@@ -251,7 +251,7 @@ namespace MudBlazor
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
                 CurrentPageChanged.InvokeAsync(_currentPage);
-                if (IsRendered)
+                if (HasRendered)
                 {
                     InvokeServerLoadFunc();
                 }
@@ -697,7 +697,7 @@ namespace MudBlazor
                 CurrentPageChanged.InvokeAsync(_currentPage);
             }
 
-            if (IsRendered)
+            if (HasRendered)
             {
                 InvokeServerLoadFunc();
             }

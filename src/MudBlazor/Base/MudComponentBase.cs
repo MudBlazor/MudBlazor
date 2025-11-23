@@ -66,7 +66,7 @@ namespace MudBlazor
         /// <summary>
         /// Whether the component has executed OnAfterRender at least once.
         /// </summary>
-        public bool IsRendered { get; private set; }
+        public bool HasRendered { get; private set; }
 
         /// <summary>
         /// Whether the <see cref="JSRuntime" /> is available.
@@ -74,7 +74,7 @@ namespace MudBlazor
         /// <remarks>
         /// When <c>true</c>, JavaScript interop calls can be made.
         /// </remarks>
-        protected bool IsJSRuntimeAvailable => IsRendered;
+        protected bool IsJSRuntimeAvailable => HasRendered;
 
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
@@ -88,7 +88,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                IsRendered = true;
+                HasRendered = true;
             }
             base.OnAfterRender(firstRender);
         }
