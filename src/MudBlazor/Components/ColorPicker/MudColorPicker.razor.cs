@@ -233,7 +233,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public override string? Text { get; set; } //= "#594ae2";
+        public override string? Text { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Value"/> property has changed.
@@ -388,7 +388,6 @@ namespace MudBlazor
         /// </param>
         public Task ChangeViewAsync(ColorPickerView value)
         {
-            //Text = GetColorTextValue(_valueState.Value); - should be redundant and causing input to have empty value
             return _colorPickerViewState.SetValueAsync(value);
         }
 
