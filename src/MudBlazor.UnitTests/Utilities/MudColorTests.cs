@@ -889,12 +889,20 @@ namespace MudBlazor.UnitTests.Utilities
             var color2 = new MudColor(245, 0.35, 0.95, 1);
 
             // Act
-            var equals = color1.Equals(color2);
+            var equals1 = color1.Equals(color2);
+            var equals2 = color1.Equals(color2, MudColorComparison.Rgba);
+            var equals3 = color1.Equals(color2, MudColorComparison.Hsl);
+            var equals4 = color1.Equals(color2, MudColorComparison.RgbaAndHsl);
+            var equals5 = color1.Equals(color2, (MudColorComparison)(-1));
             var hslEquals = color1.HslEquals(color2);
             var rgbaEquals = color1.RgbaEquals(color2);
 
             // Assert
-            equals.Should().BeTrue();
+            equals1.Should().BeTrue();
+            equals2.Should().BeTrue();
+            equals3.Should().BeFalse();
+            equals4.Should().BeFalse();
+            equals5.Should().BeTrue();
             hslEquals.Should().BeFalse();
             rgbaEquals.Should().BeTrue();
         }
