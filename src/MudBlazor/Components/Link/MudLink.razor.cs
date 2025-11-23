@@ -68,11 +68,11 @@ public partial class MudLink : MudComponentBase
     /// The typography variant to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Typo.body1"/>.
+    /// Defaults to <see cref="Typo.inherit"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Typo Typo { get; set; } = Typo.body1;
+    public Typo Typo { get; set; } = Typo.inherit;
 
     /// <summary>
     /// Applies an underline to the link.
