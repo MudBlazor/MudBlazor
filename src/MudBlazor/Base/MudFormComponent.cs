@@ -22,8 +22,9 @@ namespace MudBlazor
     /// <typeparam name="U">The value type managed by this input.</typeparam>
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
-        protected readonly ParameterState<string?> ErrorTextState;
         protected readonly ParameterState<bool> ErrorState;
+        protected readonly ParameterState<string?> ErrorIdState;
+        protected readonly ParameterState<string?> ErrorTextState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
@@ -39,6 +40,9 @@ namespace MudBlazor
             ErrorState = registerScope.RegisterParameter<bool>(nameof(Error))
                 .WithParameter(() => Error)
                 .WithEventCallback(() => ErrorChanged);
+            ErrorIdState = registerScope.RegisterParameter<string?>(nameof(ErrorId))
+                .WithParameter(() => ErrorId)
+                .WithEventCallback(() => ErrorIdChanged);
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
             _converter.OnError = OnConversionError;
         }
@@ -121,6 +125,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorId { get; set; }
+
+        /// <summary>
+        /// Raised when the <see cref="ErrorId"/> parameter value changes.
+        /// </summary>
+        /// <remarks>
+        /// This callback is triggered to support two-way binding of the <see cref="ErrorId"/> parameter.
+        /// The callback receives the updated <see cref="ErrorId"/> value.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public EventCallback<string?> ErrorIdChanged { get; set; }
 
         /// <summary>
         /// The type converter for this input.
@@ -436,7 +451,7 @@ namespace MudBlazor
                     ValidationErrors = errors;
                     await ErrorState.SetValueAsync(errors.Count > 0);
                     await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
-                    ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
+                    await ErrorIdState.SetValueAsync(HasErrors ? Guid.NewGuid().ToString() : null);
                     Form?.Update(this);
                     StateHasChanged();
                 }

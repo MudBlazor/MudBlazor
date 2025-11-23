@@ -775,7 +775,7 @@ namespace MudBlazor
 
         protected string? GetAriaDescribedByString()
         {
-            var errorId = HasErrors ? ErrorId : null;
+            var errorId = HasErrors ? ErrorIdState.Value : null;
             var helperId = GetHelperId();
 
             return errorId is not null && helperId is not null
