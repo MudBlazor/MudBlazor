@@ -288,7 +288,6 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        
         public async Task DialogShouldUpdateTitleContent()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
@@ -312,7 +311,6 @@ namespace MudBlazor.UnitTests.Components
         /// A test that ensures parameters are not overwritten when dialog is updated
         /// </summary>
         [Test]
-        
         public async Task DialogShouldNotOverwriteParameters()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
@@ -365,7 +363,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task CustomDialogService()
         {
             //Remove default IDialogService so we can provide our custom implementation
@@ -411,7 +408,6 @@ namespace MudBlazor.UnitTests.Components
         /// Getting return value from dialog
         /// </summary>
         [Test]
-        
         public async Task DialogShouldReturnTheReturnValue()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
@@ -435,7 +431,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task DialogKeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
@@ -462,7 +457,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task DialogKeyboardEvents()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
@@ -486,7 +480,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task DialogHandlesOnBackdropClickEvent()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
@@ -537,7 +530,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task DialogToggleFullscreenOptions()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
@@ -950,7 +942,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task ShowGeneric_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
@@ -974,7 +965,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task ShowGeneric_ShouldProvideCorrectOptions_WhenOverloadIsCalled()
         {
             // Arrange
@@ -990,7 +980,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task Show_ShouldRenderComponent()
         {
             // Arrange
@@ -1005,7 +994,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task Show_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
@@ -1029,7 +1017,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task Show_ShouldProvideCorrectOptions_WhenOverloadIsCalled()
         {
             // Arrange
@@ -1045,7 +1032,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        
         public async Task Show_ShouldPassDialogParametersToDialog()
         {
             // Arrange
