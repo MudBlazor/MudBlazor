@@ -121,4 +121,32 @@ public class DateTimeExtensionTests
         // Assert
         result.Should().Be(new DateTime(1, 1, 1)); // Monday
     }
+
+    [Test]
+    public void LastWeekDayOfMonth_ShouldReturnLastWeekDayOfMonth()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 9, 15); // September 15, 2023
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.LastWeekDayOfMonth(DayOfWeek.Friday, culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2023, 9, 29)); // September 29, 2023 (Friday)
+    }
+
+    [Test]
+    public void FirstWeekDayOfMonth_ShouldReturnFirstWeekDayOfMonth()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 9, 15); // September 15, 2023
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.FirstWeekDayOfMonth(DayOfWeek.Monday, culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2023, 9, 4)); // September 4, 2023 (Monday)
+    }
 }

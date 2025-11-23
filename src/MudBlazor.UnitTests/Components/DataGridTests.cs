@@ -442,7 +442,7 @@ namespace MudBlazor.UnitTests.Components
         public void DataGrid_SetParameters_ServerData_Items_Throw()
         {
             var serverDataFunc =
-                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+                new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
                     Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
@@ -460,7 +460,7 @@ namespace MudBlazor.UnitTests.Components
         public void DataGrid_SetParameters_ServerData_QuickFilter_Throw()
         {
             var serverDataFunc =
-                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+                new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
                     Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
@@ -488,7 +488,7 @@ namespace MudBlazor.UnitTests.Components
         public void DataGrid_SetParameters_ServerData_VirtualizeServerData_Throw()
         {
             var serverDataFunc =
-                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+                new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
@@ -3468,10 +3468,10 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.CurrentPage = 2;
             var serverDataCallCount = 0;
             var originalServerDataFunc = dataGrid.Instance.ServerData;
-            dataGrid.Instance.ServerData = (state) =>
+            dataGrid.Instance.ServerData = (state, token) =>
             {
                 serverDataCallCount++;
-                return originalServerDataFunc(state);
+                return originalServerDataFunc(state, token);
             };
 
             // Act

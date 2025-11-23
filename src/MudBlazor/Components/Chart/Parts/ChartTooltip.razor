@@ -1,6 +1,12 @@
 ﻿@namespace MudBlazor.Charts
 
 <g class="svg-tooltip" style="pointer-events: none;">
+    <defs>
+        <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="1.0" flood-color="black" flood-opacity="1" />
+        </filter>
+    </defs>
+
     <!-- Triangle stroke -->
     @if (ShowTriangle)
     {
@@ -34,7 +40,11 @@
           y="@ToS(_textBbox.Y - (HasSubtitle ? _textBbox.Height : 0))"
           font-size="@FontSize"
           fill="@FontColor"
-          text-anchor="middle">
+          text-anchor="middle"
+          stroke="black"
+          stroke-width="0.8"
+          paint-order="stroke"
+          filter="url(#text-shadow)">
         <tspan x="@ToS(_textBbox.X)" dy="-.3em">@Title</tspan>
         @if (HasSubtitle)
         {

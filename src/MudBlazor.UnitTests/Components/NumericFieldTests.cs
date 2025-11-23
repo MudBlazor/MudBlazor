@@ -202,11 +202,11 @@ namespace MudBlazor.UnitTests.Components
             var numericField = comp.Instance;
             // first try a valid value
             comp.Find("input").Change(99);
-            numericField.Error.Should().BeFalse(because: "The value is < 100");
+            numericField.GetState(x => x.Error).Should().BeFalse(because: "The value is < 100");
             numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // now try something that's outside of range
             comp.Find("input").Change("100.1");
-            numericField.Error.Should().BeFalse(because: "The value should be set to Max (100)");
+            numericField.GetState(x => x.Error).Should().BeFalse(because: "The value should be set to Max (100)");
             numericField.Value.Should().Be(100M);
             numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }

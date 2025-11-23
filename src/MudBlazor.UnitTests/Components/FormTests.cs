@@ -29,32 +29,32 @@ namespace MudBlazor.UnitTests.Components
             var textField = textFieldcomp.Instance;
             // check initial state: form should not be valid, but text field does not display an error initially!
             form.IsValid.Should().Be(false);
-            textField.Error.Should().BeFalse();
+            textField.GetState(x => x.Error).Should().BeFalse();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
+            textField.GetState(x => x.Error).Should().BeFalse();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear value to null
             textFieldcomp.Find("input").Change(null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Enter a rock star");
-            textField.Error.Should().BeTrue();
+            textField.GetState(x => x.Error).Should().BeTrue();
             textField.GetState(x => x.ErrorText).Should().Be("Enter a rock star");
             // set value to "" -> should also be an error
             textFieldcomp.Find("input").Change("");
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Enter a rock star");
-            textField.Error.Should().BeTrue();
+            textField.GetState(x => x.Error).Should().BeTrue();
             textField.GetState(x => x.ErrorText).Should().Be("Enter a rock star");
             //
             textFieldcomp.Find("input").Change("Kurt Cobain");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
+            textField.GetState(x => x.Error).Should().BeFalse();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
@@ -244,19 +244,19 @@ namespace MudBlazor.UnitTests.Components
             var textField = textFieldcomp.Instance;
             // check initial state: form should not be valid, but text field does not display an error initially!
             form.IsValid.Should().Be(false);
-            textField.Error.Should().BeFalse();
+            textField.GetState(x => x.Error).Should().BeFalse();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // this rock star starts with Marilyn
             textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
+            textField.GetState(x => x.Error).Should().BeFalse();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // this rock star doesn't start with Marilyn
             textFieldcomp.Find("input").Change("Kurt Cobain");
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            textField.Error.Should().BeTrue();
+            textField.GetState(x => x.Error).Should().BeTrue();
             textField.GetState(x => x.ErrorText).Should().Be("Invalid");
 
             // note: this logic is invalid, so it was removed. Validation funcs are always called
@@ -273,7 +273,7 @@ namespace MudBlazor.UnitTests.Components
             textFieldcomp.Find("input").Change("Marilyn Monroe");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
+            textField.GetState(x => x.Error).Should().BeFalse();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
@@ -578,20 +578,20 @@ namespace MudBlazor.UnitTests.Components
             var radioGroup = radioGroupcomp.Instance;
             // check initial state: form should not be valid
             form.IsValid.Should().Be(false);
-            radioGroup.Error.Should().BeFalse();
+            radioGroup.GetState(x => x.Error).Should().BeFalse();
             radioGroup.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // click on first radio: form should be valid now
             radioGroupcomp.Find("input").Click();
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            radioGroup.Error.Should().BeFalse();
+            radioGroup.GetState(x => x.Error).Should().BeFalse();
             radioGroup.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
             await comp.SetParamAsync(x => x.Selected, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            radioGroup.Error.Should().BeTrue();
+            radioGroup.GetState(x => x.Error).Should().BeTrue();
             radioGroup.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
@@ -610,21 +610,21 @@ namespace MudBlazor.UnitTests.Components
             // should not be valid since the default color is invalid
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
-            colorPicker.Error.Should().BeFalse();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a valid color
             await comp.InvokeAsync(() => colorPickerComp.FindAll("input")[0].Change("#111111"));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            colorPicker.Error.Should().BeFalse();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // reset to forbidden color
             await comp.SetParamAsync(x => x.ColorValue, forbiddenColor);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
-            colorPicker.Error.Should().BeTrue();
+            colorPicker.GetState(x => x.Error).Should().BeTrue();
             colorPicker.GetState(x => x.ErrorText).Should().Be($"{forbiddenColor.Value} is not allowed");
         }
 
@@ -656,7 +656,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            colorPicker.Error.Should().BeFalse();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
@@ -669,7 +669,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
-            colorPicker.Error.Should().BeTrue();
+            colorPicker.GetState(x => x.Error).Should().BeTrue();
             colorPicker.GetState(x => x.ErrorText).Should().Be($"{forbiddenColor.Value} is not allowed");
         }
 
@@ -685,20 +685,20 @@ namespace MudBlazor.UnitTests.Components
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
             // check initial state: form should not be valid because datepicker is required
             form.IsValid.Should().Be(false);
-            datepicker.Error.Should().BeFalse();
+            datepicker.GetState(x => x.Error).Should().BeFalse();
             datepicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a date
             dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
+            datepicker.GetState(x => x.Error).Should().BeFalse();
             datepicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
             await comp.SetParamAsync(x => x.Date, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            datepicker.Error.Should().BeTrue();
+            datepicker.GetState(x => x.Error).Should().BeTrue();
             datepicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
@@ -716,14 +716,14 @@ namespace MudBlazor.UnitTests.Components
             dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
+            datepicker.GetState(x => x.Error).Should().BeFalse();
             datepicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // set invalid date:
             await comp.SetParamAsync(x => x.Date, (DateTime?)new DateTime(1999, 1, 1));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Year must be >= 2000");
-            datepicker.Error.Should().BeTrue();
+            datepicker.GetState(x => x.Error).Should().BeTrue();
             datepicker.GetState(x => x.ErrorText).Should().Be("Year must be >= 2000");
         }
 
@@ -742,21 +742,21 @@ namespace MudBlazor.UnitTests.Components
             var secondDateTime = new DateTime(2023, 02, 20);
             // check initial state: form should not be valid because dateRangePicker is required
             form.IsValid.Should().Be(false);
-            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a date
             await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[0].Change(firstDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
             await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[1].Change(secondDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
             await comp.SetParamAsync(x => x.DateRange, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            dateRangePicker.Error.Should().BeTrue();
+            dateRangePicker.GetState(x => x.Error).Should().BeTrue();
             dateRangePicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
@@ -772,7 +772,7 @@ namespace MudBlazor.UnitTests.Components
             var dateRangePicker = comp.FindComponent<MudDateRangePicker>().Instance;
             // check initial state: form should not be valid because dateRangePicker is required
             form.IsValid.Should().Be(false);
-            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.Find("input").Click();
             // clicking day buttons to select a date range
@@ -784,14 +784,14 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
             await comp.SetParamAsync(x => x.DateRange, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            dateRangePicker.Error.Should().BeTrue();
+            dateRangePicker.GetState(x => x.Error).Should().BeTrue();
             dateRangePicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
@@ -807,20 +807,20 @@ namespace MudBlazor.UnitTests.Components
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             // check initial state: form should not be valid because datepicker is required
             form.IsValid.Should().Be(false);
-            timePicker.Error.Should().BeFalse();
+            timePicker.GetState(x => x.Error).Should().BeFalse();
             timePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a date
             timePickerComp.Find("input").Change("09:30");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            timePicker.Error.Should().BeFalse();
+            timePicker.GetState(x => x.Error).Should().BeFalse();
             timePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
             await comp.SetParamAsync(x => x.Time, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            timePicker.Error.Should().BeTrue();
+            timePicker.GetState(x => x.Error).Should().BeTrue();
             timePicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
@@ -838,14 +838,14 @@ namespace MudBlazor.UnitTests.Components
             timeComp.Find("input").Change("09:00");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            timePicker.Error.Should().BeFalse();
+            timePicker.GetState(x => x.Error).Should().BeFalse();
             timePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // set invalid date:
             await comp.SetParamAsync(x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Only full hours allowed");
-            timePicker.Error.Should().BeTrue();
+            timePicker.GetState(x => x.Error).Should().BeTrue();
             timePicker.GetState(x => x.ErrorText).Should().Be("Only full hours allowed");
         }
 
@@ -866,7 +866,7 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be valid because fileUploadInstance is required
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // add a file
@@ -885,7 +885,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
             fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
@@ -908,7 +908,7 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be valid because form is untouched
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
@@ -920,7 +920,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
             fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
@@ -928,7 +928,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             fileUploadInstance.Files.Name.Should().Be(fileName);
         }
@@ -953,7 +953,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
             fileUploadInstance.Files.Should().NotBeNull();
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
@@ -965,7 +965,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
             fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
@@ -973,7 +973,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.Files.Name.Should().Be(fileName);
         }
 
@@ -995,7 +995,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
             fileUploadInstance.Files.Should().NotBeNull();
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
@@ -1007,7 +1007,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
             fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
@@ -1015,7 +1015,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             fileUploadInstance.Files.Name.Should().Be(fileName);
         }
@@ -1278,7 +1278,7 @@ namespace MudBlazor.UnitTests.Components
             Expression<Func<string>> expression = () => model.data;
             await tf.SetParamAsync(x => x.For, expression);
             await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("Error in validation func: User error");
         }
 
@@ -1294,13 +1294,10 @@ namespace MudBlazor.UnitTests.Components
             var model = new { data = "asdf" };
             await form.SetParamAsync(x => x.Model, model);
             var tf = comp.FindComponent<MudTextField<string>>();
-            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
-            {
-                throw new InvalidOperationException("User error");
-            });
+            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) => throw new InvalidOperationException("User error"));
             await tf.SetParamAsync(x => x.Validation, validationFunc);
             await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
 
@@ -1322,7 +1319,7 @@ namespace MudBlazor.UnitTests.Components
             });
             await tf.SetParamAsync(x => x.Validation, validationFunc);
             await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
 
@@ -1347,7 +1344,7 @@ namespace MudBlazor.UnitTests.Components
             Expression<Func<string>> expression = () => model.data;
             await tf.SetParamAsync(x => x.For, expression);
             await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("Error1");
         }
 
@@ -1826,12 +1823,12 @@ namespace MudBlazor.UnitTests.Components
             var parentTextField = parentTextFieldCmp.Instance;
             // check initial state: form should not be valid, but text field does not display an error initially!
             parentForm.IsValid.Should().Be(false);
-            parentTextField.Error.Should().BeFalse();
+            parentTextField.GetState(x => x.Error).Should().BeFalse();
             parentTextField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             parentTextFieldCmp.Find("input").Change("Marilyn Manson");
             parentForm.IsValid.Should().Be(true);
             parentForm.Errors.Length.Should().Be(0);
-            parentTextField.Error.Should().BeFalse();
+            parentTextField.GetState(x => x.Error).Should().BeFalse();
             parentTextField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // display the child form
             childFormSwitch.Change(true);
@@ -1905,7 +1902,7 @@ namespace MudBlazor.UnitTests.Components
 
             // check initial state: form should not be valid because checkBox is required
             form.IsValid.Should().Be(false);
-            checkBox.Error.Should().BeFalse();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
             checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // tick checkBox with an emulated mouse click
@@ -1913,7 +1910,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            checkBox.Error.Should().BeFalse();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
             checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // untick checkBox with an emulated mouse click
@@ -1921,7 +1918,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            checkBox.Error.Should().BeTrue();
+            checkBox.GetState(x => x.Error).Should().BeTrue();
             checkBox.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
@@ -1937,7 +1934,7 @@ namespace MudBlazor.UnitTests.Components
 
             // check initial state: form should not be valid because checkBox is required
             form.IsValid.Should().Be(false);
-            checkBox.Error.Should().BeFalse();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
             checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // tick checkBox with a key press
@@ -1945,7 +1942,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            checkBox.Error.Should().BeFalse();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
             checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // untick checkBox with a key press
@@ -1953,7 +1950,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            checkBox.Error.Should().BeTrue();
+            checkBox.GetState(x => x.Error).Should().BeTrue();
             checkBox.GetState(x => x.ErrorText).Should().Be("Required");
         }
 

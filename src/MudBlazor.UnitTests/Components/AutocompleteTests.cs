@@ -2302,5 +2302,15 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.OpenedCount.Should().Be(0);
             comp.Instance.ClosedCount.Should().Be(1);
         }
+
+        [Test]
+        public async Task Autocomplete_OpenChanged_HandleClearButtonAsync()
+        {
+            var comp = Context.RenderComponent<AutocompleteHandleClearButtonAsyncTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
     }
 }

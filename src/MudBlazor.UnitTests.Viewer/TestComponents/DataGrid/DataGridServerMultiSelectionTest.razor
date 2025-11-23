@@ -1,5 +1,5 @@
-<MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
-    ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
+﻿<MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
+    ServerData="@(new Func<GridState<Item>, CancellationToken, Task<GridData<Item>>>(ServerReload))">
     <Columns>
         <SelectColumn T="Item" ShowInFooter="true"/>
         <PropertyColumn Property="x => x.Name" />
@@ -21,7 +21,7 @@
     /// <summary>
     /// Here we simulate getting the data from the server
     /// </summary>
-    private static async Task<GridData<Item>> ServerReload(GridState<Item> state)
+    private static async Task<GridData<Item>> ServerReload(GridState<Item> state, CancellationToken token)
     {
         var letters = "ABC";
         var data = new List<Item>();

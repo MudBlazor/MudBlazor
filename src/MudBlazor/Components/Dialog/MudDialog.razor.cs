@@ -156,6 +156,7 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles applied to the main dialog content.
         /// </summary>
+        [Obsolete("Prefer the ContentClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string? ContentStyle { get; set; }
@@ -208,6 +209,7 @@ namespace MudBlazor
                 if (_reference is not null && !_reference.Result.IsCompleted)
                     return _reference;
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 var parameters = new DialogParameters
                 {
                     [nameof(Class)] = Class,
@@ -225,6 +227,7 @@ namespace MudBlazor
                     [nameof(ContentStyle)] = ContentStyle,
                     [nameof(DefaultFocus)] = DefaultFocus,
                 };
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 

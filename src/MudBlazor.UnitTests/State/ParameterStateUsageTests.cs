@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterStateUsageTests : BunitTest
 {
     [Test]
-    public async Task DoesNotThrowExceptionWhenScopeCreatedMultipleTimes()
+    public void DoesNotThrowExceptionWhenScopeCreatedMultipleTimes()
     {
         var createComp = () => Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
 
@@ -21,7 +21,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task ShouldHaveTwoScopes()
+    public void ShouldHaveTwoScopes()
     {
         var comp = Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
 
@@ -29,7 +29,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task SharedHandlerIntegrationTest()
+    public void SharedHandlerIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateSharedHandlerTestComp>();
 
@@ -54,7 +54,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task InheritanceIntegrationTest()
+    public void InheritanceIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateSharedInheritanceHandlerTestComp>();
 
@@ -79,7 +79,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task EventArgsIntegrationTest()
+    public void EventArgsIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateEventArgsTestComp>();
         comp.Find(".parameter-changes").Children.Length.Should().Be(0);
@@ -145,7 +145,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task GetStateTestIntegrationTest()
+    public void GetStateTestIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateEventArgsTestComp>();
         IElement IncrementButton() => comp.Find("button.increment-int-param");
@@ -166,7 +166,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task GetStateTestFailureIntegrationTest()
+    public void GetStateTestFailureIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateEventArgsTestComp>();
         IRenderedComponent<ParameterStateTestComp> StateComponent() => comp.FindComponent<ParameterStateTestComp>();
