@@ -1,6 +1,8 @@
 ﻿// Modern browsers: Use scrollbar-gutter to reserve space and prevent layout shifts
+// Supported in Chrome 94+, Firefox 97+, Safari 17.4+
 @supports (scrollbar-gutter: stable) {
   html {
+    // overflow-y: auto ensures scrollbar gutter is always visible (prevents overlay scrollbars)
     overflow-y: auto;
     scrollbar-gutter: stable;
   }
@@ -28,7 +30,7 @@
   }
 }
 
-// Fallback for older browsers (Safari < 18.2, older embedded browsers)
+// Fallback for older browsers (Safari < 17.4, older embedded browsers)
 @supports not (scrollbar-gutter: stable) {
   .scroll-locked {
     padding-right: 8px;
