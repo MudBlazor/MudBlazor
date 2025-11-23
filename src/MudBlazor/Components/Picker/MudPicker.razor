@@ -31,7 +31,7 @@
                        Margin="@Margin"
                        Required="@Required"
                        RequiredError="@RequiredError"
-                       Error="@Error"
+                       Error="@ErrorState.Value"
                        ErrorText="@ErrorTextState.Value"
                        Clearable="@(Clearable && !GetReadOnlyState())"
                        OnClearButtonClick="@(async () => await ClearAsync())"
