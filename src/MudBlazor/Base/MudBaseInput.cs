@@ -212,25 +212,21 @@ namespace MudBlazor
         /// The appearance variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.InputDefaults.Variant"/>.
+        /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// The amount of vertical spacing for this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Margin.None"/> in <see cref="MudGlobal.InputDefaults.Margin"/>.
+        /// Defaults to <see cref="Margin.None"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
         /// Typography for the input text.
@@ -337,14 +333,12 @@ namespace MudBlazor
         /// Shows the label inside the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// Defaults to <c>false</c>.
         /// When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool ShrinkLabel { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
