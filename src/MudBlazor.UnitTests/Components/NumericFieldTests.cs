@@ -600,10 +600,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParamAsync(x => x.Value, value);
             var numericField = comp.Instance;
             numericField.Value.Should().Be(value);
-            await comp.InvokeAsync(() =>
-            {
-                numericField.Validate().Wait();
-            });
+            await comp.InvokeAsync(numericField.ValidateAsync);
             numericField.Value.Should().Be(value);
         }
 
