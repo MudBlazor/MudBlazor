@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Charts
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox hidden");
                 chartSeries[0].Visible.Should().BeFalse("Series 1 data Visible false");
-                
+
                 comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(0, "Series 1 path hidden");
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path still visible");
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path still hidden");
@@ -161,7 +161,7 @@ namespace MudBlazor.UnitTests.Charts
 
                 // Show Series 3 (was initially hidden)
                 await comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
-                
+
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox visible");
                 chartSeries[2].Visible.Should().BeTrue("Series 3 data Visible true");
