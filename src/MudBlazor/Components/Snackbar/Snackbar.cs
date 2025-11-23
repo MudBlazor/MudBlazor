@@ -121,7 +121,7 @@ namespace MudBlazor
                     TransitionTo(SnackbarState.Visible);
                 }
             }
-            else if (state.IsVisible() && !options.RequireInteraction)
+            else if (state.IsVisible() && !options.RequiresInteraction)
             {
                 if (!animate || !StartTimer(options.VisibleStateDuration))
                 {
