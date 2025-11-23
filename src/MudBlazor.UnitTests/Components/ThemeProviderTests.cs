@@ -367,7 +367,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PseudoCssRootColor_Test()
+        public void PseudoCssRootColor_Test()
         {
             const string Scope = ":root";
             var mudTheme = new MudTheme
