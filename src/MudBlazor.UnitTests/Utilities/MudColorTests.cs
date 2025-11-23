@@ -773,6 +773,24 @@ namespace MudBlazor.UnitTests.Utilities
 #pragma warning disable CS1718 // Comparison made to same variable
 
         [Test]
+        public void Equals_ShouldProduceColorsThatEqualExpectedList()
+        {
+            // Arrange & Act
+            var generatedColors = MudColor.GenerateTintShadePalette("#E53935");
+            var colors = new List<MudColor>
+            {
+                new("#ED7A78"),
+                new("#E95653"),
+                new("#E53935"),
+                new("#D91F1C"),
+                new("#B51A17")
+            };
+
+            // Assert
+            generatedColors.Should().BeEquivalentTo(colors, options => options.WithStrictOrdering());
+        }
+
+        [Test]
         public void Equals_SameType()
         {
             // Arrange
@@ -876,7 +894,7 @@ namespace MudBlazor.UnitTests.Utilities
             var rgbaEquals = color1.RgbaEquals(color2);
 
             // Assert
-            equals.Should().BeFalse();
+            equals.Should().BeTrue();
             hslEquals.Should().BeFalse();
             rgbaEquals.Should().BeTrue();
         }
@@ -982,7 +1000,7 @@ namespace MudBlazor.UnitTests.Utilities
             var getHashCodeEquals = color1.GetHashCode() == color2.GetHashCode();
 
             // Assert
-            getHashCodeEquals.Should().BeFalse();
+            getHashCodeEquals.Should().BeTrue();
         }
 
         [Test]
