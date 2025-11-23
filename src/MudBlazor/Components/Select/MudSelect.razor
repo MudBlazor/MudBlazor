@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @typeparam T
 @inherits MudBaseInput<T>
 
@@ -34,7 +34,7 @@
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="true"
-                          Error="@Error"
+                          Error="@ErrorState.Value"
                           ErrorId="@ErrorId"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"

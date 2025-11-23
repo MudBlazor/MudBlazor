@@ -42,7 +42,7 @@
                   @onkeyup:preventDefault="@KeyUpPreventDefault"
                   @onwheel="@OnMouseWheel"
                   aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@Error.ToString().ToLowerInvariant()"
+                  aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
@@ -72,7 +72,7 @@
                @onkeyup:preventDefault="@KeyUpPreventDefault"
                @onwheel="@OnMouseWheel"
                aria-describedby="@GetAriaDescribedByString()"
-               aria-invalid="@Error.ToString().ToLowerInvariant()"
+               aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
 

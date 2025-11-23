@@ -614,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
 
             // validated the picker
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Validate());
-            dateRangePickerInstance.Error.Should().BeTrue("Value is required and should be handled as invalid");
+            dateRangePickerInstance.GetState(x => x.Error).Should().BeTrue("Value is required and should be handled as invalid");
             dateRangePickerComponent.Markup.Should().Contain(errorMessage);
             dateRangePickerInstance.GetState(x => x.ErrorText).Should().Be(errorMessage);
 
@@ -625,7 +625,7 @@ namespace MudBlazor.UnitTests.Components
             // assert new values have been applied
             dateRangePickerInstance.DateRange.Start.Should().Be(startDate);
             dateRangePickerInstance.DateRange.End.Should().Be(endDate);
-            dateRangePickerInstance.Error.Should().BeFalse("Value has been set and should be handled as valid");
+            dateRangePickerInstance.GetState(x => x.Error).Should().BeFalse("Value has been set and should be handled as valid");
             dateRangePickerComponent.Markup.Should().NotContain(errorMessage);
             dateRangePickerInstance.GetState(x => x.ErrorText).Should().BeNull();
 
@@ -635,7 +635,7 @@ namespace MudBlazor.UnitTests.Components
             // assert values have been nulled
             dateRangePickerInstance.Text.Should().BeNullOrEmpty();
             dateRangePickerInstance.DateRange.Should().Be(null);
-            dateRangePickerInstance.Error.Should().BeTrue("Value has been cleared and should be handled as invalid");
+            dateRangePickerInstance.GetState(x => x.Error).Should().BeTrue("Value has been cleared and should be handled as invalid");
             dateRangePickerComponent.Markup.Should().Contain(errorMessage);
             dateRangePickerInstance.GetState(x => x.ErrorText).Should().Be(errorMessage);
         }

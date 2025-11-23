@@ -23,6 +23,7 @@ namespace MudBlazor
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
         protected readonly ParameterState<string?> ErrorTextState;
+        protected readonly ParameterState<bool> ErrorState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
@@ -35,6 +36,9 @@ namespace MudBlazor
             ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
                 .WithParameter(() => ErrorText)
                 .WithEventCallback(() => ErrorTextChanged);
+            ErrorState = registerScope.RegisterParameter<bool>(nameof(Error))
+                .WithParameter(() => Error)
+                .WithEventCallback(() => ErrorChanged);
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
             _converter.OnError = OnConversionError;
         }
@@ -77,8 +81,12 @@ namespace MudBlazor
         public string? ErrorText { get; set; }
 
         /// <summary>
-        /// Occurs when <see cref="ErrorText"/> has changed.
+        /// Raised when the <see cref="ErrorText"/> parameter value changes.
         /// </summary>
+        /// <remarks>
+        /// This callback is triggered to support two-way binding of the <see cref="ErrorText"/> parameter.
+        /// The callback receives the updated <see cref="ErrorText"/> value.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public EventCallback<string?> ErrorTextChanged { get; set; }
@@ -92,6 +100,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool Error { get; set; }
+
+        /// <summary>
+        /// Raised when the <see cref="Error"/> parameter value changes.
+        /// </summary>
+        /// <remarks>
+        /// This callback is triggered to support two-way binding of the <see cref="Error"/> parameter.
+        /// The callback receives the updated <see cref="Error"/> value.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public EventCallback<bool> ErrorChanged { get; set; }
 
         /// <summary>
         /// The ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
@@ -203,7 +222,7 @@ namespace MudBlazor
         /// <remarks>
         /// When <c>true</c>, the <see cref="Error"/> property is <c>true</c>, or <see cref="ConversionError"/> is <c>true</c>, or one or more <see cref="ValidationErrors"/> exists.
         /// </remarks>
-        public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
+        public bool HasErrors => ErrorState.Value || ConversionError || ValidationErrors.Count > 0;
 
         /// <summary>
         /// The current error or conversion error.
@@ -415,7 +434,7 @@ namespace MudBlazor
                     // if Error and ErrorText are set by the user, setting them here will have no effect.
                     // if Error, create an error id that can be used by aria-describedby on input control
                     ValidationErrors = errors;
-                    Error = errors.Count > 0;
+                    await ErrorState.SetValueAsync(errors.Count > 0);
                     await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
                     ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
@@ -661,9 +680,9 @@ namespace MudBlazor
         /// </remarks>
         public virtual void ResetValidation()
         {
-            Error = false;
+            //TODO: v9 make the ResetValidation async
+            ErrorState.SetValueAsync(false).CatchAndLog();
             ValidationErrors.Clear();
-            //TODO: v9 make the method async
             ErrorTextState.SetValueAsync(null).CatchAndLog();
             ResetConverterErrors();
             StateHasChanged();
@@ -725,9 +744,10 @@ namespace MudBlazor
             if (EditContext is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
             {
                 var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
-                Error = errorMessages.Length > 0;
+                var hasError = errorMessages.Length > 0;
                 //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
-                ErrorTextState.SetValueAsync(Error ? errorMessages[0] : null).CatchAndLog();
+                ErrorState.SetValueAsync(hasError).CatchAndLog();
+                ErrorTextState.SetValueAsync(hasError ? errorMessages[0] : null).CatchAndLog();
 
                 ValidationErrors.Clear();
                 ValidationErrors.AddRange(errorMessages);

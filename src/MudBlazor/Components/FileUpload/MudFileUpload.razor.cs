@@ -144,6 +144,7 @@ namespace MudBlazor
         /// <remarks>
         /// These styles apply when <see cref="Hidden"/> is <c>false</c>.
         /// </remarks>
+        [Obsolete("Prefer the InputClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string? InputStyle { get; set; }
@@ -247,7 +248,7 @@ namespace MudBlazor
 
             await NotifyValueChangedAsync(value);
 
-            if (!Error || !SuppressOnChangeWhenInvalid)
+            if (!ErrorState.Value || !SuppressOnChangeWhenInvalid)
                 await OnFilesChanged.InvokeAsync(args);
         }
 
@@ -316,7 +317,7 @@ namespace MudBlazor
             await base.ValidateValue();
 
             ValidationErrors = [.. ValidationErrors, .. _validationErrors];
-            Error = ValidationErrors.Count > 0;
+            await ErrorState.SetValueAsync(ValidationErrors.Count > 0);
             await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
         }
 
