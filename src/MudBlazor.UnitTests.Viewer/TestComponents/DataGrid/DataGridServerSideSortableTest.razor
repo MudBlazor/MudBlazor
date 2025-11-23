@@ -1,4 +1,4 @@
-﻿<MudDataGrid T="Item" ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
+﻿<MudDataGrid T="Item" ServerData="@(new Func<GridState<Item>, CancellationToken, Task<GridData<Item>>>(ServerReload))">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Value" />
@@ -24,7 +24,7 @@
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<GridData<Item>> ServerReload(GridState<Item> state)
+    private async Task<GridData<Item>> ServerReload(GridState<Item> state, CancellationToken token)
     {
         IEnumerable<Item> data = new List<Item>
         {
@@ -43,7 +43,7 @@
 
         // Simulate some load on the server.
         if (!DisableServerTimeoutForTests)
-            await Task.Delay(1000);
+            await Task.Delay(1000, token);
 
         return await Task.FromResult(new GridData<Item> { TotalItems = _totalItems, Items = data });
     }

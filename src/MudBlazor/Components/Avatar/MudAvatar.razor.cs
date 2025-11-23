@@ -45,27 +45,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Square { get; set; }
 
         /// <summary>
         /// Uses rounded corners instead of a circle.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The color of the avatar.

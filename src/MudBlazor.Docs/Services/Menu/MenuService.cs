@@ -119,14 +119,17 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut Chart", typeof(Donut))
-                .AddItem("Line Chart", typeof(Line), typeof(Legend))
-                .AddItem("Sankey Chart", typeof(Sankey), typeof(Legend))
-                .AddItem("Pie Chart", typeof(Pie))
-                .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
-                .AddItem("Heat Map Chart", typeof(HeatMap))
-                .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart))
+                .AddItem("Donut Chart", typeof(Donut<T>), typeof(DonutChartOptions), typeof(Legend<T>))
+                .AddItem("Line Chart", typeof(Line<T>), typeof(LineChartOptions), typeof(Legend<T>))
+                .AddItem("Pie Chart", typeof(Pie<T>), typeof(PieChartOptions), typeof(Legend<T>))
+                .AddItem("Bar Chart", typeof(Bar<T>), typeof(BarChartOptions), typeof(Legend<T>))
+                .AddItem("Heat Map Chart", typeof(HeatMap<T>), typeof(HeatMapChartOptions), typeof(Legend<T>))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar<T>), typeof(StackedBarChartOptions), typeof(Legend<T>))
+                .AddItem("Time Series Chart", typeof(TimeSeries<T>), typeof(TimeSeriesChartOptions), typeof(Legend<T>))
+                .AddItem("Radar Chart", typeof(Radar<T>), typeof(RadarChartOptions), typeof(Legend<T>))
+                .AddItem("Rose Chart", typeof(Rose<T>), typeof(RoseChartOptions), typeof(Legend<T>))
+                .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
+                .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
             // this must be last!
             .GetComponentsSortedByName();

@@ -87,27 +87,22 @@ namespace MudBlazor
         /// The amount of drop shadow to apply.
         /// </summary>
         /// <remarks>
-        /// Defaults to 8 in <see cref="MudGlobal.PopoverDefaults.Elevation"/>.
+        /// Defaults to 8.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public int Elevation { set; get; } = MudGlobal.PopoverDefaults.Elevation;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public int Elevation { set; get; } = 8;
 
         /// <summary>
         /// Displays square borders around this popover.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// When <c>true</c>, the CSS <c>border-radius</c> is set to <c>0</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Square { get; set; }
 
         /// <summary>
         /// Displays this popover in a fixed position, even through scrolling.

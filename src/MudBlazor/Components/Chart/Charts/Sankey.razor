@@ -1,77 +1,99 @@
-﻿@namespace MudBlazor.Charts
+﻿@using System.Globalization
 
-@inherits MudCategoryChartBase
+@namespace MudBlazor.Charts
+
+@inherits MudChartBase<T, SankeyChartOptions>
+
+@typeparam T
 
 @{
     var glowName = $"glow_{Guid.NewGuid()}";
 }
 
-<svg @attributes="UserAttributes" class="mud-chart-sankey mud-ltr" width="@Width" height="@Height" viewBox="0 0 650 350">
-    <defs>
-        @foreach (var edge in _edgePaths)
+<div @ref="_elementReference" class="mud-chart-sankey" style="width:@Width; height:@Height">
+    <svg @attributes="UserAttributes" class="mud-chart-sankey mud-ltr" width="@Width" height="@Height" viewBox="0 0 @_boundWidth.ToStr() @_boundHeight.ToStr()">
+        <defs>
+            @foreach (var edge in EdgePaths)
+            {
+                <linearGradient id="@($"gradient_{NodeRects[edge.Source.Name].Hash}_{NodeRects[edge.Target.Name].Hash}")">
+                    <stop stop-color="@NodeRects[edge.Source.Name].Color" offset="0" />
+                    <stop stop-color="@NodeRects[edge.Target.Name].Color" offset="1" />
+                </linearGradient>
+            }
+            <filter id="@glowName" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse">
+                <feFlood result="flood" flood-color="@ChartOptions?.HighlightColor" flood-opacity="1" />
+                <feComposite in="flood" in2="SourceAlpha" operator="in" result="mask" />
+                <feGaussianBlur in="mask" stdDeviation="4" result="blurred" />
+                <feMerge>
+                    <feMergeNode in="blurred" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+        </defs>
+        @foreach (var edge in EdgePaths)
         {
-            <linearGradient id="@($"gradient_{_nodeRects[edge.Source.Name].Hash}_{_nodeRects[edge.Target.Name].Hash}")">
-                <stop stop-color="@_nodeRects[edge.Source.Name].Color" offset="0"/>
-                <stop stop-color="@_nodeRects[edge.Target.Name].Color" offset="1"/>
-            </linearGradient>
+            <path d="@edge.Data"
+                  fill="@($"url(#gradient_{NodeRects[edge.Source.Name].Hash}_{NodeRects[edge.Target.Name].Hash})")"
+                  opacity="@ToS(ChartOptions?.EdgeOpacity ?? 0.5)"
+                  filter="@(ActiveNode == edge.Source.Name || ActiveNode == edge.Target.Name || edge.Name == ActiveEdge ? $"url(#{glowName})" : "")"
+                  @onmouseover="@((e) => OnEdgeMouseOver(e, edge))"
+                  @onmouseout="@OnEdgeMouseOut" />
         }
-        <filter id="@glowName" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse">
-            <feFlood result="flood" flood-color="@NodeChartOptions.HighlightColor" flood-opacity="1"/>
-            <feComposite in="flood" in2="SourceAlpha" operator="in" result="mask"/>
-            <feGaussianBlur in="mask" stdDeviation="4" result="blurred"/>
-            <feMerge>
-                <feMergeNode in="blurred"/>
-                <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-        </filter>
-    </defs>
-    @foreach (var edge in _edgePaths)
-    {
-        <path d="@edge.D"
-              fill="@($"url(#gradient_{_nodeRects[edge.Source.Name].Hash}_{_nodeRects[edge.Target.Name].Hash})")"
-              opacity="@ToS(NodeChartOptions.EdgeOpacity)"
-              filter="@(_activeNode == edge.Source.Name || _activeNode == edge.Target.Name || edge.Name == _activeEdge ? $"url(#{glowName})" : "")"
-              @onmouseover="@((e) => OnEdgeMouseOver(e, edge))"
-              @onmouseout="@OnEdgeMouseOut"/>
-    }
-    @foreach (var kv in _nodeRects)
-    {
-        <rect x="@ToS(kv.Value.X)"
-              y="@ToS(kv.Value.Y)"
-              width="@ToS(kv.Value.Width)"
-              height="@ToS(kv.Value.Height)"
-              fill="@kv.Value.Color"
-              filter="@(_activeNode == kv.Key ? $"url(#{glowName})" : "")"
-              @onmouseover="@((e) => OnNodeMouseOver(e, kv.Value))"
-              @onmouseout="@OnNodeMouseOut"
-              @onclick="@(e => OnNodeClick(e, kv.Value))"/>
+        @foreach (var kv in NodeRects)
+        {
+            <rect x="@ToS(kv.Value.X)"
+                  y="@ToS(kv.Value.Y)"
+                  width="@ToS(kv.Value.Width)"
+                  height="@ToS(kv.Value.Height)"
+                  fill="@kv.Value.Color"
+                  filter="@(ActiveNode == kv.Key ? $"url(#{glowName})" : "")"
+                  @onmouseover="@((e) => OnNodeMouseOver(e, kv.Value))"
+                  @onmouseout="@OnNodeMouseOut"
+                  @onclick="@(e => OnNodeClick(e, kv.Value))" />
 
-        if (ChartOptions.ShowLabels || kv.Key == _activeNode)
-        {
-            <ChartTooltip Title="@(NodeChartOptions.ShowNodeValues ? $"{kv.Key} ({_nodeValues.GetValueOrDefault(kv.Key!)})" : kv.Key!)"
-                          Color="rgba(0,0,0,0.25)"
-                          X="@(kv.Value.X + (kv.Value.X <= 10 ? kv.Value.Width : 0))"
-                          Y="@(kv.Value.Y + kv.Value.Height / 2)"
-                          ShowTriangle="false"
-                          StrokeWidth="0"
-                          FontColor="var(--mud-palette-text-primary)"
-                          AnchorPositionX="@(kv.Value.X <= 10 ? ChartTooltipAnchorPositionX.Start : ChartTooltipAnchorPositionX.End)"
-                          FontSize="@NodeChartOptions.LabelFontSize"
-                          PaddingSize="@NodeChartOptions.LabelPadding"/>
+            if (ChartOptions?.ShowLabels is true || kv.Key == ActiveNode)
+            {
+                <ChartTooltip Title="@(ChartOptions.ShowNodeValues ? $"{kv.Key} ({NodeValues.GetValueOrDefault(kv.Key!)})" : kv.Key!)"
+                              Color="rgba(0,0,0,0.25)"
+                              X="@(kv.Value.X + (kv.Value.X <= 10 ? kv.Value.Width : 0))"
+                              Y="@(kv.Value.Y + kv.Value.Height / 2)"
+                              ShowTriangle="false"
+                              StrokeWidth="0"
+                              AnchorPositionX="@(kv.Value.X <= 10 ? ChartTooltipAnchorPositionX.Start : ChartTooltipAnchorPositionX.End)"
+                              FontSize="@ChartOptions.LabelFontSize"
+                              PaddingSize="@ChartOptions.LabelPadding"/>
+            }
         }
-    }
-    @* Draw edge labels last to have them at the top *@
-    @foreach (var edge in _edgePaths.Where(edge => NodeChartOptions.ShowEdgeLabels || edge.Name == _activeEdge))
-    {
-        <ChartTooltip Title="@edge.Name"
-                      Color="var(--mud-palette-surface)"
-                      X="@edge.CenterX"
-                      Y="@edge.CenterY"
-                      ShowTriangle="false"
-                      StrokeWidth="0"
-                      FontColor="var(--mud-palette-text-primary)"
-                      FontSize="@NodeChartOptions.LabelFontSize"
-                      PaddingSize="@NodeChartOptions.LabelPadding"/>
-    }
-    @MudChartParent?.CustomGraphics
-</svg>
+        @* Draw edge labels last to have them at the top*@
+        @foreach (var edge in EdgePaths.Where(edge => ChartOptions?.ShowEdgeLabels is true || edge.Name == ActiveEdge))
+        {
+            var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(edge) is { } pos
+                    ? (pos.X, pos.Y)
+                    : (edge.LabelX, edge.LabelY);
+
+            if (TooltipTemplate is not null)
+            {
+                <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToStr(), @tooltipY.ToStr())">
+                    @TooltipTemplate((edge, @NodeRects[edge.Source.Name].Color))
+                </g>
+            }
+            else
+            {
+                <ChartTooltip Title="@edge.Name"
+                              Color="@NodeRects[edge.Source.Name].Color"
+                              X="@edge.LabelX"
+                              Y="@edge.LabelY"
+                              ShowTriangle="false"
+                              StrokeWidth="0"
+                              FontSize="@ChartOptions.LabelFontSize"
+                              PaddingSize="@ChartOptions.LabelPadding"/>
+            }
+        }
+        @MudChartParent?.CustomGraphics
+    </svg>
+</div>
+
+@if (CanHideSeries is true)
+{
+    <Legend T="T" Data="@_legend" />
+}

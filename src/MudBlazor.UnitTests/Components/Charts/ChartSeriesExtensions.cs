@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace MudBlazor.UnitTests.Components
 {
     internal static class ChartSeriesExtensions
     {
-        internal static bool TryGetIndexOfDataValue(this ChartSeries chartSeries, int seriesIndex, double value, out int dataIndex)
+        internal static bool TryGetIndexOfDataValue<T>(this ChartSeries<T> chartSeries, int seriesIndex, T value, out int dataIndex) where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
         {
             dataIndex = -1;
 
-            for (var i = 0; i < chartSeries.Data.Length; i++)
+            for (var i = 0; i < chartSeries.Data.Values.Count; i++)
             {
-                if (chartSeries.Data[i] == value)
+                if (chartSeries.Data[i].Y == value)
                 {
                     dataIndex = i;
                     return true;
@@ -24,6 +20,7 @@ namespace MudBlazor.UnitTests.Components
             return false;
         }
 
-        internal static bool TryGetIndexOfDataValue(this IEnumerable<ChartSeries> chartSeries, int seriesIndex, double value, out int dataIndex) => TryGetIndexOfDataValue(chartSeries.ElementAt(seriesIndex), seriesIndex, value, out dataIndex);
+        internal static bool TryGetIndexOfDataValue<T>(this IEnumerable<ChartSeries<T>> chartSeries, int seriesIndex, T value, out int dataIndex) where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+            => TryGetIndexOfDataValue(chartSeries.ElementAt(seriesIndex), seriesIndex, value, out dataIndex);
     }
 }

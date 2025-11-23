@@ -407,12 +407,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ObserveSystemThemeChange()
+        public async Task ObserveSystemDarkModeChange()
         {
             // Arrange & Act
             Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
             Context.JSInterop.SetupVoid("watchDarkThemeMedia");
-            var themeProvider = Context.RenderComponent<ThemeProviderObserveSystemThemeChangeTest>();
+            var themeProvider = Context.RenderComponent<ThemeProviderObserveSystemDarkModeChangeTest>();
 
             // Assert
             Context.JSInterop.VerifyNotInvoke("watchDarkThemeMedia");

@@ -773,6 +773,24 @@ namespace MudBlazor.UnitTests.Utilities
 #pragma warning disable CS1718 // Comparison made to same variable
 
         [Test]
+        public void Equals_ShouldProduceColorsThatEqualExpectedList()
+        {
+            // Arrange & Act
+            var generatedColors = MudColor.GenerateTintShadePalette("#E53935");
+            var colors = new List<MudColor>
+            {
+                new("#ED7A78"),
+                new("#E95653"),
+                new("#E53935"),
+                new("#D91F1C"),
+                new("#B51A17")
+            };
+
+            // Assert
+            generatedColors.Should().BeEquivalentTo(colors, options => options.WithStrictOrdering());
+        }
+
+        [Test]
         public void Equals_SameType()
         {
             // Arrange
@@ -871,12 +889,20 @@ namespace MudBlazor.UnitTests.Utilities
             var color2 = new MudColor(245, 0.35, 0.95, 1);
 
             // Act
-            var equals = color1.Equals(color2);
+            var equals1 = color1.Equals(color2);
+            var equals2 = color1.Equals(color2, MudColorComparison.Rgba);
+            var equals3 = color1.Equals(color2, MudColorComparison.Hsl);
+            var equals4 = color1.Equals(color2, MudColorComparison.RgbaAndHsl);
+            var equals5 = color1.Equals(color2, (MudColorComparison)(-1));
             var hslEquals = color1.HslEquals(color2);
             var rgbaEquals = color1.RgbaEquals(color2);
 
             // Assert
-            equals.Should().BeFalse();
+            equals1.Should().BeTrue();
+            equals2.Should().BeTrue();
+            equals3.Should().BeFalse();
+            equals4.Should().BeFalse();
+            equals5.Should().BeTrue();
             hslEquals.Should().BeFalse();
             rgbaEquals.Should().BeTrue();
         }
@@ -982,7 +1008,7 @@ namespace MudBlazor.UnitTests.Utilities
             var getHashCodeEquals = color1.GetHashCode() == color2.GetHashCode();
 
             // Assert
-            getHashCodeEquals.Should().BeFalse();
+            getHashCodeEquals.Should().BeTrue();
         }
 
         [Test]

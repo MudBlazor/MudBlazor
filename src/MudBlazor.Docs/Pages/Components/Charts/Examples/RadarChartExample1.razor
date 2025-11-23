@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Charts
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart @ref="_chart" ChartType="ChartType.Radar" ChartSeries="@_series" ChartLabels="@_chartLabels" ChartOptions="@_options" Width="100%" Height="400px" MatchBoundsToSize>
+        <CustomGraphics>
+            <text class="mud-chart-selected-text"
+                  x="90%"
+                  y="30"
+                  dominant-baseline="middle"
+                  text-anchor="middle"
+                  fill="@_options.ChartPalette[0]">
+                @(_selectedIndex >= 0 ? $"Selected: {_chartLabels[_selectedIndex]}" : "")
+            </text>
+        </CustomGraphics>
+    </MudChart>
+</MudPaper>
+
+@code {
+    private MudChart<double> _chart;
+    private int _selectedIndex => (_chart?.ChartReference as Radar<double>)?.SelectedPointIndex ?? -1;
+    private string[] _chartLabels = { "A", "B", "C", "D", "E" };
+    private List<ChartSeries<double>> _series = new()
+    {
+        new ChartSeries<double>() { Name = "Development", Data = new double[] { 90, 80, 60, 70, 85 } },
+    };
+
+    private RadarChartOptions _options = new RadarChartOptions
+    {
+        ShowDataMarkers = true,
+        DataPointRadius = 4,
+        ShowAxisLabels = true,
+        FillOpacity = 0.3,
+        AngleOffset = 0,
+        TooltipTitleFormat = "{{X_VALUE}}",
+    };
+}

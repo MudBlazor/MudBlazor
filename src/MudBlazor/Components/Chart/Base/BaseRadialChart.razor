@@ -1,0 +1,107 @@
+﻿@namespace MudBlazor.Charts
+
+@inherits MudComponentBase
+
+@typeparam T
+@typeparam TChartOptions
+
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @(ToS(Radius * 2)) @(ToS(Radius * 2))" style="@HoveredStylename">
+    <Filters />
+
+    <g transform="translate(@Radius.ToStr(), @Radius.ToStr())">
+        <defs>
+            <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="0" stdDeviation="1.0" flood-color="black" flood-opacity="1" />
+            </filter>
+        </defs>
+
+        @ChartGrid
+
+        @foreach (var item in Paths)
+        {
+            <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
+                  class="mud-chart-serie"
+                  fill-opacity="@ChartOptions.FillOpacity"
+                  stroke="@GetColor(item.Index)"
+                  stroke-width="@(ChartOptions is IHasDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
+                  fill="@GetColor(item.Index)"
+                  d="@item.Data"
+                  pointer-events="@(ChartOptions is IHasDataPointOptions ? "none" : "all")"
+                  @onmouseover="(e) => OnMouseOver.InvokeAsync((Args: e, Segment: item))"
+                  @onmouseout="() => OnMouseOut.InvokeAsync()">
+            </path>
+
+                @if (ChartOptions is IHasValueLabelOptions { ShowValues: true  } && item is SvgPetal petal)
+                {
+                    <g class="mud-chart-labels">
+                        @if (!string.IsNullOrEmpty(item.LabelXValue) || !string.IsNullOrEmpty(item.LabelYValue))
+                        {
+                            @RenderValueLabel(petal);
+                        }
+                    </g>
+                }
+
+            @if (item is SvgPolygon points)
+            {
+                @ChartDataPoints(points)
+            }
+        }
+    </g>
+
+    @CustomGraphics
+
+    @if (HoveredSegment is not null && ChartOptions?.ShowToolTips is true)
+    {
+        var color = GetColor(HoveredSegment.Index);
+
+        var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(HoveredSegment) is { } pos
+                ? (pos.X, pos.Y)
+                : (HoveredSegment.LabelX + Radius, HoveredSegment.LabelY + Radius);
+
+        if (TooltipTemplate is not null)
+        {
+            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToStr(), @tooltipY.ToStr())">
+                @TooltipTemplate((HoveredSegment, color))
+            </g>
+        }
+        else
+        {
+            var tooltipFormat = BuildTooltipFormat();
+            <ChartTooltip Title="@tooltipFormat.title" Subtitle="@tooltipFormat.subtitle" Color="@color" X="@tooltipX" Y="@tooltipY" />
+        }
+    }
+</svg>
+
+@code {
+    RenderFragment RenderValueLabel(SvgPetal path) => builder =>
+    {
+        var seq = 0;
+        var hasX = !string.IsNullOrWhiteSpace(path.LabelXValue);
+        var fontSize = EstimateFontSize(path.LabelXValue, path.SegmentRadius, path.AngleRadians) + (path.LabelOffset * 5);
+        var x = ToS((path.LabelX * 0.8) + (path.LabelX * path.LabelOffset));
+        var y = ToS((path.LabelY * 0.8) + (path.LabelY * path.LabelOffset));
+
+        builder.OpenElement(seq++, "text");
+        builder.AddAttribute(seq++, "class", "mud-chart-label-value");
+        builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => OnPathClick.InvokeAsync(path.Index)));
+        builder.AddAttribute(seq++, "x", x);
+        builder.AddAttribute(seq++, "y", y);
+        builder.AddAttribute(seq++, "fill", "white");
+        builder.AddAttribute(seq++, "stroke", "black");
+        builder.AddAttribute(seq++, "stroke-width", "0.8");
+        builder.AddAttribute(seq++, "paint-order", "stroke");
+        builder.AddAttribute(seq++, "filter", "url(#text-shadow)");
+        builder.AddAttribute(seq++, "text-anchor", "middle");
+        builder.AddAttribute(seq++, "dominant-baseline", "central");
+        builder.AddAttribute(seq++, "style", $"font-size:{fontSize.ToStr()}px");
+
+        if (hasX)
+        {
+            builder.OpenElement(seq++, "tspan");
+            builder.AddContent(seq++, path.LabelXValue);
+            builder.CloseElement();
+        }
+
+        builder.CloseElement(); // </text>
+    };
+}

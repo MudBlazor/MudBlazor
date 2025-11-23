@@ -48,14 +48,14 @@
 
         <DocsPageSection>
             <SectionHeader Title="System preference">
-                <Description>With <CodeInline>GetSystemPreference()</CodeInline> you can get the user-defined dark theme preference. Returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
+                <Description>With <CodeInline>GetSystemDarkModeAsync()</CodeInline> you can get the user defined dark theme preference. Returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverviewThemesSystemPreferenceExample)"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Watch system preference">
-                <Description><CodeInline>WatchSystemPreference(Func)</CodeInline> calls Func when the system preferences change. It returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
+                <Description><CodeInline>WatchSystemDarkModeAsync(Func)</CodeInline> calls Func when the system preferences change. <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverviewThemesWatchSystemPreferenceExample)"/>
         </DocsPageSection>
