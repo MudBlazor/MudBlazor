@@ -7,6 +7,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents the header of a <see cref="MudChat"/>.
     /// </summary>
+    /// <remarks>
+    /// This component is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/
+    /// </remarks>
+    [Obsolete("MudChatHeader is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/")]
     public partial class MudChatHeader : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-chat-header")

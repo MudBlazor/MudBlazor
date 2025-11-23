@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <NoWarn>CS0618</NoWarn>
   </PropertyGroup>
 
   <!--Outside Visual Studio SolutionDir is not available-->

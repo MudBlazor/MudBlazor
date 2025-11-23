@@ -2,6 +2,13 @@
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// The position of chat bubbles.
+    /// </summary>
+    /// <remarks>
+    /// This enum is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/
+    /// </remarks>
+    [Obsolete("ChatBubblePosition is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/")]
     public enum ChatBubblePosition
     {
         /// <summary>

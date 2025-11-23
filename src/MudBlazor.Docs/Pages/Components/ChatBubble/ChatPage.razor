@@ -1,9 +1,15 @@
-﻿@page "/components/chat"
+#pragma warning disable CS0618 // Type or member is obsolete
+@page "/components/chat"
 @page "/components/MudChat"
 
 <DocsPage>
     <DocsPageHeader Title="Chat" Component="@nameof(MudChat)" SubTitle="The MudChat component is used to house one or more MudChatBubble components, with optional components such as MudAvatar, MudChatHeader, and MudChatFooter." />
     <DocsPageContent>
+
+        <MudAlert Severity="Severity.Warning" Class="mb-4">
+            <strong>Deprecated:</strong> The MudChat component family is deprecated and will be removed in v10. 
+            Please use <MudLink Href="https://github.com/MudXtra/MudX/" Target="_blank">MudX</MudLink> instead for chat functionality.
+        </MudAlert>
 
         <DocsPageSection>
             <SectionHeader Title="Basic">

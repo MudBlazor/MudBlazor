@@ -1,3 +1,4 @@
+#pragma warning disable CS0618 // Type or member is obsolete
 @namespace MudBlazor.Docs.Examples
 @inject ISnackbar Snackbar
 
@@ -36,6 +37,7 @@
 </MudMenu>
 
 @code {
+#pragma warning disable CS0618 // Type or member is obsolete
     #nullable enable
     private List<Message> messages = new();
     private Message? _selectedMessage;

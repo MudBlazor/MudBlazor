@@ -8,6 +8,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a chat component for displaying chat bubbles.
+    /// </summary>
+    /// <remarks>
+    /// This component is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/
+    /// </remarks>
+    [Obsolete("MudChat is deprecated and will be removed in v10. Please use MudX instead: https://github.com/MudXtra/MudX/")]
     public partial class MudChat : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-chat")
