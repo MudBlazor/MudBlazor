@@ -2379,21 +2379,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Expands all groups.
-        /// </summary>
-        /// <remarks>
-        /// Applies when <see cref="Groupable"/> is <c>true</c>.
-        /// </remarks>
-        [Obsolete("Use ExpandAllGroupsAsync instead")]
-        public void ExpandAllGroups()
-        {
-            if (_groupDefinition != null && _groupable)
-            {
-                ToggleGroupExpandRecursively(true).CatchAndLog();
-            }
-        }
-
-        /// <summary>
         /// Collapses all groups async.
         /// </summary>
         /// <remarks>
@@ -2404,21 +2389,6 @@ namespace MudBlazor
             if (_groupDefinition != null && _groupable)
             {
                 await ToggleGroupExpandRecursively(false);
-            }
-        }
-
-        /// <summary>
-        /// Collapses all groups.
-        /// </summary>
-        /// <remarks>
-        /// Applies when <see cref="Groupable"/> is <c>true</c>.
-        /// </remarks>
-        [Obsolete("Use CollapseAllGroupsAsync instead")]
-        public void CollapseAllGroups()
-        {
-            if (_groupDefinition != null && _groupable)
-            {
-                ToggleGroupExpandRecursively(false).CatchAndLog();
             }
         }
 

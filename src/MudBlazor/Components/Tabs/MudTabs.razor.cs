@@ -695,46 +695,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided panel. 
-        /// A <c>null</c> panel deactivates all panels.
-        /// </summary>
-        /// <param name="panel">The panel to activate.</param>
-        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
-        [Obsolete("Use ActivatePanelAsync instead.")]
-        public void ActivatePanel(MudTabPanel? panel, bool ignoreDisabledState = false)
-        {
-            if (panel is not null && _panels.IndexOf(panel) > -1)
-                ActivatePanelAsync(panel, ignoreDisabledState).CatchAndLog();
-        }
-
-        /// <summary>
-        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided index. 
-        /// An invalid index is discarded and no changes are made.
-        /// </summary>
-        /// <param name="index">The index of the panel to activate.</param>
-        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
-        [Obsolete("Use ActivatePanelAsync instead.")]
-        public void ActivatePanel(int index, bool ignoreDisabledState = false)
-        {
-            if (index > -1 && index <= _panels.Count - 1)
-                ActivatePanelAsync(_panels[index], ignoreDisabledState).CatchAndLog();
-        }
-
-        /// <summary>
-        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided unique id. 
-        /// An invalid id is discarded and no changes are made.
-        /// </summary>
-        /// <param name="id">The unique ID of the panel to activate.</param>
-        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
-        [Obsolete("Use ActivatePanelAsync instead.")]
-        public void ActivatePanel(object id, bool ignoreDisabledState = false)
-        {
-            var panel = _panels.FirstOrDefault(p => Equals(p.ID, id));
-            if (panel != null)
-                ActivatePanelAsync(panel, ignoreDisabledState).CatchAndLog();
-        }
-
-        /// <summary>
         /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided index. 
         /// An invalid index is discarded and no changes are made.
         /// </summary>
