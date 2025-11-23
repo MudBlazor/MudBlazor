@@ -66,7 +66,7 @@ namespace MudBlazor
         /// <summary>
         /// Whether the component has executed OnAfterRender at least once.
         /// </summary>
-        public bool HasRendered { get; private set; }
+        protected bool HasRendered { get; private set; }
 
         /// <summary>
         /// Whether the <see cref="JSRuntime" /> is available.
