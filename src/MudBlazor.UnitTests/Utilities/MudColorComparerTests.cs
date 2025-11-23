@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -38,6 +39,22 @@ public class MudColorComparerTests
         rgba.Comparison.Should().Be(MudColorComparison.Rgba);
         hsl.Comparison.Should().Be(MudColorComparison.Hsl);
         both.Comparison.Should().Be(MudColorComparison.RgbaAndHsl);
+    }
+
+    [Test]
+    public void Equals_ShouldUseFallback_WhenComparisonIsInvalid()
+    {
+        // Arrange
+        var comparer = ConstructInvalidComparer();
+
+        var color1 = new MudColor(10, 20, 30, 40);
+        var color2 = new MudColor(10, 20, 30, 40);
+
+        // Act
+        var result = comparer.Equals(color1, color2);
+
+        // Assert
+        result.Should().BeTrue("fallback: x.Equals(y)");
     }
 
     [Test]
@@ -270,7 +287,37 @@ public class MudColorComparerTests
         h1.Should().NotBe(h2);
     }
 
-    public static IEnumerable<IEqualityComparer<MudColor>> AllComparers()
+    [Test]
+    public void GetHashCode_ShouldUseFallback_WhenComparisonIsInvalid()
+    {
+        // Arrange
+        var comparer = ConstructInvalidComparer();
+
+        var color = new MudColor(1, 2, 3, 4);
+
+        // Act
+        var hash = comparer.GetHashCode(color);
+
+        // Assert
+        hash.Should().Be(color.GetHashCode(), because: "fallback: mudColor.GetHashCode()");
+    }
+
+    private static MudColor.MudColorComparer ConstructInvalidComparer()
+    {
+        var invalidComparison = (MudColorComparison)(-1);
+        var comparer = (MudColor.MudColorComparer)typeof(MudColor.MudColorComparer)
+            .GetConstructor(
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                binder: null,
+                [typeof(MudColorComparison)],
+                modifiers: null
+            )!
+            .Invoke([invalidComparison]);
+
+        return comparer;
+    }
+
+    private static IEnumerable<IEqualityComparer<MudColor>> AllComparers()
     {
         yield return MudColor.MudColorComparer.Rgba;
         yield return MudColor.MudColorComparer.Hsl;
