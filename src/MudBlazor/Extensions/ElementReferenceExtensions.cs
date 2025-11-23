@@ -69,11 +69,5 @@ namespace MudBlazor
             this ElementReference elementReference,
             DotNetObjectReference<T> obj) where T : class =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.addOnBlurEvent", elementReference, obj) ?? ValueTask.CompletedTask;
-
-        [Obsolete("Use mudElementRef.removeOnBlurEvent via js invoke instead")]
-        public static ValueTask MudDetachBlurEventWithJS<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(
-            this ElementReference elementReference,
-            DotNetObjectReference<T> obj) where T : class =>
-            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.removeOnBlurEvent", elementReference, obj) ?? ValueTask.CompletedTask;
     }
 }

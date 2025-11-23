@@ -54,15 +54,12 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the theme <c>border-radius</c> value will be used. 
         /// Only takes affect if <see cref="Bordered"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The vertical spacing between <see cref="MudNavLink" /> items.
