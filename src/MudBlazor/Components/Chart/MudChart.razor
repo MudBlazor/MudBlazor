@@ -1,40 +1,158 @@
-﻿@namespace MudBlazor
-@using MudBlazor.Charts
-@inherits MudCategoryChartBase
+﻿@using MudBlazor.Charts
+@using System.Numerics
+
+@namespace MudBlazor
+
+@inherits MudChartBase<T, IChartOptions>
+
+@typeparam T
+@attribute [CascadingTypeParameter(nameof(T))]
 
 <CascadingValue Value="@this" IsFixed="true">
-    <CascadingValue Value="@((MudChartBase)this)" IsFixed="true">
-        @ChildContent
-
-        <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">
-            @if (ChartType == ChartType.Donut)
-            {
-                <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
-            }
-            @if (ChartType == ChartType.Pie)
-            {
-                <Pie InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Pie>
-            }
-            @if (ChartType == ChartType.Line)
-            {
-                <Line ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
-            }
-            @if (ChartType == ChartType.Sankey)
-            {
-                <Sankey Nodes="@Nodes" Edges="@Edges" ChartOptions="ChartOptions" NodeChartOptions="NodeChartOptions" @bind-SelectedIndex="@SelectedIndex"></Sankey>
-            }
-            @if (ChartType == ChartType.Bar)
-            {
-                <Bar ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
-            }
-            @if (ChartType == ChartType.StackedBar)
-            {
-                <StackedBar ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></StackedBar>
-            }
-            @if (ChartType == ChartType.HeatMap)
-            {
-                <HeatMap ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></HeatMap>
-            }
-        </div>
-    </CascadingValue>
+    <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">
+        @ChartContent
+    </div>
+    @if (ChartReference is not null)
+    {
+        <CascadingValue Value="@ChartReference" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    }
 </CascadingValue>
+
+@code {
+    private RenderFragment ChartContent => (_chartType, _chartOptions) switch
+    {
+        (ChartType.Donut, DonutChartOptions donutOptions) => @<Donut ChartSeries="@ChartSeries"
+                                                                     ChartLabels="@ChartLabels"
+                                                                     ChartOptions="donutOptions"
+                                                                     CanHideSeries="@CanHideSeries"
+                                                                     LegendPosition="@LegendPosition"
+                                                                     TooltipTemplate="@TooltipTemplate"
+                                                                     TooltipPositionFunc="@TooltipPositionFunc"
+                                                                     MatchBoundsToSize="@MatchBoundsToSize"
+                                                                     CustomGraphics="@CustomGraphics"
+                                                                     Width="@Width" Height="@Height"
+                                                                     @ref="ChartReference"
+                                                                     @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                     @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Line, LineChartOptions lineOptions) => @<Line ChartSeries="@ChartSeries"
+                                                                 ChartLabels="@ChartLabels"
+                                                                 ChartOptions="lineOptions"
+                                                                 CanHideSeries="@CanHideSeries"
+                                                                 LegendPosition="@LegendPosition"
+                                                                 TooltipTemplate="@TooltipTemplate"
+                                                                 TooltipPositionFunc="@TooltipPositionFunc"
+                                                                 MatchBoundsToSize="@MatchBoundsToSize"
+                                                                 CustomGraphics="@CustomGraphics"
+                                                                 Width="@Width" Height="@Height"
+                                                                 @ref="ChartReference"
+                                                                 @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                                 @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Pie, PieChartOptions pieOptions) => @<Pie ChartSeries="@ChartSeries"
+                                                             ChartLabels="@ChartLabels"
+                                                             ChartOptions="pieOptions"
+                                                             CanHideSeries="@CanHideSeries"
+                                                             LegendPosition="@LegendPosition"
+                                                             TooltipTemplate="@TooltipTemplate"
+                                                             TooltipPositionFunc="@TooltipPositionFunc"
+                                                             MatchBoundsToSize="@MatchBoundsToSize"
+                                                             CustomGraphics="@CustomGraphics"
+                                                             Width="@Width" Height="@Height"
+                                                             @ref="ChartReference"
+                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                             @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries"
+                                                             ChartLabels="@ChartLabels"
+                                                             ChartOptions="barOptions"
+                                                             CanHideSeries="@CanHideSeries"
+                                                             LegendPosition="@LegendPosition"
+                                                             TooltipTemplate="@TooltipTemplate"
+                                                             TooltipPositionFunc="@TooltipPositionFunc"
+                                                             MatchBoundsToSize="@MatchBoundsToSize"
+                                                             CustomGraphics="@CustomGraphics"
+                                                             Width="@Width" Height="@Height"
+                                                             @ref="ChartReference"
+                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                             @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries"
+                                                                                         ChartLabels="@ChartLabels"
+                                                                                         ChartOptions="stackedBarOptions"
+                                                                                         CanHideSeries="@CanHideSeries"
+                                                                                         LegendPosition="@LegendPosition"
+                                                                                         TooltipTemplate="@TooltipTemplate"
+                                                                                         TooltipPositionFunc="@TooltipPositionFunc"
+                                                                                         MatchBoundsToSize="@MatchBoundsToSize"
+                                                                                         CustomGraphics="@CustomGraphics"
+                                                                                         Width="@Width" Height="@Height"
+                                                                                         @ref="ChartReference"
+                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                                                         @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Timeseries, TimeSeriesChartOptions timeSeriesOptions) => @<TimeSeries ChartSeries="@ChartSeries"
+                                                                                         ChartLabels="@ChartLabels"
+                                                                                         ChartOptions="timeSeriesOptions"
+                                                                                         CanHideSeries="@CanHideSeries"
+                                                                                         LegendPosition="@LegendPosition"
+                                                                                         TooltipTemplate="@TooltipTemplate"
+                                                                                         TooltipPositionFunc="@TooltipPositionFunc"
+                                                                                         MatchBoundsToSize="@MatchBoundsToSize"
+                                                                                         CustomGraphics="@CustomGraphics"
+                                                                                         Width="@Width" Height="@Height"
+                                                                                         @ref="ChartReference"
+                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                                         @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.HeatMap, HeatMapChartOptions heatMapOptions) => @<HeatMap ChartSeries="@ChartSeries"
+                                                                             ChartLabels="@ChartLabels"
+                                                                             ChartOptions="heatMapOptions"
+                                                                             CanHideSeries="@CanHideSeries"
+                                                                             LegendPosition="@LegendPosition"
+                                                                             TooltipTemplate="@TooltipTemplate"
+                                                                             TooltipPositionFunc="@TooltipPositionFunc"
+                                                                             MatchBoundsToSize="@MatchBoundsToSize"
+                                                                             CustomGraphics="@CustomGraphics"
+                                                                             Width="@Width" Height="@Height"
+                                                                             @ref="ChartReference"
+                                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                             @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Rose, RoseChartOptions roseOptions) => @<Rose ChartSeries="@ChartSeries"
+                                                                 ChartLabels="@ChartLabels"
+                                                                 ChartOptions="roseOptions"
+                                                                 CanHideSeries="@CanHideSeries"
+                                                                 LegendPosition="@LegendPosition"
+                                                                 TooltipTemplate="@TooltipTemplate"
+                                                                 TooltipPositionFunc="@TooltipPositionFunc"
+                                                                 MatchBoundsToSize="@MatchBoundsToSize"
+                                                                 CustomGraphics="@CustomGraphics"
+                                                                 Width="@Width" Height="@Height"
+                                                                 @ref="ChartReference"
+                                                                 @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                 @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Radar, RadarChartOptions radarOptions) => @<Radar ChartSeries="@ChartSeries"
+                                                                     ChartLabels="@ChartLabels"
+                                                                     ChartOptions="radarOptions"
+                                                                     CanHideSeries="@CanHideSeries"
+                                                                     LegendPosition="@LegendPosition"
+                                                                     TooltipTemplate="@TooltipTemplate"
+                                                                     TooltipPositionFunc="@TooltipPositionFunc"
+                                                                     MatchBoundsToSize="@MatchBoundsToSize"
+                                                                     CustomGraphics="@CustomGraphics"
+                                                                     Width="@Width" Height="@Height"
+                                                                     @ref="ChartReference"
+                                                                     @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                     @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Sankey, SankeyChartOptions sankeyOptions) => @<Sankey ChartSeries="@ChartSeries"
+                                                                       ChartLabels="@ChartLabels"
+                                                                       ChartOptions="sankeyOptions"
+                                                                       CanHideSeries="@CanHideSeries"
+                                                                       LegendPosition="@LegendPosition"
+                                                                       TooltipTemplate="@TooltipTemplate"
+                                                                       TooltipPositionFunc="@TooltipPositionFunc"
+                                                                       MatchBoundsToSize="@MatchBoundsToSize"
+                                                                       CustomGraphics="@CustomGraphics"
+                                                                       Width="@Width" Height="@Height"
+                                                                       @ref="ChartReference"
+                                                                       @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                       @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        _ => throw new NotImplementedException($"{ChartType} chart is not supported")
+    };
+}

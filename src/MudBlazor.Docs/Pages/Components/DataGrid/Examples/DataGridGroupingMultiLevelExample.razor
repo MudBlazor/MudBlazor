@@ -196,7 +196,7 @@
         }
     }
 
-    private async Task<GridData<USState>> ServerReload(GridState<USState> state)
+    private async Task<GridData<USState>> ServerReload(GridState<USState> state, CancellationToken token)
     {
         // call API
         var data = GetAllStates(_searchString, state.SortDefinitions);

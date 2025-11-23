@@ -152,8 +152,8 @@ public partial class TestsForApiPages
         typeof(MudCheckBox<object>), typeof(MudSelect<object>), typeof(MudSelectItem<object>), typeof(MudSlider<int>), typeof(MudSwitch<object>), typeof(MudTextField<object>),
         typeof(MudNumericField<object>), typeof(MudForm), typeof(MudAutocomplete<object>), typeof(MudField), typeof(MudFileUpload<object>), typeof(MudToggleGroup<object>), typeof(MudToggleItem<object>),
         typeof(MudDatePicker), typeof(MudDateRangePicker), typeof(MudTimePicker), typeof(MudColorPicker),  typeof(MudButton),  typeof(MudButtonGroup), typeof(MudIconButton),
-        typeof(MudToggleIconButton), typeof(MudFab), typeof(ChartOptions), typeof(Donut), typeof(Line), typeof(Legend), typeof(Pie), typeof(Bar), typeof(HeatMap),typeof(StackedBar),
-        typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart)
+        typeof(MudToggleIconButton), typeof(MudFab), typeof(ChartOptions), typeof(Donut<>), typeof(Line<>), typeof(Legend<>), typeof(Pie<>), typeof(Bar<>), typeof(HeatMap<>),typeof(StackedBar<>),
+        typeof(TimeSeries<>), typeof(Radar<>), typeof(Rose<>)
     ];
 
     /// <summary>

@@ -14,14 +14,14 @@ namespace MudBlazor.UnitTests.Components
         /// MudElement renders first an anchor and then a button
         /// </summary>
         [Test]
-        public void Should_Render_An_Anchor_And_Then_A_Button()
+        public async Task Should_Render_An_Anchor_And_Then_A_Button()
         {
             var htmlTag = Parameter(nameof(MudElement.HtmlTag), "a");
             var className = Parameter(nameof(MudElement.Class), "mud-button-root");
             var comp = Context.RenderComponent<MudElement>(htmlTag, className);
             comp.MarkupMatches("<a class=\"mud-button-root\"></a>");
             htmlTag = Parameter(nameof(MudElement.HtmlTag), "button");
-            comp.SetParametersAndRender(htmlTag, className);
+            await comp.SetParametersAndRenderAsync(htmlTag, className);
             comp.MarkupMatches("<button class=\"mud-button-root\"></button>");
         }
 

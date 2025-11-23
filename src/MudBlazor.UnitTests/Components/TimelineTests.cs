@@ -101,13 +101,13 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(TimelineOrientation.Vertical, TimelinePosition.Left, true, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
         [TestCase(TimelineOrientation.Vertical, TimelinePosition.Right, true, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
 
-        public void TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
+        public async Task TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
         {
             var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue("RightToLeft", rtl));
 
             var timeline = comp.FindComponent<MudTimeline>();
 
-            timeline.SetParametersAndRender(p =>
+            await timeline.SetParametersAndRenderAsync(p =>
             {
                 p.Add(x => x.TimelineOrientation, orientation);
                 p.Add(x => x.TimelinePosition, position);
@@ -138,13 +138,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TimelineTest_DotStyles()
+        public async Task TimelineTest_DotStyles()
         {
             var comp = Context.RenderComponent<TimelineTest>();
             var firstItem = comp.FindComponent<MudTimelineItem>();
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("");
 
-            firstItem.SetParametersAndRender(p =>
+            await firstItem.SetParametersAndRenderAsync(p =>
             {
                 p.Add(t => t.DotStyle, "background-color: #ff0000");
             });
