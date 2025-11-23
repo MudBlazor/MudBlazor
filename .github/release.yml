@@ -11,6 +11,7 @@ changelog:
         - breaking change
     - title: New Features
       labels:
+        - new component
         - enhancement
     - title: Bug Fixes
       labels:

@@ -291,7 +291,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task Validate()
         {
-            await Task.WhenAll(_formControls.Select(x => x.Validate()));
+            await Task.WhenAll(_formControls.Select(x => x.ValidateAsync()));
 
             if (ChildForms.Count > 0)
             {
@@ -328,16 +328,16 @@ namespace MudBlazor
         /// <remarks>
         /// The values in each form input component will not be changed.
         /// </remarks>
-        public void ResetValidation()
+        public async Task ResetValidationAsync()
         {
             foreach (var control in _formControls.ToArray())
             {
-                control.ResetValidation();
+                await control.ResetValidationAsync();
             }
 
             foreach (var form in ChildForms)
             {
-                form.ResetValidation();
+                await form.ResetValidationAsync();
             }
 
             EvaluateForm(debounce: false);
@@ -389,7 +389,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                Console.WriteLine($@"An error occured while executing {nameof(OnEvaluateForm)}: {e.Message}");
+                Console.WriteLine($@"An error occurred while executing {nameof(OnEvaluateForm)}: {e.Message}");
             }
         }
 

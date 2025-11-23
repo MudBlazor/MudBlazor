@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Components
         /// MudIcon renders first an svg and then a span, both with style
         /// </summary>
         [Test]
-        public void ShouldRenderIconWithStyle()
+        public async Task ShouldRenderIconWithStyle()
         {
             var colorStyle = "color: greenyellow;";
             var icon = Parameter(nameof(MudIcon.Icon), Icons.Material.Filled.Add);
@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
                 .And.Contain($"style=\"{colorStyle}\"");
 
             icon = Parameter(nameof(MudIcon.Icon), "customicon");
-            comp.SetParametersAndRender(icon, style);
+            await comp.SetParametersAndRenderAsync(icon, style);
             comp.Markup.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"style=\"{colorStyle}\"");
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         /// MudIcon should have a Title tag/attribute if specified
         /// </summary>
         [Test]
-        public void ShouldRenderTitle()
+        public async Task ShouldRenderTitle()
         {
             var title = "Title and tooltip";
             //svg
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
 
             //class
             icon = Parameter(nameof(MudIcon.Icon), "customicon");
-            comp.SetParametersAndRender(icon, titleParam);
+            await comp.SetParametersAndRenderAsync(icon, titleParam);
             comp.Markup.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");

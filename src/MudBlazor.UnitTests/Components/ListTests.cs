@@ -14,15 +14,15 @@ namespace MudBlazor.UnitTests.Components
     {
 
         [Test]
-        public void ListRenderTest()
+        public async Task ListRenderTest()
         {
             var comp = Context.RenderComponent<ListSelectionTest>();
             var listItem = comp.FindComponent<MudListItem<string>>();
             comp.Markup.Should().Contain("Sparkling Water");
             comp.Markup.Should().NotContain("Roger Waters");
             comp.Markup.Should().NotContain("High Hopes");
-            listItem.SetParam("Text", "Roger Waters");
-            listItem.SetParam("SecondaryText", "High Hopes");
+            await listItem.SetParamAsync(x => x.Text, "Roger Waters");
+            await listItem.SetParamAsync(x => x.SecondaryText, "High Hopes");
             comp.Markup.Should().NotContain("Sparkling Water");
             comp.Markup.Should().Contain("Roger Waters");
             comp.Markup.Should().Contain("High Hopes");
@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The child lists should honor the Dense property of their parent list if not overriden.
+        /// The child lists should honor the Dense property of their parent list if not overridden.
         /// </summary>
         [Test]
         [TestCase(true, null, 9)]
@@ -237,12 +237,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ListItem_HasRipple_WhenRippleIsTrue()
+        public async Task ListItem_HasRipple_WhenRippleIsTrue()
         {
             var comp = Context.RenderComponent<ListItemRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, false));
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
         }
 

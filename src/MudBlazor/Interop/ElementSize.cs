@@ -1,5 +1,6 @@
 ﻿namespace MudBlazor.Interop;
 
+#nullable enable
 /// <summary>
 /// Represents the size of an element.
 /// </summary>

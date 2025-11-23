@@ -15,9 +15,12 @@ namespace MudBlazor
     /// </summary>
     public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
+        private ILogger? _logger;
+        private readonly string _id = Identifier.Create("mudinput");
+
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
-        private ILogger? _logger;
+
         protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType());
 
         /// <summary>
@@ -61,14 +64,18 @@ namespace MudBlazor
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
+        /// Whether the component has executed OnAfterRender at least once.
+        /// </summary>
+        protected bool HasRendered { get; private set; }
+
+        /// <summary>
         /// Whether the <see cref="JSRuntime" /> is available.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, JavaScript interop calls can be made.
         /// </remarks>
-        protected bool IsJSRuntimeAvailable { get; set; }
+        protected bool IsJSRuntimeAvailable => HasRendered;
 
-        private readonly string _id = Identifier.Create("mudinput");
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
@@ -79,7 +86,10 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
         {
-            IsJSRuntimeAvailable = true;
+            if (firstRender)
+            {
+                HasRendered = true;
+            }
             base.OnAfterRender(firstRender);
         }
 

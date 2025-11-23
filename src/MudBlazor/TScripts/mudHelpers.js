@@ -74,7 +74,7 @@ window.serializeParameter = (data, spec) => {
 
         } else {
             // string, number or boolean
-            if (currentMember === Infinity) { //inifity is not serialized by JSON.stringify
+            if (currentMember === Infinity) { //infinity is not serialized by JSON.stringify
                 currentMember = "Infinity";
             }
             if (currentMember !== null) { //needed because the default json serializer in jsinterop serialize null values

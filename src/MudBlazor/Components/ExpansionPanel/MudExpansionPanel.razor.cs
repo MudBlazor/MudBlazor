@@ -34,6 +34,7 @@ namespace MudBlazor
 
         protected string HeaderClassname =>
             new CssBuilder("mud-expand-panel-header")
+                .AddClass("mud-expand-panel-header-gutters", Gutters && Parent?.Gutters != false)
                 .AddClass(HeaderClass)
                 .Build();
 

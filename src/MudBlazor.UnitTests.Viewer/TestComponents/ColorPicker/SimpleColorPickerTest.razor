@@ -18,7 +18,8 @@
                 ColorPickerView="@ViewMode"
                 ColorPickerMode="@ColorPickerMode"
                 PickerVariant="@Variant"
-                Required="@Required" />
+                Required="@Required"
+                InputId="@InputId" />
 
 @code {
     private MudColorPicker _picker = null!;
@@ -72,6 +73,9 @@
 
     [Parameter]
     public bool Required { get; set; }
+
+    [Parameter]
+    public string? InputId { get; set; }
 
     public Task OpenPicker()
     {

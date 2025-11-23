@@ -53,7 +53,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: triage-artifacts-${{ github.run_number }}
           path: |

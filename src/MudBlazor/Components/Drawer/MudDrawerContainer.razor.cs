@@ -27,6 +27,8 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("--mud-drawer-width-left", GetDrawerWidth(FindLeftDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindLeftDrawer())))
                 .AddStyle("--mud-drawer-width-right", GetDrawerWidth(FindRightDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindRightDrawer())))
+                .AddStyle("--mud-drawer-height-top", GetDrawerHeight(FindTopDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindTopDrawer())))
+                .AddStyle("--mud-drawer-height-bottom", GetDrawerHeight(FindBottomDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindBottomDrawer())))
                 .AddStyle("--mud-drawer-width-mini-left", GetMiniDrawerWidth(FindLeftMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindLeftMiniDrawer())))
                 .AddStyle("--mud-drawer-width-mini-right", GetMiniDrawerWidth(FindRightMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindRightMiniDrawer())))
                 .AddStyle(Style)
@@ -76,7 +78,7 @@ namespace MudBlazor
             return className;
         }
 
-        private string? GetDrawerWidth(MudDrawer? drawer)
+        private static string? GetDrawerWidth(MudDrawer? drawer)
         {
             if (drawer is null)
             {
@@ -84,6 +86,16 @@ namespace MudBlazor
             }
 
             return drawer.Width;
+        }
+
+        private static string? GetDrawerHeight(MudDrawer? drawer)
+        {
+            if (drawer is null)
+            {
+                return string.Empty;
+            }
+
+            return drawer.Height;
         }
 
         private string? GetMiniDrawerWidth(MudDrawer? drawer)
@@ -108,6 +120,16 @@ namespace MudBlazor
             var anchor = RightToLeft ? Anchor.Start : Anchor.End;
 
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Right);
+        }
+
+        private MudDrawer? FindTopDrawer()
+        {
+            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Top);
+        }
+
+        private MudDrawer? FindBottomDrawer()
+        {
+            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Bottom);
         }
 
         private MudDrawer? FindLeftMiniDrawer()

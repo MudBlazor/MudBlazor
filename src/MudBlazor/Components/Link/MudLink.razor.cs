@@ -15,7 +15,7 @@ public partial class MudLink : MudComponentBase
         new CssBuilder("mud-typography mud-link")
             .AddClass($"mud-{Color.ToDescriptionString()}-text")
             .AddClass($"mud-link-underline-{Underline.ToDescriptionString()}")
-            .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
+            .AddClass($"mud-typography-{Typo.ToDescriptionString()}", Typo != Typo.inherit)
             // When Href is empty, link's hover cursor is text "I beam" even when OnClick has a delegate.
             // To change this for more expected look change hover cursor to a pointer:
             .AddClass("cursor-pointer", Href == default && OnClick.HasDelegate && !Disabled)
@@ -58,31 +58,31 @@ public partial class MudLink : MudComponentBase
     /// The color of the link.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Primary"/> in <see cref="MudGlobal.LinkDefaults.Color"/>.
+    /// Defaults to <see cref="Color.Primary"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Color Color { get; set; } = MudGlobal.LinkDefaults.Color;
+    public Color Color { get; set; } = Color.Primary;
 
     /// <summary>
     /// The typography variant to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Typo.body1"/> in <see cref="MudGlobal.LinkDefaults.Typo"/>.
+    /// Defaults to <see cref="Typo.inherit"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Typo Typo { get; set; } = MudGlobal.LinkDefaults.Typo;
+    public Typo Typo { get; set; } = Typo.inherit;
 
     /// <summary>
     /// Applies an underline to the link.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Underline.Hover"/> in <see cref="MudGlobal.LinkDefaults.Underline"/>.
+    /// Defaults to <see cref="Underline.Hover"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Underline Underline { get; set; } = MudGlobal.LinkDefaults.Underline;
+    public Underline Underline { get; set; } = Underline.Hover;
 
     /// <summary>
     /// The URL to navigate to upon click.
