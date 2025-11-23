@@ -23,7 +23,7 @@ namespace MudBlazor
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
         protected readonly ParameterState<string?> ErrorTextState;
-        protected internal readonly ParameterState<bool> ErrorState;
+        protected readonly ParameterState<bool> ErrorState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
