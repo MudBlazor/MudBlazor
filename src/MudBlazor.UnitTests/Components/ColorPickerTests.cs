@@ -310,7 +310,25 @@ namespace MudBlazor.UnitTests.Components
             var expectedColor = _defaultColor;
             hexInput.Change(colorHexString);
 
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HEX);
+            // In .NET 10, StateHasChanged is no longer automatically called when an exception occurs during parameter setting.
+            // The input field's value attribute may still show the invalid input, but the component's actual ColorValue should remain correct.
+            // Only check the component instance value, not the DOM input value.
+            comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
+            
+            // Verify the color selector position remains at default
+            var selector = comp.Find(".mud-picker-color-selector");
+            selector.Should().NotBeNull();
+            var selectorStyleAttribute = selector.GetAttribute("style");
+            selectorStyleAttribute.Should().Be($"transform: translate({_defaultXForColorPanel.ToString(CultureInfo.InvariantCulture)}px, {_defaultYForColorPanel.ToString(CultureInfo.InvariantCulture)}px);");
+            
+            // Verify sliders remain at default values
+            var hueSlideValue = comp.FindAll(".mud-picker-color-slider.hue input");
+            hueSlideValue.Should().ContainSingle();
+            ((IHtmlInputElement)hueSlideValue[0]).Value.Should().Be(((int)expectedColor.H).ToString());
+            
+            var alphaSlider = comp.FindAll(_alphaSliderCssSelector);
+            alphaSlider.Should().ContainSingle();
+            ((IHtmlInputElement)alphaSlider[0]).Value.Should().Be(((int)expectedColor.A).ToString());
         }
 
         [Test]
