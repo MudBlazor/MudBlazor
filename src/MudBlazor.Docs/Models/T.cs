@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace MudBlazor.Docs.Models
 {
-    public struct T : INumber<T>
+    public struct T : INumber<T>, IMinMaxValue<T>
     {
         int IComparable.CompareTo(object obj) => 0;
 
@@ -171,6 +171,10 @@ namespace MudBlazor.Docs.Models
         static int INumberBase<T>.Radix => 0;
 
         static T INumberBase<T>.Zero => new();
+
+        public static T MaxValue => T.MaxValue;
+
+        public static T MinValue => T.MinValue;
 
         static T INumberBase<T>.CreateChecked<TOther>(TOther value) => new();
 

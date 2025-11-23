@@ -170,11 +170,11 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void TabHeaderClassPropagated()
+        public async Task TabHeaderClassPropagated()
         {
             var comp = Context.RenderComponent<MudTabs>();
 
-            comp.SetParametersAndRender(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
+            await comp.SetParametersAndRenderAsync(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
 
             comp.Find(".mud-tabs-tabbar").ClassList.Should().Contain(new[] { "testA", "testB" });
         }
@@ -611,7 +611,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.AlwaysShowScrollButtons, false));
             await comp.Instance.SetPanelActiveAsync(5);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
@@ -644,7 +644,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.AlwaysShowScrollButtons, false));
             await comp.Instance.SetPanelActiveAsync(5);
 
             observer.UpdateTotalPanelSize(601.0);
@@ -1023,11 +1023,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(TabHeaderPosition.After)]
         [TestCase(TabHeaderPosition.Before)]
-        public void RenderHeaderBasedOnPosition(TabHeaderPosition position)
+        public async Task RenderHeaderBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, position));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabHeaderPosition, position));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
             var headerContent = comp.Find(".test-header-content");
             headerContent.TextContent.Should().Be($"Count: {3}");
@@ -1053,11 +1053,11 @@ namespace MudBlazor.UnitTests.Components
         /// If the header template is set, but the position is none, no header should be rendered
         /// </summary>
         [Test]
-        public void RenderHeaderBasedOnPosition_None()
+        public async Task RenderHeaderBasedOnPosition_None()
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
             var headerContent = comp.FindAll(".test-header-content");
             headerContent.Should().BeEmpty();
@@ -1069,11 +1069,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(TabHeaderPosition.After)]
         [TestCase(TabHeaderPosition.Before)]
-        public void RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
+        public async Task RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, position));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabPanelHeaderPosition, position));
 
             var headerContent = comp.FindAll(".test-panel-header-content");
             headerContent.Should().HaveCount(3);
@@ -1104,32 +1104,32 @@ namespace MudBlazor.UnitTests.Components
         /// If the header template is set, but the position is none, no header should be rendered
         /// </summary>
         [Test]
-        public void RenderHeaderPanelBasedOnPosition_None()
+        public async Task RenderHeaderPanelBasedOnPosition_None()
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
             var headerContent = comp.FindAll(".test-panel-header-content");
             headerContent.Should().BeEmpty();
         }
 
         [Test]
-        public void TabPanelIconColorOverridesTabIconColor()
+        public async Task TabPanelIconColorOverridesTabIconColor()
         {
             var comp = Context.RenderComponent<TabPanelIconColorTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
             var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
             iconRef.ClassList.Should().Contain("mud-success-text");
         }
 
         [Test]
-        public void TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
+        public async Task TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
         {
             var comp = Context.RenderComponent<TabPanelIconColorTest>();
-            comp.SetParam("DisableTab", true);
-            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+            await comp.SetParamAsync(x => x.DisableTab, true);
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
             var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
             iconRef.ClassList.Should().NotContain("mud-success-text");
@@ -1212,7 +1212,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void PrePanelContent()
+        public async Task PrePanelContent()
         {
             var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
 
@@ -1223,7 +1223,7 @@ namespace MudBlazor.UnitTests.Components
             content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-tabbar");
             content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
 
-            comp.SetParametersAndRender(p => p.Add(x => x.SelectedIndex, 1));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.SelectedIndex, 1));
 
             content = comp.Find(".pre-panel-content-custom");
 
@@ -1239,7 +1239,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<CancelActivationTabsTest>();
-            comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Position, Position.Left));
 
             await comp.Instance.SetPanelActiveAsync(2);
             comp.Instance.ActivePanel.Should().NotBe(2);
@@ -1314,12 +1314,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Tabs_HaveRipple_WhenRippleIsTrue()
+        public async Task Tabs_HaveRipple_WhenRippleIsTrue()
         {
             var comp = Context.RenderComponent<TabsRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, false));
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
         }
 
@@ -1517,7 +1517,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Tab_DragAndDrop_ActiveIndexShouldNotChangeDisplay()
+        public async Task Tab_DragAndDrop_ActiveIndexShouldNotChangeDisplay()
         {
             // defaulting the ActiveIndex to something other than 0 caused a display issue where it tried to make
             // that tab the FIRST tab putting any leading tabs underneath an arrow to "go left" (or right if rtl)
@@ -1537,7 +1537,7 @@ namespace MudBlazor.UnitTests.Components
             // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
-            comp.SetParametersAndRender();
+            await comp.SetParametersAndRenderAsync();
             // drop container
             comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
@@ -1550,7 +1550,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Tab_DragAndDrop_ActivatePanel()
+        public async Task Tab_DragAndDrop_ActivatePanel()
         {
             // ensures that the active tab class and custom class is updated when the index is updated regardless
             // of drag and drop. When enabled Drag and Drop was not properly updating state when a new item was clicked.
@@ -1577,7 +1577,7 @@ namespace MudBlazor.UnitTests.Components
             // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
-            comp.SetParametersAndRender(p => p.Add(p => p.ActiveTabClass, "test-active"));
+            await comp.SetParametersAndRenderAsync(p => p.Add(p => p.ActiveTabClass, "test-active"));
             // drop container
             comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");

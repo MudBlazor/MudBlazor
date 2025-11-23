@@ -81,6 +81,11 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 3. Check that you haven't broken existing tests with your changes
 4. Review test output for specific failure reasons
 
+**If CI formatting check fails:**
+1. Run `dotnet format src/MudBlazor.sln` to auto-fix formatting issues
+2. Commit the formatting changes
+3. Common issues: blank lines after attributes, missing UTF-8 BOM, incorrect indentation
+
 ## Project Structure
 
 ### Root Directory Layout
@@ -497,15 +502,21 @@ dotnet pack src/MudBlazor/MudBlazor.csproj -c Release -o ./LocalNuGet -p:Version
 # 1. Clean (if switching branches or weird issues)
 dotnet clean src/MudBlazor.sln
 
-# 2. Build
+# 2. Format code (REQUIRED - CI will fail if not formatted)
+dotnet format src/MudBlazor.sln --verify-no-changes
+# Expected: Exit code 0 with no formatting errors
+# If formatting errors are found, run without --verify-no-changes to auto-fix:
+# dotnet format src/MudBlazor.sln
+
+# 3. Build
 dotnet build src/MudBlazor.sln -c Release --nologo
 # Expected: "Build succeeded" with 0 warnings, 0 errors in ~2 minutes
 
-# 3. Test
+# 4. Test
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 # Expected: "Passed! - Failed: 0, Passed: 3734+, Skipped: 10" in ~1.5 minutes
 
-# 4. (Optional) Test docs locally
+# 5. (Optional) Test docs locally
 dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ```
 

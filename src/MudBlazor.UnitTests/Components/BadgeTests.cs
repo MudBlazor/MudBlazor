@@ -20,18 +20,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Badge_Renders_When_VisibleIsTrue()
+        public async Task Badge_Renders_When_VisibleIsTrue()
         {
             var comp = Context.RenderComponent<MudBadge>();
-            comp.SetParam("Visible", true);
+            await comp.SetParamAsync(x => x.Visible, true);
             comp.FindAll("span").Should().HaveCount(3, "Visible badge renders 3 spans");
         }
 
         [Test]
-        public void Badge_Does_Not_Render_When_VisibleIsFalse()
+        public async Task Badge_Does_Not_Render_When_VisibleIsFalse()
         {
             var comp = Context.RenderComponent<MudBadge>();
-            comp.SetParam("Visible", false);
+            await comp.SetParamAsync(x => x.Visible, false);
             comp.FindAll("span").Should().HaveCount(1, "Hidden badge renders 1 span");
         }
 

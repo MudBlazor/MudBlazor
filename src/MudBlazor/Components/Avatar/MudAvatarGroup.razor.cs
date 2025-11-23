@@ -67,28 +67,22 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> CSS style is set to <c>0</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool MaxSquare { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool MaxSquare { get; set; }
 
         /// <summary>
         /// Shows rounded corners when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool MaxRounded { get; set; } = MudGlobal.Rounded == true;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool MaxRounded { get; set; }
 
         /// <summary>
         /// The color of the avatar when the number of avatars exceeds <see cref="Max"/>.

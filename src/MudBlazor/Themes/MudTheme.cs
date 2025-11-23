@@ -9,7 +9,6 @@
         /// <summary>
         /// The palette for the light theme.
         /// </summary>
-        /// <remarks>Renamed from <c>Palette</c> to <c>PaletteLight</c> in v7.</remarks>
         public PaletteLight PaletteLight { get; set; }
 
         /// <summary>

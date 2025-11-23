@@ -2,6 +2,7 @@
 
 namespace MudBlazor.Interfaces
 {
+#nullable enable
     public interface INavigationEventReceiver
     {
         Task OnNavigation();

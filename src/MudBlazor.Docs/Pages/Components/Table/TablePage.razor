@@ -21,7 +21,7 @@
             <SectionHeader Title="Click Event and display for selected Row">
                 <Description>
                     The <CodeInline>RowClassFunc</CodeInline> function can be used to customize the display of the selected row. <CodeInline>RowClickEvent</CodeInline> is triggered each time the row is clicked. 
-                    In addition to that the <CodeInline>RowClass</CodeInline> can be used to apply a general row style independent of the selection state. In this example we show a pointer curser.
+                    In addition, the <CodeInline>RowClass</CodeInline> can be used to apply a general row style independent of the selection state. In this example we show a pointer cursor.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableRowClassFuncExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -64,7 +64,7 @@
                     The properties <CodeInline>RowsPerPageString</CodeInline>, <CodeInline>InfoFormat</CodeInline> and <CodeInline>AllItemsText</CodeInline> can be used to customize the displayed text.
                     The properties <CodeInline>HideRowsPerPage</CodeInline>, <CodeInline>HidePageNumber</CodeInline> and <CodeInline>HidePagination</CodeInline> can be used to hide the corresponding information.
                     <br /><br />
-                    See <MudLink Href="@ApiLink.GetApiLinkFor(typeof(MudTablePager))">TablePager API</MudLink> for more informations.
+                    See <MudLink Href="@ApiLink.GetApiLinkFor(typeof(MudTablePager))">TablePager API</MudLink> for more information.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
                         to be one of the values in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
@@ -160,7 +160,7 @@
         <DocsPageSection>
             <SectionHeader Title="Server Side Filtering, Sorting and Pagination">
                 <Description>
-                    Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated. Table will call this async function whenever the user navigates
+                    Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated. The table will call this async function whenever the user navigates
                     the pager or changes sorting by clicking on the sort header icons. In this example, we also show how to force the table to update when the search textfield blurs, so that the table reloads server-filtered data.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         Note: with a <CodeInline>ServerData</CodeInline> func you don't need <CodeInline>Items</CodeInline> and <CodeInline>Filter</CodeInline>.
@@ -175,8 +175,8 @@
         <DocsPageSection>
             <SectionHeader Title="Server Side Data With Cancellation">
                 <Description>
-                    Use the <CodeInline>CancellationToken</CodeInline> to detect when a request for data has been superceded by a new request.  By forwarding the token to methods which support it,
-                    such as common <CodeInline>HttpClient</CodeInline> or <CodeInline>DbContent</CodeInline> methods, the table can perform well even with frequent updates.
+                    Use the <CodeInline>CancellationToken</CodeInline> to detect when a request for data has been superseded by a new request. By forwarding the token to methods which support it,
+                    such as common <CodeInline>HttpClient</CodeInline> or <CodeInline>DbContext</CodeInline> methods, the table can perform well even with frequent updates.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         Note: When using <CodeInline>ServerData</CodeInline>, you don't need <CodeInline>Items</CodeInline> or <CodeInline>Filter</CodeInline>.
                     </MudAlert>
@@ -233,7 +233,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Table With related data">
+            <SectionHeader Title="Table with related data">
                 <Description>
                     Making use of the <CodeInline>&lt;ChildRowContent&gt;</CodeInline> allows more control over the layout for scenarios such as showing the related address data for each person below.
                 </Description>
@@ -294,7 +294,7 @@
         <DocsPageSection>
             <SectionHeader Title="Grouping (Basic) - Initially collapsed">
                 <Description>
-                    Displays items in a grouped way, but the groups are all collapsed as default. <br />
+                    Displays items in a grouped way, but the groups are all collapsed by default. <br />
                     Groups can be expanded or collapsed all at once by calling <CodeInline>ExpandAllGroups()</CodeInline> or <CodeInline>CollapseAllGroups()</CodeInline>.
                 </Description>
             </SectionHeader>

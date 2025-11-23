@@ -205,13 +205,13 @@ When NOT to edit:
 
 ## Inactivity Rules
 
-General Rules:
+General Inactivity Rules:
 - Skip threads assigned to or created by maintainers or bots
 - Only remove `stale` label and reset timer after a human (non-bot) posts a comment. No other kind of timeline event should reset the timer.
 - Do not post a comment when closing stale threads
 
 ### Issues Only
-- Close issues that have been stale for >=84 consecutive days
+- Set `state: not_planned` on issues that have been stale for >=84 consecutive days
 
 Mark issues as `stale` when ALL conditions are met:
 - Meets ONE of these inactivity thresholds:
