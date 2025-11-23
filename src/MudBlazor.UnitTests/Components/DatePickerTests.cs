@@ -1258,8 +1258,8 @@ namespace MudBlazor.UnitTests.Components
             var expectedDate1 = new DateTime(2021, 1, 23, new CultureInfo("en-US").Calendar);
             var expectedDate2 = new DateTime(2023, 11, 22, new CultureInfo("en-US").Calendar);
 
-            comp.SetParam(parameter => parameter.Date, startDate);
-            comp.SetParam(parameter => parameter.OpenTo, OpenTo.Year);
+            await comp.SetParamAsync(parameter => parameter.Date, startDate);
+            await comp.SetParamAsync(parameter => parameter.OpenTo, OpenTo.Year);
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
 
@@ -1319,8 +1319,8 @@ namespace MudBlazor.UnitTests.Components
             var expectedDate1 = new DateTime(2022, 1, 28, new CultureInfo("en-US").Calendar);
             var expectedDate2 = new DateTime(2023, 1, 28, new CultureInfo("en-US").Calendar);
 
-            comp.SetParam(parameter => parameter.Date, startDate);
-            comp.SetParam(parameter => parameter.OpenTo, OpenTo.Month);
+            await comp.SetParamAsync(parameter => parameter.Date, startDate);
+            await comp.SetParamAsync(parameter => parameter.OpenTo, OpenTo.Month);
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
 
@@ -1360,8 +1360,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
-            comp.SetParam(parameter => parameter.Date, startDate);
-            comp.SetParam(parameter => parameter.OpenTo, OpenTo.Year);
+            await comp.SetParamAsync(parameter => parameter.Date, startDate);
+            await comp.SetParamAsync(parameter => parameter.OpenTo, OpenTo.Year);
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
 
@@ -1396,12 +1396,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
-            comp.SetParam(parameter => parameter.Date, startDate);
-            comp.SetParam(parameter => parameter.OpenTo, OpenTo.Year);
+            await comp.SetParamAsync(parameter => parameter.Date, startDate);
+            await comp.SetParamAsync(parameter => parameter.OpenTo, OpenTo.Year);
             var maxDate = new DateTime(2023, 12, 31);
-            comp.SetParam(parameter => parameter.MaxDate, maxDate);
+            await comp.SetParamAsync(parameter => parameter.MaxDate, maxDate);
             var minDate = new DateTime(2021, 12, 31);
-            comp.SetParam(parameter => parameter.MinDate, minDate);
+            await comp.SetParamAsync(parameter => parameter.MinDate, minDate);
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
