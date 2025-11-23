@@ -260,5 +260,101 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
         }
+
+        [Test]
+        public void LineChartWithHiddenSeriesShouldRedraw()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = [90, 79, -72, 69, 62, 62, -55, 65, 70] },
+                new () { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, -69, 91, -148] },
+                new () { Name = "Series 3", Data = [10, 41, 35, 51, 500, 62, -69, 91, 500] }
+            };
+
+            string[] xAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.DynamicRescaling, true));
+
+            // The y-axis scale goes up to 520
+            comp.Markup.Should().Contain(">520</text>");
+            comp.Markup.Should().NotContain(">100</text>");
+
+            comp.Instance.ChartSeries.First(s => s.Name == "Series 3").Visible.Should().BeTrue();
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+
+            // The line for "Series 1"
+            d.Should().Contain("M 30 211.5441 L 103.75 216.3162 L 177.5 281.8235 L 251.25 220.6544 L 325 223.6912 L 398.75 223.6912 L 472.5 274.4485 L 546.25 222.3897 L 620 220.2206");
+
+            comp.FindAll(".mud-chart-legend-item input")[2].Change(false);
+
+            comp.Instance.ChartSeries.First(s => s.Name == "Series 3").Visible.Should().BeFalse();
+
+            // The y-axis scale goes up to 100
+            comp.Markup.Should().Contain(">100</text>");
+            comp.Markup.Should().NotContain(">520</text>");
+
+            path = comp.Find("path.mud-chart-line");
+            d = path.GetAttribute("d");
+
+            // The line for "Series 1" has been redrawn
+            d.Should().Contain("M 30 36.3462 L 103.75 48.8269 L 177.5 220.1538 L 251.25 60.1731 L 325 68.1154 L 398.75 68.1154 L 472.5 200.8654 L 546.25 64.7115 L 620 59.0385");
+        }
+
+        [Test]
+        public void LineChartWithHiddenSeriesShouldNotRedraw()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Series 1", Data = [90, 79, -72, 69, 62, 62, -55, 65, 70] },
+                new () { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, -69, 91, -148] },
+                new () { Name = "Series 3", Data = [10, 41, 35, 51, 500, 62, -69, 91, 500] }
+            };
+
+            string[] xAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.DynamicRescaling, false));
+
+            // The y-axis scale goes up to 520
+            comp.Markup.Should().Contain(">520</text>");
+            comp.Markup.Should().NotContain(">100</text>");
+
+            comp.Instance.ChartSeries.First(s => s.Name == "Series 3").Visible.Should().BeTrue();
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+
+            // The line for "Series 1"
+            d.Should().Contain("M 30 211.5441 L 103.75 216.3162 L 177.5 281.8235 L 251.25 220.6544 L 325 223.6912 L 398.75 223.6912 L 472.5 274.4485 L 546.25 222.3897 L 620 220.2206");
+
+            comp.FindAll(".mud-chart-legend-item input")[2].Change(false);
+
+            comp.Instance.ChartSeries.First(s => s.Name == "Series 3").Visible.Should().BeFalse();
+
+            // The y-axis scale still goes up to 520
+            comp.Markup.Should().Contain(">520</text>");
+            comp.Markup.Should().NotContain(">100</text>");
+
+            path = comp.Find("path.mud-chart-line");
+            d = path.GetAttribute("d");
+
+            // The line for "Series 1" has not been redrawn
+            d.Should().Contain("M 30 211.5441 L 103.75 216.3162 L 177.5 281.8235 L 251.25 220.6544 L 325 223.6912 L 398.75 223.6912 L 472.5 274.4485 L 546.25 222.3897 L 620 220.2206");
+        }
     }
 }

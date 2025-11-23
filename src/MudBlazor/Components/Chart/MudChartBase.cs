@@ -149,6 +149,13 @@ public abstract class MudChartBase : MudComponentBase
     [Category(CategoryTypes.Chart.Behavior)]
     public bool CanHideSeries { get; set; } = false;
 
+    /// <summary>
+    /// If <see cref="CanHideSeries"/> is <c>true</c>, this property determines whether the chart will recalculate the scale when a series is hidden or shown.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public bool DynamicRescaling { get; set; } = false;
+
     internal List<MudHeatMapCell> MudHeatMapCells { get; set; } = [];
 
     internal void AddCell(MudHeatMapCell cell)
