@@ -10,7 +10,7 @@ namespace MudBlazor;
 /// <summary>
 /// Allows registering a hotkey.
 /// </summary>
-public partial class MudHotkey : MudComponentBase, IDisposable
+public partial class MudHotkey : MudComponentBase, IAsyncDisposable
 {
     private readonly string _hotkeyId = Guid.NewGuid().ToString();
     private bool _childContentIsVisible;
@@ -145,15 +145,19 @@ public partial class MudHotkey : MudComponentBase, IDisposable
     }
 
     /// <inheritdoc />
-    public void Dispose()
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore()
     {
         if (_dotNetObjectReference != null)
         {
             _dotNetObjectReference.Dispose();
             _dotNetObjectReference = null;
-            _ = UnregisterHotkeyAsync();
+            await UnregisterHotkeyAsync();
         }
-
-        GC.SuppressFinalize(this);
     }
 }

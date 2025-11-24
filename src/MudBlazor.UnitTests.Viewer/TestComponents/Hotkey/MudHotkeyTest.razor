@@ -1,13 +1,12 @@
 ﻿@using MudBlazor.Utilities
 
-<MudHotkey @ref="_hotkey" Key="SelectedKey" KeyModifiers="_selectedKeyModifiers" OnHotkeyPressed="OnHotKey" HideChildContentOnRepress="HideChildContentOnRepress" Disabled="Disabled">
+<MudHotkey Key="SelectedKey" KeyModifiers="_selectedKeyModifiers" OnHotkeyPressed="OnHotKey" HideChildContentOnRepress="HideChildContentOnRepress" Disabled="Disabled">
     <div id="hotkey-child">
         Child Content
     </div>
 </MudHotkey>
 
 @code {
-    private MudHotkey _hotkey = null!;
     private const JsKey SelectedKey = JsKey.KeyA;
     private readonly IEnumerable<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.Control];
 
@@ -22,10 +21,5 @@
     private void OnHotKey()
     {
         PressedCount++;
-    }
-
-    public void Dispose()
-    {
-        _hotkey.Dispose();
     }
 }

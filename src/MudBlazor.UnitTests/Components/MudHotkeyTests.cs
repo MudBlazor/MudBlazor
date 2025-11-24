@@ -76,7 +76,7 @@ public class MudHotkeyTests : BunitTest
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
 
         // Act
-        comp.Instance.Dispose();
+        Context.DisposeComponents();
 
         // Assert
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(2));
