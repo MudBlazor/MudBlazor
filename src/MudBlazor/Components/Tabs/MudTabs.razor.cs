@@ -24,7 +24,6 @@ namespace MudBlazor
         private bool _isDisposed;
         private string? _prevIcon;
         private string? _nextIcon;
-        private bool _isRendered;
         private bool _isVerticalTabs;
         private bool _redraw;
         private bool _isSliderPositionDetermined;
@@ -533,8 +532,6 @@ namespace MudBlazor
                     await _activePanelIndexState.SetValueAsync(index.Value);
                 }
 
-                _isRendered = true;
-
                 var options = new KeyInterceptorOptions(
                     "mud-tab",
                     [
@@ -607,7 +604,7 @@ namespace MudBlazor
 
         internal async Task SetPanelRefAsync(ElementReference reference)
         {
-            if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
+            if (HasRendered && _resizeObserver!.IsElementObserved(reference) == false)
                 await _resizeObserver!.Observe(reference);
 
             _redraw = true;
