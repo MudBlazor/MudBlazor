@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Two panels which are resizeable.
+/// Two panels which are resizable.
 /// </summary>
 public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 {
