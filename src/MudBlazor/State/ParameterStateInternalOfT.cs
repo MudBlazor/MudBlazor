@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
+using MudBlazor.State.Invocation;
 using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
@@ -25,6 +26,8 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 {
     private T? _value;
     private T? _lastValue;
+    private T? _initialValue;
+    private bool _isInitialized;
     private bool _isChildOriginatedChange;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
@@ -43,14 +46,11 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     [MemberNotNullWhen(true, nameof(_parameterChangedHandler))]
     public bool HasHandler => _parameterChangedHandler is not null;
 
-    /// <summary>
-    /// Gets a value indicating whether the object is initialized.
-    /// </summary>
-    /// <remarks>
-    /// This property is <c>true</c> once the <see cref="OnInitialized"/> method is called; otherwise, <c>false</c>.
-    /// </remarks>
-    [MemberNotNullWhen(true, nameof(_lastValue), nameof(_value), nameof(Value))]
-    public bool IsInitialized { get; private set; }
+    /// <inheritdoc />
+    public override bool IsInitialized => _isInitialized;
+
+    /// <inheritdoc />
+    public override T? InitialValue => _initialValue;
 
     /// <inheritdoc/>
     public override T? Value => _value;
@@ -90,8 +90,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// <inheritdoc />
     public void OnInitialized()
     {
-        IsInitialized = true;
+        _isInitialized = true;
         var currentParameterValue = _getParameterValueFunc();
+        _initialValue = currentParameterValue;
         _value = currentParameterValue;
         _lastValue = currentParameterValue;
     }
@@ -108,21 +109,17 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         }
     }
 
-    /// <inheritdoc />
-    public Task ParameterChangeHandleAsync()
+    /// <inheritdoc/>
+    public IParameterStateInvocationSnapshot CreateInvocationSnapshot()
     {
-        if (HasHandler)
-        {
-            if (HasParameterChangedEventArgs)
-            {
-                // Since the ParameterSet lifecycles control all operations, it is acceptable to trigger the handler only when
-                // HasParameterChanged has been invoked and stored the ParameterChangedEventArgs.
-                // Direct invocation of this method by external callers is discouraged, so we shouldn't worry about it.
-                return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs.ChildOriginated(_isChildOriginatedChange));
-            }
-        }
-
-        return Task.CompletedTask;
+        return new ParameterStateInvocationSnapshot<T>(
+            Metadata,
+            HasParameterChangedEventArgs ? _parameterChangedEventArgs.Clone() : null,
+            _parameterChangedHandler,
+            // We should not cache this value because it may be modified by OnParametersSet.
+            // In theory, this could also lead to race conditions if multiple OnParametersSet calls occur with different _lastValue, currentParameterValue values.
+            // For now, we'll leave it as-is since properly fixing this would be complex, it should be fixed only if it happens in practise.
+            () => _isChildOriginatedChange);
     }
 
     /// <inheritdoc />

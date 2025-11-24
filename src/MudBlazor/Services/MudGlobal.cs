@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// <para>
 /// Static properties that let you control the default behavior of some parts of MudBlazor.
@@ -16,24 +17,6 @@ namespace MudBlazor;
 public static class MudGlobal
 {
     /// <summary>
-    /// Default settings for <see cref="MudButton"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class ButtonDefaults
-    {
-        /// <summary>
-        /// The color of the <see cref="MudButton"/>.
-        /// </summary>
-        public static Color Color { get; set; } = Color.Default;
-
-        /// <summary>
-        /// The display variation to use for <see cref="MudButton"/>.
-        /// </summary>
-        public static Variant Variant { get; set; } = Variant.Text;
-    }
-
-    /// <summary>
     /// Default settings for <see cref="MudDialog"/>.
     /// <br/>
     /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
@@ -44,65 +27,6 @@ public static class MudGlobal
         /// The element which will receive focus when this <see cref="MudDialog"/> is shown.
         /// </summary>
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
-    }
-
-    /// <summary>
-    /// Default settings for <see cref="MudGrid"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class GridDefaults
-    {
-        /// <summary>
-        /// The gap between items in <see cref="MudGrid"/>, measured in increments of <c>4px</c>.
-        /// </summary>
-        public static int Spacing { set; get; } = 6;
-    }
-
-    /// <summary>
-    /// Default settings for MudBlazor input components.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class InputDefaults
-    {
-        /// <summary>
-        /// Shows the label inside the input if no <c>Value</c> is specified.
-        /// </summary>
-        public static bool ShrinkLabel { get; set; }
-
-        /// <summary>
-        /// The appearance variation to use.
-        /// </summary>
-        public static Variant Variant { get; set; } = Variant.Text;
-
-        /// <summary>
-        /// The amount of vertical spacing for this input.
-        /// </summary>
-        public static Margin Margin { get; set; } = Margin.None;
-    }
-
-    /// <summary>
-    /// Default settings for <see cref="MudLink"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class LinkDefaults
-    {
-        /// <summary>
-        /// The color of the <see cref="MudLink"/>.
-        /// </summary>
-        public static Color Color { get; set; } = Color.Primary;
-
-        /// <summary>
-        /// The typography variant to use for <see cref="MudLink"/>.
-        /// </summary>
-        public static Typo Typo { get; set; } = Typo.body1;
-
-        /// <summary>
-        /// Applies an underline to the <see cref="MudLink"/>.
-        /// </summary>
-        public static Underline Underline { get; set; } = Underline.Hover;
     }
 
     /// <summary>
@@ -126,31 +50,13 @@ public static class MudGlobal
     public static class PopoverDefaults
     {
         /// <summary>
-        /// The amount of drop shadow to apply to <see cref="MudPopover"/>.
-        /// </summary>
-        public static int Elevation { get; set; } = 8;
-
-        /// <summary>
         /// Prevents interaction with background elements.
         /// </summary>
         /// <remarks>
         /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
         /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
         /// </remarks>
-        public static bool ModalOverlay { get; set; } = true;
-    }
-
-    /// <summary>
-    /// Default settings for <see cref="MudStack"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class StackDefaults
-    {
-        /// <summary>
-        /// The gap between items in <see cref="MudStack"/>, measured in increments of <c>4px</c>.
-        /// </summary>
-        public static int Spacing { get; set; } = 3;
+        public static bool ModalOverlay { get; set; }
     }
 
     /// <summary>
@@ -188,11 +94,6 @@ public static class MudGlobal
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
-
-    /// <summary>
-    /// Applies regular rounding to components by default; additional rounding if set to true; or squares them if set to false for MudBlazor components.
-    /// </summary>
-    public static bool? Rounded { get; set; }
 
     /// <summary>
     /// The handler for unhandled MudBlazor component exceptions.

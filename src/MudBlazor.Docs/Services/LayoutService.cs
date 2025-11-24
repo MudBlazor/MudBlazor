@@ -34,7 +34,7 @@ public class LayoutService
     /// <summary>
     /// Observes system theme changes to update dark/light mode.
     /// </summary>
-    public bool ObserveSystemThemeChange { get; private set; }
+    public bool ObserveSystemDarkModeChange { get; private set; }
 
     /// <summary>
     /// The currently active MudBlazor theme.
@@ -118,7 +118,7 @@ public class LayoutService
             _ => DarkLightMode.System, // Default case, should not happen.
         };
 
-        ObserveSystemThemeChange = CurrentDarkLightMode == DarkLightMode.System;
+        ObserveSystemDarkModeChange = CurrentDarkLightMode == DarkLightMode.System;
         UpdateDarkModeState();
 
         _userPreferences.DarkLightTheme = CurrentDarkLightMode;

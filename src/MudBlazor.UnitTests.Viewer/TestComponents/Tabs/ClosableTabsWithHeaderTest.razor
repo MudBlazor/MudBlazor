@@ -1,0 +1,88 @@
+﻿<MudPopoverProvider />
+
+<MudTabs @bind-ActivePanelIndex="Index" Border="true" Outlined="true" PanelClass="px-4 py-6" ApplyEffectsToContainer="true">
+    <ChildContent>
+        @foreach (var item in _tabs)
+        {
+            <MudTabPanel Text="@item.Name" Tag="@item.Id" ShowCloseIcon="true" OnMouseDown="@(e => OnMouseDown(e, item))" OnContextMenu="@(e => OpenMenuContentAsync(e, item))">
+                @item.Content
+            </MudTabPanel>
+        }
+    </ChildContent>
+    <TabPanelHeader>
+        @if (context.ShowCloseIcon)
+        {
+            <MudIconButton Class="pa-0 mr-3" Icon="@Icons.Material.Filled.Close" OnClick="(_) => RemoveTab(context)" />
+        }
+    </TabPanelHeader>
+</MudTabs>
+
+<MudMenu PositionAtCursor="true" @ref="_contextMenu" id="_contextMenu">
+    <MudMenuItem Icon="@Icons.Material.Filled.Close" OnClick="@(() => RemoveTab(_context))">
+        Close
+    </MudMenuItem>
+    <MudMenuItem Icon="@Icons.Material.Filled.Remove" IconColor="Color.Error" OnClick="@(() => _tabs.Clear())">
+        Close all
+    </MudMenuItem>
+    <MudMenuItem Icon="@Icons.Material.Filled.Remove" IconColor="Color.Error" OnClick="@(() => _tabs.RemoveAll(x => x != _context))">
+        Close all but this
+    </MudMenuItem>
+</MudMenu>
+
+@code {
+    public class TabView
+    {
+        required public string Name { get; set; }
+        required public string Content { get; set; }
+        public Guid Id { get; set; }
+    }
+
+    private MudMenu _contextMenu = null!;
+    private TabView _context = null!;
+    private readonly List<TabView> _tabs = new();
+
+    public int Index = 0;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _tabs.Add(new TabView { Content = "First tab content", Name = "Tab A", Id = Guid.NewGuid() });
+        _tabs.Add(new TabView { Content = "Second tab content", Name = "Tab B", Id = Guid.NewGuid() });
+        _tabs.Add(new TabView { Content = "Third tab content", Name = "Tab C", Id = Guid.NewGuid() });
+        _tabs.Add(new TabView { Content = "Tab content", Name = "Tab D", Id = Guid.NewGuid() });
+        _tabs.Add(new TabView { Content = "Tab content", Name = "Tab E", Id = Guid.NewGuid() });
+        _tabs.Add(new TabView { Content = "Tab content", Name = "Tab F", Id = Guid.NewGuid() });
+    }
+
+    private void RemoveTab(MudTabPanel tabPanel)
+    {
+        if (tabPanel.Tag is Guid id)
+        {
+            var tab = _tabs.FirstOrDefault(x => x.Id == id);
+            if (tab != null)
+            {
+                RemoveTab(tab);
+            }
+        }
+    }
+
+    private void RemoveTab(TabView tab)
+    {
+        _tabs.Remove(tab);
+    }
+
+    private void OnMouseDown(MouseEventArgs args, TabView tab)
+    {
+        if (args.Button == 1)
+        {
+            RemoveTab(tab);
+        }
+    }
+
+    private async Task OpenMenuContentAsync(MouseEventArgs args, TabView context)
+    {
+        _context = context;
+        await _contextMenu.OpenMenuAsync(args);
+    }
+}

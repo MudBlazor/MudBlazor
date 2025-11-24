@@ -112,12 +112,12 @@ public partial class MudStack : MudComponentBase
     /// The gap between items in increments of <c>4px</c>.
     /// </summary>
     /// <remarks>
-    /// <para>Defaults to 3 in <see cref="MudGlobal.StackDefaults.Spacing"/>.</para>
+    /// <para>Defaults to 3.</para>
     /// <para>Maximum is 20 (<c>80px</c>).</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public int Spacing { get; set; } = MudGlobal.StackDefaults.Spacing;
+    public int Spacing { get; set; } = 3;
 
     /// <summary>
     /// Defines the distribution of child items.

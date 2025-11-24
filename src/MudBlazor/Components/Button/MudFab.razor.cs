@@ -44,7 +44,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Large;
+        public virtual Size Size { get; set; } = Size.Large;
 
         /// <summary>
         /// The icon shown before any text.

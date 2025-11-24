@@ -1,6 +1,11 @@
-﻿using AngleSharp.Dom;
+﻿#nullable enable
+using System;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using MudBlazor;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Stepper;
 using NUnit.Framework;
@@ -22,13 +27,13 @@ namespace MudBlazor.UnitTests.Components
                     step.Add(x => x.SecondaryText, "a");
                     step.Add(x => x.Class, "step-a");
                     step.Add(x => x.Style, "fontsize:11px");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step 1"));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
                     step.Add(x => x.SecondaryText, "b");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step 2"));
                     step.Add(x => x.Class, "step-b");
                     step.Add(x => x.Style, "fontsize:12px");
                 });
@@ -53,6 +58,52 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void StepperStepContext_ShouldBeAvailableInsideChildContent()
+        {
+            MudStepContext? firstStepContext = null;
+            MudStepContext? secondStepContext = null;
+
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.Add(x => x.ChildContent, builder =>
+                    {
+                        builder.OpenComponent<StepContextRecorder>(0);
+                        builder.AddAttribute(1, nameof(StepContextRecorder.ActiveMarkup), "step-1-active");
+                        builder.AddAttribute(2, nameof(StepContextRecorder.Capture), (Action<MudStepContext?>)(context => firstStepContext = context));
+                        builder.CloseComponent();
+                    });
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.Add(x => x.ChildContent, builder =>
+                    {
+                        builder.OpenComponent<StepContextRecorder>(0);
+                        builder.AddAttribute(1, nameof(StepContextRecorder.ActiveMarkup), "step-2-active");
+                        builder.AddAttribute(2, nameof(StepContextRecorder.Capture), (Action<MudStepContext?>)(context => secondStepContext = context));
+                        builder.CloseComponent();
+                    });
+                });
+            });
+
+            firstStepContext.Should().NotBeNull();
+            firstStepContext!.Step.Should().Be(stepper.Instance.Steps[0]);
+            firstStepContext.IsActive.Should().BeTrue();
+            secondStepContext.Should().BeNull();
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Be("step-1-active");
+
+            stepper.FindAll(".mud-step")[1].Click();
+
+            secondStepContext.Should().NotBeNull();
+            secondStepContext!.Step.Should().Be(stepper.Instance.Steps[1]);
+            secondStepContext.IsActive.Should().BeTrue();
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Be("step-2-active");
+        }
+
+        [Test]
         public void Stepper_ShouldDisplayContentOfActiveStep()
         {
             var stepper = Context.RenderComponent<MudStepper>(self =>
@@ -64,13 +115,13 @@ namespace MudBlazor.UnitTests.Components
                     step.Add(x => x.SecondaryText, "a");
                     step.Add(x => x.Class, "step-a");
                     step.Add(x => x.Style, "fontsize:11px");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step 1"));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
                     step.Add(x => x.SecondaryText, "b");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step 2"));
                     step.Add(x => x.Class, "step-b");
                     step.Add(x => x.Style, "fontsize:12px");
                 });
@@ -98,12 +149,12 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step 1"));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step 2"));
                 });
             });
             // check the stepper content
@@ -190,12 +241,12 @@ namespace MudBlazor.UnitTests.Components
                 {
                     step.Add(x => x.Title, "A");
                     step.Add(x => x.Skippable, true);
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
                 });
             });
             // check the stepper content
@@ -256,17 +307,17 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "C");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 3"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 3")));
                 });
             });
 
@@ -384,12 +435,12 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
                 });
             });
             // check the stepper content
@@ -432,12 +483,12 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
                 });
             });
             // check the stepper content
@@ -461,12 +512,12 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
                 });
             });
             // check the stepper content
@@ -479,43 +530,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void UpdatingStepProperties_ShouldUpdateStepper()
+        public async Task UpdatingStepProperties_ShouldUpdateStepper()
         {
             var stepper = Context.RenderComponent<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "C");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 3"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 3")));
                 });
             });
 
             // disable step 1
             stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(false);
-            stepper.FindComponents<MudStep>()[0].SetParametersAndRender(Parameter(nameof(MudStep.Disabled), true));
+            await stepper.FindComponents<MudStep>()[0].SetParametersAndRenderAsync(Parameter(nameof(MudStep.Disabled), true));
             stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(true);
             // fail step 2
             stepper.FindAll(".mud-step")[1].ClassList.Should().NotContain("mud-step-error");
             stepper.FindAll(".mud-step-label-icon")[1].ClassList.Should().NotContain("mud-error");
             stepper.FindAll(".mud-step-label-content")[1].ClassList.Should().NotContain("mud-error-text");
-            stepper.FindComponents<MudStep>()[1].SetParametersAndRender(Parameter(nameof(MudStep.HasError), true));
+            await stepper.FindComponents<MudStep>()[1].SetParametersAndRenderAsync(Parameter(nameof(MudStep.HasError), true));
             stepper.FindAll(".mud-step")[1].ClassList.Should().Contain("mud-step-error");
             stepper.FindAll(".mud-step-label-icon")[1].ClassList.Should().Contain("mud-error");
             stepper.FindAll(".mud-step-label-content")[1].ClassList.Should().Contain("mud-error-text");
             // complete step 3
             stepper.FindAll(".mud-step")[2].ClassList.Should().NotContain("mud-step-completed");
             stepper.FindAll(".mud-step-label-icon")[2].QuerySelectorAll("path").Should().BeEmpty(); // no svg icon if not completed
-            stepper.FindComponents<MudStep>()[2].SetParametersAndRender(Parameter(nameof(MudStep.Completed), true));
+            await stepper.FindComponents<MudStep>()[2].SetParametersAndRenderAsync(Parameter(nameof(MudStep.Completed), true));
             stepper.FindAll(".mud-step-label-icon")[2].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step")[2].ClassList.Should().Contain("mud-step-completed");
         }
@@ -556,7 +607,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 self.Add(x => x.Tag, "je ne sais pas");
                 // this replaces the action buttons prev, skip and next with just text
-                self.Add(x => x.ActionContent, stepperRef => (string)stepperRef.Tag); // <-- here we simulate using the passed in stepper context
+                self.Add(x => x.ActionContent, stepperRef => (string)stepperRef.Tag!); // <-- here we simulate using the passed in stepper context
             });
             stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(0, "because the action content replaces them");
             stepper.Find(".mud-card-actions").InnerHtml?.Trim().Should().Be("je ne sais pas");
@@ -580,7 +631,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ResetButton_ShouldResetActiveStep()
+        public async Task ResetButton_ShouldResetActiveStep()
         {
             var stepper = Context.RenderComponent<MudStepper>(self =>
             {
@@ -588,23 +639,23 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "B");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
                 });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "C");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 3"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 3")));
                 });
             });
             stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(0);
             stepper.Instance.ActiveStep?.Title.Should().Be("A");
             stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(false);
-            stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync());
+            await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync());
             stepper.Instance.ActiveStep?.Title.Should().Be("B");
             stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(true);
             stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(1);
@@ -911,7 +962,7 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
             });
 
@@ -938,7 +989,7 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Title, "A");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
                 });
             });
 
@@ -953,5 +1004,44 @@ namespace MudBlazor.UnitTests.Components
                 stepButton.ClassList.Should().NotContain("mud-clickable");
             }
         }
+
+        private static RenderFragment StepContent(Action<RenderTreeBuilder> content)
+            => builder => content(builder);
+
+        [Test]
+        public void Stepper_ShouldHandleNullChildContent()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.Add(x => x.ChildContent, builder => builder.AddMarkupContent(0, "step-b"));
+                });
+            });
+
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().BeEmpty();
+            stepper.FindAll(".mud-step")[1].Click();
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Be("step-b");
+        }
+
+        [Test]
+        public void StepContext_NullStepper_Throws()
+        {
+            Action act = () => _ = new MudStepContext(null!, new MudStep());
+            act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("stepper");
+        }
+
+        [Test]
+        public void StepContext_NullStep_Throws()
+        {
+            Action act = () => _ = new MudStepContext(new MudStepper(), null!);
+            act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("step");
+        }
+
     }
 }

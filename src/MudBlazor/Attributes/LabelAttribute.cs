@@ -6,6 +6,7 @@ using System;
 
 namespace MudBlazor
 {
+#nullable enable
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class LabelAttribute : Attribute
     {

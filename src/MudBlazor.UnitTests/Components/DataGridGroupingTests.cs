@@ -589,7 +589,7 @@ namespace MudBlazor.UnitTests.Components
             // by default has a groupdefinition
             dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
             // turn off grouping for the whole grid
-            dataGrid.SetParam(x => x.Groupable, false);
+            await dataGrid.SetParamAsync(x => x.Groupable, false);
             dataGrid.Render();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
 
@@ -636,7 +636,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_IsGrouping()
+        public async Task DataGrid_IsGrouping()
         {
             // Tests the IsGrouping property of MudDataGrid to ensure it handles a change properly
             // and ensures the correct UI is rendered for column options
@@ -654,7 +654,7 @@ namespace MudBlazor.UnitTests.Components
             var overlay = provider.Find(".mud-overlay");
             overlay.Click(); // close the menu
 
-            comp.SetParametersAndRender(x => x.Add(x => x.Groupable, false));
+            await comp.SetParametersAndRenderAsync(x => x.Add(x => x.Groupable, false));
             // no change in grid rows since Grouping did not change
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
 
