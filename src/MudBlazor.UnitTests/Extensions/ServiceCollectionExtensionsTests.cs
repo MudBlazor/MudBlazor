@@ -292,6 +292,7 @@ public class ServiceCollectionExtensionsTests
             options.QueueDelay = TimeSpan.FromSeconds(5);
             options.ContainerClass = "container_class";
             options.FlipMargin = 100;
+            options.OverflowPadding = 0;
             options.ThrowOnDuplicateProvider = false;
             options.Mode = PopoverMode.Default;
             expectedOptions = options;
@@ -521,6 +522,7 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.QueueDelay = TimeSpan.FromSeconds(5);
             options.PopoverOptions.ContainerClass = "container_class";
             options.PopoverOptions.FlipMargin = 100;
+            options.PopoverOptions.OverflowPadding = 12;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
             options.PopoverOptions.Mode = PopoverMode.Default;
 
@@ -584,6 +586,7 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
         actualPopoverOptions.ContainerClass.Should().Be(expectedOptions.PopoverOptions.ContainerClass);
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
+        actualPopoverOptions.OverflowPadding.Should().Be(expectedOptions.PopoverOptions.OverflowPadding);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
 

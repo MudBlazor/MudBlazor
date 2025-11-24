@@ -188,6 +188,57 @@ public class ParameterContainerTests
         parameter2ChangedEventArgs!.Value.Should().Be(Parameter2NewValue);
     }
 
+    [Test(Description = "https://github.com/MudBlazor/MudBlazor/pull/12023")]
+    public async Task ParameterState_Snapshot_Test()
+    {
+        var tcs1 = new TaskCompletionSource();
+        var tcs2 = new TaskCompletionSource();
+        var handlerFireCount = 0;
+        var parameter = 1;
+        const string ParameterName = nameof(parameter);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => parameter)
+            .WithParameterChangedHandler(OnParameter1Change)
+            .Attach();
+        var parameterView1 = ParameterView.FromDictionary(new Dictionary<string, object?>
+        {
+            { ParameterName, 2 }
+        });
+        var parameterView2 = ParameterView.FromDictionary(new Dictionary<string, object?>
+        {
+            { ParameterName, 2 }
+        });
+        var parameterContainer = new ParameterContainer { new ParameterScopeContainer(parameter1State) };
+        void OnParameter1Change()
+        {
+            handlerFireCount++;
+        }
+
+        // Act
+        var task1 = parameterContainer.SetParametersAsync(async _ =>
+        {
+            // Update the parameter value so that the second SetParametersAsync sees that
+            // and does not trigger the parameter handler by resetting _parameterChangedEventArgs to null.
+            parameter = 2;
+            await tcs1.Task;
+        }, parameterView1);
+        var task2 = parameterContainer.SetParametersAsync(_ => tcs2.Task, parameterView2);
+
+        tcs2.SetResult();
+        // Small delay to simulate scheduling
+        await Task.Delay(100);
+        tcs1.SetResult();
+
+        await Task.WhenAll(task1, task2);
+
+        handlerFireCount.Should().Be(1, because: "each SetParametersAsync should fire its handler independently; " +
+                                                 "if 0, the second call overwrote the first call's ParameterChangedEventArgs; " +
+                                                 "if 1, the snapshot mechanism works correctly; " +
+                                                 "if more than 1, something is wrong with the test setup");
+    }
+
     [Test]
     public void GetEnumeratorNonGeneric_ReturnsAllParameterSets()
     {

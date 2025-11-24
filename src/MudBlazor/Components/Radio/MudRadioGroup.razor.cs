@@ -50,6 +50,7 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles for this button group.
         /// </summary>
+        [Obsolete("Prefer the InputClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public string? InputStyle { get; set; }

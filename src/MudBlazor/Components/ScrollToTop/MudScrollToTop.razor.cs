@@ -133,7 +133,7 @@ namespace MudBlazor
             await OnScroll.InvokeAsync(e);
 
             var topOffset = e.NodeName == "#document"
-                ? e.FirstChildBoundingClientRect.Top * -1
+                ? e.FirstChildBoundingClientRect?.Top * -1
                 : e.ScrollTop;
 
             if (topOffset >= TopOffset && Visible != true)

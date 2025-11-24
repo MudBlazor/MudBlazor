@@ -92,6 +92,8 @@ namespace MudBlazor
         /// </remarks>
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
 
+        internal bool RequiresInteraction => RequireInteraction ?? !string.IsNullOrWhiteSpace(Action);
+
         /// <summary>
         /// Creates new options for a snackbar.
         /// </summary>

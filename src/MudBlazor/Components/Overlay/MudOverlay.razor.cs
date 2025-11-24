@@ -218,11 +218,17 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         {
             _previousLockScroll = LockScroll;
             _previousAbsolute = Absolute;
-            await HandleLockScrollChange();
+
+            // Calling HandleLockScrollChange when the overlay isn't intially set to
+            // visible will incorrectly decrement the lock count
+            if (_visibleState.Value)
+            {
+                await HandleLockScrollChange();
+            }
 
             // If the overlay is initially visible and modeless auto-close is enabled,
             // then start tracking pointer down events.
-            if (Visible && !Modal && AutoClose)
+            if (_visibleState.Value && !Modal && AutoClose)
             {
                 await StartModelessAutoCloseTrackingAsync();
             }
@@ -244,7 +250,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             return;
         }
 
-        if (Visible)
+        if (_visibleState.Value)
         {
             await StartModelessAutoCloseTrackingAsync();
         }

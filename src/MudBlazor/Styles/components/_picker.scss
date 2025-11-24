@@ -15,6 +15,10 @@
       margin-inline-start: 8px;
       margin-inline-end: unset;
     }
+
+    &:empty {
+      display: none;
+    }
   }
 }
 

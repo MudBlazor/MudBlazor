@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ExpansionPanelStartExpandedTest>();
             var panel = comp.FindComponent<MudExpansionPanel>();
-            panel.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Disabled, true));
+            await panel.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Disabled, true));
 
             comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse());
             comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());
@@ -385,6 +385,51 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().NotContain("mud-panel-expanded");
             comp.FindAll("button").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Tests that when Gutters is true (default), both header and content have gutters classes.
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_Gutters_True_AppliesGuttersToHeaderAndContent()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelGuttersTrueTest>();
+
+            var header = comp.Find(".mud-expand-panel-header");
+            header.ClassList.Should().Contain("mud-expand-panel-header-gutters");
+
+            var content = comp.Find(".mud-expand-panel-content");
+            content.ClassList.Should().Contain("mud-expand-panel-gutters");
+        }
+
+        /// <summary>
+        /// Tests that when Gutters is false, neither header nor content have gutters classes.
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_Gutters_False_RemovesGuttersFromHeaderAndContent()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelGuttersFalseTest>();
+
+            var header = comp.Find(".mud-expand-panel-header");
+            header.ClassList.Should().NotContain("mud-expand-panel-header-gutters");
+
+            var content = comp.Find(".mud-expand-panel-content");
+            content.ClassList.Should().NotContain("mud-expand-panel-gutters");
+        }
+
+        /// <summary>
+        /// Tests that when Parent Gutters is false, it overrides panel's Gutters setting.
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_ParentGuttersFalse_OverridesChildGutters()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelParentGuttersFalseTest>();
+
+            var header = comp.Find(".mud-expand-panel-header");
+            header.ClassList.Should().NotContain("mud-expand-panel-header-gutters");
+
+            var content = comp.Find(".mud-expand-panel-content");
+            content.ClassList.Should().NotContain("mud-expand-panel-gutters");
         }
     }
 }

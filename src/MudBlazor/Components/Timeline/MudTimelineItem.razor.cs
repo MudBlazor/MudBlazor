@@ -37,7 +37,7 @@ namespace MudBlazor
         protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
         /// <summary>
-        /// (Obsolete) The icon displayed for the dot.
+        /// The icon displayed for the dot.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]

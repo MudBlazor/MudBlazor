@@ -363,7 +363,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("svg").Count.Should().Be(1);
             comp.Instance.CheckMark.Should().Be(true);
             comp.Instance.CheckMark.Should().Be(true);
-            comp.SetParametersAndRender(self => self.Add(x => x.CheckMark, false));
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.CheckMark, false));
             comp.FindAll("svg").Count.Should().Be(0);
             comp.Instance.CheckMark.Should().Be(false);
             comp.Instance.CheckMark.Should().Be(false);
@@ -461,7 +461,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Should_provide_accessible_keyboard_navigation()
+        public async Task Should_provide_accessible_keyboard_navigation()
         {
             var onCloseCount = 0;
             var comp = Context.RenderComponent<ChipSetKeyboardNavigationTests>(parameters => parameters
@@ -494,7 +494,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().BeNullOrEmpty();
 
             // toggle the chips again, then delete them (the chipset should no longer consider them part of its group, and remove them from selected values)
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.AreChipsClosable, true));
             comp.Find("#chip-1").KeyDown(" ");
             //comp.Find("#chip-2").KeyDown("Enter");
@@ -509,7 +509,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Should_not_accept_keyboard_inputs_when_disabled_or_readonly()
+        public async Task Should_not_accept_keyboard_inputs_when_disabled_or_readonly()
         {
             var onCloseCount = 0;
             var comp = Context.RenderComponent<ChipSetKeyboardNavigationTests>(parameters => parameters
@@ -536,7 +536,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
 
             // toggle the chips again, then delete them (the chipset should no longer consider them part of its group, and remove them from selected values)
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Disabled, false)
                 .Add(p => p.ReadOnly, true));
 

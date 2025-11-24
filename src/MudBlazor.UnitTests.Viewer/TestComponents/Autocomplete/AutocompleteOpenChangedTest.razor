@@ -1,0 +1,47 @@
+﻿<MudPopoverProvider />
+
+<MudText>@_statusMessage</MudText>
+
+<MudAutocomplete @ref="Autocomplete"
+                 @bind-Value="_value"
+                 Label="OpenChangedTest"
+                 Clearable
+                 SearchFunc="Search"
+                 OnClearButtonClick=@ClearClicked
+                 OpenChanged=@OpenChanged />
+
+@code
+{
+    public static string __description__ = "Opened and Closed count must only increase by 1, with or without selection";
+
+    private string? _value;
+
+    private readonly string[] _states = ["Alabama", "Alaska", "American Samoa"];
+
+    private Task<IEnumerable<string?>> Search(string value, CancellationToken token)
+    {
+        var result = string.IsNullOrEmpty(value) ? _states : _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+
+        return Task.FromResult<IEnumerable<string?>>(result);
+    }
+
+    public MudAutocomplete<string> Autocomplete { get; private set; } = default!;
+
+    string _statusMessage = "";
+    public int ClosedCount { get; private set; }
+    public int OpenedCount { get; private set; }
+
+    private void ClearClicked()
+    {
+        _statusMessage = "";
+        OpenedCount = 0;
+        ClosedCount = 0;
+    }
+
+    private void OpenChanged(bool opened)
+    {
+        if (opened) OpenedCount++;
+        else ClosedCount++;
+        _statusMessage = $"State: {(opened ? "Opened" : "Closed")} - Open = {OpenedCount} Close = {ClosedCount}";
+    }
+}
