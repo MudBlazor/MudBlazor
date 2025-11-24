@@ -21,19 +21,19 @@
     </MudSplitPanel>
     <MudButtonGroup Variant="Variant.Filled">
         <MudTooltip Text="Horizontal">
-            <MudToggleIconButton @bind-Toggled="_horizontal" Icon="@Icons.Material.Outlined.HorizontalRule" ToggledColor="@Color.Primary"/>
+            <MudToggleIconButton @bind-Toggled="_horizontal" Icon="@(_horizontal ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.DragHandle)" ToggledColor="@Color.Info"/>
         </MudTooltip>
         <MudTooltip Text="Reset on double click">
-            <MudToggleIconButton @bind-Toggled="_resetOnDoubleClick" Icon="@Icons.Material.Outlined.RestartAlt" ToggledColor="@Color.Primary"/>
+            <MudToggleIconButton @bind-Toggled="_resetOnDoubleClick" Icon="@Icons.Material.Outlined.RestartAlt" ToggledColor="@Color.Info"/>
         </MudTooltip>
         <MudTooltip Text="Rounded">
-            <MudToggleIconButton @bind-Toggled="_rounded" Icon="@Icons.Material.Outlined.RoundedCorner" ToggledColor="@Color.Primary"/>
+            <MudToggleIconButton @bind-Toggled="_rounded" Icon="@Icons.Material.Outlined.RoundedCorner" ToggledColor="@Color.Info"/>
         </MudTooltip>
         <MudTooltip Text="Elevation">
-            <MudToggleIconButton @bind-Toggled="_elevation" Icon="@Icons.Material.Outlined.Landscape" ToggledColor="@Color.Primary"/>
+            <MudToggleIconButton @bind-Toggled="_elevation" Icon="@Icons.Material.Outlined.Landscape" ToggledColor="@Color.Info"/>
         </MudTooltip>
         <MudTooltip Text="Transparent">
-            <MudToggleIconButton @bind-Toggled="_transparent" Icon="@Icons.Material.Outlined.Visibility" ToggledColor="@Color.Primary"/>
+            <MudToggleIconButton @bind-Toggled="_transparent" Icon="@Icons.Material.Outlined.Visibility" ToggledColor="@Color.Info"/>
         </MudTooltip>
         <MudTooltip Text="Reset sizes">
             <MudIconButton OnClick="@_splitPanel.ResetSizesAsync" Icon="@Icons.Material.Outlined.Replay" Variant="Variant.Filled"/>

@@ -50,11 +50,8 @@ class MudSplitPanel {
         this.divider.removeEventListener("dblclick", this._onDoubleClick);
         this.divider.removeEventListener("touchend", this._onTouchEnd);
         this.divider.removeEventListener("keydown", this._onKeyDown);
-        
-        if (this.isDragging) {
-            this._onMouseUp();
-        }
-        
+        this._onMouseUp();
+
         delete window.splitPanels[this.container.id];
     }
 
@@ -68,12 +65,10 @@ class MudSplitPanel {
 
         this.divider.style.minWidth = this.horizontal ? null : `${panelGap}px`;
         this.divider.style.minHeight = this.horizontal ? `${panelGap}px` : null;
-        this.divider.ariaOrientation = this.horizontal ? "horizontal" : "vertical";
-        this.divider.ariaValueMin = this.minPanelSize;
-        this.divider.ariaValueMax = (this.horizontal
-            ? this.container.offsetHeight - panelGap - this.minPanelSize
-            : this.container.offsetWidth - panelGap - this.minPanelSize)
-            .toString();
+
+        let containerSize = this._getContainerSize();
+        this.divider.ariaValueMin = (this.minPanelSize / containerSize * 100).toFixed(2).toString();
+        this.divider.ariaValueMax = ((containerSize - panelGap - this.minPanelSize) / containerSize * 100).toFixed(2).toString();
 
         if (shouldRecalculateSize) {
             this.resetSizes();
@@ -89,10 +84,10 @@ class MudSplitPanel {
         if (this.firstPanelInitialSize !== null) {
             this._setPanelSizes(this.firstPanelInitialSize, this._getContainerSize());
         } else {
-            this.divider.ariaValueNow = (this._getContainerSize() / 2).toString();
+            this.divider.ariaValueNow = "50";
         }
     }
-    
+
     _getContainerSize() {
         return this.horizontal ? this.container.offsetHeight : this.container.offsetWidth;
     }
@@ -137,7 +132,7 @@ class MudSplitPanel {
             this._setPanelSizes(newFirstSize, containerSize);
         }
     }
-    
+
     _setPanelSizes(newFirstSize, containerSize) {
         const newSecondSize = containerSize - newFirstSize - this.panelGap;
 
@@ -146,7 +141,7 @@ class MudSplitPanel {
         this.firstPanel.style.width = this.horizontal ? "100%" : `${newFirstSize}px`;
         this.secondPanel.style.width = this.horizontal ? "100%" : `${newSecondSize}px`;
 
-        this.divider.ariaValueNow = newFirstSize;
+        this.divider.ariaValueNow = (newFirstSize / containerSize * 100).toFixed(2).toString();
     }
 
     _onMouseUp() {
@@ -170,12 +165,12 @@ class MudSplitPanel {
 
         let firstPanelSize = this.firstPanelInitialSize;
         if (!firstPanelSize) {
-            firstPanelSize = containerSize / 2;
+            firstPanelSize = containerSize / 2 - this.panelGap / 2;
         }
 
         this._setPanelSizes(firstPanelSize, containerSize);
     }
-    
+
     _onTouchEnd() {
         const now = Date.now();
         if (now - this.lastTap < 300) {
@@ -241,4 +236,8 @@ window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minP
 
 window.mudSplitPanel_resetSizes = function (id) {
     window.splitPanels[id].resetSizes();
+};
+
+window.mudSplitPanel_destroy = function (id) {
+    window.splitPanels[id].destroy();
 };

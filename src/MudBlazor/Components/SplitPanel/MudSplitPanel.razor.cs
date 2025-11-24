@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// <summary>
 /// Two panels which are resizeable.
 /// </summary>
-public partial class MudSplitPanel : MudComponentBase
+public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 {
     private string Classname => new CssBuilder("mud-split-panel")
         .AddClass("flex-column", Horizontal)
@@ -207,5 +207,12 @@ public partial class MudSplitPanel : MudComponentBase
     public async Task ResetSizesAsync()
     {
         await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetSizes", _containerId);
+    }
+
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_destroy", _containerId);
+        GC.SuppressFinalize(this);
     }
 }
