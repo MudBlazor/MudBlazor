@@ -18,7 +18,7 @@ public class PopoverOptions
 
     /// <summary>
     /// Gets or sets the CSS class of the popover container.
-    /// The default value is <c>mudblazor-main-content</c>.
+    /// The default value is <c>mud-popover-provider</c>.
     /// </summary>
     public string ContainerClass { get; set; } = "mud-popover-provider";
 
@@ -37,7 +37,7 @@ public class PopoverOptions
     /// <summary>
     /// Gets or sets the overflow padding for the popover. This is used when adjusting popovers that go off screen at the top or left.
     /// It is also used to create max-height for popovers containing a list that will go off screen.
-    /// The default value is <c>24</c> rougly equal to the 8dp margin of material design.
+    /// The default value is <c>24</c> roughly equal to the 8dp margin of material design.
     /// </summary>
     public int OverflowPadding { get; set; } = 24;
 

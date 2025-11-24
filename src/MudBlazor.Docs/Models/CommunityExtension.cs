@@ -3,34 +3,25 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
-using System.Text.Json.Serialization;
 
 namespace MudBlazor.Docs.Models;
 
 [DebuggerDisplay($"Name = {nameof(Name)}")]
 public class CommunityExtension
 {
-    [JsonPropertyName("AvatarImageSrc")]
-    public string AvatarImageSrc { get; set; } = @"https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png";
+    public string AvatarImageSrc => @$"_content/MudBlazor.Docs/images/extensions/{GitHubUserPath}.{GitHubRepoPath}.webp";
 
-    [JsonPropertyName("Category")]
-    public string Category { get; set; } = "Parent";
+    public required string Category { get; set; }
 
-    [JsonPropertyName("Name")]
-    public string Name { get; set; } = "MudBlazor";
+    public required string Name { get; set; }
 
-    [JsonPropertyName("Description")]
-    public string Description { get; set; } = "With millions of downloads, from hobby developers to large enterprises, MudBlazor enables you to rapidly build amazing web applications without leaving your beloved C# language and toolchain. ";
+    public required string Description { get; set; }
 
-    [JsonPropertyName("Link")]
-    public string Link { get; set; } = @"https://mudblazor.com";
+    public required string Link { get; set; }
 
-    [JsonPropertyName("GitHubUserPath")]
-    public string GitHubUserPath { get; set; } = "MudBlazor";
+    public required string GitHubUserPath { get; set; }
 
-    [JsonPropertyName("GitHubRepoPath")]
-    public string GitHubRepoPath { get; set; } = "MudBlazor";
+    public required string GitHubRepoPath { get; set; }
 
-    [JsonIgnore]
     public string GitHubLink => @$"https://github.com/{GitHubUserPath}/{GitHubRepoPath}";
 }

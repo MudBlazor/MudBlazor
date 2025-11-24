@@ -1,13 +1,22 @@
 ﻿@using System.IO
 
+<style>
+    .file-upload-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 20;
+        opacity: 0;
+    }
+</style>
+
 <MudFileUpload T="IBrowserFile"
                @ref="@_fileUpload"
                @bind-Files="File"
                @bind-Files:after="@OnFilesChangedAsync"
                Accept=".png,.jpg,.jpeg"
                Hidden="@false"
-               InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-               InputStyle="opacity:0"
                tabindex="-1"
                @ondrop="@ClearDragClass"
                @ondragenter="@SetDragClass"

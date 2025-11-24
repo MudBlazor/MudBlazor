@@ -102,6 +102,16 @@ public partial class MudStepper : MudComponentBase
     public Color ErrorStepColor { get; set; } = Color.Error;
 
     /// <summary>
+    /// The color of skipped steps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public Color SkippedStepColor { get; set; } = Color.Default;
+
+    /// <summary>
     /// The icon shown for completed steps.
     /// </summary>
     /// <remarks>
@@ -120,6 +130,16 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public string StepErrorIcon { get; set; } = Icons.Material.Outlined.PriorityHigh;
+
+    /// <summary>
+    /// The icon shown for skipped steps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Icons.Material.Outlined.SkipNext"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public string StepSkippedIcon { get; set; } = Icons.Material.Outlined.SkipNext;
 
     /// <summary>
     /// The icon shown for the reset button.
@@ -219,16 +239,6 @@ public partial class MudStepper : MudComponentBase
     public string? StepClass { get; set; }
 
     /// <summary>
-    /// The CSS styles applied to all steps.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.List.Appearance)]
-    public string? StepStyle { get; set; }
-
-    /// <summary>
     /// Centers the labels for each step below the circle.
     /// </summary>
     /// <remarks>
@@ -247,6 +257,16 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public bool Ripple { get; set; } = true;
+
+    /// <summary>
+    /// Displays if a step has been skipped in the label.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public bool ShowSkip { get; set; } = false;
 
     /// <summary>
     /// Shows a scroll bar for steps if needed.
@@ -294,15 +314,15 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// Whether all steps have been completed.
     /// </summary>
-    public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.CompletedState.Value);
+    public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.SkippedState.Value).All(x => x.CompletedState.Value);
 
     /// <summary>
     /// Whether the <c>Complete</c> or <c>Next</c> button is displayed.
     /// </summary>
     public bool ShowCompleteInsteadOfNext => _steps.Any() &&
-                                             _steps.Count(x => !x.Skippable && !x.CompletedState.Value) == 1 &&
+                                             _steps.Count(x => !x.SkippedState.Value && !x.CompletedState.Value) == 1 &&
                                              ActiveStep != null &&
-                                             _steps.First(x => !x.Skippable && !x.CompletedState.Value) == ActiveStep;
+                                             _steps.First(x => !x.SkippedState.Value && !x.CompletedState.Value) == ActiveStep;
 
     /// <summary>
     /// The steps in this component.
@@ -436,12 +456,14 @@ public partial class MudStepper : MudComponentBase
                 }
             case StepAction.Skip:
                 {
+                    await step.SetSkippedAsync(true);
+
                     var nextStep = GetNextStep(index);
                     if (nextStep is not null)
                         index = _steps.IndexOf(nextStep);
                     await SetActiveIndexAsync(index);
+                    break;
                 }
-                break;
             case StepAction.Reset:
                 break;
             default:
@@ -559,6 +581,8 @@ public partial class MudStepper : MudComponentBase
         foreach (var step in _steps)
         {
             await step.SetCompletedAsync(false, refreshParent: false);
+            await step.SetSkippedAsync(false, refreshParent: false);
+
             if (resetErrors)
             {
                 await step.SetHasErrorAsync(false, refreshParent: false);

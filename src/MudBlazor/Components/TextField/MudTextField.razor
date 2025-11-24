@@ -12,12 +12,13 @@
                      FullWidth="@FullWidth"
                      Class="@Classname"
                      Error="@HasErrors"
-                     ErrorId="@ErrorId"
+                     ErrorId="@ErrorIdState.Value"
                      ErrorText="@GetErrorText()"
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
-                     ForId="@InputElementId">
+                     ForId="@InputElementId"
+                     @onclick="@HandleContainerClick">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -49,8 +50,8 @@
                               AdornmentAriaLabel="@AdornmentAriaLabel"
                               IconSize="@IconSize"
                               OnAdornmentClick="@OnAdornmentClick"
-                              Error="@Error"
-                              ErrorId="@ErrorId"
+                              Error="@ErrorState.Value"
+                              ErrorId="@ErrorIdState.Value"
                               HelperId="@GetHelperId()"
                               HelperText="@HelperText"
                               Immediate="@Immediate"
@@ -97,8 +98,8 @@
                              AdornmentAriaLabel="@AdornmentAriaLabel"
                              IconSize="@IconSize"
                              OnAdornmentClick="@OnAdornmentClick"
-                             Error="@Error"
-                             ErrorId="@ErrorId"
+                             Error="@ErrorState.Value"
+                             ErrorId="@ErrorIdState.Value"
                              HelperId="@HelperId"
                              HelperText="@HelperText"
                              Immediate="@Immediate"

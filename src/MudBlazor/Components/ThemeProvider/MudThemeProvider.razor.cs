@@ -28,7 +28,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
     private MudTheme? _theme;
     private readonly ParameterState<bool> _isDarkModeState;
-    private readonly ParameterState<bool> _observeSystemThemeChangeState;
+    private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
     private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
     private event Func<bool, Task>? _darkLightModeChanged;
@@ -55,19 +55,18 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// Detects when the system theme has changed between Light Mode and Dark Mode.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>true</c>.<br />
+    /// Defaults to <c>true</c>.
     /// When <c>true</c>, the theme will automatically change to Light Mode or Dark Mode as the system theme changes.
     /// </remarks>
     [Parameter]
-    public bool ObserveSystemThemeChange { get; set; } = true;
+    public bool ObserveSystemDarkModeChange { get; set; } = true;
 
     /// <summary>
     /// Uses darker colors for all MudBlazor components.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>. When this value changes, <see cref="IsDarkModeChanged"/> occurs.<br />  
-    /// When <c>true</c>, the <see cref="MudTheme.PaletteDark"/> colors will be used.<br />  
-    /// When <c>false</c>, the <see cref="MudTheme.PaletteLight"/> colors will be used.<br />  
+    /// Defaults to <c>false</c>.
+    /// When this value changes, <see cref="IsDarkModeChanged"/> occurs.
     /// </remarks>
     [Parameter]
     public bool IsDarkMode { get; set; }
@@ -78,28 +77,27 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
-    [DynamicDependency(nameof(SystemPreferenceChanged))]
+    [DynamicDependency(nameof(SystemDarkModeChangedAsync))]
     public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
             .WithEventCallback(() => IsDarkModeChanged);
-        _observeSystemThemeChangeState = registerScope
-            .RegisterParameter<bool>(nameof(ObserveSystemThemeChange))
-            .WithParameter(() => ObserveSystemThemeChange)
-            .WithChangeHandler(OnObserveSystemThemeChangeChanged);
+        _observeSystemDarkModeChangeState = registerScope
+            .RegisterParameter<bool>(nameof(ObserveSystemDarkModeChange))
+            .WithParameter(() => ObserveSystemDarkModeChange)
+            .WithChangeHandler(OnObserveSystemDarkModeChangeChanged);
         _lazyDotNetRef = new Lazy<DotNetObjectReference<MudThemeProvider>>(CreateDotNetObjectReference);
     }
 
     /// <summary>
-    /// Gets whether the system is using Dark Mode.
+    /// Gets the browser's color preference.
     /// </summary>
     /// <returns>
-    /// When <c>true</c>, the system is using Dark Mode.<br />
-    /// When <c>false</c>, the system is using Light Mode.
+    /// Returns <c>true</c> if the theme is Dark Mode; otherwise, <c>false</c>.
     /// </returns>
-    public async Task<bool> GetSystemPreference()
+    public async Task<bool> GetSystemDarkModeAsync()
     {
         var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
 
@@ -107,13 +105,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     /// <summary>
-    /// Calls a function when the system theme has changed.
+    /// Calls a function when the system's color has changed.
     /// </summary>
     /// <param name="functionOnChange">The function to call when the system theme has changed.</param>
     /// <remarks>
     /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
     /// </remarks>
-    public Task WatchSystemPreference(Func<bool, Task> functionOnChange)
+    public Task WatchSystemDarkModeAsync(Func<bool, Task> functionOnChange)
     {
         _darkLightModeChanged += functionOnChange;
 
@@ -121,11 +119,11 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     /// <summary>
-    /// Occurs when the system theme has changed.
+    /// Occurs when the system's dark mode has changed.
     /// </summary>
-    /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode.</param>
+    /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode; <c>false</c> is Light Mode.</param>
     [JSInvokable]
-    public async Task SystemPreferenceChanged(bool isDarkMode)
+    public async Task SystemDarkModeChangedAsync(bool isDarkMode)
     {
         await _isDarkModeState.SetValueAsync(isDarkMode);
         var handler = _darkLightModeChanged;
@@ -135,12 +133,12 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    // <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (_observeSystemThemeChangeState.Value && !_observing)
+            if (_observeSystemDarkModeChangeState.Value && !_observing)
             {
                 _observing = true;
                 await WatchDarkThemeMedia();
@@ -150,14 +148,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    /// <inheritdoc />
+    // <inheritdoc />
     protected override void OnInitialized()
     {
         _theme = Theme ?? new MudTheme();
         base.OnInitialized();
     }
 
-    /// <inheritdoc />
+    // <inheritdoc />
     protected override void OnParametersSet()
     {
         if (Theme is not null)
@@ -196,11 +194,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     protected static string BuildMudBlazorScrollbar()
     {
         var scrollbar = new StringBuilder();
+
         scrollbar.AppendLine("<style>");
         scrollbar.AppendLine("::-webkit-scrollbar {width: 8px;height: 8px;z-index: 1;}");
         scrollbar.AppendLine("::-webkit-scrollbar-track {background: transparent;}");
         scrollbar.AppendLine("::-webkit-scrollbar-thumb {background: #c4c4c4;border-radius: 1px;}");
         scrollbar.AppendLine("::-webkit-scrollbar-thumb:hover {background: #a6a6a6;}");
+
         //Firefox
         scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
         scrollbar.AppendLine("</style>");
@@ -294,8 +294,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Palette}-dark-hover: {palette.Dark.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
 
         theme.AppendLine($"--{Palette}-text-primary: {palette.TextPrimary};");
+        theme.AppendLine(
+            $"--{Palette}-text-primary-rgb: {palette.TextPrimary.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-text-secondary: {palette.TextSecondary};");
+        theme.AppendLine(
+            $"--{Palette}-text-secondary-rgb: {palette.TextSecondary.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-text-disabled: {palette.TextDisabled};");
+        theme.AppendLine(
+            $"--{Palette}-text-disabled-rgb: {palette.TextDisabled.ToString(MudColorOutputFormats.ColorElements)};");
 
         theme.AppendLine($"--{Palette}-action-default: {palette.ActionDefault};");
         theme.AppendLine(
@@ -305,6 +311,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Palette}-action-disabled-background: {palette.ActionDisabledBackground};");
 
         theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
+        theme.AppendLine($"--{Palette}-surface-rgb: {palette.Surface.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-background: {palette.Background};");
         theme.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
         theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
@@ -321,6 +328,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-table-hover: {palette.TableHover};");
 
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
+        theme.AppendLine(
+            $"--{Palette}-divider-rgb: {palette.Divider.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
         theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
@@ -333,6 +342,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
         theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
         theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
+
+        theme.AppendLine($"--{Palette}-border-opacity: {palette.BorderOpacity.ToString(CultureInfo.InvariantCulture)};");
 
         //Ripple
         theme.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
@@ -543,11 +554,11 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
-    private async Task OnObserveSystemThemeChangeChanged(ParameterChangedEventArgs<bool> arg)
+    private async Task OnObserveSystemDarkModeChangeChanged(ParameterChangedEventArgs<bool> arg)
     {
         // The _observing flag prevents attempting to stop observation when it hasn't been started.
-        // For example, ObserveSystemThemeChange is true by default, and if it's set to false in the initial component setup 
-        // like <MudThemeProvider ObserveSystemThemeChange="false" />, the ChangeHandler of ParameterState will be invoked.
+        // For example, ObserveSystemDarkModeChange is true by default, and if it's set to false in the initial component setup 
+        // like <MudThemeProvider ObserveSystemDarkModeChange="false" />, the ChangeHandler of ParameterState will be invoked.
         // Therefore, it's not desirable to stop an observation that hasn't been started.
         if (arg.Value)
         {

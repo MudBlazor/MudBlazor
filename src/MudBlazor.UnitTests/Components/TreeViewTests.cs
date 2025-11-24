@@ -518,24 +518,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeView_WhenDisabled_DoesNotHaveRipple()
+        public async Task TreeView_WhenDisabled_DoesNotHaveRipple()
         {
             var comp = Context.RenderComponent<TreeViewRippleTest>(self => self.Add(x => x.Disabled, true));
 
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, false));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
         }
 
         [Test]
-        public void TreeView_WhenRippleDisabled_DoesNotHaveRipple()
+        public async Task TreeView_WhenRippleDisabled_DoesNotHaveRipple()
         {
             var comp = Context.RenderComponent<TreeViewRippleTest>(self => self.Add(x => x.Ripple, false));
 
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, true));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
         }
 
@@ -746,13 +746,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_DoubleClick_CheckExpanded()
+        public async Task TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
             var itemExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
-            item.SetParametersAndRender(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
+            await item.SetParametersAndRenderAsync(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
@@ -766,14 +766,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_DoubleClick_CheckSelected()
+        public async Task TreeViewItem_DoubleClick_CheckSelected()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
             string selectedItem = null;
 
             var tree = comp.FindComponent<MudTreeView<string>>();
 
-            tree.SetParametersAndRender(Parameter(nameof(MudTreeView<string>.SelectedValueChanged), new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
+            await tree.SetParametersAndRenderAsync(Parameter(nameof(MudTreeView<string>.SelectedValueChanged), new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             selectedItem.Should().Be("content");
@@ -819,7 +819,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test updating the treeview root.
             comp.Instance.SimulateUpdateRoot = true;
-            treeView.SetParam("Items", await comp.Instance.LoadServerData(null));
+            await treeView.SetParamAsync(x => x.Items, await comp.Instance.LoadServerData(null));
             comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
 
             // Test reloading the treeview item.
@@ -834,58 +834,58 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeView_SetSelectedValue_SetsSelectedValue()
+        public async Task TreeView_SetSelectedValue_SetsSelectedValue()
         {
             var comp = Context.RenderComponent<TreeViewTest6>();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
 
             comp.Instance.SelectedValue.Should().Be("logo.png");
         }
 
         [Test]
-        public void TreeView_SetSelectedValue_IsSetNullWhenNotFound()
+        public async Task TreeView_SetSelectedValue_IsSetNullWhenNotFound()
         {
             var comp = Context.RenderComponent<TreeViewTest6>();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
 
             comp.Instance.SelectedValue.Should().Be("logo.png");
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
 
             comp.Instance.SelectedValue.Should().Be(default);
         }
 
         [Test]
-        public void TreeView_SetSelectedValue_IsSetNullWhenInitialValueIsInvalid()
+        public async Task TreeView_SetSelectedValue_IsSetNullWhenInitialValueIsInvalid()
         {
             var comp = Context.RenderComponent<TreeViewTest6>();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
 
             comp.Instance.SelectedValue.Should().Be(default);
         }
 
         [Test]
-        public void TreeView_SelectedValue_ShouldUseComparer()
+        public async Task TreeView_SelectedValue_ShouldUseComparer()
         {
             // test tree with items ("Ax", "Bx", "Cx", "Dx")
             var comp = Context.RenderComponent<TreeViewCompareTest>();
             string GetSelectedValue() => comp.Find("p.selected-value").TrimmedText();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
             GetSelectedValue().Should().Be("Ax");
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Bx"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "Bx"));
             GetSelectedValue().Should().Be("Bx");
 
             // setting A will not select anything because it isn't a valid value with the default comparer
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "A"));
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             // set the comparer to a value that will only check the first character of the string
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Comparer,
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Comparer,
                 new DelegateEqualityComparer<string>(
                     (x, y) =>
                     {
@@ -903,7 +903,7 @@ namespace MudBlazor.UnitTests.Components
                     }
                 )
             ));
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "A"));
             GetSelectedValue().Should().StartWith("A");
         }
 
@@ -912,7 +912,7 @@ namespace MudBlazor.UnitTests.Components
         /// selected values are updated correctly.
         /// </summary>
         [Test]
-        public void TreeView_SelectedValues_ShouldUseComparer()
+        public async Task TreeView_SelectedValues_ShouldUseComparer()
         {
             // tree containing two children with values AA and AC
             var comp = Context.RenderComponent<TreeViewComparerMultiSelectTest>(self => self.Add(x => x.SelectedValues, ["AA"]));
@@ -920,7 +920,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Comparer,
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Comparer,
                 new DelegateEqualityComparer<string>(
                     (x, y) =>
                     {
@@ -1208,7 +1208,7 @@ namespace MudBlazor.UnitTests.Components
             var exception = Assert.Throws<InvalidOperationException>(() =>
             {
                 var comp = Context.RenderComponent<TreeViewTest8>();
-                comp.SetParametersAndRender();
+                comp.SetParametersAndRenderAsync().Wait();
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 

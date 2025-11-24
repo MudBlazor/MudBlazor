@@ -10,6 +10,13 @@
     "labels": [
         "dependency"
     ],
+    "minimumReleaseAge": "14 days",
+    "vulnerabilityAlerts": {
+        "enabled": true,
+        "labels": [
+            "triage needed"
+        ]
+    },
     "packageRules": [
         {
             "matchPackageNames": [
@@ -24,10 +31,34 @@
             "enabled": false
         },
         {
-            "matchPackageNames": [
-                "FluentAssertions"
+            "matchManagers": [
+                "nuget"
             ],
-            "allowedVersions": "< 8.0.0"
+            "matchUpdateTypes": [
+                "major"
+            ],
+            "draftPR": true
+        },
+        {
+            "matchFileNames": [
+                "src/MudBlazor/MudBlazor.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.AspNetCore**",
+                "Microsoft.Extensions**"
+            ],
+            "enabled": false
+        },
+        {
+            "matchFileNames": [
+                "src/**/MudBlazor.UnitTests*.csproj",
+                "src/**/MudBlazor.Docs*.csproj"
+            ],
+            "matchUpdateTypes": [
+                "patch",
+                "minor"
+            ],
+            "automerge": true
         }
     ]
 }

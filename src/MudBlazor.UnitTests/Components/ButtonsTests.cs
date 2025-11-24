@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures buttons inherit their disabled state
         /// </summary>
         [Test]
-        public void ButtonsNestedDisabledTest()
+        public async Task ButtonsNestedDisabledTest()
         {
             var comp = Context.RenderComponent<ButtonsNestedDisabledTest>();
 
@@ -444,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudIconButton>().Find("button").HasAttribute("disabled").Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(x => x.Disabled, true)); //buttons should be disabled when the cascading value is disabled
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true)); //buttons should be disabled when the cascading value is disabled
 
             comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeTrue();

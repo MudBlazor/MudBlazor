@@ -12,7 +12,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// A layer which darkens a window, often as part of showing a <see cref="MudDialog" />.
+/// Renders a translucent layer over content, typically used for modals, popovers, progress bars, or blocking interactions.
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
@@ -213,17 +213,31 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
     {
-        // If the overlay is initially visible and modeless auto-close is enabled,
-        // then start tracking pointer down events.
-        if (firstTime && Visible && !Modal && AutoClose)
+        // set initial handlelockscrollchanges
+        if (firstTime)
         {
-            await StartModelessAutoCloseTrackingAsync();
+            _previousLockScroll = LockScroll;
+            _previousAbsolute = Absolute;
+
+            // Calling HandleLockScrollChange when the overlay isn't intially set to
+            // visible will incorrectly decrement the lock count
+            if (_visibleState.Value)
+            {
+                await HandleLockScrollChange();
+            }
+
+            // If the overlay is initially visible and modeless auto-close is enabled,
+            // then start tracking pointer down events.
+            if (_visibleState.Value && !Modal && AutoClose)
+            {
+                await StartModelessAutoCloseTrackingAsync();
+            }
         }
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_previousLockScroll != LockScroll || _previousAbsolute != Absolute)
+        if (IsJSRuntimeAvailable && (_previousLockScroll != LockScroll || _previousAbsolute != Absolute))
         {
             // handle lock scroll change when user changes LockScroll parameter
             _previousLockScroll = LockScroll;
@@ -236,7 +250,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             return;
         }
 
-        if (Visible)
+        if (_visibleState.Value)
         {
             await StartModelessAutoCloseTrackingAsync();
         }
@@ -286,6 +300,11 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </summary>
     private ValueTask BlockScrollAsync()
     {
+        if (!IsJSRuntimeAvailable)
+        {
+            return ValueTask.CompletedTask;
+        }
+
         // we only want to lock scroll once
         if (_lockCount > 0)
         {
@@ -301,6 +320,11 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </summary>
     private ValueTask UnblockScrollAsync()
     {
+        if (!IsJSRuntimeAvailable)
+        {
+            return ValueTask.CompletedTask;
+        }
+
         _lockCount = Math.Max(0, _lockCount - 1);
         return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
     }

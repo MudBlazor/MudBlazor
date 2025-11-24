@@ -287,7 +287,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; } = true;
+        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
 
         /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
@@ -441,7 +441,10 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, _selectedValues.Select(Converter.Set)), updateValue: false).CatchAndLog();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T?>(_selectedValues, _comparer));
+
+                var newValues = new HashSet<T?>(_selectedValues, _comparer);
+                SelectedValuesChanged.InvokeAsync(newValues);
+                FieldChanged(newValues);
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
             }
@@ -496,7 +499,7 @@ namespace MudBlazor
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
-            if (firstRender && Value != null)
+            if (firstRender)
             {
                 // we need to render the initial Value which is not possible without the items
                 // which supply the RenderFragment. So in this case, a second render is necessary
@@ -537,7 +540,7 @@ namespace MudBlazor
         {
             get
             {
-                if (MultiSelection || Value == null)
+                if (MultiSelection)
                     return false;
                 if (!_shadowLookup.TryGetValue(Value, out var item))
                     return false;
@@ -549,16 +552,12 @@ namespace MudBlazor
         {
             get
             {
-                if (Value == null)
-                    return false;
                 return _shadowLookup.TryGetValue(Value, out _);
             }
         }
 
         protected RenderFragment? GetSelectedValuePresenter()
         {
-            if (Value == null)
-                return null;
             if (!_shadowLookup.TryGetValue(Value, out var item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return item.ChildContent;
@@ -635,12 +634,9 @@ namespace MudBlazor
             {
                 _items.Add(item);
 
-                if (item.Value is not null)
-                {
-                    _valueLookup[item.Value] = item;
-                    if (item.Value.Equals(Value) && !MultiSelection)
-                        result = true;
-                }
+                _valueLookup[item.Value] = item;
+                if (EqualityComparer<T?>.Default.Equals(item.Value, Value) && !MultiSelection)
+                    result = true;
             }
             UpdateSelectAllChecked();
             if (result.HasValue == false)
@@ -653,10 +649,7 @@ namespace MudBlazor
         internal void Remove(MudSelectItem<T> item)
         {
             _items.Remove(item);
-            if (item.Value is not null)
-            {
-                _valueLookup.Remove(item.Value);
-            }
+            _valueLookup.Remove(item.Value);
         }
 
         /// <summary>
@@ -810,6 +803,7 @@ namespace MudBlazor
 
             HighlightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            FieldChanged(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T?)(object?)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
@@ -817,11 +811,6 @@ namespace MudBlazor
 
         private async void HighlightItemForValueAsync(T? value)
         {
-            if (value == null)
-            {
-                HighlightItem(null);
-                return;
-            }
             await WaitForRender();
             _valueLookup.TryGetValue(value, out var item);
             HighlightItem(item);
@@ -1042,7 +1031,7 @@ namespace MudBlazor
         /// Occurs when the <c>Clear</c> button has been clicked.
         /// </summary>
         /// <remarks>
-        /// This is the first event raised when the clear button is clicked.  
+        /// This is the first event raised when the clear button is clicked.
         /// The <see cref="SelectedValues"/> are cleared and the <see cref="OnClearButtonClick"/> event is raised.
         /// </remarks>
         protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
@@ -1053,6 +1042,7 @@ namespace MudBlazor
             await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            FieldChanged(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -1109,9 +1099,9 @@ namespace MudBlazor
         /// The icon to display whether all, none, or some items are selected.
         /// </summary>
         /// <remarks>
-        /// Only applies when <see cref="MultiSelection"/> is <c>true</c>.  
+        /// Only applies when <see cref="MultiSelection"/> is <c>true</c>.
         /// If all items are selected, <see cref="CheckedIcon"/> is returned.
-        /// If no items are selected, <see cref="UncheckedIcon"/> is returned.  
+        /// If no items are selected, <see cref="UncheckedIcon"/> is returned.
         /// Otherwise, <see cref="IndeterminateIcon"/> is returned.
         /// </remarks>
         protected string SelectAllCheckBoxIcon
@@ -1254,17 +1244,8 @@ namespace MudBlazor
             await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            FieldChanged(_selectedValues);
         }
-
-        /// <summary>
-        /// Clears all selections.
-        /// </summary>
-        /// <remarks>
-        /// To reset validation errors (e.g. required), use <see cref="ResetValueAsync"/>
-        /// </remarks>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use ClearAsync instead")]
-        public Task Clear() => ClearAsync();
 
         private async Task SelectAllClickAsync()
         {
@@ -1302,6 +1283,7 @@ namespace MudBlazor
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            FieldChanged(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
         }
@@ -1312,7 +1294,7 @@ namespace MudBlazor
         /// <param name="item">The item to add.</param>
         public void RegisterShadowItem(MudSelectItem<T>? item)
         {
-            if (item == null || item.Value == null)
+            if (item == null)
                 return;
 
             _shadowLookup[item.Value] = item;
@@ -1336,7 +1318,7 @@ namespace MudBlazor
         /// <param name="item">The item to remove.</param>
         public void UnregisterShadowItem(MudSelectItem<T>? item)
         {
-            if (item == null || item.Value == null)
+            if (item == null)
                 return;
             _shadowLookup.Remove(item.Value);
         }
@@ -1393,7 +1375,9 @@ namespace MudBlazor
             }
             else
             {
-                await SelectedValuesChanged.InvokeAsync(new HashSet<T?>(SelectedValues!, _comparer));
+                var newValues = new HashSet<T?>(SelectedValues!, _comparer);
+                await SelectedValuesChanged.InvokeAsync(newValues);
+                FieldChanged(newValues);
             }
         }
     }

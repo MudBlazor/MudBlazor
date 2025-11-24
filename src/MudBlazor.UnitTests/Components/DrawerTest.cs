@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using AngleSharp.Css.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -612,6 +613,20 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(expectedToggledDrawerCount);
             comp.FindAll(".mud-drawer-overlay").Count.Should().Be(expectedToggledDrawerCount);
             comp.Instance.Drawer.Open.Should().Be(!initialState);
+        }
+
+
+        [Test]
+        public void DrawerPersistentTop_HeightTest()
+        {
+            var drawerHeight = "300px";
+            var comp = Context.RenderComponent<DrawerPersistentTest>(
+                Parameter(nameof(DrawerPersistentTest.Anchor), Anchor.Top),
+                Parameter(nameof(DrawerPersistentTest.DrawerHeight), drawerHeight));
+
+            var asideDrawer = comp.Find("aside.mud-drawer");
+            var styles = asideDrawer.GetStyle().ToList();
+            styles.Single(a => a.Name == "--mud-drawer-height").Value.Should().Be(drawerHeight);
         }
     }
 }

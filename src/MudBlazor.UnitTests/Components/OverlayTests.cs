@@ -2,6 +2,8 @@
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.Overlay;
 using NUnit.Framework;
@@ -311,7 +313,6 @@ public class OverlayTests : BunitTest
     {
         var scrollManagerMock = new Mock<IScrollManager>();
         Context.Services.AddSingleton(scrollManagerMock.Object);
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
 
         var visible = true;
 
@@ -324,7 +325,7 @@ public class OverlayTests : BunitTest
 
         var mudOverlay = comp.Instance;
 
-        // Initial unlock state
+        // Initial unlock state without JSRuntime
         scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 
         if (!absolute && lockscroll)
@@ -350,7 +351,7 @@ public class OverlayTests : BunitTest
 
         // === Toggle visible to false, expect unlock ===
         visible = false;
-        comp.SetParametersAndRender(p => p.Add(p => p.Visible, visible));
+        await comp.SetParametersAndRenderAsync(p => p.Add(p => p.Visible, visible));
 
         if (!absolute && lockscroll)
         {
@@ -363,7 +364,7 @@ public class OverlayTests : BunitTest
 
         // open it
         visible = true;
-        comp.SetParametersAndRender(p => p.Add(p => p.Visible, visible));
+        await comp.SetParametersAndRenderAsync(p => p.Add(p => p.Visible, visible));
 
         // close it by method
         await mudOverlay.CloseOverlayAsync();
@@ -388,5 +389,47 @@ public class OverlayTests : BunitTest
         {
             scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.AtMostOnce());
         }
+    }
+
+    [Test]
+    public void Overlay_StartClosedTest()
+    {
+        var jsRuntimeMock = new Mock<IJSRuntime>(MockBehavior.Loose);
+
+        Context.Services.AddSingleton(typeof(IJSRuntime), jsRuntimeMock.Object);
+        // verifies lockScroll was called once and 2 arguments were supplied
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudScrollManager.lockScroll", It.Is<object[]>(y => y.Length == 2)))
+            .ReturnsAsync(Mock.Of<IJSVoidResult>())
+            .Verifiable();
+
+        // Expect unlockScroll to NOT be called
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>(
+                "mudScrollManager.unlockScroll",
+                It.IsAny<object[]>()))
+            .Throws(new Exception("unlockScroll should not be called!"));
+
+        var dialog = Context.RenderComponent<MudDialogProvider>();
+        var comp = Context.RenderComponent<OverlayScrollLockedTest>();
+        // click the button opening dialog
+        var button = comp.Find("button");
+        button.Click();
+        // verify dialog is open
+        comp.WaitForAssertion(() => dialog.FindComponent<MudOverlay>().Should().NotBeNull());
+
+        // verify lockScroll was called
+        jsRuntimeMock.Verify(
+            x => x.InvokeAsync<IJSVoidResult>(
+                "mudScrollManager.lockScroll",
+                It.IsAny<object[]>()),
+            Times.Once);
+
+        // verify unlockScroll was NOT called
+        jsRuntimeMock.Verify(
+            x => x.InvokeAsync<IJSVoidResult>(
+                "mudScrollManager.unlockScroll",
+                It.IsAny<object[]>()),
+            Times.Never);
     }
 }

@@ -17,9 +17,18 @@
                       @bind-Value="_searchString" @bind-Value:after="@(() => _dataGrid.ReloadServerData())" 
                       DebounceInterval="100" Variant="Variant.Outlined" Clearable />
     </ToolBarContent>
+    <GroupTemplate>
+        <span style="font-weight:bold">
+            @context.Title: @context.Grouping.Key Count: @context.Grouping.Count()
+            @if (context.DataGrid.FilteredItems.Count() != 0)
+            {
+                @string.Format(" Percentage: {0:P1}", context.Grouping.Count() / ((double)context.DataGrid.FilteredItems.Count()))
+            }
+            </span>
+    </GroupTemplate>
     <Columns>
         <PropertyColumn Property="x => x.State" Title="State" Groupable="false" />
-        <PropertyColumn Property="x => x.Counties" Groupable="false" />
+        <PropertyColumn Property="x => x.Counties" Groupable="true" />
         <PropertyColumn Property="x => x.Population" Groupable="false" Format="N0" />
         <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry"
                         @bind-Grouping="_primaryIndustryGrouping" GroupBy="_groupBy1"
@@ -126,8 +135,8 @@
     <MudSwitch T="bool" @bind-Value="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
     <MudSwitch T="bool" Value="@_customizeGroupBy" Color="@Color.Primary" ValueChanged="@CustomizeByGroupChanged">Customize Group By Industry</MudSwitch>
     <MudSwitch T="bool" @bind-Value="_customizeGroupStyle" Color="@Color.Primary">Customize Group Style</MudSwitch>
-    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Expand All</MudButton>
-    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Collapse All</MudButton>
+    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Expand all</MudButton>
+    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Collapse all</MudButton>
 </div>
 
 @code {
@@ -187,7 +196,7 @@
         }
     }
 
-    private async Task<GridData<USState>> ServerReload(GridState<USState> state)
+    private async Task<GridData<USState>> ServerReload(GridState<USState> state, CancellationToken token)
     {
         // call API
         var data = GetAllStates(_searchString, state.SortDefinitions);

@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
@@ -11,14 +12,25 @@ namespace MudBlazor;
 /// Represents the grouping information for columns in a <see cref="MudDataGrid{T}"/>.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class GroupDefinition<T>
+public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {
     private GroupDefinition<T>? _innerGroup;
+
+    /// <summary>
+    /// The <see cref="MudDataGrid{T}"/> which contains this group definition.
+    /// </summary>
+    public required MudDataGrid<T> DataGrid { get; init; }
 
     /// <summary>
     /// The LINQ definition of the grouping.
     /// </summary>
     public required IGrouping<object?, T> Grouping { get; set; }
+
+    /// <summary>
+    /// List of keys representing the path of this group across all grouping levels.
+    /// Each item in the list corresponds to a grouping level.
+    /// </summary>
+    public required GroupKeyPath KeyPath { get; init; }
 
     /// <summary>
     /// The function which selects items for this group.

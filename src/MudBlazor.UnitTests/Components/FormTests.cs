@@ -1,9 +1,11 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
@@ -27,33 +29,33 @@ namespace MudBlazor.UnitTests.Components
             var textField = textFieldcomp.Instance;
             // check initial state: form should not be valid, but text field does not display an error initially!
             form.IsValid.Should().Be(false);
-            textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            textField.GetState(x => x.Error).Should().BeFalse();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            textField.GetState(x => x.Error).Should().BeFalse();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear value to null
             textFieldcomp.Find("input").Change(null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Enter a rock star");
-            textField.Error.Should().BeTrue();
-            textField.ErrorText.Should().Be("Enter a rock star");
+            textField.GetState(x => x.Error).Should().BeTrue();
+            textField.GetState(x => x.ErrorText).Should().Be("Enter a rock star");
             // set value to "" -> should also be an error
             textFieldcomp.Find("input").Change("");
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Enter a rock star");
-            textField.Error.Should().BeTrue();
-            textField.ErrorText.Should().Be("Enter a rock star");
+            textField.GetState(x => x.Error).Should().BeTrue();
+            textField.GetState(x => x.ErrorText).Should().Be("Enter a rock star");
             //
             textFieldcomp.Find("input").Change("Kurt Cobain");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            textField.GetState(x => x.Error).Should().BeFalse();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -131,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => form.ResetValidation());
+            await comp.InvokeAsync(() => form.ResetValidationAsync());
             form.IsTouched.Should().Be(true);
         }
 
@@ -166,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(false);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => form.ResetValidation());
+            await comp.InvokeAsync(() => form.ResetValidationAsync());
             form.IsTouched.Should().Be(true);
             nestedForm.IsTouched.Should().Be(false);
         }
@@ -204,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(true);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => nestedFormDateField.ResetValidation());
+            await comp.InvokeAsync(() => nestedFormDateField.ResetValidationAsync());
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(true);
         }
@@ -242,20 +244,20 @@ namespace MudBlazor.UnitTests.Components
             var textField = textFieldcomp.Instance;
             // check initial state: form should not be valid, but text field does not display an error initially!
             form.IsValid.Should().Be(false);
-            textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            textField.GetState(x => x.Error).Should().BeFalse();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // this rock star starts with Marilyn
             textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            textField.GetState(x => x.Error).Should().BeFalse();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // this rock star doesn't start with Marilyn
             textFieldcomp.Find("input").Change("Kurt Cobain");
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            textField.Error.Should().BeTrue();
-            textField.ErrorText.Should().Be("Invalid");
+            textField.GetState(x => x.Error).Should().BeTrue();
+            textField.GetState(x => x.ErrorText).Should().Be("Invalid");
 
             // note: this logic is invalid, so it was removed. Validation funcs are always called
             // the validation func must validate non-required empty fields as valid.
@@ -265,14 +267,14 @@ namespace MudBlazor.UnitTests.Components
             //form.IsValid.Should().Be(true);
             //form.Errors.Length.Should().Be(0);
             //textField.Error.Should().BeFalse();
-            //textField.ErrorText.Should().BeNullOrEmpty();
+            //textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // ok, not a rock star, but a star nonetheless
             textFieldcomp.Find("input").Change("Marilyn Monroe");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            textField.GetState(x => x.Error).Should().BeFalse();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -508,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormValidationTest4>();
             var form = comp.FindComponent<MudForm>().Instance;
-            comp.FindComponent<MudForm>().SetParam(x => x.ValidationDelay, 0);
+            comp.FindComponent<MudForm>().SetParamAsync(x => x.ValidationDelay, 0);
             comp.WaitForAssertion(() => form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out"));
             var buttons = comp.FindComponents<MudButton>();
             // click validate button
@@ -516,26 +518,26 @@ namespace MudBlazor.UnitTests.Components
             validateButton.Find("button").Click();
             var textfields = comp.FindComponents<MudTextField<string>>();
             comp.WaitForAssertion(() => textfields[0].Instance.HasErrors.Should().BeTrue());
-            textfields[0].Instance.ErrorText.Should().Be("User name is required!");
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().Be("User name is required!");
             comp.WaitForAssertion(() => textfields[1].Instance.HasErrors.Should().BeTrue());
-            textfields[1].Instance.ErrorText.Should().Be("Email is required!");
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().Be("Email is required!");
             comp.WaitForAssertion(() => textfields[2].Instance.HasErrors.Should().BeTrue());
-            textfields[2].Instance.ErrorText.Should().Be("Password is required!");
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().Be("Password is required!");
             var checkbox = comp.FindComponent<MudCheckBox<bool>>();
             comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeTrue());
-            checkbox.Instance.ErrorText.Should().Be("You must agree");
+            checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must agree");
             // click reset validation
             var resetValidationButton = buttons[3];
             resetValidationButton.Find("button").Click();
             comp.WaitForState(() => form.Errors.Length == 0);
             comp.WaitForAssertion(() => textfields[0].Instance.HasErrors.Should().BeFalse());
-            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => textfields[1].Instance.HasErrors.Should().BeFalse());
-            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => textfields[2].Instance.HasErrors.Should().BeFalse());
-            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeFalse());
-            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+            checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // fill in the form to make it valid
             textfields[0].Find("input").Change("Rick Sanchez");
             textfields[1].Find("input").Change("rick.sanchez@citadel-of-ricks.com");
@@ -549,16 +551,16 @@ namespace MudBlazor.UnitTests.Components
             resetButton.Find("button").Click();
             comp.WaitForState(() => form.Errors.Length == 0);
             comp.WaitForAssertion(() => textfields[0].Instance.HasErrors.Should().BeFalse());
-            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[0].Instance.Text.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => textfields[1].Instance.HasErrors.Should().BeFalse());
-            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[1].Instance.Text.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => textfields[2].Instance.HasErrors.Should().BeFalse());
-            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[2].Instance.Text.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeFalse());
-            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+            checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => checkbox.Instance.Value.Should().BeFalse());
             // TODO: fill out the form with errors, field after field, check how fields get validation errors after blur
         }
@@ -568,7 +570,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clearing the value of a required radiogroup should set form's IsValid to false.
         /// </summary>
         [Test]
-        public void FormWithRadioGroupIsValidTest()
+        public async Task FormWithRadioGroupIsValidTest()
         {
             var comp = Context.RenderComponent<FormWithRadioGroupTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -576,21 +578,21 @@ namespace MudBlazor.UnitTests.Components
             var radioGroup = radioGroupcomp.Instance;
             // check initial state: form should not be valid
             form.IsValid.Should().Be(false);
-            radioGroup.Error.Should().BeFalse();
-            radioGroup.ErrorText.Should().BeNullOrEmpty();
+            radioGroup.GetState(x => x.Error).Should().BeFalse();
+            radioGroup.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // click on first radio: form should be valid now
             radioGroupcomp.Find("input").Click();
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            radioGroup.Error.Should().BeFalse();
-            radioGroup.ErrorText.Should().BeNullOrEmpty();
+            radioGroup.GetState(x => x.Error).Should().BeFalse();
+            radioGroup.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam("Selected", null);
+            await comp.SetParamAsync(x => x.Selected, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            radioGroup.Error.Should().BeTrue();
-            radioGroup.ErrorText.Should().Be("Required");
+            radioGroup.GetState(x => x.Error).Should().BeTrue();
+            radioGroup.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         /// <summary>
@@ -604,26 +606,26 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Value;
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            await colorPickerComp.SetParamAsync(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // should not be valid since the default color is invalid
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
-            colorPicker.Error.Should().BeFalse();
-            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
+            colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a valid color
             await comp.InvokeAsync(() => colorPickerComp.FindAll("input")[0].Change("#111111"));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            colorPicker.Error.Should().BeFalse();
-            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
+            colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // reset to forbidden color
-            comp.SetParam(x => x.ColorValue, forbiddenColor);
+            await comp.SetParamAsync(x => x.ColorValue, forbiddenColor);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
-            colorPicker.Error.Should().BeTrue();
-            colorPicker.ErrorText.Should().Be($"{forbiddenColor.Value} is not allowed");
+            colorPicker.GetState(x => x.Error).Should().BeTrue();
+            colorPicker.GetState(x => x.ErrorText).Should().Be($"{forbiddenColor.Value} is not allowed");
         }
 
         /// <summary>
@@ -637,7 +639,7 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Palette.First();
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            await colorPickerComp.SetParamAsync(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // initial form state
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
@@ -654,8 +656,8 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            colorPicker.Error.Should().BeFalse();
-            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
+            colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
@@ -667,15 +669,15 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
-            colorPicker.Error.Should().BeTrue();
-            colorPicker.ErrorText.Should().Be($"{forbiddenColor.Value} is not allowed");
+            colorPicker.GetState(x => x.Error).Should().BeTrue();
+            colorPicker.GetState(x => x.ErrorText).Should().Be($"{forbiddenColor.Value} is not allowed");
         }
 
         /// <summary>
         /// DatePicker should be validated like every other form component
         /// </summary>
         [Test]
-        public void FormWithDatePickerTest()
+        public async Task FormWithDatePickerTest()
         {
             var comp = Context.RenderComponent<FormWithDatePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -683,46 +685,46 @@ namespace MudBlazor.UnitTests.Components
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
             // check initial state: form should not be valid because datepicker is required
             form.IsValid.Should().Be(false);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            datepicker.GetState(x => x.Error).Should().BeFalse();
+            datepicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a date
             dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            datepicker.GetState(x => x.Error).Should().BeFalse();
+            datepicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.Date, null);
+            await comp.SetParamAsync(x => x.Date, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            datepicker.Error.Should().BeTrue();
-            datepicker.ErrorText.Should().Be("Required");
+            datepicker.GetState(x => x.Error).Should().BeTrue();
+            datepicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         /// <summary>
         /// DatePicker should be validated like every other form component
         /// </summary>
         [Test]
-        public void Form_Should_ValidateDatePickerTest()
+        public async Task Form_Should_ValidateDatePickerTest()
         {
             var comp = Context.RenderComponent<FormWithDatePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
-            dateComp.SetParam(x => x.Validation, new Func<DateTime?, string>(date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
+            await dateComp.SetParamAsync(x => x.Validation, new Func<DateTime?, string>(date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
             dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            datepicker.GetState(x => x.Error).Should().BeFalse();
+            datepicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Date, (DateTime?)new DateTime(1999, 1, 1));
+            await comp.SetParamAsync(x => x.Date, (DateTime?)new DateTime(1999, 1, 1));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Year must be >= 2000");
-            datepicker.Error.Should().BeTrue();
-            datepicker.ErrorText.Should().Be("Year must be >= 2000");
+            datepicker.GetState(x => x.Error).Should().BeTrue();
+            datepicker.GetState(x => x.ErrorText).Should().Be("Year must be >= 2000");
         }
 
         /// <summary>
@@ -740,22 +742,22 @@ namespace MudBlazor.UnitTests.Components
             var secondDateTime = new DateTime(2023, 02, 20);
             // check initial state: form should not be valid because dateRangePicker is required
             form.IsValid.Should().Be(false);
-            dateRangePicker.Error.Should().BeFalse();
-            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
+            dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a date
             await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[0].Change(firstDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
             await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[1].Change(secondDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            dateRangePicker.Error.Should().BeFalse();
-            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
+            dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.DateRange, null);
+            await comp.SetParamAsync(x => x.DateRange, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            dateRangePicker.Error.Should().BeTrue();
-            dateRangePicker.ErrorText.Should().Be("Required");
+            dateRangePicker.GetState(x => x.Error).Should().BeTrue();
+            dateRangePicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         /// <summary>
@@ -770,8 +772,8 @@ namespace MudBlazor.UnitTests.Components
             var dateRangePicker = comp.FindComponent<MudDateRangePicker>().Instance;
             // check initial state: form should not be valid because dateRangePicker is required
             form.IsValid.Should().Be(false);
-            dateRangePicker.Error.Should().BeFalse();
-            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
+            dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.Find("input").Click();
             // clicking day buttons to select a date range
             await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click());
@@ -782,22 +784,22 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            dateRangePicker.Error.Should().BeFalse();
-            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            dateRangePicker.GetState(x => x.Error).Should().BeFalse();
+            dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.DateRange, null);
+            await comp.SetParamAsync(x => x.DateRange, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            dateRangePicker.Error.Should().BeTrue();
-            dateRangePicker.ErrorText.Should().Be("Required");
+            dateRangePicker.GetState(x => x.Error).Should().BeTrue();
+            dateRangePicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         /// <summary>
         /// TimePicker should be validated like every other form component
         /// </summary>
         [Test]
-        public void FormWithTimePickerTest()
+        public async Task FormWithTimePickerTest()
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -805,46 +807,46 @@ namespace MudBlazor.UnitTests.Components
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             // check initial state: form should not be valid because datepicker is required
             form.IsValid.Should().Be(false);
-            timePicker.Error.Should().BeFalse();
-            timePicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.GetState(x => x.Error).Should().BeFalse();
+            timePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a date
             timePickerComp.Find("input").Change("09:30");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            timePicker.Error.Should().BeFalse();
-            timePicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.GetState(x => x.Error).Should().BeFalse();
+            timePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.Time, null);
+            await comp.SetParamAsync(x => x.Time, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            timePicker.Error.Should().BeTrue();
-            timePicker.ErrorText.Should().Be("Required");
+            timePicker.GetState(x => x.Error).Should().BeTrue();
+            timePicker.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         /// <summary>
         /// TimePicker should be validated like every other form component
         /// </summary>
         [Test]
-        public void Form_Should_ValidateTimePickerTest()
+        public async Task Form_Should_ValidateTimePickerTest()
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var timeComp = comp.FindComponent<MudTimePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
-            timeComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
+            await timeComp.SetParamAsync(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
             timeComp.Find("input").Change("09:00");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            timePicker.Error.Should().BeFalse();
-            timePicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.GetState(x => x.Error).Should().BeFalse();
+            timePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
+            await comp.SetParamAsync(x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Only full hours allowed");
-            timePicker.Error.Should().BeTrue();
-            timePicker.ErrorText.Should().Be("Only full hours allowed");
+            timePicker.GetState(x => x.Error).Should().BeTrue();
+            timePicker.GetState(x => x.ErrorText).Should().Be("Only full hours allowed");
         }
 
         /// <summary>
@@ -864,8 +866,8 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be valid because fileUploadInstance is required
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
-            fileUploadInstance.Error.Should().BeFalse();
-            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // add a file
             input.UploadFiles(fileToUpload);
@@ -883,8 +885,8 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
-            fileUploadInstance.ErrorText.Should().Be("Required");
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         /// <summary>
@@ -906,8 +908,8 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be valid because form is untouched
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
-            fileUploadInstance.Error.Should().BeFalse();
-            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
             await input.ClearFilesAsync();
@@ -918,15 +920,16 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
-            fileUploadInstance.ErrorText.Should().Be("Required");
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
             input.UploadFiles(fileToUpload);
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             fileUploadInstance.Files.Name.Should().Be(fileName);
         }
 
@@ -950,8 +953,8 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
             fileUploadInstance.Files.Should().NotBeNull();
-            fileUploadInstance.Error.Should().BeFalse();
-            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
             await comp.InvokeAsync(async () => await fileUploadInstance.ClearAsync());
@@ -962,15 +965,15 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
-            fileUploadInstance.ErrorText.Should().Be("Required");
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
             input.UploadFiles(fileToUpload);
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.Files.Name.Should().Be(fileName);
         }
 
@@ -992,8 +995,8 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeFalse();
             fileUploadInstance.Files.Should().NotBeNull();
-            fileUploadInstance.Error.Should().BeFalse();
-            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
             await comp.InvokeAsync(() => comp.Find("button#clear-button").Click());
@@ -1004,15 +1007,16 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            fileUploadInstance.Error.Should().BeTrue();
-            fileUploadInstance.ErrorText.Should().Be("Required");
+            fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
             input.UploadFiles(fileToUpload);
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
-            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
+            fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             fileUploadInstance.Files.Name.Should().Be(fileName);
         }
 
@@ -1027,13 +1031,17 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("form").Submit();
             var textfields = comp.FindComponents<MudTextField<string>>();
             textfields[0].Instance.HasErrors.Should().BeTrue();
-            textfields[0].Instance.ErrorText.Should().Be("The Username field is required.");
+            textfields[0].Markup.Should().Contain("The Username field is required.");
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().Be("The Username field is required.");
             textfields[1].Instance.HasErrors.Should().BeTrue();
-            textfields[1].Instance.ErrorText.Should().Be("The Email field is required.");
+            textfields[1].Markup.Should().Contain("The Email field is required.");
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().Be("The Email field is required.");
             textfields[2].Instance.HasErrors.Should().BeTrue();
-            textfields[2].Instance.ErrorText.Should().Be("The Password field is required.");
+            textfields[2].Markup.Should().Contain("The Password field is required.");
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().Be("The Password field is required.");
             textfields[3].Instance.HasErrors.Should().BeTrue();
-            textfields[3].Instance.ErrorText.Should().Be("The Password2 field is required.");
+            textfields[3].Markup.Should().Contain("The Password2 field is required.");
+            textfields[3].Instance.GetState(x => x.ErrorText).Should().Be("The Password2 field is required.");
         }
 
         /// <summary>
@@ -1054,14 +1062,15 @@ namespace MudBlazor.UnitTests.Components
             // same effect as clicking the validate button
             comp.Find("form").Submit();
             var textfields = comp.FindComponents<MudTextField<string>>();
-            textfields[0].Instance.ErrorText.Should().Be("Name length can't be more than 8.");
+            textfields[0].Markup.Should().Contain("Name length can't be more than 8.");
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().Be("Name length can't be more than 8.");
             textfields[0].Instance.HasErrors.Should().BeTrue();
             textfields[1].Instance.HasErrors.Should().BeFalse();
-            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[2].Instance.HasErrors.Should().BeFalse();
-            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[3].Instance.HasErrors.Should().BeFalse();
-            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -1125,28 +1134,28 @@ namespace MudBlazor.UnitTests.Components
             var numericFields = comp.FindComponents<MudNumericField<decimal>>();
 
             textfields[0].Instance.HasErrors.Should().BeFalse();
-            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[1].Instance.HasErrors.Should().BeFalse();
-            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[2].Instance.HasErrors.Should().BeFalse();
-            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[3].Instance.HasErrors.Should().BeFalse();
-            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[4].Instance.HasErrors.Should().BeFalse();
-            textfields[4].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[4].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[5].Instance.HasErrors.Should().BeFalse();
-            textfields[5].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[5].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             //Nested Forms
             textfields[6].Instance.HasErrors.Should().BeFalse();
-            textfields[6].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[6].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericFields[0].Instance.HasErrors.Should().BeFalse();
-            numericFields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             textfields[7].Instance.HasErrors.Should().BeTrue();
-            textfields[7].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[7].Instance.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
             numericFields[1].Instance.HasErrors.Should().BeTrue();
-            numericFields[1].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            numericFields[1].Instance.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
         }
 
         /// <summary>
@@ -1170,28 +1179,28 @@ namespace MudBlazor.UnitTests.Components
             var numericFields = comp.FindComponents<MudNumericField<decimal>>();
 
             textfields[0].Instance.HasErrors.Should().BeTrue();
-            textfields[0].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
             textfields[1].Instance.HasErrors.Should().BeTrue();
-            textfields[1].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
             textfields[2].Instance.HasErrors.Should().BeFalse();
-            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[3].Instance.HasErrors.Should().BeTrue();
-            textfields[3].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[3].Instance.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
             textfields[4].Instance.HasErrors.Should().BeTrue();
-            textfields[4].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[4].Instance.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
             textfields[5].Instance.HasErrors.Should().BeTrue();
-            textfields[5].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[5].Instance.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
 
             //Nested Forms
             textfields[6].Instance.HasErrors.Should().BeFalse();
-            textfields[6].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[6].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericFields[0].Instance.HasErrors.Should().BeFalse();
-            numericFields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             textfields[7].Instance.HasErrors.Should().BeFalse();
-            textfields[7].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[7].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericFields[1].Instance.HasErrors.Should().BeFalse();
-            numericFields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -1225,28 +1234,28 @@ namespace MudBlazor.UnitTests.Components
             var numericFields = comp.FindComponents<MudNumericField<decimal>>();
 
             textfields[0].Instance.HasErrors.Should().BeFalse();
-            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[1].Instance.HasErrors.Should().BeFalse();
-            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[2].Instance.HasErrors.Should().BeFalse();
-            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[3].Instance.HasErrors.Should().BeFalse();
-            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[4].Instance.HasErrors.Should().BeFalse();
-            textfields[4].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[4].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[5].Instance.HasErrors.Should().BeFalse();
-            textfields[5].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[5].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             //Nested Forms
             textfields[6].Instance.HasErrors.Should().BeFalse();
-            textfields[6].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[6].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericFields[0].Instance.HasErrors.Should().BeFalse();
-            numericFields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             textfields[7].Instance.HasErrors.Should().BeFalse();
-            textfields[7].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[7].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             numericFields[1].Instance.HasErrors.Should().BeFalse();
-            numericFields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[1].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
         /// <summary>
@@ -1259,18 +1268,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormWithSingleTextField>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
-            form.SetParam(nameof(MudForm.Model), model);
+            await form.SetParamAsync(x => x.Model, model);
             var tf = comp.FindComponent<MudTextField<string>>();
             var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
             {
                 throw new InvalidOperationException("User error");
             });
-            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            await tf.SetParamAsync(x => x.Validation, validationFunc);
             Expression<Func<string>> expression = () => model.data;
-            tf.SetParam(nameof(MudTextField<string>.For), expression);
-            await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
-            tf.Instance.ErrorText.Should().Be("Error in validation func: User error");
+            await tf.SetParamAsync(x => x.For, expression);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
+            tf.Instance.GetState(x => x.ErrorText).Should().Be("Error in validation func: User error");
         }
 
         /// <summary>
@@ -1283,16 +1292,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormWithSingleTextField>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
-            form.SetParam(nameof(MudForm.Model), model);
+            await form.SetParamAsync(x => x.Model, model);
             var tf = comp.FindComponent<MudTextField<string>>();
-            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
-            {
-                throw new InvalidOperationException("User error");
-            });
-            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
-            await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
-            tf.Instance.ErrorText.Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
+            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) => throw new InvalidOperationException("User error"));
+            await tf.SetParamAsync(x => x.Validation, validationFunc);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
+            tf.Instance.GetState(x => x.ErrorText).Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
 
         /// <summary>
@@ -1305,16 +1311,16 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormWithSingleTextField>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
-            form.SetParam(nameof(MudForm.Model), model);
+            await form.SetParamAsync(x => x.Model, model);
             var tf = comp.FindComponent<MudTextField<string>>();
             var validationFunc = new Func<object, string, Task<IEnumerable<string>>>((obj, property) =>
             {
                 throw new InvalidOperationException("User error");
             });
-            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
-            await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
-            tf.Instance.ErrorText.Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
+            await tf.SetParamAsync(x => x.Validation, validationFunc);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
+            tf.Instance.GetState(x => x.ErrorText).Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
 
         /// <summary>
@@ -1326,7 +1332,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormWithSingleTextField>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
-            form.SetParam(nameof(MudForm.Model), model);
+            await form.SetParamAsync(x => x.Model, model);
             var tf = comp.FindComponent<MudTextField<string>>();
             var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
             {
@@ -1334,12 +1340,12 @@ namespace MudBlazor.UnitTests.Components
                 property.Should().Be("data");
                 return new[] { "Error1", "Error2" };
             });
-            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            await tf.SetParamAsync(x => x.Validation, validationFunc);
             Expression<Func<string>> expression = () => model.data;
-            tf.SetParam(nameof(MudTextField<string>.For), expression);
-            await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
-            tf.Instance.ErrorText.Should().Be("Error1");
+            await tf.SetParamAsync(x => x.For, expression);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
+            tf.Instance.GetState(x => x.Error).Should().Be(true);
+            tf.Instance.GetState(x => x.ErrorText).Should().Be("Error1");
         }
 
         /// <summary>
@@ -1609,7 +1615,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures that all child components are Readonly when the Form is Readonly
         /// </summary>
         [Test]
-        public void FormReadonlyTest()
+        public async Task FormReadonlyTest()
         {
             var comp = Context.RenderComponent<FormReadOnlyDisabledTest>();
 
@@ -1638,7 +1644,7 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse(); //readonly = disabled in the calse of fileUpload
 
             //form readonly = true, comp readonly = false
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormReadOnly, true).Add(p => p.CompReadOnly, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FormReadOnly, true).Add(p => p.CompReadOnly, false));
 
             textField.Find("input").HasAttribute("readonly").Should().BeTrue();
             maskedTextField.Find("input").HasAttribute("readonly").Should().BeTrue();
@@ -1650,7 +1656,7 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.Find("input").HasAttribute("disabled").Should().BeTrue();
 
             //form readonly = false, comp readonly = true
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormReadOnly, false).Add(p => p.CompReadOnly, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FormReadOnly, false).Add(p => p.CompReadOnly, true));
 
             textField.Find("input").HasAttribute("readonly").Should().BeTrue();
             maskedTextField.Find("input").HasAttribute("readonly").Should().BeTrue();
@@ -1662,7 +1668,7 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse(); //the file upload can't be readonly
 
             //form readonly = false, comp readonly = false
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormReadOnly, false).Add(p => p.CompReadOnly, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FormReadOnly, false).Add(p => p.CompReadOnly, false));
 
             textField.Find("input").HasAttribute("readonly").Should().BeFalse();
             maskedTextField.Find("input").HasAttribute("readonly").Should().BeFalse();
@@ -1678,7 +1684,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures that all child components are Disabled when the Form is Disabled
         /// </summary>
         [Test]
-        public void FormDisabledTest()
+        public async Task FormDisabledTest()
         {
             var comp = Context.RenderComponent<FormReadOnlyDisabledTest>();
 
@@ -1712,7 +1718,7 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse();
 
             //form disabled = true, comp disabled = false
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormDisabled, true).Add(p => p.CompDisabled, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FormDisabled, true).Add(p => p.CompDisabled, false));
 
             textField.Find("input").HasAttribute("disabled").Should().BeTrue();
             maskedTextField.Find("input").HasAttribute("disabled").Should().BeTrue();
@@ -1729,7 +1735,7 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.Find("input").HasAttribute("disabled").Should().BeTrue();
 
             //form disabled = false, comp disabled = true
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormDisabled, false).Add(p => p.CompDisabled, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FormDisabled, false).Add(p => p.CompDisabled, true));
 
             textField.Find("input").HasAttribute("disabled").Should().BeTrue();
             maskedTextField.Find("input").HasAttribute("disabled").Should().BeTrue();
@@ -1746,7 +1752,7 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.Find("input").HasAttribute("disabled").Should().BeTrue();
 
             //form disabled = false, comp disabled = false
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormDisabled, false).Add(p => p.CompDisabled, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FormDisabled, false).Add(p => p.CompDisabled, false));
 
             textField.Find("input").HasAttribute("disabled").Should().BeFalse();
             maskedTextField.Find("input").HasAttribute("disabled").Should().BeFalse();
@@ -1767,21 +1773,21 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures the child MudForm correctly inherits ReadOnly and applies it to its children
         /// </summary>
         [Test]
-        public void FormNestedReadOnlyTest()
+        public async Task FormNestedReadOnlyTest()
         {
             var comp = Context.RenderComponent<FormNestedReadOnlyDisabledTest>();
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.NestedReadOnly, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.NestedReadOnly, true));
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, true).Add(p => p.NestedReadOnly, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true).Add(p => p.NestedReadOnly, true));
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, false).Add(p => p.NestedReadOnly, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, false).Add(p => p.NestedReadOnly, false));
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
         }
 
@@ -1789,21 +1795,21 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures the child MudForm correctly inherits Disabled and applies it to its children
         /// </summary>
         [Test]
-        public void FormNestedDisabledTest()
+        public async Task FormNestedDisabledTest()
         {
             var comp = Context.RenderComponent<FormNestedReadOnlyDisabledTest>();
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, true));
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.NestedDisabled, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.NestedDisabled, true));
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, true).Add(p => p.NestedDisabled, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, true).Add(p => p.NestedDisabled, true));
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false).Add(p => p.NestedDisabled, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, false).Add(p => p.NestedDisabled, false));
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
         }
 
@@ -1817,13 +1823,13 @@ namespace MudBlazor.UnitTests.Components
             var parentTextField = parentTextFieldCmp.Instance;
             // check initial state: form should not be valid, but text field does not display an error initially!
             parentForm.IsValid.Should().Be(false);
-            parentTextField.Error.Should().BeFalse();
-            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            parentTextField.GetState(x => x.Error).Should().BeFalse();
+            parentTextField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             parentTextFieldCmp.Find("input").Change("Marilyn Manson");
             parentForm.IsValid.Should().Be(true);
             parentForm.Errors.Length.Should().Be(0);
-            parentTextField.Error.Should().BeFalse();
-            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            parentTextField.GetState(x => x.Error).Should().BeFalse();
+            parentTextField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // display the child form
             childFormSwitch.Change(true);
             var forms = comp.FindComponents<MudForm>();
@@ -1857,6 +1863,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        [Test]
+        public void FormComponentTest_ErrorTextTwoWayBinding()
+        {
+            var comp = Context.RenderComponent<FormWithErrorTextTwoWayBindingTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var textInput = comp.Find("input");
+
+            // check initial state: ErrorText and bound Property should be the default value defined inside the component property.
+            comp.Instance.BoundErrorText.Should().Be("Default value not changed by binding");
+            textField.GetState(x => x.ErrorText).Should().Be("Default value not changed by binding");
+
+            // call validation on the textfield: now the error text should be null and the bound property aswell
+            textField.ValidateAsync();
+            textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            comp.Instance.BoundErrorText.Should().BeNullOrEmpty();
+
+            // empty the input text and call validation: now the error text and the bound property should be the validation error message.
+            textInput.Change("");
+            textField.ValidateAsync();
+            textField.GetState(x => x.ErrorText).Should().Be("EmptyOrWhitespace!");
+            comp.Instance.BoundErrorText.Should().Be("EmptyOrWhitespace!");
+            comp.Markup.Should().Contain("EmptyOrWhitespace!");
+        }
+
+        /// <summary>
         /// CheckBox should be validated like every other form component when ticked using mouse
         /// </summary>
         [Test]
@@ -1868,24 +1902,24 @@ namespace MudBlazor.UnitTests.Components
 
             // check initial state: form should not be valid because checkBox is required
             form.IsValid.Should().Be(false);
-            checkBox.Error.Should().BeFalse();
-            checkBox.ErrorText.Should().BeNullOrEmpty();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
+            checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // tick checkBox with an emulated mouse click
             comp.Find("input").Change(true);
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            checkBox.Error.Should().BeFalse();
-            checkBox.ErrorText.Should().BeNullOrEmpty();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
+            checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // untick checkBox with an emulated mouse click
             comp.Find("input").Change(false);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            checkBox.Error.Should().BeTrue();
-            checkBox.ErrorText.Should().Be("Required");
+            checkBox.GetState(x => x.Error).Should().BeTrue();
+            checkBox.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         /// <summary>
@@ -1900,34 +1934,34 @@ namespace MudBlazor.UnitTests.Components
 
             // check initial state: form should not be valid because checkBox is required
             form.IsValid.Should().Be(false);
-            checkBox.Error.Should().BeFalse();
-            checkBox.ErrorText.Should().BeNullOrEmpty();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
+            checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // tick checkBox with a key press
             comp.Find("input").KeyDown(Key.Space);
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            checkBox.Error.Should().BeFalse();
-            checkBox.ErrorText.Should().BeNullOrEmpty();
+            checkBox.GetState(x => x.Error).Should().BeFalse();
+            checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // untick checkBox with a key press
             comp.Find("input").KeyDown(Key.Space);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            checkBox.Error.Should().BeTrue();
-            checkBox.ErrorText.Should().Be("Required");
+            checkBox.GetState(x => x.Error).Should().BeTrue();
+            checkBox.GetState(x => x.ErrorText).Should().Be("Required");
         }
 
         [Test]
-        public void FormSpacingClass()
+        public async Task FormSpacingClass()
         {
             var comp = Context.RenderComponent<MudForm>();
 
             for (var i = 0; i <= 20; i++)
             {
-                comp.SetParam(x => x.Spacing, i);
+                await comp.SetParamAsync(x => x.Spacing, i);
                 comp.Find("form.mud-form").ClassList.Should().Contain($"gap-{i}");
             }
         }

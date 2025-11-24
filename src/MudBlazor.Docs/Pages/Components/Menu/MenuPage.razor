@@ -3,10 +3,9 @@
 <DocsPage>
     <DocsPageHeader Title="Menus" Component="@nameof(MudMenu)">
         <Description>
-            <MudAlert Class="mt-4" Severity="Severity.Warning">
-                Note: Blazor static rendering is not supported.
-                <MudLink Href="/getting-started/installation#manual-install-add-components" Target="_blank">See install guide for more info</MudLink>.
-            </MudAlert>
+            Use menus to show items in a scannable way.
+            Make menus easy to open, close, and select.
+            Menus can open from a variety of components, including icon buttons and text fields.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -64,7 +63,8 @@
                     <SectionHeader Title="Custom Activator">
                         <Description>
                             If the regular customization options are not enough, use the <CodeInline>ActivatorContent</CodeInline> render fragment to define a custom activator element for opening the menu.
-                            In this example, a custom button, chip, and avatar are each used to open a menu.
+                            In this example, a custom button, chip, and avatar are each used to open a menu. When generating activator elements inside a Blazor code block (<CodeInline>&#64;{ ... }</CodeInline>) or conditional markup, ensure that the element includes
+							<CodeInline>tabindex="0"</CodeInline> so it can receive focus and remain accessible via keyboard input.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
@@ -206,16 +206,15 @@
                 <DocsPageSection>
                     <SectionHeader Title="DropdownSettings">
                         <Description>
-                            This component uses <MudLink Href="/components/popover">MudPopover</MudLink>
-                            to place its list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>.
-                            Some of these settings can be controlled with <CodeInline>DropdownSettings</CodeInline>,
-                            which contain defaults for the <CodeInline>MudPopover</CodeInline> appearance and behavior.
-                            <MudLink Color="Color.Secondary" Href="/components/popover#dropdownsettings">
-                                Read more on popover's page.
-                            </MudLink>
+                            This component leverages <MudLink Href="/components/popover">MudPopover</MudLink> along with
+                            <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage its item list.
+                            You can configure certain aspects using <CodeInline>DropdownSettings</CodeInline>,
+                            which sets default appearance and behavior properties.
+                            Learn more on the <MudLink Color="Color.Secondary" Href="/components/popover#dropdownsettings">popover documentation page.</MudLink>
                         </Description>
                     </SectionHeader>
                 </DocsPageSection>
+
             </SectionSubGroups>
         </DocsPageSection>
     </DocsPageContent>

@@ -35,11 +35,15 @@ namespace MudBlazor.UnitTests.Components
             tabs.CloseTabIcon.Should().Be(Icons.Material.Filled.Close);
 
             tabs.AddIconClass.Should().BeNullOrEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
             tabs.AddIconStyle.Should().BeNullOrEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
             tabs.AddIconToolTip.Should().BeNullOrEmpty();
 
             tabs.CloseIconClass.Should().BeNullOrEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
             tabs.CloseIconStyle.Should().BeNullOrEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
             tabs.CloseIconToolTip.Should().BeNullOrEmpty();
 
             comp.Nodes.Should().ContainSingle();
@@ -59,7 +63,6 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in closeButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -73,7 +76,6 @@ namespace MudBlazor.UnitTests.Components
             addButtons.Should().HaveCount(1);
             foreach (var item in addButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -95,7 +97,6 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in closeButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -124,7 +125,6 @@ namespace MudBlazor.UnitTests.Components
             addButtons.Should().HaveCount(1);
             foreach (var item in addButtons)
             {
-                item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");

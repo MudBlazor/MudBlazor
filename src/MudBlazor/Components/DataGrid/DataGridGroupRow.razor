@@ -5,15 +5,19 @@
 <tr class="mud-table-row">
     <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
         <div style="display:flex; align-items:center;">
-            <MudIconButton Class="mud-datagrid-group-button" Icon="@(DataGrid.GetGroupIcon(_expanded))"
+            <MudIconButton Class="mud-table-row-expander" Icon="@(DataGrid.GetGroupIcon(_expanded))"
                            OnClick="@GroupExpandClick" />
-            @if (GroupDefinition?.GroupTemplate == null)
+            @if (GroupDefinition.GroupTemplate is not null)
             {
-                <span style="font-weight:bold">@GroupDefinition?.Title: @(Items?.Key ?? "null")</span>
+                @GroupDefinition.GroupTemplate(GroupDefinition)
+            }
+            else if (GroupDefinition.DataGrid.GroupTemplate is not null)
+            {
+                @GroupDefinition.DataGrid.GroupTemplate(GroupDefinition)
             }
             else
             {
-                @GroupDefinition.GroupTemplate(GroupDefinition)
+                <span style="font-weight:bold">@GroupDefinition.Title: @(Items?.Key ?? "null")</span>
             }
         </div>
     </td>

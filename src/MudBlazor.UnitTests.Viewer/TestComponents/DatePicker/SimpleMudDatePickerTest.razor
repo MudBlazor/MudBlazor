@@ -16,7 +16,9 @@
                    FixYear="@FixYear"
                    MinDate="@MinDate"
                    MaxDate="@MaxDate"
-                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
+                   Culture="@(new CultureInfo("en-US"))"
+                   InputId="@InputId" />
 }
 else
 {
@@ -31,7 +33,9 @@ else
                    FixYear="@FixYear"
                    MinDate="@MinDate"
                    MaxDate="@MaxDate"
-                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
+                   Culture="@(new CultureInfo("en-US"))"
+                   InputId="@InputId" />
 }
 
 @code {
@@ -72,6 +76,9 @@ else
 
     [Parameter]
     public DateTime? Date { get; set; }
+
+    [Parameter]
+    public string? InputId { get; set; }
 
     private async Task HandleDateChanged(DateTime? input)
     {

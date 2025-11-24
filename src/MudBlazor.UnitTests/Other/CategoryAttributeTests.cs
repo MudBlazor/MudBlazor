@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using NUnit.Framework;
@@ -42,7 +40,7 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudDataGridPager<>),
                 typeof(SelectColumn<>),
                 typeof(HierarchyColumn<>),
-
+                typeof(TemplateColumn<>),
                 typeof(MudTHeadRow),
                 typeof(MudTFootRow),
                 typeof(MudTr),
@@ -60,7 +58,7 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudCollapse),
                 typeof(MudPageContentNavigation),
                 typeof(MudSnackbarElement),
-                typeof(MudBlazor.Charts.Legend),
+                typeof(MudBlazor.Charts.Legend<>),
 
                 typeof(MudRatingItem),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/discussions/3452
             };

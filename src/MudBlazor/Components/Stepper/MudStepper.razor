@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudComponentBase
@@ -17,6 +17,7 @@
                 .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
                 .AddClass("mud-step-error", step.HasErrorState.Value)
                 .AddClass("mud-step-completed", step.CompletedState.Value)
+                .AddClass("mud-step-skipped", step.SkippedState.Value)
                 .Build();
 
             <button class="@stepClassname" role="tab" type="button" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
@@ -47,7 +48,7 @@
 
     @if (IsCompleted && CompletedContent is not null)
     {
-        <div class="@StepClassname mud-stepper-complete" style="@StepStyle">
+        <div class="@StepClassname mud-stepper-complete">
             @CompletedContent
         </div>
     }
@@ -126,6 +127,10 @@
                     {
                         <MudIcon Size="Size.Small" Icon="@StepErrorIcon" />
                     }
+                    else if(step.SkippedState.Value && ShowSkip)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@StepSkippedIcon" />
+                    }
                     else if (step.CompletedState.Value)
                     {
                         <MudIcon Size="Size.Small" Icon="@StepCompleteIcon" />
@@ -157,16 +162,23 @@
         </div>;
 
     RenderFragment StepContent(MudStep step) =>
-        @<div @attributes="@step.UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
-            @if (Vertical)
-            {
-                <MudCollapse Expanded="step == ActiveStep">
-                    @step.ChildContent
-                </MudCollapse>
-            }
-            else
-            {
-                @step.ChildContent
-            }
-        </div>;
+        @<CascadingValue Value="@CreateStepContext(step)">
+            <div @attributes="@step.UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
+                @if (step.ChildContent is not null)
+                {
+                    if (Vertical)
+                    {
+                        <MudCollapse Expanded="step == ActiveStep">
+                            @step.ChildContent
+                        </MudCollapse>
+                    }
+                    else
+                    {
+                        @step.ChildContent
+                    }
+                }
+            </div>
+        </CascadingValue>;
+
+    private MudStepContext CreateStepContext(MudStep step) => new(this, step);
 }

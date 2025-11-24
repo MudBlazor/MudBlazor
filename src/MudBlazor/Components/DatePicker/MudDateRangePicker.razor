@@ -6,8 +6,8 @@
 @code{
 
     protected override RenderFragment InputContent=>
-        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@Error"
-                          ErrorText="@ErrorText" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
+        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
+                          ErrorText="@ErrorTextState.Value" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
                           @onclick="async () => { if (!Editable) await ToggleStateAsync(); }" ForId="@FieldId">
                <InputContent>
                    <MudRangeInput @ref="_rangeInput"
@@ -27,15 +27,17 @@
                                   OnAdornmentClick="ToggleStateAsync"
                                   Required="@Required"
                                   RequiredError="@RequiredError"
-                                  Error="@Error"
-                                  ErrorText="@ErrorText"
+                                  Error="@ErrorState.Value"
+                                  ErrorText="@ErrorTextState.Value"
                                   Margin="@Margin"
                                   AdornmentAriaLabel="@AdornmentAriaLabel"
                                   PlaceholderStart="@PlaceholderStart"
                                   PlaceholderEnd="@PlaceholderEnd"
                                   SeparatorIcon="@SeparatorIcon"
                                   Clearable="@(Clearable && !GetReadOnlyState())"
-                                  Underline="@Underline" />
+                                  Underline="@Underline"
+                                  ShrinkLabel="@ShrinkLabel"
+                                  InputId="@InputId" />
                </InputContent>
            </MudInputControl>;
 

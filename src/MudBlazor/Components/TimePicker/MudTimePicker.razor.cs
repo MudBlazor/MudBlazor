@@ -11,6 +11,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -29,7 +30,6 @@ namespace MudBlazor
             Converter.SetFunc = OnSet;
             ((DefaultConverter<TimeSpan?>)Converter).Format = Format24Hours;
             AdornmentIcon = Icons.Material.Filled.AccessTime;
-            AdornmentAriaLabel = "Open Time Picker";
         }
 
         private string OnSet(TimeSpan? timespan)
@@ -44,7 +44,7 @@ namespace MudBlazor
             return time.ToString(((DefaultConverter<TimeSpan?>)Converter).Format, Culture);
         }
 
-        private TimeSpan? OnGet(string value)
+        private TimeSpan? OnGet(string? value)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -254,7 +254,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
         /// <inheritdoc />
-        protected override Task StringValueChangedAsync(string value)
+        protected override Task StringValueChangedAsync(string? value)
         {
             Touched = true;
 
@@ -542,12 +542,13 @@ namespace MudBlazor
         private readonly SetTime _timeSet = new();
         private int _initialHour;
         private int _initialMinute;
-        private DotNetObjectReference<MudTimePicker> _dotNetRef;
-        private string _clockElementReferenceId;
+        private DotNetObjectReference<MudTimePicker>? _dotNetRef;
+        private string? _clockElementReferenceId;
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            AdornmentAriaLabel ??= Localizer[LanguageResource.MudTimePicker_Open];
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;

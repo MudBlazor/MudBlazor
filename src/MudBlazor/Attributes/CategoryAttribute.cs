@@ -1,5 +1,7 @@
-﻿namespace MudBlazor
+﻿using MudBlazor.Charts;
+namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
@@ -16,7 +18,7 @@
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("The category name cannot be null nor empty.");
-            if (!categoryOrder.ContainsKey(name))
+            if (!_categoryOrder.ContainsKey(name))
                 throw new ArgumentException($"The given category name '{name}' isn't in the categoryOrder field.");
             Name = name;
         }
@@ -25,10 +27,10 @@
         public string Name { get; }
 
         /// <summary> The order of the category - the greater the number the lower the category will be displayed in the API documentation. </summary>
-        public int Order => categoryOrder[Name];
+        public int Order => _categoryOrder[Name];
 
         // Possible categories of component properties and the order in which they are displayed in the API documentation.
-        private static readonly Dictionary<string, int> categoryOrder = new()
+        private static readonly Dictionary<string, int> _categoryOrder = new()
         {
             ["Data"] = 0, // general category
             ["Validation"] = 1, // general category
@@ -148,7 +150,7 @@
             public const string PickerAppearance = "Picker appearance";
         }
 
-        /// <summary>Used in all charts, that is in <see cref="MudCategoryChartBase"/> and all components inheriting from it.</summary>
+        /// <summary>Used in <see cref="MudChartBase{T, TOptions}"/> and all components inheriting from it.</summary>
         public static class Chart
         {
             public const string Behavior = "Behavior";

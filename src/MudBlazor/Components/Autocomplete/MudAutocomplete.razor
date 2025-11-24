@@ -15,7 +15,7 @@
                          Style="@Style"
                          Error="@HasErrors"
                          ErrorText="@GetErrorText()"
-                         ErrorId="@ErrorId"
+                         ErrorId="@ErrorIdState.Value"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
                          @onmousedown="@OnInputClickedAsync"
@@ -31,8 +31,8 @@
                           Value="@Text" Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="@GetReadOnlyState()"
-                          Error="@Error"
-                          ErrorId="@ErrorId"
+                          Error="@ErrorState.Value"
+                          ErrorId="@ErrorIdState.Value"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
                           AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
@@ -146,5 +146,5 @@
 <MudOverlay AutoClose
             Visible="Open"
             OnClosed="OnOverlayClosedAsync"
-            LockScroll="false"
+            LockScroll="@LockScroll"
             Modal="@Modal" />

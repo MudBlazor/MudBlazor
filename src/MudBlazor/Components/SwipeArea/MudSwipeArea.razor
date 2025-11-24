@@ -3,7 +3,9 @@
 
 <div @ref="_componentRef" @attributes="UserAttributes" class="@Classname" style="@Style"
      @onpointerdown="OnPointerDown" @onpointerdown:stopPropagation="true"
-     @onpointerup="OnPointerUp" @onpointerup:stopPropagation="true"
-     @onpointercancel="OnPointerCancel" @onpointercancel:stopPropagation="true">
+     @onpointerup="OnPointerUpAsync" @onpointerup:stopPropagation="true"
+     @onpointercancel="OnPointerCancelAsync" @onpointercancel:stopPropagation="true"
+     @onpointermove="OnPointerMoveAsync" @onpointermove:stopPropagation="true"
+     @onpointerleave="OnSwipeLeave" @onpointerleave:stopPropagation="true">
     @ChildContent
 </div>

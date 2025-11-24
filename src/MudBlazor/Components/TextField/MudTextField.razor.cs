@@ -179,7 +179,7 @@ namespace MudBlazor
         /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
         /// <param name="text">The new text value to use.</param>
-        public async Task SetText(string text)
+        public async Task SetText(string? text)
         {
             if (!HasMask)
             {
@@ -232,5 +232,13 @@ namespace MudBlazor
             0 => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}"),
             _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
         };
+
+        protected async Task HandleContainerClick()
+        {
+            if (!_isFocused && IsJSRuntimeAvailable && InputReference != null)
+            {
+                await InputReference.FocusAsync();
+            }
+        }
     }
 }

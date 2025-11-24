@@ -91,7 +91,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Ensures the underyling input receives the accept attribute
+        /// Ensures the underlying input receives the accept attribute
         /// </summary>
         [Test]
         public void FileUpload_AcceptTest()
@@ -233,11 +233,11 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse(); //form is invalid to start
 
             var single = comp.FindComponent<MudFileUpload<IBrowserFile>>();
-            single.Instance.ErrorText.Should().Be("'File' must not be empty.");
+            single.Instance.GetState(x => x.ErrorText).Should().Be("'File' must not be empty.");
             single.Markup.Should().Contain("'File' must not be empty.");
 
             var multiple = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
-            multiple.Instance.ErrorText.Should().Be("'Files' must not be empty.");
+            multiple.Instance.GetState(x => x.ErrorText).Should().Be("'Files' must not be empty.");
             multiple.Markup.Should().Contain("'Files' must not be empty.");
 
             var singleInput = single.FindComponent<InputFile>();
@@ -245,7 +245,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => form.Validate());
 
-            single.Instance.ErrorText.Should().Be(null); //first input is now valid
+            single.Instance.GetState(x => x.ErrorText).Should().BeNull();
             single.Markup.Should().NotContain("'File' must not be empty.");
 
             form.IsValid.Should().BeFalse(); //form is still invalid
@@ -255,7 +255,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => form.Validate());
 
-            single.Instance.ErrorText.Should().Be(null); //second input is now valid
+            single.Instance.GetState(x => x.ErrorText).Should().BeNull();
             single.Markup.Should().NotContain("'Files' must not be empty.");
 
             form.IsValid.Should().BeTrue(); //form is now valid
@@ -289,14 +289,14 @@ namespace MudBlazor.UnitTests.Components
         /// Makes sure the file upload is disabled
         /// </summary>
         [Test]
-        public void FileUploadDisabledTest()
+        public async Task FileUploadDisabledTest()
         {
             var comp = Context.RenderComponent<FileUploadDisabledTest>();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeFalse();
 
 
-            comp.SetParametersAndRender(parameters =>
+            await comp.SetParametersAndRenderAsync(parameters =>
                 parameters.Add(x => x.Disabled,
                     true)); //The input and child button should be disabled when file upload is disabled
 
@@ -358,14 +358,14 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required FileUpload attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
@@ -584,6 +584,204 @@ namespace MudBlazor.UnitTests.Components
             // Act & Assert
             Action action = () => instance.GetType().GetMethod("GetFilenames").Invoke(instance, null);
             action.Should().NotThrow();
+        private static InputFileContent CreateDummyFile(string fileName, long size)
+        {
+            var content = new byte[size];
+            var file = new DummyBrowserFile(fileName, DateTimeOffset.Now, size, "application/octet-stream", content);
+
+            return InputFileContent.CreateFromBinary(file.Content, file.Name, null, file.ContentType);
+        }
+
+        [Test]
+        public void MaxFileSize_SingleFile_WithinLimit()
+        {
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+
+            var file = CreateDummyFile("test.txt", 50);
+            var input = comp.FindComponent<InputFile>();
+
+            input.UploadFiles(file);
+
+            comp.Instance.File.Should().NotBeNull();
+            comp.Instance.File.Name.Should().Be("test.txt");
+            comp.Instance.File.Size.Should().Be(50);
+        }
+
+        [Test]
+        public void MaxFileSize_SingleFile_ExceedsLimit()
+        {
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+
+            var file = CreateDummyFile("test.txt", 150);
+            var input = comp.FindComponent<InputFile>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+
+            input.UploadFiles(file);
+
+            comp.Instance.File.Should().BeNull(); // File should be rejected
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
+            fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test.txt' exceeds the maximum allowed size of 100 bytes.");
+        }
+
+        [Test]
+        public void MaxFileSize_SingleFile_NoLimit()
+        {
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
+
+            var file = CreateDummyFile("test.txt", 200);
+            var input = comp.FindComponent<InputFile>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+
+            input.UploadFiles(file);
+
+            comp.Instance.File.Should().NotBeNull();
+            comp.Instance.File.Name.Should().Be("test.txt");
+            comp.Instance.File.Size.Should().Be(200);
+            fileUpload.GetState(x => x.Error).Should().BeFalse();
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void MaxFileSize_MultipleFiles_AllWithinLimit()
+        {
+            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+
+            var file1 = CreateDummyFile("test1.txt", 50);
+            var file2 = CreateDummyFile("test2.txt", 70);
+
+            var input = comp.FindComponent<InputFile>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>().Instance;
+
+            input.UploadFiles(file1, file2);
+
+            comp.Instance.Files.Should().NotBeNull();
+            comp.Instance.Files.Count.Should().Be(2);
+            comp.Instance.Files[0].Name.Should().Be("test1.txt");
+            comp.Instance.Files[1].Name.Should().Be("test2.txt");
+            fileUpload.GetState(x => x.Error).Should().BeFalse();
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void MaxFileSize_MultipleFiles_SomeExceedLimit()
+        {
+            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+
+            var file1 = CreateDummyFile("test1.txt", 50);
+            var file2 = CreateDummyFile("test2.txt", 120);
+            var file3 = CreateDummyFile("test3.txt", 70);
+
+            var input = comp.FindComponent<InputFile>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>().Instance;
+
+            input.UploadFiles(file1, file2, file3);
+
+            // Assertions after OnChangeAsync
+            comp.Instance.Files.Should().NotBeNull();
+            comp.Instance.Files.Count.Should().Be(2);
+            comp.Instance.Files.Should().Contain(f => f.Name == "test1.txt");
+            comp.Instance.Files.Should().Contain(f => f.Name == "test3.txt");
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
+            fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test2.txt' exceeds the maximum allowed size of 100 bytes.");
+        }
+
+        [Test]
+        public void MaxFileSize_MultipleFiles_AllExceedLimit()
+        {
+            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+
+            var file1 = CreateDummyFile("test1.txt", 120);
+            var file2 = CreateDummyFile("test2.txt", 150);
+
+            var input = comp.FindComponent<InputFile>();
+
+            input.UploadFiles(file1, file2);
+            var fileUpload = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>().Instance;
+
+            comp.Instance.Files.Should().NotBeNull(); // It will be an empty list
+            comp.Instance.Files.Count.Should().Be(0);
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
+
+            var validationErrors = fileUpload.ValidationErrors;
+            validationErrors.Should().HaveCount(2);
+            validationErrors.Should().Contain("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
+            validationErrors.Should().Contain("File 'test2.txt' exceeds the maximum allowed size of 100 bytes.");
+        }
+
+        [Test]
+        public void MaxFileSize_MultipleFiles_NoLimit()
+        {
+            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
+
+            var file1 = CreateDummyFile("test1.txt", 200);
+            var file2 = CreateDummyFile("test2.txt", 300);
+
+            var input = comp.FindComponent<InputFile>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>().Instance;
+
+            input.UploadFiles(file1, file2);
+
+            comp.Instance.Files.Should().NotBeNull();
+            comp.Instance.Files.Count.Should().Be(2);
+            comp.Instance.Files[0].Name.Should().Be("test1.txt");
+            comp.Instance.Files[1].Name.Should().Be("test2.txt");
+            fileUpload.GetState(x => x.Error).Should().BeFalse();
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public async Task MaxFileSize_ClearValidationAfterError()
+        {
+            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100));
+
+            var file1 = CreateDummyFile("test1.txt", 200);
+            var file2 = CreateDummyFile("test2.txt", 300);
+
+            var input = comp.FindComponent<InputFile>();
+
+            input.UploadFiles(file1, file2);
+
+            // Assert initial error state
+            comp.Instance.Files.Should().BeEmpty();
+
+            var fileUpload = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>().Instance;
+
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
+            fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
+
+            await comp.InvokeAsync(fileUpload.ClearAsync);
+
+            // Assert cleared state
+            comp.Instance.Files.Should().BeNull();
+            fileUpload.GetState(x => x.Error).Should().BeFalse(); // Errors should be cleared
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            fileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
+        }
+
+        [Test]
+        public async Task MaxFileSize_ResetValidationAfterError()
+        {
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100));
+
+            var file1 = CreateDummyFile("test1.txt", 200);
+
+            var input = comp.FindComponent<InputFile>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+
+            input.UploadFiles(file1);
+
+            // Assert initial error state
+            comp.Instance.File.Should().BeNull();
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
+            fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
+
+            await comp.InvokeAsync(fileUpload.ResetValidationAsync);
+
+            // Assert cleared state
+            comp.Instance.File.Should().BeNull();
+            fileUpload.GetState(x => x.Error).Should().BeFalse(); // Errors should be cleared
+            fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty(); // ErrorText should be cleared
+            fileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
         }
     }
 }
