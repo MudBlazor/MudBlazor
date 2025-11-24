@@ -13,8 +13,8 @@ namespace MudBlazor
     /// <seealso cref="MudRadio{T}"/>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
-        private string _elementId = Identifier.Create("checkbox");
-        private string _ariaId = Identifier.Create("cbox-aria-");
+        private readonly string _elementId = Identifier.Create("checkbox");
+        private readonly string _ariaId = Identifier.Create("cbox-aria-");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -58,7 +58,7 @@ namespace MudBlazor
         /// The Aria Label to be assigned to the checkbox.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Used to improve accessibility for screen readers. Adds an aria-labelledby to <c>UserAttributes"</c>.
+        /// Defaults to <c>null</c>.  Used to improve accessibility for screen readers. Adds an aria-labelledby to <c>UserAttributes</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
@@ -206,9 +206,10 @@ namespace MudBlazor
                 Label = For.GetLabelString();
             }
             // if Aria Label has a value add aria-labeled by
-            if (!string.IsNullOrEmpty(AriaLabel))
+            if (!string.IsNullOrWhiteSpace(AriaLabel))
             {
-                UserAttributes.Add("aria-labelledby", _ariaId);
+                // we use try add in case the user has already set an aria-labelledby attribute
+                UserAttributes.TryAdd("aria-labelledby", _ariaId);
             }
         }
 

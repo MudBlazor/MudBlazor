@@ -12,19 +12,19 @@
             </span>
             @if (!string.IsNullOrEmpty(Label))
             {
-                <MudText aria-hidden="@(AriaLabel is not null ?  true : false)" Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
+                <MudText aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
             }
             @if (ChildContent is not null)
             {
-                <MudText aria-hidden="@(AriaLabel is not null ?  true : false)" Color="HasErrors ? Color.Error : Color.Inherit">
+                <MudText aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">
                     @ChildContent
                 </MudText>
             }
             @if (AriaLabel is not null)
             {
-                <arialabelledby id="@_ariaId" class="mud-sr-only">
+                <span id="@_ariaId" class="mud-sr-only">
                     @AriaLabel
-                </arialabelledby>
+                </span>
             }
         </label>
     </InputContent>
