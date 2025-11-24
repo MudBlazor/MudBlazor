@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// <para>
 /// Static properties that let you control the default behavior of some parts of MudBlazor.

@@ -2,12 +2,13 @@
 
 namespace MudBlazor
 {
+#nullable enable
     public class ScrollEventArgs : EventArgs
     {
         /// <summary>
         /// The BoundingClientRect for the first child of the scrolled element
         /// </summary>
-        public BoundingClientRect FirstChildBoundingClientRect { get; set; }
+        public BoundingClientRect? FirstChildBoundingClientRect { get; set; }
 
         /// <summary>
         /// The ScrollTop property gets or sets the number of pixels that an element's content is scrolled vertically
@@ -32,6 +33,6 @@ namespace MudBlazor
         /// <summary>
         /// Node name of the scrolled element
         /// </summary>
-        public string NodeName { get; set; }
+        public string? NodeName { get; set; }
     }
 }

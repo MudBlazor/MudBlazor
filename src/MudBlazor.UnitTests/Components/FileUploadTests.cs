@@ -613,7 +613,7 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.GetState(x => x.Error).Should().BeTrue();
             fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
 
-            await comp.InvokeAsync(fileUpload.ResetValidation);
+            await comp.InvokeAsync(fileUpload.ResetValidationAsync);
 
             // Assert cleared state
             comp.Instance.File.Should().BeNull();
