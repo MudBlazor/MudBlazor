@@ -2,14 +2,24 @@
 // Supported in Chrome 94+, Firefox 97+, Safari 17.4+
 @supports (scrollbar-gutter: stable) {
   html {
-    // overflow-y: auto ensures scrollbar gutter is always visible (prevents overlay scrollbars)
-    overflow-y: auto;
+    // Reserve space for scrollbar to prevent layout shift
     scrollbar-gutter: stable;
+  }
+
+  // When scroll is locked, hide overflow on both html and body to hide the scrollbar
+  // but keep the reserved gutter space
+  body.scroll-locked,
+  body.scroll-locked-no-padding {
+    overflow: hidden;
+  }
+
+  html:has(body.scroll-locked),
+  html:has(body.scroll-locked-no-padding) {
+    overflow-y: hidden;
   }
 
   // When scrollbar-gutter is supported, we don't need padding compensation
   .scroll-locked {
-    overflow: hidden;
     padding-right: 0;
 
     .mud-layout {
@@ -26,7 +36,7 @@
   }
 
   .scroll-locked-no-padding {
-    overflow: hidden;
+    padding-right: 0;
   }
 }
 
