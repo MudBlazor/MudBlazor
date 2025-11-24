@@ -147,7 +147,7 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        await DisposeAsyncCore().ConfigureAwait(false);
+        await DisposeAsyncCore();
         GC.SuppressFinalize(this);
     }
 
