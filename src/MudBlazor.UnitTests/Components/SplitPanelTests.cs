@@ -46,22 +46,34 @@ public class SplitPanelTests : BunitTest
     }
 
     [Test]
-    public async Task ExecutesJsCallsCorrectly()
+    public async Task ExecutesBuildDestroyJsCalls()
     {
         var comp = Context.RenderComponent<MudSplitPanel>();
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel.build");
         invocation.Arguments.Count.Should().Be(6);
 
-        await comp.SetParamAsync(c => c.Horizontal, true);
-        invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_update");
-        invocation.Arguments.Count.Should().Be(5);
-
-        await comp.Instance.ResetSizesAsync();
-        invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_resetSizes");
-        invocation.Arguments.Count.Should().Be(1);
-
         await comp.Instance.DisposeAsync();
         invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_destroy");
+        invocation.Arguments.Count.Should().Be(1);
+    }
+
+    [Test]
+    public async Task ExecutesUpdateJsCall()
+    {
+        var comp = Context.RenderComponent<MudSplitPanel>();
+        await comp.SetParamAsync(c => c.Horizontal, true);
+
+        var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_update");
+        invocation.Arguments.Count.Should().Be(5);
+    }
+
+    [Test]
+    public async Task ExecutesResetSizesJsCall()
+    {
+        var comp = Context.RenderComponent<MudSplitPanel>();
+        await comp.Instance.ResetSizesAsync();
+
+        var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_resetSizes");
         invocation.Arguments.Count.Should().Be(1);
     }
 }

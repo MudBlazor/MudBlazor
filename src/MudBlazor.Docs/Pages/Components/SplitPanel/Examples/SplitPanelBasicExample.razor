@@ -20,8 +20,8 @@
         </SecondPanel>
     </MudSplitPanel>
     <MudButtonGroup Variant="Variant.Filled">
-        <MudTooltip Text="Horizontal">
-            <MudToggleIconButton @bind-Toggled="_horizontal" Icon="@(_horizontal ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.DragHandle)" ToggledColor="@Color.Info"/>
+        <MudTooltip Text="Toggle orientation">
+            <MudToggleIconButton @bind-Toggled="_horizontal" Icon="@Icons.Material.Outlined.Pause" ToggledIcon="@Icons.Material.Outlined.DragHandle" ToggledColor="@Color.Info"/>
         </MudTooltip>
         <MudTooltip Text="Reset on double click">
             <MudToggleIconButton @bind-Toggled="_resetOnDoubleClick" Icon="@Icons.Material.Outlined.RestartAlt" ToggledColor="@Color.Info"/>
