@@ -15,8 +15,8 @@ class MudHotkeyListener {
         document.removeEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
 
-    registerHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault) {
-        modifiers = (modifiers || []).slice().sort();
+    registerOrUpdateHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault) {
+        modifiers = modifiers || [];
         const newHotkey = this._createHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault);
         const existingIndex = this._getHotkeyIndexById(hotkeyId);
         
