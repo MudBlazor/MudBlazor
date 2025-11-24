@@ -321,11 +321,11 @@ namespace MudBlazor
             await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
         }
 
-        public override void ResetValidation()
+        public override Task ResetValidationAsync()
         {
             _validationErrors.Clear();
 
-            base.ResetValidation();
+            return base.ResetValidationAsync();
         }
     }
 }

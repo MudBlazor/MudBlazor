@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => form.ResetValidation());
+            await comp.InvokeAsync(() => form.ResetValidationAsync());
             form.IsTouched.Should().Be(true);
         }
 
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(false);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => form.ResetValidation());
+            await comp.InvokeAsync(() => form.ResetValidationAsync());
             form.IsTouched.Should().Be(true);
             nestedForm.IsTouched.Should().Be(false);
         }
@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(true);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => nestedFormDateField.ResetValidation());
+            await comp.InvokeAsync(() => nestedFormDateField.ResetValidationAsync());
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(true);
         }
@@ -1277,7 +1277,7 @@ namespace MudBlazor.UnitTests.Components
             await tf.SetParamAsync(x => x.Validation, validationFunc);
             Expression<Func<string>> expression = () => model.data;
             await tf.SetParamAsync(x => x.For, expression);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("Error in validation func: User error");
         }
@@ -1296,7 +1296,7 @@ namespace MudBlazor.UnitTests.Components
             var tf = comp.FindComponent<MudTextField<string>>();
             var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) => throw new InvalidOperationException("User error"));
             await tf.SetParamAsync(x => x.Validation, validationFunc);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
@@ -1318,7 +1318,7 @@ namespace MudBlazor.UnitTests.Components
                 throw new InvalidOperationException("User error");
             });
             await tf.SetParamAsync(x => x.Validation, validationFunc);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
@@ -1343,7 +1343,7 @@ namespace MudBlazor.UnitTests.Components
             await tf.SetParamAsync(x => x.Validation, validationFunc);
             Expression<Func<string>> expression = () => model.data;
             await tf.SetParamAsync(x => x.For, expression);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.GetState(x => x.Error).Should().Be(true);
             tf.Instance.GetState(x => x.ErrorText).Should().Be("Error1");
         }
@@ -1878,13 +1878,13 @@ namespace MudBlazor.UnitTests.Components
             textField.GetState(x => x.ErrorText).Should().Be("Default value not changed by binding");
 
             // call validation on the textfield: now the error text should be null and the bound property aswell
-            textField.Validate();
+            textField.ValidateAsync();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.Instance.BoundErrorText.Should().BeNullOrEmpty();
 
             // empty the input text and call validation: now the error text and the bound property should be the validation error message.
             textInput.Change("");
-            textField.Validate();
+            textField.ValidateAsync();
             textField.GetState(x => x.ErrorText).Should().Be("EmptyOrWhitespace!");
             comp.Instance.BoundErrorText.Should().Be("EmptyOrWhitespace!");
             comp.Markup.Should().Contain("EmptyOrWhitespace!");
