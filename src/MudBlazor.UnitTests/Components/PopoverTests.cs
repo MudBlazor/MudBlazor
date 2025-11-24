@@ -326,17 +326,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudPopoverProvider_RenderElementsBasedOnEnableState()
+        public async Task MudPopoverProvider_RenderElementsBasedOnEnableState()
         {
             var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, true));
             comp.Find("#my-content").TextContent.Should().Be("Popover content");
 
             for (var i = 0; i < 3; i++)
             {
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, false));
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, false));
                 Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
 
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, true));
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, true));
                 comp.Find("#my-content").TextContent.Should().Be("Popover content");
             }
         }

@@ -289,14 +289,14 @@ namespace MudBlazor.UnitTests.Components
         /// Makes sure the file upload is disabled
         /// </summary>
         [Test]
-        public void FileUploadDisabledTest()
+        public async Task FileUploadDisabledTest()
         {
             var comp = Context.RenderComponent<FileUploadDisabledTest>();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeFalse();
 
 
-            comp.SetParametersAndRender(parameters =>
+            await comp.SetParametersAndRenderAsync(parameters =>
                 parameters.Add(x => x.Disabled,
                     true)); //The input and child button should be disabled when file upload is disabled
 
@@ -358,14 +358,14 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required FileUpload attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
@@ -457,7 +457,7 @@ namespace MudBlazor.UnitTests.Components
             input.UploadFiles(file);
 
             comp.Instance.File.Should().BeNull(); // File should be rejected
-            fileUpload.Error.Should().BeTrue();
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
             fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test.txt' exceeds the maximum allowed size of 100 bytes.");
         }
 
@@ -475,7 +475,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.File.Should().NotBeNull();
             comp.Instance.File.Name.Should().Be("test.txt");
             comp.Instance.File.Size.Should().Be(200);
-            fileUpload.Error.Should().BeFalse();
+            fileUpload.GetState(x => x.Error).Should().BeFalse();
             fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
@@ -496,7 +496,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Files.Count.Should().Be(2);
             comp.Instance.Files[0].Name.Should().Be("test1.txt");
             comp.Instance.Files[1].Name.Should().Be("test2.txt");
-            fileUpload.Error.Should().BeFalse();
+            fileUpload.GetState(x => x.Error).Should().BeFalse();
             fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
@@ -519,7 +519,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Files.Count.Should().Be(2);
             comp.Instance.Files.Should().Contain(f => f.Name == "test1.txt");
             comp.Instance.Files.Should().Contain(f => f.Name == "test3.txt");
-            fileUpload.Error.Should().BeTrue();
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
             fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test2.txt' exceeds the maximum allowed size of 100 bytes.");
         }
 
@@ -538,7 +538,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.Files.Should().NotBeNull(); // It will be an empty list
             comp.Instance.Files.Count.Should().Be(0);
-            fileUpload.Error.Should().BeTrue();
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
 
             var validationErrors = fileUpload.ValidationErrors;
             validationErrors.Should().HaveCount(2);
@@ -563,7 +563,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Files.Count.Should().Be(2);
             comp.Instance.Files[0].Name.Should().Be("test1.txt");
             comp.Instance.Files[1].Name.Should().Be("test2.txt");
-            fileUpload.Error.Should().BeFalse();
+            fileUpload.GetState(x => x.Error).Should().BeFalse();
             fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
@@ -584,14 +584,14 @@ namespace MudBlazor.UnitTests.Components
 
             var fileUpload = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>().Instance;
 
-            fileUpload.Error.Should().BeTrue();
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
             fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
 
             await comp.InvokeAsync(fileUpload.ClearAsync);
 
             // Assert cleared state
             comp.Instance.Files.Should().BeNull();
-            fileUpload.Error.Should().BeFalse(); // Errors should be cleared
+            fileUpload.GetState(x => x.Error).Should().BeFalse(); // Errors should be cleared
             fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             fileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
         }
@@ -610,14 +610,14 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert initial error state
             comp.Instance.File.Should().BeNull();
-            fileUpload.Error.Should().BeTrue();
+            fileUpload.GetState(x => x.Error).Should().BeTrue();
             fileUpload.GetState(x => x.ErrorText).Should().Be("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
 
-            await comp.InvokeAsync(fileUpload.ResetValidation);
+            await comp.InvokeAsync(fileUpload.ResetValidationAsync);
 
             // Assert cleared state
             comp.Instance.File.Should().BeNull();
-            fileUpload.Error.Should().BeFalse(); // Errors should be cleared
+            fileUpload.GetState(x => x.Error).Should().BeFalse(); // Errors should be cleared
             fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty(); // ErrorText should be cleared
             fileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
         }

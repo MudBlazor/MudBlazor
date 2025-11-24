@@ -5,18 +5,18 @@
         <MudChart ChartType="ChartType.HeatMap"
                     ChartSeries="@exampleOne"
                     ChartOptions="@chartOptions"
-                    XAxisLabels="@testLabels"
+                    ChartLabels="@testLabels"
                     Width="100%" Height="300px">
-            <MudHeatMapCell Row="0" Column="0" MinValue="@(_useOverride ? 0 : default)" MaxValue="@(_useOverride ? .95 : null)" />
+            <MudHeatMapCell Row="0" Column="0" MinValue="@(_useOverride ? 0 : null)" MaxValue="@(_useOverride ? .95 : null)" />
         </MudChart>
     </MudTabPanel>
     <MudTabPanel Text="Example Two">
         <MudChart ChartType="ChartType.HeatMap"
                     ChartSeries="@exampleTwo"
                     ChartOptions="@chartOptions"
-                    XAxisLabels="@testLabels"
+                    ChartLabels="@testLabels"
                     Width="100%" Height="300px">
-            <MudHeatMapCell Row="0" Column="0" MinValue="@(_useOverride ? 0 : default)" MaxValue="@(_useOverride ? .95 : null)" />
+            <MudHeatMapCell Row="0" Column="0" MinValue="@(_useOverride ? 0 : null)" MaxValue="@(_useOverride ? .95 : null)" />
         </MudChart>
     </MudTabPanel>
 </MudTabs>
@@ -33,30 +33,31 @@
     private bool _useOverride;
     private bool _showLegend = true;
 
-    private ChartOptions chartOptions = new()
+    private HeatMapChartOptions chartOptions = new()
     {
         ChartPalette = [COLOR_HORRIBLE, COLOR_BAD, COLOR_GOOD, COLOR_PERFECT],
         XAxisLabelPosition = XAxisLabelPosition.Top,
         ValueFormatString = "P0",
         ShowLegend = false,
+        ShowToolTips = true,
     };
 
     private readonly string[] testLabels = ["Test 1", "Test 2", "Test 3", "Test 4"];
 
-    private readonly List<ChartSeries> exampleOne =
-    [
-        new() { Name = "Student 1", Data = [.40, .72, .64, .92] },
-        new() { Name = "Student 2", Data = [.80, .71, .97, .75] },
-        new() { Name = "Student 3", Data = [.92, .84, .85, .97] },
-        new() { Name = "Student 4", Data = [.79, .99, .87, .69] },
+    private readonly List<ChartSeries<double>> exampleOne =
+        [
+        new() { Name = "Student 1", Data = new([.40, .72, .64, .92]) },
+        new() { Name = "Student 2", Data = new([.80, .71, .97, .75]) },
+        new() { Name = "Student 3", Data = new([.92, .84, .85, .97]) },
+        new() { Name = "Student 4", Data = new([.79, .99, .87, .69]) },
     ];
 
-    private readonly List<ChartSeries> exampleTwo =
-    [
-        new() { Name = "Student 1", Data = [.40, .52, .64, .32] },
-        new() { Name = "Student 2", Data = [.32, .65, .48, .66] },
-        new() { Name = "Student 3", Data = [.35, .34, .55, .67] },
-        new() { Name = "Student 4", Data = [.30, .63, .36, .62] },
+    private readonly List<ChartSeries<double>> exampleTwo =
+        [
+        new() { Name = "Student 1", Data = new([.40, .52, .64, .32]) },
+        new() { Name = "Student 2", Data = new([.32, .65, .48, .66]) },
+        new() { Name = "Student 3", Data = new([.35, .34, .55, .67]) },
+        new() { Name = "Student 4", Data = new([.30, .63, .36, .62]) },
     ];
 
     protected override void OnInitialized()

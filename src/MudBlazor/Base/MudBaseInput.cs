@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -211,25 +212,21 @@ namespace MudBlazor
         /// The appearance variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.InputDefaults.Variant"/>.
+        /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// The amount of vertical spacing for this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Margin.None"/> in <see cref="MudGlobal.InputDefaults.Margin"/>.
+        /// Defaults to <see cref="Margin.None"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
         /// Typography for the input text.
@@ -336,14 +333,12 @@ namespace MudBlazor
         /// Shows the label inside the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// Defaults to <c>false</c>.
         /// When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool ShrinkLabel { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
@@ -732,6 +727,17 @@ namespace MudBlazor
             {
                 base.OnParametersSet();
             }
+            else
+            {
+                // MudBlazor uses an unconventional SubscribeToParentForm mechanism whose behavior is not fully understandable.
+                // Because of this, we must manually call OnParametersSet on the ParameterContainer to ensure ParameterState fields update correctly.
+                //
+                // Without this manual call, scenarios involving inherited components can fall out of sync. For example:
+                // - Component1 inherits a base component that defines a state parameter.
+                // - Component2 also inherits that same base component, wraps Component1, and forwards its base parameters to Component1.
+                // In this case, ParameterState will not remain properly synchronized since base.OnParametersSet is called conditionally.
+                ParameterContainer.OnParametersSet();
+            }
         }
 
         /// <inheritdoc />
@@ -763,7 +769,7 @@ namespace MudBlazor
 
         protected string? GetAriaDescribedByString()
         {
-            var errorId = HasErrors ? ErrorId : null;
+            var errorId = HasErrors ? ErrorIdState.Value : null;
             var helperId = GetHelperId();
 
             return errorId is not null && helperId is not null

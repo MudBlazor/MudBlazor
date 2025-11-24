@@ -85,14 +85,6 @@ namespace MudBlazor
                 .AddClass("mud-disabled", Disabled)
                 .Build();
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete($"Will be removed in future, replaced by {nameof(PositionAttributes)}.")]
-        protected string Stylename =>
-            new StyleBuilder()
-                .AddStyle("top", _openPosition.Top.ToPx(), PositionAtCursor)
-                .AddStyle("left", _openPosition.Left.ToPx(), PositionAtCursor)
-                .Build();
-
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>

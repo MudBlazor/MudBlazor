@@ -68,7 +68,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwipeTest_PreventDefault_SetFalse()
+        public async Task SwipeTest_PreventDefault_SetFalse()
         {
             var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = Context.JSInterop.SetupVoid(invocation => invocation.Identifier == "mudElementRef.removeDefaultPreventingHandlers")
                 .SetVoidResult();
 
-            comp.SetParam("PreventDefault", false);
+            await comp.SetParamAsync(x => x.PreventDefault, false);
 
             comp.Instance.PreventDefault.Should().Be(false);
             comp.Instance._listenerIds.Should().BeNull();

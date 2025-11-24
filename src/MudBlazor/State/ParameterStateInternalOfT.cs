@@ -26,6 +26,8 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 {
     private T? _value;
     private T? _lastValue;
+    private T? _initialValue;
+    private bool _isInitialized;
     private bool _isChildOriginatedChange;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
@@ -44,14 +46,11 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     [MemberNotNullWhen(true, nameof(_parameterChangedHandler))]
     public bool HasHandler => _parameterChangedHandler is not null;
 
-    /// <summary>
-    /// Gets a value indicating whether the object is initialized.
-    /// </summary>
-    /// <remarks>
-    /// This property is <c>true</c> once the <see cref="OnInitialized"/> method is called; otherwise, <c>false</c>.
-    /// </remarks>
-    [MemberNotNullWhen(true, nameof(_lastValue), nameof(_value), nameof(Value))]
-    public bool IsInitialized { get; private set; }
+    /// <inheritdoc />
+    public override bool IsInitialized => _isInitialized;
+
+    /// <inheritdoc />
+    public override T? InitialValue => _initialValue;
 
     /// <inheritdoc/>
     public override T? Value => _value;
@@ -91,8 +90,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// <inheritdoc />
     public void OnInitialized()
     {
-        IsInitialized = true;
+        _isInitialized = true;
         var currentParameterValue = _getParameterValueFunc();
+        _initialValue = currentParameterValue;
         _value = currentParameterValue;
         _lastValue = currentParameterValue;
     }

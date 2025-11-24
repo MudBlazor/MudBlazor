@@ -24,6 +24,23 @@ public abstract class ParameterState<T>
     public abstract T? Value { get; }
 
     /// <summary>
+    /// Gets a value indicating whether the object is initialized.
+    /// </summary>
+    /// <remarks>
+    /// This property is <c>true</c> once the <see cref="ComponentBase.OnInitialized"/> method is called; otherwise, <c>false</c>.
+    /// </remarks>
+    public abstract bool IsInitialized { get; }
+
+    /// <summary>
+    /// Gets the initial value of the parameter at the time <see cref="ComponentBase.OnInitialized"/> is called.
+    /// </summary>
+    /// <remarks>
+    /// This value is captured once when the component is initialized and never changes thereafter,
+    /// even if the <see cref="Value"/> property changes later.
+    /// </remarks>
+    public abstract T? InitialValue { get; }
+
+    /// <summary>
     /// Set the parameter's value. 
     /// </summary>
     /// <remarks>

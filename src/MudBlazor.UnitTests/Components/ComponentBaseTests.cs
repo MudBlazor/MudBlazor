@@ -41,12 +41,12 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        public void Should_prefer_user_id_over_internal_field_id_when_set_after_initialization()
+        public async Task Should_prefer_user_id_over_internal_field_id_when_set_after_initialization()
         {
             var id = "this-is-an-id";
             var comp = Context.RenderComponent<DummyComponentBase>();
 
-            comp.SetParametersAndRender(parameters =>
+            await comp.SetParametersAndRenderAsync(parameters =>
             {
                 parameters.Add(x => x.UserAttributes, new Dictionary<string, object>
                 {
@@ -60,12 +60,12 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        public void Should_fallback_to_internal_field_id_if_user_id_is_invalid()
+        public async Task Should_fallback_to_internal_field_id_if_user_id_is_invalid()
         {
             var comp = Context.RenderComponent<DummyComponentBase>();
             var internalId = comp.Instance.FieldId;
 
-            comp.SetParametersAndRender(parameters =>
+            await comp.SetParametersAndRenderAsync(parameters =>
             {
                 parameters.Add(x => x.UserAttributes, new Dictionary<string, object>
                 {

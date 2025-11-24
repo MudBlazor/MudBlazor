@@ -181,7 +181,7 @@ namespace MudBlazor
         public int? MaxMonthColumns { get; set; }
 
         /// <summary>
-        /// The start month when opening the picker. 
+        /// The start month when opening the picker.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -271,7 +271,7 @@ namespace MudBlazor
         /// The year to use, which cannot be changed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -368,7 +368,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets the n-th week of the currently displayed month. 
+        /// Gets the n-th week of the currently displayed month.
         /// </summary>
         /// <param name="month">offset from _picker_month</param>
         /// <param name="index">between 0 and 4</param>
@@ -418,6 +418,17 @@ namespace MudBlazor
                 _ => null,
             };
             return nextView;
+        }
+
+        protected virtual OpenTo? GetPreviousView()
+        {
+            OpenTo? previousView = CurrentView switch
+            {
+                OpenTo.Date => !FixMonth.HasValue ? OpenTo.Month : !FixYear.HasValue ? OpenTo.Year : null,
+                OpenTo.Month => !FixYear.HasValue ? OpenTo.Year : null,
+                _ => null,
+            };
+            return previousView;
         }
 
         protected virtual async Task SubmitAndCloseAsync()
@@ -599,27 +610,28 @@ namespace MudBlazor
         /// <summary>
         /// Is set to true to scroll to the actual year after the next render
         /// </summary>
-        private bool _scrollToYearAfterRender = false;
+        protected bool _scrollToYearAfterRender = false;
 
         /// <summary>
         /// Scrolls to the current year.
         /// </summary>
-        public async void ScrollToYear()
+        public async Task ScrollToYearAsync(DateTime? date = null)
         {
             _scrollToYearAfterRender = false;
-            var id = $"{_componentId}{Culture.Calendar.GetYear(GetMonthStart(0))}";
+            var dateTime = date ?? GetMonthStart(0);
+            var id = $"{_componentId}{Culture.Calendar.GetYear(dateTime)}";
             await ScrollManager.ScrollToYearAsync(id);
             StateHasChanged();
         }
 
-        private int GetMinYear()
+        protected int GetMinYear()
         {
             if (MinDate.HasValue)
                 return Culture.Calendar.GetYear(MinDate.Value);
             return Culture.Calendar.GetYear(DateTime.Today) - 100;
         }
 
-        private int GetMaxYear()
+        protected int GetMaxYear()
         {
             if (MaxDate.HasValue)
                 return Culture.Calendar.GetYear(MaxDate.Value);
@@ -736,12 +748,12 @@ namespace MudBlazor
 
             if (firstRender && CurrentView == OpenTo.Year)
             {
-                ScrollToYear();
+                ScrollToYearAsync().CatchAndLog();
                 return;
             }
 
             if (_scrollToYearAfterRender)
-                ScrollToYear();
+                ScrollToYearAsync().CatchAndLog();
         }
 
         protected abstract DateTime GetCalendarStartOfMonth();

@@ -1247,16 +1247,6 @@ namespace MudBlazor
             FieldChanged(_selectedValues);
         }
 
-        /// <summary>
-        /// Clears all selections.
-        /// </summary>
-        /// <remarks>
-        /// To reset validation errors (e.g. required), use <see cref="ResetValueAsync"/>
-        /// </remarks>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use ClearAsync instead")]
-        public Task Clear() => ClearAsync();
-
         private async Task SelectAllClickAsync()
         {
             // Manage the fake tri-state of a checkbox
