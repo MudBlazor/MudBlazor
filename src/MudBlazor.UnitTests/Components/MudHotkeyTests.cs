@@ -58,21 +58,27 @@ public class MudHotkeyTests : BunitTest
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
 
-        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerHotkey", It.IsAny<object[]>()));
+        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()));
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()));
 
         Context.Services.AddSingleton(jsRuntimeMock.Object);
         var comp = Context.RenderComponent<MudHotkeyTest>();
 
         // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerHotkey", It.IsAny<object[]>()), Times.Exactly(1));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(1));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Never);
 
         // Act
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, true));
 
         // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerHotkey", It.IsAny<object[]>()), Times.Exactly(1));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(1));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
+
+        // Act
+        comp.Instance.Dispose();
+
+        // Assert
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(2));
     }
 }
