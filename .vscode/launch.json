@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "C#: Docs Compiler Debug",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.Compiler/bin/Debug/net9.0/MudBlazor.Docs.Compiler.dll",
+            "args": ["${workspaceFolder}/src/MudBlazor/obj/Debug/net9.0/MudBlazor.dll"],
+            "cwd": "${workspaceFolder}/src/MudBlazor.Docs",
+        },
+        {
             "name": "unit test viewer (wasm)",
             "type": "blazorwasm",
             "request": "launch",
