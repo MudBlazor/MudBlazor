@@ -5,7 +5,7 @@
 class MudHotkeyListener {
     constructor() {
         this._EVENT_TYPE = "keydown";
-        this._hotkeys = [];
+        this._hotkeys = new Map();
 
         this._handleKeyEventBound = this._handleKeyEvent.bind(this);
         document.addEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
@@ -15,60 +15,40 @@ class MudHotkeyListener {
         document.removeEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
 
-    registerOrUpdateHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault) {
+    registerOrUpdateHotkey(dotnetRef, dotnetMethodId, hotkeyId, key, modifiers, preventDefault) {
         modifiers = modifiers || [];
-        const newHotkey = this._createHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault);
-        const existingIndex = this._getHotkeyIndexById(hotkeyId);
-        
-        if (existingIndex !== -1) {
-            this._hotkeys[existingIndex] = newHotkey;
-        } else {
-            this._hotkeys.push(newHotkey);
-        }
+        const newHotkey = this._createHotkey(dotnetRef, dotnetMethodId, hotkeyId, key, modifiers, preventDefault);
+        this._hotkeys.set(hotkeyId, newHotkey);
     }
 
     unregisterHotkey(hotkeyId) {
-        const existingIndex = this._getHotkeyIndexById(hotkeyId);
-        
-        if (existingIndex !== -1) {
-            this._hotkeys.splice(existingIndex, 1);
+        if (this._hotkeys.has(hotkeyId)) {
+            this._hotkeys.delete(hotkeyId);
         } else {
             console.warn("[MudBlazor] MudHotkey: No matching hotkey found to unregister");
         }
     }
 
-    _getHotkeyIndexById(hotkeyId) {
-        return this._hotkeys.findIndex(h => h.hotkeyId === hotkeyId);
-    }
-
-    _createHotkey(dotnetRef, dotnetMethodId, hotkeyId, keyCode, modifiers, preventDefault) {
+    _createHotkey(dotnetRef, dotnetMethodId, hotkeyId, key, modifiers, preventDefault) {
         return {
             dotnetRef: dotnetRef,
             dotnetMethodId: dotnetMethodId,
             hotkeyId: hotkeyId,
-            keyCode: keyCode,
-            modifiers: modifiers.slice().sort(),
+            key: key,
+            modifiers: new Set(modifiers),
             preventDefault: preventDefault
         };
     }
 
     _handleKeyEvent(e) {
-        const pressedKeyCode = e.keyCode != null ? e.keyCode : e.which;
-        const pressedModifierCodes = [];
-        if (e.ctrlKey) pressedModifierCodes.push(17);
-        if (e.shiftKey) pressedModifierCodes.push(16);
-        if (e.altKey) pressedModifierCodes.push(18);
-        if (e.code === "MetaLeft" || e.keyCode === 91) pressedModifierCodes.push(91);
-        if (e.code === "MetaRight" || e.keyCode === 92) pressedModifierCodes.push(92);
+        const pressedKey = e.code || e.key;
+        const pressedModifiers = this._getPressedModifiers(e);
 
-        for (let i = 0; i < this._hotkeys.length; i++) {
-            const hotkey = this._hotkeys[i];
-            const keyCode = hotkey.keyCode;
+        for (const hotkey of this._hotkeys.values()) {
+            if (pressedKey !== hotkey.key) continue;
 
-            if (pressedKeyCode !== keyCode) continue;
-
-            const allModifiersPressed = hotkey.modifiers.every(m => pressedModifierCodes.includes(m));
-            const noExtraModifiersPressed = pressedModifierCodes.every(m => hotkey.modifiers.includes(m));
+            const allModifiersPressed = [...hotkey.modifiers].every(m => pressedModifiers.has(m));
+            const noExtraModifiersPressed = [...pressedModifiers].every(m => hotkey.modifiers.has(m));
             if (allModifiersPressed && noExtraModifiersPressed) {
                 if (hotkey.preventDefault) {
                     e.preventDefault();
@@ -79,8 +59,8 @@ class MudHotkeyListener {
                     hotkey.dotnetRef.invokeMethodAsync(hotkey.dotnetMethodId);
                 } catch (err) {
                     console.error("[MudBlazor] MudHotkey: DotNet invocation failed", {
-                        keyCode: hotkey.keyCode,
-                        modifiers: hotkey.modifiers,
+                        key: hotkey.key,
+                        modifiers: [...hotkey.modifiers],
                         err: err
                     });
                 }
@@ -88,6 +68,44 @@ class MudHotkeyListener {
                 break;
             }
         }
+    }
+
+    _getPressedModifiers(e) {
+        const pressedModifiers = new Set();
+
+        if (e.ctrlKey) {
+            if (e.code === "ControlRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
+                pressedModifiers.add("ControlRight");
+            } else {
+                pressedModifiers.add("ControlLeft");
+            }
+        }
+
+        if (e.shiftKey) {
+            if (e.code === "ShiftRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
+                pressedModifiers.add("ShiftRight");
+            } else {
+                pressedModifiers.add("ShiftLeft");
+            }
+        }
+
+        if (e.altKey) {
+            if (e.code === "AltRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
+                pressedModifiers.add("AltRight");
+            } else {
+                pressedModifiers.add("AltLeft");
+            }
+        }
+
+        if (e.metaKey) {
+            if (e.code === "MetaRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
+                pressedModifiers.add("MetaRight");
+            } else {
+                pressedModifiers.add("MetaLeft");
+            }
+        }
+
+        return pressedModifiers;
     }
 }
 

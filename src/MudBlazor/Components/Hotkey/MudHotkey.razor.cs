@@ -12,7 +12,7 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudHotkey : MudComponentBase, IAsyncDisposable
 {
-    private readonly string _hotkeyId = Guid.NewGuid().ToString();
+    private readonly string _hotkeyId = Identifier.Create("hotkey");
     private bool _childContentIsVisible;
     private DotNetObjectReference<MudHotkey>? _dotNetObjectReference;
 
@@ -81,6 +81,15 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
     {
         _dotNetObjectReference = DotNetObjectReference.Create(this);
         using var registerScope = CreateRegisterScope();
+        registerScope.RegisterParameter<JsKey>(nameof(Key))
+            .WithParameter(() => Key)
+            .WithChangeHandler(RegisterOrUpdateHotkeyAsync);
+        registerScope.RegisterParameter<IEnumerable<JsKeyModifier>>(nameof(KeyModifiers))
+            .WithParameter(() => KeyModifiers)
+            .WithChangeHandler(RegisterOrUpdateHotkeyAsync);
+        registerScope.RegisterParameter<bool>(nameof(PreventEventPropagation))
+            .WithParameter(() => PreventEventPropagation)
+            .WithChangeHandler(RegisterOrUpdateHotkeyAsync);
         registerScope.RegisterParameter<bool>(nameof(Disabled))
             .WithParameter(() => Disabled)
             .WithChangeHandler(OnDisabledChangedAsync);
@@ -89,16 +98,8 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if (firstRender && !Disabled)
-        {
-            await RegisterOrUpdateHotkeyAsync();
-        }
-    }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-        if (IsJSRuntimeAvailable && !Disabled)
+        if (firstRender && !Disabled)
         {
             await RegisterOrUpdateHotkeyAsync();
         }
@@ -106,17 +107,27 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
 
     private async Task RegisterOrUpdateHotkeyAsync()
     {
+        if (!IsJSRuntimeAvailable)
+        {
+            return;
+        }
+
         await JsRuntime.InvokeVoidAsync("mudHotkeyListener.registerOrUpdateHotkey",
             _dotNetObjectReference,
             nameof(MudHotkeyProviderJsCallback),
             _hotkeyId,
-            Key,
-            KeyModifiers,
+            Key.ToString(),
+            KeyModifiers.Select(m => m.ToString()).ToArray(),
             PreventEventPropagation);
     }
 
     private async Task UnregisterHotkeyAsync()
     {
+        if (!IsJSRuntimeAvailable)
+        {
+            return;
+        }
+
         await JsRuntime.InvokeVoidAsync("mudHotkeyListener.unregisterHotkey", _hotkeyId);
     }
 
@@ -157,6 +168,7 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
         {
             _dotNetObjectReference.Dispose();
             _dotNetObjectReference = null;
+
             await UnregisterHotkeyAsync();
         }
     }
