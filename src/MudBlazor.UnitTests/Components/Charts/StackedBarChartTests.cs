@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartEmptyData()
         {
-            var comp = Context.RenderComponent<StackedBar>();
+            var comp = Context.Render<StackedBar>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.Render<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "650px")
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should()
                 .Contain("d=\"M 587.7 206.9167 L 587.7 162.1667\"");
 
-            comp.SetParametersAndRender(parameters => parameters
+            comp.Render(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Charts
                 new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.Render<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -141,7 +141,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"none\"") && p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(5 * 22);
 
-            comp.SetParametersAndRender(parameters => parameters
+            comp.Render(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

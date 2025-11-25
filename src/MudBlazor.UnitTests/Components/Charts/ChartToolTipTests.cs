@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartEmptyData()
         {
-            var comp = Context.RenderComponent<ChartTooltip>(parameters => parameters
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
                     .Add(p => p.Title, "Some Title")
                     .Add(p => p.Subtitle, "Some Subtitle")
                     .Add(p => p.X, 10.05)

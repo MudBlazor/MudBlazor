@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_Bind_Test()
         {
-            var comp = Context.RenderComponent<ToggleGroupBindTest>();
+            var comp = Context.Render<ToggleGroupBindTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
             IElement ToggleItem() => comp.FindAll(".mud-toggle-item").GetItemByIndex(1);
@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_CustomFragmentBind_Test()
         {
-            var comp = Context.RenderComponent<ToggleGroupCustomFragmentTest>();
+            var comp = Context.Render<ToggleGroupCustomFragmentTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
             IElement ToggleItem() => comp.FindAll(".mud-toggle-item").GetItemByIndex(1);
@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_SelectionMode_Test()
         {
-            var comp = Context.RenderComponent<ToggleGroupBindMultiSelectionTest>();
+            var comp = Context.Render<ToggleGroupBindMultiSelectionTest>();
             var group1 = comp.FindComponents<MudToggleGroup<string>>().First();
             var group2 = comp.FindComponents<MudToggleGroup<string>>().Last();
             IElement ToggleItemSecond() => comp.FindAll(".mud-toggle-item").GetItemByIndex(1);
@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_Initialize_Test()
         {
-            var comp = Context.RenderComponent<ToggleGroupInitializeTest>();
+            var comp = Context.Render<ToggleGroupInitializeTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
 
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_ToggleSelection_Test()
         {
-            var comp = Context.RenderComponent<ToggleGroupToggleSelectionTest>();
+            var comp = Context.Render<ToggleGroupToggleSelectionTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();
             IElement ToggleItem() => comp.FindAll(".mud-toggle-item").GetItemByIndex(0);
 
@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_ToggleRemove_Test()
         {
-            var comp = Context.RenderComponent<ToggleGroupRemoveTest>();
+            var comp = Context.Render<ToggleGroupRemoveTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();
             var toggleGroup = toggle.Instance;
             IElement Button() => comp.Find("#remove_btn");
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Large)]
         public void ToggleGroup_SizeClasses_Test(Size size)
         {
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            var comp = Context.Render<MudToggleGroup<string>>(builder =>
             {
                 builder.Add(x => x.Size, size);
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"));
@@ -151,7 +151,7 @@ namespace MudBlazor.UnitTests.Components
         [Test(Description = "Ensures the checkmark is a direct descendant of the button label, is using the right name, and correctly contains a custom class definition")]
         public void ToggleGroup_CheckMarkClass()
         {
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            var comp = Context.Render<MudToggleGroup<string>>(builder =>
             {
                 builder.Add(x => x.CheckMarkClass, "c69");
                 builder.Add(x => x.CheckMark, true);
@@ -164,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_ItemRegistration_Test()
         {
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            var comp = Context.Render<MudToggleGroup<string>>(builder =>
             {
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"));
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"));
@@ -184,7 +184,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
             foreach (var mode in new[] { SelectionMode.SingleSelection, SelectionMode.ToggleSelection })
             {
-                Context.RenderComponent<MudToggleGroup<string>>(builder =>
+                Context.Render<MudToggleGroup<string>>(builder =>
                 {
                     builder.Add(x => x.SelectionMode, mode);
                     builder.Add(x => x.ValuesChanged, new Action<IEnumerable<string>>(_ => { }));
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
                 logger!.GetEntries().Last().Level.Should().Be(LogLevel.Warning);
                 logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {mode} you should bind {nameof(MudToggleGroup<string>.Value)} instead of {nameof(MudToggleGroup<string>.Values)}");
             }
-            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            Context.Render<MudToggleGroup<string>>(builder =>
             {
                 builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
                 builder.Add(x => x.ValueChanged, new Action<string>(_ => { }));
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
             logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {SelectionMode.MultiSelection} you should bind {nameof(MudToggleGroup<string>.Values)} instead of {nameof(MudToggleGroup<string>.Value)}");
             logger.GetEntries().Count.Should().Be(3);
             // no warning if both are bound
-            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            Context.Render<MudToggleGroup<string>>(builder =>
             {
                 builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
                 builder.Add(x => x.ValueChanged, new Action<string>(_ => { }));
@@ -209,7 +209,7 @@ namespace MudBlazor.UnitTests.Components
             });
             logger.GetEntries().Count.Should().Be(3);
             // no warning if none are bound
-            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            Context.Render<MudToggleGroup<string>>(builder =>
             {
                 builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
             });
@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_Disabled_Test()
         {
-            var comp = Context.RenderComponent<ToggleGroupDisabledTest>();
+            var comp = Context.Render<ToggleGroupDisabledTest>();
             var toggleGroups = comp.FindComponents<MudToggleGroup<string>>();
             var disabledToggleGroup = toggleGroups[0];
             var enabledToggleGroup = toggleGroups[1];
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleGroup_SetSelectedFromValuesTest(SelectionMode selMode, string selectedValues)
         {
             // Arrange
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+            var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters
                 .Add(p => p.SelectionMode, selMode)
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
@@ -261,11 +261,11 @@ namespace MudBlazor.UnitTests.Components
             // Act
             if (selMode == SelectionMode.MultiSelection)
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, [selectedValues]));
+                comp.Render(parameters => parameters.Add(p => p.Values, [selectedValues]));
             }
             else
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Value, selectedValues));
+                comp.Render(parameters => parameters.Add(p => p.Value, selectedValues));
             }
 
             // Assert
@@ -299,7 +299,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleGroup_UnselectPreviousValue_OnToggle_Test(SelectionMode selMode)
         {
             // Arrange
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+            var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters
                 .Add(p => p.SelectionMode, selMode)
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
@@ -332,7 +332,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleGroup_SetSelectedFromValuesTest_WithAsyncItems(SelectionMode selMode, string selectedValues)
         {
             // Arrange
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+            var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters
                 .Add(p => p.SelectionMode, selMode)
                 .AddChildContent<Virtualize<string>>(v =>
                     v.Add(x => x.Items, ["a", "b", "c"])
@@ -347,11 +347,11 @@ namespace MudBlazor.UnitTests.Components
             // Act
             if (selMode == SelectionMode.MultiSelection)
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, [selectedValues]));
+                comp.Render(parameters => parameters.Add(p => p.Values, [selectedValues]));
             }
             else
             {
-                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Value, selectedValues));
+                comp.Render(parameters => parameters.Add(p => p.Value, selectedValues));
             }
 
             // Assert
@@ -382,7 +382,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleGroup_RTLTest(bool isRTL)
         {
             // Arrange
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+            var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters
                 .Add(p => p.RightToLeft, isRTL)
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
@@ -406,7 +406,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleGroup_VerticalTest()
         {
             // Arrange & Act
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+            var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters
                 .Add(p => p.Vertical, true)
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
@@ -418,7 +418,7 @@ namespace MudBlazor.UnitTests.Components
             group.ClassList.Should().NotContain("mud-toggle-group-horizontal");
 
             // Act - set to false
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Vertical, false));
+            comp.Render(parameters => parameters.Add(p => p.Vertical, false));
 
             // Assert
             group = comp.Find(".mud-toggle-group");
@@ -430,7 +430,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleGroup_FixedContentTest()
         {
             // Arrange & Act
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+            var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters
                 .Add(p => p.FixedContent, true)
                 .Add(p => p.CheckMark, true)
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
@@ -440,7 +440,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-toggle-item").ClassList.Should().Contain("mud-toggle-item-fixed");
 
             // Act - disable fixed content
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FixedContent, false));
+            comp.Render(parameters => parameters.Add(p => p.FixedContent, false));
 
             // Assert
             comp.Find(".mud-toggle-item").ClassList.Should().NotContain("mud-toggle-item-fixed");
@@ -450,7 +450,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleGroup_MultipleSelectionTest()
         {
             // Arrange
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+            var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters
                 .Add(p => p.SelectionMode, SelectionMode.MultiSelection)
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
@@ -461,7 +461,7 @@ namespace MudBlazor.UnitTests.Components
             var items = toggleGroup.GetItems().ToList();
 
             // Act - select multiple items
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, ["a", "c"]));
+            comp.Render(parameters => parameters.Add(p => p.Values, ["a", "c"]));
 
             // Assert
             // Verify correct items are selected
@@ -480,7 +480,7 @@ namespace MudBlazor.UnitTests.Components
             toggleGroup.Value.Should().BeNull();
 
             // Act - deselect an item
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, ["a"]));
+            comp.Render(parameters => parameters.Add(p => p.Values, ["a"]));
 
             // Assert
             items.First(x => x.Value == "a").Selected.Should().BeTrue();
@@ -503,7 +503,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_ToggleSelectionTest()
         {
-            var comp = Context.RenderComponent<ToggleGroupInterceptValueTest>();
+            var comp = Context.Render<ToggleGroupInterceptValueTest>();
             IElement GetYesButton() => comp.FindAll(".mud-toggle-group .mud-toggle-item")[0];
             IElement GetNoButton() => comp.FindAll(".mud-toggle-group .mud-toggle-item")[1];
             IElement GetMaybeButton() => comp.FindAll(".mud-toggle-group .mud-toggle-item")[2];

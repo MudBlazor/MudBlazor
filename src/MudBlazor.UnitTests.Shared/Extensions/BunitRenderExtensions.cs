@@ -15,24 +15,28 @@ namespace MudBlazor.UnitTests.Shared.Extensions
     {
         /// <summary>
         /// Renders a component with the specified parameters (bUnit 1.x compatibility).
+        /// Uses the new Render method instead of deprecated RenderComponent.
+        /// The first parameter distinguishes from the built-in Render method.
         /// </summary>
-        public static IRenderedComponent<T> RenderComponent<T>(this BunitContext context, params object[] parameters) where T : IComponent
+        public static IRenderedComponent<T> Render<T>(this BunitContext context, object firstParameter, params object[] additionalParameters) where T : IComponent
         {
-            if (parameters == null || parameters.Length == 0)
-            {
-                Action<ComponentParameterCollectionBuilder<T>>? nullAction = null;
-                return context.Render<T>(nullAction);
-            }
-
             return context.Render<T>((Action<ComponentParameterCollectionBuilder<T>>)(builder =>
             {
-                foreach (var param in parameters)
+                // Add first parameter
+                AddParameterReflection(builder, firstParameter);
+                
+                // Add additional parameters
+                foreach (var param in additionalParameters)
                 {
-                    // Use reflection to call Add on the builder with the internal ComponentParameter
-                    var addMethod = builder.GetType().GetMethod("Add", BindingFlags.Public | BindingFlags.Instance, null, new[] { param.GetType() }, null);
-                    addMethod?.Invoke(builder, new[] { param });
+                    AddParameterReflection(builder, param);
                 }
             }));
+        }
+
+        private static void AddParameterReflection<T>(ComponentParameterCollectionBuilder<T> builder, object param) where T : IComponent
+        {
+            var addMethod = builder.GetType().GetMethod("Add", BindingFlags.Public | BindingFlags.Instance, null, new[] { param.GetType() }, null);
+            addMethod?.Invoke(builder, new[] { param });
         }
     }
 }

@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudTimeSeriesChart>(parameters => parameters
+            var comp = Context.Render<MudTimeSeriesChart>(parameters => parameters
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudTimeSeriesChart>(parameters => parameters
+            var comp = Context.Render<MudTimeSeriesChart>(parameters => parameters
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudTimeSeriesChart>(parameters => parameters
+            var comp = Context.Render<MudTimeSeriesChart>(parameters => parameters
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
@@ -99,7 +99,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudTimeSeriesChart>(parameters => parameters
+            var comp = Context.Render<MudTimeSeriesChart>(parameters => parameters
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
@@ -125,7 +125,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void TimeSeriesChartEmptyData()
         {
-            var comp = Context.RenderComponent<TimeSeries>();
+            var comp = Context.Render<TimeSeries>();
             comp.Markup.Should().Contain("mud-chart-line");
         }
 
@@ -135,7 +135,7 @@ namespace MudBlazor.UnitTests.Charts
             var time = new DateTime(2000, 1, 1);
             var format = "dd/MM HH:mm";
 
-            var comp = Context.RenderComponent<MudTimeSeriesChart>(parameters => parameters
+            var comp = Context.Render<MudTimeSeriesChart>(parameters => parameters
                 .Add(p => p.ChartSeries, new List<TimeSeriesChartSeries>() {
                     new TimeSeriesChartSeries()
                     {

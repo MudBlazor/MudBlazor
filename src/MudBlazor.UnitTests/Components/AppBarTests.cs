@@ -19,10 +19,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithModifiedToolBarClass()
         {
-            var comp = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.ToolBarClass), "test-class"));
+            var comp = Context.Render<MudAppBar>(Parameter(nameof(MudAppBar.ToolBarClass), "test-class"));
 
             // Find the Toolbar inside the AppBar
-            comp.Find("div").ToMarkup()
+            comp.Find("div").OuterHtml
                 .Should()
                 .Contain("test-class");
         }
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomUnset()
         {
-            var bar = Context.RenderComponent<MudAppBar>();
+            var bar = Context.Render<MudAppBar>();
             bar.Markup
                .Should()
                .StartWith("<header")
@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomSetFalse()
         {
-            var bar = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), false));
+            var bar = Context.Render<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), false));
             bar.Markup
                .Should()
                .StartWith("<header")
@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomSetTrue()
         {
-            var bar = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), true));
+            var bar = Context.Render<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), true));
             bar.Markup
                .Should()
                .StartWith("<footer")
@@ -75,14 +75,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBar_WrapContent_ShouldBeFalseByDefault()
         {
-            var comp = Context.RenderComponent<MudAppBar>();
+            var comp = Context.Render<MudAppBar>();
             comp.FindComponent<MudToolBar>().Instance.WrapContent.Should().Be(false);
         }
 
         [Test]
         public void AppBarWithContextualSetTrue()
         {
-            var comp = Context.RenderComponent<ContextualAppBarTest>();
+            var comp = Context.Render<ContextualAppBarTest>();
             var bar = comp.FindComponent<MudAppBar>();
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithContextualSetFalse()
         {
-            var comp = Context.RenderComponent<ContextualAppBarTest>(Parameter(nameof(ContextualAppBarTest.IsContextual), false));
+            var comp = Context.Render<ContextualAppBarTest>(Parameter(nameof(ContextualAppBarTest.IsContextual), false));
             var bar = comp.FindComponent<MudAppBar>();
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");

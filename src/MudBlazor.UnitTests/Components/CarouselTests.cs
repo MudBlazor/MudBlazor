@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CarouselTest1()
         {
-            var comp = Context.RenderComponent<CarouselTest>();
+            var comp = Context.Render<CarouselTest>();
             // print the generated html
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CarouselTest_RenderingOptions()
         {
-            var comp = Context.RenderComponent<MudCarousel<object>>();
+            var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
             // adding some pages
@@ -174,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CarouselTest_AutoCycle()
         {
-            var comp = Context.RenderComponent<MudCarousel<object>>();
+            var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
             // adding some pages
             comp.Instance.Items.Add(new());
@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CarouselTest_SelectedIndexTransition()
         {
-            var comp = Context.RenderComponent<CarouselTest>();
+            var comp = Context.Render<CarouselTest>();
 
             // No change
             comp.Instance.SelectedIndex = 0;
@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CarouselTest_DisableSwipeGesture()
         {
-            var comp = Context.RenderComponent<MudCarousel<object>>();
+            var comp = Context.Render<MudCarousel<object>>();
 
             //Add some pages
             comp.Instance.Items.Add(new MudCarouselItem());
@@ -266,7 +266,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CarouselTest_DataBinding()
         {
-            var comp = Context.RenderComponent<CarouselBindingTest>();
+            var comp = Context.Render<CarouselBindingTest>();
             // print the generated html
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
@@ -298,7 +298,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CarouselTest_AddBullets()
         {
-            var comp = Context.RenderComponent<MudCarousel<object>>();
+            var comp = Context.Render<MudCarousel<object>>();
 
             // check for the default buttons
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
