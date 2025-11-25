@@ -23,8 +23,10 @@ public sealed class MenuContext
     /// Creates a new instance of <see cref="MenuContext"/>.
     /// </summary>
     /// <param name="menu">The menu associated with this context.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="menu"/> is null.</exception>
     internal MenuContext(MudMenu menu)
     {
+        ArgumentNullException.ThrowIfNull(menu);
         _menu = menu;
     }
 

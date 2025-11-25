@@ -18,7 +18,8 @@
     {
         @if (ParentMenu is null)
         {
-            <div @onkeydown="HandleActivatorKeydown"
+            <div @onclick="ToggleMenuAsync"
+                 @onkeydown="HandleActivatorKeydown"
                  disabled="@Disabled"
                  class="@ActivatorClassname"
                  tabindex="0"
