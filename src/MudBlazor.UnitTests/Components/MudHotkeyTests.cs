@@ -85,7 +85,7 @@ public class MudHotkeyTests : BunitTest
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, false));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(5));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
-        
+
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ChildContent, builder => builder.AddContent(0, "New Child Content")));
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.HideChildContentOnRepress, true));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(5));
