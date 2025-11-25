@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 // ReSharper disable once CheckNamespace
 namespace MudBlazor;
@@ -11,8 +12,11 @@ namespace MudBlazor;
 /// <summary>
 /// Provides extension methods for string manipulation and formatting.
 /// </summary>
-internal static class StringExtensions
+internal static partial class StringExtensions
 {
+    [GeneratedRegex("(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z0-9])", RegexOptions.Compiled)]
+    private static partial Regex KebabCaseRegex();
+    
     /// <summary>
     /// Determines whether the specified string is null, empty, or consists only of white-space characters.
     /// </summary>
@@ -41,4 +45,20 @@ internal static class StringExtensions
     /// A string representation of the decimal value formatted as a percentage with up to two decimal places.
     /// </returns>
     public static string ToPercentage(this decimal value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+
+    /// <summary>
+    /// Converts a string to kebab case.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static string ToKebabCase(this string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        return KebabCaseRegex()
+            .Replace(value, "-$1")
+            .Trim()
+            .ToLower();
+    }
 }

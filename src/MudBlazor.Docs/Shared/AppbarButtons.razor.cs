@@ -42,6 +42,16 @@ public partial class AppbarButtons
     };
 
     /// <summary>
+    /// Gets the text for the design language mode toggle button, indicating the next language.
+    /// </summary>
+    public string DesignLanguageButtonText => LayoutService.CurrentTheme.DesignLanguage switch
+    {
+        DesignLanguage.MaterialV2 => "Material V2",
+        DesignLanguage.MaterialV3 => "Material V3",
+        _ => "Material V2"
+    };
+
+    /// <summary>
     /// Gets the icon for the dark/light mode toggle button.
     /// </summary>
     public string DarkLightModeButtonIcon => LayoutService.CurrentDarkLightMode switch
@@ -49,6 +59,16 @@ public partial class AppbarButtons
         DarkLightMode.Dark => Icons.Material.Rounded.AutoMode,
         DarkLightMode.Light => Icons.Material.Outlined.DarkMode,
         _ => Icons.Material.Filled.LightMode
+    };
+
+    /// <summary>
+    /// Gets the icon for the design language toggle button.
+    /// </summary>
+    public string DesignLanguageButtonIcon => LayoutService.CurrentTheme.DesignLanguage switch
+    {
+        DesignLanguage.MaterialV2 => Icons.Material.Filled.LooksTwo,
+        DesignLanguage.MaterialV3 => Icons.Material.Filled.Looks3,
+        _ => Icons.Material.Filled.LooksTwo
     };
 
     private async Task MarkNotificationAsReadAsync()

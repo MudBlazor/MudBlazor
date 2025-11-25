@@ -19,6 +19,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
     private bool _observing;
+    private bool _isJSRuntimeAvailable;
     private const string Palette = "mud-palette";
     private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
@@ -138,6 +139,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     {
         if (firstRender)
         {
+            _isJSRuntimeAvailable = true;
+            
             if (_observeSystemDarkModeChangeState.Value && !_observing)
             {
                 _observing = true;
@@ -156,7 +159,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     // <inheritdoc />
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (Theme is not null)
         {
@@ -164,9 +167,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             {
                 _theme = Theme;
             }
+            
+            if (_isJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsync("setDesignLanguage", Theme.DesignLanguage.ToString().ToKebabCase());
+            }
         }
-
-        base.OnParametersSet();
+        
+        await base.OnParametersSetAsync();
     }
 
     /// <summary>

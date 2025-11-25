@@ -17,5 +17,10 @@ namespace MudBlazor.Docs.Services.UserPreferences
         /// The preferred dark mode configuration.
         /// </summary>
         public DarkLightMode DarkLightTheme { get; set; }
+
+        /// <summary>
+        /// The preferred design language.
+        /// </summary>
+        public DesignLanguage DesignLanguage { get; set; }
     }
 }
