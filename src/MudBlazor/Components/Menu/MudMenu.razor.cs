@@ -240,14 +240,27 @@ namespace MudBlazor
         public bool PositionAtCursor { get; set; }
 
         /// <summary>
-        /// Overrides the default button with a custom component.
+        /// Overrides the default button with custom content that receives a <see cref="MenuContext"/>.
         /// </summary>
         /// <remarks>
-        /// Can be a <see cref="MudButton"/>, <see cref="MudIconButton"/>, or any other component.
+        /// <para>The context provides methods to control the menu: <see cref="MenuContext.OpenMenuAsync"/>,
+        /// <see cref="MenuContext.CloseMenuAsync"/>, <see cref="MenuContext.ToggleMenuAsync"/>, and
+        /// <see cref="MenuContext.CloseAllMenusAsync"/>.</para>
+        /// <para>Example usage:</para>
+        /// <code>
+        /// &lt;MudMenu&gt;
+        ///     &lt;ActivatorContent&gt;
+        ///         &lt;MudButton OnClick="@context.ToggleMenuAsync"&gt;Open Menu&lt;/MudButton&gt;
+        ///     &lt;/ActivatorContent&gt;
+        ///     &lt;ChildContent&gt;
+        ///         &lt;MudMenuItem&gt;Item 1&lt;/MudMenuItem&gt;
+        ///     &lt;/ChildContent&gt;
+        /// &lt;/MudMenu&gt;
+        /// </code>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public RenderFragment? ActivatorContent { get; set; }
+        public RenderFragment<MenuContext>? ActivatorContent { get; set; }
 
         /// <summary>
         /// The action which opens the menu, when <see cref="ActivatorContent"/> is set.

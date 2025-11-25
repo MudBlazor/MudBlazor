@@ -12,15 +12,6 @@ namespace MudBlazor
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
-        /// The menu context for activating a menu when this button is clicked.
-        /// </summary>
-        /// <remarks>
-        /// Default to <c>null</c>. This property is used to activate a menu when the button is clicked.
-        /// </remarks>
-        [CascadingParameter]
-        protected MenuContext? MenuContext { get; set; }
-
-        /// <summary>
         /// The custom activation behavior.
         /// </summary>
         /// <remarks>
@@ -136,7 +127,6 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-            MenuContext?.Activate(this, ev);
             Activatable?.Activate(this, ev);
         }
 

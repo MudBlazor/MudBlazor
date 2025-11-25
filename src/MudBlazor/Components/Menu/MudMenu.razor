@@ -16,37 +16,32 @@
     }
     else if (ActivatorContent is not null)
     {
-        <CascadingValue 
-            Value="@_menuContext" 
-            IsFixed="true">
-            @if (ParentMenu is null)
-            {
-                <div @onclick="ToggleMenuAsync"
-                     @onkeydown="HandleActivatorKeydown"
-                     disabled="@Disabled"
-                     class="@ActivatorClassname"
-                     tabindex="0"
-                     role="button"
-                     aria-haspopup="true"
-                     aria-expanded="@_openState.Value">
-                    @ActivatorContent
-                </div>
-            }
-            else
-            {
-                <MudMenuItem @ref="_menuItemActivator"
-                             Class="mud-menu-sub-menu-activator"
-                             Disabled="@Disabled"
-                             OnClick="OpenSubMenuAsync"
-                             AutoClose="false"
-                             HideSubMenuArrow="true"
-                             aria-haspopup="true"
-                             aria-expanded="@_openState.Value"
-                             aria-label="@AriaLabel">
-                    @ActivatorContent
-                </MudMenuItem>
-            }
-        </CascadingValue>
+        @if (ParentMenu is null)
+        {
+            <div @onkeydown="HandleActivatorKeydown"
+                 disabled="@Disabled"
+                 class="@ActivatorClassname"
+                 tabindex="0"
+                 role="button"
+                 aria-haspopup="true"
+                 aria-expanded="@_openState.Value">
+                @ActivatorContent(_menuContext!)
+            </div>
+        }
+        else
+        {
+            <MudMenuItem @ref="_menuItemActivator"
+                         Class="mud-menu-sub-menu-activator"
+                         Disabled="@Disabled"
+                         OnClick="OpenSubMenuAsync"
+                         AutoClose="false"
+                         HideSubMenuArrow="true"
+                         aria-haspopup="true"
+                         aria-expanded="@_openState.Value"
+                         aria-label="@AriaLabel">
+                @ActivatorContent(_menuContext!)
+            </MudMenuItem>
+        }
     }
     else if (string.IsNullOrEmpty(Icon))
     {

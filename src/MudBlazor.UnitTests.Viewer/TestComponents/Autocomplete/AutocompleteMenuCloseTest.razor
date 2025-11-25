@@ -5,7 +5,7 @@
 
 <MudMenu Label="Open Menu">
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" id="menu-open">OPEN MENU</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" id="menu-open" OnClick="@context.ToggleMenuAsync">OPEN MENU</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem AutoClose="false">

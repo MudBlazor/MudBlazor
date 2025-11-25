@@ -9,12 +9,13 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// The context for a <see cref="MudMenu"/> component.
+/// Provides access to menu operations for external components and custom activators.
 /// </summary>
 /// <remarks>
-/// This context is used to manage activation and state for menu components, centralizing associated logic.
+/// This context is passed to <see cref="MudMenu.ActivatorContent"/> to allow custom activators
+/// to control menu behavior through strongly-typed async methods.
 /// </remarks>
-public class MenuContext
+public sealed class MenuContext
 {
     private readonly MudMenu _menu;
 
@@ -22,25 +23,44 @@ public class MenuContext
     /// Creates a new instance of <see cref="MenuContext"/>.
     /// </summary>
     /// <param name="menu">The menu associated with this context.</param>
-    public MenuContext(MudMenu menu)
+    internal MenuContext(MudMenu menu)
     {
         _menu = menu;
     }
 
     /// <summary>
-    /// Activates the menu, toggling its open or closed state.
+    /// Opens the menu.
     /// </summary>
-    /// <param name="activator">The object which raised the activation event.</param>
-    /// <param name="args">The mouse event arguments for the activation event.</param>
-    public void Activate(object activator, MouseEventArgs args)
-    {
-        // Prevent activation if the activator button has a specific CSS class that marks it as non-activatable.
-        if (activator is MudBaseButton activatorButton &&
-            (activatorButton.Class?.Contains("mud-no-activator") ?? false))
-        {
-            return;
-        }
+    /// <param name="args">
+    /// Optional event arguments. When <see cref="MudMenu.PositionAtCursor"/> is <c>true</c>,
+    /// the menu will be positioned at the coordinates from <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.
+    /// </param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public Task OpenMenuAsync(EventArgs? args = null)
+        => _menu.OpenMenuAsync(args ?? EventArgs.Empty);
 
-        _menu.ToggleMenuAsync(args).CatchAndLog();
-    }
+    /// <summary>
+    /// Closes the menu and any open sub-menus.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public Task CloseMenuAsync()
+        => _menu.CloseMenuAsync();
+
+    /// <summary>
+    /// Toggles the menu between open and closed states.
+    /// </summary>
+    /// <param name="args">
+    /// Optional event arguments. When <see cref="MudMenu.PositionAtCursor"/> is <c>true</c>,
+    /// the menu will be positioned at the coordinates from <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.
+    /// </param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public Task ToggleMenuAsync(EventArgs? args = null)
+        => _menu.ToggleMenuAsync(args ?? EventArgs.Empty);
+
+    /// <summary>
+    /// Closes all menus in the hierarchy, starting from the top-most parent.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public Task CloseAllMenusAsync()
+        => _menu.CloseAllMenusAsync();
 }
