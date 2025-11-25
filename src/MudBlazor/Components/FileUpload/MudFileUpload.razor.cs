@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using MudBlazor.Interfaces;
 using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
