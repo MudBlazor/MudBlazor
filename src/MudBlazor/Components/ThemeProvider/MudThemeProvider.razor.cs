@@ -14,7 +14,7 @@ namespace MudBlazor;
 /// Provides a standard set of colors, shapes, sizes and shadows to a layout.
 /// </summary>
 /// <seealso cref="MudTheme"/>
-partial class MudThemeProvider : ComponentBaseWithState, IDisposable
+partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
@@ -558,22 +558,32 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
     }
 
-    /// <summary>
-    /// Releases resources used by this component.
-    /// </summary>
-    public void Dispose()
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
     {
-        if (!_disposed)
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases managed resources associated with this object asynchronously.
+    /// </summary>
+    /// <returns>The task representing asynchronous execution of this method.</returns>
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        _darkLightModeChanged = null;
+
+        if (_lazyDotNetRef.IsValueCreated)
         {
-            _disposed = true;
-            _darkLightModeChanged = null;
-            if (_lazyDotNetRef.IsValueCreated)
-            {
-                _lazyDotNetRef.Value.Dispose();
-                // When .NET7 is dropped we can use async Dispose, but for now MAUI has bug https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968.
-                _ = StopWatchingDarkThemeMedia();
-            }
+            _lazyDotNetRef.Value.Dispose();
         }
+
+        await StopWatchingDarkThemeMedia();
     }
 
     private Palette? GetCurrentPalette()
