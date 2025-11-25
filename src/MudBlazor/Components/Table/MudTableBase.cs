@@ -13,7 +13,6 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         private int _currentPage = 0;
-        private bool _isFirstRendered = false;
         internal int? _rowsPerPage;
         internal object? _editingItem = null;
         internal bool Editing => _editingItem != null;
@@ -252,7 +251,7 @@ namespace MudBlazor
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
                 CurrentPageChanged.InvokeAsync(_currentPage);
-                if (_isFirstRendered)
+                if (HasRendered)
                 {
                     InvokeServerLoadFunc();
                 }
@@ -638,14 +637,6 @@ namespace MudBlazor
         /// </remarks>
         public abstract TableContext TableContext { get; }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                _isFirstRendered = true;
-
-            return base.OnAfterRenderAsync(firstRender);
-        }
-
         /// <summary>
         /// Changes the current page.
         /// </summary>
@@ -688,7 +679,6 @@ namespace MudBlazor
                 return;
             }
 
-
             var currentPageHasChanged = false;
 
             // On intialization, don't reset CurrentPage
@@ -707,7 +697,7 @@ namespace MudBlazor
                 CurrentPageChanged.InvokeAsync(_currentPage);
             }
 
-            if (_isFirstRendered)
+            if (HasRendered)
             {
                 InvokeServerLoadFunc();
             }

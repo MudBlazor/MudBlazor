@@ -35,8 +35,10 @@ public class ParameterStateTests
         await parameterState.SetValueAsync(NewValue);
 
         // Assert
-        parameterState.Value.Should().Be(NewValue);
         eventFired.Should().BeTrue();
+        parameterState.IsInitialized.Should().BeTrue();
+        parameterState.InitialValue.Should().Be(InitialValue);
+        parameterState.Value.Should().Be(NewValue);
     }
 
     [Test]
@@ -58,6 +60,8 @@ public class ParameterStateTests
         await parameterState.SetValueAsync(InitialValue);
 
         // Assert
+        parameterState.IsInitialized.Should().BeTrue();
+        parameterState.InitialValue.Should().Be(InitialValue);
         parameterState.Value.Should().Be(InitialValue);
         eventFired.Should().BeFalse();
     }
@@ -77,8 +81,9 @@ public class ParameterStateTests
         parameterState.OnInitialized();
 
         // Assert
-        parameterState.Value.Should().Be(InitialValue);
+        parameterState.InitialValue.Should().Be(InitialValue);
         parameterState.IsInitialized.Should().BeTrue();
+        parameterState.Value.Should().Be(InitialValue);
     }
 
     [Test]
@@ -104,6 +109,7 @@ public class ParameterStateTests
         initialValue = NewValue;
         parameterState.OnParametersSet();
         parameterState.Value.Should().Be(NewValue);
+        parameterState.InitialValue.Should().Be(0, because: "OnInitialized wasn't called, so InitialValue remains its default for int");
     }
 
     [Test]

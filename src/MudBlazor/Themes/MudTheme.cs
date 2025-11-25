@@ -9,12 +9,12 @@
         /// <summary>
         /// The palette for the light theme.
         /// </summary>
-        public PaletteLight PaletteLight { get; set; }
+        public Palette PaletteLight { get; set; }
 
         /// <summary>
         /// The palette for the dark theme.
         /// </summary>
-        public PaletteDark PaletteDark { get; set; }
+        public Palette PaletteDark { get; set; }
 
         /// <summary>
         /// The shadow settings.

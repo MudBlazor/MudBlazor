@@ -2,6 +2,7 @@
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Link;
 using NUnit.Framework;
@@ -18,11 +19,44 @@ public class LinkTests : BunitTest
         var comp = Context.RenderComponent<MudLink>();
 
         comp.Instance.Color.Should().Be(Color.Primary);
-        comp.Instance.Typo.Should().Be(Typo.body1);
+        comp.Instance.Typo.Should().Be(Typo.inherit);
         comp.Instance.Underline.Should().Be(Underline.Hover);
         comp.Instance.Href.Should().BeNull();
         comp.Instance.Target.Should().BeNull();
         comp.Instance.Disabled.Should().BeFalse();
+    }
+
+    [Test]
+    public void DefaultTypo_ShouldInheritParentTypography()
+    {
+        var comp = Context.RenderComponent<MudLink>();
+
+        var linkElement = comp.Find("a");
+        linkElement.GetAttribute("class").Should().NotContain("mud-typography-");
+    }
+
+    [Test]
+    public void InlineLink_ShouldRenderWithParentTypography()
+    {
+        var comp = Context.RenderComponent<MudText>(parameters => parameters
+            .Add(p => p.Typo, Typo.caption)
+            .AddChildContent(childBuilder =>
+            {
+                childBuilder.AddContent(0, "MudBlazor is ");
+                childBuilder.OpenComponent<MudLink>(1);
+                childBuilder.AddAttribute(2, nameof(MudLink.ChildContent), (RenderFragment)(linkBuilder => linkBuilder.AddContent(0, "Awesome")));
+                childBuilder.CloseComponent();
+            }));
+
+        var textElement = comp.Find("span.mud-typography");
+        textElement.ClassList.Should().Contain("mud-typography-caption");
+
+        var linkElement = textElement.QuerySelector("a.mud-link")!;
+        linkElement.ClassList.Should().Contain("mud-typography");
+        linkElement.GetAttribute("class").Should().NotContain("mud-typography-");
+        linkElement.TextContent.Should().Be("Awesome");
+
+        comp.MarkupMatches("""<span class="mud-typography mud-typography-caption">MudBlazor is <a class="mud-typography mud-link mud-primary-text mud-link-underline-hover">Awesome</a></span>""");
     }
 
     [Test]
