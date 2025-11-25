@@ -205,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
 
         public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenPicker(object parameter)
         {
-            return OpenPicker(new ComponentParameter[] { parameter });
+            return OpenPicker(new object[] { parameter });
         }
 
         public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenPicker(object[] parameters = null)

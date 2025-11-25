@@ -4,6 +4,7 @@
 
 using System.Reflection;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.UnitTests.Shared
 {
@@ -50,5 +51,17 @@ namespace MudBlazor.UnitTests.Shared
 
         public static object CascadingValue(object value)
             => _createCascadingValueMethod2.Invoke(null, new object[] { value })!;
+
+        /// <summary>
+        /// Creates a parameter with an EventCallback value.
+        /// </summary>
+        public static object EventCallback<T>(string name, Action<T> callback)
+            => Parameter(name, Microsoft.AspNetCore.Components.EventCallback.Factory.Create<T>(null!, callback));
+
+        /// <summary>
+        /// Creates a parameter with an EventCallback value (non-generic).
+        /// </summary>
+        public static object EventCallback(string name, Action callback)
+            => Parameter(name, Microsoft.AspNetCore.Components.EventCallback.Factory.Create(null!, callback));
     }
 }

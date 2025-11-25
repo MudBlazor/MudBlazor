@@ -441,7 +441,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Render<MudThemeProvider>();
 
             //Act
-            Context.DisposeComponents();
+            Context.Dispose();
 
             // Assert
             Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia");

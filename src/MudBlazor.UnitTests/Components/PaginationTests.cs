@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         //returns the specified control button
-        private static IElement FindControlButton(IRenderedComponent<MudPagination> comp, Page controlButton)
+        private static IElement FindControlButton<T>(IRenderedComponent<T> comp, Page controlButton) where T : Microsoft.AspNetCore.Components.IComponent
         {
             var buttons = comp.FindAll(".mud-pagination-item button");
             var button = controlButton switch

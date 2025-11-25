@@ -45,6 +45,22 @@ namespace MudBlazor.UnitTests
             self.Render(builder => AddParameterReflection(builder, Parameter(name, new EventCallback<U>(null, callback))));
         }
 
+        /// <summary>
+        /// Renders a component with the specified parameters (bUnit 1.x compatibility).
+        /// Uses the new Render method instead of deprecated SetParametersAndRender.
+        /// </summary>
+        public static void Render<T>(this IRenderedComponent<T> self, object firstParameter, params object[] additionalParameters) where T : IComponent
+        {
+            self.Render(builder =>
+            {
+                AddParameterReflection(builder, firstParameter);
+                foreach (var param in additionalParameters)
+                {
+                    AddParameterReflection(builder, param);
+                }
+            });
+        }
+
         private static void AddParameterReflection<T>(ComponentParameterCollectionBuilder<T> builder, object param) where T : IComponent
         {
             var addMethod = builder.GetType().GetMethod("Add", BindingFlags.Public | BindingFlags.Instance, null, new[] { param.GetType() }, null);

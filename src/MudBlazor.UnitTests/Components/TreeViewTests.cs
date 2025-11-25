@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
         {
-            var comp = Context.Render<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), true)]);
+            var comp = Context.Render<DisabledTreeViewTest>(Parameter(nameof(MudTreeView<string>.Disabled), true));
             comp.Find("div.mud-treeview-item-content").Click();
             var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
             GetSelectedValue().Should().BeNullOrWhiteSpace();

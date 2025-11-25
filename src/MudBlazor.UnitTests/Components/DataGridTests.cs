@@ -3092,7 +3092,7 @@ namespace MudBlazor.UnitTests.Components
             var items = comp.FindAll("div.mud-list-item");
 
             items.Count.Should().Be(4);
-            items.OuterHtml
+            string.Join("", items.Select(e => e.OuterHtml))
                  .Should().Contain("starts with")
                  .And.Contain("ends with")
                  .And.Contain("equals")
@@ -3706,7 +3706,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridShowMenuIconTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridShowMenuIconTest.Item>>();
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().BeEmpty();
-            var parameters = new List<ComponentParameter>();
+            var parameters = new List<object>();
             parameters.Add(Parameter(nameof(dataGrid.Instance.ShowMenuIcon), true));
             dataGrid.Render(parameters.ToArray());
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().NotBeEmpty();
@@ -3722,7 +3722,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".filter-button").Click();
             var input = comp.FindComponent<MudTextField<string>>();
-            var parameters = new List<ComponentParameter>();
+            var parameters = new List<object>();
             parameters.Add(Parameter(nameof(input.Instance.Value), "test"));
             input.Render(parameters.ToArray());
             comp.Find(".apply-filter-button").Click();
@@ -3878,7 +3878,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<DataGridCustomFilteringTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomFilteringTest.Model>>();
-            var parameters = new List<ComponentParameter>();
+            var parameters = new List<object>();
             parameters.Add(Parameter(nameof(dataGrid.Instance.Filterable), false));
             dataGrid.Render(parameters.ToArray());
             dataGrid.Instance.DropContainerHasChanged();
@@ -4609,7 +4609,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(2);
 
-            var parameters = new List<ComponentParameter>();
+            var parameters = new List<object>();
             parameters.Add(Parameter(nameof(dataGrid.Instance.SelectOnRowClick), false));
             dataGrid.Render(parameters.ToArray());
 
@@ -4648,7 +4648,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
 
-            var parameters = new List<ComponentParameter>
+            var parameters = new List<object>
             {
                 Parameter(nameof(dataGrid.Instance.SelectOnRowClick), false)
             };
