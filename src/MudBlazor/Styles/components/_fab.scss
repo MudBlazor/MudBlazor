@@ -115,17 +115,11 @@
     .mud-fab-label {
       gap: 8px;
     }
-  }
 
-  &.mud-fab-size-small {
-    width: auto;
-    height: 34px;
-    padding: 0 12px;
-    min-width: 34px;
-    border-radius: 17px;
-
-    .mud-fab-label {
-      gap: 4px;
+    html[data-mud-design-language="material-v3"] & {
+      width: auto;
+      height: 96px;
+      border-radius: 28px;
     }
   }
 
@@ -139,6 +133,30 @@
     .mud-fab-label {
       gap: 8px;
     }
+
+    html[data-mud-design-language="material-v3"] & {
+      width: auto;
+      height: 80px;
+      border-radius: 20px;
+    }
+  }
+
+  &.mud-fab-size-small {
+    width: auto;
+    height: 34px;
+    padding: 0 12px;
+    min-width: 34px;
+    border-radius: 17px;
+
+    .mud-fab-label {
+      gap: 4px;
+    }
+
+    html[data-mud-design-language="material-v3"] & {
+      width: auto;
+      height: 56px;
+      border-radius: 16px;
+    }
   }
 }
 
@@ -149,14 +167,32 @@
 .mud-fab-size-small {
   width: 40px;
   height: 40px;
+
+  html[data-mud-design-language="material-v3"] & {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+  }
 }
 
 .mud-fab-size-medium {
   width: 48px;
   height: 48px;
+
+  html[data-mud-design-language="material-v3"] & {
+    width: 80px;
+    height: 80px;
+    border-radius: 28px;
+  }
 }
 
 .mud-fab-size-large {
   width: 56px;
   height: 56px;
+
+  html[data-mud-design-language="material-v3"] & {
+    width: 96px;
+    height: 96px;
+    border-radius: 20px;
+  }
 }

@@ -1,58 +1,66 @@
-﻿namespace MudBlazor
-{
+﻿namespace MudBlazor;
+
 #nullable enable
+
+/// <summary>
+/// Represents the theme settings for the MudBlazor user interface.
+/// </summary>
+public class MudTheme
+{
     /// <summary>
-    /// Represents the theme settings for the MudBlazor user interface.
+    /// The palette for the light theme.
     /// </summary>
-    public class MudTheme
+    public Palette PaletteLight { get; set; }
+
+    /// <summary>
+    /// The palette for the dark theme.
+    /// </summary>
+    public Palette PaletteDark { get; set; }
+
+    /// <summary>
+    /// The shadow settings.
+    /// </summary>
+    public Shadow Shadows { get; set; }
+
+    /// <summary>
+    /// The typography settings.
+    /// </summary>
+    public Typography Typography { get; set; }
+
+    /// <summary>
+    /// The layout properties.
+    /// </summary>
+    public LayoutProperties LayoutProperties { get; set; }
+
+    /// <summary>
+    /// The z-index values.
+    /// </summary>
+    public ZIndex ZIndex { get; set; }
+
+    /// <summary>
+    /// The pseudo CSS styles.
+    /// </summary>
+    public PseudoCss PseudoCss { get; set; }
+    
+    /// <summary>
+    /// The overall design language of this theme.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="DesignLanguage.MaterialV2"/>.
+    /// </remarks>
+    public DesignLanguage DesignLanguage { get; set; } = DesignLanguage.MaterialV2;
+
+    /// <summary>
+    /// Initializes the <see cref="MudTheme"/> class.
+    /// </summary>
+    public MudTheme()
     {
-        /// <summary>
-        /// The palette for the light theme.
-        /// </summary>
-        public Palette PaletteLight { get; set; }
-
-        /// <summary>
-        /// The palette for the dark theme.
-        /// </summary>
-        public Palette PaletteDark { get; set; }
-
-        /// <summary>
-        /// The shadow settings.
-        /// </summary>
-        public Shadow Shadows { get; set; }
-
-        /// <summary>
-        /// The typography settings.
-        /// </summary>
-        public Typography Typography { get; set; }
-
-        /// <summary>
-        /// The layout properties.
-        /// </summary>
-        public LayoutProperties LayoutProperties { get; set; }
-
-        /// <summary>
-        /// The z-index values.
-        /// </summary>
-        public ZIndex ZIndex { get; set; }
-
-        /// <summary>
-        /// The pseudo CSS styles.
-        /// </summary>
-        public PseudoCss PseudoCss { get; set; }
-
-        /// <summary>
-        /// Initializes the <see cref="MudTheme"/> class.
-        /// </summary>
-        public MudTheme()
-        {
-            PaletteLight = new PaletteLight();
-            PaletteDark = new PaletteDark();
-            Shadows = new Shadow();
-            Typography = new Typography();
-            LayoutProperties = new LayoutProperties();
-            ZIndex = new ZIndex();
-            PseudoCss = new PseudoCss();
-        }
+        PaletteLight = new PaletteLight();
+        PaletteDark = new PaletteDark();
+        Shadows = new Shadow();
+        Typography = new Typography();
+        LayoutProperties = new LayoutProperties();
+        ZIndex = new ZIndex();
+        PseudoCss = new PseudoCss();
     }
 }

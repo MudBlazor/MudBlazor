@@ -82,6 +82,7 @@ public class LayoutService
             {
                 RightToLeft = false,
                 DarkLightTheme = DarkLightMode.System,
+                DesignLanguage = DesignLanguage.MaterialV2
             };
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
         }
@@ -89,6 +90,7 @@ public class LayoutService
         {
             IsRTL = _userPreferences.RightToLeft;
             CurrentDarkLightMode = _userPreferences.DarkLightTheme;
+            CurrentTheme.DesignLanguage = _userPreferences.DesignLanguage;
             UpdateDarkModeState();
         }
     }
@@ -122,6 +124,23 @@ public class LayoutService
         UpdateDarkModeState();
 
         _userPreferences.DarkLightTheme = CurrentDarkLightMode;
+        await _userPreferencesService.SaveUserPreferences(_userPreferences);
+        OnMajorUpdateOccurred();
+    }
+
+    /// <summary>
+    /// Cycles through the available design languages and saves the new preference.
+    /// </summary>
+    public async Task CycleDesignLanguageAsync()
+    {
+        CurrentTheme.DesignLanguage = CurrentTheme.DesignLanguage switch
+        {
+            DesignLanguage.MaterialV2 => DesignLanguage.MaterialV3,
+            DesignLanguage.MaterialV3 => DesignLanguage.MaterialV2,
+            _ => DesignLanguage.MaterialV2,
+        };
+        
+        _userPreferences.DesignLanguage = CurrentTheme.DesignLanguage;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
         OnMajorUpdateOccurred();
     }
