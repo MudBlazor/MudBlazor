@@ -512,7 +512,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CurrentPalette_ShouldUpdateToLight_WhenDarkModeChangesToFalse()
+        public void CurrentPalette_ShouldUpdateToLight_WhenDarkModeChangesToFalse()
         {
             // Arrange
             var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
@@ -530,7 +530,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CurrentPalette_ShouldUpdateToDark_WhenDarkModeChangesToTrue()
+        public void CurrentPalette_ShouldUpdateToDark_WhenDarkModeChangesToTrue()
         {
             // Arrange
             var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
@@ -571,7 +571,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CurrentPaletteChanged_ShouldFire_WhenDarkModeChanges()
+        public void CurrentPaletteChanged_ShouldFire_WhenDarkModeChanges()
         {
             // Arrange
             Palette? capturedPalette = null;
@@ -589,7 +589,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CurrentPalette_ShouldUpdate_WhenThemeChanges()
+        public void CurrentPalette_ShouldUpdate_WhenThemeChanges()
         {
             // Arrange
             var theme1 = new MudTheme
@@ -624,7 +624,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CurrentPalette_ShouldReflectBothDarkModeAndThemeChanges()
+        public void CurrentPalette_ShouldReflectBothDarkModeAndThemeChanges()
         {
             // Arrange
             var customTheme = new MudTheme

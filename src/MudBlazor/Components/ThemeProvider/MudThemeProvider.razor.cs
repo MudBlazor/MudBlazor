@@ -19,7 +19,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
     private bool _observing;
-    private bool _currentPaletteInitialized;
     private const string Palette = "mud-palette";
     private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
@@ -29,8 +28,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
     private MudTheme? _theme;
     private readonly ParameterState<bool> _isDarkModeState;
-    private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
     private readonly ParameterState<Palette?> _currentPaletteState;
+    private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
     private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
     private event Func<bool, Task>? _darkLightModeChanged;
@@ -101,8 +100,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         using var registerScope = CreateRegisterScope();
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
-            .WithEventCallback(() => IsDarkModeChanged)
-            .WithChangeHandler(OnIsDarkModeChangedAsync);
+            .WithEventCallback(() => IsDarkModeChanged);
         _observeSystemDarkModeChangeState = registerScope
             .RegisterParameter<bool>(nameof(ObserveSystemDarkModeChange))
             .WithParameter(() => ObserveSystemDarkModeChange)
@@ -180,22 +178,15 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     // <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
-        var themeChanged = false;
         if (Theme is not null)
         {
             if (!ReferenceEquals(_theme, Theme))
             {
                 _theme = Theme;
-                themeChanged = true;
             }
         }
 
-        // Update CurrentPalette on first initialization or when theme changes
-        if (themeChanged || !_currentPaletteInitialized)
-        {
-            _currentPaletteInitialized = true;
-            await UpdateCurrentPaletteAsync();
-        }
+        await _currentPaletteState.SetValueAsync(GetCurrentPalette());
 
         await base.OnParametersSetAsync();
     }
@@ -583,19 +574,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
                 _ = StopWatchingDarkThemeMedia();
             }
         }
-    }
-
-    private Task OnIsDarkModeChangedAsync(ParameterChangedEventArgs<bool> arg)
-    {
-        return _currentPaletteState.SetValueAsync(GetCurrentPalette());
-    }
-
-    /// <summary>
-    /// Updates the current palette based on the current dark mode setting.
-    /// </summary>
-    private Task UpdateCurrentPaletteAsync()
-    {
-        return _currentPaletteState.SetValueAsync(GetCurrentPalette());
     }
 
     private Palette? GetCurrentPalette()
