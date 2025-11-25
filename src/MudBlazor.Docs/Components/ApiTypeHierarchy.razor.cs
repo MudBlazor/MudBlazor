@@ -73,10 +73,6 @@ public sealed partial class ApiTypeHierarchy
             // Now check for types inheriting from this type
             foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
             {
-                if (primaryItem is null)
-                {
-                    continue;
-                }
 
                 var children = primaryItem.Children?.ToList() ?? new List<ITreeItemData<DocumentedType>>();
                 children.Add(new TreeItemData<DocumentedType>
