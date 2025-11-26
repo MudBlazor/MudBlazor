@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ScrollToTopTest()
         {
-            var comp = Context.Render<ScrollToTopTest>();
+            var comp = Context.RenderComponent<ScrollToTopTest>();
 
             comp.Instance.Clicked.Should().BeFalse(because: "Not clicked yet");
 

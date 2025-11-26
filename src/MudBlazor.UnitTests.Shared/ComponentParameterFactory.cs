@@ -6,7 +6,7 @@ using System.Reflection;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.UnitTests.Shared
+namespace Bunit
 {
     /// <summary>
     /// Compatibility layer for bUnit 2.x migration.

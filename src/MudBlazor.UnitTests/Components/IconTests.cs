@@ -1,7 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;
+using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
@@ -16,13 +16,13 @@ namespace MudBlazor.UnitTests.Components
             var colorStyle = "color: greenyellow;";
             var icon = Parameter(nameof(MudIcon.Icon), Icons.Material.Filled.Add);
             var style = Parameter(nameof(MudIcon.Style), colorStyle);
-            var comp = Context.Render<MudIcon>(icon, style);
+            var comp = Context.RenderComponent<MudIcon>(icon, style);
             comp.Markup.Trim().Should().StartWith("<svg")
                 .And.Contain(Icons.Material.Filled.Add)
                 .And.Contain($"style=\"{colorStyle}\"");
 
             icon = Parameter(nameof(MudIcon.Icon), "customicon");
-            comp.Render(icon, style);
+            comp.SetParametersAndRender(icon, style);
             comp.Markup.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"style=\"{colorStyle}\"");
@@ -38,12 +38,12 @@ namespace MudBlazor.UnitTests.Components
             //svg
             var icon = Parameter(nameof(MudIcon.Icon), Icons.Material.Filled.Add);
             var titleParam = Parameter(nameof(MudIcon.Title), title);
-            var comp = Context.Render<MudIcon>(icon, titleParam);
+            var comp = Context.RenderComponent<MudIcon>(icon, titleParam);
             comp.Find("svg Title").TextContent.Should().Be(title);
 
             //class
             icon = Parameter(nameof(MudIcon.Icon), "customicon");
-            comp.Render(icon, titleParam);
+            comp.SetParametersAndRender(icon, titleParam);
             comp.Markup.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");
@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldParseCorrectSyntax()
         {
-            var comp = Context.Render<MudIcon>(parameters =>
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
                 parameters.Add(parameter => parameter.Icon, "material-symbols-outlined/database"));
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined\" aria-hidden=\"true\" role=\"img\">database</span>");
@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldNotParseWhenWrongSyntax()
         {
-            var comp = Context.Render<MudIcon>(parameters =>
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
                 parameters.Add(parameter => parameter.Icon, "material-symbols-outlined(database)"));
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined(database)\" aria-hidden=\"true\" role=\"img\"></span>");
@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldNotParseWhenEmpty()
         {
-            var comp = Context.Render<MudIcon>(parameters =>
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
                 parameters.Add(parameter => parameter.Icon, string.Empty));
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium \" aria-hidden=\"true\" role=\"img\"></span>");
@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldUseChildContentWhenAssigned()
         {
-            var comp = Context.Render<MudIcon>(parameters =>
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
                 parameters
                     .Add(parameter => parameter.Icon, "material-symbols-outlined")
                     .AddChildContent("database"));
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldBeEmptyChildContent()
         {
-            var comp = Context.Render<MudIcon>(parameters =>
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
                 parameters
                     .Add(parameter => parameter.Icon, "material-symbols-outlined"));
 

@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         public void SnackbarSetUp()
         {
             _service = Context.Services.GetService<ISnackbar>();
-            _provider = Context.Render<MudSnackbarProvider>();
+            _provider = Context.RenderComponent<MudSnackbarProvider>();
             _provider.Find("#mud-snackbar-container").InnerHtml.Trimmed().Should().BeEmpty();
         }
 
@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TestWithRenderFragmentLiteral()
         {
-            var testComponent = Context.Render<SnackbarRenderFragmentMessageTest>();
+            var testComponent = Context.RenderComponent<SnackbarRenderFragmentMessageTest>();
 
             testComponent.Find("button").Click();
             _provider.WaitForAssertion(() =>
@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TestWithCustomComponent()
         {
-            var testComponent = Context.Render<SnackbarCustomComponentMessageTest>();
+            var testComponent = Context.RenderComponent<SnackbarCustomComponentMessageTest>();
 
             testComponent.Find("button").Click();
             _provider.WaitForAssertion(() =>
@@ -241,7 +241,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SnackbarIconConfigurationTest()
         {
-            var testComponent = Context.Render<SnackbarIconConfiguationTest>();
+            var testComponent = Context.RenderComponent<SnackbarIconConfiguationTest>();
 
             testComponent.Find("button").Click();
 

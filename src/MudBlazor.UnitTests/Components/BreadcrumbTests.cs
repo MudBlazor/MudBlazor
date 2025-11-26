@@ -1,7 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithSeparators()
         {
-            var comp = Context.Render<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
             {
                 new("Link 1", "link1"),
                 new("Link 2", "link2"),
@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithIcons()
         {
-            var comp = Context.Render<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
             {
                 new("Link 1", "link1", icon: Icons.Material.Filled.Home),
                 new("Link 2", "link2", icon: Icons.Material.Filled.List),
@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldCollapseWhenMaxItemsIsReached()
         {
-            var comp = Context.Render<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
             {
                 new("Link 1", "link1"),
                 new("Link 2", "link2"),
@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudBreadcrumbs_Other()
         {
-            var comp = Context.Render<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
             {
                 new("Link 1", "link1"),
                 new("Link 2", "link2"),

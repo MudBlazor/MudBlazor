@@ -18,10 +18,8 @@ public class TestsForExamples
             var cb = new CodeBuilder();
 
             cb.AddHeader();
-            cb.AddLine("using Bunit;");
             cb.AddLine("using MudBlazor.Docs.Examples;");
             cb.AddLine("using MudBlazor.Docs.Wireframes;");
-            cb.AddLine("using MudBlazor.UnitTests.Shared.Extensions;");
             cb.AddLine("using NUnit.Framework;");
             cb.AddLine();
 
@@ -50,7 +48,7 @@ public class TestsForExamples
                 cb.AddLine($"public void {componentName}_Test()");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                cb.AddLine($"ctx.Render<{componentName}>((Action<ComponentParameterCollectionBuilder<{componentName}>>?)null);");
+                cb.AddLine($"ctx.RenderComponent<{componentName}>();");
                 cb.IndentLevel--;
                 cb.AddLine("}");
             }

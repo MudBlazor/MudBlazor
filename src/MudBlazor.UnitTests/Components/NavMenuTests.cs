@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavMenuTests_DefaultValues()
         {
-            var comp = Context.Render<MudNavMenu>();
+            var comp = Context.RenderComponent<MudNavMenu>();
 
             comp.Instance.Bordered.Should().Be(false);
             comp.Instance.Color.Should().Be(Color.Default);
@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavMenuTests_CheckAllStyling()
         {
-            var comp = Context.Render<MudNavMenu>(x =>
+            var comp = Context.RenderComponent<MudNavMenu>(x =>
             {
                 x.Add(p => p.Bordered, true);
                 x.Add(p => p.Color, Color.Success);
@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void One_Way_Bindable()
         {
-            var comp = Context.Render<NavMenuOneWay>();
+            var comp = Context.RenderComponent<NavMenuOneWay>();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
@@ -77,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Two_Way_Bindable()
         {
-            var comp = Context.Render<NavMenuTwoWay>();
+            var comp = Context.RenderComponent<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
             var expanded = comp.Instance.Expanded;

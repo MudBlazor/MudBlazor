@@ -20,7 +20,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void ActiveNavGroups_Should_BeFocusable()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
         var navGroups = comp
             .FindComponents<MudNavGroup>()
             .Where(navGroup => navGroup.Instance.Disabled is false)
@@ -43,7 +43,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void DisabledNavGroups_Should_NotBeFocusable()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
         var navGroups = comp
             .FindComponents<MudNavGroup>()
             .Where(navGroup => navGroup.Instance.Disabled)
@@ -66,7 +66,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void ActiveNavLinkInActiveNavGroup_Should_BeFocusable()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
 
         comp.FindAll("#second-level-navgroup a.mud-nav-link:not(.mud-nav-link-disabled)").Should().HaveCount(1);
         comp.FindAll("#second-level-navgroup a.mud-nav-link:not(.mud-nav-link-disabled)")
@@ -84,7 +84,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void DisabledNavLinksInActiveNavGroup_Should_NotBeFocusable()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
 
         comp.FindAll("#second-level-navgroup a.mud-nav-link.mud-nav-link-disabled").Should().HaveCount(2);
         comp.FindAll("#second-level-navgroup a.mud-nav-link.mud-nav-link-disabled")
@@ -102,7 +102,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void EverythingWithinDisabledNavGroups_Should_NotBeFocusable()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>(parameters =>
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.TopLevelDisabled, true));
 
         comp.FindAll("[tabindex]").Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("tabindex").Should().Be("-1"));
@@ -114,7 +114,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void MudCollapseWithinCollapsedNavGroup_Should_BeAriaHidden()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>(parameters =>
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.TopLevelExpanded, false));
 
         comp.FindAll(".mud-collapse-container").Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("true"));
@@ -126,7 +126,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void MudCollapseWithinExpandedNavGroup_Should_NotBeAriaHidden()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
 
         comp.FindAll("#second-level-navgroup .mud-collapse-container").Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("false"));
     }
@@ -137,7 +137,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void NavGroupButtons_Should_HaveCorrectAriaExpandedValue()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
         var navGroups = comp.FindComponents<MudNavGroup>();
 
         navGroups
@@ -156,7 +156,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void NavGroupButtons_Should_HaveValidAriaControlsValue_And_NavMenus_Should_HaveAnId()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
         var navGroups = comp.FindComponents<MudNavGroup>();
         var navMenus = comp.FindComponents<MudNavMenu>();
         var ariaControlsIds = navGroups
@@ -179,7 +179,7 @@ public class NavigationAccessibilityTests : BunitTest
     [Test]
     public void NavGroupButtons_Should_HaveAriaLabel()
     {
-        var comp = Context.Render<NavigationAccessibilityTest>();
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
         var navGroups = comp.FindComponents<MudNavGroup>();
 
         navGroups
@@ -199,7 +199,7 @@ public class NavigationAccessibilityTests : BunitTest
     public void NavGroups_Should_HaveAriaLabel_WhenTitleIsProvided()
     {
         var expectedTitle = "expected title";
-        var comp = Context.Render<NavigationAccessibilityTest>(parameters =>
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.SecondLevelTitle, expectedTitle));
 
         comp.Find("#second-level-navgroup")
@@ -215,7 +215,7 @@ public class NavigationAccessibilityTests : BunitTest
     public void NavGroupButtonsAriaLabel_Should_ContainTitle_WhenTitleIsProvided()
     {
         var expectedTitle = "expected title";
-        var comp = Context.Render<NavigationAccessibilityTest>(parameters =>
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.SecondLevelTitle, expectedTitle));
 
         comp.Find("#second-level-navgroup > button")

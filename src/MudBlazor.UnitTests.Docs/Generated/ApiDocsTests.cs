@@ -3,25 +3,22 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Api;
-#pragma warning disable CS0619 // Type or member is obsolete
 using MudBlazor.Docs.Services;
-#pragma warning disable CS0619 // Type or member is obsolete
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.Shared.Extensions;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;
+
 namespace MudBlazor.UnitTests.Docs.Generated
 {
     [TestFixture]
     public partial class ApiDocsTests
     {
-        private Bunit.BunitContext ctx;
+        private Bunit.TestContext ctx;
 
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.BunitContext();
+            ctx = new Bunit.TestContext();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton(TimeProvider.System);
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
@@ -54,7 +51,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
         public async Task AlertPage_Test()
         {
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
-            var comp = ctx.Render<MudBlazor.Docs.Pages.Components.Alert.AlertPage>((Action<ComponentParameterCollectionBuilder<MudBlazor.Docs.Pages.Components.Alert.AlertPage>>?)null);
+            var comp = ctx.RenderComponent<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
         }
 
@@ -65,7 +62,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
         public async Task MudAlert_API_Test_Example()
         {
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
-            var comp = ctx.Render<Api>(Parameter("TypeName", "MudAlert"));
+            var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter("TypeName", "MudAlert"));
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
             comp.Markup.Should().NotContain("Sorry, the type").And.NotContain("could not be found");
             var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));

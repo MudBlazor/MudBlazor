@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void LineChartEmptyData()
         {
-            var comp = Context.Render<Bar>();
+            var comp = Context.RenderComponent<Bar>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.Render<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Charts
                 d.Should().Contain("M 30 127.1154 L 103.75 91.9423 L 177.5 98.75 L 251.25 80.5962 L 325 82.8654 L 398.75 68.1154 L 472.5 216.75 L 546.25 35.2115 L 620 306.3846");
             }
 
-            comp.Render(parameters => parameters
+            comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
 
-            comp.Render(parameters => parameters
+            comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.CanHideSeries, true)
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
 
@@ -158,7 +158,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.Render<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Charts
                     break;
             }
 
-            comp.Render(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
             comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Charts
                 new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.Render<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -242,7 +242,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(22);
 
-            comp.Render(parameters => parameters
+            comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");

@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.Shared.ComponentParameterFactory;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Default()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             var picker = comp.Instance;
 
             picker.Text.Should().Be(null);
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerOpenButtonDefaultAriaLabel()
         {
-            var comp = Context.Render<DatePickerValidationTest>();
+            var comp = Context.RenderComponent<DatePickerValidationTest>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerLabelFor()
         {
-            var comp = Context.Render<DatePickerValidationTest>();
+            var comp = Context.RenderComponent<DatePickerValidationTest>();
             var label = comp.Find(".mud-input-label");
             label.Attributes.GetNamedItem("for")?.Value.Should().Be("datePickerLabelTest");
         }
@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerInputId()
         {
-            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>(parameters => parameters
                 .Add(c => c.InputId, "birthday"));
 
             comp.Find("input[id='birthday']").Should().NotBeNull();
@@ -70,12 +70,12 @@ namespace MudBlazor.UnitTests.Components
         public void DatePicker_Render_Performance()
         {
             // warmup
-            Context.Render<MudDatePicker>();
+            Context.RenderComponent<MudDatePicker>();
             // measure
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 1000; i++)
             {
-                Context.Render<MudDatePicker>();
+                Context.RenderComponent<MudDatePicker>();
             }
 
             watch.Stop();
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePicker_OpenClose_Performance()
         {
             // warmup
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             var datepicker = comp.Instance;
             // measure
             var watch = Stopwatch.StartNew();
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePicker_Should_ApplyDateFormat()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePicker_Should_ApplyDateFormatAfterDate()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePicker_Should_ApplyCultureDateFormat()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -174,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePicker_Should_DateFormatTakesPrecedenceOverCulture()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -189,21 +189,21 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ReadOnlyShouldNotHaveClearButton()
         {
-            var comp = Context.Render<MudDatePicker>(p => p
+            var comp = Context.RenderComponent<MudDatePicker>(p => p
                 .Add(x => x.Text, "some value")
                 .Add(x => x.Clearable, true)
                 .Add(x => x.ReadOnly, false));
 
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
-            comp.Render(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
 
         [Test]
         public void DatePicker_Should_Clear()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
@@ -223,7 +223,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataPicker_ShouldClearText_WhenDateSetNull()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
 
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
 
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -268,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataPicker_ShouldDisplayError_WhenTextSetToInvalidValue()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
 
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -282,7 +282,7 @@ namespace MudBlazor.UnitTests.Components
         public void Check_Initial_Date_Format()
         {
             DateTime? date = new DateTime(2021, 1, 13);
-            var comp = Context.Render<MudDatePicker>(parameters => parameters
+            var comp = Context.RenderComponent<MudDatePicker>(parameters => parameters
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
                 .Add(p => p.DateFormat, "dd/MM/yyyy")
                 .Add(p => p.Date, date)
@@ -301,7 +301,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.Date.Should().Be(DateTime.MaxValue);
 
-            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("31")).OuterHtml.Should().Contain("mud-selected");
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("31")).ToMarkup().Should().Contain("mud-selected");
             comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 31 Dec");
             comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("9999");
         }
@@ -316,11 +316,11 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<SimpleMudDatePickerTest> comp;
             if (parameters is null)
             {
-                comp = Context.Render<SimpleMudDatePickerTest>();
+                comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             }
             else
             {
-                comp = Context.Render<SimpleMudDatePickerTest>(parameters);
+                comp = Context.RenderComponent<SimpleMudDatePickerTest>(parameters);
             }
 
             // should not be open
@@ -467,7 +467,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerStaticWithPickerActionsDayClick_Test()
         {
-            var comp = Context.Render<DatePickerStaticTest>();
+            var comp = Context.RenderComponent<DatePickerStaticTest>();
             var picker = comp.FindComponent<MudDatePicker>();
 
             picker.Markup.Should().Contain("mud-selected"); //confirm selected date is shown
@@ -487,7 +487,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerBindingTest()
         {
-            var comp = Context.Render<DatePickerBindingTest>();
+            var comp = Context.RenderComponent<DatePickerBindingTest>();
 
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             comp.Find(".mud-input-adornment button").Click();
@@ -553,7 +553,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_FixYear_Click2ndMonth_Click3_CheckDate()
         {
-            var comp = OpenPicker(Parameter("FixYear", 2021));
+            var comp = OpenPicker(ComponentParameter.CreateParameter("FixYear", 2021));
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
             comp.Find("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Click();
@@ -567,7 +567,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_FixDay_ClickYear_Click2ndMonth_CheckDate()
         {
-            var comp = OpenPicker(Parameter("FixDay", 1));
+            var comp = OpenPicker(ComponentParameter.CreateParameter("FixDay", 1));
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year").First(x => x.TrimmedText().Contains("2022")).Click();
@@ -579,7 +579,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_FixMonth_ClickYear_Click3_CheckDate()
         {
-            var comp = OpenPicker(Parameter("FixMonth", 1));
+            var comp = OpenPicker(ComponentParameter.CreateParameter("FixMonth", 1));
             comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(0);
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
@@ -593,7 +593,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_FixYear_FixMonth_Click3_CheckDate()
         {
-            var comp = OpenPicker(new[] { Parameter("FixMonth", 1), Parameter("FixYear", 2022) });
+            var comp = OpenPicker(new[] { ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixYear", 2022) });
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
@@ -606,7 +606,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_FixMonth_FixDay_ClickYear2022_CheckDate()
         {
-            var comp = OpenPicker(new[] { Parameter("OpenTo", OpenTo.Year), Parameter("FixMonth", 1), Parameter("FixDay", 1) });
+            var comp = OpenPicker(new[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Year), ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixDay", 1) });
             comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count.Should().Be(0);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year").First(x => x.TrimmedText().Contains("2022")).Click();
@@ -616,7 +616,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_FixYear_FixDay_Click3rdMonth_CheckDate()
         {
-            var comp = OpenPicker(new[] { Parameter("OpenTo", OpenTo.Month), Parameter("FixYear", 2022), Parameter("FixDay", 1) });
+            var comp = OpenPicker(new[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Month), ComponentParameter.CreateParameter("FixYear", 2022), ComponentParameter.CreateParameter("FixDay", 1) });
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
@@ -641,7 +641,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = Context.Render<SimpleMudDatePickerTest>();
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // open programmatically
             await comp.InvokeAsync(comp.Instance.Open);
@@ -660,7 +660,7 @@ namespace MudBlazor.UnitTests.Components
             cal.GetMonth(date).Should().Be(11);
             cal.GetDayOfMonth(date).Should().Be(26);
             // ---------------------------------------------------------------
-            var comp = Context.Render<PersianDatePickerTest>();
+            var comp = Context.RenderComponent<PersianDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
             await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
 
@@ -671,7 +671,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task PersianCalendarTest_GoToDate()
         {
             var cal = new PersianCalendar();
-            var comp = Context.Render<PersianDatePickerTest>();
+            var comp = Context.RenderComponent<PersianDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
             await comp.InvokeAsync(() => datePicker.OpenAsync());
             datePicker.Text.Should().Be("1399/11/26");
@@ -690,7 +690,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
             timeProvider.SetUtcNow(new DateTime(2025, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
-            var comp = Context.Render<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
+            var comp = Context.RenderComponent<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
             await comp.InvokeAsync(() => datePicker.OpenAsync());
 
@@ -706,7 +706,7 @@ namespace MudBlazor.UnitTests.Components
             var cal = new PersianCalendar();
             var date = new DateTime(1404, 1, 1, cal);
 
-            var comp = Context.Render<PersianDatePickerTest>(parameter => parameter.Add(p => p.Date, date).Add(p => p.FixDay, 1));
+            var comp = Context.RenderComponent<PersianDatePickerTest>(parameter => parameter.Add(p => p.Date, date).Add(p => p.FixDay, 1));
 
             comp.FindAll("button.mud-picker-month").Count.Should().Be(0);
             comp.Find("input").Click();
@@ -719,7 +719,7 @@ namespace MudBlazor.UnitTests.Components
         public void SetPickerValue_CheckText()
         {
             var date = DateTime.Now;
-            var comp = Context.Render<MudDatePicker>(
+            var comp = Context.RenderComponent<MudDatePicker>(
                 Parameter(nameof(MudDatePicker.Date), date));
             // select elements needed for the test
             var picker = comp.Instance;
@@ -926,7 +926,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var wasEventCallbackCalled = false;
             Func<DateTime, bool> isDisabledFunc = _ => true;
-            var comp = Context.Render<MudDatePicker>(
+            var comp = Context.RenderComponent<MudDatePicker>(
                 Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
             );
@@ -943,7 +943,7 @@ namespace MudBlazor.UnitTests.Components
             var wasEventCallbackCalled = false;
             var today = DateTime.Today;
             Func<DateTime, bool> isDisabledFunc = date => date < today;
-            var comp = Context.Render<MudDatePicker>(
+            var comp = Context.RenderComponent<MudDatePicker>(
                 Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
             );
@@ -998,7 +998,7 @@ namespace MudBlazor.UnitTests.Components
             var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
-            var comp = Context.Render<AutoCompleteDatePickerTest>();
+            var comp = Context.RenderComponent<AutoCompleteDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
 
             // Open the datepicker
@@ -1071,7 +1071,7 @@ namespace MudBlazor.UnitTests.Components
             var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
-            var comp = Context.Render<SimpleMudDatePickerTest>();
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             var picker = comp.Instance;
 
             // Open the datepicker
@@ -1108,7 +1108,7 @@ namespace MudBlazor.UnitTests.Components
                 now = picker.Date.Value;
             }
 
-            comp.Render(p => p.Add(x => x.Readonly, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.Readonly, true));
 
             // Open the datepicker
             await picker.Open();
@@ -1135,7 +1135,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckDateTimeMinValueTest()
         {
             // Get access to the datepicker of the instance
-            var comp = Context.Render<DateTimeMinValueDatePickerTest>();
+            var comp = Context.RenderComponent<DateTimeMinValueDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
 
             // Open the datepicker
@@ -1155,7 +1155,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void CheckButtonTypeTest(bool navigateToMonthSelection)
         {
-            var dateComp = Context.Render<MudDatePicker>(p =>
+            var dateComp = Context.RenderComponent<MudDatePicker>(p =>
             p.Add(x => x.PickerVariant, PickerVariant.Dialog));
 
             //open picker
@@ -1171,14 +1171,14 @@ namespace MudBlazor.UnitTests.Components
             //expected values
             foreach (var button in buttons)
             {
-                button.OuterHtml.Contains("type=\"button\"").Should().BeTrue();
+                button.ToMarkup().Contains("type=\"button\"").Should().BeTrue();
             }
         }
 
         [Test]
         public async Task DatePickerTest_Editable()
         {
-            var comp = Context.Render<SimpleMudDatePickerTest>();
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
 
             var cultureInfo = new CultureInfo("en-US");
 
@@ -1199,7 +1199,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePickerTest_KeyboardNavigation()
         {
-            var comp = Context.Render<SimpleMudDatePickerTest>();
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
 
@@ -1253,7 +1253,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePickerTest_GoToDate()
         {
-            var comp = Context.Render<SimpleMudDatePickerTest>();
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
 
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
 
@@ -1273,7 +1273,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePickerTest_CheckIfMonthsAreDisabled()
         {
-            var comp = Context.Render<SimpleMudDatePickerTest>();
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
 
@@ -1320,7 +1320,7 @@ namespace MudBlazor.UnitTests.Components
         {
             string? changedText = null;
 
-            var comp = Context.Render<MudDatePicker>(EventCallback<string>("TextChanged", x => changedText = x));
+            var comp = Context.RenderComponent<MudDatePicker>(EventCallback<string>("TextChanged", x => changedText = x));
 
             comp.SetParam(x => x.Editable, true);
             comp.SetParam(x => x.ImmediateText, true);
@@ -1365,7 +1365,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OldDateWithDefinedKind_SetValue_KindUnchanged()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
             var picker = comp.Instance;
             var oldDate = DateTime.Now;
             var newDate = oldDate.AddDays(1);
@@ -1380,7 +1380,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Display_SelectedDate_WhenWrapped()
         {
-            var comp = Context.Render<WrappedDatePickerTest>();
+            var comp = Context.RenderComponent<WrappedDatePickerTest>();
 
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             comp.Find(".mud-input-adornment button").Click();
@@ -1397,7 +1397,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
-            var comp = Context.Render<MudDatePicker>(parameters =>
+            var comp = Context.RenderComponent<MudDatePicker>(parameters =>
                 parameters.Add(p => p.Label, "Test Label"));
 
             comp.Find("input").Id.Should().NotBeNullOrEmpty();
@@ -1412,7 +1412,7 @@ namespace MudBlazor.UnitTests.Components
         public void DatePickerWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
             var expectedId = "test-id";
-            var comp = Context.Render<MudDatePicker>(parameters
+            var comp = Context.RenderComponent<MudDatePicker>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
                     .Add(p => p.UserAttributes, new Dictionary<string, object?>
@@ -1431,7 +1431,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OptionalDatePicker_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
@@ -1443,7 +1443,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RequiredDatePicker_Should_HaveRequiredAndAriaRequiredAttributes()
         {
-            var comp = Context.Render<MudDatePicker>(parameters => parameters
+            var comp = Context.RenderComponent<MudDatePicker>(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
@@ -1456,12 +1456,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RequiredAndAriaRequiredDatePickerAttributes_Should_BeDynamic()
         {
-            var comp = Context.Render<MudDatePicker>();
+            var comp = Context.RenderComponent<MudDatePicker>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
-            comp.Render(parameters => parameters
+            comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
@@ -1478,7 +1478,7 @@ namespace MudBlazor.UnitTests.Components
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
             timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
-            var comp = Context.Render<DatePickerCustomDateTest>();
+            var comp = Context.RenderComponent<DatePickerCustomDateTest>();
 
             // click to open menu
             comp.Find("input").Click();
@@ -1493,7 +1493,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DatePickerWithFixYearAndFixMonthTest()
         {
-            var comp = Context.Render<FixYearFixMonthTest>();
+            var comp = Context.RenderComponent<FixYearFixMonthTest>();
             await comp.Find("input").TriggerEventAsync("onclick", new MouseEventArgs());
             await Task.Delay(500);
             comp.Find(".mud-button-year").GetInnerText().Should().Be("2022");
@@ -1505,9 +1505,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePickerToolbar_DisplaysSelectedDate()
         {
             var selectedDate = new DateTime(2025, 1, 10);
-            var comp = Context.Render<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
+            var comp = Context.RenderComponent<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
 
-            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).OuterHtml.Should().Contain("mud-selected");
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ToMarkup().Should().Contain("mud-selected");
             comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 10 Jan");
             comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("2025");
 
@@ -1517,7 +1517,7 @@ namespace MudBlazor.UnitTests.Components
             //toolbar should display 2025 Fri, 10 Jan
             comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("2025");
             comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 10 Jan");
-            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).OuterHtml.Should().NotContain("mud-selected");
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ToMarkup().Should().NotContain("mud-selected");
 
             //select new month
             await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
@@ -1526,7 +1526,7 @@ namespace MudBlazor.UnitTests.Components
             //toolbar should display 2025 Fri, 10 Jan
             comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("2025");
             comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 10 Jan");
-            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).OuterHtml.Should().NotContain("mud-selected");
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ToMarkup().Should().NotContain("mud-selected");
 
             //select new year
             await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
@@ -1543,34 +1543,34 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePicker_HighlightSelectedMonthOnly()
         {
             var selectedDate = new DateTime(2025, 1, 10);
-            var comp = Context.Render<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
+            var comp = Context.RenderComponent<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
 
             //go to month view
             await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
 
             //confirm Jan is highlighted
-            comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).OuterHtml.Should().Contain("mud-picker-month-selected");
+            comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).ToMarkup().Should().Contain("mud-picker-month-selected");
 
             //select new month (March)
             await comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Mar")).ClickAsync(new MouseEventArgs());
             await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
 
             //confirm Jan is highlighted
-            comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).OuterHtml.Should().Contain("mud-picker-month-selected");
+            comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).ToMarkup().Should().Contain("mud-picker-month-selected");
 
             //change year
             await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
             await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
 
             //confirm no month is highlighted
-            comp.Find(".mud-picker-month-container").OuterHtml.Should().NotContain("mud-picker-month-selected");
+            comp.Find(".mud-picker-month-container").ToMarkup().Should().NotContain("mud-picker-month-selected");
 
             //back to present year
             await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Next year']").ClickAsync(new MouseEventArgs());
             await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Next year']").ClickAsync(new MouseEventArgs());
 
             //confirm Jan is highlighted
-            comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).OuterHtml.Should().Contain("mud-picker-month-selected");
+            comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).ToMarkup().Should().Contain("mud-picker-month-selected");
         }
 
         [Test]
@@ -1578,21 +1578,21 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePicker_HighlightSelectedYearOnly()
         {
             var selectedDate = new DateTime(2025, 1, 10);
-            var comp = Context.Render<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
+            var comp = Context.RenderComponent<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
 
             //go to year view
             await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
             await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync(new MouseEventArgs());
 
             //2025 is highlighted
-            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).OuterHtml.Should().Contain("mud-picker-year-selected");
+            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
 
             //select new year
             await comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2020")).ClickAsync(new MouseEventArgs());
             await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync(new MouseEventArgs());
 
             //2025 is still highlighted
-            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).OuterHtml.Should().Contain("mud-picker-year-selected");
+            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
         }
 
         [Test]
@@ -1600,7 +1600,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePicker_JumpToYear()
         {
             var selectedDate = new DateTime(2025, 1, 10);
-            var comp = Context.Render<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
+            var comp = Context.RenderComponent<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
             var picker = comp.Instance;
 
             await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
@@ -1616,13 +1616,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync(new MouseEventArgs());
 
             picker.PickerReference.PickerMonth!.Value.Year.Should().Be(2020);
-            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).OuterHtml.Should().Contain("mud-picker-year-selected");
+            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
 
             //Jump to 2025
             await comp.Find("button.mud-button-year").ClickAsync(new MouseEventArgs());
 
             picker.PickerReference.PickerMonth!.Value.Year.Should().Be(2025);
-            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).OuterHtml.Should().Contain("mud-picker-year-selected");
+            comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
         }
     }
 }

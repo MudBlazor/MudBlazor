@@ -6,7 +6,7 @@ using MudBlazor.UnitTests.Shared.Mocks;
 
 namespace MudBlazor.UnitTests.Shared.Extensions
 {
-    public static class BunitContextExtensions
+    public static class TestContextExtensions
     {
         public static void AddTestServices(this BunitContext ctx)
         {

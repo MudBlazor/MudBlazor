@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(2, true)]
         public async Task MessageBox_Should_ReturnTrue(int clickButtonIndex, bool? expectedResult)
         {
-            var comp = Context.Render<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(2, true)]
         public async Task MessageBox_Should_ReturnTrueWithMarkupVariant(int clickButtonIndex, bool? expectedResult)
         {
-            var comp = Context.Render<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_NoOptions_NoMudDefaults()
         {
-            var comp = Context.Render<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = (DialogService)Context.Services.GetService<IDialogService>()!;
             service.Should().NotBe(null);
@@ -181,7 +181,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_WithOptions_NoMudDefaults()
         {
-            var comp = Context.Render<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = (DialogService)Context.Services.GetService<IDialogService>();
             service.Should().NotBe(null);
@@ -251,7 +251,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_NoOptions_WithMudDefaults()
         {
-            var comp = Context.Render<MudDialogProvider>(builder =>
+            var comp = Context.RenderComponent<MudDialogProvider>(builder =>
             {
                 builder.Add(p => p.CloseOnEscapeKey, true);
             });

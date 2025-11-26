@@ -3,24 +3,21 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
-#pragma warning disable CS0619 // Type or member is obsolete
 using MudBlazor.UnitTests.Docs.Mocks;
-#pragma warning disable CS0619 // Type or member is obsolete
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-using MudBlazor.UnitTests.Shared.Extensions;
 
 namespace MudBlazor.UnitTests.Docs.Generated
 {
     [TestFixture]
     public partial class ExampleDocsTests
     {
-        private Bunit.BunitContext ctx;
+        private Bunit.TestContext ctx;
 
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.BunitContext();
+            ctx = new Bunit.TestContext();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton(TimeProvider.System);
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());

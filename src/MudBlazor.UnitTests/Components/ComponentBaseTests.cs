@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void Should_have_consistent_field_id_when_user_id_is_not_provided()
         {
-            var comp = Context.Render<DummyComponentBase>();
+            var comp = Context.RenderComponent<DummyComponentBase>();
 
             comp.Instance.FieldId.Should().Be(comp.Instance.FieldId);
         }
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests
         public void Should_prefer_user_id_over_internal_field_id()
         {
             var id = "this-is-an-id";
-            var comp = Context.Render<DummyComponentBase>(parameters =>
+            var comp = Context.RenderComponent<DummyComponentBase>(parameters =>
             {
                 parameters.Add(x => x.UserAttributes, new Dictionary<string, object>
                 {
@@ -44,9 +44,9 @@ namespace MudBlazor.UnitTests
         public void Should_prefer_user_id_over_internal_field_id_when_set_after_initialization()
         {
             var id = "this-is-an-id";
-            var comp = Context.Render<DummyComponentBase>();
+            var comp = Context.RenderComponent<DummyComponentBase>();
 
-            comp.Render(parameters =>
+            comp.SetParametersAndRender(parameters =>
             {
                 parameters.Add(x => x.UserAttributes, new Dictionary<string, object>
                 {
@@ -62,10 +62,10 @@ namespace MudBlazor.UnitTests
         [Test]
         public void Should_fallback_to_internal_field_id_if_user_id_is_invalid()
         {
-            var comp = Context.Render<DummyComponentBase>();
+            var comp = Context.RenderComponent<DummyComponentBase>();
             var internalId = comp.Instance.FieldId;
 
-            comp.Render(parameters =>
+            comp.SetParametersAndRender(parameters =>
             {
                 parameters.Add(x => x.UserAttributes, new Dictionary<string, object>
                 {

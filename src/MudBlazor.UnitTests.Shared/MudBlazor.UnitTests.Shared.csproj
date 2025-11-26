@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CS0619</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
