@@ -67,6 +67,60 @@ public class ParameterStateTests
     }
 
     [Test]
+    public async Task SetValueAsync_And_Value_Middleware()
+    {
+        // Arrange
+        const int Initial = 5;
+        var logs = new List<string>();
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Initial)))
+            .WithGetParameterValueFunc(() => Initial)
+            .WithMiddleware(
+                onRead: value =>
+                {
+                    logs.Add($"Read middleware: input={value}, +1");
+                    return value + 1;
+                },
+                onWriteAsync: async (value, next) =>
+                {
+                    logs.Add($"Write middleware: input={value}, +4");
+                    value += 4;
+                    await next(value);
+                    logs.Add($"Write middleware: completed next with value={value}");
+                })
+            .Attach();
+
+        // Act
+        parameterState.OnInitialized();
+
+        // Assert
+        parameterState.Value.Should().Be(
+            6,
+            because: "Read middleware adds 1 to the initial value (5 + 1 = 6)"
+        );
+
+        logs.Should().ContainInOrder("Read middleware: input=5, +1");
+
+        // Act
+        await parameterState.SetValueAsync(Initial);
+
+        // Assert
+        parameterState.Value.Should().Be(
+            10,
+            because: "Write middleware adds 4 to 5 (5 + 4 = 9), then read middleware adds 1 (9 + 1 = 10)"
+        );
+
+        logs.Should().ContainInOrder(
+            "Read middleware: input=5, +1",
+            "Write middleware: input=5, +4",
+            "Read middleware: input=5, +1",
+            "Write middleware: completed next with value=9",
+            "Read middleware: input=9, +1"
+        );
+    }
+
+    [Test]
     public void OnInitialized_SetsInitialValue()
     {
         // Arrange

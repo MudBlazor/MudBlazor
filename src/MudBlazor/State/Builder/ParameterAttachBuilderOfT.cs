@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
+using MudBlazor.State.Middleware;
 
 namespace MudBlazor.State.Builder;
 
@@ -26,6 +27,7 @@ internal class ParameterAttachBuilder<T>
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private IParameterEqualityComparerSwappable<T>? _comparer;
+    private IParameterMiddleware<T>[]? _middlewares;
 
     /// <summary>
     /// Sets the metadata for the parameter.
@@ -148,11 +150,63 @@ internal class ParameterAttachBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Sets the function to provide the comparer for the parameter, converting it to a comparer of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="TFrom">The type of the original comparer.</typeparam>
+    /// <param name="comparerFromFunc">The function to provide the original comparer.</param>
+    /// <param name="comparerToFunc">The function to convert the original comparer to a comparer of type <typeparamref name="T"/>.</param>
+    /// <param name="comparerParameterName">The parameter's comparer name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithComparer<TFrom>(Func<IEqualityComparer<TFrom>> comparerFromFunc, Func<IEqualityComparer<TFrom>, IEqualityComparer<T>> comparerToFunc, [CallerArgumentExpression(nameof(comparerFromFunc))] string? comparerParameterName = null)
     {
         _comparer = new ParameterEqualityComparerTransformSwappable<TFrom, T>(comparerFromFunc, comparerToFunc);
 
         return this;
+    }
+
+    /// <summary>
+    /// Sets the parameter middlewares to be applied to this parameter.
+    /// </summary>
+    /// <param name="middlewares">An array of <see cref="IParameterMiddleware{T}"/> instances that will be executed for read and write operations on the parameter.</param>
+    /// <remarks>
+    /// Middlewares are invoked when the parameter value is read or written through the <see cref="ParameterState{T}"/> pipeline.
+    /// The order of the array determines the invocation order.
+    /// </remarks>
+    /// <returns>The current instance of the builder.</returns>
+    public ParameterAttachBuilder<T> WithMiddleWare(params IParameterMiddleware<T>[] middlewares)
+    {
+        _middlewares = middlewares;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Convenience overload that registers a middleware created from inline lambda delegates.
+    /// </summary>
+    /// <param name="onRead">
+    /// Optional delegate invoked when the parameter value is read. Receives the current value (maybe <c>null</c>) and should
+    /// return the value that should be observed after middleware processing (either the same value or a transformed value).
+    /// </param>
+    /// <param name="onWriteAsync">
+    /// Optional asynchronous delegate invoked when the parameter value is written. Receives the incoming value and a <c>next</c>
+    /// delegate that invokes the next stage in the write pipeline. Call <c>await next(value)</c> to continue the pipeline and pass
+    /// the (optionally modified) value; omitting the call will short-circuit the pipeline.
+    /// </param>
+    /// <returns>The current instance of the builder.</returns>
+    /// <remarks>
+    /// This method constructs a <see cref="LambdaParameterMiddleware{T}"/> from the supplied delegates and registers it by delegating to <see cref="WithMiddleWare"/>.
+    /// Use this overload for small, inline middleware logic without creating a dedicated middleware type.
+    /// Middleware execution order is determined by registration order and can affect overall behaviour.
+    /// <para>
+    /// Note: this overload creates and registers a single middleware instance (a <see cref="LambdaParameterMiddleware{T}"/>).
+    /// To register multiple middlewares, use <see cref="WithMiddleWare(IParameterMiddleware{T}[])"/>.
+    /// </para>
+    /// </remarks>
+    public ParameterAttachBuilder<T> WithMiddleware(Func<T?, T>? onRead = null, Func<T, Func<T, Task>, Task>? onWriteAsync = null)
+    {
+        var middleware = new LambdaParameterMiddleware<T>(onRead, onWriteAsync);
+        return WithMiddleWare(middleware);
     }
 
     /// <summary>
@@ -167,6 +221,7 @@ internal class ParameterAttachBuilder<T>
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,
+            _middlewares,
             _comparer
         );
     }

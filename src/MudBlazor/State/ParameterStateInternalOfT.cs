@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Invocation;
+using MudBlazor.State.Middleware;
 using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
@@ -35,6 +36,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     private readonly IParameterEqualityComparerSwappable<T> _comparer;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
     private readonly IParameterChangedHandler<T>? _parameterChangedHandler;
+    private readonly IReadOnlyList<IParameterMiddleware<T>> _middlewares;
 
     [MemberNotNullWhen(true, nameof(_parameterChangedEventArgs))]
     private bool HasParameterChangedEventArgs => _parameterChangedEventArgs is not null;
@@ -53,38 +55,56 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     public override T? InitialValue => _initialValue;
 
     /// <inheritdoc/>
-    public override T? Value => _value;
+    public override T? Value => OnRead(_value);
+
+    // TODO: Do we need this?
+    //public override T? RawValue => _value;
 
     /// <summary>
     /// Gets the function to provide the comparer for the parameter.
     /// </summary>
     public IParameterEqualityComparerSwappable<T> Comparer => _comparer;
 
-    private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
+    private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterMiddleware<T>[]? middlewares = null, IParameterEqualityComparerSwappable<T>? comparer = null)
     {
         Metadata = metadata;
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
+        _middlewares = middlewares ?? [];
         _comparer = comparer ?? new ParameterEqualityComparerSwappable<T>(() => EqualityComparer<T>.Default);
         _lastValue = default;
         _value = default;
     }
 
     /// <inheritdoc/>
-    public override Task SetValueAsync(T value)
+    public override async Task SetValueAsync(T value)
     {
-        if (!_comparer.Equals(Value, value))
+        Task Final(T incomingValue)
         {
-            _value = value;
-            var eventCallback = _eventCallbackFunc();
-            if (eventCallback.HasDelegate)
+            if (!_comparer.Equals(Value, incomingValue))
             {
-                return eventCallback.InvokeAsync(value);
+                _value = incomingValue;
+                var eventCallback = _eventCallbackFunc();
+                if (eventCallback.HasDelegate)
+                {
+                    return eventCallback.InvokeAsync(incomingValue);
+                }
             }
+            return Task.CompletedTask;
         }
 
-        return Task.CompletedTask;
+        var pipeline = Final;
+
+        // Pipeline from last to first to preserve registration order
+        for (var i = _middlewares.Count - 1; i >= 0; i--)
+        {
+            var middleware = _middlewares[i];
+            var next = pipeline;
+            pipeline = incomingValue => middleware.OnWriteAsync(incomingValue, next);
+        }
+
+        await pipeline(value);
     }
 
     /// <inheritdoc />
@@ -147,6 +167,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: comparer))
         {
             changed = true;
+            // TODO: Do we need middleware OnRead here, does the change handler should receive transformed new value (and current value)?
             _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newValue);
         }
 
@@ -163,16 +184,17 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
     ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
+    ///  <param name="middlewares">An optional array of <see cref="IParameterMiddleware{T}"/> instances to apply to the parameter. Middlewares are invoked for both reads and writes of the parameter value and are executed in the order they are provided. Use middlewares to transform, validate, or short-circuit read/write operations.</param>
     ///  <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     ///  <remarks>
     ///  For details and usage please read CONTRIBUTING.md
     ///  </remarks>
     ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterStateInternal<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
+    public static ParameterStateInternal<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterMiddleware<T>[]? middlewares = null, IParameterEqualityComparerSwappable<T>? comparer = null)
     {
         metadata = ParameterMetadataRules.Morph(metadata);
 
-        return new ParameterStateInternal<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparer);
+        return new ParameterStateInternal<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, middlewares, comparer);
     }
 
     /// <inheritdoc />
@@ -199,4 +221,15 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 
     /// <inheritdoc />
     public override int GetHashCode() => Metadata.ParameterName.GetHashCode();
+
+    private T? OnRead(T? currentValue)
+    {
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        foreach (var middleware in _middlewares)
+        {
+            currentValue = middleware.OnRead(currentValue);
+        }
+
+        return currentValue;
+    }
 }
