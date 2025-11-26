@@ -524,6 +524,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ActionRequiresInteractionByDefault()
+        {
+            Snackbar snackbar = null;
+
+            await _provider.InvokeAsync(() =>
+                snackbar = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 0;
+                    c.HideTransitionDuration = 0;
+                    c.VisibleStateDuration = 10;
+                    c.Action = "Close";
+                    c.OnClick = _ => Task.CompletedTask;
+                })
+            );
+
+            snackbar.Should().NotBeNull();
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            await Task.Delay(200);
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            _provider.Find(".mud-snackbar-action-button").Click();
+
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task ActionAllowsAutoDismissWhenDisabled()
+        {
+            await _provider.InvokeAsync(() =>
+                _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 0;
+                    c.HideTransitionDuration = 0;
+                    c.VisibleStateDuration = 10;
+                    c.Action = "Close";
+                    c.RequireInteraction = false;
+                })
+            );
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
         public async Task CannotStopCloseTransition()
         {
             // Set up the snackbar.

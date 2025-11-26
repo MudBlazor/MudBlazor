@@ -22,7 +22,7 @@ namespace MudBlazor
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
         private bool _keyInterceptorObserving = false;
-        private string _elementId = Identifier.Create("picker");
+        private readonly string _elementId = Identifier.Create("picker");
 
         public MudPicker() : base(new Converter<T, string>()) { }
 
@@ -75,13 +75,11 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-#pragma warning disable CS0618 // Type or member is obsolete
         protected string PopoverClassname =>
             new CssBuilder("mud-picker-popover")
                 // We can't use the Elevation parameter because it requires Paper=true; Instead we define the class explicitly.
-                .AddClass($"mud-elevation-{Elevation ?? MudGlobal.PopoverDefaults.Elevation}")
+                .AddClass($"mud-elevation-{Elevation ?? 8}")
                 .Build();
-#pragma warning restore CS0618 // Type or member is obsolete
 
         protected string ActionsClassname =>
             new CssBuilder("mud-picker-actions")
@@ -162,27 +160,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Square { get; set; }
 
         /// <summary>
         /// Shows rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The text displayed below the text field.
@@ -312,13 +304,11 @@ namespace MudBlazor
         /// The display variant of the text input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.InputDefaults.Variant"/>.
+        /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// The location of the <see cref="AdornmentIcon"/> for the input.
@@ -364,7 +354,7 @@ namespace MudBlazor
         /// Occurs when <see cref="Text"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<string> TextChanged { get; set; }
+        public EventCallback<string?> TextChanged { get; set; }
 
         /// <summary>
         /// Updates <see cref="Text"/> immediately upon typing when <see cref="Editable"/> is <c>true</c>.
@@ -388,7 +378,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string? Text
+        public virtual string? Text
         {
             get => _text;
             set => SetTextAsync(value, true).CatchAndLog();
@@ -413,26 +403,22 @@ namespace MudBlazor
         /// The amount of vertical spacing for the text input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Margin.None"/> in <see cref="MudGlobal.InputDefaults.Margin"/>.
+        /// Defaults to <see cref="Margin.None"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
         /// Shows the label inside the text input if no <see cref="Text"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// Defaults to <c>false</c>.
         /// When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool ShrinkLabel { get; set; }
 
         /// <summary>
         /// The mask to apply to input values when <see cref="Editable"/> is <c>true</c>.
@@ -504,7 +490,7 @@ namespace MudBlazor
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
-        protected async Task SetTextAsync(string? value, bool callback)
+        protected virtual async Task SetTextAsync(string? value, bool callback)
         {
             if (_text != value)
             {
@@ -721,6 +707,20 @@ namespace MudBlazor
 
         protected virtual Task OnPickerClosedAsync() => PickerClosed.InvokeAsync(this);
 
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to read directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        protected virtual string? ReadText => Text;
+
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to write directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        protected virtual Task WriteTextAsync(string? value)
+        {
+            Text = value;
+            return Task.CompletedTask;
+        }
+
         protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
@@ -731,7 +731,7 @@ namespace MudBlazor
                     if (args.CtrlKey && args.ShiftKey)
                     {
                         await ClearAsync();
-                        _value = default;
+                        await WriteValueAsync(default);
                         await ResetAsync();
                     }
 

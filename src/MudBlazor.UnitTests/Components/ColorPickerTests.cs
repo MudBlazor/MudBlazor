@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
+using MudBlazor.Extensions;
 using MudBlazor.Resources;
 using MudBlazor.UnitTests.TestComponents.ColorPicker;
 using MudBlazor.Utilities;
@@ -37,29 +38,29 @@ namespace MudBlazor.UnitTests.Components
         private const string _mudToolbarButtonsCssSelector = ".mud-toolbar button";
 
         private static readonly MudColor[] _mudGridDefaultColors = new MudColor[]
-                        {
-                "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
-                "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
-                "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
-                "#2e6c8c","#1841a3","#280c72","#591e77","#6f223d","#a62c17","#a0451a","#a06b23","#9f7d28","#c3bc3c","#9da436","#587934",
-                "#3c8ab0","#2155ce","#331c8e","#702898","#8d2e4f","#d03a20","#ca5a24","#c8862e","#c99f35","#f3ec4e","#c6d047","#729b44",
-                "#479fd3","#2660f5","#4725ab","#8c33b5","#aa395d","#eb512e","#ed732e","#f3ae3d","#f5c944","#fefb67","#ddeb5c","#86b953",
-                "#59c4f7","#4e85f6","#5733e2","#af43eb","#d44a7a","#ed6c59","#ef8c56","#f3b757","#f6cd5b","#fef881","#e6ee7a","#a3d16e",
-                "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
-                "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
-                "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
-                        };
+        {
+            "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
+            "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
+            "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
+            "#2e6c8c","#1841a3","#280c72","#591e77","#6f223d","#a62c17","#a0451a","#a06b23","#9f7d28","#c3bc3c","#9da436","#587934",
+            "#3c8ab0","#2155ce","#331c8e","#702898","#8d2e4f","#d03a20","#ca5a24","#c8862e","#c99f35","#f3ec4e","#c6d047","#729b44",
+            "#479fd3","#2660f5","#4725ab","#8c33b5","#aa395d","#eb512e","#ed732e","#f3ae3d","#f5c944","#fefb67","#ddeb5c","#86b953",
+            "#59c4f7","#4e85f6","#5733e2","#af43eb","#d44a7a","#ed6c59","#ef8c56","#f3b757","#f6cd5b","#fef881","#e6ee7a","#a3d16e",
+            "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
+            "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
+            "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
+        };
 
         private static readonly MudColor[] _mudGridPaletteDefaultColors = new MudColor[]
-                {
-                   "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
-                  "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
-                  "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
-                  "#c9cccf", "#13b8e8", "#14dc71", "#fdd22f", "#ff9102",
-                  "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
-                  "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
-                  "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
-                };
+        {
+            "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
+            "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
+            "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
+            "#c9cccf", "#13b8e8", "#14dc71", "#fdd22f", "#ff9102",
+            "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
+            "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
+            "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
+        };
 
         private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {
@@ -123,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        private IHtmlInputElement[] GetColorInputs(IRenderedComponent<SimpleColorPickerTest> comp, int expectedCount = 4)
+        private static IHtmlInputElement[] GetColorInputs(IRenderedComponent<SimpleColorPickerTest> comp, int expectedCount = 4)
         {
             var inputs = comp.FindAll(".mud-picker-color-inputs input");
 
@@ -135,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
             return castedInputs;
         }
 
-        private IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
+        private static IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
 
         [Test]
         public void ColorPickerOpenButtonDefaultAriaLabel()
@@ -491,65 +492,65 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Toggle_Toolbar()
+        public async Task Toggle_Toolbar()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowToolbar, true));
 
             _ = comp.Find(_toolbarCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowToolbar, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowToolbar, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_toolbarCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowToolbar, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowToolbar, true));
 
             _ = comp.Find(_toolbarCssSelector);
         }
 
         [Test]
-        public void Toggle_ColorField()
+        public async Task Toggle_ColorField()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowColorField, true));
 
             _ = comp.Find(_mudColorPickerCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowColorField, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowColorField, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_mudColorPickerCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowColorField, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowColorField, true));
 
             _ = comp.Find(_mudColorPickerCssSelector);
         }
 
         [Test]
-        public void Toggle_Preview()
+        public async Task Toggle_Preview()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowPreview, true));
 
             _ = comp.Find(_colorDotCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowPreview, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowPreview, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorDotCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowPreview, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowPreview, true));
 
             _ = comp.Find(_colorDotCssSelector);
         }
 
         [Test]
-        public void Toggle_Sliders()
+        public async Task Toggle_Sliders()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowSliders, true));
 
             _ = comp.Find(_slidersControlCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowSliders, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowSliders, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_slidersControlCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowSliders, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowSliders, true));
 
             _ = comp.Find(_slidersControlCssSelector);
         }
@@ -558,7 +559,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(ColorPickerMode.HEX)]
         [TestCase(ColorPickerMode.HSL)]
         [TestCase(ColorPickerMode.RGB)]
-        public void Toggle_Input(ColorPickerMode mode)
+        public async Task Toggle_Input(ColorPickerMode mode)
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
@@ -569,27 +570,27 @@ namespace MudBlazor.UnitTests.Components
 
             _ = comp.Find(_colorInputCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.DisableInput, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.DisableInput, true));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.DisableInput, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.DisableInput, false));
 
             _ = comp.Find(_colorInputCssSelector);
         }
 
         [Test]
-        public void Toggle_ModeSwitch()
+        public async Task Toggle_ModeSwitch()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowModeSwitch, true));
 
             _ = comp.Find(_colorInputModeSwitchCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowModeSwitch, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowModeSwitch, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputModeSwitchCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowModeSwitch, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowModeSwitch, true));
 
             _ = comp.Find(_colorInputModeSwitchCssSelector);
         }
@@ -643,7 +644,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(ColorPickerMode.HSL)]
         [TestCase(ColorPickerMode.RGB)]
-        public void Toggle_Alpha(ColorPickerMode mode)
+        public async Task Toggle_Alpha(ColorPickerMode mode)
         {
             var color = new MudColor(12, 220, 124, 120);
             var expectedColor = new MudColor(12, 220, 124, 120);
@@ -657,13 +658,13 @@ namespace MudBlazor.UnitTests.Components
 
             _ = comp.Find(_alphaInputCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
             comp.Instance.ColorValue.Should().Be(expectedColor);
             comp.Instance.TextValue.Should().Be(expectedColor.ToString(MudColorOutputFormats.Hex));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, true));
 
             _ = comp.Find(_alphaInputCssSelector);
             comp.Instance.ColorValue.Should().Be(expectedColor);
@@ -671,7 +672,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Toggle_Alpha_HexInputMode()
+        public async Task Toggle_Alpha_HexInputMode()
         {
             var color = new MudColor(12, 220, 124, 120);
             var expectedColor = new MudColor(12, 220, 124, 120);
@@ -685,7 +686,7 @@ namespace MudBlazor.UnitTests.Components
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, false));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, false));
 
             comp.Instance.ColorValue.Should().Be(expectedColor);
 
@@ -697,7 +698,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.TextValue.Should().Be("#0cdc7c");
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, true));
             comp.Instance.ColorValue.Should().Be(expectedColor);
             inputs = comp.FindAll(".mud-picker-color-inputfield input");
             inputs.Should().ContainSingle();
@@ -1055,14 +1056,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SetNullColor_NothingChanged()
+        public async Task SetNullColor_NothingChanged()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
                 p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL);
             });
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ColorValue, null));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ColorValue, null));
 
             var lColor = GetColorInput(comp, 2);
             var expectedColor = _defaultColor;
@@ -1206,7 +1207,7 @@ namespace MudBlazor.UnitTests.Components
 
         //https://github.com/MudBlazor/MudBlazor/issues/4899
         [Test]
-        public void DistinguishBetweenInternalAndExternalView()
+        public async Task DistinguishBetweenInternalAndExternalView()
         {
             var comp = Context.RenderComponent<PickerWithFixedView>();
 
@@ -1230,7 +1231,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-grid"));
 
             //change the view per parameter
-            comp.SetParametersAndRender(x => x.Add(y => y.ColorPickerView, ColorPickerView.GridCompact));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.ColorPickerView, ColorPickerView.GridCompact));
 
             //now the grid view should be visible
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-overlay"));
@@ -1244,11 +1245,11 @@ namespace MudBlazor.UnitTests.Components
         public void ColorPickerValueShouldUpdateOnTextTest()
         {
             var comp = Context.RenderComponent<MudColorPicker>(parameters => parameters
-            .Add(x => x.Editable, true));
+                .Add(x => x.Editable, true));
 
             comp.Find("input").Change("#180f6fff");
-            comp.Instance.Text.Should().Be("#180f6fff");
-            comp.Instance.Value.Should().Be(new MudColor("#180f6fff"));
+            comp.Instance.GetState(x => x.Text).Should().Be("#180f6fff");
+            comp.Instance.GetState(x => x.Value).Should().Be(new MudColor("#180f6fff"));
         }
 
         /// <summary>
@@ -1322,7 +1323,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required RGB ColorPicker attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredRGBColorPickerAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredRGBColorPickerAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.RGB));
@@ -1333,7 +1334,7 @@ namespace MudBlazor.UnitTests.Components
                 input.GetAttribute("aria-required").Should().Be("false");
             });
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
@@ -1380,7 +1381,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required HSL ColorPicker attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredHSLColorPickerAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredHSLColorPickerAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HSL));
@@ -1391,7 +1392,7 @@ namespace MudBlazor.UnitTests.Components
                 input.GetAttribute("aria-required").Should().Be("false");
             });
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
@@ -1438,7 +1439,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required HEX ColorPicker attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredHEXColorPickerAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredHEXColorPickerAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HEX));
@@ -1449,7 +1450,7 @@ namespace MudBlazor.UnitTests.Components
                 input.GetAttribute("aria-required").Should().Be("false");
             });
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             // must be re-fetched after re-render

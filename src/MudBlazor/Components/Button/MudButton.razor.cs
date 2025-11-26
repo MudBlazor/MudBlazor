@@ -98,13 +98,11 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the button.
@@ -121,13 +119,11 @@ namespace MudBlazor
         /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
+        /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// Expands the button to 100% of the container width.

@@ -1,4 +1,4 @@
-@*html head (for server prerendering)*@
+﻿@*html head (for server prerendering)*@
 <PageTitle>@(GetTitle())</PageTitle>
 <HeadContent>
     <meta Name="keywords" Content="@GetKeywords()" />
@@ -61,7 +61,7 @@ else
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
         <MudAlert Severity="Severity.Info" Class="mt-6">
-            For examples and details on the usage of this component, visit the <MudLink Href="@($"/components/{Example.Link.ToLowerInvariant()}")" Typo="Typo.inherit">@Example.Name</MudLink> page.
+            For examples and details on the usage of this component, visit the <MudLink Href="@($"/components/{Example.Link.ToLowerInvariant()}")">@Example.Name</MudLink> page.
         </MudAlert>
     </DocsPageSection>
 }

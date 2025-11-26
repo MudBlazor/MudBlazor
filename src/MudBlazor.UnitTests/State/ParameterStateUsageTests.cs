@@ -92,52 +92,52 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public void StaticComparerIntegrationTest()
+    public async Task StaticComparerIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateComparerStaticTestComp>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
         IElement ParamChanges() => comp.Find(".parameter-changes");
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
         ParamChanges().Children[0].TextContent.Trimmed().Should().Be("DoubleParam: 0=>10000");
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(2);
         ParamChanges().Children[1].TextContent.Trimmed().Should().Be("DoubleParam: 10000=>10001");
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000000f));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000000f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(3);
         ParamChanges().Children[2].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>1000000");
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000001f));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000001f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(3, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
     }
 
     [Test]
-    public void SwapComparerInSequenceIntegrationTest()
+    public async Task SwapComparerInSequenceIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateComparerSwapTestComp>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
         IElement ParamChanges() => comp.Find(".parameter-changes");
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
         ParamChanges().Children[0].TextContent.Trimmed().Should().Be("DoubleParam: 0=>10000");
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(1, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
-        comp.SetParametersAndRender(parameters => parameters
+        await comp.SetParametersAndRenderAsync(parameters => parameters
             .Add(parameter => parameter.DoubleEqualityComparer, new DoubleEpsilonEqualityComparer(0.00001f)));
-        comp.SetParametersAndRender(parameters => parameters
+        await comp.SetParametersAndRenderAsync(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10002f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(2);
         ParamChanges().Children[1].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>10002");
     }
 
     [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when the associated value and comparer change at same time.")]
-    public void SwapComparerAtSameTimeIntegrationTest()
+    public async Task SwapComparerAtSameTimeIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateComparerSwapTestComp>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
         IElement ParamChanges() => comp.Find(".parameter-changes");
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
         ParamChanges().Children[0].TextContent.Trimmed().Should().Be("DoubleParam: 0=>10000");
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(1, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
-        comp.SetParametersAndRender(parameters => parameters
+        await comp.SetParametersAndRenderAsync(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10002f)
             .Add(parameter => parameter.DoubleEqualityComparer, new DoubleEpsilonEqualityComparer(0.00001f)));
         comp.Find(".parameter-changes").Children.Length.Should().Be(2);
@@ -229,7 +229,7 @@ public class ParameterStateUsageTests : BunitTest
         // Outer modifications
 
         // Show
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Expanded, true));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Expanded, true));
         alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
         comp.Instance.Expanded.Should().BeTrue("We changed the parameter directly, must change.");
         comp.Instance.ExpandedStateValue.Should().BeTrue("We sync on OnInitialized, must be same as Expanded.");
@@ -239,7 +239,7 @@ public class ParameterStateUsageTests : BunitTest
         });
 
         // Hide
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Expanded, false));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Expanded, false));
         alertTextFunc.Should().Throw<ComponentNotFoundException>();
         comp.Instance.Expanded.Should().BeFalse("We changed the parameter directly, must change.");
         comp.Instance.ExpandedStateValue.Should().BeFalse("We sync on OnInitialized, must be same as Expanded.");
@@ -284,7 +284,7 @@ public class ParameterStateUsageTests : BunitTest
         // Outer modifications
 
         // Show
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Expanded, true));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Expanded, true));
         alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
         comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
         {
@@ -293,7 +293,7 @@ public class ParameterStateUsageTests : BunitTest
         callBackEvents.Should().BeEquivalentTo(new[] { true, false });
 
         // Hide
-        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Expanded, false));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Expanded, false));
         alertTextFunc.Should().Throw<ComponentNotFoundException>();
         comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
         {

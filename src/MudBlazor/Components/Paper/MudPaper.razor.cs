@@ -48,14 +48,11 @@ public partial class MudPaper : MudComponentBase
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
-    /// Override with <see cref="MudGlobal.Rounded"/>..
     /// When <c>true</c>, the <c>border-radius</c> is set to <c>0</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-    public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+    public bool Square { get; set; }
 
     /// <summary>
     /// Displays an outline around this component.

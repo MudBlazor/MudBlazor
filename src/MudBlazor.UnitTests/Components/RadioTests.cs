@@ -352,7 +352,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required RadioGroup attributes should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredRadioGroupAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredRadioGroupAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<RadioGroupRequiredTest>();
 
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
