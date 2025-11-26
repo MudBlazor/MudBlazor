@@ -16,12 +16,12 @@ internal class LambdaParameterMiddleware<T> : IParameterMiddleware<T>
         _onWriteAsync = onWriteAsync;
     }
 
-    public T? OnRead(T? value) => _onRead is not null ? _onRead(value) : value;
+    public T? OnRead(T? currentValue) => _onRead is not null ? _onRead(currentValue) : currentValue;
 
-    public Task OnWriteAsync(T incomingValue, Func<T, Task> next)
+    public Task OnWriteAsync(T newValue, Func<T, Task> next)
     {
         return _onWriteAsync is not null
-            ? _onWriteAsync(incomingValue, next)
-            : next(incomingValue);
+            ? _onWriteAsync(newValue, next)
+            : next(newValue);
     }
 }

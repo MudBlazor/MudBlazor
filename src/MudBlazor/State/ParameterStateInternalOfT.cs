@@ -55,7 +55,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     public override T? InitialValue => _initialValue;
 
     /// <inheritdoc/>
-    public override T? Value => OnRead(_value);
+    public override T? Value => ApplyReadMiddleware(_value);
 
     // TODO: Do we need this?
     //public override T? RawValue => _value;
@@ -82,7 +82,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     {
         Task Final(T incomingValue)
         {
-            if (!_comparer.Equals(Value, incomingValue))
+            // TODO: Should we do middleware OnRead here too?
+            // The incoming value could be transformed (for example by converter) and we are comparing against a raw value, so it's not exactly correct?
+            if (!_comparer.Equals(_value, incomingValue))
             {
                 _value = incomingValue;
                 var eventCallback = _eventCallbackFunc();
@@ -222,7 +224,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// <inheritdoc />
     public override int GetHashCode() => Metadata.ParameterName.GetHashCode();
 
-    private T? OnRead(T? currentValue)
+    private T? ApplyReadMiddleware(T? currentValue)
     {
         // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (var middleware in _middlewares)
