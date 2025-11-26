@@ -84,7 +84,12 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         {
             // TODO: Should we do middleware OnRead here too?
             // The incoming value could be transformed (for example by converter) and we are comparing against a raw value, so it's not exactly correct?
-            if (!_comparer.Equals(_value, incomingValue))
+            // Possible Combinations and not cute clear what is the most "correct" one:
+            // - raw (_value) vs raw (value): chosen option for now
+            // - raw (_value) vs transformed (incomingValue) ??: old one
+            // - transformed (ApplyReadMiddleware(_value)) vs transformed (incomingValue) or ApplyRead(incomingValue
+            // - transformed (ApplyReadMiddleware(_value)) vs transformed ApplyReadMiddleware(value)
+            if (!_comparer.Equals(_value, value))
             {
                 _value = incomingValue;
                 var eventCallback = _eventCallbackFunc();
