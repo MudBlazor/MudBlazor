@@ -182,9 +182,28 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
     /// </remarks>
     private sealed class EnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>> where T : notnull
     {
-        public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y) => false;
+        public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
+        {
+            if (x == null && y == null) return true;
+            if (x == null || y == null) return false;
+            
+            return x.SequenceEqual(y);
+        }
 
-        public int GetHashCode(IEnumerable<T> obj) => Random.Shared.Next();
+        public int GetHashCode(IEnumerable<T>? obj)
+        {
+            if (obj == null) return 0;
+            
+            unchecked
+            {
+                var hash = 0;
+                foreach (var item in obj)
+                {
+                    hash += item?.GetHashCode() ?? 0;
+                }
+                return hash;
+            }
+        }
 
         public static readonly EnumerableEqualityComparer<T> Default = new();
     }
