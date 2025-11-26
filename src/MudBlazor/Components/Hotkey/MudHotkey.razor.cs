@@ -199,7 +199,7 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
                 var hash = 0;
                 foreach (var item in obj)
                 {
-                    hash += item?.GetHashCode() ?? 0;
+                    hash += item.GetHashCode();
                 }
                 return hash;
             }
