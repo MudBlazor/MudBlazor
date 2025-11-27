@@ -22,11 +22,11 @@ public class BoundingClientRectTests
     [Test]
     public void Detect_Boundaries()
     {
-        var client = new BoundingClientRect 
-        { 
+        var client = new BoundingClientRect
+        {
             Top = -10,
-            Left = -10, 
-            Height = 100, 
+            Left = -10,
+            Height = 100,
             Width = 100,
             ScrollX = 100,
             ScrollY = 100,
