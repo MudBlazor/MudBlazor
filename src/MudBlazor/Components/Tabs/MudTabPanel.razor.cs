@@ -13,7 +13,7 @@ namespace MudBlazor;
 /// <summary>
 /// A tab as part of a <see cref="MudTabs"/> or <see cref="MudDynamicTabs"/> component.
 /// </summary>
-public partial class MudTabPanel
+public partial class MudTabPanel : MudComponentBase
 {
     private bool _disposed;
 
