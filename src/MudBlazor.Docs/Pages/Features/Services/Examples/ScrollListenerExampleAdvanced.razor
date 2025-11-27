@@ -1,0 +1,105 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Interop
+@using MudBlazor.Services
+@inject IScrollListenerFactory ScrollListenerFactory
+@inject IResizeObserverFactory ResizeObserverFactory
+@implements IDisposable
+@implements IAsyncDisposable
+
+<!--suppress CssUnresolvedCustomProperty -->
+<style>
+    #wrapper {
+        width: 50%;
+    }
+
+    #scroll {
+        height: 20rem;
+        width: 100%;
+        padding: 16px;
+        background-color: var(--mud-palette-background);
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    #scrollbar {
+        position: relative;
+        width: 1rem;
+        background-color: var(--mud-palette-background);
+    }
+
+    #cursor {
+        position: absolute;
+        top: @(_scrollTop / _scrollBarHeight * 100)px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--mud-palette-text-primary);
+    }
+</style>
+
+<MudStack id="wrapper" Row="true">
+    <MudStack id="scroll" Class="rounded" Spacing="4">
+        @for (var i = 0; i < 100; i++)
+        {
+            <MudPaper Class="pa-8" Style="@($"background-color: {ColorPalette[i % ColorPalette.Length]};")" Outlined="true"/>
+        }
+    </MudStack>
+    <div @ref="_scrollbarRef" id="scrollbar">
+        <div id="cursor"></div>
+    </div>
+</MudStack>
+
+
+@code {
+
+    private static readonly string[] ColorPalette =
+    [
+        Colors.Blue.Accent3, Colors.Teal.Accent3, Colors.Amber.Accent3, Colors.Orange.Accent3, Colors.Red.Accent3,
+        Colors.DeepPurple.Accent3, Colors.Green.Accent3, Colors.LightBlue.Accent3, Colors.Teal.Lighten1, Colors.Amber.Lighten1,
+        Colors.Orange.Lighten1, Colors.Red.Lighten1, Colors.DeepPurple.Lighten1, Colors.Green.Lighten1, Colors.LightBlue.Lighten1,
+        Colors.Amber.Darken2, Colors.Orange.Darken2, Colors.Red.Darken2, Colors.DeepPurple.Darken2, Colors.Gray.Darken2
+    ];
+
+    private IResizeObserver _resizeObserver;
+    private IScrollListener _scrollListenerRect;
+    private ElementReference _scrollbarRef;
+    private double _scrollBarHeight;
+    private double _scrollTop;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            _resizeObserver = ResizeObserverFactory.Create();
+            _resizeObserver.OnResized += ResizeObserverOnResized;
+            await _resizeObserver.Observe(_scrollbarRef);
+
+            _scrollListenerRect = ScrollListenerFactory.Create("#scroll");
+            _scrollListenerRect.OnScroll += ScrollListenerRectOnScroll;
+        }
+    }
+
+    public void Dispose()
+    {
+        _scrollListenerRect?.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_resizeObserver != null) await _resizeObserver.DisposeAsync();
+    }
+
+    private void ResizeObserverOnResized(IDictionary<ElementReference, BoundingClientRect> changes)
+    {
+        _scrollBarHeight = changes.Values.LastOrDefault()?.Height ?? 0;
+        StateHasChanged();
+    }
+
+    private void ScrollListenerRectOnScroll(object sender, ScrollEventArgs e)
+    {
+        _scrollTop = e.ScrollTop;
+        StateHasChanged();
+    }
+}
