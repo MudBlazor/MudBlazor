@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
+using MudBlazor.Utilities.Converter.Base;
 using static System.String;
 
 namespace MudBlazor
@@ -26,6 +27,7 @@ namespace MudBlazor
         protected readonly ParameterState<bool> ErrorState;
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
+        protected readonly ParameterState<IConverter<T, U>> ConverterState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
@@ -44,6 +46,8 @@ namespace MudBlazor
             ErrorIdState = registerScope.RegisterParameter<string?>(nameof(ErrorId))
                 .WithParameter(() => ErrorId)
                 .WithEventCallback(() => ErrorIdChanged);
+            ConverterState = registerScope.RegisterParameter<IConverter<T, U>>(nameof(NewConverter))
+                .WithParameter(() => NewConverter);
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
             _converter.OnError = OnConversionError;
         }
@@ -151,6 +155,10 @@ namespace MudBlazor
             get => _converter;
             set => SetConverter(value);
         }
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IConverter<T, U> NewConverter { get; set; } = null!;
 
         protected virtual bool SetConverter(Converter<T, U> value)
         {
@@ -835,6 +843,8 @@ namespace MudBlazor
         }
 
         #endregion
+
+
 
         protected override Task OnInitializedAsync()
         {
