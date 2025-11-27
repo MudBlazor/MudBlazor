@@ -30,7 +30,7 @@
 
     #cursor {
         position: absolute;
-        top: @(_scrollTop / _scrollBarHeight * 100)px;
+        top: @(Convert.ToInt32(_scrollBarTop))px;
         left: 0;
         width: 100%;
         height: 3px;
@@ -39,13 +39,13 @@
 </style>
 
 <MudStack id="wrapper" Row="true">
-    <MudStack id="scroll" Class="rounded" Spacing="4">
+    <div @ref="_scrollContainerRef" id="scroll" Class="d-flex flex-column gap-4 rounded">
         @for (var i = 0; i < 100; i++)
         {
             <MudPaper Class="pa-8" Style="@($"background-color: {ColorPalette[i % ColorPalette.Length]};")" Outlined="true"/>
         }
-    </MudStack>
-    <div @ref="_scrollbarRef" id="scrollbar">
+    </div>
+    <div @ref="_scrollBarRef" id="scrollbar">
         <div id="cursor"></div>
     </div>
 </MudStack>
@@ -63,9 +63,12 @@
 
     private IResizeObserver _resizeObserver;
     private IScrollListener _scrollListenerRect;
-    private ElementReference _scrollbarRef;
+    private ElementReference _scrollContainerRef;
+    private ElementReference _scrollBarRef;
+    private double _scrollContainerHeight;
+    private double _scrollContainerScrollTop;
     private double _scrollBarHeight;
-    private double _scrollTop;
+    private double _scrollBarTop => _scrollContainerScrollTop / Math.Max(_scrollContainerHeight, 1) * _scrollBarHeight;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -74,7 +77,8 @@
         {
             _resizeObserver = ResizeObserverFactory.Create();
             _resizeObserver.OnResized += ResizeObserverOnResized;
-            await _resizeObserver.Observe(_scrollbarRef);
+            _scrollContainerHeight = (await _resizeObserver.Observe(_scrollContainerRef))!.Height;
+            _scrollBarHeight = (await _resizeObserver.Observe(_scrollBarRef))!.Height;
 
             _scrollListenerRect = ScrollListenerFactory.Create("#scroll");
             _scrollListenerRect.OnScroll += ScrollListenerRectOnScroll;
@@ -93,13 +97,14 @@
 
     private void ResizeObserverOnResized(IDictionary<ElementReference, BoundingClientRect> changes)
     {
-        _scrollBarHeight = changes.Values.LastOrDefault()?.Height ?? 0;
+        _scrollContainerHeight = changes[_scrollContainerRef].Height;
+        _scrollBarHeight = changes[_scrollBarRef].Height;
         StateHasChanged();
     }
 
     private void ScrollListenerRectOnScroll(object sender, ScrollEventArgs e)
     {
-        _scrollTop = e.ScrollTop;
+        _scrollContainerScrollTop = e.ScrollTop;
         StateHasChanged();
     }
 }
