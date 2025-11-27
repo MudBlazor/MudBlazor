@@ -18,10 +18,7 @@ public sealed class ReversibleChain<TIn, TOut> : ConverterChain<TIn, TOut>, IRev
     public ReversibleChain<TOut, TIn> Reverse() => new(_backward, Forward);
 
     public ReversibleChain<TIn, TNext> Then<TNext>(IReversibleConverter<TOut, TNext> next)
-        => new(
-            x => next.Convert(Forward(x)),
-            o => _backward(next.ConvertBack(o))
-        );
+        => new(value => next.Convert(Forward(value)), value => _backward(next.ConvertBack(value)));
 
     public ConversionResult<TIn> TryConvertBack(TOut input)
     {

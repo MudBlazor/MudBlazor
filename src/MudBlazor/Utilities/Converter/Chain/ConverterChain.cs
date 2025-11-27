@@ -18,7 +18,6 @@ public class ConverterChain<TIn, TOut> : IConverter<TIn, TOut>
 
     public ConverterChain<TIn, TNext> Then<TNext>(Func<TOut, TNext> func) => new(x => func(Forward(x)));
 
-
     public ConversionResult<TOut> TryConvert(TIn input)
     {
         try
