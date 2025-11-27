@@ -70,10 +70,10 @@ public class BoundingClientRectTests
         clone.ScrollY.Should().Be(rect.ScrollY);
 
         // Check computed properties
-        #pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
         clone.X.Should().Be(rect.Left);
         clone.Y.Should().Be(rect.Top);
-        #pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
         clone.Bottom.Should().Be(rect.Top + rect.Height);
         clone.Right.Should().Be(rect.Left + rect.Width);
         clone.AbsoluteLeft.Should().Be(rect.Left + rect.ScrollX);
