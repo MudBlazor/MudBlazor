@@ -1778,7 +1778,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test if Tabs and TabPanels cobined TabButtonClass and TabPanelsClass are applying the CSS classes properly
+        /// Test if Tabs and TabPanels combined TabButtonClass and TabPanelsClass are applying the CSS classes properly
         /// </summary>
         [Test]
         public void Tabs_And_TabPanel_CombinedClassesTest()

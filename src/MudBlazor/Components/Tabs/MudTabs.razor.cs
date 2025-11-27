@@ -337,7 +337,7 @@ namespace MudBlazor
         public string? ActiveTabClass { get; set; }
 
         /// <summary>
-        /// The CSS classes applied to the element encasing the tab panels
+        /// The CSS classes applied to the element encasing the tab panels.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
