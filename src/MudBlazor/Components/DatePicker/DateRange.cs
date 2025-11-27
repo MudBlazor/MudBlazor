@@ -1,5 +1,6 @@
 ﻿using System;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -29,12 +30,12 @@ namespace MudBlazor
         /// </summary>
         /// <param name="converter">The converter used to convert to a <c>string</c>.</param>
         /// <returns>The formatted string.</returns>
-        public string ToString(Converter<DateTime?, string> converter)
+        public string ToString(IConverter<DateTime?, string> converter)
         {
             if (Start == null || End == null)
                 return string.Empty;
 
-            return RangeConverter<DateTime>.Join(converter.Set(Start.Value), converter.Set(End.Value));
+            return RangeConverter<DateTime>.Join(converter.Convert(Start.Value), converter.Convert(End.Value));
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string value, Converter<DateTime?, string> converter, out DateRange date)
+        public static bool TryParse(string value, IConverter<DateTime?, string> converter, out DateRange date)
         {
             date = null;
 
@@ -74,17 +75,17 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string start, string end, Converter<DateTime?, string> converter, out DateRange date)
+        public static bool TryParse(string start, string end, IConverter<DateTime?, string> converter, out DateRange date)
         {
             date = null;
 
-            var endDate = converter.Get(end);
-            if (converter.GetError)
-                return false;
+            var endDate = converter.ConvertBack(end);
+            //if (converter.GetError)
+            //    return false;
 
-            var startDate = converter.Get(start);
-            if (converter.GetError)
-                return false;
+            var startDate = converter.ConvertBack(start);
+            //if (converter.GetError)
+            //    return false;
 
             date = new DateRange(startDate, endDate);
             return true;

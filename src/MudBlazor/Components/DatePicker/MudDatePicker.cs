@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -78,8 +79,8 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    Converter.GetError = false;
-                    await SetTextAsync(Converter.Set(_value), false);
+                    //Converter.GetError = false;
+                    await SetTextAsync(Converter.Convert(_value), false);
                 }
 
                 await DateChanged.InvokeAsync(_value);
@@ -91,14 +92,14 @@ namespace MudBlazor
         protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
-            return SetTextAsync(Converter.Set(_value), false);
+            return SetTextAsync(Converter.Convert(_value), false);
         }
 
         protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             // Update the date property (without updating back the Value property)
-            return SetDateAsync(Converter.Get(value), false);
+            return SetDateAsync(Converter.ConvertBack(value), false);
         }
 
         protected override string GetDayClasses(int month, DateTime day)

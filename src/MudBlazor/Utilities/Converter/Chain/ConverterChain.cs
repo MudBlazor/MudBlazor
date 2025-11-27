@@ -18,15 +18,5 @@ public class ConverterChain<TIn, TOut> : IConverter<TIn, TOut>
 
     public ConverterChain<TIn, TNext> Then<TNext>(Func<TOut, TNext> func) => new(x => func(Forward(x)));
 
-    public ConversionResult<TOut> TryConvert(TIn input)
-    {
-        try
-        {
-            return new ConversionResult<TOut>(Forward(input));
-        }
-        catch (Exception ex)
-        {
-            return new ConversionResult<TOut>(ex);
-        }
-    }
+    public ConversionResult<TOut> TryConvert(TIn input) => ConverterExtensions.TryConvert(this, input);
 }

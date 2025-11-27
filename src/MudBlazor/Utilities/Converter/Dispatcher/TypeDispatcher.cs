@@ -1,4 +1,5 @@
-﻿using MudBlazor.Utilities.Converter.Base;
+﻿using MudBlazor.Resources;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
@@ -12,6 +13,7 @@ public static class TypeDispatcher
 internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 {
     private readonly Dictionary<Type, Delegate> _handlers;
+    //private readonly List<DynamicFactory> _dynamicFactories;
 
     protected TypeDispatcher(Dictionary<Type, Delegate> handlers)
     {
@@ -22,21 +24,29 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     {
         var type = typeof(TIn);
 
-        if (!_handlers.TryGetValue(type, out var del))
+        // 1) Static lookup
+        if (_handlers.TryGetValue(type, out var del))
         {
-            throw new InvalidOperationException($"No converter registered for {type}");
+            return (TOut)del.DynamicInvoke(input)!;
         }
 
-        return (TOut)del.DynamicInvoke(input)!;
+        // 2) Dynamic factories
+        //foreach (var factory in _dynamicFactories)
+        //{
+        //    var created = factory(type);
+        //    if(created is not null)
+        //    {
+        //        return (TOut)created;
+        //    }
+        //}
+
+        throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [type], new InvalidOperationException($"No converter registered for {type}"));
     }
-
-    // public static Builder Create() => new();
-
-    //public static IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>, TypeDispatcher<TIn, TOut>> Create() => new Builder();
 
     internal class Builder : IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>>
     {
         private readonly Dictionary<Type, Delegate> _handlers = new();
+        //private readonly List<DynamicFactory> _dynamicFactories = new();
 
         public IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> Add<TSpecific>(IConverter<TSpecific, TOut> converter)
         {
@@ -45,11 +55,18 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
             return this;
         }
 
-        public IConverter<TIn, TOut> Build()
-        {
-            return new TypeDispatcher<TIn, TOut>(_handlers);
-        }
+        //public IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> AddDynamic(DynamicFactory factory)
+        //{
+        //    _dynamicFactories.Add(factory);
+        //    return this;
+        //}
+
+        public IConverter<TIn, TOut> Build() => new TypeDispatcher<TIn, TOut>(_handlers);
     }
+
+    // public static Builder Create() => new();
+
+    //public static IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>, TypeDispatcher<TIn, TOut>> Create() => new Builder();
 
     //internal class Builder
     //{

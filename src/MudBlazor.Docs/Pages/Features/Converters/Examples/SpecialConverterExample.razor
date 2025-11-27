@@ -7,7 +7,7 @@
     </MudItem>
     
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField Label="Switch state" Variant="Variant.Outlined" Converter="@converter" @bind-Value="state" Immediate="true"/>
+@*         <MudTextField Label="Switch state" Variant="Variant.Outlined" Converter="@converter" @bind-Value="state" Immediate="true"/> *@
     </MudItem>
 
 </MudGrid>
@@ -15,9 +15,9 @@
 @code {
     bool state = true;
 
-    Converter<bool> converter = new Converter<bool>
-    {
-        SetFunc = value => value ? "ON" : "OFF",
-        GetFunc = text => (text ?? "").ToLowerInvariant() == "on",
-    };
+    // Converter<bool> converter = new Converter<bool>
+    // {
+    //     SetFunc = value => value ? "ON" : "OFF",
+    //     GetFunc = text => (text ?? "").ToLowerInvariant() == "on",
+    // };
 }

@@ -20,15 +20,5 @@ public sealed class ReversibleChain<TIn, TOut> : ConverterChain<TIn, TOut>, IRev
     public ReversibleChain<TIn, TNext> Then<TNext>(IReversibleConverter<TOut, TNext> next)
         => new(value => next.Convert(Forward(value)), value => _backward(next.ConvertBack(value)));
 
-    public ConversionResult<TIn> TryConvertBack(TOut input)
-    {
-        try
-        {
-            return new ConversionResult<TIn>(_backward(input));
-        }
-        catch (Exception ex)
-        {
-            return new ConversionResult<TIn>(ex);
-        }
-    }
+    public ConversionResult<TIn> TryConvertBack(TOut input) => ConverterExtensions.TryConvertBack(this, input);
 }

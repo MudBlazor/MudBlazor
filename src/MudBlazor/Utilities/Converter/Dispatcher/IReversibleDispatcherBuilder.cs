@@ -2,16 +2,15 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-
 using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
-public interface IDispatcherBuilder<TIn, in TOut, out TConverter>
+public interface IReversibleDispatcherBuilder<TIn, TOut, out TConverter>
 {
-    IDispatcherBuilder<TIn, TOut, TConverter> Add<TSpecific>(IConverter<TSpecific, TOut> conv);
+    IReversibleDispatcherBuilder<TIn, TOut, TConverter> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> conv);
 
-    //IDispatcherBuilder<TIn, TOut, TConverter> AddDynamic(DynamicFactory factory);
+    //IReversibleDispatcherBuilder<TIn, TOut, TConverter> AddDynamic(DynamicFactory factory);
 
     TConverter Build();
 }

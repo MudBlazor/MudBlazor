@@ -16,7 +16,7 @@ namespace MudBlazor
     {
         public MudBooleanInput() : base(new BoolConverter<T?>())
         {
-            NewConverter = new MudBlazor.Utilities.Converter.BoolConverter<T?>();
+            Converter = new MudBlazor.Utilities.Converter.BoolConverter<T?>();
         }
 
         protected virtual string? Classname { get; set; }
@@ -126,7 +126,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => NewConverter.Convert(Value);
+        protected bool? BoolValue => Convert(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
@@ -140,9 +140,8 @@ namespace MudBlazor
                 Touched = true;
             }
 
-            T? b = Converter.Get(value);
-            T? n = NewConverter.ConvertBack(value);
-            return SetCheckedAsync(n);
+            var convertedValue = ConvertBack(value);
+            return SetCheckedAsync(convertedValue);
         }
 
         protected async Task SetCheckedAsync(T? value)
@@ -161,16 +160,16 @@ namespace MudBlazor
             }
         }
 
-        protected override bool SetConverter(Converter<T?, bool?> value)
-        {
-            var changed = base.SetConverter(value);
-            if (changed)
-            {
-                //SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
-            }
+        //protected override bool SetConverter(Converter<T?, bool?> value)
+        //{
+        //    var changed = base.SetConverter(value);
+        //    if (changed)
+        //    {
+        //        //SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
+        //    }
 
-            return changed;
-        }
+        //    return changed;
+        //}
 
         /// <summary>
         /// A value is required, so if not checked we return ERROR.

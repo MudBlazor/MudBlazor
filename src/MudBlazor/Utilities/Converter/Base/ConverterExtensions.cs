@@ -16,9 +16,29 @@ public static class ConverterExtensions
         {
             return new ConversionResult<TOut>(converter.Convert(input));
         }
+        catch (ConversionException ex)
+        {
+            return new ConversionResult<TOut>(ex, ex.ErrorMessageKey, ex.ErrorMessageArgs);
+        }
         catch (Exception ex)
         {
             return new ConversionResult<TOut>(ex);
+        }
+    }
+
+    public static ConversionResult<TIn> TryConvertBack<TIn, TOut>(this IConverter<TIn, TOut> converter, TOut input)
+    {
+        try
+        {
+            return new ConversionResult<TIn>(converter.ConvertBack(input));
+        }
+        catch (ConversionException ex)
+        {
+            return new ConversionResult<TIn>(ex, ex.ErrorMessageKey, ex.ErrorMessageArgs);
+        }
+        catch (Exception ex)
+        {
+            return new ConversionResult<TIn>(ex);
         }
     }
 
@@ -27,6 +47,10 @@ public static class ConverterExtensions
         try
         {
             return new ConversionResult<TIn>(converter.ConvertBack(input));
+        }
+        catch (ConversionException ex)
+        {
+            return new ConversionResult<TIn>(ex, ex.ErrorMessageKey, ex.ErrorMessageArgs);
         }
         catch (Exception ex)
         {
@@ -44,7 +68,7 @@ public static class ConverterExtensions
         {
             return reversible.ConvertBack(value);
         }
-
+        // TODO: throw InvalidOperationException
         throw new InvalidOperationException($"Converter {converter.GetType().Name} does not support ConvertBack. Implement an IReversibleConverter for the converter instead.");
     }
 }

@@ -159,7 +159,7 @@ namespace MudBlazor
             var mudSelectItems = items as MudSelectItem<T>[] ?? items.ToArray();
 
             var matchingItems = mudSelectItems
-                .Where(x => !x.Disabled && Converter.Set(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
+                .Where(x => !x.Disabled && Converter.Convert(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
                 .ToList();
 
             if (matchingItems.Count == 0)
@@ -432,13 +432,13 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(Converter.Set)),
-                            selectedConvertedValues: _selectedValues.Select(Converter.Set).ToList(),
+                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(Convert!)),
+                            selectedConvertedValues: _selectedValues.Select(Convert!).ToList(),
                             multiSelectionTextFunc: MultiSelectionTextFunc).CatchAndLog();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(Converter.Set)), updateValue: false).CatchAndLog();
+                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(Convert!)), updateValue: false).CatchAndLog();
                     }
                 }
 
@@ -482,11 +482,11 @@ namespace MudBlazor
                 if (_toStringFunc == value)
                     return;
                 _toStringFunc = value;
-                Converter = new Converter<T>
-                {
-                    SetFunc = _toStringFunc ?? (x => x?.ToString()),
-                    //GetFunc = LookupValue,
-                };
+                //Converter = new Converter<T>
+                //{
+                //    SetFunc = _toStringFunc ?? (x => x?.ToString()),
+                //    //GetFunc = LookupValue,
+                //};
             }
         }
 
@@ -578,14 +578,14 @@ namespace MudBlazor
             if (MultiSelectionTextFunc != null)
             {
                 return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)),
-                        selectedConvertedValues: SelectedValues!.Select(Converter.Set).ToList(),
+                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)),
+                        selectedConvertedValues: SelectedValues!.Select(Convert).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc)
                     : base.UpdateTextPropertyAsync(updateValue);
             }
 
             return MultiSelection
-                ? SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)))
+                ? SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)))
                 : base.UpdateTextPropertyAsync(updateValue);
         }
 
@@ -771,13 +771,13 @@ namespace MudBlazor
 
                 if (MultiSelectionTextFunc != null)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)),
-                        selectedConvertedValues: SelectedValues!.Select(Converter.Set).ToList(),
+                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert!)),
+                        selectedConvertedValues: SelectedValues!.Select(Convert!).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc);
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)), updateValue: false);
+                    await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert!)), updateValue: false);
                 }
 
                 UpdateSelectAllChecked();
@@ -1271,13 +1271,13 @@ namespace MudBlazor
             _selectedValues = new HashSet<T?>(selectedValues, _comparer);
             if (MultiSelectionTextFunc != null)
             {
-                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)),
-                    selectedConvertedValues: SelectedValues!.Select(Converter.Set).ToList(),
+                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)),
+                    selectedConvertedValues: SelectedValues!.Select(Convert).ToList(),
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
             {
-                await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)), updateValue: false);
+                await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)), updateValue: false);
             }
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
@@ -1301,7 +1301,7 @@ namespace MudBlazor
 
             if (!FitContent) return;
 
-            var stringValue = ToStringFunc?.Invoke(item.Value) ?? Converter.Set(item.Value);
+            var stringValue = ToStringFunc?.Invoke(item.Value) ?? Convert(item.Value);
 
             if (_longestItem is null || stringValue?.Length > _longestItemLength)
             {

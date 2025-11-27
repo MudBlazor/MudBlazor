@@ -4,8 +4,8 @@
 <MudSwitch @bind-Value="nullable" Color="Color.Primary">bool?: @nullable</MudSwitch>
 <MudSwitch @bind-Value="integer" Color="Color.Secondary">int: @integer</MudSwitch>
 <MudSwitch @bind-Value="str" Color="Color.Tertiary">string: "@(str)"</MudSwitch>
-<MudSwitch @bind-Value="customstr" Color="Color.Error" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudSwitch>
-<MudSwitch @bind-Value="customobj" Color="Color.Dark" Converter="@(new ObjectToBoolConverter())">object: "@(customobj.ToString())"</MudSwitch>
+@* <MudSwitch @bind-Value="customstr" Color="Color.Error" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudSwitch>
+<MudSwitch @bind-Value="customobj" Color="Color.Dark" Converter="@(new ObjectToBoolConverter())">object: "@(customobj.ToString())"</MudSwitch> *@
 
 @code{
     public bool boolean { get; set; } = true;
@@ -15,98 +15,98 @@
     public string customstr { get; set; } = "no, at all";
     public object customobj { get; set; } = false;
 
-    public class ObjectToBoolConverter : BoolConverter<object>
-    {
+    // public class ObjectToBoolConverter : BoolConverter<object>
+    // {
 
-        public ObjectToBoolConverter()
-        {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
-        }
+    //     public ObjectToBoolConverter()
+    //     {
+    //         SetFunc = OnSet;
+    //         GetFunc = OnGet;
+    //     }
 
-        private object OnGet(bool? value)
-        {
-            try
-            {
-                return value == true;
-            }
-            catch (Exception e)
-            {
-                UpdateGetError("Conversion error: " + e.Message);
-                return default;
-            }
-        }
+    //     private object OnGet(bool? value)
+    //     {
+    //         try
+    //         {
+    //             return value == true;
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             UpdateGetError("Conversion error: " + e.Message);
+    //             return default;
+    //         }
+    //     }
 
-        private bool? OnSet(object arg)
-        {
-            if (arg == null)
-                return null;
-            try
-            {
-                if (arg is bool)
-                    return (bool)arg;
-                else if (arg is bool?)
-                    return (bool?)arg;
-                else
-                {
-                    UpdateSetError("Unable to convert to bool? from type object");
-                    return null;
-                }
-            }
-            catch (FormatException e)
-            {
-                UpdateSetError("Conversion error: " + e.Message);
-                return null;
-            }
-        }
+    //     private bool? OnSet(object arg)
+    //     {
+    //         if (arg == null)
+    //             return null;
+    //         try
+    //         {
+    //             if (arg is bool)
+    //                 return (bool)arg;
+    //             else if (arg is bool?)
+    //                 return (bool?)arg;
+    //             else
+    //             {
+    //                 UpdateSetError("Unable to convert to bool? from type object");
+    //                 return null;
+    //             }
+    //         }
+    //         catch (FormatException e)
+    //         {
+    //             UpdateSetError("Conversion error: " + e.Message);
+    //             return null;
+    //         }
+    //     }
 
-    }
+    // }
 
-    public class CustomStringToBoolConverter : BoolConverter<string>
-    {
+    // public class CustomStringToBoolConverter : BoolConverter<string>
+    // {
 
-        public CustomStringToBoolConverter()
-        {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
-        }
+    //     public CustomStringToBoolConverter()
+    //     {
+    //         SetFunc = OnSet;
+    //         GetFunc = OnGet;
+    //     }
 
-        private string TrueString = "yes, please";
-        private string FalseString = "no, at all";
-        private string NullString = "I don't know";
+    //     private string TrueString = "yes, please";
+    //     private string FalseString = "no, at all";
+    //     private string NullString = "I don't know";
 
-        private string OnGet(bool? value)
-        {
-            try
-            {
-                return (value == true) ? TrueString : FalseString;
-            }
-            catch (Exception e)
-            {
-                UpdateGetError("Conversion error: " + e.Message);
-                return NullString;
-            }
-        }
+    //     private string OnGet(bool? value)
+    //     {
+    //         try
+    //         {
+    //             return (value == true) ? TrueString : FalseString;
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             UpdateGetError("Conversion error: " + e.Message);
+    //             return NullString;
+    //         }
+    //     }
 
-        private bool? OnSet(string arg)
-        {
-            if (arg == null)
-                return null;
-            try
-            {
-                if (arg == TrueString)
-                    return true;
-                if (arg == FalseString)
-                    return false;
-                else
-                    return null;
-            }
-            catch (FormatException e)
-            {
-                UpdateSetError("Conversion error: " + e.Message);
-                return null;
-            }
-        }
+    //     private bool? OnSet(string arg)
+    //     {
+    //         if (arg == null)
+    //             return null;
+    //         try
+    //         {
+    //             if (arg == TrueString)
+    //                 return true;
+    //             if (arg == FalseString)
+    //                 return false;
+    //             else
+    //                 return null;
+    //         }
+    //         catch (FormatException e)
+    //         {
+    //             UpdateSetError("Conversion error: " + e.Message);
+    //             return null;
+    //         }
+    //     }
 
-    }
+    // }
 }

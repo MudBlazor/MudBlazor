@@ -147,7 +147,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    Converter.GetError = false;
+                    //Converter.GetError = false;
                     if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
@@ -156,8 +156,8 @@ namespace MudBlazor
                     else
                     {
                         _rangeText = new Range<string>(
-                            Converter.Set(_dateRange.Start),
-                            Converter.Set(_dateRange.End));
+                            Converter.Convert(_dateRange.Start),
+                            Converter.Convert(_dateRange.End));
                         await SetTextAsync(_dateRange.ToString(Converter), false);
                     }
                 }
@@ -227,8 +227,8 @@ namespace MudBlazor
             if (_dateRange?.Start != null || _dateRange?.End != null)
             {
                 _rangeText = new Range<string>(
-                    Converter.Set(_dateRange.Start),
-                    Converter.Set(_dateRange.End));
+                    Converter.Convert(_dateRange.Start),
+                    Converter.Convert(_dateRange.End));
             }
 
             return SetTextAsync(_dateRange?.ToString(Converter), false);

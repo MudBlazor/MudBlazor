@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -14,7 +15,7 @@ namespace MudBlazor
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
         private readonly string _mudPickerCalendarContentElementId;
-        private bool _dateFormatTouched;
+        //private bool _dateFormatTouched;
 
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
@@ -22,6 +23,7 @@ namespace MudBlazor
             Culture = CultureInfo.CurrentCulture
         })
         {
+
             _mudPickerCalendarContentElementId = Identifier.Create();
         }
 
@@ -74,7 +76,7 @@ namespace MudBlazor
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
                 {
                     defaultConverter.Format = value;
-                    _dateFormatTouched = true;
+                    //_dateFormatTouched = true;
                 }
                 DateFormatChangedAsync(value);
             }
@@ -88,17 +90,17 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
-        protected override bool SetCulture(CultureInfo value)
-        {
-            if (!base.SetCulture(value))
-                return false;
+        ///// <inheritdoc />
+        //protected override bool SetCulture(CultureInfo value)
+        //{
+        //    if (!base.SetCulture(value))
+        //        return false;
 
-            if (!_dateFormatTouched && Converter is DefaultConverter<DateTime?> defaultConverter)
-                defaultConverter.Format = value.DateTimeFormat.ShortDatePattern;
+        //    if (!_dateFormatTouched && Converter is DefaultConverter<DateTime?> defaultConverter)
+        //        defaultConverter.Format = value.DateTimeFormat.ShortDatePattern;
 
-            return true;
-        }
+        //    return true;
+        //}
 
         /// <summary>
         /// The day representing the first day of the week.
@@ -306,7 +308,7 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var a = Converter.Get(Text);
+                var a = Converter.ConvertBack(Text);
                 if (a.HasValue)
                 {
                     a = new DateTime(Culture.Calendar.GetYear(a.Value), Culture.Calendar.GetMonth(a.Value), 1, Culture.Calendar);

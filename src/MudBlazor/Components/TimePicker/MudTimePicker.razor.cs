@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter.Base;
 
 #nullable enable
 namespace MudBlazor
@@ -26,9 +27,7 @@ namespace MudBlazor
 
         public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
         {
-            Converter.GetFunc = OnGet;
-            Converter.SetFunc = OnSet;
-            ((DefaultConverter<TimeSpan?>)Converter).Format = Format24Hours;
+            Converter = MudBlazor.Utilities.Converter.Base.Convert.From<TimeSpan?, string?>(OnSet, OnGet);
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
 
@@ -41,7 +40,7 @@ namespace MudBlazor
 
             var time = DateTime.Today.Add(timespan.Value);
 
-            return time.ToString(((DefaultConverter<TimeSpan?>)Converter).Format, Culture);
+            return time.ToString(Format24Hours, Culture);
         }
 
         private TimeSpan? OnGet(string? value)
@@ -51,7 +50,7 @@ namespace MudBlazor
                 return null;
             }
 
-            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out var time))
+            if (DateTime.TryParseExact(value, Format24Hours, Culture, DateTimeStyles.None, out var time))
             {
                 return time.TimeOfDay;
             }
@@ -78,10 +77,10 @@ namespace MudBlazor
 
         private void HandleParsingError()
         {
-            const string ParsingErrorMessage = LanguageResource.Converter_InvalidTimeSpan;
-            Converter.GetError = true;
-            Converter.GetErrorMessage = (ParsingErrorMessage, []);
-            Converter.OnError?.Invoke(ParsingErrorMessage, []);
+            //const string ParsingErrorMessage = LanguageResource.Converter_InvalidTimeSpan;
+            //Converter.GetError = true;
+            //Converter.GetErrorMessage = (ParsingErrorMessage, []);
+            //Converter.OnError?.Invoke(ParsingErrorMessage, []);
         }
 
         private bool _amPm = false;
@@ -171,7 +170,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
+                SetTextAsync(Converter.Convert(_value), false).CatchAndLog();
             }
         }
 
@@ -206,7 +205,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
+                SetTextAsync(Converter.Convert(_value), false).CatchAndLog();
             }
         }
 
@@ -238,7 +237,7 @@ namespace MudBlazor
                 _value = time;
                 if (updateValue)
                 {
-                    await SetTextAsync(Converter.Set(_value), false);
+                    await SetTextAsync(Converter.Convert(_value), false);
                 }
 
                 UpdateTimeSetFromTime();
@@ -259,7 +258,7 @@ namespace MudBlazor
             Touched = true;
 
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(Converter.Get(value), false);
+            return SetTimeAsync(Converter.ConvertBack(value), false);
         }
 
         /// <inheritdoc />

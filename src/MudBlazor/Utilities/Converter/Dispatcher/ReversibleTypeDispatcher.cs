@@ -1,4 +1,5 @@
-﻿using MudBlazor.Utilities.Converter.Base;
+﻿using MudBlazor.Resources;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
@@ -28,7 +29,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
 
         if (!_backwards.TryGetValue(type, out var del))
         {
-            throw new InvalidOperationException($"No reverse converter registered for {type}");
+            throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [type], new InvalidOperationException($"No converter registered for {type}"));
         }
 
         return (TIn)del.DynamicInvoke(output)!;

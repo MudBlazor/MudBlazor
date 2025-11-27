@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components.Web.Virtualization;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -253,11 +254,7 @@ namespace MudBlazor
         internal bool _isEditFormOpen;
 
         // converters
-        private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
-        {
-            SetFunc = value => !value,
-            GetFunc = value => !value ?? true,
-        };
+        private IConverter<bool, bool?> _oppositeBoolConverter = MudBlazor.Utilities.Converter.Base.Convert.From<bool, bool?>(value => !value, value => !value ?? true);
 
         #region Notify Children Delegates
 

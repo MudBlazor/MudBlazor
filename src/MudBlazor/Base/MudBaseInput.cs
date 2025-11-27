@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -41,6 +42,7 @@ namespace MudBlazor
             _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
+            Converter = new MudBlazor.Utilities.Converter.DefaultConverter<T>(() => Culture, () => Format);
         }
 
         [Inject]
@@ -467,7 +469,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            return SetTextAsync(Converter.Set(Value), updateValue);
+            return SetTextAsync(Converter.Convert(Value), updateValue);
         }
 
         /// <summary>
@@ -592,30 +594,30 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            return SetValueAsync(Converter.Get(Text), updateText);
+            return SetValueAsync(Converter.ConvertBack(Text), updateText);
         }
 
-        protected override bool SetConverter(Converter<T, string> value)
-        {
-            var changed = base.SetConverter(value);
-            if (changed)
-            {
-                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-            }
+        //protected override bool SetConverter(Converter<T, string> value)
+        //{
+        //    var changed = base.SetConverter(value);
+        //    if (changed)
+        //    {
+        //        UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
+        //    }
 
-            return changed;
-        }
+        //    return changed;
+        //}
 
-        protected override bool SetCulture(CultureInfo value)
-        {
-            var changed = base.SetCulture(value);
-            if (changed)
-            {
-                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-            }
+        //protected override bool SetCulture(CultureInfo value)
+        //{
+        //    var changed = base.SetCulture(value);
+        //    if (changed)
+        //    {
+        //        UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
+        //    }
 
-            return changed;
-        }
+        //    return changed;
+        //}
 
         protected virtual bool SetFormat(string? value)
         {

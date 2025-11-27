@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter.Base;
 
 #nullable enable
 namespace MudBlazor
@@ -180,10 +181,10 @@ namespace MudBlazor
                     return;
 
                 _toStringFunc = value;
-                Converter = new Converter<T>
-                {
-                    SetFunc = _toStringFunc ?? (x => x?.ToString()),
-                };
+                //Converter = new Converter<T>
+                //{
+                //    SetFunc = _toStringFunc ?? (x => x?.ToString()),
+                //};
             }
         }
 
@@ -843,7 +844,7 @@ namespace MudBlazor
 
             try
             {
-                return Converter.Set(item);
+                return Converter.Convert(item);
             }
             catch (NullReferenceException)
             {
@@ -1153,7 +1154,7 @@ namespace MudBlazor
 
             _debounceTimer?.Dispose();
 
-            var value = Converter.Get(Text);
+            var value = ConvertBack(Text);
             await SetValueAsync(value, updateText: false);
 
             // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false

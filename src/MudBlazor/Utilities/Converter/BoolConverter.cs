@@ -15,22 +15,13 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
     public BoolConverter()
     {
         _dispatcher = ReversibleTypeDispatcher.Create<T?, bool?>()
-            .Add(BoolIdentity.Instance)             // bool       <-> bool?
-            .Add(BoolNullableIdentity.Instance)     // bool?      <-> bool?
             .Add(BoolStringConverter.Instance)      // string     <-> bool?
-            .Add(BoolIntConverter.Instance)         // int        <-> bool?
-            .Add(BoolNullableIntConverter.Instance) // int?       <-> bool?
+            .Add<bool>(BoolIdentity.Instance)             // bool       <-> bool?
+            .Add<bool?>(BoolIdentity.Instance)     // bool?      <-> bool?
+            .Add<int>(BoolIntConverter.Instance)         // int        <-> bool?
+            .Add<int?>(BoolIntConverter.Instance) // int?       <-> bool?
             .Add(ObjectBoolConverter.Instance)
             .Build();
-        //_dispatcher = ReversibleTypeDispatcher<T?, bool?>
-        //    .CreateReversible()
-        //    .Add(new BoolIdentity())             // bool       <-> bool?
-        //    .Add(new BoolNullableIdentity())     // bool?      <-> bool?
-        //    .Add(new BoolStringConverter())      // string     <-> bool?
-        //    .Add(new BoolIntConverter())         // int        <-> bool?
-        //    .Add(new BoolNullableIntConverter()) // int?       <-> bool?
-        //    .Add(new ObjectBoolConverter())
-        //    .Build();
     }
 
     public bool? Convert(T? input) => _dispatcher.Convert(input);
@@ -64,7 +55,8 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
     }
 
     // bool? <-> int
-    public sealed class BoolIntConverter : IReversibleConverter<int, bool?>
+    // bool? <-> int?
+    public sealed class BoolIntConverter : IReversibleConverter<int, bool?>, IReversibleConverter<int?, bool?>
     {
         public bool? Convert(int i) => i switch
         {
@@ -72,24 +64,18 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
             _ => true
         };
 
-        public int ConvertBack(bool? b) => b switch
-        {
-            null => 0,
-            false => 0,
-            true => 1
-        };
-
-        public static BoolIntConverter Instance { get; } = new();
-    }
-
-    // bool? <-> int?
-    public sealed class BoolNullableIntConverter : IReversibleConverter<int?, bool?>
-    {
         public bool? Convert(int? i) => i switch
         {
             null => null,
             > 0 => true,
             _ => false
+        };
+
+        int IReversibleConverter<int, bool?>.ConvertBack(bool? b) => b switch
+        {
+            null => 0,
+            false => 0,
+            true => 1
         };
 
         public int? ConvertBack(bool? b) => b switch
@@ -99,25 +85,20 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
             _ => null
         };
 
-        public static BoolNullableIntConverter Instance { get; } = new();
+        public static BoolIntConverter Instance { get; } = new();
     }
 
-    // bool? <-> bool? (identity)
-    public sealed class BoolNullableIdentity : IReversibleConverter<bool?, bool?>
+    // bool? <-> bool
+    // bool? <-> bool?
+    public sealed class BoolIdentity : IReversibleConverter<bool, bool?>, IReversibleConverter<bool?, bool?>
     {
-        public bool? Convert(bool? b) => b;
+        public bool? Convert(bool value) => value;
 
-        public bool? ConvertBack(bool? b) => b;
+        public bool? Convert(bool? value) => value;
 
-        public static BoolNullableIdentity Instance { get; } = new();
-    }
+        bool IReversibleConverter<bool, bool?>.ConvertBack(bool? value) => value == true;
 
-    // bool? <-> bool (non-nullable)
-    public sealed class BoolIdentity : IReversibleConverter<bool, bool?>
-    {
-        public bool? Convert(bool b) => b;
-
-        public bool ConvertBack(bool? b) => b == true;
+        public bool? ConvertBack(bool? value) => value;
 
         public static BoolIdentity Instance { get; } = new();
     }
@@ -141,8 +122,7 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
 
         public object? ConvertBack(bool? value)
         {
-            // For ConvertBack we default to returning bool? (could extend to choose original runtime type)
-            return new BoolNullableIdentity().ConvertBack(value);
+            return BoolIdentity.Instance.ConvertBack(value);
         }
 
         public static ObjectBoolConverter Instance { get; } = new();
