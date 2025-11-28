@@ -126,7 +126,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => Convert(Value);
+        protected bool? BoolValue => ApplyConvert(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
@@ -140,7 +140,7 @@ namespace MudBlazor
                 Touched = true;
             }
 
-            var convertedValue = ConvertBack(value);
+            var convertedValue = ApplyConvert(value);
             return SetCheckedAsync(convertedValue);
         }
 

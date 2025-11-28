@@ -816,7 +816,7 @@ namespace MudBlazor
             }
         }
 
-        protected U? Convert(T? input)
+        protected U? ApplyConvert(T? input)
         {
             var converter = _converterState.Value;
             if (converter is null)
@@ -829,7 +829,7 @@ namespace MudBlazor
             return result.Value;
         }
 
-        protected T? ConvertBack(U? input)
+        protected T? ApplyConvert(U? input)
         {
             var converter = _converterState.Value;
             if (converter is null)

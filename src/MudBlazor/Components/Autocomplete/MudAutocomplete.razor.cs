@@ -1154,7 +1154,7 @@ namespace MudBlazor
 
             _debounceTimer?.Dispose();
 
-            var value = ConvertBack(Text);
+            var value = ApplyConvert(Text);
             await SetValueAsync(value, updateText: false);
 
             // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false

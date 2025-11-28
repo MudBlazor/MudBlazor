@@ -432,13 +432,13 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(Convert!)),
-                            selectedConvertedValues: _selectedValues.Select(Convert!).ToList(),
+                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ApplyConvert!)),
+                            selectedConvertedValues: _selectedValues.Select(ApplyConvert!).ToList(),
                             multiSelectionTextFunc: MultiSelectionTextFunc).CatchAndLog();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(Convert!)), updateValue: false).CatchAndLog();
+                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ApplyConvert!)), updateValue: false).CatchAndLog();
                     }
                 }
 
@@ -578,14 +578,14 @@ namespace MudBlazor
             if (MultiSelectionTextFunc != null)
             {
                 return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)),
-                        selectedConvertedValues: SelectedValues!.Select(Convert).ToList(),
+                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(ApplyConvert)),
+                        selectedConvertedValues: SelectedValues!.Select(ApplyConvert).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc)
                     : base.UpdateTextPropertyAsync(updateValue);
             }
 
             return MultiSelection
-                ? SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)))
+                ? SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(ApplyConvert)))
                 : base.UpdateTextPropertyAsync(updateValue);
         }
 
@@ -771,13 +771,13 @@ namespace MudBlazor
 
                 if (MultiSelectionTextFunc != null)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert!)),
-                        selectedConvertedValues: SelectedValues!.Select(Convert!).ToList(),
+                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(ApplyConvert!)),
+                        selectedConvertedValues: SelectedValues!.Select(ApplyConvert!).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc);
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert!)), updateValue: false);
+                    await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(ApplyConvert!)), updateValue: false);
                 }
 
                 UpdateSelectAllChecked();
@@ -1271,13 +1271,13 @@ namespace MudBlazor
             _selectedValues = new HashSet<T?>(selectedValues, _comparer);
             if (MultiSelectionTextFunc != null)
             {
-                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)),
-                    selectedConvertedValues: SelectedValues!.Select(Convert).ToList(),
+                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(ApplyConvert)),
+                    selectedConvertedValues: SelectedValues!.Select(ApplyConvert).ToList(),
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
             {
-                await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Convert)), updateValue: false);
+                await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(ApplyConvert)), updateValue: false);
             }
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
@@ -1301,7 +1301,7 @@ namespace MudBlazor
 
             if (!FitContent) return;
 
-            var stringValue = ToStringFunc?.Invoke(item.Value) ?? Convert(item.Value);
+            var stringValue = ToStringFunc?.Invoke(item.Value) ?? ApplyConvert(item.Value);
 
             if (_longestItem is null || stringValue?.Length > _longestItemLength)
             {
