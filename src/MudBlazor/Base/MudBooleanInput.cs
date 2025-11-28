@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -14,7 +13,7 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
-        public MudBooleanInput() : base(new BoolConverter<T?>())
+        public MudBooleanInput()
         {
             Converter = new MudBlazor.Utilities.Converter.BoolConverter<T?>();
         }

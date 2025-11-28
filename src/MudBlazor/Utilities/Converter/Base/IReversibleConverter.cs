@@ -3,5 +3,5 @@
 #nullable enable
 public interface IReversibleConverter<TIn, TOut> : IConverter<TIn, TOut>
 {
-    TIn ConvertBack(TOut output);
+    TIn ConvertBack(TOut input);
 }

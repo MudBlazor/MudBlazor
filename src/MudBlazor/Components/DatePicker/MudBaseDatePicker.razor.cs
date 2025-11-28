@@ -18,23 +18,20 @@ namespace MudBlazor
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string> _dateFormatState;
 
-        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
+        protected MudBaseDatePicker()
         {
-            Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
-            Culture = CultureInfo.CurrentCulture
-        })
-        {
-            using var registerScope = CreateRegisterScope();
-            _mudPickerCalendarContentElementId = Identifier.Create();
-            _dateFormatState = registerScope.RegisterParameter<string>(nameof(_dateFormatState))
-                .WithParameter(() => _dateFormatState)
-                .WithChangeHandler(DateFormatChangedAsync);
             Culture = CultureInfo.CurrentCulture;
             Converter = new Utilities.Converter.DefaultConverter<DateTime?>
             {
                 Culture = GetCulture,
                 Format = GetFormat
             };
+
+            using var registerScope = CreateRegisterScope();
+            _mudPickerCalendarContentElementId = Identifier.Create();
+            _dateFormatState = registerScope.RegisterParameter<string>(nameof(_dateFormatState))
+                .WithParameter(() => _dateFormatState)
+                .WithChangeHandler(DateFormatChangedAsync);
         }
 
         [Inject]

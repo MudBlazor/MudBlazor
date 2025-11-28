@@ -35,7 +35,6 @@ namespace MudBlazor
         private readonly ParameterState<string?> _inputIdState;
 
         protected MudBaseInput()
-            : base(new DefaultConverter<T>())
         {
             using var registerScope = CreateRegisterScope();
             _formatState = registerScope.RegisterParameter<string?>(nameof(Format))

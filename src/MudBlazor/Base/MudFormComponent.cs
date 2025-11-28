@@ -38,8 +38,10 @@ namespace MudBlazor
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
-        protected MudFormComponent(Converter<T, U> converter)
+        protected MudFormComponent()
         {
+            Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
+
             using var registerScope = CreateRegisterScope();
             ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
                 .WithParameter(() => ErrorText)
@@ -154,7 +156,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IConverter<T?, U?> Converter { get; set; } = null!;
+        public IConverter<T?, U?> Converter { get; set; }
 
         /// <summary>
         /// The culture used to format and interpret values such as dates and currency.

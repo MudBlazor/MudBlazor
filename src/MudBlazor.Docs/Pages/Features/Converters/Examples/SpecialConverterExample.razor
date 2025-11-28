@@ -16,6 +16,6 @@
 
     private readonly IConverter<bool, string> _converter = Conversions
         .From((bool value) => value ? "ON" : "OFF",
-            text => (text ?? "").ToLowerInvariant() == "on");
+            text => string.Equals(text, "on", StringComparison.InvariantCultureIgnoreCase));
 
 }

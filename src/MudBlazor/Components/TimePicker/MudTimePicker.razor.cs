@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter.Base;
 
 #nullable enable
 namespace MudBlazor
@@ -25,8 +24,9 @@ namespace MudBlazor
         private const string Format24Hours = "HH:mm";
         private const string Format12Hours = "hh:mm tt";
 
-        public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
+        public MudTimePicker()
         {
+            Converter = new Utilities.Converter.DefaultConverter<TimeSpan?>();
             Converter = Conversions.From<TimeSpan?, string?>(OnSet, OnGet);
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }

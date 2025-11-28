@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using MudBlazor.Resources;
@@ -51,20 +52,71 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Add(new NullableNumberConverter<decimal>(Culture, Format))
             .Add<Guid>(StrictGuidStringConverter.Instance)
             .Add<Guid?>(StrictGuidStringConverter.Instance)
-            //.Add(DateTimeConverter.Create(this)!)
-            //.Add(TimeSpanConverter.Create(this)!)
+            .Add<DateTime>(new DateTimeConverter(Culture, Format))
+            .Add<DateTime?>(new DateTimeConverter(Culture, Format))
+            .Add<TimeSpan>(new TimeSpanConverter(Culture, Format))
+            .Add<TimeSpan?>(new TimeSpanConverter(Culture, Format))
             //.Add(ObjectConverter.Create(this))
             .Build();
     }
 
     public string? Convert(T? input)
     {
-        return _dispatcher.Convert(input);
+        // Special handling for enums
+        if (IsNullableEnum(typeof(T), out _))
+        {
+            var value = input as Enum;
+            return value?.ToString();
+        }
+
+        if (typeof(T).IsEnum)
+        {
+            var value = input as Enum;
+            return value?.ToString();
+        }
+
+        var result = _dispatcher.TryConvert(input);
+        // If conversion failed, fallback to ToString() implementation of the T
+        return result.Success ? result.Value : input?.ToString();
     }
 
-    public T? ConvertBack(string? output)
+    public T? ConvertBack(string? input)
     {
-        return _dispatcher.ConvertBack(output);
+        // Special handling for enums
+        if (IsNullableEnum(typeof(T), out var enumType))
+        {
+            if (Enum.TryParse(enumType, input, out var result))
+            {
+                return (T)result;
+            }
+
+            throw new ConversionException(LanguageResource.Converter_NotValueOf, [enumType.Name]);
+        }
+
+        if (typeof(T).IsEnum)
+        {
+            if (Enum.TryParse(typeof(T), input, out var result))
+            {
+                return (T)result;
+            }
+
+            throw new ConversionException(LanguageResource.Converter_NotValueOf, [typeof(T).Name]);
+        }
+
+        return _dispatcher.ConvertBack(input);
+    }
+
+    private static bool IsNullableEnum(Type type, [NotNullWhen(true)] out Type? result)
+    {
+        var underlyingType = Nullable.GetUnderlyingType(type);
+        if (underlyingType?.IsEnum is true)
+        {
+            result = underlyingType;
+            return true;
+        }
+
+        result = null!;
+        return false;
     }
 
     private sealed class StrictGuidStringConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
@@ -91,13 +143,14 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     private sealed class CharConverter : IReversibleConverter<char, string?>, IReversibleConverter<char?, string?>
     {
         public string Convert(char input) => input.ToString();
+
         public string? Convert(char? input) => input?.ToString();
 
-        public char ConvertBack(string? s) => string.IsNullOrEmpty(s) ? '\0' : s[0];
+        public char ConvertBack(string? input) => string.IsNullOrEmpty(input) ? '\0' : input[0];
 
-        char? IReversibleConverter<char?, string?>.ConvertBack(string? output)
+        char? IReversibleConverter<char?, string?>.ConvertBack(string? input)
         {
-            return ConvertBack(output);
+            return ConvertBack(input);
         }
 
         public static readonly CharConverter Instance = new();
@@ -114,15 +167,15 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             null => null
         };
 
-        public bool ConvertBack(string? value) =>
-            value?.ToLowerInvariant() switch
+        public bool ConvertBack(string? input) =>
+            input?.ToLowerInvariant() switch
             {
                 "true" or "1" or "on" => true,
                 _ => false
             };
 
-        bool? IReversibleConverter<bool?, string?>.ConvertBack(string? value) =>
-            value?.ToLowerInvariant() switch
+        bool? IReversibleConverter<bool?, string?>.ConvertBack(string? input) =>
+            input?.ToLowerInvariant() switch
             {
                 "true" or "1" or "on" => true,
                 "false" or "0" or "off" => false,
@@ -152,11 +205,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             return input?.ToString(format?.Invoke(), culture1);
         }
 
-        public TNumber? ConvertBack(string? output)
+        public TNumber? ConvertBack(string? input)
         {
             var culture1 = culture.Invoke();
 
-            if (TNumber.TryParse(output, NumberStyles.Any, culture1, out var result))
+            if (TNumber.TryParse(input, NumberStyles.Any, culture1, out var result))
             {
                 return result;
             }
@@ -171,16 +224,12 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     {
         public string Convert(TNumber input)
         {
-            var culture1 = culture.Invoke();
-
-            return input.ToString(format?.Invoke(), culture1);
+            return input.ToString(format.Invoke(), culture.Invoke());
         }
 
-        public TNumber ConvertBack(string? output)
+        public TNumber ConvertBack(string? input)
         {
-            var culture1 = culture.Invoke();
-
-            if (TNumber.TryParse(output, NumberStyles.Any, culture1, out var result))
+            if (TNumber.TryParse(input, NumberStyles.Any, culture.Invoke(), out var result))
             {
                 return result;
             }
@@ -189,34 +238,54 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         }
     }
 
+    private sealed class DateTimeConverter(Func<CultureInfo> culture, Func<string?> format)
+        : IReversibleConverter<DateTime, string?>, IReversibleConverter<DateTime?, string?>
+    {
+        public string Convert(DateTime dateTime) => dateTime.ToString(format.Invoke(), culture.Invoke());
 
-    //public sealed class DateTimeConverter : IReversibleConverter<DateTime, string>
-    //{
-    //    private readonly DefaultConverter<T> _parent;
-    //    private DateTimeConverter(DefaultConverter<T> parent) => _parent = parent;
+        public string? Convert(DateTime? input) => input?.ToString(format.Invoke(), culture.Invoke());
 
-    //    public static DateTimeConverter Create(DefaultConverter<T> parent) => new(parent);
+        public DateTime ConvertBack(string? input)
+        {
+            var currentCulture = culture.Invoke();
+            if (DateTime.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
+            {
+                return result;
+            }
 
-    //    public string Convert(DateTime dt) =>
-    //        dt.ToString(_parent.Format ?? _parent.Culture.DateTimeFormat.ShortDatePattern, _parent.Culture);
+            throw new ConversionException(LanguageResource.Converter_InvalidDateTime);
+        }
 
-    //    public DateTime ConvertBack(string s) =>
-    //        DateTime.ParseExact(s, _parent.Format ?? _parent.Culture.DateTimeFormat.ShortDatePattern, _parent.Culture);
-    //}
+        DateTime? IReversibleConverter<DateTime?, string?>.ConvertBack(string? input)
+        {
+            return ConvertBack(input);
+        }
+    }
 
-    //public sealed class TimeSpanConverter : IReversibleConverter<TimeSpan, string>
-    //{
-    //    private readonly DefaultConverter<T> _parent;
-    //    private TimeSpanConverter(DefaultConverter<T> parent) => _parent = parent;
+    private sealed class TimeSpanConverter(Func<CultureInfo> culture, Func<string?> format)
+        : IReversibleConverter<TimeSpan, string?>, IReversibleConverter<TimeSpan?, string?>
+    {
+        private const string DefaultTimeSpanFormat = "c";
 
-    //    public static TimeSpanConverter Create(DefaultConverter<T> parent) => new(parent);
+        public string Convert(TimeSpan timeSpan) => timeSpan.ToString(format.Invoke() ?? DefaultTimeSpanFormat, culture.Invoke());
 
-    //    public string Convert(TimeSpan ts) =>
-    //        ts.ToString(_parent.Format ?? "c", _parent.Culture);
+        public string? Convert(TimeSpan? timeSpan) => timeSpan?.ToString(format.Invoke() ?? DefaultTimeSpanFormat, culture.Invoke());
 
-    //    public TimeSpan ConvertBack(string s) =>
-    //        TimeSpan.ParseExact(s, _parent.Format ?? "c", _parent.Culture);
-    //}
+        public TimeSpan ConvertBack(string? input)
+        {
+            if (TimeSpan.TryParseExact(input, format.Invoke() ?? DefaultTimeSpanFormat, culture.Invoke(), out var result))
+            {
+                return result;
+            }
+
+            throw new ConversionException(LanguageResource.Converter_InvalidTimeSpan);
+        }
+
+        TimeSpan? IReversibleConverter<TimeSpan?, string?>.ConvertBack(string? input)
+        {
+            return ConvertBack(input);
+        }
+    }
 
     //public sealed class ObjectConverter : IReversibleConverter<object?, string?>
     //{

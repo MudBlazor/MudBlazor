@@ -33,12 +33,17 @@ namespace MudBlazor
         /// <summary>
         /// Creates a new instance.
         /// </summary>
-        public MudFileUpload() : base(new DefaultConverter<T>())
+        public MudFileUpload()
         {
             using var registerScope = CreateRegisterScope();
             _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
                 .WithParameter(() => Files)
                 .WithEventCallback(() => FilesChanged);
+            Converter = new Utilities.Converter.DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         private readonly string _id = Identifier.Create();
