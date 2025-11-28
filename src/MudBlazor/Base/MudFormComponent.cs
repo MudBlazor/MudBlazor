@@ -30,6 +30,7 @@ namespace MudBlazor
         protected readonly ParameterState<bool> ErrorState;
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
+        private readonly ParameterState<CultureInfo> _cultureState;
         private readonly ParameterState<IConverter<T?, U?>> _converterState;
 
         [Inject]
@@ -47,6 +48,8 @@ namespace MudBlazor
             ErrorIdState = registerScope.RegisterParameter<string?>(nameof(ErrorId))
                 .WithParameter(() => ErrorId)
                 .WithEventCallback(() => ErrorIdChanged);
+            _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
+                .WithParameter(() => Culture);
             _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
                 .WithParameter(() => Converter);
         }
@@ -762,6 +765,7 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
                 // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
@@ -816,7 +820,35 @@ namespace MudBlazor
             }
         }
 
-        protected virtual Task SetConverterAsync(IConverter<T?, U?> newConverter) => _converterState.SetValueAsync(newConverter);
+        private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
+        {
+            if (_converterState.Value is ICultureAwareConverter cultureAwareConverter)
+            {
+                cultureAwareConverter.Culture = culture;
+                cultureAwareConverter.Format = format;
+            }
+        }
+
+        protected virtual Task SetCultureAsync(CultureInfo newCultureInfo) 
+        {
+            ArgumentNullException.ThrowIfNull(newCultureInfo);
+            // Skip InjectCultureAndFormatToConverter.
+            // The converter relies on Func delegates that read Culture/Format at runtime
+            // The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
+            return _cultureState.SetValueAsync(newCultureInfo);
+        }
+
+        protected virtual CultureInfo GetCulture() => _cultureState.Value ?? CultureInfo.InvariantCulture;
+
+        protected virtual string? GetFormat() => null;
+
+        protected virtual Task SetConverterAsync(IConverter<T?, U?> newConverter)
+        {
+            ArgumentNullException.ThrowIfNull(newConverter);
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+
+            return _converterState.SetValueAsync(newConverter);
+        }
 
         protected T? ConvertGet(U? input)
         {

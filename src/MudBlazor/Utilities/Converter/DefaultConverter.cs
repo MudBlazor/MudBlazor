@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel;
 using System.Globalization;
 using System.Numerics;
 using MudBlazor.Resources;
@@ -12,19 +11,16 @@ using MudBlazor.Utilities.Converter.Dispatcher;
 namespace MudBlazor.Utilities.Converter;
 
 #nullable enable
-public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
+public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICultureAwareConverter
 {
     private readonly IReversibleConverter<T?, string?> _dispatcher;
 
-    public Func<string?>? Format { get;  }
+    public Func<string?> Format { get; set; } = () => null;
 
-    public Func<CultureInfo> Culture { get; }
+    public Func<CultureInfo> Culture { get; set; } = () => CultureInfo.InvariantCulture;
 
-    public DefaultConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    public DefaultConverter()
     {
-        Format = format;
-        Culture = culture ?? (() => CultureInfo.InvariantCulture);
-
         _dispatcher = ReversibleTypeDispatcher.Create<T?, string?>()
             .Add(StringIdentityConverter.Instance)
             .Add<char>(CharConverter.Instance)
@@ -71,7 +67,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
         return _dispatcher.ConvertBack(output);
     }
 
-    public sealed class StrictGuidStringConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
+    private sealed class StrictGuidStringConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
     {
         public Guid ConvertBack(string? input)
         {
@@ -92,7 +88,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
         public static StrictGuidStringConverter Instance { get; } = new();
     }
 
-    public sealed class CharConverter : IReversibleConverter<char, string?>, IReversibleConverter<char?, string?>
+    private sealed class CharConverter : IReversibleConverter<char, string?>, IReversibleConverter<char?, string?>
     {
         public string Convert(char input) => input.ToString();
         public string? Convert(char? input) => input?.ToString();
@@ -107,7 +103,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
         public static readonly CharConverter Instance = new();
     }
 
-    public sealed class BoolConverter : IReversibleConverter<bool?, string?>, IReversibleConverter<bool, string?>
+    private sealed class BoolConverter : IReversibleConverter<bool?, string?>, IReversibleConverter<bool, string?>
     {
         public string Convert(bool input) => input ? "on" : "off";
 
@@ -136,7 +132,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
         public static readonly BoolConverter Instance = new();
     }
 
-    public sealed class StringIdentityConverter : IReversibleConverter<string?, string?>
+    private sealed class StringIdentityConverter : IReversibleConverter<string?, string?>
     {
         public string? Convert(string? input) => input;
 
@@ -145,31 +141,22 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
         public static readonly StringIdentityConverter Instance = new();
     }
 
-    public sealed class NullableNumberConverter<TNumber> : IReversibleConverter<TNumber?, string?> where TNumber : struct, INumber<TNumber>
+    private sealed class NullableNumberConverter<TNumber>(Func<CultureInfo> culture, Func<string?> format)
+        : IReversibleConverter<TNumber?, string?>
+        where TNumber : struct, INumber<TNumber>
     {
-        public Func<string?>? Format { get; }
-
-        public Func<CultureInfo> Culture { get; }
-
-        public NullableNumberConverter(Func<CultureInfo> culture, Func<string?>? format)
-        {
-            Culture = culture;
-            Format = format;
-            
-        }
-
         public string? Convert(TNumber? input)
         {
-            var culture = Culture.Invoke();
+            var culture1 = culture.Invoke();
 
-            return input?.ToString(Format?.Invoke(), culture);
+            return input?.ToString(format?.Invoke(), culture1);
         }
 
         public TNumber? ConvertBack(string? output)
         {
-            var culture = Culture.Invoke();
+            var culture1 = culture.Invoke();
 
-            if (TNumber.TryParse(output, NumberStyles.Any, culture, out var result))
+            if (TNumber.TryParse(output, NumberStyles.Any, culture1, out var result))
             {
                 return result;
             }
@@ -178,31 +165,22 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
         }
     }
 
-    public sealed class NumberConverter<TNumber> : IReversibleConverter<TNumber, string?> where TNumber : INumber<TNumber>
+    private sealed class NumberConverter<TNumber>(Func<CultureInfo> culture, Func<string?> format)
+        : IReversibleConverter<TNumber, string?>
+        where TNumber : INumber<TNumber>
     {
-        public Func<string?>? Format { get; }
-
-        public Func<CultureInfo> Culture { get; }
-
-        public NumberConverter(Func<CultureInfo> culture, Func<string?>? format)
+        public string Convert(TNumber input)
         {
-            Culture = culture;
-            Format = format;
+            var culture1 = culture.Invoke();
 
-        }
-
-        public string? Convert(TNumber input)
-        {
-            var culture = Culture.Invoke();
-
-            return input.ToString(Format?.Invoke(), culture);
+            return input.ToString(format?.Invoke(), culture1);
         }
 
         public TNumber ConvertBack(string? output)
         {
-            var culture = Culture.Invoke();
+            var culture1 = culture.Invoke();
 
-            if (TNumber.TryParse(output, NumberStyles.Any, culture, out var result))
+            if (TNumber.TryParse(output, NumberStyles.Any, culture1, out var result))
             {
                 return result;
             }

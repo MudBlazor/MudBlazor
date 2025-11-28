@@ -2,16 +2,26 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
+
 namespace MudBlazor.Utilities.Converter
 {
 #nullable enable
-    public sealed class RangeConverter<T> : IReversibleConverter<Range<T>?, string?>
+    public sealed class RangeConverter<T> : IReversibleConverter<Range<T>?, string?>, ICultureAwareConverter
     {
         private readonly IReversibleConverter<T?, string?> _inner;
 
+        public Func<string?> Format { get; set; } = () => null;
+
+        public Func<CultureInfo> Culture { get; set; } = () => CultureInfo.InvariantCulture;
+
         public RangeConverter()
         {
-            _inner = new DefaultConverter<T>();
+            _inner = new DefaultConverter<T>()
+            {
+                Culture = Culture,
+                Format = Format
+            };
         }
 
         public string Convert(Range<T>? input)

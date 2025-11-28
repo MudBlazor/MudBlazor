@@ -22,7 +22,11 @@ namespace MudBlazor
         public MudRangeInput()
         {
             Value = new Range<T>();
-            Converter = new Utilities.Converter.RangeConverter<T>();
+            Converter = new Utilities.Converter.RangeConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,

@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -33,16 +31,23 @@ namespace MudBlazor
         protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
+        private readonly ParameterState<string?> _formatState;
         private readonly ParameterState<string?> _inputIdState;
 
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
             using var registerScope = CreateRegisterScope();
+            _formatState = registerScope.RegisterParameter<string?>(nameof(Format))
+                .WithParameter(() => Format);
             _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
-            Converter = new MudBlazor.Utilities.Converter.DefaultConverter<T>(() => Culture, () => Format);
+            Converter = new MudBlazor.Utilities.Converter.DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         [Inject]
@@ -420,11 +425,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string? Format
-        {
-            get => ((Converter<T>)Converter).Format;
-            set => SetFormat(value);
-        }
+        public string? Format { get; set; }
 
         /// <summary>
         /// The ID of the input element.
@@ -608,22 +609,24 @@ namespace MudBlazor
         //    return changed;
         //}
 
+        protected override string? GetFormat() => _formatState.Value;
+
+        protected override async Task SetCultureAsync(CultureInfo newCultureInfo)
+        {
+            await base.SetCultureAsync(newCultureInfo);
+            await UpdateTextPropertyAsync(false);
+        }
+
         protected override async Task SetConverterAsync(IConverter<T?, string?> newConverter)
         {
             await base.SetConverterAsync(newConverter);
             await UpdateTextPropertyAsync(false);
         }
 
-        protected virtual bool SetFormat(string? value)
+        protected virtual async Task SetFormatAsync(string? value)
         {
-            var changed = Format != value;
-            if (changed)
-            {
-                ((Converter<T>)Converter).Format = value;
-                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-            }
-
-            return changed;
+            await _formatState.SetValueAsync(value);
+            await UpdateTextPropertyAsync(false);
         }
 
         protected override async Task ValidateValue()
