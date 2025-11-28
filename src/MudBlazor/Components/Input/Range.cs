@@ -29,7 +29,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="start">The minimum value.</param>
         /// <param name="end">The maximum value.</param>
-        public Range(T start, T end)
+        public Range(T? start, T? end)
         {
             Start = start;
             End = end;

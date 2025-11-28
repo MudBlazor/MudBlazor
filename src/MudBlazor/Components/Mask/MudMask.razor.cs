@@ -296,7 +296,7 @@ namespace MudBlazor
             // allow this only via changes from the outside
             if (_updating)
                 return;
-            var text = ConvertSet(Value));
+            var text = ConvertSet(Value);
             var cleanText = Mask.GetCleanText();
             if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;

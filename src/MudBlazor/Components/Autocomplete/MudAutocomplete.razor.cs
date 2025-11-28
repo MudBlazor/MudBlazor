@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter.Base;
 
 #nullable enable
 namespace MudBlazor
@@ -844,7 +843,7 @@ namespace MudBlazor
 
             try
             {
-                return Converter.Convert(item);
+                return ConvertSet(item);
             }
             catch (NullReferenceException)
             {
