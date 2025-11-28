@@ -1,9 +1,10 @@
 ﻿@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
+@using MudBlazor.Utilities.Converter.Base
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" @ref="grid" Items="_elements" DragDropColumnReordering="_dragDropReorderingEnabled" ColumnsPanelReordering="_columnsPanelReorderingEnabled"
+<MudDataGrid T="Element" @ref="_grid" Items="_elements" DragDropColumnReordering="_dragDropReorderingEnabled" ColumnsPanelReordering="_columnsPanelReorderingEnabled"
              ColumnResizeMode="ResizeMode.Container" Hideable="_hideable" Filterable="_filterable" Groupable="_groupable" FilterMode="_filterMode" ShowMenuIcon="true">
     <Columns>
         <SelectColumn T="Element"/>
@@ -28,8 +29,8 @@
 
 <div class="d-flex flex-rows flex-wrap mr-4">
     <MudSwitch @bind-Value="_hideable" Color="Color.Primary">Hideable</MudSwitch>
-@*     <MudSwitch @bind-Value="_hideMolar" Color="Color.Primary" Converter="_oppositeBoolConverter">Molar Mass Visible</MudSwitch>
-    <MudSwitch @bind-Value="_hideCategory" Color="Color.Primary" Converter="_oppositeBoolConverter">Category Visible</MudSwitch> *@
+    <MudSwitch @bind-Value="_hideMolar" Color="Color.Primary" Converter="_oppositeBoolConverter">Molar Mass Visible</MudSwitch>
+    <MudSwitch @bind-Value="_hideCategory" Color="Color.Primary" Converter="_oppositeBoolConverter">Category Visible</MudSwitch>
 </div>
 
 <div class="d-flex flex-wrap mt-4 gap-1">
@@ -51,7 +52,6 @@
     </MudRadioGroup>
 </div>
 
-
 @code {
     private IEnumerable<Element> _elements = new List<Element>();
 
@@ -61,18 +61,13 @@
     private bool _hideable = true;
     private bool _filterable = true;
     private bool _groupable = true;
-    private bool _hideMolar = false;
-    private bool _hideCategory = false;
-    private bool _groupMolar = false;
-    private bool _groupCategory = false;
-    public MudDataGrid<Element> grid = null;
+    private bool _hideMolar;
+    private bool _hideCategory;
+    private bool _groupMolar;
+    private bool _groupCategory;
+    private MudDataGrid<Element> _grid = null!;
 
-    // private MudBlazor.Converter<bool, bool?> _oppositeBoolConverter = new()
-    // {
-    //     SetFunc = value => !value,
-    //     GetFunc = value => !value ?? true,
-    // };
-
+    private readonly IConverter<bool, bool?> _oppositeBoolConverter = Conversions.From<bool, bool?>(value => !value, value => !value ?? true);
     protected override async Task OnInitializedAsync()
     {
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
@@ -80,7 +75,7 @@
 
     private async Task HideColumnsAsync(bool hide)
     {        
-        foreach (var column in grid.RenderedColumns)
+        foreach (var column in _grid.RenderedColumns)
         {
             if (hide)
             {
