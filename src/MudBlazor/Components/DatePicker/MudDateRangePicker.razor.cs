@@ -139,7 +139,7 @@ namespace MudBlazor
                 Touched = true;
 
                 if (range?.Start is not null)
-                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+                    PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
 
                 _dateRange = range;
                 _value = range?.End;
@@ -498,14 +498,14 @@ namespace MudBlazor
         protected override DateTime GetCalendarStartOfMonth()
         {
             var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;
-            return date.StartOfMonth(Culture);
+            return date.StartOfMonth(GetCulture());
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = DateRange?.Start ?? DateTime.Today;
-            var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
-            var calenderYear = Culture.Calendar.GetYear(date);
+            var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
+            var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;
         }
     }

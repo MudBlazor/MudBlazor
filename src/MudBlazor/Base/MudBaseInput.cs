@@ -598,17 +598,6 @@ namespace MudBlazor
             return SetValueAsync(ConvertGet(Text), updateText);
         }
 
-        //protected override bool SetCulture(CultureInfo value)
-        //{
-        //    var changed = base.SetCulture(value);
-        //    if (changed)
-        //    {
-        //        UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-        //    }
-
-        //    return changed;
-        //}
-
         protected override string? GetFormat() => _formatState.Value;
 
         protected override async Task SetCultureAsync(CultureInfo newCultureInfo)

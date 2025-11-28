@@ -26,7 +26,9 @@ namespace MudBlazor
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
         private ConversionResult<T?>? _getConversionResult;
+        // ReSharper disable NotAccessedField.Local maybe we use it later, original converter didn't read the set errors
         private ConversionResult<U?>? _setConversionResult;
+        // ReSharper restore NotAccessedField.Local
         protected readonly ParameterState<bool> ErrorState;
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
@@ -820,15 +822,6 @@ namespace MudBlazor
             }
         }
 
-        private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
-        {
-            if (_converterState.Value is ICultureAwareConverter cultureAwareConverter)
-            {
-                cultureAwareConverter.Culture = culture;
-                cultureAwareConverter.Format = format;
-            }
-        }
-
         protected virtual Task SetCultureAsync(CultureInfo newCultureInfo) 
         {
             ArgumentNullException.ThrowIfNull(newCultureInfo);
@@ -874,6 +867,15 @@ namespace MudBlazor
             _setConversionResult = result;
 
             return result.Value;
+        }
+
+        private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
+        {
+            if (_converterState.Value is ICultureAwareConverter cultureAwareConverter)
+            {
+                cultureAwareConverter.Culture = culture;
+                cultureAwareConverter.Format = format;
+            }
         }
 
         private void ResetConverterErrors()
