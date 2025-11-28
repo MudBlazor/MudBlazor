@@ -1,4 +1,11 @@
-﻿<a href="@Website" target="@Target" rel="nofollow">
+﻿<!--suppress CssUnresolvedCustomProperty, CssUnusedSymbol -->
+<style>
+    .white-background {
+        background-color: var(--mud-palette-white);
+    }
+</style>
+
+<a href="@Website" target="@Target" rel="nofollow">
     <MudPaper Elevation="@(LandingPage? 0 : 25)" Class="@GetClassnames()" Height="100%">
         <MudImage Src="@($"_content/MudBlazor.Docs/images/sponsors/{Image}")" Alt="@Name" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" />
     </MudPaper>
@@ -9,18 +16,12 @@
     [Parameter] public string Name { get; set; }
     [Parameter] public string Image { get; set; }
     [Parameter] public bool LandingPage { get; set; }
-
     [Parameter] public string Target { get; set; } = "_blank";
     
     private string GetClassnames()
     {
-        if (LandingPage)
-        {
-            return "lp-sponsor d-flex justify-center align-center mud-transparent pa-4 relative";
-        }
-        else
-        {
-            return "d-flex justify-center align-center mud-transparent rounded-lg relative";
-        }
+        return LandingPage 
+            ? "lp-sponsor d-flex justify-center align-center pa-4 relative mud-transparent" 
+            : "d-flex justify-center align-center rounded-lg relative white-background";
     }
 }
