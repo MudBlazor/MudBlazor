@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter.Base;
 
 #nullable enable
 namespace MudBlazor
@@ -26,7 +27,6 @@ namespace MudBlazor
 
         public MudTimePicker()
         {
-            Converter = new Utilities.Converter.DefaultConverter<TimeSpan?>();
             Converter = Conversions.From<TimeSpan?, string?>(OnSet, OnGet);
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
@@ -77,10 +77,7 @@ namespace MudBlazor
 
         private void HandleParsingError()
         {
-            //const string ParsingErrorMessage = LanguageResource.Converter_InvalidTimeSpan;
-            //Converter.GetError = true;
-            //Converter.GetErrorMessage = (ParsingErrorMessage, []);
-            //Converter.OnError?.Invoke(ParsingErrorMessage, []);
+            throw new ConversionException(LanguageResource.Converter_InvalidTimeSpan);
         }
 
         private bool _amPm = false;
@@ -170,7 +167,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Convert(_value), false).CatchAndLog();
+                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
         }
 

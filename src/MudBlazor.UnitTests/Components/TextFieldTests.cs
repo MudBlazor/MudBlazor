@@ -241,12 +241,11 @@ namespace MudBlazor.UnitTests.Components
         [Test, CancelAfter(1000)]
         public async Task TextFieldUpdateLoopProtectionTest()
         {
-            var comp = Context.RenderComponent<MudTextField<string>>();
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Converter, Conversions.From<string, string>(s => $"{s}x", s => $"{s}y")));
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that textfields and other inputs are now protected against.
             var textfield = comp.Instance;
-            textfield.Converter.SetFunc = s => $"{s}x";
-            textfield.Converter.GetFunc = s => $"{s}y";
             await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", "A"));
             textfield.Value.Should().Be("A");
             textfield.Text.Should().Be("Ax");

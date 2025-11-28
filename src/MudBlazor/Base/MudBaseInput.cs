@@ -36,17 +36,18 @@ namespace MudBlazor
 
         protected MudBaseInput()
         {
+            Converter = new MudBlazor.Utilities.Converter.DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+
             using var registerScope = CreateRegisterScope();
             _formatState = registerScope.RegisterParameter<string?>(nameof(Format))
                 .WithParameter(() => Format);
             _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
-            Converter = new MudBlazor.Utilities.Converter.DefaultConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
         }
 
         [Inject]

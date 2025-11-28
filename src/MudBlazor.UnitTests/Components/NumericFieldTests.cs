@@ -237,12 +237,11 @@ namespace MudBlazor.UnitTests.Components
         [Test, CancelAfter(1000)]
         public async Task NumericFieldUpdateLoopProtectionTest()
         {
-            var comp = Context.RenderComponent<MudNumericField<int>>();
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.Converter, Conversions.From((int s) => s.ToString(), int.Parse)));
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that numericFields and other inputs are now protected against.
             var numericField = comp.Instance;
-            numericField.Converter.SetFunc = s => s.ToString();
-            numericField.Converter.GetFunc = s => int.Parse(s);
             await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", 1));
             numericField.Value.Should().Be(1);
             numericField.Text.Should().Be("1");

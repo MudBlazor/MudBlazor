@@ -40,7 +40,7 @@ namespace MudBlazor
 
         protected MudFormComponent()
         {
-            Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
+            //Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
 
             using var registerScope = CreateRegisterScope();
             ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
@@ -156,7 +156,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IConverter<T?, U?> Converter { get; set; }
+        public IConverter<T?, U?> Converter { get; set; } = null!;
 
         /// <summary>
         /// The culture used to format and interpret values such as dates and currency.
@@ -845,7 +845,7 @@ namespace MudBlazor
             return _converterState.SetValueAsync(newConverter);
         }
 
-        protected T? ConvertGet(U? input)
+        protected virtual T? ConvertGet(U? input)
         {
             var converter = _converterState.Value;
             if (converter is null)
@@ -858,7 +858,7 @@ namespace MudBlazor
             return result.Value;
         }
 
-        protected U? ConvertSet(T? input)
+        protected virtual U? ConvertSet(T? input)
         {
             var converter = _converterState.Value;
             if (converter is null)
