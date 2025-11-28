@@ -1,6 +1,6 @@
 ﻿using MudBlazor.Utilities.Converter.Chain;
 
-namespace MudBlazor.Utilities.Converter.Base;
+namespace MudBlazor;
 
 #nullable enable
 public static class Conversions

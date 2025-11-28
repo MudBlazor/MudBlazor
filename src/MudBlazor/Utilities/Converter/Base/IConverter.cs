@@ -1,4 +1,4 @@
-﻿namespace MudBlazor.Utilities.Converter.Base;
+﻿namespace MudBlazor;
 
 #nullable enable
 public interface IConverter<in TIn, out TOut>

@@ -816,6 +816,8 @@ namespace MudBlazor
             }
         }
 
+        protected virtual Task SetConverterAsync(IConverter<T?, U?> newConverter) => _converterState.SetValueAsync(newConverter);
+
         protected U? ApplyConvert(T? input)
         {
             var converter = _converterState.Value;
