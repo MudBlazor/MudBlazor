@@ -156,8 +156,8 @@ namespace MudBlazor
                     else
                     {
                         _rangeText = new Range<string>(
-                            Converter.Convert(_dateRange.Start),
-                            Converter.Convert(_dateRange.End));
+                            ApplyConvert(_dateRange.Start),
+                            ApplyConvert(_dateRange.End));
                         await SetTextAsync(_dateRange.ToString(Converter), false);
                     }
                 }
@@ -227,8 +227,8 @@ namespace MudBlazor
             if (_dateRange?.Start != null || _dateRange?.End != null)
             {
                 _rangeText = new Range<string>(
-                    Converter.Convert(_dateRange.Start),
-                    Converter.Convert(_dateRange.End));
+                    ApplyConvert(_dateRange.Start),
+                    ApplyConvert(_dateRange.End));
             }
 
             return SetTextAsync(_dateRange?.ToString(Converter), false);

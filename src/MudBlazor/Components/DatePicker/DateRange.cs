@@ -79,15 +79,15 @@ namespace MudBlazor
         {
             date = null;
 
-            var endDate = converter.ConvertBack(end);
-            //if (converter.GetError)
-            //    return false;
+            var endDate = converter.TryConvertBack(end);
+            if (!endDate.Success)
+                return false;
 
-            var startDate = converter.ConvertBack(start);
-            //if (converter.GetError)
-            //    return false;
+            var startDate = converter.TryConvertBack(start);
+            if (!startDate.Success)
+                return false;
 
-            date = new DateRange(startDate, endDate);
+            date = new DateRange(startDate.Value, endDate.Value);
             return true;
         }
 

@@ -12,8 +12,10 @@
 </MudGrid>
 
 @code {
-
     private bool _state = true;
 
-    private readonly IConverter<bool, string> _converter = Conversions.From((bool value) => value ? "ON" : "OFF", text => (text ?? "").ToLowerInvariant() == "on");
+    private readonly IConverter<bool, string> _converter = Conversions
+        .From((bool value) => value ? "ON" : "OFF",
+            text => (text ?? "").ToLowerInvariant() == "on");
+
 }

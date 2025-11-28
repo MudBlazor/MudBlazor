@@ -27,7 +27,7 @@ namespace MudBlazor
 
         public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
         {
-            Converter = MudBlazor.Utilities.Converter.Base.Conversions.From<TimeSpan?, string?>(OnSet, OnGet);
+            Converter = Conversions.From<TimeSpan?, string?>(OnSet, OnGet);
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
 
@@ -205,7 +205,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Convert(_value), false).CatchAndLog();
+                SetTextAsync(ApplyConvert(_value), false).CatchAndLog();
             }
         }
 
@@ -237,7 +237,7 @@ namespace MudBlazor
                 _value = time;
                 if (updateValue)
                 {
-                    await SetTextAsync(Converter.Convert(_value), false);
+                    await SetTextAsync(ApplyConvert(_value), false);
                 }
 
                 UpdateTimeSetFromTime();
@@ -258,7 +258,7 @@ namespace MudBlazor
             Touched = true;
 
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(Converter.ConvertBack(value), false);
+            return SetTimeAsync(ApplyConvert(value), false);
         }
 
         /// <inheritdoc />
