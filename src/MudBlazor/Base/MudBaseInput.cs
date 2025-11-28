@@ -469,7 +469,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            return SetTextAsync(Converter.Convert(Value), updateValue);
+            return SetTextAsync(ApplyConvert(Value), updateValue);
         }
 
         /// <summary>
@@ -594,19 +594,8 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            return SetValueAsync(Converter.ConvertBack(Text), updateText);
+            return SetValueAsync(ApplyConvert(Text), updateText);
         }
-
-        //protected override bool SetConverter(Converter<T, string> value)
-        //{
-        //    var changed = base.SetConverter(value);
-        //    if (changed)
-        //    {
-        //        UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-        //    }
-
-        //    return changed;
-        //}
 
         //protected override bool SetCulture(CultureInfo value)
         //{
@@ -618,6 +607,12 @@ namespace MudBlazor
 
         //    return changed;
         //}
+
+        protected override async Task SetConverterAsync(IConverter<T?, string?> newConverter)
+        {
+            await base.SetConverterAsync(newConverter);
+            await UpdateTextPropertyAsync(false);
+        }
 
         protected virtual bool SetFormat(string? value)
         {
