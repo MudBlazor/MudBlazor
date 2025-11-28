@@ -469,7 +469,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            return SetTextAsync(ApplyConvert(Value), updateValue);
+            return SetTextAsync(ConvertSet(Value), updateValue);
         }
 
         /// <summary>
@@ -594,7 +594,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            return SetValueAsync(ApplyConvert(Text), updateText);
+            return SetValueAsync(ConvertGet(Text), updateText);
         }
 
         //protected override bool SetCulture(CultureInfo value)

@@ -205,7 +205,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(ApplyConvert(_value), false).CatchAndLog();
+                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
         }
 
@@ -237,7 +237,7 @@ namespace MudBlazor
                 _value = time;
                 if (updateValue)
                 {
-                    await SetTextAsync(ApplyConvert(_value), false);
+                    await SetTextAsync(ConvertSet(_value), false);
                 }
 
                 UpdateTimeSetFromTime();
@@ -258,7 +258,7 @@ namespace MudBlazor
             Touched = true;
 
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(ApplyConvert(value), false);
+            return SetTimeAsync(ConvertGet(value), false);
         }
 
         /// <inheritdoc />

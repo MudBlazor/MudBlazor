@@ -80,7 +80,7 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     //Converter.GetError = false;
-                    await SetTextAsync(ApplyConvert(_value), false);
+                    await SetTextAsync(ConvertSet(_value), false);
                 }
 
                 await DateChanged.InvokeAsync(_value);
@@ -92,14 +92,14 @@ namespace MudBlazor
         protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
-            return SetTextAsync(ApplyConvert(_value), false);
+            return SetTextAsync(ConvertSet(_value), false);
         }
 
         protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             // Update the date property (without updating back the Value property)
-            return SetDateAsync(ApplyConvert(value), false);
+            return SetDateAsync(ConvertGet(value), false);
         }
 
         protected override string GetDayClasses(int month, DateTime day)

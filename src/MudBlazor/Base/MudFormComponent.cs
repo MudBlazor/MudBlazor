@@ -818,20 +818,7 @@ namespace MudBlazor
 
         protected virtual Task SetConverterAsync(IConverter<T?, U?> newConverter) => _converterState.SetValueAsync(newConverter);
 
-        protected U? ApplyConvert(T? input)
-        {
-            var converter = _converterState.Value;
-            if (converter is null)
-            {
-                throw new InvalidOperationException("Converter is not set.");
-            }
-            var result = converter.TryConvert(input);
-            _setConversionResult = result;
-
-            return result.Value;
-        }
-
-        protected T? ApplyConvert(U? input)
+        protected T? ConvertGet(U? input)
         {
             var converter = _converterState.Value;
             if (converter is null)
@@ -840,6 +827,19 @@ namespace MudBlazor
             }
             var result = converter.TryConvertBack(input);
             _getConversionResult = result;
+
+            return result.Value;
+        }
+
+        protected U? ConvertSet(T? input)
+        {
+            var converter = _converterState.Value;
+            if (converter is null)
+            {
+                throw new InvalidOperationException("Converter is not set.");
+            }
+            var result = converter.TryConvert(input);
+            _setConversionResult = result;
 
             return result.Value;
         }

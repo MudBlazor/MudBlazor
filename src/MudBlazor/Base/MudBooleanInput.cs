@@ -126,7 +126,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => ApplyConvert(Value);
+        protected bool? BoolValue => ConvertSet(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
@@ -140,7 +140,7 @@ namespace MudBlazor
                 Touched = true;
             }
 
-            var convertedValue = ApplyConvert(value);
+            var convertedValue = ConvertGet(value);
             return SetCheckedAsync(convertedValue);
         }
 
@@ -160,16 +160,11 @@ namespace MudBlazor
             }
         }
 
-        //protected override bool SetConverter(Converter<T?, bool?> value)
-        //{
-        //    var changed = base.SetConverter(value);
-        //    if (changed)
-        //    {
-        //        //SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
-        //    }
-
-        //    return changed;
-        //}
+        protected override async Task SetConverterAsync(IConverter<T?, bool?> newConverter)
+        {
+            await base.SetConverterAsync(newConverter);
+            await SetBoolValueAsync(ConvertSet(Value));
+        }
 
         /// <summary>
         /// A value is required, so if not checked we return ERROR.
