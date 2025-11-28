@@ -27,7 +27,7 @@ namespace MudBlazor
 
         public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
         {
-            Converter = MudBlazor.Utilities.Converter.Base.Convert.From<TimeSpan?, string?>(OnSet, OnGet);
+            Converter = MudBlazor.Utilities.Converter.Base.Conversions.From<TimeSpan?, string?>(OnSet, OnGet);
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
 

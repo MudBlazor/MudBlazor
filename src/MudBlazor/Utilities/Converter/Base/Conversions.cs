@@ -3,7 +3,7 @@
 namespace MudBlazor.Utilities.Converter.Base;
 
 #nullable enable
-public static class Convert
+public static class Conversions
 {
     public static ConverterChain<TIn, TOut> From<TIn, TOut>(IConverter<TIn, TOut> converter) => new(converter.Convert);
 

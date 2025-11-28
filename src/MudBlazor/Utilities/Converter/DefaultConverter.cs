@@ -94,7 +94,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
 
     public sealed class CharConverter : IReversibleConverter<char, string?>, IReversibleConverter<char?, string?>
     {
-        public string? Convert(char input) => input.ToString();
+        public string Convert(char input) => input.ToString();
         public string? Convert(char? input) => input?.ToString();
 
         public char ConvertBack(string? s) => string.IsNullOrEmpty(s) ? '\0' : s[0];
@@ -109,7 +109,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>
 
     public sealed class BoolConverter : IReversibleConverter<bool?, string?>, IReversibleConverter<bool, string?>
     {
-        public string? Convert(bool input) => input ? "on" : "off";
+        public string Convert(bool input) => input ? "on" : "off";
 
         public string? Convert(bool? input) => input switch
         {
