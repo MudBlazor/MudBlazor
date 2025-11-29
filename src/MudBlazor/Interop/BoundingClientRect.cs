@@ -17,7 +17,7 @@ public class BoundingClientRect
     public double Left { get; set; }
 
     /// <summary>
-    /// The horizontal offset relative to the bottom edge.
+    /// The vertical offset relative to the bottom edge.
     /// </summary>
     /// <returns>
     /// <see cref="Top"/> + <see cref="Height"/>
@@ -25,7 +25,7 @@ public class BoundingClientRect
     public double Bottom => Top + Height;
 
     /// <summary>
-    /// The vertical offset to the right edge.
+    /// The horizontal offset to the right edge.
     /// </summary>
     /// <returns>
     /// <see cref="Left"/> + <see cref="Width"/>
@@ -43,14 +43,14 @@ public class BoundingClientRect
     public double Height { get; set; }
 
     /// <summary>
-    /// Height of the viewport.
-    /// </summary>
-    public double WindowHeight { get; set; }
-
-    /// <summary>
     /// Width of the viewport.
     /// </summary>
     public double WindowWidth { get; set; }
+
+    /// <summary>
+    /// Height of the viewport.
+    /// </summary>
+    public double WindowHeight { get; set; }
 
     /// <summary>
     /// The horizontal scrolled offset.
@@ -63,7 +63,7 @@ public class BoundingClientRect
     public double ScrollY { get; set; }
 
     /// <summary>
-    /// The vertical offset.
+    /// The horizontal offset.
     /// </summary>
     /// <returns>
     /// <see cref="Left"/>
@@ -72,7 +72,7 @@ public class BoundingClientRect
     public double X => Left;
 
     /// <summary>
-    /// The horizontal offset.
+    /// The vertical offset.
     /// </summary>
     /// <returns>
     /// <see cref="Top"/>
@@ -97,7 +97,7 @@ public class BoundingClientRect
     public double AbsoluteTop => Top + ScrollY;
 
     /// <summary>
-    /// The horizontal offset from the right edge including the vertical scroll.
+    /// The horizontal offset from the right edge including the horizontal scroll.
     /// </summary>
     /// <returns>
     /// <see cref="Right"/> + <see cref="ScrollX"/>
@@ -144,16 +144,20 @@ public class BoundingClientRect
     /// </returns>
     public bool IsOutsideRight => Right > WindowWidth;
 
+    /// <summary>
+    /// Creates a shallow copy of the current <see cref="BoundingClientRect"/> instance.
+    /// </summary>
+    /// <returns>A new <see cref="BoundingClientRect"/> instance</returns>
     public BoundingClientRect Clone()
     {
         return new BoundingClientRect
         {
-            Left = Left,
             Top = Top,
+            Left = Left,
             Width = Width,
             Height = Height,
-            WindowHeight = WindowHeight,
             WindowWidth = WindowWidth,
+            WindowHeight = WindowHeight,
             ScrollX = ScrollX,
             ScrollY = ScrollY
         };
