@@ -21,7 +21,7 @@ public abstract class ParameterState<T>
     /// <summary>
     /// Gets the current value.
     /// </summary>
-    public abstract T? Value { get; }
+    public abstract T Value { get; }
 
     /// <summary>
     /// Gets a value indicating whether the object is initialized.
@@ -38,7 +38,7 @@ public abstract class ParameterState<T>
     /// This value is captured once when the component is initialized and never changes thereafter,
     /// even if the <see cref="Value"/> property changes later.
     /// </remarks>
-    public abstract T? InitialValue { get; }
+    public abstract T InitialValue { get; }
 
     /// <summary>
     /// Set the parameter's value. 
@@ -56,5 +56,5 @@ public abstract class ParameterState<T>
     /// </summary>
     /// <param name="parameterState">The <see cref="ParameterState{T}"/> object to convert.</param>
     /// <returns>The underlying value of type <typeparamref name="T"/>.</returns>
-    public static implicit operator T?(ParameterState<T> parameterState) => parameterState.Value;
+    public static implicit operator T(ParameterState<T> parameterState) => parameterState.Value;
 }
