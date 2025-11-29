@@ -133,7 +133,13 @@ namespace MudBlazor
                 .Build();
 
         private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
-        private bool IsFormatted => Pattern is not null || GetFormat() is not null;
+
+        // Defensive null check: GetCulture() is annotated as non-null, but DataGrid may return null in certain cases.
+        // In typical scenarios it is not null, as MudFormComponent sets a default culture and other components do not override it with null.
+        // The annotation could be changed in the future, but doing so would introduce unnecessary null checks in other components.
+        // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        private bool IsFormatted => Pattern is not null || GetFormat() is not null || GetCulture() is not null;
+        // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]

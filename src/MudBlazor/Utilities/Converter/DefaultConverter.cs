@@ -59,12 +59,17 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Add<DateTime?>(new DateTimeConverter(() => Culture(), () => Format()))
             .Add<TimeSpan>(new TimeSpanConverter(() => Culture(), () => Format()))
             .Add<TimeSpan?>(new TimeSpanConverter(() => Culture(), () => Format()))
-            //.Add(ObjectConverter.Create(this))
+            //.Add(new ObjectConverter(() => Culture(), () => Format()))
             .Build();
     }
 
     public string? Convert(T? input)
     {
+        //if (input is null)
+        //{
+        //    return null;
+        //}
+
         // Special handling for enums
         if (IsNullableEnum(typeof(T), out _))
         {
@@ -126,6 +131,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     {
         public Guid ConvertBack(string? input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return Guid.Empty;
+            }
+
             if (Guid.TryParse(input, out var guid))
             {
                 return guid;
@@ -138,7 +148,15 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         public string? Convert(Guid? value) => value is null ? null : value.ToString();
 
-        Guid? IReversibleConverter<Guid?, string?>.ConvertBack(string? output) => ConvertBack(output);
+        Guid? IReversibleConverter<Guid?, string?>.ConvertBack(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return null;
+            }
+
+            return ConvertBack(input);
+        }
 
         public static StrictGuidStringConverter Instance { get; } = new();
     }
@@ -203,16 +221,23 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     {
         public string? Convert(TNumber? input)
         {
-            var culture1 = culture.Invoke();
+            var currentCulture = culture.Invoke();
+            var currentFormat = format.Invoke();
+            var result = input?.ToString(currentFormat, currentCulture);
 
-            return input?.ToString(format?.Invoke(), culture1);
+            return result;
         }
 
         public TNumber? ConvertBack(string? input)
         {
-            var culture1 = culture.Invoke();
+            if (string.IsNullOrEmpty(input))
+            {
+                return null;
+            }
 
-            if (TNumber.TryParse(input, NumberStyles.Any, culture1, out var result))
+            var currentCulture = culture.Invoke();
+
+            if (TNumber.TryParse(input, NumberStyles.Any, currentCulture, out var result))
             {
                 return result;
             }
@@ -227,12 +252,22 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     {
         public string Convert(TNumber input)
         {
-            return input.ToString(format.Invoke(), culture.Invoke());
+            var currentCulture = culture.Invoke();
+            var currentFormat = format.Invoke();
+
+            return input.ToString(currentFormat, currentCulture);
         }
 
         public TNumber ConvertBack(string? input)
         {
-            if (TNumber.TryParse(input, NumberStyles.Any, culture.Invoke(), out var result))
+            if (string.IsNullOrEmpty(input))
+            {
+                return TNumber.Zero;
+            }
+
+            var currentCulture = culture.Invoke();
+
+            if (TNumber.TryParse(input, NumberStyles.Any, currentCulture, out var result))
             {
                 return result;
             }
@@ -254,6 +289,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         public DateTime ConvertBack(string? input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return default;
+            }
+
             var currentCulture = culture.Invoke();
             if (DateTime.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
             {
@@ -265,6 +305,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         DateTime? IReversibleConverter<DateTime?, string?>.ConvertBack(string? input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return null;
+            }
+
             return ConvertBack(input);
         }
     }
@@ -280,6 +325,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         public TimeSpan ConvertBack(string? input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return TimeSpan.Zero;
+            }
+
             if (TimeSpan.TryParseExact(input, format.Invoke() ?? DefaultTimeSpanFormat, culture.Invoke(), out var result))
             {
                 return result;
@@ -290,31 +340,39 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         TimeSpan? IReversibleConverter<TimeSpan?, string?>.ConvertBack(string? input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return null;
+            }
+
             return ConvertBack(input);
         }
     }
 
-    //public sealed class ObjectConverter : IReversibleConverter<object?, string?>
+    //public sealed class ObjectConverter(Func<CultureInfo> culture, Func<string?> format)
+    //    : IReversibleConverter<object?, string?>
     //{
-    //    public Func<string?>? Format { get; }
-
-    //    public Func<CultureInfo> Culture { get; }
-
-    //    public ObjectConverter(Func<CultureInfo> culture, Func<string?>? format)
-    //    {
-    //        Culture = culture;
-    //        Format = format;
-    //    }
-
     //    public string? Convert(object? input)
     //    {
     //        return input switch
     //        {
     //            null => null,
-    //            DateTime dt => DateTimeConverter.Create(_parent).Convert(dt),
-    //            TimeSpan ts => TimeSpanConverter.Create(_parent).Convert(ts),
-    //            int i => new NumberConverter<int>(Culture, Format).Convert(i),
-    //            double d => new NumberConverter<double>(Culture, Format).Convert(d),
+    //            Guid guid => StrictGuidStringConverter.Instance.Convert(guid),
+    //            DateTime dateTime => new DateTimeConverter(() => culture(), () => format()).Convert(dateTime),
+    //            TimeSpan timeSpan => new TimeSpanConverter(() => culture(), () => format()).Convert(timeSpan),
+    //            int i => new NumberConverter<int>(() => culture(), () => format()).Convert(i),
+    //            uint u => new NumberConverter<uint>(() => culture(), () => format()).Convert(u),
+    //            long l => new NumberConverter<long>(() => culture(), () => format()).Convert(l),
+    //            ulong ul => new NumberConverter<ulong>(() => culture(), () => format()).Convert(ul),
+    //            float f => new NumberConverter<float>(() => culture(), () => format()).Convert(f),
+    //            decimal m => new NumberConverter<decimal>(() => culture(), () => format()).Convert(m),
+    //            double d => new NumberConverter<double>(() => culture(), () => format()).Convert(d),
+    //            byte b => new NumberConverter<byte>(() => culture(), () => format()).Convert(b),
+    //            sbyte sb => new NumberConverter<sbyte>(() => culture(), () => format()).Convert(sb),
+    //            short sh => new NumberConverter<short>(() => culture(), () => format()).Convert(sh),
+    //            ushort ush => new NumberConverter<ushort>(() => culture(), () => format()).Convert(ush),
+    //            bool bo => BoolConverter.Instance.Convert(bo),
+    //            char c => CharConverter.Instance.Convert(c),
     //            string s => s,
     //            _ => input.ToString()
     //        };
@@ -322,16 +380,14 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
     //    public object? ConvertBack(string? output)
     //    {
-    //        if (output == null) return null;
-
-    //        // Try numeric
-    //        if (int.TryParse(output, NumberStyles.Any, _parent.Culture, out var i)) return i;
-    //        if (double.TryParse(output, NumberStyles.Any, _parent.Culture, out var d)) return d;
-    //        // Try DateTime / TimeSpan
-    //        if (DateTime.TryParseExact(output, _parent.Format ?? _parent.Culture.DateTimeFormat.ShortDatePattern, _parent.Culture, DateTimeStyles.None, out var dt))
-    //            return dt;
-    //        if (TimeSpan.TryParseExact(output, _parent.Format ?? "c", _parent.Culture, out var ts))
-    //            return ts;
+    //        //// Try numeric
+    //        //if (int.TryParse(output, NumberStyles.Any, _parent.Culture, out var i)) return i;
+    //        //if (double.TryParse(output, NumberStyles.Any, _parent.Culture, out var d)) return d;
+    //        //// Try DateTime / TimeSpan
+    //        //if (DateTime.TryParseExact(output, _parent.Format ?? _parent.Culture.DateTimeFormat.ShortDatePattern, _parent.Culture, DateTimeStyles.None, out var dt))
+    //        //    return dt;
+    //        //if (TimeSpan.TryParseExact(output, _parent.Format ?? "c", _parent.Culture, out var ts))
+    //        //    return ts;
 
     //        return output;
     //    }

@@ -63,7 +63,7 @@ namespace MudBlazor
                 .WithChangeHandler(OnCultureAndFormatChangedAsync);
             _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
                 .WithParameter(() => Converter)
-                .WithChangeHandler(OnConverterChangedAsync);
+                .WithChangeHandler(args => OnConverterChangedAsync(args));
         }
 
         [CascadingParameter]
@@ -847,13 +847,6 @@ namespace MudBlazor
 
         protected virtual string? GetFormat() => null;
 
-        protected virtual Task OnConverterChangedAsync()
-        {
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
-
-            return Task.CompletedTask;
-        }
-
         protected virtual T? ConvertGet(U? input)
         {
             var converter = _converterState.Value;
@@ -881,6 +874,17 @@ namespace MudBlazor
 
             return result.Value;
         }
+
+        protected virtual Task OnConverterChangedAsync()
+        {
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+
+            return Task.CompletedTask;
+        }
+
+        private Task OnConverterChangedAsync(ParameterChangedEventArgs<IConverter<T?, U?>> args) => args.Value is null
+            ? throw new NullReferenceException(nameof(Converter))
+            : OnConverterChangedAsync();
 
         private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
         {

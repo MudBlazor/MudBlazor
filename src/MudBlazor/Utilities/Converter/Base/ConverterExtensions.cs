@@ -12,50 +12,17 @@ public static class ConverterExtensions
 
     public static ConversionResult<TOut> TryConvert<TIn, TOut>(this IConverter<TIn, TOut> converter, TIn input)
     {
-        try
-        {
-            return new ConversionResult<TOut>(converter.Convert(input));
-        }
-        catch (ConversionException ex)
-        {
-            return new ConversionResult<TOut>(ex, ex.ErrorMessageKey, ex.ErrorMessageArgs);
-        }
-        catch (Exception ex)
-        {
-            return new ConversionResult<TOut>(ex);
-        }
+        return Wrap(() => converter.Convert(input));
     }
 
     public static ConversionResult<TIn> TryConvertBack<TIn, TOut>(this IConverter<TIn, TOut> converter, TOut input)
     {
-        try
-        {
-            return new ConversionResult<TIn>(converter.ConvertBack(input));
-        }
-        catch (ConversionException ex)
-        {
-            return new ConversionResult<TIn>(ex, ex.ErrorMessageKey, ex.ErrorMessageArgs);
-        }
-        catch (Exception ex)
-        {
-            return new ConversionResult<TIn>(ex);
-        }
+        return Wrap(() => converter.ConvertBack(input));
     }
 
     public static ConversionResult<TIn> TryConvertBack<TIn, TOut>(this IReversibleConverter<TIn, TOut> converter, TOut input)
     {
-        try
-        {
-            return new ConversionResult<TIn>(converter.ConvertBack(input));
-        }
-        catch (ConversionException ex)
-        {
-            return new ConversionResult<TIn>(ex, ex.ErrorMessageKey, ex.ErrorMessageArgs);
-        }
-        catch (Exception ex)
-        {
-            return new ConversionResult<TIn>(ex);
-        }
+        return Wrap(() => converter.ConvertBack(input));
     }
 
     /// <summary>
@@ -71,5 +38,40 @@ public static class ConverterExtensions
 
         // TODO: throw ConversionException
         throw new InvalidOperationException($"Converter {converter.GetType().Name} does not support ConvertBack. Implement an IReversibleConverter for the converter instead.");
+    }
+
+    private static ConversionResult<T> Wrap<T>(Func<T> func)
+    {
+        try
+        {
+            return new ConversionResult<T>(func());
+        }
+        catch (Exception ex)
+        {
+            // Direct ConversionException
+            if (ex is ConversionException conversionException)
+            {
+                return new ConversionResult<T>(conversionException, conversionException.ErrorMessageKey, conversionException.ErrorMessageArgs);
+            }
+
+            // Wrapped
+            if (ex.InnerException is ConversionException innerExceptionConversionException)
+            {
+                return new ConversionResult<T>(innerExceptionConversionException, innerExceptionConversionException.ErrorMessageKey, innerExceptionConversionException.ErrorMessageArgs);
+            }
+
+            // AggregateException containing ConversionException
+            if (ex is AggregateException aggregateException)
+            {
+                var aggregateConversionException = aggregateException.InnerExceptions.OfType<ConversionException>().FirstOrDefault();
+                if (aggregateConversionException is not null)
+                {
+                    return new ConversionResult<T>(aggregateConversionException, aggregateConversionException.ErrorMessageKey, aggregateConversionException.ErrorMessageArgs);
+                }
+            }
+
+            // Unknown exception
+            return new ConversionResult<T>(ex);
+        }
     }
 }

@@ -20,17 +20,18 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 
     public TOut Convert(TIn input)
     {
-        var type = typeof(TIn);
+        //var runtimeType = input is null ? typeof(TIn) : input.GetType();
+        var runtimeType = typeof(TIn);
 
         // 1) Static lookup
-        if (_handlers.TryGetValue(type, out var del))
+        if (_handlers.TryGetValue(runtimeType, out var del))
         {
             return (TOut)del.DynamicInvoke(input)!;
         }
 
         // 2) Dynamic factories (future)
 
-        throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [type], new InvalidOperationException($"No converter registered for {type}"));
+        throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
 
     internal class Builder : IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>>

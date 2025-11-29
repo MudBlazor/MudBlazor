@@ -22,16 +22,17 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         _backwards = backwards;
     }
 
-    public TIn ConvertBack(TOut output)
+    public TIn ConvertBack(TOut input)
     {
-        var type = typeof(TIn);
+        //var runtimeType = input is null ? typeof(TIn) : input.GetType();
+        var runtimeType = typeof(TIn);
 
-        if (_backwards.TryGetValue(type, out var del))
+        if (_backwards.TryGetValue(runtimeType, out var del))
         {
-            return (TIn)del.DynamicInvoke(output)!;
+            return (TIn)del.DynamicInvoke(input)!;
         }
 
-        throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [type], new InvalidOperationException($"No converter registered for {type}"));
+        throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
 
     internal class ReversibleBuilder : IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>>
