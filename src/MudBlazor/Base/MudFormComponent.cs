@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
+using MudBlazor.Utilities.Comparer;
 using MudBlazor.Utilities.Converter.Base;
 using static System.String;
 
@@ -60,7 +61,8 @@ namespace MudBlazor
                 .WithEventCallback(() => ErrorIdChanged);
             _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
                 .WithParameter(() => Culture)
-                .WithChangeHandler(OnCultureAndFormatChangedAsync);
+                .WithChangeHandler(OnCultureAndFormatChangedAsync)
+                .WithComparer(ReferenceCultureComparer.Default);
             _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
                 .WithParameter(() => Converter)
                 .WithChangeHandler(args => OnConverterChangedAsync(args));
