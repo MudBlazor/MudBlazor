@@ -235,11 +235,11 @@ namespace MudBlazor
         private T? GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)System.Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
+                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)System.Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
+                return (T)(object)Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)System.Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
+                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
             return Num.To<T>(Num.From(Value) + (Num.From(Step) * factor));
         }
 
@@ -482,11 +482,11 @@ namespace MudBlazor
             return null;
         }
 
-        private static decimal FromDecimal(T? v) => System.Convert.ToDecimal((decimal?)(object?)v);
+        private static decimal FromDecimal(T? v) => Convert.ToDecimal((decimal?)(object?)v);
 
-        private static long FromInt64(T? v) => System.Convert.ToInt64((long?)(object?)v);
+        private static long FromInt64(T? v) => Convert.ToInt64((long?)(object?)v);
 
-        private static ulong FromUInt64(T? v) => System.Convert.ToUInt64((ulong?)(object?)v);
+        private static ulong FromUInt64(T? v) => Convert.ToUInt64((ulong?)(object?)v);
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

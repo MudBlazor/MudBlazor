@@ -35,15 +35,15 @@ namespace MudBlazor
         /// </summary>
         public MudFileUpload()
         {
-            using var registerScope = CreateRegisterScope();
-            _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
-                .WithParameter(() => Files)
-                .WithEventCallback(() => FilesChanged);
             Converter = new Utilities.Converter.DefaultConverter<T>
             {
                 Culture = GetCulture,
                 Format = GetFormat
             };
+            using var registerScope = CreateRegisterScope();
+            _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
+                .WithParameter(() => Files)
+                .WithEventCallback(() => FilesChanged);
         }
 
         private readonly string _id = Identifier.Create();

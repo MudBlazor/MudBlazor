@@ -33,7 +33,7 @@ namespace MudBlazor
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
         private readonly ParameterState<CultureInfo> _cultureState;
-        protected readonly ParameterState<IConverter<T?, U?>> _converterState;
+        private readonly ParameterState<IConverter<T?, U?>> _converterState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
@@ -45,7 +45,8 @@ namespace MudBlazor
             //    Culture = GetCulture,
             //    Format = GetFormat
             //};
-            Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
+            //Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
+            Converter = null!;
 
             using var registerScope = CreateRegisterScope();
             ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))

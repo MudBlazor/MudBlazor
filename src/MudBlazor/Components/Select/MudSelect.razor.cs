@@ -159,7 +159,7 @@ namespace MudBlazor
             var mudSelectItems = items as MudSelectItem<T>[] ?? items.ToArray();
 
             var matchingItems = mudSelectItems
-                .Where(x => !x.Disabled && Converter.Convert(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
+                .Where(x => !x.Disabled && ConvertSet(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
                 .ToList();
 
             if (matchingItems.Count == 0)
@@ -472,7 +472,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<T?, string?>? ToStringFunc { get; set; } = x => x?.ToString();
+        public Func<T?, string?>? ToStringFunc { get; set; }
 
         public MudSelect()
         {

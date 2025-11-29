@@ -290,7 +290,7 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var a = Converter.ConvertBack(Text);
+                var a = ConvertGet(Text);
                 if (a.HasValue)
                 {
                     a = new DateTime(GetCulture().Calendar.GetYear(a.Value), GetCulture().Calendar.GetMonth(a.Value), 1, GetCulture().Calendar);

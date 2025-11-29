@@ -139,8 +139,7 @@ namespace MudBlazor
                 Touched = true;
             }
 
-            var convertedValue = ConvertGet(value);
-            return SetCheckedAsync(convertedValue);
+            return SetCheckedAsync(ConvertGet(value));
         }
 
         protected async Task SetCheckedAsync(T? value)
