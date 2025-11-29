@@ -179,14 +179,18 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
     private sealed class BoolConverter : IReversibleConverter<bool?, string?>, IReversibleConverter<bool, string?>
     {
-        public string Convert(bool input) => input ? "on" : "off";
+        //public string Convert(bool input) => input ? "on" : "off";
 
-        public string? Convert(bool? input) => input switch
-        {
-            true => "on",
-            false => "off",
-            null => null
-        };
+        //public string? Convert(bool? input) => input switch
+        //{
+        //    true => "on",
+        //    false => "off",
+        //    null => null
+        //};
+
+        public string Convert(bool input) => input.ToString(CultureInfo.InvariantCulture);
+
+        public string? Convert(bool? input) => input?.ToString(CultureInfo.InvariantCulture);
 
         public bool ConvertBack(string? input) =>
             input?.ToLowerInvariant() switch
