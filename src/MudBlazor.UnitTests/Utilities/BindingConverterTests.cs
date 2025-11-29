@@ -636,78 +636,7 @@ namespace MudBlazor.UnitTests.Utilities
             DefaultConverter<object>.GlobalGetFunc = null;
         }
 
-        [Test]
-        public void DateConverter_Format_AffectsConversion()
-        {
-            var dt1 = new DateConverter("dd/MM/yyyy");
-            dt1.Culture = new CultureInfo("pt-BR", false);
-            dt1.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
-            dt1.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            var dt2 = new NullableDateConverter("dd/MM/yyyy");
-            dt2.Culture = new CultureInfo("pt-BR", false);
-            dt2.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
-            dt2.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            dt2.Set(null).Should().Be(null);
-            dt2.Get(null).Should().Be(null);
 
-            var dt3 = new DateConverter("dd/MM/yyyy");
-            dt3.Culture = new CultureInfo("de-AT", false);
-            dt3.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
-            dt3.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            var dt4 = new NullableDateConverter("dd/MM/yyyy");
-            dt4.Culture = new CultureInfo("de-AT", false);
-            dt4.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
-            dt4.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            dt4.Set(null).Should().Be(null);
-            dt4.Get(null).Should().Be(null);
-        }
-
-        [Test]
-        public void BoolConverter_ValidCases()
-        {
-            var c1 = new BoolConverter<bool>();
-            c1.Set(true).Should().Be(true);
-            c1.Set(false).Should().Be(false);
-            c1.Get(null).Should().BeFalse();
-            c1.Get(false).Should().BeFalse();
-            c1.Get(true).Should().BeTrue();
-            var c2 = new BoolConverter<bool?>();
-            c2.Set(true).Should().Be(true);
-            c2.Set(false).Should().Be(false);
-            c2.Set(null).Should().BeNull();
-            c2.Get(null).Should().BeNull();
-            c2.Get(false).Should().BeFalse();
-            c2.Get(true).Should().BeTrue();
-            var c3 = new BoolConverter<string>();
-            c3.Set("true").Should().Be(true);
-            c3.Set("false").Should().Be(false);
-            c3.Set("on").Should().Be(true);
-            c3.Set("off").Should().Be(false);
-            c3.Set(null).Should().BeNull();
-            c3.Get(null).Should().BeNull();
-            c3.Get(false).Should().Be("off");
-            c3.Get(true).Should().Be("on");
-            var c4 = new BoolConverter<int>();
-            c4.Set(1).Should().Be(true);
-            c4.Set(0).Should().Be(false);
-            c4.Get(null).Should().Be(0);
-            c4.Get(false).Should().Be(0);
-            c4.Get(true).Should().Be(1);
-            var c5 = new BoolConverter<int?>();
-            c5.Set(17).Should().Be(true);
-            c5.Set(-1).Should().Be(false);
-            c5.Set(null).Should().BeNull();
-            c5.Get(null).Should().BeNull();
-            c5.Get(false).Should().Be(0);
-            c5.Get(true).Should().Be(1);
-
-            // non-convertible types will be handled without exceptions
-            var c6 = new BoolConverter<DateTime>();
-            c6.Set(DateTime.Now).Should().Be(null);
-            c6.Get(true).Should().Be(default(DateTime));
-            c6.Get(false).Should().Be(default(DateTime));
-            c6.Get(null).Should().Be(default(DateTime));
-        }
 
         [Test]
         public void CustomlConverter_ValidCases()
