@@ -68,7 +68,8 @@ public static class ConverterExtensions
         {
             return reversible.ConvertBack(value);
         }
-        // TODO: throw InvalidOperationException
+
+        // TODO: throw ConversionException
         throw new InvalidOperationException($"Converter {converter.GetType().Name} does not support ConvertBack. Implement an IReversibleConverter for the converter instead.");
     }
 }

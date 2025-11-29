@@ -9,7 +9,5 @@ public interface IDispatcherBuilder<TIn, in TOut, out TConverter>
 {
     IDispatcherBuilder<TIn, TOut, TConverter> Add<TSpecific>(IConverter<TSpecific, TOut> conv);
 
-    //IDispatcherBuilder<TIn, TOut, TConverter> AddDynamic(DynamicFactory factory);
-
     TConverter Build();
 }

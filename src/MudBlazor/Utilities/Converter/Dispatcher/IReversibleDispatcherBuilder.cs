@@ -8,7 +8,5 @@ public interface IReversibleDispatcherBuilder<TIn, TOut, out TConverter>
 {
     IReversibleDispatcherBuilder<TIn, TOut, TConverter> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> conv);
 
-    //IReversibleDispatcherBuilder<TIn, TOut, TConverter> AddDynamic(DynamicFactory factory);
-
     TConverter Build();
 }
