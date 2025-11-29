@@ -158,9 +158,9 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task SetConverterAsync(IConverter<T?, bool?> newConverter)
+        protected override async Task OnConverterChangedAsync()
         {
-            await base.SetConverterAsync(newConverter);
+            await base.OnConverterChangedAsync();
             await SetBoolValueAsync(ConvertSet(Value));
         }
 

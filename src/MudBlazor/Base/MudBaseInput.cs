@@ -45,7 +45,7 @@ namespace MudBlazor
             using var registerScope = CreateRegisterScope();
             _formatState = registerScope.RegisterParameter<string?>(nameof(Format))
                 .WithParameter(() => Format)
-                .WithChangeHandler(args => SetFormatAsync(args.Value));
+                .WithChangeHandler(OnCultureAndFormatChangedAsync);
             _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
@@ -601,21 +601,15 @@ namespace MudBlazor
 
         protected override string? GetFormat() => _formatState.Value;
 
-        protected override async Task SetCultureAsync(CultureInfo newCultureInfo)
+        protected override async Task OnCultureAndFormatChangedAsync()
         {
-            await base.SetCultureAsync(newCultureInfo);
+            await base.OnCultureAndFormatChangedAsync();
             await UpdateTextPropertyAsync(false);
         }
 
-        protected override async Task SetConverterAsync(IConverter<T?, string?> newConverter)
+        protected override async Task OnConverterChangedAsync()
         {
-            await base.SetConverterAsync(newConverter);
-            await UpdateTextPropertyAsync(false);
-        }
-
-        protected virtual async Task SetFormatAsync(string? value)
-        {
-            await _formatState.SetValueAsync(value);
+            await base.OnConverterChangedAsync();
             await UpdateTextPropertyAsync(false);
         }
 

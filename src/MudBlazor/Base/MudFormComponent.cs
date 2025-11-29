@@ -60,9 +60,10 @@ namespace MudBlazor
                 .WithEventCallback(() => ErrorIdChanged);
             _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
                 .WithParameter(() => Culture)
-                .WithChangeHandler(args => SetCultureAsync(args.Value));
+                .WithChangeHandler(OnCultureAndFormatChangedAsync);
             _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
-                .WithParameter(() => Converter);
+                .WithParameter(() => Converter)
+                .WithChangeHandler(OnConverterChangedAsync);
         }
 
         [CascadingParameter]
@@ -831,25 +832,26 @@ namespace MudBlazor
             }
         }
 
-        protected virtual Task SetCultureAsync(CultureInfo newCultureInfo) 
+        protected Task SetCultureAsync(CultureInfo newCultureInfo)
         {
             ArgumentNullException.ThrowIfNull(newCultureInfo);
-            // Skip InjectCultureAndFormatToConverter.
-            // The converter relies on Func delegates that read Culture/Format at runtime
-            // The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
+            //// Skip InjectCultureAndFormatToConverter.
+            //// The converter relies on Func delegates that read Culture/Format at runtime
+            //// The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
             return _cultureState.SetValueAsync(newCultureInfo);
         }
 
-        protected virtual CultureInfo GetCulture() => _cultureState.Value ?? CultureInfo.InvariantCulture;
+        protected virtual Task OnCultureAndFormatChangedAsync() => Task.CompletedTask;
+
+        protected virtual CultureInfo GetCulture() => _cultureState.Value;
 
         protected virtual string? GetFormat() => null;
 
-        protected virtual Task SetConverterAsync(IConverter<T?, U?> newConverter)
+        protected virtual Task OnConverterChangedAsync()
         {
-            ArgumentNullException.ThrowIfNull(newConverter);
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
 
-            return _converterState.SetValueAsync(newConverter);
+            return Task.CompletedTask;
         }
 
         protected virtual T? ConvertGet(U? input)
