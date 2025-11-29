@@ -53,10 +53,14 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Add(new NullableNumberConverter<double>(() => Culture(), () => Format()))
             .Add(new NumberConverter<decimal>(() => Culture(), () => Format()))
             .Add(new NullableNumberConverter<decimal>(() => Culture(), () => Format()))
-            .Add<Guid>(StrictGuidStringConverter.Instance)
-            .Add<Guid?>(StrictGuidStringConverter.Instance)
+            .Add<Guid>(GuidStringConverter.Instance)
+            .Add<Guid?>(GuidStringConverter.Instance)
             .Add<DateTime>(new DateTimeConverter(() => Culture(), () => Format()))
             .Add<DateTime?>(new DateTimeConverter(() => Culture(), () => Format()))
+            .Add<DateOnly>(new DateOnlyConverter(() => Culture(), () => Format()))
+            .Add<DateOnly?>(new DateOnlyConverter(() => Culture(), () => Format()))
+            .Add<TimeOnly>(new TimeOnlyConverter(() => Culture(), () => Format()))
+            .Add<TimeOnly?>(new TimeOnlyConverter(() => Culture(), () => Format()))
             .Add<TimeSpan>(new TimeSpanConverter(() => Culture(), () => Format()))
             .Add<TimeSpan?>(new TimeSpanConverter(() => Culture(), () => Format()))
             //.Add(new ObjectConverter(() => Culture(), () => Format()))
@@ -65,11 +69,6 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
     public string? Convert(T? input)
     {
-        //if (input is null)
-        //{
-        //    return null;
-        //}
-
         // Special handling for enums
         if (IsNullableEnum(typeof(T), out _))
         {
@@ -127,7 +126,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         return false;
     }
 
-    private sealed class StrictGuidStringConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
+    private sealed class GuidStringConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
     {
         public Guid ConvertBack(string? input)
         {
@@ -158,7 +157,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             return ConvertBack(input);
         }
 
-        public static StrictGuidStringConverter Instance { get; } = new();
+        public static GuidStringConverter Instance { get; } = new();
     }
 
     private sealed class CharConverter : IReversibleConverter<char, string?>, IReversibleConverter<char?, string?>
@@ -179,15 +178,6 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
     private sealed class BoolConverter : IReversibleConverter<bool?, string?>, IReversibleConverter<bool, string?>
     {
-        //public string Convert(bool input) => input ? "on" : "off";
-
-        //public string? Convert(bool? input) => input switch
-        //{
-        //    true => "on",
-        //    false => "off",
-        //    null => null
-        //};
-
         public string Convert(bool input) => input.ToString(CultureInfo.InvariantCulture);
 
         public string? Convert(bool? input) => input?.ToString(CultureInfo.InvariantCulture);
@@ -283,11 +273,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     private sealed class DateTimeConverter(Func<CultureInfo> culture, Func<string?> format)
         : IReversibleConverter<DateTime, string?>, IReversibleConverter<DateTime?, string?>
     {
-        public string Convert(DateTime dateTime)
-        {
-            var currentFormat = format.Invoke();
-            return dateTime.ToString(currentFormat, culture.Invoke());
-        }
+        public string Convert(DateTime input) => input.ToString(format.Invoke(), culture.Invoke());
 
         public string? Convert(DateTime? input) => input?.ToString(format.Invoke(), culture.Invoke());
 
@@ -308,6 +294,76 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         }
 
         DateTime? IReversibleConverter<DateTime?, string?>.ConvertBack(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return null;
+            }
+
+            return ConvertBack(input);
+        }
+    }
+
+    private sealed class DateOnlyConverter(Func<CultureInfo> culture, Func<string?> format)
+        : IReversibleConverter<DateOnly, string?>, IReversibleConverter<DateOnly?, string?>
+    {
+        public string Convert(DateOnly input) => input.ToString(format.Invoke(), culture.Invoke());
+
+        public string? Convert(DateOnly? input) => input?.ToString(format.Invoke(), culture.Invoke());
+
+        public DateOnly ConvertBack(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return default;
+            }
+
+            var currentCulture = culture.Invoke();
+            if (DateOnly.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
+            {
+                return result;
+            }
+
+            // TODO: Differentiate error message for DateOnly
+            throw new ConversionException(LanguageResource.Converter_InvalidDateTime);
+        }
+
+        DateOnly? IReversibleConverter<DateOnly?, string?>.ConvertBack(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return null;
+            }
+
+            return ConvertBack(input);
+        }
+    }
+
+    private sealed class TimeOnlyConverter(Func<CultureInfo> culture, Func<string?> format)
+        : IReversibleConverter<TimeOnly, string?>, IReversibleConverter<TimeOnly?, string?>
+    {
+        public string Convert(TimeOnly input) => input.ToString(format.Invoke(), culture.Invoke());
+
+        public string? Convert(TimeOnly? input) => input?.ToString(format.Invoke(), culture.Invoke());
+
+        public TimeOnly ConvertBack(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return default;
+            }
+
+            var currentCulture = culture.Invoke();
+            if (TimeOnly.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
+            {
+                return result;
+            }
+
+            // TODO: Differentiate error message for TimeOnly
+            throw new ConversionException(LanguageResource.Converter_InvalidDateTime);
+        }
+
+        TimeOnly? IReversibleConverter<TimeOnly?, string?>.ConvertBack(string? input)
         {
             if (string.IsNullOrEmpty(input))
             {

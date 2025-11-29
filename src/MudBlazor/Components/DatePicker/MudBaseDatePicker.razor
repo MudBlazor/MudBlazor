@@ -17,8 +17,8 @@
         <MudPickerContent>
             <div id="@_mudPickerCalendarContentElementId" class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")" @onmousedown:preventDefault="true">
                 @{
-                    int dayId = 0;
-            @if (_picker_month.HasValue && GetCulture().Calendar.GetYear(_picker_month.Value) == 1 && GetCulture().Calendar.GetMonth(_picker_month.Value) == 1)
+                    int dayId = 0; 
+                    @if (_picker_month.HasValue && GetCulture().Calendar.GetYear(_picker_month.Value) == 1 && GetCulture().Calendar.GetMonth(_picker_month.Value) == 1)
                     {
                         dayId = -1;
                     }
