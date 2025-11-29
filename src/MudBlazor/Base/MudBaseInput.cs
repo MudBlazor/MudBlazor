@@ -44,7 +44,8 @@ namespace MudBlazor
 
             using var registerScope = CreateRegisterScope();
             _formatState = registerScope.RegisterParameter<string?>(nameof(Format))
-                .WithParameter(() => Format);
+                .WithParameter(() => Format)
+                .WithChangeHandler(args => SetFormatAsync(args.Value));
             _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);

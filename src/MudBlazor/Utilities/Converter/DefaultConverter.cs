@@ -22,40 +22,43 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
     public DefaultConverter()
     {
+        // Do NOT pass Culture or Format directly.
+        // The dispatcher caches method delegates and captures the converter's field values at registration time.
+        // Using () => Culture() and () => Format() ensures the converters always read the latest property values.
         _dispatcher = ReversibleTypeDispatcher.Create<T?, string?>()
             .Add(StringIdentityConverter.Instance)
             .Add<char>(CharConverter.Instance)
             .Add<char?>(CharConverter.Instance)
             .Add<bool>(BoolConverter.Instance)
             .Add<bool?>(BoolConverter.Instance)
-            .Add(new NumberConverter<sbyte>(Culture, Format))
-            .Add(new NullableNumberConverter<sbyte>(Culture, Format))
-            .Add(new NumberConverter<byte>(Culture, Format))
-            .Add(new NullableNumberConverter<byte>(Culture, Format))
-            .Add(new NumberConverter<short>(Culture, Format))
-            .Add(new NullableNumberConverter<short>(Culture, Format))
-            .Add(new NumberConverter<ushort>(Culture, Format))
-            .Add(new NullableNumberConverter<ushort>(Culture, Format))
-            .Add(new NumberConverter<int>(Culture, Format))
-            .Add(new NullableNumberConverter<int>(Culture, Format))
-            .Add(new NumberConverter<uint>(Culture, Format))
-            .Add(new NullableNumberConverter<uint>(Culture, Format))
-            .Add(new NumberConverter<long>(Culture, Format))
-            .Add(new NullableNumberConverter<long>(Culture, Format))
-            .Add(new NumberConverter<ulong>(Culture, Format))
-            .Add(new NullableNumberConverter<ulong>(Culture, Format))
-            .Add(new NumberConverter<float>(Culture, Format))
-            .Add(new NullableNumberConverter<float>(Culture, Format))
-            .Add(new NumberConverter<double>(Culture, Format))
-            .Add(new NullableNumberConverter<double>(Culture, Format))
-            .Add(new NumberConverter<decimal>(Culture, Format))
-            .Add(new NullableNumberConverter<decimal>(Culture, Format))
+            .Add(new NumberConverter<sbyte>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<sbyte>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<byte>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<byte>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<short>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<short>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<ushort>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<ushort>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<int>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<int>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<uint>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<uint>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<long>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<long>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<ulong>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<ulong>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<float>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<float>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<double>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<double>(() => Culture(), () => Format()))
+            .Add(new NumberConverter<decimal>(() => Culture(), () => Format()))
+            .Add(new NullableNumberConverter<decimal>(() => Culture(), () => Format()))
             .Add<Guid>(StrictGuidStringConverter.Instance)
             .Add<Guid?>(StrictGuidStringConverter.Instance)
-            .Add<DateTime>(new DateTimeConverter(Culture, Format))
-            .Add<DateTime?>(new DateTimeConverter(Culture, Format))
-            .Add<TimeSpan>(new TimeSpanConverter(Culture, Format))
-            .Add<TimeSpan?>(new TimeSpanConverter(Culture, Format))
+            .Add<DateTime>(new DateTimeConverter(() => Culture(), () => Format()))
+            .Add<DateTime?>(new DateTimeConverter(() => Culture(), () => Format()))
+            .Add<TimeSpan>(new TimeSpanConverter(() => Culture(), () => Format()))
+            .Add<TimeSpan?>(new TimeSpanConverter(() => Culture(), () => Format()))
             //.Add(ObjectConverter.Create(this))
             .Build();
     }
@@ -241,7 +244,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     private sealed class DateTimeConverter(Func<CultureInfo> culture, Func<string?> format)
         : IReversibleConverter<DateTime, string?>, IReversibleConverter<DateTime?, string?>
     {
-        public string Convert(DateTime dateTime) => dateTime.ToString(format.Invoke(), culture.Invoke());
+        public string Convert(DateTime dateTime)
+        {
+            var currentFormat = format.Invoke();
+            return dateTime.ToString(currentFormat, culture.Invoke());
+        }
 
         public string? Convert(DateTime? input) => input?.ToString(format.Invoke(), culture.Invoke());
 

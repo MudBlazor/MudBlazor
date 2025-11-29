@@ -432,13 +432,13 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)),
-                            selectedConvertedValues: _selectedValues.Select(ConvertSet!).ToList(),
+                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                            selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
                             multiSelectionTextFunc: MultiSelectionTextFunc).CatchAndLog();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)), updateValue: false).CatchAndLog();
+                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false).CatchAndLog();
                     }
                 }
 

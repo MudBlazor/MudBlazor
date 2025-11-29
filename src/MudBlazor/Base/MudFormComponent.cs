@@ -33,14 +33,19 @@ namespace MudBlazor
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
         private readonly ParameterState<CultureInfo> _cultureState;
-        private readonly ParameterState<IConverter<T?, U?>> _converterState;
+        protected readonly ParameterState<IConverter<T?, U?>> _converterState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
         protected MudFormComponent()
         {
-            //Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
+            //Converter = new Utilities.Converter.DefaultConverter<T>
+            //{
+            //    Culture = GetCulture,
+            //    Format = GetFormat
+            //};
+            Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
 
             using var registerScope = CreateRegisterScope();
             ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
@@ -53,7 +58,8 @@ namespace MudBlazor
                 .WithParameter(() => ErrorId)
                 .WithEventCallback(() => ErrorIdChanged);
             _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
-                .WithParameter(() => Culture);
+                .WithParameter(() => Culture)
+                .WithChangeHandler(args => SetCultureAsync(args.Value));
             _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
                 .WithParameter(() => Converter);
         }
@@ -156,7 +162,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IConverter<T?, U?> Converter { get; set; } = null!;
+        public IConverter<T?, U?> Converter { get; set; }
 
         /// <summary>
         /// The culture used to format and interpret values such as dates and currency.
@@ -850,6 +856,7 @@ namespace MudBlazor
             var converter = _converterState.Value;
             if (converter is null)
             {
+                //return default;
                 throw new InvalidOperationException("Converter is not set.");
             }
             var result = converter.TryConvertBack(input);
@@ -863,6 +870,7 @@ namespace MudBlazor
             var converter = _converterState.Value;
             if (converter is null)
             {
+                //return default;
                 throw new InvalidOperationException("Converter is not set.");
             }
             var result = converter.TryConvert(input);
