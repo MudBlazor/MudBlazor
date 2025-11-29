@@ -220,7 +220,7 @@
     {
         foreach (var value in typeof(Palette).GetProperties())
         {
-            var newProp = new ApiDefaultTheme()
+            var newProp = new ApiDefaultTheme
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
@@ -234,7 +234,7 @@
 
     private void LoadShadows()
     {
-        _apiShadow.Add(new ApiDefaultTheme()
+        _apiShadow.Add(new ApiDefaultTheme
         {
             Name = "Elevation",
             Type = "String[]",
@@ -242,7 +242,7 @@
         });
         for (var i = 0; i < _mudTheme.Shadows.Elevation.Length; i++)
         {
-            _apiShadow.Add(new ApiDefaultTheme()
+            _apiShadow.Add(new ApiDefaultTheme
             {
                 Name = $"Elevation[{i}]",
                 Type = "String",
@@ -257,7 +257,7 @@
     {
         foreach (var value in typeof(LayoutProperties).GetProperties())
         {
-            _apiLayout.Add(new ApiDefaultTheme()
+            _apiLayout.Add(new ApiDefaultTheme
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
@@ -271,7 +271,7 @@
     {
         foreach (var _typography in typeof(Typography).GetProperties())
         {
-            _apiTypography.Add(new ApiDefaultTheme()
+            _apiTypography.Add(new ApiDefaultTheme
             {
                 Name = _typography.Name,
                 Type = _typography.PropertyType.ConvertToCSharpSource(),
@@ -279,7 +279,7 @@
             });
             foreach (var item in _typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperties() ?? [])
             {
-                _apiTypography.Add(new ApiDefaultTheme()
+                _apiTypography.Add(new ApiDefaultTheme
                 {
                     Name = _typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperty(item.Name)?.Name,
                     Type = _typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperty(item.Name)?.PropertyType.ConvertToCSharpSource(),
@@ -294,7 +294,7 @@
     {
         foreach (var value in typeof(ZIndex).GetProperties())
         {
-            _apiZindex.Add(new ApiDefaultTheme()
+            _apiZindex.Add(new ApiDefaultTheme
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),

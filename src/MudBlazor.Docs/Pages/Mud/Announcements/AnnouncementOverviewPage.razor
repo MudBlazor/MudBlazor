@@ -8,13 +8,13 @@
         </SpecialHeaderContent>
     </DocsPageHeader>
     <DocsPageContent>
-        @if (_messages?.Count == 0)
-        {
-            <MudText Typo="Typo.h6">No announcements yet.</MudText>
-        }
         @if (_messages == null)
         {
             <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
+        }
+        else if (_messages.Count == 0)
+        {
+            <MudText Typo="Typo.h6">No announcements yet.</MudText>
         }
         else
         {
