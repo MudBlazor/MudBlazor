@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 #nullable enable
 namespace MudBlazor
@@ -22,7 +23,7 @@ namespace MudBlazor
         public MudRangeInput()
         {
             Value = new Range<T>();
-            Converter = new Utilities.Converter.RangeConverter<T>
+            Converter = new RangeConverter<T>
             {
                 Culture = GetCulture,
                 Format = GetFormat
