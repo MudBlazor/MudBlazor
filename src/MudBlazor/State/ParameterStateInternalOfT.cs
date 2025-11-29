@@ -24,7 +24,7 @@ namespace MudBlazor.State;
 [DebuggerDisplay("ParameterName = {Metadata.ParameterName}, Value = {_value}")]
 internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterStateInternal<T>>
 {
-    internal T? _value;
+    private T? _value;
     private T? _lastValue;
     private T? _initialValue;
     private bool _isInitialized;
