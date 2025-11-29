@@ -467,28 +467,12 @@ namespace MudBlazor
             }
         }
 
-        private Func<T?, string?>? _toStringFunc = x => x?.ToString();
-
         /// <summary>
         /// The function for the <c>Text</c> in drop-down items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<T?, string?>? ToStringFunc
-        {
-            get => _toStringFunc;
-            set
-            {
-                if (_toStringFunc == value)
-                    return;
-                _toStringFunc = value;
-                //Converter = new Converter<T>
-                //{
-                //    SetFunc = _toStringFunc ?? (x => x?.ToString()),
-                //    //GetFunc = LookupValue,
-                //};
-            }
-        }
+        public Func<T?, string?>? ToStringFunc { get; set; } = x => x?.ToString();
 
         public MudSelect()
         {
@@ -980,6 +964,13 @@ namespace MudBlazor
             }
 
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override string? ConvertSet(T? input)
+        {
+            return ToStringFunc is not null
+                ? ToStringFunc(input)
+                : base.ConvertSet(input);
         }
 
         /// <summary>
