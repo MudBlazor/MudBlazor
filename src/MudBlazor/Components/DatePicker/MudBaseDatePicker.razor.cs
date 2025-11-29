@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
 {
@@ -20,6 +19,7 @@ namespace MudBlazor
 
         protected MudBaseDatePicker()
         {
+            _mudPickerCalendarContentElementId = Identifier.Create();
             Culture = CultureInfo.CurrentCulture;
             Converter = new Utilities.Converter.DefaultConverter<DateTime?>
             {
@@ -28,9 +28,8 @@ namespace MudBlazor
             };
 
             using var registerScope = CreateRegisterScope();
-            _mudPickerCalendarContentElementId = Identifier.Create();
-            _dateFormatState = registerScope.RegisterParameter<string>(nameof(_dateFormatState))
-                .WithParameter(() => _dateFormatState)
+            _dateFormatState = registerScope.RegisterParameter<string>(nameof(DateFormat))
+                .WithParameter(() => DateFormat)
                 .WithChangeHandler(DateFormatChangedAsync);
         }
 
