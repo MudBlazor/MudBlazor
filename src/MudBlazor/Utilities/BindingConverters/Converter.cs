@@ -15,7 +15,7 @@ namespace MudBlazor
         /// <summary>
         /// The culture info being used for decimal points, date and time format, etc.
         /// </summary>
-        public CultureInfo Culture { get; set; } = Converters.DefaultCulture;
+        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
         public Action<string, object[]>? OnError { get; set; }
 
