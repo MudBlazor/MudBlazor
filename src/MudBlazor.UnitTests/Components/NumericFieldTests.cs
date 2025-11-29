@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
+using MudBlazor.Utilities.Converter;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -775,10 +776,12 @@ namespace MudBlazor.UnitTests.Components
             numericField.Text.Should().Be(null);
             //
             77.ToString("€0", CultureInfo.InvariantCulture).Should().Be("€77");
-            var conv = new DefaultConverter<int?>();
-            conv.Format = "€0";
-            conv.Culture = CultureInfo.InvariantCulture;
-            conv.Set(77).Should().Be("€77");
+            var conv = new DefaultConverter<int?>()
+            {
+                Culture = () => CultureInfo.InvariantCulture,
+                Format = () => "€0"
+            };
+            conv.Convert(77).Should().Be("€77");
             //
             comp.FindAll("input").First().Change("1234");
             comp.FindAll("input").First().Blur();
@@ -841,7 +844,7 @@ namespace MudBlazor.UnitTests.Components
             }
             // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
-            comp.Instance.Value.Should().Be(converter.Get(currentText));
+            comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
             numericField.Text.Should().Be(currentText);
         }
 
@@ -853,7 +856,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>(
                 Parameter(nameof(MudNumericField<int>.Value), defaultValue));
             var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
-            textfield.Text.Should().Be(converter.Set(defaultValue));
+            textfield.Text.Should().Be(converter.Convert(defaultValue));
         }
 
         /// <summary>

@@ -161,11 +161,6 @@ namespace MudBlazor
 
                 _amPm = value;
 
-                if (Converter is DefaultConverter<TimeSpan?> defaultConverter && string.IsNullOrWhiteSpace(_timeFormat))
-                {
-                    defaultConverter.Format = AmPm ? Format12Hours : Format24Hours;
-                }
-
                 Touched = true;
                 SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
@@ -196,10 +191,6 @@ namespace MudBlazor
                 }
 
                 _timeFormat = value;
-                if (Converter is DefaultConverter<TimeSpan?> defaultConverter)
-                {
-                    defaultConverter.Format = _timeFormat;
-                }
 
                 Touched = true;
                 SetTextAsync(ConvertSet(_value), false).CatchAndLog();
@@ -857,6 +848,16 @@ namespace MudBlazor
             }
 
             StateHasChanged();
+        }
+
+        protected override string GetFormat()
+        {
+            if (!string.IsNullOrEmpty(TimeFormat))
+            {
+                return TimeFormat;
+            }
+
+            return AmPm? Format12Hours : Format24Hours;
         }
 
         protected Task ChangeMinuteAsync(int minute)
