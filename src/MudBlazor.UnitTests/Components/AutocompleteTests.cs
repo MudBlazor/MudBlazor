@@ -2009,8 +2009,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudAutocomplete<int>>(parameters => parameters
                 .Add(p => p.ErrorId, "error-id")
-                .Add(p => p.Text, "not a number")
-                .Add(p => p.Converter, new DummyErrorConverter()));
+                .Add(p => p.CoerceValue, true)
+                .Add(p => p.Converter, new DummyErrorConverter())
+                .Add(p => p.Text, "not a number"));
 
             comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
             comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
