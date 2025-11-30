@@ -20,7 +20,7 @@ public static class ConverterExtensions
     /// <param name="converter">The reversible converter to reverse.</param>
     /// <returns>
     /// A <see cref="ReversibleChain{TOut,TIn}"/> whose forward conversion delegates to <see cref="IReversibleConverter{TIn,TOut}.ConvertBack"/>
-    /// and whose backward conversion delegates to <see cref="IReversibleConverter{TIn,TOut}.Convert"/>.
+    /// and whose backward conversion delegates to <see cref="IConverter{TIn,TOut}.Convert"/>.
     /// </returns>
     public static ReversibleChain<TOut, TIn> Reverse<TIn, TOut>(this IReversibleConverter<TIn, TOut> converter)
     {
