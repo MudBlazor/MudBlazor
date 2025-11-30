@@ -178,15 +178,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public CultureInfo Culture { get; set; } = CultureInfo.CurrentUICulture;
 
-        private void OnConversionError(string error, object[] arguments)
-        {
-            // note: we need to update the form here because the conversion error might lead to not updating the value
-            // ... which leads to not updating the form
-            Touched = true;
-            Form?.Update(this);
-            OnConversionErrorOccurred(Localizer[error, arguments]);
-        }
-
         protected virtual void OnConversionErrorOccurred(string error)
         {
             /* Descendants can override this method to catch conversion errors */
@@ -858,6 +849,7 @@ namespace MudBlazor
             }
             var result = converter.TryConvertBack(input);
             _getConversionResult = result;
+            HandleConversionResult(result);
 
             return result.Value;
         }
@@ -871,6 +863,7 @@ namespace MudBlazor
             }
             var result = converter.TryConvert(input);
             _setConversionResult = result;
+            HandleConversionResult(result);
 
             return result.Value;
         }
@@ -885,6 +878,32 @@ namespace MudBlazor
         private Task OnConverterChangedAsync(ParameterChangedEventArgs<IConverter<T?, U?>> args) => args.Value is null
             ? throw new NullReferenceException(nameof(Converter))
             : OnConverterChangedAsync();
+
+        private void HandleConversionResult<TResult>(ConversionResult<TResult?> result)
+        {
+            if (result.Success)
+            {
+                return;
+            }
+
+            if (result.ErrorMessageKey is not null)
+            {
+                OnConversionError(result.ErrorMessageKey, result.ErrorMessageArgs);
+            }
+            else
+            {
+                OnConversionError(result.ExceptionError.Message, []);
+            }
+        }
+
+        private void OnConversionError(string error, object[] arguments)
+        {
+            // note: we need to update the form here because the conversion error might lead to not updating the value
+            // ... which leads to not updating the form
+            Touched = true;
+            Form?.Update(this);
+            OnConversionErrorOccurred(Localizer[error, arguments]);
+        }
 
         private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
         {
