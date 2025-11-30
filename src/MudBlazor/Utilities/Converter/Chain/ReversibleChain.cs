@@ -47,13 +47,13 @@ public sealed class ReversibleChain<TIn, TOut> : ConverterChain<TIn, TOut>, IRev
     /// <summary>
     /// Performs the backward conversion (from <typeparamref name="TOut"/> to <typeparamref name="TIn"/>).
     /// </summary>
-    /// <param name="output">The value to convert back.</param>
+    /// <param name="input">The value to convert back.</param>
     /// <returns>The result of the backward conversion.</returns>
     /// <remarks>
     /// Exceptions thrown by the provided backward delegate propagate to the caller. For a non-throwing alternative
     /// that captures errors in a <see cref="ConversionResult{T}"/>, use <see cref="TryConvertBack"/>.
     /// </remarks>
-    public TIn ConvertBack(TOut output) => _backward(output);
+    public TIn ConvertBack(TOut input) => _backward(input);
 
     /// <summary>
     /// Creates a new <see cref="ReversibleChain{TOut,TIn}"/> representing this chain reversed

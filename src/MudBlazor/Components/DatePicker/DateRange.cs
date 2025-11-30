@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Extensions;
+using MudBlazor.Utilities.Converter;
 using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor
@@ -37,7 +38,7 @@ namespace MudBlazor
                 return string.Empty;
             }
 
-            return Utilities.Converter.RangeConverter<DateTime>.Join(converter.Convert(Start.Value), converter.Convert(End.Value));
+            return RangeConverter<DateTime>.Join(converter.Convert(Start.Value), converter.Convert(End.Value));
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace MudBlazor
                 return string.Empty;
             }
 
-            return Utilities.Converter.RangeConverter<DateTime>.Join(Start.ToIsoDateString(), End.ToIsoDateString());
+            return RangeConverter<DateTime>.Join(Start.ToIsoDateString(), End.ToIsoDateString());
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace MudBlazor
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
         public static bool TryParse(string value, IConverter<DateTime?, string> converter, out DateRange? date)
         {
-            if (!Utilities.Converter.RangeConverter<DateTime>.Split(value, out var start, out var end))
+            if (!RangeConverter<DateTime>.Split(value, out var start, out var end))
             {
                 date = null;
                 return false;

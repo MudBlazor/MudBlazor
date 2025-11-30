@@ -22,17 +22,11 @@ public class DeferredConverter<TIn, TOut> : IReversibleConverter<TIn, TOut>
 
     public TOut Convert(TIn input)
     {
-        if (_forward is null)
-            throw new InvalidOperationException("Conversion not initialized.");
-
-        return _forward(input);
+        return _forward is null ? throw new InvalidOperationException("Conversion not initialized.") : _forward(input);
     }
 
     public TIn ConvertBack(TOut input)
     {
-        if (_backward is null)
-            throw new InvalidOperationException("Reverse conversion not initialized.");
-
-        return _backward(input);
+        return _backward is null ? throw new InvalidOperationException("Reverse conversion not initialized.") : _backward(input);
     }
 }

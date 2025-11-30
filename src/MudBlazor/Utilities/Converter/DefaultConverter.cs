@@ -130,39 +130,4 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         result = null!;
         return false;
     }
-
-    //public sealed class ObjectConverter(Func<CultureInfo> culture, Func<string?> format)
-    //    : IReversibleConverter<object?, string?>
-    //{
-    //    public string? Convert(object? input)
-    //    {
-    //        return input switch
-    //        {
-    //            null => null,
-    //            Guid guid => StrictGuidStringConverter.Instance.Convert(guid),
-    //            DateTime dateTime => new DateTimeConverter(() => culture(), () => format()).Convert(dateTime),
-    //            TimeSpan timeSpan => new TimeSpanConverter(() => culture(), () => format()).Convert(timeSpan),
-    //            int i => new NumberConverter<int>(() => culture(), () => format()).Convert(i),
-    //            uint u => new NumberConverter<uint>(() => culture(), () => format()).Convert(u),
-    //            long l => new NumberConverter<long>(() => culture(), () => format()).Convert(l),
-    //            ulong ul => new NumberConverter<ulong>(() => culture(), () => format()).Convert(ul),
-    //            float f => new NumberConverter<float>(() => culture(), () => format()).Convert(f),
-    //            decimal m => new NumberConverter<decimal>(() => culture(), () => format()).Convert(m),
-    //            double d => new NumberConverter<double>(() => culture(), () => format()).Convert(d),
-    //            byte b => new NumberConverter<byte>(() => culture(), () => format()).Convert(b),
-    //            sbyte sb => new NumberConverter<sbyte>(() => culture(), () => format()).Convert(sb),
-    //            short sh => new NumberConverter<short>(() => culture(), () => format()).Convert(sh),
-    //            ushort ush => new NumberConverter<ushort>(() => culture(), () => format()).Convert(ush),
-    //            bool bo => BoolConverter.Instance.Convert(bo),
-    //            char c => CharConverter.Instance.Convert(c),
-    //            string s => s,
-    //            _ => input.ToString()
-    //        };
-    //    }
-
-    //    public object? ConvertBack(string? output)
-    //    {
-    //        return output;
-    //    }
-    //}
 }

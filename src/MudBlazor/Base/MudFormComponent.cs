@@ -41,14 +41,6 @@ namespace MudBlazor
 
         protected MudFormComponent()
         {
-            //Converter = new Utilities.Converter.DefaultConverter<T>
-            //{
-            //    Culture = GetCulture,
-            //    Format = GetFormat
-            //};
-            //Converter = new Utilities.Converter.DeferredConverter<T?, U?>();
-            Converter = null!;
-
             using var registerScope = CreateRegisterScope();
             ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
                 .WithParameter(() => ErrorText)
@@ -166,7 +158,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IConverter<T?, U?> Converter { get; set; }
+        public IConverter<T?, U?> Converter { get; set; } = null!;
 
         /// <summary>
         /// The culture used to format and interpret values such as dates and currency.
@@ -770,6 +762,7 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
@@ -845,7 +838,11 @@ namespace MudBlazor
             var converter = _converterState.Value;
             if (converter is null)
             {
-                throw new InvalidOperationException("Converter is not set.");
+                throw new InvalidOperationException(
+                    $"{nameof(Converter)} parameter cannot be null. " +
+                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
+                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
+                );
             }
             var result = converter.TryConvertBack(input);
             _getConversionResult = result;
@@ -859,7 +856,11 @@ namespace MudBlazor
             var converter = _converterState.Value;
             if (converter is null)
             {
-                throw new InvalidOperationException("Converter is not set.");
+                throw new InvalidOperationException(
+                    $"{nameof(Converter)} parameter cannot be null. " +
+                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
+                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
+                );
             }
             var result = converter.TryConvert(input);
             _setConversionResult = result;
@@ -876,7 +877,7 @@ namespace MudBlazor
         }
 
         private Task OnConverterChangedAsync(ParameterChangedEventArgs<IConverter<T?, U?>> args) => args.Value is null
-            ? throw new NullReferenceException(nameof(Converter))
+            ? throw new InvalidOperationException(nameof(Converter))
             : OnConverterChangedAsync();
 
         private void HandleConversionResult<TResult>(ConversionResult<TResult?> result)

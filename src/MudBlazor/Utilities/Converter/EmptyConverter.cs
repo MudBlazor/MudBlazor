@@ -6,13 +6,7 @@ namespace MudBlazor.Utilities.Converter;
 
 public class EmptyConverter<T> : IReversibleConverter<T, T>
 {
-    public T Convert(T input)
-    {
-        return input;
-    }
+    public T Convert(T input) => input;
 
-    public T ConvertBack(T output)
-    {
-        return output;
-    }
+    public T ConvertBack(T output) => output;
 }

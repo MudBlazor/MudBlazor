@@ -64,5 +64,5 @@ public readonly struct ConversionResult<T>
     /// <param name="ex">The exception describing the conversion failure.</param>
     /// <param name="errorKey">An optional localizable error message key (or token).</param>
     /// <param name="errorArgs">Optional format arguments for the error message key.</param>
-    public ConversionResult(Exception ex, string? errorKey = null, params object[] errorArgs) => (Value, ExceptionError, ErrorMessageKey, ErrorMessageArgs) = (default, ex, errorKey, errorArgs);
+    public ConversionResult(Exception ex, string errorKey, params object[] errorArgs) => (Value, ExceptionError, ErrorMessageKey, ErrorMessageArgs) = (default, ex, errorKey, errorArgs);
 }
