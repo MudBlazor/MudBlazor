@@ -8,6 +8,7 @@ using System.Numerics;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Converter.Base;
 using MudBlazor.Utilities.Converter.Dispatcher;
+using static MudBlazor.Utilities.Converter.DefaultConverter;
 
 namespace MudBlazor.Utilities.Converter;
 
@@ -26,11 +27,13 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         // The dispatcher caches method delegates and captures the converter's field values at registration time.
         // Using () => Culture() and () => Format() ensures the converters always read the latest property values.
         _dispatcher = ReversibleTypeDispatcher.Create<T?, string?>()
-            .Add(StringIdentityConverter.Instance)
+            .Add(StringConverter.Instance)
             .Add<char>(CharConverter.Instance)
             .Add<char?>(CharConverter.Instance)
             .Add<bool>(BoolConverter.Instance)
             .Add<bool?>(BoolConverter.Instance)
+            .Add<Guid>(GuidConverter.Instance)
+            .Add<Guid?>(GuidConverter.Instance)
             .Add(new NumberConverter<sbyte>(() => Culture(), () => Format()))
             .Add(new NullableNumberConverter<sbyte>(() => Culture(), () => Format()))
             .Add(new NumberConverter<byte>(() => Culture(), () => Format()))
@@ -53,10 +56,12 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Add(new NullableNumberConverter<double>(() => Culture(), () => Format()))
             .Add(new NumberConverter<decimal>(() => Culture(), () => Format()))
             .Add(new NullableNumberConverter<decimal>(() => Culture(), () => Format()))
-            .Add<Guid>(GuidStringConverter.Instance)
-            .Add<Guid?>(GuidStringConverter.Instance)
+            .Add<BigInteger>(new BigIntegerConverter(() => Culture(), () => Format()))
+            .Add<BigInteger?>(new BigIntegerConverter(() => Culture(), () => Format()))
             .Add<DateTime>(new DateTimeConverter(() => Culture(), () => Format()))
             .Add<DateTime?>(new DateTimeConverter(() => Culture(), () => Format()))
+            .Add<DateTimeOffset>(new DateTimeOffsetConverter(() => Culture(), () => Format()))
+            .Add<DateTimeOffset?>(new DateTimeOffsetConverter(() => Culture(), () => Format()))
             .Add<DateOnly>(new DateOnlyConverter(() => Culture(), () => Format()))
             .Add<DateOnly?>(new DateOnlyConverter(() => Culture(), () => Format()))
             .Add<TimeOnly>(new TimeOnlyConverter(() => Culture(), () => Format()))
@@ -126,289 +131,6 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         return false;
     }
 
-    private sealed class GuidStringConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
-    {
-        public Guid ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return Guid.Empty;
-            }
-
-            if (Guid.TryParse(input, out var guid))
-            {
-                return guid;
-            }
-
-            throw new ConversionException(LanguageResource.Converter_InvalidGUID);
-        }
-
-        public string Convert(Guid value) => value.ToString();
-
-        public string? Convert(Guid? value) => value is null ? null : value.ToString();
-
-        Guid? IReversibleConverter<Guid?, string?>.ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return null;
-            }
-
-            return ConvertBack(input);
-        }
-
-        public static GuidStringConverter Instance { get; } = new();
-    }
-
-    private sealed class CharConverter : IReversibleConverter<char, string?>, IReversibleConverter<char?, string?>
-    {
-        public string Convert(char input) => input.ToString();
-
-        public string? Convert(char? input) => input?.ToString();
-
-        public char ConvertBack(string? input) => string.IsNullOrEmpty(input) ? '\0' : input[0];
-
-        char? IReversibleConverter<char?, string?>.ConvertBack(string? input)
-        {
-            return ConvertBack(input);
-        }
-
-        public static readonly CharConverter Instance = new();
-    }
-
-    private sealed class BoolConverter : IReversibleConverter<bool?, string?>, IReversibleConverter<bool, string?>
-    {
-        public string Convert(bool input) => input.ToString(CultureInfo.InvariantCulture);
-
-        public string? Convert(bool? input) => input?.ToString(CultureInfo.InvariantCulture);
-
-        public bool ConvertBack(string? input) =>
-            input?.ToLowerInvariant() switch
-            {
-                "true" or "1" or "on" => true,
-                _ => false
-            };
-
-        bool? IReversibleConverter<bool?, string?>.ConvertBack(string? input) =>
-            input?.ToLowerInvariant() switch
-            {
-                "true" or "1" or "on" => true,
-                "false" or "0" or "off" => false,
-                _ => null
-            };
-
-        public static readonly BoolConverter Instance = new();
-    }
-
-    private sealed class StringIdentityConverter : IReversibleConverter<string?, string?>
-    {
-        public string? Convert(string? input) => input;
-
-        public string? ConvertBack(string? input) => input;
-
-        public static readonly StringIdentityConverter Instance = new();
-    }
-
-    private sealed class NullableNumberConverter<TNumber>(Func<CultureInfo> culture, Func<string?> format)
-        : IReversibleConverter<TNumber?, string?>
-        where TNumber : struct, INumber<TNumber>
-    {
-        public string? Convert(TNumber? input)
-        {
-            var currentCulture = culture.Invoke();
-            var currentFormat = format.Invoke();
-            var result = input?.ToString(currentFormat, currentCulture);
-
-            return result;
-        }
-
-        public TNumber? ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return null;
-            }
-
-            var currentCulture = culture.Invoke();
-
-            if (TNumber.TryParse(input, NumberStyles.Any, currentCulture, out var result))
-            {
-                return result;
-            }
-
-            throw new ConversionException(LanguageResource.Converter_InvalidNumber);
-        }
-    }
-
-    private sealed class NumberConverter<TNumber>(Func<CultureInfo> culture, Func<string?> format)
-        : IReversibleConverter<TNumber, string?>
-        where TNumber : INumber<TNumber>
-    {
-        public string Convert(TNumber input)
-        {
-            var currentCulture = culture.Invoke();
-            var currentFormat = format.Invoke();
-
-            return input.ToString(currentFormat, currentCulture);
-        }
-
-        public TNumber ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return TNumber.Zero;
-            }
-
-            var currentCulture = culture.Invoke();
-
-            if (TNumber.TryParse(input, NumberStyles.Any, currentCulture, out var result))
-            {
-                return result;
-            }
-
-            throw new ConversionException(LanguageResource.Converter_InvalidNumber);
-        }
-    }
-
-    private sealed class DateTimeConverter(Func<CultureInfo> culture, Func<string?> format)
-        : IReversibleConverter<DateTime, string?>, IReversibleConverter<DateTime?, string?>
-    {
-        public string Convert(DateTime input) => input.ToString(format.Invoke(), culture.Invoke());
-
-        public string? Convert(DateTime? input) => input?.ToString(format.Invoke(), culture.Invoke());
-
-        public DateTime ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return default;
-            }
-
-            var currentCulture = culture.Invoke();
-            if (DateTime.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
-            {
-                return result;
-            }
-
-            throw new ConversionException(LanguageResource.Converter_InvalidDateTime);
-        }
-
-        DateTime? IReversibleConverter<DateTime?, string?>.ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return null;
-            }
-
-            return ConvertBack(input);
-        }
-    }
-
-    private sealed class DateOnlyConverter(Func<CultureInfo> culture, Func<string?> format)
-        : IReversibleConverter<DateOnly, string?>, IReversibleConverter<DateOnly?, string?>
-    {
-        public string Convert(DateOnly input) => input.ToString(format.Invoke(), culture.Invoke());
-
-        public string? Convert(DateOnly? input) => input?.ToString(format.Invoke(), culture.Invoke());
-
-        public DateOnly ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return default;
-            }
-
-            var currentCulture = culture.Invoke();
-            if (DateOnly.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
-            {
-                return result;
-            }
-
-            // TODO: Differentiate error message for DateOnly
-            throw new ConversionException(LanguageResource.Converter_InvalidDateTime);
-        }
-
-        DateOnly? IReversibleConverter<DateOnly?, string?>.ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return null;
-            }
-
-            return ConvertBack(input);
-        }
-    }
-
-    private sealed class TimeOnlyConverter(Func<CultureInfo> culture, Func<string?> format)
-        : IReversibleConverter<TimeOnly, string?>, IReversibleConverter<TimeOnly?, string?>
-    {
-        public string Convert(TimeOnly input) => input.ToString(format.Invoke(), culture.Invoke());
-
-        public string? Convert(TimeOnly? input) => input?.ToString(format.Invoke(), culture.Invoke());
-
-        public TimeOnly ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return default;
-            }
-
-            var currentCulture = culture.Invoke();
-            if (TimeOnly.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
-            {
-                return result;
-            }
-
-            // TODO: Differentiate error message for TimeOnly
-            throw new ConversionException(LanguageResource.Converter_InvalidDateTime);
-        }
-
-        TimeOnly? IReversibleConverter<TimeOnly?, string?>.ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return null;
-            }
-
-            return ConvertBack(input);
-        }
-    }
-
-    private sealed class TimeSpanConverter(Func<CultureInfo> culture, Func<string?> format)
-        : IReversibleConverter<TimeSpan, string?>, IReversibleConverter<TimeSpan?, string?>
-    {
-        private const string DefaultTimeSpanFormat = "c";
-
-        public string Convert(TimeSpan timeSpan) => timeSpan.ToString(format.Invoke() ?? DefaultTimeSpanFormat, culture.Invoke());
-
-        public string? Convert(TimeSpan? timeSpan) => timeSpan?.ToString(format.Invoke() ?? DefaultTimeSpanFormat, culture.Invoke());
-
-        public TimeSpan ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return TimeSpan.Zero;
-            }
-
-            if (TimeSpan.TryParseExact(input, format.Invoke() ?? DefaultTimeSpanFormat, culture.Invoke(), out var result))
-            {
-                return result;
-            }
-
-            throw new ConversionException(LanguageResource.Converter_InvalidTimeSpan);
-        }
-
-        TimeSpan? IReversibleConverter<TimeSpan?, string?>.ConvertBack(string? input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return null;
-            }
-
-            return ConvertBack(input);
-        }
-    }
-
     //public sealed class ObjectConverter(Func<CultureInfo> culture, Func<string?> format)
     //    : IReversibleConverter<object?, string?>
     //{
@@ -440,15 +162,6 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
     //    public object? ConvertBack(string? output)
     //    {
-    //        //// Try numeric
-    //        //if (int.TryParse(output, NumberStyles.Any, _parent.Culture, out var i)) return i;
-    //        //if (double.TryParse(output, NumberStyles.Any, _parent.Culture, out var d)) return d;
-    //        //// Try DateTime / TimeSpan
-    //        //if (DateTime.TryParseExact(output, _parent.Format ?? _parent.Culture.DateTimeFormat.ShortDatePattern, _parent.Culture, DateTimeStyles.None, out var dt))
-    //        //    return dt;
-    //        //if (TimeSpan.TryParseExact(output, _parent.Format ?? "c", _parent.Culture, out var ts))
-    //        //    return ts;
-
     //        return output;
     //    }
     //}
