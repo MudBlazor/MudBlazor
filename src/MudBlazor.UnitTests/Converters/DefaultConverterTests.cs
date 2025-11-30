@@ -16,6 +16,218 @@ namespace MudBlazor.UnitTests.Converters;
 [TestFixture]
 public class DefaultConverterTests
 {
+    #region DefeultConverter
+
+    [Test]
+    public void DefaultConverter_Roundtrip_AllSupportedTypes_ForwardAndBack()
+    {
+        // string
+        {
+            var conv = new DefaultConverter<string>();
+            const string StringValue = "hello world";
+            var text = conv.Convert(StringValue);
+            text.Should().Be(StringValue);
+            conv.ConvertBack(text).Should().Be(StringValue);
+            conv.ConvertBack(null).Should().BeNull();
+        }
+
+        // char
+        {
+            var conv = new DefaultConverter<char>();
+            const char CharValue = 'Z';
+            conv.Convert(CharValue).Should().Be("Z");
+            conv.ConvertBack("Z").Should().Be(CharValue);
+        }
+
+        // bool
+        {
+            var conv = new DefaultConverter<bool>();
+            const bool BoolValue = true;
+            conv.Convert(BoolValue).Should().Be(BoolValue.ToString(CultureInfo.InvariantCulture));
+            conv.ConvertBack("true").Should().BeTrue();
+            conv.ConvertBack("off").Should().BeFalse(); // non-true -> false for non-nullable
+        }
+
+        // Guid
+        {
+            var conv = new DefaultConverter<Guid>();
+            var guidValue = Guid.NewGuid();
+            conv.Convert(guidValue).Should().Be(guidValue.ToString());
+            conv.ConvertBack(guidValue.ToString()).Should().Be(guidValue);
+        }
+
+        // integers
+        {
+            var conv = new DefaultConverter<int>();
+            const int IntValue = 123456;
+            conv.Convert(IntValue).Should().Be(IntValue.ToString(null, CultureInfo.InvariantCulture));
+            conv.ConvertBack(IntValue.ToString(CultureInfo.InvariantCulture)).Should().Be(IntValue);
+            conv.ConvertBack(null).Should().Be(0); // non-nullable numeric returns zero for null/empty
+            conv.ConvertBack(string.Empty).Should().Be(0);
+        }
+
+        // unsigned
+        {
+            var conv = new DefaultConverter<uint>();
+            const uint UnsignedIntValue = 4000000000u;
+            conv.Convert(UnsignedIntValue).Should().Be(UnsignedIntValue.ToString(null, CultureInfo.InvariantCulture));
+            conv.ConvertBack(UnsignedIntValue.ToString(CultureInfo.InvariantCulture)).Should().Be(UnsignedIntValue);
+        }
+
+        // long/ulong
+        {
+            var convLong = new DefaultConverter<long>();
+            const long LongValue = -123456789012345;
+            convLong.Convert(LongValue).Should().Be(LongValue.ToString(null, CultureInfo.InvariantCulture));
+            convLong.ConvertBack(LongValue.ToString(CultureInfo.InvariantCulture)).Should().Be(LongValue);
+
+            var convULong = new DefaultConverter<ulong>();
+            const ulong UnsignedLongValue = 123456789012345ul;
+            convULong.Convert(UnsignedLongValue).Should().Be(UnsignedLongValue.ToString(null, CultureInfo.InvariantCulture));
+            convULong.ConvertBack(UnsignedLongValue.ToString(CultureInfo.InvariantCulture)).Should().Be(UnsignedLongValue);
+        }
+
+        // floating point
+        {
+            var convDouble = new DefaultConverter<double>();
+            const double DoubleValue = 3.14159265358979;
+            convDouble.Convert(DoubleValue).Should().Be(DoubleValue.ToString(null, CultureInfo.InvariantCulture));
+            convDouble.ConvertBack(DoubleValue.ToString(CultureInfo.InvariantCulture)).Should().BeApproximately(DoubleValue, 1e-10);
+
+            var convFloat = new DefaultConverter<float>();
+            const float FloatValue = 1.2345f;
+            convFloat.Convert(FloatValue).Should().Be(FloatValue.ToString(null, CultureInfo.InvariantCulture));
+            convFloat.ConvertBack(FloatValue.ToString(CultureInfo.InvariantCulture)).Should().BeApproximately(FloatValue, 1e-6f);
+        }
+
+        // decimal
+        {
+            var conv = new DefaultConverter<decimal>();
+            const decimal DecimalValue = 12345.6789m;
+            conv.Convert(DecimalValue).Should().Be(DecimalValue.ToString(null, CultureInfo.InvariantCulture));
+            conv.ConvertBack(DecimalValue.ToString(CultureInfo.InvariantCulture)).Should().Be(DecimalValue);
+        }
+
+        // BigInteger
+        {
+            var conv = new DefaultConverter<BigInteger>();
+            var bigIntegerValue = BigInteger.Parse("123456789012345678901234567890");
+            conv.Convert(bigIntegerValue).Should().Be(bigIntegerValue.ToString(null, CultureInfo.InvariantCulture));
+            conv.ConvertBack(bigIntegerValue.ToString(CultureInfo.InvariantCulture)).Should().Be(bigIntegerValue);
+        }
+
+        // DateTime
+        {
+            var conv = new DefaultConverter<DateTime> { Format = () => "yyyy-MM-dd HH:mm:ss", Culture = () => CultureInfo.InvariantCulture };
+            var dateTimeValue = new DateTime(2025, 11, 30, 13, 45, 12);
+            var text = conv.Convert(dateTimeValue);
+            text.Should().Be(dateTimeValue.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            conv.ConvertBack(text).Should().Be(dateTimeValue);
+        }
+
+        // DateTimeOffset
+        {
+            var conv = new DefaultConverter<DateTimeOffset> { Format = () => "o", Culture = () => CultureInfo.InvariantCulture };
+            var dateTimeOffsetValue = new DateTimeOffset(2025, 11, 30, 13, 45, 12, TimeSpan.FromHours(2));
+            var text = conv.Convert(dateTimeOffsetValue);
+            text.Should().Be(dateTimeOffsetValue.ToString("o", CultureInfo.InvariantCulture));
+            conv.ConvertBack(text).Should().Be(dateTimeOffsetValue);
+        }
+
+        // DateOnly
+        {
+            var conv = new DefaultConverter<DateOnly> { Format = () => "yyyy-MM-dd", Culture = () => CultureInfo.InvariantCulture };
+            var dateOnlyValue = new DateOnly(2025, 11, 30);
+            var text = conv.Convert(dateOnlyValue);
+            text.Should().Be(dateOnlyValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            conv.ConvertBack(text).Should().Be(dateOnlyValue);
+        }
+
+        // TimeOnly
+        {
+            var conv = new DefaultConverter<TimeOnly> { Format = () => "HH:mm:ss", Culture = () => CultureInfo.InvariantCulture };
+            var timeOnlyValue = new TimeOnly(14, 5, 6);
+            var text = conv.Convert(timeOnlyValue);
+            text.Should().Be(timeOnlyValue.ToString("HH:mm:ss", CultureInfo.InvariantCulture));
+            conv.ConvertBack(text).Should().Be(timeOnlyValue);
+        }
+
+        // TimeSpan
+        {
+            var conv = new DefaultConverter<TimeSpan> { Format = () => "c", Culture = () => CultureInfo.InvariantCulture };
+            var timeSpanValue = new TimeSpan(1, 2, 3, 4, 567);
+            var text = conv.Convert(timeSpanValue);
+            text.Should().Be(timeSpanValue.ToString("c", CultureInfo.InvariantCulture));
+            conv.ConvertBack(text).Should().Be(timeSpanValue);
+        }
+
+        // Nullable examples: int?, double?, DateTime?, Guid?
+        {
+            var convIntN = new DefaultConverter<int?>();
+            int? intValue = 42;
+            convIntN.Format = () => null;
+            convIntN.Culture = () => CultureInfo.InvariantCulture;
+            convIntN.Convert(intValue).Should().Be(intValue.Value.ToString(null, CultureInfo.InvariantCulture));
+            convIntN.ConvertBack("42").Should().Be(42);
+            convIntN.ConvertBack(null).Should().BeNull();
+
+            var convDoubleN = new DefaultConverter<double?>();
+            double? doubleValue = 2.5;
+            convDoubleN.Format = () => "F1";
+            convDoubleN.Culture = () => CultureInfo.InvariantCulture;
+            convDoubleN.Convert(doubleValue).Should().Be(doubleValue.Value.ToString("F1", CultureInfo.InvariantCulture));
+            convDoubleN.ConvertBack(null).Should().BeNull();
+            convDoubleN.ConvertBack("2.5").Should().BeApproximately(2.5, 1e-10);
+
+            var convDateN = new DefaultConverter<DateTime?> { Format = () => "yyyy-MM-dd", Culture = () => CultureInfo.InvariantCulture };
+            var dateTimeValue = new DateTime(2025, 11, 30);
+            convDateN.Convert(dateTimeValue).Should().Be(dateTimeValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            convDateN.ConvertBack(null).Should().BeNull();
+
+            var convGuidN = new DefaultConverter<Guid?>();
+            var guidValue = Guid.NewGuid();
+            convGuidN.Convert(guidValue).Should().Be(guidValue.ToString());
+            convGuidN.ConvertBack(null).Should().BeNull();
+        }
+    }
+
+    [Test]
+    public void DefaultConverter_CultureAndFormat_DynamicSwap_AffectsConversionAtRuntime()
+    {
+        // double: switching culture and format should change decimal separator and digits
+        var convDouble = new DefaultConverter<double> { Format = () => "F2", Culture = () => CultureInfo.InvariantCulture };
+        const double DoubleValue = 1234.5678;
+        var textInvariant = convDouble.Convert(DoubleValue);
+        textInvariant.Should().Be(DoubleValue.ToString("F2", CultureInfo.InvariantCulture)); // "1234.57"
+
+        // Change culture to fr-FR and format to F3 at runtime
+        convDouble.Format = () => "F3";
+        convDouble.Culture = () => new CultureInfo("fr-FR");
+        var textFrench = convDouble.Convert(DoubleValue);
+        textFrench.Should().Be(DoubleValue.ToString("F3", new CultureInfo("fr-FR"))); // "1234,568"
+
+        // ConvertBack should parse with current culture/format (the converter uses TryParse with NumberStyles.Any and current culture)
+        convDouble.ConvertBack(textFrench).Should().BeApproximately(DoubleValue, 1e-2);
+
+        // DateOnly: switching format/culture changes parsing/formatting
+        var convDate = new DefaultConverter<DateOnly> { Format = () => "yyyy-MM-dd", Culture = () => CultureInfo.InvariantCulture };
+        var date = new DateOnly(2025, 11, 30);
+        convDate.Convert(date).Should().Be("2025-11-30");
+
+        // Now change to en-GB short date pattern by leaving Format = null and setting Culture
+        convDate.Format = () => null;
+        convDate.Culture = () => new CultureInfo("en-GB"); // ShortDatePattern "dd/MM/yyyy"
+        var gbString = date.ToString(CultureInfo.GetCultureInfo("en-GB").DateTimeFormat.ShortDatePattern, CultureInfo.GetCultureInfo("en-GB"));
+        // Convert should follow the new culture's short date pattern
+        convDate.Convert(date).Should().Be(date.ToString(convDate.Culture().DateTimeFormat.ShortDatePattern, convDate.Culture()));
+
+        // And ConvertBack should parse the GB string
+        var parsed = convDate.ConvertBack(gbString);
+        parsed.Should().Be(date);
+    }
+
+    #endregion
+
     #region BigInteger
 
     private static DefaultConverter.BigIntegerConverter CreateBigIntegerConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
