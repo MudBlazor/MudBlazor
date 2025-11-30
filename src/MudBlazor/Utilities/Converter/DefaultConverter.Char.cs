@@ -17,6 +17,16 @@ internal partial class DefaultConverter
 
         char? IReversibleConverter<char?, string?>.ConvertBack(string? input)
         {
+            if (input is null)
+            {
+                return null;
+            }
+
+            if (input.Length == 0)
+            {
+                return '\0';
+            }
+
             return ConvertBack(input);
         }
 
