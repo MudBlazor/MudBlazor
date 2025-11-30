@@ -15,10 +15,10 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
     {
         _dispatcher = ReversibleTypeDispatcher.Create<T?, bool?>()
             .Add(BoolStringConverter.Instance)      // string     <-> bool?
-            .Add<bool>(BoolIdentity.Instance)             // bool       <-> bool?
-            .Add<bool?>(BoolIdentity.Instance)     // bool?      <-> bool?
-            .Add<int>(BoolIntConverter.Instance)         // int        <-> bool?
-            .Add<int?>(BoolIntConverter.Instance) // int?       <-> bool?
+            .Add<bool>(BoolIdentity.Instance)       // bool       <-> bool?
+            .Add<bool?>(BoolIdentity.Instance)      // bool?      <-> bool?
+            .Add<int>(BoolIntConverter.Instance)    // int        <-> bool?
+            .Add<int?>(BoolIntConverter.Instance)   // int?       <-> bool?
             .Add(ObjectBoolConverter.Instance)
             .Build();
     }

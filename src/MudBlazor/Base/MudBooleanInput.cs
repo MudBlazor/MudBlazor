@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -15,7 +16,7 @@ namespace MudBlazor
     {
         public MudBooleanInput()
         {
-            Converter = new MudBlazor.Utilities.Converter.BoolConverter<T?>();
+            Converter = new BoolConverter<T?>();
         }
 
         protected virtual string? Classname { get; set; }
