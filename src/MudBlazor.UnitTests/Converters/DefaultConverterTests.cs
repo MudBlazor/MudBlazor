@@ -810,7 +810,7 @@ public class DefaultConverterTests
 
     #region Number
 
-    private static DefaultConverter.NumberConverter<TNumber> CreateNumberConverter<TNumber>(Func<CultureInfo>? culture = null, Func<string?>? format = null) 
+    private static DefaultConverter.NumberConverter<TNumber> CreateNumberConverter<TNumber>(Func<CultureInfo>? culture = null, Func<string?>? format = null)
         where TNumber : struct, INumber<TNumber>
     {
         return new DefaultConverter.NumberConverter<TNumber>(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
