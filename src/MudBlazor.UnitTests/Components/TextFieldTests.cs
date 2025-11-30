@@ -62,8 +62,10 @@ namespace MudBlazor.UnitTests.Components
             //
             0.0.ToString("F1", CultureInfo.InvariantCulture).Should().Be("0.0");
             //
-            await comp.InvokeAsync(() => textfield.Format = "F1");
-            await comp.InvokeAsync(() => textfield.Culture = CultureInfo.InvariantCulture);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Format, "F1")
+                .Add(x => x.Culture, CultureInfo.InvariantCulture));
+
             textfield.Value.Should().Be(0.0);
             textfield.Text.Should().Be("0.0");
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
