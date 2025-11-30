@@ -857,7 +857,7 @@ namespace MudBlazor
                 return TimeFormat;
             }
 
-            return AmPm? Format12Hours : Format24Hours;
+            return AmPm ? Format12Hours : Format24Hours;
         }
 
         protected Task ChangeMinuteAsync(int minute)
