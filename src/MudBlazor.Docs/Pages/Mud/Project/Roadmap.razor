@@ -29,7 +29,6 @@
     {
         var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/ROADMAP.md");
         _roadMap = await response.Content.ReadAsStringAsync();
-        if (_roadMap.StartsWith("# Roadmap")) _roadMap = _roadMap["# Roadmap".Length..].Trim();
     }
 
     private static string GetBody(string value)

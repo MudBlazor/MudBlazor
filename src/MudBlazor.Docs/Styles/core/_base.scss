@@ -87,6 +87,8 @@
 }
 
 .docs-class-table {
+  padding: 8px;
+
   table {
     table-layout: fixed;
     position: relative;
@@ -169,4 +171,12 @@
 ol,
 ul {
   list-style: none;
+}
+
+.white-background {
+  background-color: var(--mud-palette-white);
+}
+
+.height-400 {
+  height: 400px;
 }
