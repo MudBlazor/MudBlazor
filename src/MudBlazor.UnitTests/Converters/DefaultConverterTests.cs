@@ -18,7 +18,7 @@ public class DefaultConverterTests
 {
     #region BigInteger
 
-    private DefaultConverter.BigIntegerConverter CreateBigIntegerConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    private static DefaultConverter.BigIntegerConverter CreateBigIntegerConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
     {
         return new DefaultConverter.BigIntegerConverter(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
     }
@@ -199,7 +199,7 @@ public class DefaultConverterTests
 
     #region DateOnly
 
-    private DefaultConverter.DateOnlyConverter CreateDateOnlyConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    private static DefaultConverter.DateOnlyConverter CreateDateOnlyConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
     {
         return new DefaultConverter.DateOnlyConverter(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
     }
@@ -276,6 +276,574 @@ public class DefaultConverterTests
 
         nullableConv.ConvertBack(null).Should().BeNull();
         nullableConv.ConvertBack(string.Empty).Should().BeNull();
+    }
+
+    #endregion
+
+    #region DateTime
+
+    private static DefaultConverter.DateTimeConverter CreateDateTimeConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    {
+        return new DefaultConverter.DateTimeConverter(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
+    }
+
+    [Test]
+    public void DateTime_Convert_ShouldUseProvidedFormatAndCulture()
+    {
+        var conv = CreateDateTimeConverter(() => CultureInfo.InvariantCulture, () => "yyyy-MM-dd HH:mm");
+        var value = new DateTime(2025, 11, 30, 13, 45, 0);
+        var expected = value.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+
+        var result = conv.Convert(value);
+
+        result.Should().Be(expected);
+    }
+
+    [Test]
+    public void DateTime_Convert_NullableNull_ReturnsNull()
+    {
+        var conv = CreateDateTimeConverter();
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DateTime_ConvertBack_EmptyOrNull_ReturnsDefaultDateTime()
+    {
+        var conv = CreateDateTimeConverter();
+        conv.ConvertBack(null).Should().Be(default(DateTime));
+        conv.ConvertBack(string.Empty).Should().Be(default(DateTime));
+    }
+
+    [Test]
+    public void DateTime_ConvertBack_ValidExactFormat_ReturnsParsedDateTime()
+    {
+        var conv = CreateDateTimeConverter(() => CultureInfo.InvariantCulture, () => "yyyy-MM-dd HH:mm");
+        const string Text = "2025-11-30 13:45";
+        var expected = new DateTime(2025, 11, 30, 13, 45, 0);
+
+        var result = conv.ConvertBack(Text);
+
+        result.Should().Be(expected);
+    }
+
+    [Test]
+    public void DateTime_ConvertBack_WhenFormatIsNull_UsesCultureShortDatePattern()
+    {
+        var culture = new CultureInfo("en-GB"); // ShortDatePattern = "dd/MM/yyyy"
+        var conv = CreateDateTimeConverter(() => culture, () => null);
+        const string Text = "30/11/2025";
+        var expected = new DateTime(2025, 11, 30);
+
+        conv.ConvertBack(Text).Should().Be(expected);
+    }
+
+    [Test]
+    public void DateTime_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
+    {
+        var conv = CreateDateTimeConverter(() => CultureInfo.InvariantCulture, () => "yyyy-MM-dd");
+
+        Action act = () => conv.ConvertBack("not-a-datetime");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidDateTime);
+    }
+
+    [Test]
+    public void DateTime_NullableInterfaceConvertBack_EmptyOrNull_ReturnsNull_And_ParsesValidValue()
+    {
+        var conv = CreateDateTimeConverter(() => CultureInfo.InvariantCulture, () => "yyyy-MM-dd");
+        IReversibleConverter<DateTime?, string?> nullableConv = conv;
+
+        nullableConv.ConvertBack(null).Should().BeNull();
+        nullableConv.ConvertBack(string.Empty).Should().BeNull();
+
+        var parsed = nullableConv.ConvertBack("2025-11-30");
+        parsed.Should().Be(new DateTime(2025, 11, 30));
+    }
+
+    #endregion
+
+    #region DateTimeOffset
+
+    private static DefaultConverter.DateTimeOffsetConverter CreateDateTimeOffsetConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    {
+        return new DefaultConverter.DateTimeOffsetConverter(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
+    }
+
+    [Test]
+    public void DateTimeOffset_Convert_ShouldUseProvidedFormatAndCulture()
+    {
+        var conv = CreateDateTimeOffsetConverter(() => CultureInfo.InvariantCulture, () => "o");
+        var value = new DateTimeOffset(2025, 11, 30, 13, 45, 0, TimeSpan.FromHours(-5));
+        var expected = value.ToString("o", CultureInfo.InvariantCulture);
+
+        var result = conv.Convert(value);
+
+        result.Should().Be(expected);
+    }
+
+    [Test]
+    public void DateTimeOffset_Convert_NullableNull_ReturnsNull()
+    {
+        var conv = CreateDateTimeOffsetConverter();
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DateTimeOffset_ConvertBack_EmptyOrNull_ReturnsDefault()
+    {
+        var conv = CreateDateTimeOffsetConverter();
+        conv.ConvertBack(null).Should().Be(default);
+        conv.ConvertBack(string.Empty).Should().Be(default);
+    }
+
+    [Test]
+    public void DateTimeOffset_ConvertBack_ValidExactFormat_ReturnsParsedDateTimeOffset()
+    {
+        var conv = CreateDateTimeOffsetConverter(() => CultureInfo.InvariantCulture, () => "o");
+        var value = new DateTimeOffset(2025, 11, 30, 13, 45, 0, TimeSpan.FromHours(2));
+        var text = value.ToString("o", CultureInfo.InvariantCulture);
+
+        var result = conv.ConvertBack(text);
+
+        result.Should().Be(value);
+    }
+
+    [Test]
+    public void DateTimeOffset_ConvertBack_WhenFormatIsNull_UsesCultureShortDatePattern()
+    {
+        var culture = new CultureInfo("en-GB"); // ShortDatePattern = "dd/MM/yyyy"
+        var conv = CreateDateTimeOffsetConverter(() => culture, () => null);
+        var text = "30/11/2025";
+        // Obtain expected using the same parsing logic as the converter
+        var pattern = culture.DateTimeFormat.ShortDatePattern;
+        var parsed = DateTimeOffset.TryParseExact(text, pattern, culture, DateTimeStyles.None, out var expected);
+        parsed.Should().BeTrue("the test input must be parseable with the culture's ShortDatePattern");
+
+        conv.ConvertBack(text).Should().Be(expected);
+    }
+
+    [Test]
+    public void DateTimeOffset_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
+    {
+        var conv = CreateDateTimeOffsetConverter(() => CultureInfo.InvariantCulture, () => "o");
+
+        Action act = () => conv.ConvertBack("not-a-datetime");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidDateTime);
+    }
+
+    [Test]
+    public void DateTimeOffset_NullableInterfaceConvertBack_EmptyOrNull_ReturnsNull_And_ParsesValidValue()
+    {
+        var conv = CreateDateTimeOffsetConverter(() => CultureInfo.InvariantCulture, () => "o");
+        IReversibleConverter<DateTimeOffset?, string?> nullableConv = conv;
+
+        nullableConv.ConvertBack(null).Should().BeNull();
+        nullableConv.ConvertBack(string.Empty).Should().BeNull();
+
+        var value = new DateTimeOffset(2025, 11, 30, 10, 0, 0, TimeSpan.Zero);
+        var text = value.ToString("o", CultureInfo.InvariantCulture);
+        nullableConv.ConvertBack(text).Should().Be(value);
+    }
+
+    #endregion
+
+    #region Guid
+
+    [Test]
+    public void Guid_Convert_ShouldReturnString()
+    {
+        var conv = DefaultConverter.GuidConverter.Instance;
+        var guid = Guid.NewGuid();
+
+        conv.Convert(guid).Should().Be(guid.ToString());
+    }
+
+    [Test]
+    public void Guid_Convert_NullableNull_ReturnsNull()
+    {
+        var conv = DefaultConverter.GuidConverter.Instance;
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void Guid_ConvertBack_NullOrEmpty_ReturnsEmptyGuid()
+    {
+        var conv = DefaultConverter.GuidConverter.Instance;
+        conv.ConvertBack(null).Should().Be(Guid.Empty);
+        conv.ConvertBack(string.Empty).Should().Be(Guid.Empty);
+    }
+
+    [Test]
+    public void Guid_ConvertBack_ValidGuidString_ReturnsParsedGuid()
+    {
+        var conv = DefaultConverter.GuidConverter.Instance;
+        var guid = Guid.NewGuid();
+        var text = guid.ToString();
+
+        conv.ConvertBack(text).Should().Be(guid);
+    }
+
+    [Test]
+    public void Guid_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
+    {
+        var conv = DefaultConverter.GuidConverter.Instance;
+
+        Action act = () => conv.ConvertBack("not-a-guid");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidGUID);
+    }
+
+    [Test]
+    public void Guid_NullableInterfaceConvertBack_EmptyOrNull_ReturnsNull_And_ParsesValidValue()
+    {
+        var conv = DefaultConverter.GuidConverter.Instance;
+        IReversibleConverter<Guid?, string?> nullableConv = conv;
+
+        nullableConv.ConvertBack(null).Should().BeNull();
+        nullableConv.ConvertBack(string.Empty).Should().BeNull();
+
+        var guid = Guid.NewGuid();
+        nullableConv.ConvertBack(guid.ToString()).Should().Be(guid);
+    }
+
+    #endregion
+
+    #region NullableNumber
+
+    private static DefaultConverter.NullableNumberConverter<TNumber> CreateNullableNumberConverter<TNumber>(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+        where TNumber : struct, INumber<TNumber>
+    {
+        return new DefaultConverter.NullableNumberConverter<TNumber>(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
+    }
+
+    [Test]
+    public void NullableNumber_Convert_Int_ReturnsStringUsingCulture()
+    {
+        var conv = CreateNullableNumberConverter<int>(() => CultureInfo.InvariantCulture, () => null);
+        int? value = 12345;
+        var expected = value.Value.ToString(null, CultureInfo.InvariantCulture);
+
+        conv.Convert(value).Should().Be(expected);
+    }
+
+    [Test]
+    public void NullableNumber_Convert_Double_WithFormat_ReturnsFormattedString()
+    {
+        var conv = CreateNullableNumberConverter<double>(() => CultureInfo.InvariantCulture, () => "F2");
+        double? value = 3.14159;
+        conv.Convert(value).Should().Be(value.Value.ToString("F2", CultureInfo.InvariantCulture));
+    }
+
+    [Test]
+    public void NullableNumber_Convert_NullableNull_ReturnsNull()
+    {
+        var conv = CreateNullableNumberConverter<int>();
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void NullableNumber_ConvertBack_NullOrEmpty_ReturnsNull()
+    {
+        var conv = CreateNullableNumberConverter<int>();
+        conv.ConvertBack(null).Should().BeNull();
+        conv.ConvertBack(string.Empty).Should().BeNull();
+    }
+
+    [Test]
+    public void NullableNumber_ConvertBack_ValidInt_ReturnsParsedValue()
+    {
+        var conv = CreateNullableNumberConverter<int>(() => CultureInfo.InvariantCulture);
+        const string Text = "999";
+        conv.ConvertBack(Text).Should().Be(999);
+    }
+
+    [Test]
+    public void NullableNumber_ConvertBack_ValidDouble_WithCulture_ReturnsParsedValue()
+    {
+        // french culture uses comma as decimal separator
+        var culture = new CultureInfo("fr-FR");
+        var conv = CreateNullableNumberConverter<double>(() => culture);
+        const string Text = "3,14";
+        conv.ConvertBack(Text).Should().BeApproximately(3.14, 1e-10);
+    }
+
+    [Test]
+    public void NullableNumber_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
+    {
+        var conv = CreateNullableNumberConverter<int>();
+
+        Action act = () => conv.ConvertBack("not-a-number");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidNumber);
+    }
+
+    #endregion
+
+    #region Number
+
+    private static DefaultConverter.NumberConverter<TNumber> CreateNumberConverter<TNumber>(Func<CultureInfo>? culture = null, Func<string?>? format = null) 
+        where TNumber : struct, INumber<TNumber>
+    {
+        return new DefaultConverter.NumberConverter<TNumber>(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
+    }
+
+    [Test]
+    public void Number_Convert_Int_ShouldUseProvidedCultureAndFormat()
+    {
+        var conv = CreateNumberConverter<int>(() => CultureInfo.InvariantCulture, () => "N0");
+        const int Value = 12345;
+        var expected = Value.ToString("N0", CultureInfo.InvariantCulture);
+
+        conv.Convert(Value).Should().Be(expected);
+    }
+
+    [Test]
+    public void Number_Convert_Double_WithFormat_ReturnsFormattedString()
+    {
+        var conv = CreateNumberConverter<double>(() => CultureInfo.InvariantCulture, () => "F2");
+        const double Value = 3.14159;
+        conv.Convert(Value).Should().Be(Value.ToString("F2", CultureInfo.InvariantCulture));
+    }
+
+    [Test]
+    public void Number_ConvertBack_Int_NullOrEmpty_ReturnsZero()
+    {
+        var conv = CreateNumberConverter<int>();
+        conv.ConvertBack(null).Should().Be(0);
+        conv.ConvertBack(string.Empty).Should().Be(0);
+    }
+
+    [Test]
+    public void Number_ConvertBack_Double_ValidValue_ReturnsParsedDouble_WithCulture()
+    {
+        var culture = new CultureInfo("fr-FR"); // comma decimal separator
+        var conv = CreateNumberConverter<double>(() => culture);
+        const string Text = "3,14";
+        conv.ConvertBack(Text).Should().BeApproximately(3.14, 1e-10);
+    }
+
+    [Test]
+    public void Number_ConvertBack_Int_ValidValue_ReturnsParsedInt()
+    {
+        var conv = CreateNumberConverter<int>(() => CultureInfo.InvariantCulture);
+        conv.ConvertBack("999").Should().Be(999);
+    }
+
+    [Test]
+    public void Number_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
+    {
+        var conv = CreateNumberConverter<int>();
+
+        Action act = () => conv.ConvertBack("not-a-number");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidNumber);
+    }
+
+    #endregion
+
+    #region String
+
+    [Test]
+    public void String_Convert_ShouldReturnSameString()
+    {
+        var conv = DefaultConverter.StringConverter.Instance;
+        conv.Convert("hello").Should().Be("hello");
+        conv.Convert(string.Empty).Should().Be(string.Empty);
+    }
+
+    [Test]
+    public void String_Convert_Null_ReturnsNull()
+    {
+        var conv = DefaultConverter.StringConverter.Instance;
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void String_ConvertBack_ShouldReturnSameString()
+    {
+        var conv = DefaultConverter.StringConverter.Instance;
+        conv.ConvertBack("world").Should().Be("world");
+        conv.ConvertBack(string.Empty).Should().Be(string.Empty);
+    }
+
+    [Test]
+    public void String_ConvertBack_Null_ReturnsNull()
+    {
+        var conv = DefaultConverter.StringConverter.Instance;
+        conv.ConvertBack(null).Should().BeNull();
+    }
+
+    #endregion
+
+    #region TimeOnly
+
+    private static DefaultConverter.TimeOnlyConverter CreateTimeOnlyConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    {
+        return new DefaultConverter.TimeOnlyConverter(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
+    }
+
+    [Test]
+    public void TimeOnly_Convert_ShouldUseProvidedFormatAndCulture()
+    {
+        var conv = CreateTimeOnlyConverter(() => CultureInfo.InvariantCulture, () => "HH:mm");
+        var value = new TimeOnly(13, 45);
+        var expected = value.ToString("HH:mm", CultureInfo.InvariantCulture);
+
+        conv.Convert(value).Should().Be(expected);
+    }
+
+    [Test]
+    public void TimeOnly_Convert_NullableNull_ReturnsNull()
+    {
+        var conv = CreateTimeOnlyConverter();
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void TimeOnly_ConvertBack_EmptyOrNull_ReturnsDefaultTimeOnly()
+    {
+        var conv = CreateTimeOnlyConverter();
+        conv.ConvertBack(null).Should().Be(default);
+        conv.ConvertBack(string.Empty).Should().Be(default);
+    }
+
+    [Test]
+    public void TimeOnly_ConvertBack_ValidExactFormat_ReturnsParsedTimeOnly()
+    {
+        var conv = CreateTimeOnlyConverter(() => CultureInfo.InvariantCulture, () => "HH:mm:ss");
+        const string Text = "08:30:15";
+        var expected = new TimeOnly(8, 30, 15);
+
+        conv.ConvertBack(Text).Should().Be(expected);
+    }
+
+    [Test]
+    public void TimeOnly_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
+    {
+        var conv = CreateTimeOnlyConverter(() => CultureInfo.InvariantCulture, () => "HH:mm");
+
+        Action act = () => conv.ConvertBack("not-a-time");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidDateTime);
+    }
+
+    [Test]
+    public void TimeOnly_NullableInterfaceConvertBack_EmptyOrNull_ReturnsNull_And_ParsesValidValue()
+    {
+        var conv = CreateTimeOnlyConverter(() => CultureInfo.InvariantCulture, () => "HH:mm");
+        IReversibleConverter<TimeOnly?, string?> nullableConv = conv;
+
+        nullableConv.ConvertBack(null).Should().BeNull();
+        nullableConv.ConvertBack(string.Empty).Should().BeNull();
+
+        var parsed = nullableConv.ConvertBack("14:05");
+        parsed.Should().Be(new TimeOnly(14, 5));
+    }
+
+    #endregion
+
+    #region TimeSpan
+
+    private static DefaultConverter.TimeSpanConverter CreateTimeSpanConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    {
+        return new DefaultConverter.TimeSpanConverter(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
+    }
+
+    [Test]
+    public void TimeSpan_Convert_ShouldUseProvidedFormatAndCulture()
+    {
+        var conv = CreateTimeSpanConverter(() => CultureInfo.InvariantCulture, () => "c");
+        var value = new TimeSpan(1, 2, 3, 4, 567); // 1 day, 2 hours, 3 minutes, 4 seconds + milliseconds
+        var expected = value.ToString("c", CultureInfo.InvariantCulture);
+
+        conv.Convert(value).Should().Be(expected);
+    }
+
+    [Test]
+    public void TimeSpan_Convert_NullableNull_ReturnsNull()
+    {
+        var conv = CreateTimeSpanConverter();
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void TimeSpan_ConvertBack_EmptyOrNull_ReturnsZero()
+    {
+        var conv = CreateTimeSpanConverter();
+        conv.ConvertBack(null).Should().Be(TimeSpan.Zero);
+        conv.ConvertBack(string.Empty).Should().Be(TimeSpan.Zero);
+    }
+
+    [Test]
+    public void TimeSpan_ConvertBack_ValidExactFormat_ReturnsParsedTimeSpan()
+    {
+        // Use a custom format (hours:minutes)
+        var conv = CreateTimeSpanConverter(() => CultureInfo.InvariantCulture, () => "hh\\:mm");
+        var value = new TimeSpan(14, 5, 0); // 14:05
+        var text = value.ToString("hh\\:mm", CultureInfo.InvariantCulture);
+
+        conv.ConvertBack(text).Should().Be(value);
+    }
+
+    [Test]
+    public void TimeSpan_ConvertBack_DefaultFormat_CanParse_c()
+    {
+        // When format is null the converter should use the default "c" format
+        var conv = CreateTimeSpanConverter(() => CultureInfo.InvariantCulture, () => null);
+        var value = new TimeSpan(0, 1, 2, 3, 456);
+        var text = value.ToString("c", CultureInfo.InvariantCulture);
+
+        conv.ConvertBack(text).Should().Be(value);
+    }
+
+    [Test]
+    public void TimeSpan_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
+    {
+        var conv = CreateTimeSpanConverter(() => CultureInfo.InvariantCulture, () => "c");
+        FluentActions.Invoking(() => conv.ConvertBack("not-a-timespan"))
+            .Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidTimeSpan);
+    }
+
+    [Test]
+    public void TimeSpan_NullableInterfaceConvertBack_EmptyOrNull_ReturnsNull_And_ParsesValidValue()
+    {
+        var conv = CreateTimeSpanConverter(() => CultureInfo.InvariantCulture, () => "hh\\:mm");
+        IReversibleConverter<TimeSpan?, string?> nullableConv = conv;
+
+        nullableConv.ConvertBack(null).Should().BeNull();
+        nullableConv.ConvertBack(string.Empty).Should().BeNull();
+
+        var parsed = nullableConv.ConvertBack("09:30");
+        parsed.Should().Be(new TimeSpan(9, 30, 0));
     }
 
     #endregion

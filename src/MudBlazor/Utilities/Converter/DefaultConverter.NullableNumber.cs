@@ -16,14 +16,7 @@ internal partial class DefaultConverter
         : IReversibleConverter<TNumber?, string?>
         where TNumber : struct, INumber<TNumber>
     {
-        public string? Convert(TNumber? input)
-        {
-            var currentCulture = culture.Invoke();
-            var currentFormat = format.Invoke();
-            var result = input?.ToString(currentFormat, currentCulture);
-
-            return result;
-        }
+        public string? Convert(TNumber? input) => input?.ToString(format.Invoke(), culture.Invoke());
 
         public TNumber? ConvertBack(string? input)
         {
