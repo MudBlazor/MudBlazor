@@ -90,7 +90,7 @@ public sealed class ReversibleChain<TIn, TOut> : ConverterChain<TIn, TOut>, IRev
     /// Use this overload when you want to append small inline reversible steps without creating a concrete <see cref="IReversibleConverter{TOut,TNext}"/>.
     /// Exceptions thrown by the provided delegates will propagate to the caller.
     /// </remarks>
-    public ReversibleChain<TIn, TNext> Then<TNext>(Func<TOut, TNext> forward, Func<TNext, TOut> backward) 
+    public ReversibleChain<TIn, TNext> Then<TNext>(Func<TOut, TNext> forward, Func<TNext, TOut> backward)
         => new(value => forward(Forward(value)), value => _backward(backward(value)));
 
     /// <summary>

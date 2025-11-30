@@ -1018,7 +1018,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
             numericField.Instance.Text.Should().Be("123.45");
-            numericField.Instance.GetState(x=> x.Culture).Name.Should().Be("");
+            numericField.Instance.GetState(x => x.Culture).Name.Should().Be("");
         }
 
         [Test]
@@ -1048,7 +1048,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
             comp.Instance.Text.Should().Be("123,45");
-            comp.Instance.GetState(x=> x.Culture).Name.Should().Be("ru-RU");
+            comp.Instance.GetState(x => x.Culture).Name.Should().Be("ru-RU");
         }
 
         [Test]
