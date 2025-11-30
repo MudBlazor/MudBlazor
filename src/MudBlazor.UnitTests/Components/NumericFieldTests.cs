@@ -1000,9 +1000,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("pattern");
             field.GetAttribute("type").Should().Be("number");
 
-            var usePattern = Parameter(nameof(NumericFieldRenderTest.UsePattern), true);
-
-            await comp.SetParametersAndRenderAsync(usePattern);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.UsePattern, true));
             comp.Markup.Should().Contain("pattern");
             field.GetAttribute("type").Should().Be("text");
         }
@@ -1012,13 +1011,14 @@ namespace MudBlazor.UnitTests.Components
         public void Should_ignore_default_culture()
         {
             var comp = Context.RenderComponent<NumericFieldRenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<decimal>>();
 
             comp.Find("input").Change("123.45");
             comp.Find("input").Blur();
 
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
-            comp.Instance.NumericField.Text.Should().Be("123.45");
-            comp.Instance.NumericField.Culture.Name.Should().Be("");
+            numericField.Instance.Text.Should().Be("123.45");
+            numericField.Instance.Culture.Name.Should().Be("");
         }
 
         [Test]
