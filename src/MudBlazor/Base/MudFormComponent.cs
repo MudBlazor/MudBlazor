@@ -854,7 +854,6 @@ namespace MudBlazor
             var converter = _converterState.Value;
             if (converter is null)
             {
-                //return default;
                 throw new InvalidOperationException("Converter is not set.");
             }
             var result = converter.TryConvertBack(input);
@@ -868,7 +867,6 @@ namespace MudBlazor
             var converter = _converterState.Value;
             if (converter is null)
             {
-                //return default;
                 throw new InvalidOperationException("Converter is not set.");
             }
             var result = converter.TryConvert(input);

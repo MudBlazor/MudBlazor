@@ -4,8 +4,25 @@ using MudBlazor.Utilities.Converter.Base;
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
 #nullable enable
+/// <summary>
+/// Helper that creates a type-based reversible dispatcher for converting values using per-type reversible converters.
+/// </summary>
+/// <remarks>
+/// The returned dispatcher (built by the nested builder) allows registering reversible converters for specific concrete
+/// input types and produces an <see cref="IReversibleConverter{TIn,TOut}"/> that will route forward and backward conversions
+/// to the registered converters for the matching type.
+/// </remarks>
 public static class ReversibleTypeDispatcher
 {
+    /// <summary>
+    /// Creates a new reversible dispatcher builder for dispatching conversions from <typeparamref name="TIn"/> to <typeparamref name="TOut"/>.
+    /// </summary>
+    /// <typeparam name="TIn">The general input type accepted by the resulting dispatcher.</typeparam>
+    /// <typeparam name="TOut">The output type produced by registered reversible converters.</typeparam>
+    /// <returns>
+    /// A builder implementing <see cref="IReversibleDispatcherBuilder{TIn,TOut,TConverter}"/>
+    /// to register per-type reversible converters and produce a concrete dispatcher via <see cref="IReversibleDispatcherBuilder{TIn,TOut,TConverter}.Build"/>.
+    /// </returns>
     public static IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>> Create<TIn, TOut>() => new ReversibleTypeDispatcher<TIn, TOut>.ReversibleBuilder();
 }
 
@@ -14,7 +31,12 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
 {
     private readonly Dictionary<Type, Delegate> _backwards;
 
-    public ReversibleTypeDispatcher(
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReversibleTypeDispatcher{TIn,TOut}"/> class.
+    /// </summary>
+    /// <param name="forwards">A pre-populated map of concrete input <see cref="Type"/> to forward conversion delegates.</param>
+    /// <param name="backwards">A pre-populated map of concrete input <see cref="Type"/> to backward conversion delegates.</param>
+    protected ReversibleTypeDispatcher(
         Dictionary<Type, Delegate> forwards,
         Dictionary<Type, Delegate> backwards)
         : base(forwards)
@@ -22,6 +44,11 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         _backwards = backwards;
     }
 
+    /// <inheritdoc />
+    /// <exception cref="ConversionException">
+    /// Thrown when no backward converter has been registered for the resolved type. The exception contains a localization key
+    /// and an inner exception describing the missing registration.
+    /// </exception>
     public TIn ConvertBack(TOut input)
     {
         //var runtimeType = input is null ? typeof(TIn) : input.GetType();
@@ -40,6 +67,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         private readonly Dictionary<Type, Delegate> _handlers = new();
         private readonly Dictionary<Type, Delegate> _reverseHandlers = new();
 
+        /// <inheritdoc />
         public IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> converter)
         {
             _handlers[typeof(TSpecific)] = new Func<TSpecific, TOut>(converter.Convert);
@@ -50,6 +78,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             return this;
         }
 
+        /// <inheritdoc />
         public IReversibleConverter<TIn, TOut> Build()
         {
             return new ReversibleTypeDispatcher<TIn, TOut>(_handlers, _reverseHandlers);
