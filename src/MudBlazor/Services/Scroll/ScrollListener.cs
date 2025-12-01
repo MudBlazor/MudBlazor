@@ -92,7 +92,7 @@ internal sealed class ScrollListener : IScrollListener
             _initialScrollEvent = e;
             _started = true;
         }
-        
+
         _onScroll?.Invoke(this, e);
     }
 
