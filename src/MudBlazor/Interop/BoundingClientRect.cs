@@ -63,24 +63,6 @@ public class BoundingClientRect
     public double ScrollY { get; set; }
 
     /// <summary>
-    /// The horizontal offset.
-    /// </summary>
-    /// <returns>
-    /// <see cref="Left"/>
-    /// </returns>
-    [Obsolete("Use Left instead")]
-    public double X => Left;
-
-    /// <summary>
-    /// The vertical offset.
-    /// </summary>
-    /// <returns>
-    /// <see cref="Top"/>
-    /// </returns>
-    [Obsolete("Use Top instead")]
-    public double Y => Top;
-
-    /// <summary>
     /// The horizontal offset including the horizontal scroll.
     /// </summary>
     /// <returns>
