@@ -2,38 +2,42 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-//Functions related to scroll events
+// Functions related to scroll events
 class MudScrollListener {
 
     constructor() {
         this.throttleScrollHandlerId = -1;
-        //needed as variable to remove the event listeners
+        // needed as a variable to remove the event listeners
         this.handlerRef = null;
     }
 
     // subscribe to throttled scroll event
-    listenForScroll(dotnetReference, selector) {
-        //if selector is null, attach to document
+    listenForScroll(dotnetReference, selector, reportRateMs, fireOnStart) {
+        // if selector is null, attach to document
         let element = selector
             ? document.querySelector(selector)
             : document;
 
-        this.handlerRef = this.throttleScrollHandler.bind(this, dotnetReference);
+        this.handlerRef = this.throttleScrollHandler.bind(this, dotnetReference, reportRateMs);
         // add the event listener
         element.addEventListener(
             'scroll',
             this.handlerRef,
             false
         );
+
+        if (fireOnStart) {
+            this.scrollHandler(dotnetReference, { target: element });
+        }
     }
 
-    // fire the event just once each 100 ms, **it's hardcoded**
-    throttleScrollHandler(dotnetReference, event) {
+    // fire the event just once each reportRateMs
+    throttleScrollHandler(dotnetReference, reportRateMs, event) {
         clearTimeout(this.throttleScrollHandlerId);
 
         this.throttleScrollHandlerId = window.setTimeout(
             this.scrollHandler.bind(this, dotnetReference, event),
-            100
+            reportRateMs
         );
     }
 
@@ -58,10 +62,10 @@ class MudScrollListener {
             let scrollLeft = scrollSource.scrollLeft || 0;
             let nodeName = element.nodeName;
 
-            //data to pass
+            // data to pass
             let firstChild = element.firstElementChild;
             let firstChildBoundingClientRect = firstChild.getBoundingClientRect();
-            //invoke C# method
+            // invoke C# method
             dotnetReference.invokeMethodAsync('RaiseOnScroll', {
                 firstChildBoundingClientRect,
                 scrollLeft,
@@ -75,7 +79,7 @@ class MudScrollListener {
         }
     }
 
-    //remove event listener
+    // remove event listener
     cancelListener(selector) {
         let element = selector
             ? document.querySelector(selector)
@@ -83,5 +87,6 @@ class MudScrollListener {
 
         element.removeEventListener('scroll', this.handlerRef);
     }
-};
+}
+
 window.mudScrollListener = new MudScrollListener();

@@ -16,6 +16,22 @@ public interface IScrollListener : IDisposable
     string? Selector { get; set; }
 
     /// <summary>
+    /// The rate at which the <see cref="IScrollListener"/> will report scroll position changes (in milliseconds).
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>100</c>.
+    /// </remarks>
+    public int ReportRateMs { get; set; }
+
+    /// <summary>
+    /// Whether to fire the <see cref="OnScroll"/> event immediately after creation.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool FireOnStart { get; set; }
+
+    /// <summary>
     /// Occurs when a scroll event is detected on the specified element.
     /// </summary>
     event EventHandler<ScrollEventArgs> OnScroll;

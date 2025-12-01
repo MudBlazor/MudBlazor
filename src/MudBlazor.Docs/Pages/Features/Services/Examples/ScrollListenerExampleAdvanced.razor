@@ -1,11 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@using MudBlazor.Interop
-@using MudBlazor.Services
 @inject IScrollListenerFactory ScrollListenerFactory
-@inject IResizeObserverFactory ResizeObserverFactory
+@inject IScrollManager ScrollManager
 @implements IDisposable
-@implements IAsyncDisposable
 
 <!--suppress CssUnresolvedCustomProperty -->
 <style>
@@ -21,37 +18,24 @@
         overflow-y: scroll;
         scrollbar-width: none;
     }
-
-    #scrollbar {
-        position: relative;
-        width: 1rem;
-        background-color: var(--mud-palette-background);
-    }
-
-    #cursor {
-        position: absolute;
-        top: @(Convert.ToInt32(_scrollBarTop))px;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background-color: var(--mud-palette-text-primary);
-    }
 </style>
 
-<MudStack id="wrapper" Row="true">
-    <div @ref="_scrollContainerRef" id="scroll" Class="d-flex flex-column gap-4 rounded">
+<MudStack id="wrapper" Row="true" AlignItems="AlignItems.Center" Spacing="0">
+    <div id="scroll" Class="d-flex flex-column gap-4 rounded">
         @for (var i = 0; i < 100; i++)
         {
             <MudPaper Class="pa-8" Style="@($"background-color: {ColorPalette[i % ColorPalette.Length]};")" Outlined="true"/>
         }
     </div>
-    <div @ref="_scrollBarRef" id="scrollbar">
-        <div id="cursor"></div>
+    <div>
+        <MudSlider @bind-Value="_scrollBarValue" @bind-Value:after="OnScrollBarValueChanged" Step="0.1" Vertical="true"/>
     </div>
 </MudStack>
 
 
 @code {
+
+    private const string ScrollId = "#scroll";
 
     private static readonly string[] ColorPalette =
     [
@@ -61,26 +45,16 @@
         Colors.Amber.Darken2, Colors.Orange.Darken2, Colors.Red.Darken2, Colors.DeepPurple.Darken2, Colors.Gray.Darken2
     ];
 
-    private IResizeObserver _resizeObserver;
     private IScrollListener _scrollListenerRect;
-    private ElementReference _scrollContainerRef;
-    private ElementReference _scrollBarRef;
-    private double _scrollContainerHeight;
-    private double _scrollContainerScrollTop;
-    private double _scrollBarHeight;
-    private double _scrollBarTop => _scrollContainerScrollTop / Math.Max(_scrollContainerHeight, 1) * _scrollBarHeight;
+    private double _scrollBarValue = 100;
+    private double _scrollHeight;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-            _resizeObserver = ResizeObserverFactory.Create();
-            _resizeObserver.OnResized += ResizeObserverOnResized;
-            _scrollContainerHeight = (await _resizeObserver.Observe(_scrollContainerRef))!.Height;
-            _scrollBarHeight = (await _resizeObserver.Observe(_scrollBarRef))!.Height;
-
-            _scrollListenerRect = ScrollListenerFactory.Create("#scroll");
+            _scrollListenerRect = ScrollListenerFactory.Create(ScrollId, 10, true);
             _scrollListenerRect.OnScroll += ScrollListenerRectOnScroll;
         }
     }
@@ -90,21 +64,16 @@
         _scrollListenerRect?.Dispose();
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_resizeObserver != null) await _resizeObserver.DisposeAsync();
-    }
-
-    private void ResizeObserverOnResized(IDictionary<ElementReference, BoundingClientRect> changes)
-    {
-        _scrollContainerHeight = changes[_scrollContainerRef].Height;
-        _scrollBarHeight = changes[_scrollBarRef].Height;
-        StateHasChanged();
-    }
-
     private void ScrollListenerRectOnScroll(object sender, ScrollEventArgs e)
     {
-        _scrollContainerScrollTop = e.ScrollTop;
+        _scrollBarValue = 100 - e.ScrollTop / e.ScrollHeight * 100;
+        _scrollHeight = e.ScrollHeight;
         StateHasChanged();
+    }
+
+    private void OnScrollBarValueChanged()
+    {
+        var scrollTo = (100 - _scrollBarValue) / 100 * _scrollHeight;
+        ScrollManager.ScrollToAsync(ScrollId, 0, Convert.ToInt32(scrollTo), ScrollBehavior.Smooth);
     }
 }
