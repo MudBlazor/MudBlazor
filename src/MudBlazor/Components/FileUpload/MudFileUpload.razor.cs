@@ -11,6 +11,7 @@ using MudBlazor.Interfaces;
 using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -35,7 +36,7 @@ namespace MudBlazor
         /// </summary>
         public MudFileUpload()
         {
-            Converter = new Utilities.Converter.DefaultConverter<T>
+            Converter = new DefaultConverter<T>
             {
                 Culture = GetCulture,
                 Format = GetFormat

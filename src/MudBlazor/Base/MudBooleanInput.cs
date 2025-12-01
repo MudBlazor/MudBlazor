@@ -16,7 +16,7 @@ namespace MudBlazor
     {
         public MudBooleanInput()
         {
-            Converter = new BoolConverter<T?>();
+            Converter = BoolConverter<T?>.Instance;
         }
 
         protected virtual string? Classname { get; set; }

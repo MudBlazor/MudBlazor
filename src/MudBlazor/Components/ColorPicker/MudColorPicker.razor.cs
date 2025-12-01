@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
@@ -51,7 +52,7 @@ namespace MudBlazor
 
         public MudColorPicker()
         {
-            Converter = new Utilities.Converter.DefaultConverter<MudColor>
+            Converter = new DefaultConverter<MudColor>
             {
                 Culture = GetCulture,
                 Format = GetFormat

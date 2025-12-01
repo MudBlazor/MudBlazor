@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -36,7 +37,7 @@ namespace MudBlazor
 
         protected MudBaseInput()
         {
-            Converter = new MudBlazor.Utilities.Converter.DefaultConverter<T>
+            Converter = new DefaultConverter<T>
             {
                 Culture = GetCulture,
                 Format = GetFormat

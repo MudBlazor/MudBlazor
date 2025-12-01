@@ -17,7 +17,7 @@ namespace MudBlazor.Utilities.Converter
 
         public RangeConverter()
         {
-            _inner = new DefaultConverter<T>()
+            _inner = new DefaultConverter<T>
             {
                 Culture = Culture,
                 Format = Format

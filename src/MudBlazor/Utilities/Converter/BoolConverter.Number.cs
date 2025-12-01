@@ -1,0 +1,28 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Numerics;
+
+namespace MudBlazor.Utilities.Converter;
+
+internal partial class BoolConverter
+{
+    internal sealed class NumberConverter<T> : IReversibleConverter<T, bool?> where T : INumber<T>
+    {
+        public bool? Convert(T input) => input switch
+        {
+            0 => false,
+            _ => true
+        };
+
+        T IReversibleConverter<T, bool?>.ConvertBack(bool? input) => input switch
+        {
+            null => T.Zero,
+            false => T.Zero,
+            true => T.One
+        };
+
+        public static readonly NumberConverter<T> Instance = new();
+    }
+}

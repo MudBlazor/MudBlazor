@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using MudBlazor.Utilities.Converter.Dispatcher;
-
+using static MudBlazor.Utilities.Converter.BoolConverter;
 namespace MudBlazor.Utilities.Converter;
 
 #nullable enable
@@ -14,11 +14,33 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
     public BoolConverter()
     {
         _dispatcher = ReversibleTypeDispatcher.Create<T?, bool?>()
-            .Add(BoolStringConverter.Instance)      // string     <-> bool?
-            .Add<bool>(BoolIdentity.Instance)       // bool       <-> bool?
-            .Add<bool?>(BoolIdentity.Instance)      // bool?      <-> bool?
-            .Add<int>(BoolIntConverter.Instance)    // int        <-> bool?
-            .Add<int?>(BoolIntConverter.Instance)   // int?       <-> bool?
+            .Add(StringConverter.Instance)                  // string <-> bool?
+            .Add<bool>(BoolIdentity.Instance)               // bool <-> bool?
+            .Add<bool?>(BoolIdentity.Instance)              // bool? <-> bool?
+            .Add(NumberConverter<int>.Instance)             // int <-> bool?
+            .Add(NullableNumberConverter<int>.Instance)     // int? <-> bool?
+            .Add(NumberConverter<uint>.Instance)            // uint <-> bool?
+            .Add(NullableNumberConverter<uint>.Instance)    // uint? <-> bool?
+            .Add(NumberConverter<sbyte>.Instance)           // sbyte  <-> bool?
+            .Add(NullableNumberConverter<sbyte>.Instance)   // sbyte? <-> bool?
+            .Add(NumberConverter<byte>.Instance)            // byte <-> bool?
+            .Add(NullableNumberConverter<byte>.Instance)    // byte? <-> bool?
+            .Add(NumberConverter<short>.Instance)           // short  <-> bool?
+            .Add(NullableNumberConverter<short>.Instance)   // short? <-> bool?
+            .Add(NumberConverter<ushort>.Instance)          // ushort <-> bool?
+            .Add(NullableNumberConverter<ushort>.Instance)  // ushort? <-> bool?
+            .Add(NumberConverter<long>.Instance)            // long <-> bool?
+            .Add(NullableNumberConverter<long>.Instance)    // long? <-> bool?
+            .Add(NumberConverter<ulong>.Instance)           // ulong <-> bool?
+            .Add(NullableNumberConverter<ulong>.Instance)   // ulong? <-> bool?
+            .Add(NumberConverter<float>.Instance)           // float <-> bool?
+            .Add(NullableNumberConverter<float>.Instance)   // int? <-> bool?
+            .Add(NumberConverter<double>.Instance)          // double <-> bool?
+            .Add(NullableNumberConverter<double>.Instance)  // double? <-> bool?
+            .Add(NumberConverter<decimal>.Instance)         // decimal <-> bool?
+            .Add(NullableNumberConverter<decimal>.Instance) // decimal? <-> bool?
+            .Add(NumberConverter<char>.Instance)            // char <-> bool?
+            .Add(NullableNumberConverter<char>.Instance)    // char? <-> bool?
             .Add(ObjectBoolConverter.Instance)
             .Build();
     }
@@ -27,103 +49,5 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
 
     public T? ConvertBack(bool? output) => _dispatcher.ConvertBack(output);
 
-    public sealed class BoolStringConverter : IReversibleConverter<string?, bool?>
-    {
-        public bool? Convert(string? input)
-        {
-            if (input is null) return null;
-            if (bool.TryParse(input, out var b)) return b;
-
-            return input.ToLowerInvariant() switch
-            {
-                "on" => true,
-                "off" => false,
-                _ => null
-            };
-        }
-
-        public string? ConvertBack(bool? value) =>
-            value switch
-            {
-                true => "on",
-                false => "off",
-                _ => null
-            };
-
-        public static BoolStringConverter Instance { get; } = new();
-    }
-
-    // bool? <-> int
-    // bool? <-> int?
-    public sealed class BoolIntConverter : IReversibleConverter<int, bool?>, IReversibleConverter<int?, bool?>
-    {
-        public bool? Convert(int i) => i switch
-        {
-            0 => false,
-            _ => true
-        };
-
-        public bool? Convert(int? i) => i switch
-        {
-            null => null,
-            > 0 => true,
-            _ => false
-        };
-
-        int IReversibleConverter<int, bool?>.ConvertBack(bool? b) => b switch
-        {
-            null => 0,
-            false => 0,
-            true => 1
-        };
-
-        public int? ConvertBack(bool? b) => b switch
-        {
-            true => 1,
-            false => 0,
-            _ => null
-        };
-
-        public static BoolIntConverter Instance { get; } = new();
-    }
-
-    // bool? <-> bool
-    // bool? <-> bool?
-    public sealed class BoolIdentity : IReversibleConverter<bool, bool?>, IReversibleConverter<bool?, bool?>
-    {
-        public bool? Convert(bool value) => value;
-
-        public bool? Convert(bool? value) => value;
-
-        bool IReversibleConverter<bool, bool?>.ConvertBack(bool? value) => value == true;
-
-        public bool? ConvertBack(bool? value) => value;
-
-        public static BoolIdentity Instance { get; } = new();
-    }
-
-    /// <summary>
-    /// Converts from object? to bool? and back by delegating to specific typed reversible converters.
-    /// </summary>
-    public sealed class ObjectBoolConverter : IReversibleConverter<object?, bool?>
-    {
-        public bool? Convert(object? input)
-        {
-            return input switch
-            {
-                null => null,
-                bool b => BoolIdentity.Instance.Convert(b),
-                int i => BoolIntConverter.Instance.Convert(i),
-                string s => BoolStringConverter.Instance.Convert(s),
-                _ => throw new InvalidOperationException($"Cannot convert type {input.GetType()} to bool?")
-            };
-        }
-
-        public object? ConvertBack(bool? value)
-        {
-            return BoolIdentity.Instance.ConvertBack(value);
-        }
-
-        public static ObjectBoolConverter Instance { get; } = new();
-    }
+    public static readonly BoolConverter<T> Instance = new();
 }

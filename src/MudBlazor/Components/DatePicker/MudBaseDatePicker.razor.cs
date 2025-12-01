@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -21,7 +22,7 @@ namespace MudBlazor
         {
             _mudPickerCalendarContentElementId = Identifier.Create();
             Culture = CultureInfo.CurrentCulture;
-            Converter = new Utilities.Converter.DefaultConverter<DateTime?>
+            Converter = new DefaultConverter<DateTime?>
             {
                 Culture = GetCulture,
                 Format = GetFormat
