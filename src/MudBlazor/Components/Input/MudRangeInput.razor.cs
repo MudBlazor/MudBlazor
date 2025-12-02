@@ -156,7 +156,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -171,7 +171,7 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -183,14 +183,14 @@ namespace MudBlazor
         {
             await base.UpdateTextPropertyAsync(updateValue);
 
-            RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(Text, out _textStart, out _textEnd);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
 
-            RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(Text, out _textStart, out _textEnd);
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)

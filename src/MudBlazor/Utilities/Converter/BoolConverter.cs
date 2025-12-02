@@ -10,7 +10,6 @@ namespace MudBlazor.Utilities.Converter;
 #nullable enable
 public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
 {
-    private readonly IReversibleConverter<T?, bool?> _dispatcher;
     private static readonly SafeType[] _numericTypes =
     [
         typeof(int), typeof(uint),
@@ -19,6 +18,7 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
         typeof(byte), typeof(sbyte),
         typeof(float), typeof(double), typeof(decimal), typeof(char)
     ];
+    private readonly IReversibleConverter<T?, bool?> _dispatcher;
 
     private BoolConverter()
     {
@@ -28,8 +28,11 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
             .Add<bool?>(BoolIdentity.Instance)  // bool? <-> bool?
             .Add(ObjectBoolConverter.Instance); // object <-> bool?
 
+        // If Microsoft's adds this API https://github.com/dotnet/runtime/issues/28033
+        // Then we can make for any T that implements INumber<T>, right now we will use know numeric types only for simplicity
         foreach (var type in _numericTypes)
         {
+            // Very small overhead as this is only done once per T when the static Instance is accessed the first time
             var numberConv = Activator.CreateInstance(typeof(NumberConverter<>).MakeGenericType(type));
             var nullableConv = Activator.CreateInstance(typeof(NullableNumberConverter<>).MakeGenericType(type));
 
