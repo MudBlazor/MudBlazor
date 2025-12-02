@@ -170,6 +170,16 @@ namespace MudBlazor
         public int DisplayMonths { get; set; } = 1;
 
         /// <summary>
+        /// Use week numbering from ISOWeek.GetWeekOfYear. Requires first day of week to be monday.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c><br />
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ISOWeek { get; set; }
+
+        /// <summary>
         /// The maximum number of months allowed in one row.
         /// </summary>
         /// <remarks>
@@ -405,8 +415,18 @@ namespace MudBlazor
             if (week_first.Month != month_first.Month && week_first.AddDays(6).Month != month_first.Month)
                 return "";
 
-            return Culture.Calendar.GetWeekOfYear(week_first,
+            // iso week requires first day to be monday
+            if (ISOWeek && GetFirstDayOfWeek() == DayOfWeek.Monday)
+            {
+                var weeknumberIsoWeek = System.Globalization.ISOWeek.GetWeekOfYear(week_first).ToString();
+
+                return weeknumberIsoWeek;
+            }
+
+            var weeknumber = Culture.Calendar.GetWeekOfYear(week_first,
                 Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
+
+            return weeknumber;
         }
 
         protected virtual OpenTo? GetNextView()
