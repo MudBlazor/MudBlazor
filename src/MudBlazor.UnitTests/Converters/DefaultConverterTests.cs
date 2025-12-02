@@ -226,6 +226,48 @@ public class DefaultConverterTests
         parsed.Should().Be(date);
     }
 
+    [Test]
+    public void DefaultConverter_Enum_ConvertAndConvertBack_NonNullable()
+    {
+        var conv = new DefaultConverter<DayOfWeek>();
+        const DayOfWeek Value = DayOfWeek.Wednesday;
+
+        // forward
+        conv.Convert(Value).Should().Be("Wednesday");
+
+        // back
+        conv.ConvertBack("Wednesday").Should().Be(Value);
+
+        // invalid should throw ConversionException with expected key
+        Action act = () => conv.ConvertBack("NotAValue");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_NotValueOf);
+    }
+
+    [Test]
+    public void DefaultConverter_Enum_ConvertAndConvertBack_Nullable()
+    {
+        var conv = new DefaultConverter<DayOfWeek?>();
+
+        // null forward -> null string
+        conv.Convert(null).Should().BeNull();
+
+        // valid back
+        conv.ConvertBack("Monday").Should().Be(DayOfWeek.Monday);
+
+        // invalid back should throw ConversionException
+        Action act = () => conv.ConvertBack("NoSuchDay");
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_NotValueOf);
+    }
+
     #endregion
 
     #region BigInteger
