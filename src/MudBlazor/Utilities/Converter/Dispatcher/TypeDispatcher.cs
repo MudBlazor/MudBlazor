@@ -21,10 +21,10 @@ public static class TypeDispatcher
     /// <typeparam name="TIn">The general input type accepted by the resulting dispatcher.</typeparam>
     /// <typeparam name="TOut">The output type produced by registered converters.</typeparam>
     /// <returns>
-    /// A builder implementing <see cref="IDispatcherBuilder{TIn,TOut,TConverter}"/> to register per-type converters
-    /// and produce a concrete dispatcher via <see cref="IDispatcherBuilder{TIn,TOut,TConverter}.Build"/>.
+    /// A builder implementing <see cref="IDispatcherBuilder{TIn,TOut}"/> to register per-type converters
+    /// and produce a concrete dispatcher via <see cref="IDispatcherBuilder{TIn,TOut}.Build"/>.
     /// </returns>
-    public static IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> Create<TIn, TOut>() => new TypeDispatcher<TIn, TOut>.Builder();
+    public static IDispatcherBuilder<TIn, TOut> Create<TIn, TOut>() => new TypeDispatcher<TIn, TOut>.Builder();
 }
 
 internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
@@ -58,12 +58,12 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
 
-    internal class Builder : IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>>
+    internal class Builder : IDispatcherBuilder<TIn, TOut>
     {
         private readonly Dictionary<Type, Delegate> _handlers = new();
 
         /// <inheritdoc />
-        public IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> Add<TSpecific>(IConverter<TSpecific, TOut> converter)
+        public IDispatcherBuilder<TIn, TOut> Add<TSpecific>(IConverter<TSpecific, TOut> converter)
         {
             _handlers[typeof(TSpecific)] = new Func<TSpecific, TOut>(converter.Convert);
 
@@ -71,7 +71,7 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
         }
 
         /// <inheritdoc />
-        public IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> AddDynamic(Type specificType, object converter)
+        public IDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object converter)
         {
             ArgumentNullException.ThrowIfNull(specificType);
             ArgumentNullException.ThrowIfNull(converter);

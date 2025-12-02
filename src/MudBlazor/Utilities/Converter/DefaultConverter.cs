@@ -13,19 +13,35 @@ using static MudBlazor.Utilities.Converter.DefaultConverter;
 namespace MudBlazor.Utilities.Converter;
 
 #nullable enable
+/// <summary>
+/// Default reversible converter that converts between <typeparamref name="T"/> and <see cref="string"/>.
+/// </summary>
+/// <typeparam name="T">The target CLR type the converter handles.</typeparam>
+/// <remarks>
+/// This converter composes many built-in converters (numbers, dates, guid, boolean, char, BigInteger, etc.).
+/// It implements <see cref="ICultureAwareConverter"/> so that when used as
+/// a component converter (for example via a Mud form component) the host can automatically supply the
+/// <see cref="Culture"/> and <see cref="Format"/> delegates.
+/// </remarks>
 public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICultureAwareConverter
 {
     private readonly IReversibleConverter<T?, string?> _dispatcher;
 
+    /// <inheritdoc />
     public Func<string?> Format { get; set; } = () => null;
 
+    /// <inheritdoc />
     public Func<CultureInfo> Culture { get; set; } = () => CultureInfo.InvariantCulture;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="DefaultConverter{T}"/> and registers the built-in converters with a reversible dispatcher.
+    /// </summary>
     public DefaultConverter()
     {
-        // Do NOT pass Culture or Format directly.
+        // Do NOT pass Culture or Format directly: new NumberConverter<sbyte>(Culture, Format)
         // The dispatcher caches method delegates and captures the converter's field values at registration time.
         // Using () => Culture() and () => Format() ensures the converters always read the latest property values.
+        // We could make Add a Func<IConverter> overload
         _dispatcher = ReversibleTypeDispatcher.Create<T?, string?>()
             .Add(StringConverter.Instance)
             .Add<char>(CharConverter.Instance)
@@ -72,6 +88,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Build();
     }
 
+    /// <inheritdoc />
     public string? Convert(T? input)
     {
         // Special handling for enums
@@ -92,6 +109,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         return result.Success ? result.Value : input?.ToString();
     }
 
+    /// <inheritdoc />
     public T? ConvertBack(string? input)
     {
         // Special handling for enums

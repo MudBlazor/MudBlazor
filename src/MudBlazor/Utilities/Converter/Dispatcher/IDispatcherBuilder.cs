@@ -10,18 +10,12 @@ namespace MudBlazor.Utilities.Converter.Dispatcher;
 /// to the appropriate registered converter.
 /// </summary>
 /// <typeparam name="TIn">The general input type the resulting dispatcher will accept.</typeparam>
-/// <typeparam name="TOut">
-/// The output type produced by registered converters. Declared <c>in</c> to allow builders that accept
-/// more derived output types where appropriate.
-/// </typeparam>
-/// <typeparam name="TConverter">
-/// The type of converter produced by <see cref="Build"/> (for example <c>IConverter&lt;TIn,TOut&gt;</c> or a reversible variant).
-/// </typeparam>
+/// <typeparam name="TOut">The output type produced by registered converters.</typeparam>
 /// <remarks>
 /// Implementations of this interface typically accumulate converters for concrete input types (via <see cref="Add"/>)
 /// and then produce a composite dispatcher (via <see cref="Build"/>) that routes conversion requests to the registered handlers.
 /// </remarks>
-public interface IDispatcherBuilder<in TIn, TOut, out TConverter>
+public interface IDispatcherBuilder<in TIn, TOut>
 {
     /// <summary>
     /// Register a converter that handles conversions for the specific concrete input type <typeparamref name="TSpecific"/>.
@@ -29,7 +23,7 @@ public interface IDispatcherBuilder<in TIn, TOut, out TConverter>
     /// <typeparam name="TSpecific">The concrete input type this converter handles.</typeparam>
     /// <param name="conv">The converter instance that performs conversions from <typeparamref name="TSpecific"/> to <typeparamref name="TOut"/>.</param>
     /// <returns>The same builder instance to allow fluent registrations.</returns>
-    IDispatcherBuilder<TIn, TOut, TConverter> Add<TSpecific>(IConverter<TSpecific, TOut> conv);
+    IDispatcherBuilder<TIn, TOut> Add<TSpecific>(IConverter<TSpecific, TOut> conv);
 
     /// <summary>
     /// Register a converter instance for a concrete input type that is known only at runtime.
@@ -49,11 +43,11 @@ public interface IDispatcherBuilder<in TIn, TOut, out TConverter>
     /// Implementations will typically validate that <paramref name="converter"/> is compatible with the supplied <paramref name="specificType"/>.
     /// If the instance is incompatible a runtime exception may be thrown by the builder implementation.
     /// </remarks>
-    IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> AddDynamic(Type specificType, object converter);
+    IDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object converter);
 
     /// <summary>
     /// Builds the dispatcher that routes conversions to the registered per-type converters.
     /// </summary>
-    /// <returns>An instance of <typeparamref name="TConverter"/> which implements the dispatching behaviour.</returns>
-    TConverter Build();
+    /// <returns>An instance of <see cref="IConverter{TIn, TOut}"/>.</returns>
+    IConverter<TIn, TOut> Build();
 }

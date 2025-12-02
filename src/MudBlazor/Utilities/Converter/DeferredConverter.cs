@@ -20,13 +20,17 @@ public class DeferredConverter<TIn, TOut> : IReversibleConverter<TIn, TOut>
         _backward = backward;
     }
 
-    public TOut Convert(TIn input)
-    {
-        return _forward is null ? throw new InvalidOperationException("Conversion not initialized.") : _forward(input);
-    }
+    /// <summary>
+    /// Converts the specified <paramref name="input"/> value to the target type.
+    /// </summary>
+    /// <param name="input">The value to convert.</param>
+    /// <returns>The converted value as <typeparamref name="TOut"/>.</returns>
+    public TOut Convert(TIn input) => _forward is null
+        ? throw new InvalidOperationException("Conversion not initialized.")
+        : _forward(input);
 
-    public TIn ConvertBack(TOut input)
-    {
-        return _backward is null ? throw new InvalidOperationException("Reverse conversion not initialized.") : _backward(input);
-    }
+    /// <inheritdoc />
+    public TIn ConvertBack(TOut input) => _backward is null ?
+        throw new InvalidOperationException("Reverse conversion not initialized.")
+        : _backward(input);
 }

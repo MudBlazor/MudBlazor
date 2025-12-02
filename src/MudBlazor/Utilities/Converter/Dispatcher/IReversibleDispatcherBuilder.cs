@@ -10,10 +10,9 @@ namespace MudBlazor.Utilities.Converter.Dispatcher;
 /// </summary>
 /// <typeparam name="TIn">The general input type the resulting dispatcher will accept.</typeparam>
 /// <typeparam name="TOut">The output type produced by registered converters.</typeparam>
-/// <typeparam name="TConverter">
-/// The concrete converter type produced by <see cref="Build"/> (for example <c>IReversibleConverter&lt;TIn,TOut&gt;</c>).
-/// </typeparam>
-public interface IReversibleDispatcherBuilder<TIn, TOut, out TConverter>
+/// Implementations of this interface typically accumulate converters for concrete input types (via <see cref="Add"/>)
+/// and then produce a composite dispatcher (via <see cref="Build"/>) that routes conversion requests to the registered handlers.
+public interface IReversibleDispatcherBuilder<TIn, TOut>
 {
     /// <summary>
     /// Register a reversible converter that handles conversions for the specific concrete input type <typeparamref name="TSpecific"/>.
@@ -21,7 +20,7 @@ public interface IReversibleDispatcherBuilder<TIn, TOut, out TConverter>
     /// <typeparam name="TSpecific">The concrete input type this reversible converter handles.</typeparam>
     /// <param name="conv">An <see cref="IReversibleConverter{TSpecific,TOut}"/> implementation used for conversions of <typeparamref name="TSpecific"/>.</param>
     /// <returns>The same builder instance to allow fluent registrations.</returns>
-    IReversibleDispatcherBuilder<TIn, TOut, TConverter> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> conv);
+    IReversibleDispatcherBuilder<TIn, TOut> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> conv);
 
     /// <summary>
     /// Register a reversible converter instance for a concrete input type that is known only at runtime.
@@ -41,11 +40,11 @@ public interface IReversibleDispatcherBuilder<TIn, TOut, out TConverter>
     /// Implementations will typically validate that <paramref name="converter"/> is compatible with the supplied <paramref name="specificType"/>.
     /// If the instance is incompatible a runtime exception may be thrown by the builder implementation.
     /// </remarks>
-    IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>> AddDynamic(Type specificType, object converter);
+    IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object converter);
 
     /// <summary>
     /// Builds the reversible dispatcher that routes forward and backward conversions to the registered per-type reversible converters.
     /// </summary>
-    /// <returns>An instance of <typeparamref name="TConverter"/> which implements the dispatching behaviour.</returns>
-    TConverter Build();
+    /// <returns>An instance of <see cref="IReversibleConverter{TIn, TOut}"/>.</returns>
+    IReversibleConverter<TIn, TOut> Build();
 }

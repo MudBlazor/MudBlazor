@@ -21,10 +21,10 @@ public static class ReversibleTypeDispatcher
     /// <typeparam name="TIn">The general input type accepted by the resulting dispatcher.</typeparam>
     /// <typeparam name="TOut">The output type produced by registered reversible converters.</typeparam>
     /// <returns>
-    /// A builder implementing <see cref="IReversibleDispatcherBuilder{TIn,TOut,TConverter}"/>
-    /// to register per-type reversible converters and produce a concrete dispatcher via <see cref="IReversibleDispatcherBuilder{TIn,TOut,TConverter}.Build"/>.
+    /// A builder implementing <see cref="IReversibleDispatcherBuilder{TIn,TOut}"/>
+    /// to register per-type reversible converters and produce a concrete dispatcher via <see cref="IReversibleDispatcherBuilder{TIn,TOut}.Build"/>.
     /// </returns>
-    public static IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>> Create<TIn, TOut>() => new ReversibleTypeDispatcher<TIn, TOut>.ReversibleBuilder();
+    public static IReversibleDispatcherBuilder<TIn, TOut> Create<TIn, TOut>() => new ReversibleTypeDispatcher<TIn, TOut>.ReversibleBuilder();
 }
 
 internal class ReversibleTypeDispatcher<TIn, TOut> :
@@ -63,13 +63,13 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
 
-    internal class ReversibleBuilder : IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>>
+    internal class ReversibleBuilder : IReversibleDispatcherBuilder<TIn, TOut>
     {
         private readonly Dictionary<Type, Delegate> _handlers = new();
         private readonly Dictionary<Type, Delegate> _reverseHandlers = new();
 
         /// <inheritdoc />
-        public IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> converter)
+        public IReversibleDispatcherBuilder<TIn, TOut> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> converter)
         {
             _handlers[typeof(TSpecific)] = new Func<TSpecific, TOut>(converter.Convert);
 
@@ -80,7 +80,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         }
 
         /// <inheritdoc />
-        public IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>> AddDynamic(Type specificType, object converter)
+        public IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object converter)
         {
             ArgumentNullException.ThrowIfNull(specificType);
             ArgumentNullException.ThrowIfNull(converter);
