@@ -25,7 +25,7 @@
 
 @code {
     private Point _point;
-    private readonly IReversibleConverter<Point, string> _pointConverter = Conversions.From(
+    private readonly IConverter<Point, string> _pointConverter = Conversions.From(
         (Point x) => $"[{x.X}, {x.Y}]",
         x =>
         {

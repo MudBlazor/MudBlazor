@@ -231,9 +231,11 @@ public class DefaultConverterTests
     {
         var conv = new DefaultConverter<DayOfWeek>();
         const DayOfWeek Value = DayOfWeek.Wednesday;
+        const DayOfWeek Invalid = (DayOfWeek)(-1);
 
         // forward
         conv.Convert(Value).Should().Be("Wednesday");
+        conv.Convert(Invalid).Should().Be("-1");
 
         // back
         conv.ConvertBack("Wednesday").Should().Be(Value);
@@ -254,10 +256,14 @@ public class DefaultConverterTests
         var conv = new DefaultConverter<DayOfWeek?>();
 
         // null forward -> null string
+        conv.Convert(DayOfWeek.Wednesday).Should().Be("Wednesday");
+        conv.Convert((DayOfWeek)(-1)).Should().Be("-1");
         conv.Convert(null).Should().BeNull();
 
         // valid back
         conv.ConvertBack("Monday").Should().Be(DayOfWeek.Monday);
+        conv.ConvertBack(string.Empty).Should().BeNull();
+        conv.ConvertBack(null).Should().BeNull();
 
         // invalid back should throw ConversionException
         Action act = () => conv.ConvertBack("NoSuchDay");

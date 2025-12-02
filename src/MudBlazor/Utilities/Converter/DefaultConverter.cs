@@ -115,6 +115,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         // Special handling for enums
         if (IsNullableEnum(typeof(T), out var enumType))
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return default;
+            }
+
             if (Enum.TryParse(enumType, input, out var result))
             {
                 return (T)result;
