@@ -12,13 +12,9 @@ internal partial class BoolConverter
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.Interfaces)]
     internal sealed class NumberConverter<T> : IReversibleConverter<T, bool?> where T : INumber<T>
     {
-        public bool? Convert(T input) => input switch
-        {
-            0 => false,
-            _ => true
-        };
+        public bool? Convert(T input) => !T.IsZero(input);
 
-        T IReversibleConverter<T, bool?>.ConvertBack(bool? input) => input switch
+        public T ConvertBack(bool? input) => input switch
         {
             null => T.Zero,
             false => T.Zero,

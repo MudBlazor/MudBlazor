@@ -16,8 +16,7 @@ internal partial class BoolConverter
         public bool? Convert(T? input) => input switch
         {
             null => null,
-            > 0 => true,
-            _ => false
+            _ => !T.IsZero(input.Value)
         };
 
         public T? ConvertBack(bool? input) => input switch
