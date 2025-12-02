@@ -1221,5 +1221,27 @@ namespace MudBlazor.UnitTests.Components
 
             focusedIndex.Should().Be(menuItems.Count - 1);
         }
+
+        [Test]
+        public void DropdownSettings_SetsDefaultValues()
+        {
+            var menu = Context.RenderComponent<MudMenu>();
+
+            menu.Instance.PopoverFixed.Should().BeFalse();
+            menu.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+        }
+
+        [Test]
+        public void DropdownSettings_OverridesDefaultValues()
+        {
+            MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
+            var menu = Context.RenderComponent<MudMenu>(p =>
+            {
+                p.Add(p => p.PopoverFixed, true);
+            });
+
+            menu.Instance.PopoverFixed.Should().BeTrue();
+            menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+        }
     }
 }
