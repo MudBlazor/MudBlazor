@@ -18,9 +18,9 @@ public interface IReversibleDispatcherBuilder<TIn, TOut>
     /// Register a reversible converter that handles conversions for the specific concrete input type <typeparamref name="TSpecific"/>.
     /// </summary>
     /// <typeparam name="TSpecific">The concrete input type this reversible converter handles.</typeparam>
-    /// <param name="conv">An <see cref="IReversibleConverter{TSpecific,TOut}"/> implementation used for conversions of <typeparamref name="TSpecific"/>.</param>
+    /// <param name="converter">An <see cref="IReversibleConverter{TSpecific,TOut}"/> implementation used for conversions of <typeparamref name="TSpecific"/>.</param>
     /// <returns>The same builder instance to allow fluent registrations.</returns>
-    IReversibleDispatcherBuilder<TIn, TOut> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> conv);
+    IReversibleDispatcherBuilder<TIn, TOut> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> converter);
 
     /// <summary>
     /// Register a reversible converter instance for a concrete input type that is known only at runtime.

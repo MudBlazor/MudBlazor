@@ -21,9 +21,9 @@ public interface IDispatcherBuilder<in TIn, TOut>
     /// Register a converter that handles conversions for the specific concrete input type <typeparamref name="TSpecific"/>.
     /// </summary>
     /// <typeparam name="TSpecific">The concrete input type this converter handles.</typeparam>
-    /// <param name="conv">The converter instance that performs conversions from <typeparamref name="TSpecific"/> to <typeparamref name="TOut"/>.</param>
+    /// <param name="converter">The converter instance that performs conversions from <typeparamref name="TSpecific"/> to <typeparamref name="TOut"/>.</param>
     /// <returns>The same builder instance to allow fluent registrations.</returns>
-    IDispatcherBuilder<TIn, TOut> Add<TSpecific>(IConverter<TSpecific, TOut> conv);
+    IDispatcherBuilder<TIn, TOut> Add<TSpecific>(IConverter<TSpecific, TOut> converter);
 
     /// <summary>
     /// Register a converter instance for a concrete input type that is known only at runtime.

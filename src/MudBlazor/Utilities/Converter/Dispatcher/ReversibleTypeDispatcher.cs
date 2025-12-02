@@ -113,9 +113,6 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         }
 
         /// <inheritdoc />
-        public IReversibleConverter<TIn, TOut> Build()
-        {
-            return new ReversibleTypeDispatcher<TIn, TOut>(_handlers, _reverseHandlers);
-        }
+        public IReversibleConverter<TIn, TOut> Build() => new ReversibleTypeDispatcher<TIn, TOut>(_handlers, _reverseHandlers);
     }
 }
