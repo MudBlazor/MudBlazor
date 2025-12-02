@@ -297,7 +297,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
         public OverflowBehavior OverflowBehavior { get; set; } = MudGlobal.PopoverDefaults.OverflowBehavior;
-        
+
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
         /// </summary>
