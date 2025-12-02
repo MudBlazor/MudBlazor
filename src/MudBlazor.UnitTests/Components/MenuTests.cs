@@ -1234,14 +1234,22 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DropdownSettings_OverridesDefaultValues()
         {
-            MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
-            var menu = Context.RenderComponent<MudMenu>(p =>
+            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
+            try
             {
-                p.Add(p => p.PopoverFixed, true);
-            });
+                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
+                var menu = Context.RenderComponent<MudMenu>(p =>
+                {
+                    p.Add(p => p.PopoverFixed, true);
+                });
 
-            menu.Instance.PopoverFixed.Should().BeTrue();
-            menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+                menu.Instance.PopoverFixed.Should().BeTrue();
+                menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+            }
+            finally
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
+            }
         }
     }
 }
