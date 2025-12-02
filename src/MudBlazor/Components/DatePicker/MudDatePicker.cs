@@ -78,7 +78,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    //Converter.GetError = false;
+                    ResetConverterErrors();
                     await SetTextAsync(ConvertSet(_value), false);
                 }
 

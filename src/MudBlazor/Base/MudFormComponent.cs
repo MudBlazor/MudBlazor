@@ -821,9 +821,9 @@ namespace MudBlazor
         protected Task SetCultureAsync(CultureInfo newCultureInfo)
         {
             ArgumentNullException.ThrowIfNull(newCultureInfo);
-            //// Skip InjectCultureAndFormatToConverter.
-            //// The converter relies on Func delegates that read Culture/Format at runtime
-            //// The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
+            // Skip InjectCultureAndFormatToConverter.
+            // The converter relies on Func delegates that read Culture/Format at runtime
+            // The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
             return _cultureState.SetValueAsync(newCultureInfo);
         }
 
@@ -915,7 +915,7 @@ namespace MudBlazor
             }
         }
 
-        private void ResetConverterErrors()
+        protected void ResetConverterErrors()
         {
             _getConversionResult = null;
             _setConversionResult = null;

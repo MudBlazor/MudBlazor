@@ -75,7 +75,7 @@ namespace MudBlazor
             return null;
         }
 
-        private void HandleParsingError()
+        private static void HandleParsingError()
         {
             throw new ConversionException(LanguageResource.Converter_InvalidTimeSpan);
         }
