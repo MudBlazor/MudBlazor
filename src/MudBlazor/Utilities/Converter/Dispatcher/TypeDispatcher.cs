@@ -1,4 +1,5 @@
-﻿using MudBlazor.Resources;
+﻿using System.Reflection;
+using MudBlazor.Resources;
 using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
@@ -65,6 +66,29 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
         public IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> Add<TSpecific>(IConverter<TSpecific, TOut> converter)
         {
             _handlers[typeof(TSpecific)] = new Func<TSpecific, TOut>(converter.Convert);
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IDispatcherBuilder<TIn, TOut, IConverter<TIn, TOut>> AddDynamic(Type specificType, object converter)
+        {
+            ArgumentNullException.ThrowIfNull(specificType);
+            ArgumentNullException.ThrowIfNull(converter);
+
+            var convType = converter.GetType();
+
+            var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
+            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<,>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (convertMethod is null)
+            {
+                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
+            }
+
+            var forwardDelegate = convertMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
+
+            _handlers[specificType] = forwardDelegate;
 
             return this;
         }

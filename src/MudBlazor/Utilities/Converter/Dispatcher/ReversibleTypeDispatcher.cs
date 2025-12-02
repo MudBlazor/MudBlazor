@@ -1,4 +1,5 @@
-﻿using MudBlazor.Resources;
+﻿using System.Reflection;
+using MudBlazor.Resources;
 using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
@@ -74,6 +75,39 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
 
             // backward
             _reverseHandlers[typeof(TSpecific)] = new Func<TOut, TSpecific>(converter.ConvertBack);
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IReversibleDispatcherBuilder<TIn, TOut, IReversibleConverter<TIn, TOut>> AddDynamic(Type specificType, object converter)
+        {
+            ArgumentNullException.ThrowIfNull(specificType);
+            ArgumentNullException.ThrowIfNull(converter);
+
+            var convType = converter.GetType();
+
+            var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
+            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<,>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (convertMethod is null)
+            {
+                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
+            }
+
+            var convertBackMethodInterface = typeof(IReversibleConverter<,>).MakeGenericType(specificType, typeof(TOut));
+            var convertBackMethod = convertBackMethodInterface.GetMethod(nameof(IReversibleConverter<,>.ConvertBack), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (convertBackMethod is null)
+            {
+                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement ConvertBack({typeof(TOut)})");
+            }
+
+            var forwardDelegate = convertMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
+            var backwardDelegate = convertBackMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(TOut), specificType), converter);
+
+            _handlers[specificType] = forwardDelegate;
+            _reverseHandlers[specificType] = backwardDelegate;
 
             return this;
         }
