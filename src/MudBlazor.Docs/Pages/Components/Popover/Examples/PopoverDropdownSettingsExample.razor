@@ -1,10 +1,11 @@
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
 <MudGrid>
     <MudItem md="4">
         <MudSelect T="string"
                    Label="MudSelect"
-                   DropdownSettings="@_dropdownSettings"
+                   PopoverFixed="_fixed"
+                   OverflowBehavior="_overflowBehavior"
                    AnchorOrigin="@_anchor"
                    TransformOrigin="@_transform"
                    RelativeWidth="_dropdownWidth"
@@ -22,7 +23,8 @@
         <MudMenu Label="MudMenu"
                  Variant="Variant.Filled"
                  Color="Color.Primary"
-                 DropdownSettings="@_dropdownSettings"
+                 PopoverFixed="_fixed"
+                 OverflowBehavior="_overflowBehavior"
                  AnchorOrigin="@_anchor"
                  TransformOrigin="@_transform"
                  RelativeWidth="_dropdownWidth">
@@ -37,7 +39,8 @@
         <MudAutocomplete SearchFunc="Search"
                          Variant="Variant.Outlined"
                          Label="MudAutocomplete"
-                         DropdownSettings="@_dropdownSettings"
+                         PopoverFixed="_fixed"
+                         OverflowBehavior="_overflowBehavior"
                          AnchorOrigin="@_anchor"
                          TransformOrigin="@_transform"
                          RelativeWidth="_dropdownWidth" />
@@ -56,7 +59,8 @@
         <MudSelect T="Origin"
                    Label="Anchor Origin"
                    @bind-Value="@_anchor"
-                   DropdownSettings="@_dropdownSettings">
+                   PopoverFixed="_fixed"
+                   OverflowBehavior="_overflowBehavior">
             <MudSelectItem Value="@Origin.TopLeft">Top Left</MudSelectItem>
             <MudSelectItem Value="@Origin.TopCenter">Top Center</MudSelectItem>
             <MudSelectItem Value="@Origin.TopRight">Top Right</MudSelectItem>
@@ -115,8 +119,6 @@
     private bool _fixed = false;
     private OverflowBehavior _overflowBehavior = OverflowBehavior.FlipOnOpen;
     private DropdownWidth _dropdownWidth = DropdownWidth.Relative;
-
-    private DropdownSettings _dropdownSettings => new DropdownSettings() { Fixed = _fixed, OverflowBehavior = _overflowBehavior, };
 
     private string[] _states =
     {
