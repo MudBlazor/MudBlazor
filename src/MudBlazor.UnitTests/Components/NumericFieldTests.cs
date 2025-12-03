@@ -1004,6 +1004,12 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.UsePattern, true));
             comp.Markup.Should().Contain("pattern");
             field.GetAttribute("type").Should().Be("text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.UsePattern, false));
+
+            comp.Markup.Should().NotContain("pattern");
+            field.GetAttribute("type").Should().Be("number");
         }
 
         [Test]
