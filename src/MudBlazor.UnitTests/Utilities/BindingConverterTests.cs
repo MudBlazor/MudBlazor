@@ -76,57 +76,57 @@ namespace MudBlazor.UnitTests.Utilities
         //    c1.GetErrorMessage.Value.Item2.Should().BeEquivalentTo(errorArgs);
         //}
 
-        //[Test]
-        //public void DefaultConverter_String_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<string>();
-        //    c1.Set("hello").Should().Be("hello");
-        //    c1.Get("hello").Should().Be("hello");
-        //    c1.Set("").Should().Be("");
-        //    c1.Get("").Should().Be("");
-        //    c1.Get(null).Should().Be(null);
-        //    c1.Set(null).Should().Be(null);
-        //}
+        [Test]
+        public void DefaultConverter_String_ValidCases()
+        {
+            var c1 = new DefaultConverter<string>();
+            c1.Convert("hello").Should().Be("hello");
+            c1.ConvertBack("hello").Should().Be("hello");
+            c1.Convert("").Should().Be("");
+            c1.ConvertBack("").Should().Be("");
+            c1.ConvertBack(null).Should().Be(null);
+            c1.Convert(null).Should().Be(null);
+        }
 
-        //[Test]
-        //public void DefaultConverter_Char_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<char>();
-        //    c1.Set('x').Should().Be("x");
-        //    c1.Get("a").Should().Be('a');
-        //    c1.Get("").Should().Be(default(char));
-        //    c1.Get(null).Should().Be(default(char));
+        [Test]
+        public void DefaultConverter_Char_ValidCases()
+        {
+            var c1 = new DefaultConverter<char>();
+            c1.Convert('x').Should().Be("x");
+            c1.ConvertBack("a").Should().Be('a');
+            c1.ConvertBack("").Should().Be('\0');
+            c1.ConvertBack(null).Should().Be('\0');
 
-        //    var c2 = new DefaultConverter<char?>();
-        //    c2.Set('x').Should().Be("x");
-        //    c2.Get("a").Should().Be('a');
-        //    c2.Get("").Should().Be(null);
-        //    c2.Get(null).Should().Be(null);
-        //    c2.Set(null).Should().Be(null);
-        //}
+            var c2 = new DefaultConverter<char?>();
+            c2.Convert('x').Should().Be("x");
+            c2.ConvertBack("a").Should().Be('a');
+            c2.ConvertBack("").Should().Be(null);
+            c2.ConvertBack(null).Should().Be(null);
+            c2.Convert(null).Should().Be(null);
+        }
 
-        //[Test]
-        //public void DefaultConverter_Bool_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<bool>();
-        //    c1.Set(true).Should().Be("True");
-        //    c1.Set(false).Should().Be("False");
-        //    c1.Get("true").Should().Be(true);
-        //    c1.Get("True").Should().Be(true);
-        //    c1.Get("false").Should().Be(false);
-        //    c1.Get("ON").Should().Be(true);
-        //    c1.Get("off").Should().Be(false);
-        //    c1.Get("").Should().Be(false);
-        //    c1.Get("asdf").Should().Be(false);
+        [Test]
+        public void DefaultConverter_Bool_ValidCases()
+        {
+            var c1 = new DefaultConverter<bool>();
+            c1.Convert(true).Should().Be("True");
+            c1.Convert(false).Should().Be("False");
+            c1.ConvertBack("true").Should().Be(true);
+            c1.ConvertBack("True").Should().Be(true);
+            c1.ConvertBack("false").Should().Be(false);
+            c1.ConvertBack("ON").Should().Be(true);
+            c1.ConvertBack("off").Should().Be(false);
+            c1.ConvertBack("").Should().Be(false);
+            c1.ConvertBack("asdf").Should().Be(false);
 
-        //    var c2 = new DefaultConverter<bool?>();
-        //    c2.Set(true).Should().Be("True");
-        //    c2.Get("true").Should().Be(true);
-        //    c2.Set(false).Should().Be("False");
-        //    c2.Get("false").Should().Be(false);
-        //    c2.Set(null).Should().Be(null);
-        //    c2.Get(null).Should().Be(null);
-        //}
+            var c2 = new DefaultConverter<bool?>();
+            c2.Convert(true).Should().Be("True");
+            c2.ConvertBack("true").Should().Be(true);
+            c2.Convert(false).Should().Be("False");
+            c2.ConvertBack("false").Should().Be(false);
+            c2.Convert(null).Should().Be(null);
+            c2.ConvertBack(null).Should().Be(null);
+        }
 
         //[Test]
         //public void DefaultConverter_Bool_ErrorCases()
@@ -141,89 +141,89 @@ namespace MudBlazor.UnitTests.Utilities
         //    TestInvalidFormat<bool?>(invalidInput, booleanErrorMessage);
         //}
 
-        //[Test]
-        //public void DefaultConverter_Numeric_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<sbyte>();
-        //    c1.Set(123).Should().Be("123");
-        //    c1.Get("123").Should().Be(123);
+        [Test]
+        public void DefaultConverter_Numeric_ValidCases()
+        {
+            var c1 = new DefaultConverter<sbyte>();
+            c1.Convert(123).Should().Be("123");
+            c1.ConvertBack("123").Should().Be(123);
 
-        //    var c2 = new DefaultConverter<sbyte?>();
-        //    c2.Set(123).Should().Be("123");
-        //    c2.Get("123").Should().Be(123);
-        //    c2.Set(null).Should().Be(null);
-        //    c2.Get(null).Should().Be(null);
+            var c2 = new DefaultConverter<sbyte?>();
+            c2.Convert(123).Should().Be("123");
+            c2.ConvertBack("123").Should().Be(123);
+            c2.Convert(null).Should().Be(null);
+            c2.ConvertBack(null).Should().Be(null);
 
-        //    var c3 = new DefaultConverter<byte>();
-        //    c3.Set(234).Should().Be("234");
-        //    c3.Get("234").Should().Be(234);
+            var c3 = new DefaultConverter<byte>();
+            c3.Convert(234).Should().Be("234");
+            c3.ConvertBack("234").Should().Be(234);
 
-        //    var c4 = new DefaultConverter<byte?>();
-        //    c4.Set(234).Should().Be("234");
-        //    c4.Get("234").Should().Be(234);
-        //    c4.Set(null).Should().Be(null);
-        //    c4.Get(null).Should().Be(null);
+            var c4 = new DefaultConverter<byte?>();
+            c4.Convert(234).Should().Be("234");
+            c4.ConvertBack("234").Should().Be(234);
+            c4.Convert(null).Should().Be(null);
+            c4.ConvertBack(null).Should().Be(null);
 
-        //    var c5 = new DefaultConverter<short>();
-        //    c5.Set(1234).Should().Be("1234");
-        //    c5.Get("1234").Should().Be(1234);
+            var c5 = new DefaultConverter<short>();
+            c5.Convert(1234).Should().Be("1234");
+            c5.ConvertBack("1234").Should().Be(1234);
 
-        //    var c6 = new DefaultConverter<short?>();
-        //    c6.Set(1234).Should().Be("1234");
-        //    c6.Get("1234").Should().Be(1234);
-        //    c6.Set(null).Should().Be(null);
-        //    c6.Get(null).Should().Be(null);
+            var c6 = new DefaultConverter<short?>();
+            c6.Convert(1234).Should().Be("1234");
+            c6.ConvertBack("1234").Should().Be(1234);
+            c6.Convert(null).Should().Be(null);
+            c6.ConvertBack(null).Should().Be(null);
 
-        //    var c7 = new DefaultConverter<ushort>();
-        //    c7.Set(12345).Should().Be("12345");
-        //    c7.Get("12345").Should().Be(12345);
+            var c7 = new DefaultConverter<ushort>();
+            c7.Convert(12345).Should().Be("12345");
+            c7.ConvertBack("12345").Should().Be(12345);
 
-        //    var c8 = new DefaultConverter<ushort?>();
-        //    c8.Set(12345).Should().Be("12345");
-        //    c8.Get("12345").Should().Be(12345);
-        //    c8.Set(null).Should().Be(null);
-        //    c8.Get(null).Should().Be(null);
+            var c8 = new DefaultConverter<ushort?>();
+            c8.Convert(12345).Should().Be("12345");
+            c8.ConvertBack("12345").Should().Be(12345);
+            c8.Convert(null).Should().Be(null);
+            c8.ConvertBack(null).Should().Be(null);
 
-        //    var c9 = new DefaultConverter<int>();
-        //    c9.Set(34567).Should().Be("34567");
-        //    c9.Get("34567").Should().Be(34567);
+            var c9 = new DefaultConverter<int>();
+            c9.Convert(34567).Should().Be("34567");
+            c9.ConvertBack("34567").Should().Be(34567);
 
-        //    var c10 = new DefaultConverter<int?>();
-        //    c10.Set(34567).Should().Be("34567");
-        //    c10.Get("34567").Should().Be(34567);
-        //    c10.Set(null).Should().Be(null);
-        //    c10.Get(null).Should().Be(null);
+            var c10 = new DefaultConverter<int?>();
+            c10.Convert(34567).Should().Be("34567");
+            c10.ConvertBack("34567").Should().Be(34567);
+            c10.Convert(null).Should().Be(null);
+            c10.ConvertBack(null).Should().Be(null);
 
-        //    var c11 = new DefaultConverter<uint>();
-        //    c11.Set(45678).Should().Be("45678");
-        //    c11.Get("45678").Should().Be(45678);
+            var c11 = new DefaultConverter<uint>();
+            c11.Convert(45678).Should().Be("45678");
+            c11.ConvertBack("45678").Should().Be(45678);
 
-        //    var c12 = new DefaultConverter<uint?>();
-        //    c12.Set(45678).Should().Be("45678");
-        //    c12.Get("45678").Should().Be(45678);
-        //    c12.Set(null).Should().Be(null);
-        //    c12.Get(null).Should().Be(null);
+            var c12 = new DefaultConverter<uint?>();
+            c12.Convert(45678).Should().Be("45678");
+            c12.ConvertBack("45678").Should().Be(45678);
+            c12.Convert(null).Should().Be(null);
+            c12.ConvertBack(null).Should().Be(null);
 
-        //    var c13 = new DefaultConverter<long>();
-        //    c13.Set(456789).Should().Be("456789");
-        //    c13.Get("456789").Should().Be(456789);
+            var c13 = new DefaultConverter<long>();
+            c13.Convert(456789).Should().Be("456789");
+            c13.ConvertBack("456789").Should().Be(456789);
 
-        //    var c14 = new DefaultConverter<long?>();
-        //    c14.Set(456789).Should().Be("456789");
-        //    c14.Get("456789").Should().Be(456789);
-        //    c14.Set(null).Should().Be(null);
-        //    c14.Get(null).Should().Be(null);
+            var c14 = new DefaultConverter<long?>();
+            c14.Convert(456789).Should().Be("456789");
+            c14.ConvertBack("456789").Should().Be(456789);
+            c14.Convert(null).Should().Be(null);
+            c14.ConvertBack(null).Should().Be(null);
 
-        //    var c15 = new DefaultConverter<ulong>();
-        //    c15.Set(4567890).Should().Be("4567890");
-        //    c15.Get("4567890").Should().Be(4567890);
+            var c15 = new DefaultConverter<ulong>();
+            c15.Convert(4567890).Should().Be("4567890");
+            c15.ConvertBack("4567890").Should().Be(4567890);
 
-        //    var c16 = new DefaultConverter<ulong?>();
-        //    c16.Set(4567890).Should().Be("4567890");
-        //    c16.Get("4567890").Should().Be(4567890);
-        //    c16.Set(null).Should().Be(null);
-        //    c16.Get(null).Should().Be(null);
-        //}
+            var c16 = new DefaultConverter<ulong?>();
+            c16.Convert(4567890).Should().Be("4567890");
+            c16.ConvertBack("4567890").Should().Be(4567890);
+            c16.Convert(null).Should().Be(null);
+            c16.ConvertBack(null).Should().Be(null);
+        }
 
         //[Test]
         //public void DefaultConverter_Numeric_ErrorCases()
@@ -265,116 +265,110 @@ namespace MudBlazor.UnitTests.Utilities
         //    c12.GetErrorMessage.Value.Item2.Should().BeEmpty();
         //}
 
-        //[Test]
-        //public void DefaultConverter_Numeric_Culture_AffectsConversion()
-        //{
-        //    var c3 = new DefaultConverter<double?>() { Culture = CultureInfo.InvariantCulture };
-        //    c3.Set(1.7).Should().Be("1.7");
-        //    c3.Get("1.7").Should().Be(1.7);
-        //    c3.Get("1234567.15").Should().Be(1234567.15);
-        //    c3.Set(1234567.15).Should().Be("1234567.15");
-        //    c3.Set(c3.Get("1234567.15")).Should().Be("1234567.15");
-        //    c3.Get(c3.Set(1234567.15)).Should().Be(1234567.15);
-        //    c3.Set(null).Should().Be(null);
-        //    c3.Get(null).Should().Be(null);
-        //    c3.Culture = CultureInfo.GetCultureInfo("de-AT");
-        //    c3.Set(1.7).Should().Be("1,7");
-        //    c3.Get("1,7").Should().Be(1.7);
-        //}
+        [Test]
+        public void DefaultConverter_Numeric_Culture_AffectsConversion()
+        {
+            var c3 = new DefaultConverter<double?>() { Culture = () => CultureInfo.InvariantCulture };
+            c3.Convert(1.7).Should().Be("1.7");
+            c3.ConvertBack("1.7").Should().Be(1.7);
+            c3.ConvertBack("1234567.15").Should().Be(1234567.15);
+            c3.Convert(1234567.15).Should().Be("1234567.15");
+            c3.Convert(c3.ConvertBack("1234567.15")).Should().Be("1234567.15");
+            c3.ConvertBack(c3.Convert(1234567.15)).Should().Be(1234567.15);
+            c3.Convert(null).Should().Be(null);
+            c3.ConvertBack(null).Should().Be(null);
+            c3.Culture = () => CultureInfo.GetCultureInfo("de-AT");
+            c3.Convert(1.7).Should().Be("1,7");
+            c3.ConvertBack("1,7").Should().Be(1.7);
+        }
 
-        //[Test]
-        //public void DefaultConverter_Numeric_Format_AffectsConversion()
-        //{
-        //    var float1 = new DefaultConverter<float>() { Format = "0.00" };
-        //    float1.Culture = new CultureInfo("en-US", false);
-        //    float1.Set(1.7f).Should().Be("1.70");
-        //    float1.Set(1.773f).Should().Be("1.77");
-        //    float1.Get("1.773").Should().Be(1.773f);
-        //    float1.Get("1.77").Should().Be(1.77f);
-        //    float1.Get("1.7").Should().Be(1.7f);
-        //    float1.Culture = new CultureInfo("pt-BR", false);
-        //    float1.Set(1.7f).Should().Be("1,70");
-        //    float1.Set(1.773f).Should().Be("1,77");
-        //    float1.Get("1,773").Should().Be(1.773f);
-        //    float1.Get("1,77").Should().Be(1.77f);
-        //    float1.Get("1,7").Should().Be(1.7f);
+        [Test]
+        public void DefaultConverter_Numeric_Format_AffectsConversion()
+        {
+            var float1 = new DefaultConverter<float> { Format = () => "0.00", Culture = () => new CultureInfo("en-US", false) };
+            float1.Convert(1.7f).Should().Be("1.70");
+            float1.Convert(1.773f).Should().Be("1.77");
+            float1.ConvertBack("1.773").Should().Be(1.773f);
+            float1.ConvertBack("1.77").Should().Be(1.77f);
+            float1.ConvertBack("1.7").Should().Be(1.7f);
+            float1.Culture = () => new CultureInfo("pt-BR", false);
+            float1.Convert(1.7f).Should().Be("1,70");
+            float1.Convert(1.773f).Should().Be("1,77");
+            float1.ConvertBack("1,773").Should().Be(1.773f);
+            float1.ConvertBack("1,77").Should().Be(1.77f);
+            float1.ConvertBack("1,7").Should().Be(1.7f);
 
-        //    var float2 = new DefaultConverter<float?>() { Format = "0.00" };
-        //    float2.Culture = new CultureInfo("en-US", false);
-        //    float2.Set(1.7f).Should().Be("1.70");
-        //    float2.Set(1.773f).Should().Be("1.77");
-        //    float2.Set(null).Should().Be(null);
-        //    float2.Get("1.773").Should().Be(1.773f);
-        //    float2.Get("1.77").Should().Be(1.77f);
-        //    float2.Get("1.7").Should().Be(1.7f);
-        //    float2.Get(null).Should().Be(null);
-        //    float2.Culture = new CultureInfo("pt-BR", false);
-        //    float2.Set(1.7f).Should().Be("1,70");
-        //    float2.Set(1.773f).Should().Be("1,77");
-        //    float2.Get("1,773").Should().Be(1.773f);
-        //    float2.Get("1,77").Should().Be(1.77f);
-        //    float2.Get("1,7").Should().Be(1.7f);
+            var float2 = new DefaultConverter<float?> { Format = () => "0.00", Culture = () => new CultureInfo("en-US", false) };
+            float2.Convert(1.7f).Should().Be("1.70");
+            float2.Convert(1.773f).Should().Be("1.77");
+            float2.Convert(null).Should().Be(null);
+            float2.ConvertBack("1.773").Should().Be(1.773f);
+            float2.ConvertBack("1.77").Should().Be(1.77f);
+            float2.ConvertBack("1.7").Should().Be(1.7f);
+            float2.ConvertBack(null).Should().Be(null);
+            float2.Culture = () => new CultureInfo("pt-BR", false);
+            float2.Convert(1.7f).Should().Be("1,70");
+            float2.Convert(1.773f).Should().Be("1,77");
+            float2.ConvertBack("1,773").Should().Be(1.773f);
+            float2.ConvertBack("1,77").Should().Be(1.77f);
+            float2.ConvertBack("1,7").Should().Be(1.7f);
 
-        //    var dbl1 = new DefaultConverter<double>() { Format = "0.00" };
-        //    dbl1.Culture = new CultureInfo("en-US", false);
-        //    dbl1.Set(1.7d).Should().Be("1.70");
-        //    dbl1.Set(1.773d).Should().Be("1.77");
-        //    dbl1.Get("1.773").Should().Be(1.773d);
-        //    dbl1.Get("1.77").Should().Be(1.77d);
-        //    dbl1.Get("1.7").Should().Be(1.7d);
-        //    dbl1.Culture = new CultureInfo("pt-BR", false);
-        //    dbl1.Set(1.7d).Should().Be("1,70");
-        //    dbl1.Set(1.773d).Should().Be("1,77");
-        //    dbl1.Get("1,773").Should().Be(1.773d);
-        //    dbl1.Get("1,77").Should().Be(1.77d);
-        //    dbl1.Get("1,7").Should().Be(1.7d);
+            var dbl1 = new DefaultConverter<double> { Format = () => "0.00", Culture = () => new CultureInfo("en-US", false) };
+            dbl1.Convert(1.7d).Should().Be("1.70");
+            dbl1.Convert(1.773d).Should().Be("1.77");
+            dbl1.ConvertBack("1.773").Should().Be(1.773d);
+            dbl1.ConvertBack("1.77").Should().Be(1.77d);
+            dbl1.ConvertBack("1.7").Should().Be(1.7d);
+            dbl1.Culture = () => new CultureInfo("pt-BR", false);
+            dbl1.Convert(1.7d).Should().Be("1,70");
+            dbl1.Convert(1.773d).Should().Be("1,77");
+            dbl1.ConvertBack("1,773").Should().Be(1.773d);
+            dbl1.ConvertBack("1,77").Should().Be(1.77d);
+            dbl1.ConvertBack("1,7").Should().Be(1.7d);
 
-        //    var dbl2 = new DefaultConverter<double?>() { Format = "0.00" };
-        //    dbl2.Culture = new CultureInfo("en-US", false);
-        //    dbl2.Set(1.7d).Should().Be("1.70");
-        //    dbl2.Set(1.773d).Should().Be("1.77");
-        //    dbl2.Set(null).Should().Be(null);
-        //    dbl2.Get("1.773").Should().Be(1.773d);
-        //    dbl2.Get("1.77").Should().Be(1.77d);
-        //    dbl2.Get("1.7").Should().Be(1.7d);
-        //    dbl2.Get(null).Should().Be(null);
-        //    dbl2.Culture = new CultureInfo("pt-BR", false);
-        //    dbl2.Set(1.7d).Should().Be("1,70");
-        //    dbl2.Set(1.773d).Should().Be("1,77");
-        //    dbl2.Get("1,773").Should().Be(1.773d);
-        //    dbl2.Get("1,77").Should().Be(1.77d);
-        //    dbl2.Get("1,7").Should().Be(1.7d);
+            var dbl2 = new DefaultConverter<double?> { Format = () => "0.00", Culture = () => new CultureInfo("en-US", false) };
+            dbl2.Convert(1.7d).Should().Be("1.70");
+            dbl2.Convert(1.773d).Should().Be("1.77");
+            dbl2.Convert(null).Should().Be(null);
+            dbl2.ConvertBack("1.773").Should().Be(1.773d);
+            dbl2.ConvertBack("1.77").Should().Be(1.77d);
+            dbl2.ConvertBack("1.7").Should().Be(1.7d);
+            dbl2.ConvertBack(null).Should().Be(null);
+            dbl2.Culture = () => new CultureInfo("pt-BR", false);
+            dbl2.Convert(1.7d).Should().Be("1,70");
+            dbl2.Convert(1.773d).Should().Be("1,77");
+            dbl2.ConvertBack("1,773").Should().Be(1.773d);
+            dbl2.ConvertBack("1,77").Should().Be(1.77d);
+            dbl2.ConvertBack("1,7").Should().Be(1.7d);
 
-        //    var dec1 = new DefaultConverter<decimal>() { Format = "0.00" };
-        //    dec1.Culture = new CultureInfo("en-US", false);
-        //    dec1.Set(1.7m).Should().Be("1.70");
-        //    dec1.Set(1.773m).Should().Be("1.77");
-        //    dec1.Get("1.773").Should().Be(1.773m);
-        //    dec1.Get("1.77").Should().Be(1.77m);
-        //    dec1.Get("1.7").Should().Be(1.7m);
-        //    dec1.Culture = new CultureInfo("pt-BR", false);
-        //    dec1.Set(1.7m).Should().Be("1,70");
-        //    dec1.Set(1.773m).Should().Be("1,77");
-        //    dec1.Get("1,773").Should().Be(1.773m);
-        //    dec1.Get("1,77").Should().Be(1.77m);
-        //    dec1.Get("1,7").Should().Be(1.7m);
+            var dec1 = new DefaultConverter<decimal> { Format = () => "0.00", Culture = () => new CultureInfo("en-US", false) };
+            dec1.Convert(1.7m).Should().Be("1.70");
+            dec1.Convert(1.773m).Should().Be("1.77");
+            dec1.ConvertBack("1.773").Should().Be(1.773m);
+            dec1.ConvertBack("1.77").Should().Be(1.77m);
+            dec1.ConvertBack("1.7").Should().Be(1.7m);
+            dec1.Culture = () => new CultureInfo("pt-BR", false);
+            dec1.Convert(1.7m).Should().Be("1,70");
+            dec1.Convert(1.773m).Should().Be("1,77");
+            dec1.ConvertBack("1,773").Should().Be(1.773m);
+            dec1.ConvertBack("1,77").Should().Be(1.77m);
+            dec1.ConvertBack("1,7").Should().Be(1.7m);
 
-        //    var dec2 = new DefaultConverter<decimal?>() { Format = "0.00" };
-        //    dec2.Culture = new CultureInfo("en-US", false);
-        //    dec2.Set(1.7m).Should().Be("1.70");
-        //    dec2.Set(1.773m).Should().Be("1.77");
-        //    dec2.Set(null).Should().Be(null);
-        //    dec2.Get("1.773").Should().Be(1.773m);
-        //    dec2.Get("1.77").Should().Be(1.77m);
-        //    dec2.Get("1.7").Should().Be(1.7m);
-        //    dec2.Get(null).Should().Be(null);
-        //    dec2.Culture = new CultureInfo("pt-BR", false);
-        //    dec2.Set(1.7m).Should().Be("1,70");
-        //    dec2.Set(1.773m).Should().Be("1,77");
-        //    dec2.Get("1,773").Should().Be(1.773m);
-        //    dec2.Get("1,77").Should().Be(1.77m);
-        //    dec2.Get("1,7").Should().Be(1.7m);
-        //}
+            var dec2 = new DefaultConverter<decimal?> { Format = () => "0.00", Culture = () => new CultureInfo("en-US", false) };
+            dec2.Convert(1.7m).Should().Be("1.70");
+            dec2.Convert(1.773m).Should().Be("1.77");
+            dec2.Convert(null).Should().Be(null);
+            dec2.ConvertBack("1.773").Should().Be(1.773m);
+            dec2.ConvertBack("1.77").Should().Be(1.77m);
+            dec2.ConvertBack("1.7").Should().Be(1.7m);
+            dec2.ConvertBack(null).Should().Be(null);
+            dec2.Culture = () => new CultureInfo("pt-BR", false);
+            dec2.Convert(1.7m).Should().Be("1,70");
+            dec2.Convert(1.773m).Should().Be("1,77");
+            dec2.ConvertBack("1,773").Should().Be(1.773m);
+            dec2.ConvertBack("1,77").Should().Be(1.77m);
+            dec2.ConvertBack("1,7").Should().Be(1.7m);
+        }
 
         //[Test]
         //public void DefaultConverter_Guid_ValidCases()
