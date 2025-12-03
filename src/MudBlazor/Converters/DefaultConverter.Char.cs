@@ -24,7 +24,7 @@ internal partial class DefaultConverter
 
             if (input.Length == 0)
             {
-                return '\0';
+                return null;
             }
 
             return ConvertBack(input);

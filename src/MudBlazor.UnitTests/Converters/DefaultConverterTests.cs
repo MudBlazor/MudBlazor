@@ -451,7 +451,7 @@ public class DefaultConverterTests
         IReversibleConverter<char?, string?> nullableConv = conv;
 
         nullableConv.ConvertBack(null).Should().Be(null);
-        nullableConv.ConvertBack(string.Empty).Should().Be('\0');
+        nullableConv.ConvertBack(string.Empty).Should().Be(null);
         nullableConv.ConvertBack("Xyz").Should().Be('X');
     }
 

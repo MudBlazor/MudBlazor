@@ -5,7 +5,7 @@
 namespace MudBlazor.Utilities;
 
 #nullable enable
-public class RangeUtility
+public static class RangeUtility
 {
     /// <summary>
     /// Joins two element string values into the canonical range representation <c>[{start};{end}]</c>.
