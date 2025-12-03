@@ -4,7 +4,7 @@
 
 using System.Globalization;
 
-namespace MudBlazor.Utilities.Converter;
+namespace MudBlazor;
 
 #nullable enable
 internal partial class DefaultConverter

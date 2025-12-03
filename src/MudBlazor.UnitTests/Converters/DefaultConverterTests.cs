@@ -7,7 +7,7 @@ using System.Numerics;
 using FluentAssertions;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Converter;
-using MudBlazor.Utilities.Converter.Base;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Converters;

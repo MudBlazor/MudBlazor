@@ -5,12 +5,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
+using MudBlazor.Extensions;
 using MudBlazor.Resources;
-using MudBlazor.Utilities.Converter.Base;
 using MudBlazor.Utilities.Converter.Dispatcher;
-using static MudBlazor.Utilities.Converter.DefaultConverter;
+using MudBlazor.Utilities.Exceptions;
+using static MudBlazor.DefaultConverter;
 
-namespace MudBlazor.Utilities.Converter;
+namespace MudBlazor;
 
 #nullable enable
 /// <summary>

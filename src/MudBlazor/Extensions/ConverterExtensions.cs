@@ -1,6 +1,8 @@
-﻿using MudBlazor.Utilities.Converter.Chain;
+﻿using MudBlazor.Utilities.Converter.Base;
+using MudBlazor.Utilities.Converter.Chain;
+using MudBlazor.Utilities.Exceptions;
 
-namespace MudBlazor.Utilities.Converter.Base;
+namespace MudBlazor.Extensions;
 
 #nullable enable
 /// <summary>

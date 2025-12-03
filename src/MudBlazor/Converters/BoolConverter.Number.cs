@@ -5,7 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace MudBlazor.Utilities.Converter;
+namespace MudBlazor;
 
 internal partial class BoolConverter
 {

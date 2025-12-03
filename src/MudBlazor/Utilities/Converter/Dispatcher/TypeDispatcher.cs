@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using MudBlazor.Resources;
-using MudBlazor.Utilities.Converter.Base;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 

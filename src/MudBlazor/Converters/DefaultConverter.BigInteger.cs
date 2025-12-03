@@ -5,9 +5,9 @@
 using System.Globalization;
 using System.Numerics;
 using MudBlazor.Resources;
-using MudBlazor.Utilities.Converter.Base;
+using MudBlazor.Utilities.Exceptions;
 
-namespace MudBlazor.Utilities.Converter;
+namespace MudBlazor;
 
 #nullable enable
 internal partial class DefaultConverter

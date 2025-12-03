@@ -1,4 +1,5 @@
-﻿using MudBlazor.Utilities.Converter.Base;
+﻿using MudBlazor.Extensions;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Chain;
 

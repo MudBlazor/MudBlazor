@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter.Base;
+using MudBlazor.Utilities.Exceptions;
 
 #nullable enable
 namespace MudBlazor

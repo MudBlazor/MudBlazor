@@ -4,8 +4,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Utilities.Converter.Dispatcher;
-using static MudBlazor.Utilities.Converter.BoolConverter;
-namespace MudBlazor.Utilities.Converter;
+using static MudBlazor.BoolConverter;
+
+namespace MudBlazor;
 
 #nullable enable
 public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>

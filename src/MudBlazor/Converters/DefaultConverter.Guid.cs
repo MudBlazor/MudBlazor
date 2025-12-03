@@ -3,9 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using MudBlazor.Resources;
-using MudBlazor.Utilities.Converter.Base;
+using MudBlazor.Utilities.Exceptions;
 
-namespace MudBlazor.Utilities.Converter;
+namespace MudBlazor;
 
 #nullable enable
 internal partial class DefaultConverter
