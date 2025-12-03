@@ -17,8 +17,8 @@
         <MudPickerContent>
             <div id="@_mudPickerCalendarContentElementId" class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")" @onmousedown:preventDefault="true">
                 @{
-                    int dayId = 0;
-                    @if (_picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 1 && Culture.Calendar.GetMonth(_picker_month.Value) == 1)
+                    int dayId = 0; 
+                    @if (_picker_month.HasValue && GetCulture().Calendar.GetYear(_picker_month.Value) == 1 && GetCulture().Calendar.GetMonth(_picker_month.Value) == 1)
                     {
                         dayId = -1;
                     }
@@ -105,7 +105,7 @@
                                     @for (int week = 0; week < 6; week++)
                                     {
                                         int tempWeek = week;
-                                        var firstMonthFirstYear = _picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 1 && Culture.Calendar.GetMonth(_picker_month.Value) == 1;
+                                        var firstMonthFirstYear = _picker_month.HasValue && GetCulture().Calendar.GetYear(_picker_month.Value) == 1 && GetCulture().Calendar.GetMonth(_picker_month.Value) == 1;
 
                                         @if (ShowWeekNumbers)
                                         {
@@ -137,7 +137,7 @@
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text"></p>
                                                 </button>
                                             }
-                                            wasMaxValue = day == Culture.Calendar.MaxSupportedDateTime;
+                                            wasMaxValue = day == GetCulture().Calendar.MaxSupportedDateTime;
                                         }
                                     }
                                 </div>

@@ -5,6 +5,7 @@
 using System.Reflection;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Docs.Compiler;
 
@@ -155,6 +156,16 @@ public class ApiDocumentationBuilder
         return false;
     }
 
+    private static bool ImplementsConverterInterface(Type type)
+    {
+        if (!type.IsClass) return false;
+
+        return type
+            .GetInterfaces()
+            .Any(i => i.IsGenericType
+                      && i.GetGenericTypeDefinition() == typeof(IConverter<,>));
+    }
+
     /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
@@ -202,6 +213,7 @@ public class ApiDocumentationBuilder
                     && !IsExcluded(type)
                     // ... which aren't interfaces
                     && !type.IsInterface
+                    && !ImplementsConverterInterface(type)
                     // ... which aren't source generators
                     && !type.Name.Contains("SourceGenerator")
                     // ... which aren't extension classes

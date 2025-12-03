@@ -24,10 +24,6 @@ namespace MudBlazor
         private bool _keyInterceptorObserving = false;
         private readonly string _elementId = Identifier.Create("picker");
 
-        public MudPicker() : base(new Converter<T, string>()) { }
-
-        protected MudPicker(Converter<T, string> converter) : base(converter) { }
-
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 

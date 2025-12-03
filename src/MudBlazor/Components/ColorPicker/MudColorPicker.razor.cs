@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
@@ -49,8 +50,16 @@ namespace MudBlazor
             "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
         };
 
-        public MudColorPicker() : base(new DefaultConverter<MudColor>())
+        public MudColorPicker()
         {
+            Converter = new DefaultConverter<MudColor>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+            AdornmentIcon = Icons.Material.Outlined.Palette;
+            ShowToolbar = false;
+
             using var registerScope = CreateRegisterScope();
             _valueState = registerScope.RegisterParameter<MudColor?>(nameof(Value))
                 .WithParameter(() => Value)
@@ -68,8 +77,6 @@ namespace MudBlazor
             _throttleIntervalState = registerScope.RegisterParameter<int>(nameof(ThrottleInterval))
                 .WithParameter(() => ThrottleInterval)
                 .WithChangeHandler(OnThrottleIntervalParameterChanged);
-            AdornmentIcon = Icons.Material.Outlined.Palette;
-            ShowToolbar = false;
         }
 
         protected override async Task OnInitializedAsync()

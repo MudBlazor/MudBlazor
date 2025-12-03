@@ -1,8 +1,9 @@
-﻿using System;
-using MudBlazor.Extensions;
+﻿using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents a date range used by a <see cref="MudDatePicker"/>.
     /// </summary>
@@ -29,12 +30,14 @@ namespace MudBlazor
         /// </summary>
         /// <param name="converter">The converter used to convert to a <c>string</c>.</param>
         /// <returns>The formatted string.</returns>
-        public string ToString(Converter<DateTime?, string> converter)
+        public string ToString(IConverter<DateTime?, string> converter)
         {
-            if (Start == null || End == null)
+            if (Start is null || End is null)
+            {
                 return string.Empty;
+            }
 
-            return RangeConverter<DateTime>.Join(converter.Set(Start.Value), converter.Set(End.Value));
+            return RangeUtility.Join(converter.Convert(Start.Value), converter.Convert(End.Value));
         }
 
         /// <summary>
@@ -43,10 +46,12 @@ namespace MudBlazor
         /// <returns>The formatted string.</returns>
         public string ToIsoDateString()
         {
-            if (Start == null || End == null)
+            if (Start is null || End is null)
+            {
                 return string.Empty;
+            }
 
-            return RangeConverter<DateTime>.Join(Start.ToIsoDateString(), End.ToIsoDateString());
+            return RangeUtility.Join(Start.ToIsoDateString(), End.ToIsoDateString());
         }
 
         /// <summary>
@@ -56,12 +61,13 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string value, Converter<DateTime?, string> converter, out DateRange date)
+        public static bool TryParse(string value, IConverter<DateTime?, string> converter, out DateRange? date)
         {
-            date = null;
-
-            if (!RangeConverter<DateTime>.Split(value, out var start, out var end))
+            if (!RangeUtility.Split(value, out var start, out var end))
+            {
+                date = null;
                 return false;
+            }
 
             return TryParse(start, end, converter, out date);
         }
@@ -74,19 +80,23 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string start, string end, Converter<DateTime?, string> converter, out DateRange date)
+        public static bool TryParse(string start, string end, IConverter<DateTime?, string> converter, out DateRange? date)
         {
-            date = null;
-
-            var endDate = converter.Get(end);
-            if (converter.GetError)
+            var endDate = converter.TryConvertBack(end);
+            if (!endDate.Success)
+            {
+                date = null;
                 return false;
+            }
 
-            var startDate = converter.Get(start);
-            if (converter.GetError)
+            var startDate = converter.TryConvertBack(start);
+            if (!startDate.Success)
+            {
+                date = null;
                 return false;
+            }
 
-            date = new DateRange(startDate, endDate);
+            date = new DateRange(startDate.Value, endDate.Value);
             return true;
         }
 
@@ -94,12 +104,12 @@ namespace MudBlazor
         public override int GetHashCode() => HashCode.Combine(Start, End);
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => Equals(obj as DateRange);
+        public override bool Equals(object? obj) => Equals(obj as DateRange);
 
         /// <inheritdoc />
-        public bool Equals(DateRange other) => other != null && Start == other.Start && End == other.End;
+        public bool Equals(DateRange? other) => other is not null && Start == other.Start && End == other.End;
 
-        public static bool operator ==(DateRange dateRange1, DateRange dateRange2)
+        public static bool operator ==(DateRange? dateRange1, DateRange? dateRange2)
         {
             if (ReferenceEquals(dateRange1, dateRange2))
                 return true;

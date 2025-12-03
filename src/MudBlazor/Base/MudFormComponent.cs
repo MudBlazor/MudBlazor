@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -9,8 +10,11 @@ using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
+using MudBlazor.Utilities.Comparer;
+using MudBlazor.Utilities.Converter.Base;
 using static System.String;
 
 namespace MudBlazor
@@ -23,16 +27,20 @@ namespace MudBlazor
     /// <typeparam name="U">The value type managed by this input.</typeparam>
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
+        private ConversionResult<T?>? _getConversionResult;
+        // ReSharper disable NotAccessedField.Local maybe we use it later, original converter didn't read the set errors
+        private ConversionResult<U?>? _setConversionResult;
+        // ReSharper restore NotAccessedField.Local
         protected readonly ParameterState<bool> ErrorState;
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
+        private readonly ParameterState<CultureInfo> _cultureState;
+        private readonly ParameterState<IConverter<T?, U?>> _converterState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
-        private Converter<T, U> _converter;
-
-        protected MudFormComponent(Converter<T, U> converter)
+        protected MudFormComponent()
         {
             using var registerScope = CreateRegisterScope();
             ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
@@ -44,8 +52,13 @@ namespace MudBlazor
             ErrorIdState = registerScope.RegisterParameter<string?>(nameof(ErrorId))
                 .WithParameter(() => ErrorId)
                 .WithEventCallback(() => ErrorIdChanged);
-            _converter = converter ?? throw new ArgumentNullException(nameof(converter));
-            _converter.OnError = OnConversionError;
+            _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
+                .WithParameter(() => Culture)
+                .WithChangeHandler(OnCultureAndFormatChangedAsync)
+                .WithComparer(ReferenceCultureComparer.Default);
+            _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
+                .WithParameter(() => Converter)
+                .WithChangeHandler(args => OnConverterChangedAsync(args));
         }
 
         [CascadingParameter]
@@ -146,23 +159,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Converter<T, U> Converter
-        {
-            get => _converter;
-            set => SetConverter(value);
-        }
-
-        protected virtual bool SetConverter(Converter<T, U> value)
-        {
-            var changed = _converter != value;
-            if (changed)
-            {
-                _converter = value ?? throw new ArgumentNullException(nameof(value));   // converter is mandatory at all times
-                _converter.OnError = OnConversionError;
-            }
-
-            return changed;
-        }
+        public IConverter<T?, U?> Converter { get; set; } = null!;
 
         /// <summary>
         /// The culture used to format and interpret values such as dates and currency.
@@ -172,31 +169,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public CultureInfo Culture
-        {
-            get => _converter.Culture;
-            set => SetCulture(value);
-        }
-
-        protected virtual bool SetCulture(CultureInfo value)
-        {
-            var changed = _converter.Culture != value;
-            if (changed)
-            {
-                _converter.Culture = value;
-            }
-
-            return changed;
-        }
-
-        private void OnConversionError(string error, object[] arguments)
-        {
-            // note: we need to update the form here because the conversion error might lead to not updating the value
-            // ... which leads to not updating the form
-            Touched = true;
-            Form?.Update(this);
-            OnConversionErrorOccurred(Localizer[error, arguments]);
-        }
+        public CultureInfo Culture { get; set; } = CultureInfo.CurrentUICulture;
 
         protected virtual void OnConversionErrorOccurred(string error)
         {
@@ -210,7 +183,7 @@ namespace MudBlazor
         /// When <c>true</c>, the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
         /// </remarks>
         [MemberNotNullWhen(true, nameof(ConversionErrorMessage))]
-        public bool ConversionError => _converter.GetError;
+        public bool ConversionError => _getConversionResult is { Success: false };
 
         /// <summary>
         /// The error describing why type conversion failed.
@@ -222,13 +195,13 @@ namespace MudBlazor
         {
             get
             {
-                var getErrorMessage = _converter.GetErrorMessage;
-                if (!getErrorMessage.HasValue)
-                {
+                if (_getConversionResult is not { Success: false } result)
                     return null;
-                }
 
-                return Localizer[getErrorMessage.Value.Item1, getErrorMessage.Value.Item2];
+                if (result.ErrorMessageKey is not null)
+                    return Localizer[result.ErrorMessageKey, result.ErrorMessageArgs];
+
+                return result.ExceptionError.Message;
             }
         }
 
@@ -703,12 +676,6 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
-        private void ResetConverterErrors()
-        {
-            _converter.GetError = false;
-            _converter.GetErrorMessage = null;
-        }
-
         #endregion
 
         #region --> Blazor EditForm validation support
@@ -796,6 +763,8 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
                 // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
@@ -848,6 +817,109 @@ namespace MudBlazor
             {
                 Form?.Add(this);
             }
+        }
+
+        protected Task SetCultureAsync(CultureInfo newCultureInfo)
+        {
+            ArgumentNullException.ThrowIfNull(newCultureInfo);
+            // Skip InjectCultureAndFormatToConverter.
+            // The converter relies on Func delegates that read Culture/Format at runtime
+            // The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
+            return _cultureState.SetValueAsync(newCultureInfo);
+        }
+
+        protected virtual Task OnCultureAndFormatChangedAsync() => Task.CompletedTask;
+
+        protected virtual CultureInfo GetCulture() => _cultureState.Value;
+
+        protected virtual string? GetFormat() => null;
+
+        protected virtual T? ConvertGet(U? input)
+        {
+            var converter = _converterState.Value;
+            if (converter is null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(Converter)} parameter cannot be null. " +
+                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
+                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
+                );
+            }
+            var result = converter.TryConvertBack(input);
+            _getConversionResult = result;
+            HandleConversionResult(result);
+
+            return result.Value;
+        }
+
+        protected virtual U? ConvertSet(T? input)
+        {
+            var converter = _converterState.Value;
+            if (converter is null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(Converter)} parameter cannot be null. " +
+                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
+                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
+                );
+            }
+            var result = converter.TryConvert(input);
+            _setConversionResult = result;
+            HandleConversionResult(result);
+
+            return result.Value;
+        }
+
+        protected virtual Task OnConverterChangedAsync()
+        {
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+
+            return Task.CompletedTask;
+        }
+
+        private Task OnConverterChangedAsync(ParameterChangedEventArgs<IConverter<T?, U?>> args) => args.Value is null
+            ? throw new InvalidOperationException(nameof(Converter))
+            : OnConverterChangedAsync();
+
+        private void HandleConversionResult<TResult>(ConversionResult<TResult?> result)
+        {
+            if (result.Success)
+            {
+                return;
+            }
+
+            if (result.ErrorMessageKey is not null)
+            {
+                OnConversionError(result.ErrorMessageKey, result.ErrorMessageArgs);
+            }
+            else
+            {
+                OnConversionError(result.ExceptionError.Message, []);
+            }
+        }
+
+        private void OnConversionError(string error, object[] arguments)
+        {
+            // note: we need to update the form here because the conversion error might lead to not updating the value
+            // ... which leads to not updating the form
+            Touched = true;
+            Form?.Update(this);
+            OnConversionErrorOccurred(Localizer[error, arguments]);
+        }
+
+        private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
+        {
+            if (_converterState.Value is ICultureAwareConverter cultureAwareConverter)
+            {
+                cultureAwareConverter.Culture = culture;
+                cultureAwareConverter.Format = format;
+            }
+        }
+
+        protected void ResetConverterErrors()
+        {
+            _getConversionResult = null;
+            _setConversionResult = null;
         }
 
         protected virtual T? ReadValue() => _value;

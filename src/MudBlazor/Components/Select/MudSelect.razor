@@ -62,7 +62,7 @@
                 {
                     <MudStack Class="@FillerClassname" Spacing="1" Row>
                         @{
-                            var value = _longestItem is { Value: not null } ? ToStringFunc ?.Invoke(_longestItem.Value) ?? Converter.Set(_longestItem.Value) : string.Empty;
+                            var value = _longestItem is { Value: not null } ? ToStringFunc ?.Invoke(_longestItem.Value) ?? ConvertSet(_longestItem.Value) : string.Empty;
                             var useLabel = Label is not null && Placeholder is null && !ShrinkLabel
                                         && (Adornment != Adornment.Start || (AdornmentIcon is null && AdornmentText is null));
 

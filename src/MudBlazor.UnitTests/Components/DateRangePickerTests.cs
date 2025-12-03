@@ -10,6 +10,8 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
+using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -154,11 +156,11 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.Text.Should().BeNullOrEmpty();
             picker.DateRange.Should().Be(null);
-            await comp.InvokeAsync(() => picker.Text = RangeConverter<DateTime>.Join(new DateTime(2021, 01, 01).ToShortDateString(), new DateTime(2021, 01, 10).ToShortDateString()));
+            await comp.InvokeAsync(() => picker.Text = RangeUtility.Join(new DateTime(2021, 01, 01).ToShortDateString(), new DateTime(2021, 01, 10).ToShortDateString()));
             picker.DateRange.Start.Should().Be(new DateTime(2021, 01, 01));
             picker.DateRange.End.Should().Be(new DateTime(2021, 01, 10));
             await comp.InvokeAsync(() => picker.DateRange = new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)));
-            picker.Text.Should().Be(RangeConverter<DateTime>.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
+            picker.Text.Should().Be(RangeUtility.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
         }
 
         [Test]
@@ -167,8 +169,8 @@ namespace MudBlazor.UnitTests.Components
             var d1 = "val1";
             var d2 = "val2";
 
-            var repr = RangeConverter<DateTime>.Join(d1, d2);
-            RangeConverter<DateTime>.Split(repr, out var c1, out var c2).Should().BeTrue();
+            var repr = RangeUtility.Join(d1, d2);
+            RangeUtility.Split(repr, out var c1, out var c2).Should().BeTrue();
 
             c1.Should().Be(d1);
             c2.Should().Be(d2);
@@ -433,7 +435,7 @@ namespace MudBlazor.UnitTests.Components
             var textStart = date.ToShortDateString();
             var textEnd = date.AddDays(5).ToShortDateString();
 
-            picker.Text.Should().Be(RangeConverter<DateTime>.Join(textStart, textEnd));
+            picker.Text.Should().Be(RangeUtility.Join(textStart, textEnd));
             var inputs = comp.FindAll("input");
             ((IHtmlInputElement)inputs[0]).Value.Should().Be(textStart);
             ((IHtmlInputElement)inputs[1]).Value.Should().Be(textEnd);
@@ -620,7 +622,7 @@ namespace MudBlazor.UnitTests.Components
 
 
             // set a value
-            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Text = RangeConverter<DateTime>.Join(startDate.ToShortDateString(), endDate.ToShortDateString()));
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Text = RangeUtility.Join(startDate.ToShortDateString(), endDate.ToShortDateString()));
 
             // assert new values have been applied
             dateRangePickerInstance.DateRange.Start.Should().Be(startDate);

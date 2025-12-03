@@ -4,6 +4,7 @@ using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -23,7 +24,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T?>>?> _itemsState;
-        private Converter<T> _converter = new DefaultConverter<T>();
+        private readonly IConverter<T?, string?> _converter = new DefaultConverter<T?>();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
         public MudTreeViewItem()
@@ -389,7 +390,7 @@ namespace MudBlazor
             return Value;
         }
 
-        private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Set(Value) : Text;
+        private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Convert(Value) : Text;
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
 

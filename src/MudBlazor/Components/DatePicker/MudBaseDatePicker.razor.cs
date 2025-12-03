@@ -4,7 +4,9 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -14,15 +16,22 @@ namespace MudBlazor
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
         private readonly string _mudPickerCalendarContentElementId;
-        private bool _dateFormatTouched;
+        private readonly ParameterState<string> _dateFormatState;
 
-        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
-        {
-            Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
-            Culture = CultureInfo.CurrentCulture
-        })
+        protected MudBaseDatePicker()
         {
             _mudPickerCalendarContentElementId = Identifier.Create();
+            Culture = CultureInfo.CurrentCulture;
+            Converter = new DefaultConverter<DateTime?>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+
+            using var registerScope = CreateRegisterScope();
+            _dateFormatState = registerScope.RegisterParameter<string>(nameof(DateFormat))
+                .WithParameter(() => DateFormat)
+                .WithChangeHandler(DateFormatChangedAsync);
         }
 
         [Inject]
@@ -63,22 +72,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string DateFormat
-        {
-            get
-            {
-                return (Converter as DefaultConverter<DateTime?>)?.Format;
-            }
-            set
-            {
-                if (Converter is DefaultConverter<DateTime?> defaultConverter)
-                {
-                    defaultConverter.Format = value;
-                    _dateFormatTouched = true;
-                }
-                DateFormatChangedAsync(value);
-            }
-        }
+        public string DateFormat { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="DateFormat"/> has changed.
@@ -88,17 +82,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
-        protected override bool SetCulture(CultureInfo value)
-        {
-            if (!base.SetCulture(value))
-                return false;
-
-            if (!_dateFormatTouched && Converter is DefaultConverter<DateTime?> defaultConverter)
-                defaultConverter.Format = value.DateTimeFormat.ShortDatePattern;
-
-            return true;
-        }
+        private Task DateFormatChangedAsync(ParameterChangedEventArgs<string> args) => DateFormatChangedAsync(args.Value);
 
         /// <summary>
         /// The day representing the first day of the week.
@@ -108,7 +92,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public DayOfWeek? FirstDayOfWeek { get; set; } = null;
+        public DayOfWeek? FirstDayOfWeek { get; set; }
 
         /// <summary>
         /// The current month shown in the date picker.
@@ -306,10 +290,10 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var a = Converter.Get(Text);
+                var a = ConvertGet(Text);
                 if (a.HasValue)
                 {
-                    a = new DateTime(Culture.Calendar.GetYear(a.Value), Culture.Calendar.GetMonth(a.Value), 1, Culture.Calendar);
+                    a = new DateTime(GetCulture().Calendar.GetYear(a.Value), GetCulture().Calendar.GetMonth(a.Value), 1, GetCulture().Calendar);
                     PickerMonth = a;
                 }
             }
@@ -331,24 +315,24 @@ namespace MudBlazor
         /// </summary>
         protected DateTime GetMonthStart(int month)
         {
-            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
-            var correctYear = FixYear ?? Culture.Calendar.GetYear(monthStartDate);
-            var correctMonth = FixMonth ?? Culture.Calendar.GetMonth(monthStartDate);
-            monthStartDate = new DateTime(correctYear, correctMonth, Culture.Calendar.GetDayOfMonth(monthStartDate), 0, 0, 0, 0, Culture.Calendar, DateTimeKind.Utc);
+            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(GetCulture());
+            var correctYear = FixYear ?? GetCulture().Calendar.GetYear(monthStartDate);
+            var correctMonth = FixMonth ?? GetCulture().Calendar.GetMonth(monthStartDate);
+            monthStartDate = new DateTime(correctYear, correctMonth, GetCulture().Calendar.GetDayOfMonth(monthStartDate), 0, 0, 0, 0, GetCulture().Calendar, DateTimeKind.Utc);
 
             // Return the min supported datetime of the calendar when this is year 1 and first month!
             if (_picker_month is { Year: 1, Month: 1 })
             {
-                return Culture.Calendar.MinSupportedDateTime;
+                return GetCulture().Calendar.MinSupportedDateTime;
             }
 
-            if (_picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 9999
-                && Culture.Calendar.GetMonth(_picker_month.Value) == Culture.Calendar.GetMonthsInYear(Culture.Calendar.GetYear(_picker_month.Value))
+            if (_picker_month.HasValue && GetCulture().Calendar.GetYear(_picker_month.Value) == 9999
+                && GetCulture().Calendar.GetMonth(_picker_month.Value) == GetCulture().Calendar.GetMonthsInYear(GetCulture().Calendar.GetYear(_picker_month.Value))
                 && month >= 1)
             {
-                return Culture.Calendar.MaxSupportedDateTime;
+                return GetCulture().Calendar.MaxSupportedDateTime;
             }
-            return Culture.Calendar.AddMonths(monthStartDate, month);
+            return GetCulture().Calendar.AddMonths(monthStartDate, month);
         }
 
         /// <summary>
@@ -356,15 +340,15 @@ namespace MudBlazor
         /// </summary>
         protected DateTime GetMonthEnd(int month)
         {
-            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
-            return Culture.Calendar.AddMonths(monthStartDate, month).EndOfMonth(Culture);
+            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(GetCulture());
+            return GetCulture().Calendar.AddMonths(monthStartDate, month).EndOfMonth(GetCulture());
         }
 
         protected DayOfWeek GetFirstDayOfWeek()
         {
             if (FirstDayOfWeek.HasValue)
                 return FirstDayOfWeek.Value;
-            return Culture.DateTimeFormat.FirstDayOfWeek;
+            return GetCulture().DateTimeFormat.FirstDayOfWeek;
         }
 
         /// <summary>
@@ -377,15 +361,15 @@ namespace MudBlazor
             if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
-            if ((Culture.Calendar.MaxSupportedDateTime - month_first).Days >= index * 7)
+            if ((GetCulture().Calendar.MaxSupportedDateTime - month_first).Days >= index * 7)
             {
                 var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
                 for (var i = 0; i < 7; i++)
                 {
-                    if ((Culture.Calendar.MaxSupportedDateTime - week_first).Days >= i)
+                    if ((GetCulture().Calendar.MaxSupportedDateTime - week_first).Days >= i)
                         yield return week_first.AddDays(i);
                     else
-                        yield return Culture.Calendar.MaxSupportedDateTime;
+                        yield return GetCulture().Calendar.MaxSupportedDateTime;
                 }
             }
         }
@@ -405,8 +389,8 @@ namespace MudBlazor
             if (week_first.Month != month_first.Month && week_first.AddDays(6).Month != month_first.Month)
                 return "";
 
-            return Culture.Calendar.GetWeekOfYear(week_first,
-                Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
+            return GetCulture().Calendar.GetWeekOfYear(week_first,
+                GetCulture().DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? GetCulture().DateTimeFormat.FirstDayOfWeek).ToString();
         }
 
         protected virtual OpenTo? GetNextView()
@@ -482,7 +466,7 @@ namespace MudBlazor
         protected virtual Task OnYearClickedAsync(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1, Culture.Calendar);
+            PickerMonth = new DateTime(year, current.Month, 1, GetCulture().Calendar);
             var nextView = GetNextView();
             if (nextView != null)
             {
@@ -511,9 +495,9 @@ namespace MudBlazor
         {
             if (!FixDay.HasValue)
             {
-                return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
+                return month.EndOfMonth(GetCulture()) < MinDate || month > MaxDate;
             }
-            if (Culture.Calendar.GetDaysInMonth(Culture.Calendar.GetYear(month), Culture.Calendar.GetMonth(month)) < FixDay!.Value)
+            if (GetCulture().Calendar.GetDaysInMonth(GetCulture().Calendar.GetYear(month), GetCulture().Calendar.GetMonth(month)) < FixDay!.Value)
             {
                 return true;
             }
@@ -526,7 +510,7 @@ namespace MudBlazor
         /// </summary>
         protected IEnumerable<string> GetAbbreviatedDayNames()
         {
-            var dayNamesNormal = Culture.DateTimeFormat.AbbreviatedDayNames;
+            var dayNamesNormal = GetCulture().DateTimeFormat.AbbreviatedDayNames;
             var dayNamesShifted = Shift(dayNamesNormal, (int)GetFirstDayOfWeek());
             return dayNamesShifted;
         }
@@ -544,14 +528,14 @@ namespace MudBlazor
 
         protected string GetMonthName(int month)
         {
-            return GetMonthStart(month).ToString(Culture.DateTimeFormat.YearMonthPattern, Culture);
+            return GetMonthStart(month).ToString(GetCulture().DateTimeFormat.YearMonthPattern, GetCulture());
         }
 
         protected abstract string GetTitleDateString();
 
         protected string FormatTitleDate(DateTime? date)
         {
-            return date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+            return date?.ToString(TitleDateFormat ?? "ddd, dd MMM", GetCulture()) ?? "";
         }
 
         protected string GetFormattedYearString()
@@ -564,11 +548,11 @@ namespace MudBlazor
         private void OnPreviousMonthClick()
         {
             // It is impossible to go further into the past after the first year and the first month!
-            if (PickerMonth.HasValue && Culture.Calendar.GetYear(PickerMonth.Value) == 1 && Culture.Calendar.GetMonth(PickerMonth.Value) == 1)
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 1 && GetCulture().Calendar.GetMonth(PickerMonth.Value) == 1)
             {
                 return;
             }
-            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
+            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(GetCulture());
         }
 
         private void OnNextMonthClick()
@@ -619,7 +603,7 @@ namespace MudBlazor
         {
             _scrollToYearAfterRender = false;
             var dateTime = date ?? GetMonthStart(0);
-            var id = $"{_componentId}{Culture.Calendar.GetYear(dateTime)}";
+            var id = $"{_componentId}{GetCulture().Calendar.GetYear(dateTime)}";
             await ScrollManager.ScrollToYearAsync(id);
             StateHasChanged();
         }
@@ -627,22 +611,22 @@ namespace MudBlazor
         protected int GetMinYear()
         {
             if (MinDate.HasValue)
-                return Culture.Calendar.GetYear(MinDate.Value);
-            return Culture.Calendar.GetYear(DateTime.Today) - 100;
+                return GetCulture().Calendar.GetYear(MinDate.Value);
+            return GetCulture().Calendar.GetYear(DateTime.Today) - 100;
         }
 
         protected int GetMaxYear()
         {
             if (MaxDate.HasValue)
-                return Culture.Calendar.GetYear(MaxDate.Value);
-            return Culture.Calendar.GetYear(DateTime.Today) + 100;
+                return GetCulture().Calendar.GetYear(MaxDate.Value);
+            return GetCulture().Calendar.GetYear(DateTime.Today) + 100;
         }
 
         private string GetYearClasses(int year)
         {
             var selectedYear = HighlightedDate ?? GetMonthStart(0);
 
-            if (year == Culture.Calendar.GetYear(selectedYear))
+            if (year == GetCulture().Calendar.GetYear(selectedYear))
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
@@ -659,7 +643,7 @@ namespace MudBlazor
         {
             var selectedYear = HighlightedDate ?? GetMonthStart(0);
 
-            if (year == Culture.Calendar.GetYear(selectedYear))
+            if (year == GetCulture().Calendar.GetYear(selectedYear))
                 return Typo.h5;
 
             return Typo.subtitle1;
@@ -674,32 +658,32 @@ namespace MudBlazor
         private IEnumerable<DateTime> GetAllMonths()
         {
             var current = GetMonthStart(0);
-            var calendarYear = Culture.Calendar.GetYear(current);
-            var firstOfCalendarYear = Culture.Calendar.ToDateTime(calendarYear, 1, 1, 0, 0, 0, 0);
-            for (var i = 0; i < Culture.Calendar.GetMonthsInYear(calendarYear); i++)
-                yield return Culture.Calendar.AddMonths(firstOfCalendarYear, i);
+            var calendarYear = GetCulture().Calendar.GetYear(current);
+            var firstOfCalendarYear = GetCulture().Calendar.ToDateTime(calendarYear, 1, 1, 0, 0, 0, 0);
+            for (var i = 0; i < GetCulture().Calendar.GetMonthsInYear(calendarYear); i++)
+                yield return GetCulture().Calendar.AddMonths(firstOfCalendarYear, i);
         }
 
         private string GetAbbreviatedMonthName(DateTime month)
         {
-            var calendarMonth = Culture.Calendar.GetMonth(month);
-            return Culture.DateTimeFormat.AbbreviatedMonthNames[calendarMonth - 1];
+            var calendarMonth = GetCulture().Calendar.GetMonth(month);
+            return GetCulture().DateTimeFormat.AbbreviatedMonthNames[calendarMonth - 1];
         }
 
         private string GetMonthName(DateTime month)
         {
-            var calendarMonth = Culture.Calendar.GetMonth(month);
-            return Culture.DateTimeFormat.MonthNames[calendarMonth - 1];
+            var calendarMonth = GetCulture().Calendar.GetMonth(month);
+            return GetCulture().DateTimeFormat.MonthNames[calendarMonth - 1];
         }
 
         private string GetMonthClasses(DateTime month)
         {
             var selectedMonth = HighlightedDate ?? GetMonthStart(0);
 
-            if (Culture.Calendar.GetYear(month) != Culture.Calendar.GetYear(selectedMonth))
+            if (GetCulture().Calendar.GetYear(month) != GetCulture().Calendar.GetYear(selectedMonth))
                 return null;
 
-            if (Culture.Calendar.GetMonth(month) == Culture.Calendar.GetMonth(selectedMonth) && !IsMonthDisabled(selectedMonth))
+            if (GetCulture().Calendar.GetMonth(month) == GetCulture().Calendar.GetMonth(selectedMonth) && !IsMonthDisabled(selectedMonth))
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
 
             return null;
@@ -709,10 +693,10 @@ namespace MudBlazor
         {
             var selectedMonth = HighlightedDate ?? GetMonthStart(0);
 
-            if (Culture.Calendar.GetYear(month) != Culture.Calendar.GetYear(selectedMonth))
+            if (GetCulture().Calendar.GetYear(month) != GetCulture().Calendar.GetYear(selectedMonth))
                 return Typo.subtitle1;
 
-            if (Culture.Calendar.GetMonth(month) == Culture.Calendar.GetMonth(selectedMonth))
+            if (GetCulture().Calendar.GetMonth(month) == GetCulture().Calendar.GetMonth(selectedMonth))
                 return Typo.h5;
 
             return Typo.subtitle1;
@@ -727,11 +711,11 @@ namespace MudBlazor
 
             var today = TimeProvider.GetLocalNow().Date;
 
-            var year = FixYear ?? Culture.Calendar.GetYear(today);
-            var month = FixMonth ?? (year == Culture.Calendar.GetYear(today) ? Culture.Calendar.GetMonth(today) : 1);
+            var year = FixYear ?? GetCulture().Calendar.GetYear(today);
+            var month = FixMonth ?? (year == GetCulture().Calendar.GetYear(today) ? GetCulture().Calendar.GetMonth(today) : 1);
             var day = FixDay ?? 1;
 
-            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", Culture, DateTimeStyles.None, out var date))
+            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
             {
                 HighlightedDate = date;
             }
@@ -756,11 +740,29 @@ namespace MudBlazor
                 ScrollToYearAsync().CatchAndLog();
         }
 
+        protected override string GetFormat()
+        {
+            if (!string.IsNullOrEmpty(_dateFormatState.Value))
+            {
+                return _dateFormatState.Value;
+            }
+
+            var culture = GetCulture();
+            if (!string.IsNullOrEmpty(culture.DateTimeFormat.ShortDatePattern))
+            {
+                // In some cases, a custom culture may set the ShortDatePattern to an empty string.
+                // This could result in an invalid or unintended date format, but if it's not empty, return the custom ShortDatePattern.
+                return culture.DateTimeFormat.ShortDatePattern;
+            }
+
+            return CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
+        }
+
         protected abstract DateTime GetCalendarStartOfMonth();
 
         private int GetCalendarDayOfMonth(DateTime date)
         {
-            return Culture.Calendar.GetDayOfMonth(date);
+            return GetCulture().Calendar.GetDayOfMonth(date);
         }
 
         /// <summary>

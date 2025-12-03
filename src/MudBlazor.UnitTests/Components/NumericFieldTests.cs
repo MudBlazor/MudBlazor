@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
+using MudBlazor.Utilities.Converter;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -63,8 +64,10 @@ namespace MudBlazor.UnitTests.Components
             //
             0.0.ToString("F1", CultureInfo.InvariantCulture).Should().Be("0.0");
             //
-            await comp.InvokeAsync(() => numericField.Format = "F1");
-            await comp.InvokeAsync(() => numericField.Culture = CultureInfo.InvariantCulture);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Format, "F1")
+                .Add(x => x.Culture, CultureInfo.InvariantCulture));
+
             numericField.Value.Should().Be(0.0);
             numericField.Text.Should().Be("0.0");
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -237,12 +240,11 @@ namespace MudBlazor.UnitTests.Components
         [Test, CancelAfter(1000)]
         public async Task NumericFieldUpdateLoopProtectionTest()
         {
-            var comp = Context.RenderComponent<MudNumericField<int>>();
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.Converter, Conversions.From((int s) => s.ToString(), int.Parse)));
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that numericFields and other inputs are now protected against.
             var numericField = comp.Instance;
-            numericField.Converter.SetFunc = s => s.ToString();
-            numericField.Converter.GetFunc = s => int.Parse(s);
             await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", 1));
             numericField.Value.Should().Be(1);
             numericField.Text.Should().Be("1");
@@ -774,10 +776,12 @@ namespace MudBlazor.UnitTests.Components
             numericField.Text.Should().Be(null);
             //
             77.ToString("€0", CultureInfo.InvariantCulture).Should().Be("€77");
-            var conv = new DefaultConverter<int?>();
-            conv.Format = "€0";
-            conv.Culture = CultureInfo.InvariantCulture;
-            conv.Set(77).Should().Be("€77");
+            var conv = new DefaultConverter<int?>()
+            {
+                Culture = () => CultureInfo.InvariantCulture,
+                Format = () => "€0"
+            };
+            conv.Convert(77).Should().Be("€77");
             //
             comp.FindAll("input").First().Change("1234");
             comp.FindAll("input").First().Blur();
@@ -840,7 +844,7 @@ namespace MudBlazor.UnitTests.Components
             }
             // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
-            comp.Instance.Value.Should().Be(converter.Get(currentText));
+            comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
             numericField.Text.Should().Be(currentText);
         }
 
@@ -852,7 +856,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>(
                 Parameter(nameof(MudNumericField<int>.Value), defaultValue));
             var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
-            textfield.Text.Should().Be(converter.Set(defaultValue));
+            textfield.Text.Should().Be(converter.Convert(defaultValue));
         }
 
         /// <summary>
@@ -996,11 +1000,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("pattern");
             field.GetAttribute("type").Should().Be("number");
 
-            var usePattern = Parameter(nameof(NumericFieldRenderTest.UsePattern), true);
-
-            await comp.SetParametersAndRenderAsync(usePattern);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.UsePattern, true));
             comp.Markup.Should().Contain("pattern");
             field.GetAttribute("type").Should().Be("text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.UsePattern, false));
+
+            comp.Markup.Should().NotContain("pattern");
+            field.GetAttribute("type").Should().Be("number");
         }
 
         [Test]
@@ -1008,13 +1017,14 @@ namespace MudBlazor.UnitTests.Components
         public void Should_ignore_default_culture()
         {
             var comp = Context.RenderComponent<NumericFieldRenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<decimal>>();
 
             comp.Find("input").Change("123.45");
             comp.Find("input").Blur();
 
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
-            comp.Instance.NumericField.Text.Should().Be("123.45");
-            comp.Instance.NumericField.Culture.Name.Should().Be("");
+            numericField.Instance.Text.Should().Be("123.45");
+            numericField.Instance.GetState(x => x.Culture).Name.Should().Be("");
         }
 
         [Test]
@@ -1044,7 +1054,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
             comp.Instance.Text.Should().Be("123,45");
-            comp.Instance.Culture.Name.Should().Be("ru-RU");
+            comp.Instance.GetState(x => x.Culture).Name.Should().Be("ru-RU");
         }
 
         [Test]

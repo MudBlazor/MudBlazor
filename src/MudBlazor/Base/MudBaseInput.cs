@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -32,12 +32,21 @@ namespace MudBlazor
         protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
+        private readonly ParameterState<string?> _formatState;
         private readonly ParameterState<string?> _inputIdState;
 
         protected MudBaseInput()
-            : base(new DefaultConverter<T>())
         {
+            Converter = new DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+
             using var registerScope = CreateRegisterScope();
+            _formatState = registerScope.RegisterParameter<string?>(nameof(Format))
+                .WithParameter(() => Format)
+                .WithChangeHandler(OnCultureAndFormatChangedAsync);
             _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
@@ -418,11 +427,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string? Format
-        {
-            get => ((Converter<T>)Converter).Format;
-            set => SetFormat(value);
-        }
+        public string? Format { get; set; }
 
         /// <summary>
         /// The ID of the input element.
@@ -467,7 +472,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            return SetTextAsync(Converter.Set(Value), updateValue);
+            return SetTextAsync(ConvertSet(Value), updateValue);
         }
 
         /// <summary>
@@ -592,41 +597,21 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            return SetValueAsync(Converter.Get(Text), updateText);
+            return SetValueAsync(ConvertGet(Text), updateText);
         }
 
-        protected override bool SetConverter(Converter<T, string> value)
-        {
-            var changed = base.SetConverter(value);
-            if (changed)
-            {
-                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-            }
+        protected override string? GetFormat() => _formatState.Value;
 
-            return changed;
+        protected override async Task OnCultureAndFormatChangedAsync()
+        {
+            await base.OnCultureAndFormatChangedAsync();
+            await UpdateTextPropertyAsync(false);
         }
 
-        protected override bool SetCulture(CultureInfo value)
+        protected override async Task OnConverterChangedAsync()
         {
-            var changed = base.SetCulture(value);
-            if (changed)
-            {
-                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-            }
-
-            return changed;
-        }
-
-        protected virtual bool SetFormat(string? value)
-        {
-            var changed = Format != value;
-            if (changed)
-            {
-                ((Converter<T>)Converter).Format = value;
-                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
-            }
-
-            return changed;
+            await base.OnConverterChangedAsync();
+            await UpdateTextPropertyAsync(false);
         }
 
         protected override async Task ValidateValue()
