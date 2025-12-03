@@ -1237,6 +1237,43 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input[id='event-range-start']").Should().NotBeNull();
             comp.Find("input[id='event-range-end']").Should().NotBeNull();
         }
+
+        private class DateRangePickerImpl : MudDateRangePicker
+        {
+            public DateTime StartOfMonth() => base.GetCalendarStartOfMonth();
+        }
+
+        [Test]
+        public async Task StartMonth_SetInitially_IsRespected()
+        {
+            var startMonth = new DateTime(2025, 12, 3); //expected Dec. 3rd
+            var dateRange = new DateRange(new DateTime(2025, 12, 5), new DateTime(2025, 12, 20));
+
+            var picker = Context.RenderComponent<DateRangePickerImpl>(ps => ps
+                .Add(p => p.StartMonth, startMonth)
+                .Add(p => p.DateRange, dateRange)
+            );
+
+            var calendarStart = await picker.InvokeAsync(() => picker.Instance.StartOfMonth());
+            Assert.That(startMonth.Year == calendarStart.Year);
+            Assert.That(startMonth.Month == calendarStart.Month);
+        }
+
+        [Test]
+        public async Task Unset_StartMonth_IsIgnored_RangeStart_IsUsed()
+        {
+            var dateRangeStart = new DateTime(2025, 12, 3);
+            var dateRange = new DateRange(new DateTime(2025, 12, 5), new DateTime(2025, 12, 20));
+
+            var picker = Context.RenderComponent<DateRangePickerImpl>(ps => ps
+                .Add(p => p.DateRange, dateRange)
+            );
+
+            var calendarStart = await picker.InvokeAsync(() => picker.Instance.StartOfMonth());
+            Assert.That(dateRangeStart.Year == calendarStart.Year);
+            Assert.That(dateRangeStart.Month == calendarStart.Month);
+        }
+
     }
 
     public static class DatePickerRenderedFragmentExtensions
