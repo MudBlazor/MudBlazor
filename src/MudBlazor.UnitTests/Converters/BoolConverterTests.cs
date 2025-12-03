@@ -4,7 +4,6 @@
 
 using System.Reflection;
 using FluentAssertions;
-using MudBlazor.Utilities.Converter;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Converters;

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FluentAssertions;
-using MudBlazor.Utilities.Converter;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Converters;
