@@ -253,7 +253,7 @@ namespace MudBlazor
         internal bool _isEditFormOpen;
 
         // converters
-        private IConverter<bool, bool?> _oppositeBoolConverter = Conversions.From(value => !value, (bool? value) => !value ?? true);
+        private readonly IConverter<bool, bool?> _oppositeBoolConverter = Conversions.From(value => !value, (bool? value) => !value ?? true);
 
         #region Notify Children Delegates
 
