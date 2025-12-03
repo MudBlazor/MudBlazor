@@ -42,7 +42,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         // Do NOT pass Culture or Format directly: new NumberConverter<sbyte>(Culture, Format)
         // The dispatcher caches method delegates and captures the converter's field values at registration time.
         // Using () => Culture() and () => Format() ensures the converters always read the latest property values.
-        // We could make Add a Func<IConverter> overload
+        // We could make Add a factory Func<IConverter> overload, but that would create instance on each conversion attempt which is less performant than current the trick.
         _dispatcher = ReversibleTypeDispatcher.Create<T?, string?>()
             .Add(StringConverter.Instance)
             .Add<char>(CharConverter.Instance)
