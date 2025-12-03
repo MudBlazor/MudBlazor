@@ -147,7 +147,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    //Converter.GetError = false;
+                    ResetConverterErrors();
                     if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
