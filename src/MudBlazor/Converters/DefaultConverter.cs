@@ -85,6 +85,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Add<TimeOnly?>(new TimeOnlyConverter(() => Culture(), () => Format()))
             .Add<TimeSpan>(new TimeSpanConverter(() => Culture(), () => Format()))
             .Add<TimeSpan?>(new TimeSpanConverter(() => Culture(), () => Format()))
+            // Let's not use that for now and see if we really need it
             //.Add(new ObjectConverter(() => Culture(), () => Format()))
             .Build();
     }

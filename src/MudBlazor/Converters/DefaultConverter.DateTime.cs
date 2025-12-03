@@ -14,9 +14,17 @@ internal partial class DefaultConverter
     public sealed class DateTimeConverter(Func<CultureInfo> culture, Func<string?> format)
         : IReversibleConverter<DateTime, string?>, IReversibleConverter<DateTime?, string?>
     {
-        public string Convert(DateTime input) => input.ToString(format.Invoke(), culture.Invoke());
+        public string Convert(DateTime input)
+        {
+            var currentCulture = culture.Invoke();
+            return input.ToString(format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture);
+        }
 
-        public string? Convert(DateTime? input) => input?.ToString(format.Invoke(), culture.Invoke());
+        public string? Convert(DateTime? input)
+        {
+            var currentCulture = culture.Invoke();
+            return input?.ToString(format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture);
+        }
 
         public DateTime ConvertBack(string? input)
         {

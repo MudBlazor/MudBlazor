@@ -7,10 +7,10 @@ using FluentAssertions;
 using NUnit.Framework;
 
 #nullable enable
-namespace MudBlazor.UnitTests.Utilities
+namespace MudBlazor.UnitTests.Converters
 {
     [TestFixture]
-    public class BindingConverterTests
+    public class DefaultConverterLegacyTests
     {
         [Test]
         public void DefaultConverter_String_ValidCases()
@@ -293,19 +293,19 @@ namespace MudBlazor.UnitTests.Utilities
             c3.Convert(null).Should().Be(null);
         }
 
-        //[Test]
-        //public void DefaultConverter_DateTime_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<DateTime>();
-        //    var date = DateTime.Today;
-        //    c1.ConvertBack(c1.Convert(date)).Should().Be(date);
+        [Test]
+        public void DefaultConverter_DateTime_ValidCases()
+        {
+            var c1 = new DefaultConverter<DateTime>();
+            var date = DateTime.Today;
+            c1.ConvertBack(c1.Convert(date)).Should().Be(date);
 
-        //    var c2 = new DefaultConverter<DateTime?>();
-        //    var date2 = DateTime.Today;
-        //    c2.ConvertBack(c2.Convert(date2)).Should().Be(date2);
-        //    c2.Convert(null).Should().Be(null);
-        //    c2.ConvertBack(null).Should().Be(null);
-        //}
+            var c2 = new DefaultConverter<DateTime?>();
+            var date2 = DateTime.Today;
+            c2.ConvertBack(c2.Convert(date2)).Should().Be(date2);
+            c2.Convert(null).Should().Be(null);
+            c2.ConvertBack(null).Should().Be(null);
+        }
 
         [Test]
         public void DefaultConverter_DateTime_Format_AffectsConversion()

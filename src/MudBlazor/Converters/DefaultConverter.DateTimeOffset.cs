@@ -14,10 +14,7 @@ internal partial class DefaultConverter
     internal sealed class DateTimeOffsetConverter(Func<CultureInfo> culture, Func<string?> format)
         : IReversibleConverter<DateTimeOffset, string?>, IReversibleConverter<DateTimeOffset?, string?>
     {
-        public string Convert(DateTimeOffset input)
-        {
-            return input.ToString(format.Invoke(), culture.Invoke());
-        }
+        public string Convert(DateTimeOffset input) => input.ToString(format.Invoke(), culture.Invoke());
 
         public string? Convert(DateTimeOffset? input) => input?.ToString(format.Invoke(), culture.Invoke());
 
