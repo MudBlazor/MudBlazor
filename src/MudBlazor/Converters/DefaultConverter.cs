@@ -131,6 +131,11 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         if (typeof(T).IsEnum)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return default;
+            }
+
             if (Enum.TryParse(typeof(T), input, out var result))
             {
                 return (T)result;

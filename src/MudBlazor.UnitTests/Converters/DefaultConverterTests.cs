@@ -226,6 +226,10 @@ public class DefaultConverterTests
         parsed.Should().Be(date);
     }
 
+    #endregion
+
+    #region Enum
+
     [Test]
     public void DefaultConverter_Enum_ConvertAndConvertBack_NonNullable()
     {
@@ -239,6 +243,7 @@ public class DefaultConverterTests
 
         // back
         conv.ConvertBack("Wednesday").Should().Be(Value);
+        conv.ConvertBack(string.Empty).Should().Be(default);
 
         // invalid should throw ConversionException with expected key
         Action act = () => conv.ConvertBack("NotAValue");

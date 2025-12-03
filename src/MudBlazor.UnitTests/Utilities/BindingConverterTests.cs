@@ -370,25 +370,24 @@ namespace MudBlazor.UnitTests.Utilities
             dec2.ConvertBack("1,7").Should().Be(1.7m);
         }
 
-        //[Test]
-        //public void DefaultConverter_Guid_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<Guid>();
-        //    var guid = Guid.NewGuid();
-        //    c1.Set(guid).Should().Be(guid.ToString());
-        //    c1.Get(guid.ToString()).Should().Be(guid);
-        //    c1.Get("").Should().Be(Guid.Empty);
-        //    c1.Get(null).Should().Be(Guid.Empty);
+        [Test]
+        public void DefaultConverter_Guid_ValidCases()
+        {
+            var c1 = new DefaultConverter<Guid>();
+            var guid = Guid.NewGuid();
+            c1.Convert(guid).Should().Be(guid.ToString());
+            c1.ConvertBack(guid.ToString()).Should().Be(guid);
+            c1.ConvertBack("").Should().Be(Guid.Empty);
+            c1.ConvertBack(null).Should().Be(Guid.Empty);
 
-        //    var c2 = new DefaultConverter<Guid?>();
-        //    Guid? guid2;
-        //    guid2 = Guid.NewGuid();
-        //    c2.Set(guid2).Should().Be(guid2.ToString());
-        //    c2.Set(null).Should().Be(null);
-        //    c2.Get(guid2.ToString()).Should().Be(guid2);
-        //    c2.Get("").Should().Be(null);
-        //    c2.Get(null).Should().Be(null);
-        //}
+            var c2 = new DefaultConverter<Guid?>();
+            Guid? guid2 = Guid.NewGuid();
+            c2.Convert(guid2).Should().Be(guid2.ToString());
+            c2.Convert(null).Should().Be(null);
+            c2.ConvertBack(guid2.ToString()).Should().Be(guid2);
+            c2.ConvertBack("").Should().Be(null);
+            c2.ConvertBack(null).Should().Be(null);
+        }
 
         //[Test]
         //public void DefaultConverter_Guid_ErrorCases()
@@ -403,28 +402,26 @@ namespace MudBlazor.UnitTests.Utilities
         //    TestInvalidFormat<Guid?>(invalidInput, guidErrorMessage);
         //}
 
-        //public enum YesNoMaybe { Maybe, Yes, No }
+        [Test]
+        public void DefaultConverter_Enum_ValidCases()
+        {
+            var c1 = new DefaultConverter<ButtonType>();
+            c1.Convert(ButtonType.Button).Should().Be("Button");
+            c1.ConvertBack("Button").Should().Be(ButtonType.Button);
 
-        //[Test]
-        //public void DefaultConverter_Enum_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<ButtonType>();
-        //    c1.Set(ButtonType.Button).Should().Be("Button");
-        //    c1.Get("Button").Should().Be(ButtonType.Button);
+            var c2 = new DefaultConverter<YesNoMaybe>();
+            c2.Convert(YesNoMaybe.Yes).Should().Be("Yes");
+            c2.ConvertBack("No").Should().Be(YesNoMaybe.No);
+            c2.ConvertBack(string.Empty).Should().Be(default);
+            c2.ConvertBack(null).Should().Be(default);
 
-        //    var c2 = new DefaultConverter<YesNoMaybe>();
-        //    c2.Set(YesNoMaybe.Yes).Should().Be("Yes");
-        //    c2.Get("No").Should().Be(YesNoMaybe.No);
-        //    c2.Get("").Should().Be(default(YesNoMaybe));
-        //    c2.Get(null).Should().Be(default(YesNoMaybe));
-
-        //    var c3 = new DefaultConverter<YesNoMaybe?>();
-        //    c3.Set(YesNoMaybe.Maybe).Should().Be("Maybe");
-        //    c3.Get("Maybe").Should().Be(YesNoMaybe.Maybe);
-        //    c3.Get("").Should().Be(null);
-        //    c3.Get(null).Should().Be(null);
-        //    c3.Set(null).Should().Be(null);
-        //}
+            var c3 = new DefaultConverter<YesNoMaybe?>();
+            c3.Convert(YesNoMaybe.Maybe).Should().Be("Maybe");
+            c3.ConvertBack("Maybe").Should().Be(YesNoMaybe.Maybe);
+            c3.ConvertBack(string.Empty).Should().Be(null);
+            c3.ConvertBack(null).Should().Be(null);
+            c3.Convert(null).Should().Be(null);
+        }
 
         //[Test]
         //public void DefaultConverter_Enum_ErrorCases()
@@ -445,13 +442,13 @@ namespace MudBlazor.UnitTests.Utilities
         //{
         //    var c1 = new DefaultConverter<DateTime>();
         //    var date = DateTime.Today;
-        //    c1.Get(c1.Set(date)).Should().Be(date);
+        //    c1.ConvertBack(c1.Convert(date)).Should().Be(date);
 
         //    var c2 = new DefaultConverter<DateTime?>();
         //    var date2 = DateTime.Today;
-        //    c2.Get(c2.Set(date2)).Should().Be(date2);
-        //    c2.Set(null).Should().Be(null);
-        //    c2.Get(null).Should().Be(null);
+        //    c2.ConvertBack(c2.Convert(date2)).Should().Be(date2);
+        //    c2.Convert(null).Should().Be(null);
+        //    c2.ConvertBack(null).Should().Be(null);
         //}
 
         //[Test]
@@ -491,37 +488,35 @@ namespace MudBlazor.UnitTests.Utilities
         //    TestInvalidFormat<DateTime?>(invalidInput, dtErrorMessage);
         //}
 
-        //[Test]
-        //public void DefaultConverter_TimeSpan_ValidCases()
-        //{
-        //    var c1 = new DefaultConverter<TimeSpan>();
-        //    var time = DateTime.Now.TimeOfDay;
-        //    c1.Get(c1.Set(time)).Should().Be(time);
+        [Test]
+        public void DefaultConverter_TimeSpan_ValidCases()
+        {
+            var c1 = new DefaultConverter<TimeSpan>();
+            var time = DateTime.Now.TimeOfDay;
+            c1.ConvertBack(c1.Convert(time)).Should().Be(time);
 
-        //    var c2 = new DefaultConverter<TimeSpan?>();
-        //    var time2 = DateTime.Now.TimeOfDay;
-        //    c2.Get(c2.Set(time2)).Should().Be(time2);
-        //    c2.Set(null).Should().Be(null);
-        //    c2.Get(null).Should().Be(null);
-        //}
+            var c2 = new DefaultConverter<TimeSpan?>();
+            var time2 = DateTime.Now.TimeOfDay;
+            c2.ConvertBack(c2.Convert(time2)).Should().Be(time2);
+            c2.Convert(null).Should().Be(null);
+            c2.ConvertBack(null).Should().Be(null);
+        }
 
-        //[Test]
-        //public void DefaultConverter_TimeSpan_DefaultTimeSpanFormat_AffectsConversion()
-        //{
-        //    var converter = new DefaultConverter<TimeSpan>();
-        //    var time = new TimeSpan(1, 2, 3);
+        [Test]
+        public void DefaultConverter_TimeSpan_Format_AffectsConversion()
+        {
+            var converter = new DefaultConverter<TimeSpan>();
+            var time = new TimeSpan(1, 2, 3);
 
-        //    // Test custom DefaultTimeSpanFormat
-        //    converter.DefaultTimeSpanFormat = @"hh\:mm";
-        //    converter.Set(time).Should().Be("01:02");
-        //    converter.Get("01:02").Should().Be(new TimeSpan(1, 2, 0));
+            converter.Format = () => @"hh\:mm";
+            converter.Convert(time).Should().Be("01:02");
+            converter.ConvertBack("01:02").Should().Be(new TimeSpan(1, 2, 0));
 
-        //    // Test Format property override
-        //    converter.Format = @"hh\:mm\:ss\.fff";
-        //    var preciseTime = new TimeSpan(0, 1, 2, 3, 456);
-        //    converter.Set(preciseTime).Should().Be("01:02:03.456");
-        //    converter.Get("01:02:03.456").Should().Be(preciseTime);
-        //}
+            converter.Format = () => @"hh\:mm\:ss\.fff";
+            var preciseTime = new TimeSpan(0, 1, 2, 3, 456);
+            converter.Convert(preciseTime).Should().Be("01:02:03.456");
+            converter.ConvertBack("01:02:03.456").Should().Be(preciseTime);
+        }
 
         //[Test]
         //public void DefaultConverter_TimeSpan_ErrorCases()
@@ -659,5 +654,7 @@ namespace MudBlazor.UnitTests.Utilities
         //        return base.ConvertToString(arg);
         //    }
         //}
+
+        private enum YesNoMaybe { Maybe, Yes, No }
     }
 }
