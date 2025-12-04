@@ -5,5 +5,7 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <NuGetAudit>false</NuGetAudit>
+    <!-- Suppress ParameterState analyzer warnings during development: the MudBlazor codebase has existing usages -->
+    <NoWarn>$(NoWarn);MUD0010;MUD0011;MUD0012</NoWarn>
   </PropertyGroup>
 </Project>
