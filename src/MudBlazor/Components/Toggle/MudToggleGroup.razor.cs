@@ -94,7 +94,7 @@ namespace MudBlazor
         /// <summary>
         /// Prevents the user from interacting with this toggle group.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
@@ -104,7 +104,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public T? Value { get; set; }
 
@@ -124,7 +124,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public IEnumerable<T?>? Values { get; set; }
 
@@ -144,7 +144,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedClass { get; set; }
 
@@ -179,7 +179,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public bool Outlined { get; set; } = true;
 
@@ -189,7 +189,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public bool Delimiters { get; set; } = true;
 
@@ -209,7 +209,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
@@ -232,7 +232,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="Color.Primary"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
@@ -242,7 +242,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, the checkmark icons can be customized via <c>SelectedIcon</c> and <c>UnselectedIcon</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public bool CheckMark { get; set; }
 
@@ -252,7 +252,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public bool FixedContent { get; set; }
 

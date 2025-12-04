@@ -1060,7 +1060,7 @@ namespace MudBlazor
         /// <remarks>
         /// This property can be bound (<c>@bind-SelectedItems</c>) to initially select rows.  Use <see cref="SelectedItem"/> when <see cref="MultiSelection"/> is <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         public HashSet<T> SelectedItems { get; set; }
 
         /// <summary>
@@ -1069,7 +1069,7 @@ namespace MudBlazor
         /// <remarks>
         /// This property can be bound (<c>@bind-SelectedItem</c>) to initially select a row.  Use <see cref="SelectedItems"/> when <see cref="MultiSelection"/> is <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         public T SelectedItem { get; set; }
 
         /// <summary>
@@ -1157,7 +1157,7 @@ namespace MudBlazor
         /// Ensures the user can only expand one Hierarchy row at a time. This only has an effect if you are using a Hierarchy column.
         /// </summary>
         /// <remarks>Defaults to <c>false</c>.</remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         public bool ExpandSingleRow { get; set; }
 
         /// <summary>

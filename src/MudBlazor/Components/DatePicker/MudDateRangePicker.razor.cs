@@ -58,7 +58,7 @@ namespace MudBlazor
         /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
         /// This parameter will take effect when <see cref="MinDays"/> or <see cref="MaxDays"/> is set.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInCount { get; set; } = true;
 

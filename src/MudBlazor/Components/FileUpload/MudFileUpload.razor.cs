@@ -62,7 +62,7 @@ namespace MudBlazor
         /// When <c>T</c> is <see cref="IBrowserFile" />, a single file is returned.<br />
         /// When <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>, multiple files are returned.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public T? Files { get; set; }
 

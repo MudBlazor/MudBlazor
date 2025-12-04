@@ -213,7 +213,7 @@ namespace MudBlazor
         /// <summary>
         /// The child items underneath this item.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Data)]
         public IReadOnlyCollection<ITreeItemData<T?>>? Items { get; set; }
 
@@ -229,7 +229,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Expanding)]
         public bool Expanded { get; set; }
 
@@ -245,7 +245,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. Can be set alongside other items if <see cref="MudTreeView{T}.SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool Selected { get; set; }
 

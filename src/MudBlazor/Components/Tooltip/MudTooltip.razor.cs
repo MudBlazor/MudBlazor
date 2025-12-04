@@ -183,7 +183,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Visible { get; set; }
 

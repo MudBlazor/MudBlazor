@@ -70,7 +70,7 @@ namespace MudBlazor
         /// <summary>
         /// The format for selected dates.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string DateFormat { get; set; }
 
