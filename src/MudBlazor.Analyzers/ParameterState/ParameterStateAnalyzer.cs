@@ -29,7 +29,8 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
     private static void OnCompilationStart(CompilationStartAnalysisContext context)
     {
-        var parameterStateAttributeSymbol = context.Compilation.GetBestTypeByMetadataName(ParameterStateAttributeFullName);
+        // Try to find the ParameterStateAttribute by metadata name
+        var parameterStateAttributeSymbol = context.Compilation.GetTypeByMetadataName(ParameterStateAttributeFullName);
         if (parameterStateAttributeSymbol is null)
         {
             // ParameterStateAttribute is not available, nothing to analyze
@@ -246,7 +247,20 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
         private bool HasParameterStateAttribute(IPropertySymbol propertySymbol)
         {
-            return propertySymbol.HasAttribute(_parameterStateAttributeSymbol);
+            // Check for the ParameterStateAttribute by comparing the fully qualified name
+            // This avoids issues with symbol identity across compilation contexts
+            foreach (var attribute in propertySymbol.GetAttributes())
+            {
+                if (attribute.AttributeClass is null)
+                    continue;
+
+                var attributeFullName = attribute.AttributeClass.ToDisplayString();
+                if (string.Equals(attributeFullName, ParameterStateAttributeFullName, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static bool IsAssignmentTarget(IPropertyReferenceOperation propertyReference)
