@@ -2315,7 +2315,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DropdownSettings_SetsDefaultValues()
+        public void PopoverSettings_SetsDefaultValues()
         {
             var auto = Context.RenderComponent<MudAutocomplete<string>>();
 
@@ -2324,7 +2324,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DropdownSettings_OverridesDefaultValues()
+        public void PopoverSettings_OverridesDefaultValues()
         {
             var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
             try

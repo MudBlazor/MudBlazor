@@ -1223,7 +1223,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DropdownSettings_SetsDefaultValues()
+        public void PopoverSettings_SetsDefaultValues()
         {
             var menu = Context.RenderComponent<MudMenu>();
 
@@ -1232,7 +1232,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DropdownSettings_OverridesDefaultValues()
+        public void PopoverSettings_OverridesDefaultValues()
         {
             var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
             try
