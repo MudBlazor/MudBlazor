@@ -43,23 +43,6 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Default settings for <see cref="MudPopover"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class PopoverDefaults
-    {
-        /// <summary>
-        /// Prevents interaction with background elements.
-        /// </summary>
-        /// <remarks>
-        /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
-        /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
-        /// </remarks>
-        public static bool ModalOverlay { get; set; }
-    }
-
-    /// <summary>
     /// Default settings for <see cref="MudTooltip"/>.
     /// <br/>
     /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.

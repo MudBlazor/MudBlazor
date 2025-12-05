@@ -52,4 +52,14 @@ public class PopoverOptions
     /// The default value is <c>PopoverMode.Default</c>.
     /// </summary>
     public PopoverMode Mode { get; set; } = PopoverMode.Default;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to prevent interaction with background elements.
+    /// </summary>
+    /// <remarks>
+    /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
+    /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
+    /// The default value is <c>false</c>.
+    /// </remarks>
+    public bool ModalOverlay { get; set; }
 }

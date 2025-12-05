@@ -283,11 +283,11 @@ namespace MudBlazor
         /// Prevents interaction with background elements while this list is open.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>false</c>. Can be changed globally via <see cref="PopoverOptions.ModalOverlay"/> or <see cref="MudPopoverProvider.ModalOverlay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
+        public bool Modal { get; set; }
 
         /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
