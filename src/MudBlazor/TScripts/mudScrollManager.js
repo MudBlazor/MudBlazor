@@ -71,29 +71,22 @@ class MudScrollManager {
                 // Apply padding-right to body to compensate for scrollbar disappearance
                 element.style.paddingRight = `${scrollBarWidth}px`;
                 
+                // Helper function to adjust padding for elements
+                const adjustPadding = (elements, scrollBarWidth) => {
+                    elements.forEach(el => {
+                        // Store original padding-right before modification
+                        if (!el.hasAttribute('data-original-padding-right')) {
+                            const originalPadding = window.getComputedStyle(el).paddingRight;
+                            el.setAttribute('data-original-padding-right', originalPadding);
+                        }
+                        const originalPadding = parseFloat(el.getAttribute('data-original-padding-right')) || 0;
+                        el.style.paddingRight = `${originalPadding + scrollBarWidth}px`;
+                    });
+                };
+                
                 // Apply padding-right to appbar and scroll-to-top elements
-                const appBars = document.querySelectorAll('.mud-appbar');
-                const scrollToTopElements = document.querySelectorAll('.mud-scroll-to-top');
-                
-                appBars.forEach(appBar => {
-                    // Store original padding-right before modification
-                    if (!appBar.hasAttribute('data-original-padding-right')) {
-                        const originalPadding = window.getComputedStyle(appBar).paddingRight;
-                        appBar.setAttribute('data-original-padding-right', originalPadding);
-                    }
-                    const originalPadding = parseFloat(appBar.getAttribute('data-original-padding-right')) || 0;
-                    appBar.style.paddingRight = `${originalPadding + scrollBarWidth}px`;
-                });
-                
-                scrollToTopElements.forEach(element => {
-                    // Store original padding-right before modification
-                    if (!element.hasAttribute('data-original-padding-right')) {
-                        const originalPadding = window.getComputedStyle(element).paddingRight;
-                        element.setAttribute('data-original-padding-right', originalPadding);
-                    }
-                    const originalPadding = parseFloat(element.getAttribute('data-original-padding-right')) || 0;
-                    element.style.paddingRight = `${originalPadding + scrollBarWidth}px`;
-                });
+                adjustPadding(document.querySelectorAll('.mud-appbar'), scrollBarWidth);
+                adjustPadding(document.querySelectorAll('.mud-scroll-to-top'), scrollBarWidth);
                 
                 element.classList.add(lockclass);
             } else {
@@ -112,27 +105,21 @@ class MudScrollManager {
             // Remove padding-right from body
             element.style.paddingRight = '';
             
+            // Helper function to restore original padding for elements
+            const restorePadding = (elements) => {
+                elements.forEach(el => {
+                    if (el.hasAttribute('data-original-padding-right')) {
+                        el.style.paddingRight = el.getAttribute('data-original-padding-right');
+                        el.removeAttribute('data-original-padding-right');
+                    } else {
+                        el.style.paddingRight = '';
+                    }
+                });
+            };
+            
             // Restore original padding-right for appbar and scroll-to-top elements
-            const appBars = document.querySelectorAll('.mud-appbar');
-            const scrollToTopElements = document.querySelectorAll('.mud-scroll-to-top');
-            
-            appBars.forEach(appBar => {
-                if (appBar.hasAttribute('data-original-padding-right')) {
-                    appBar.style.paddingRight = appBar.getAttribute('data-original-padding-right');
-                    appBar.removeAttribute('data-original-padding-right');
-                } else {
-                    appBar.style.paddingRight = '';
-                }
-            });
-            
-            scrollToTopElements.forEach(element => {
-                if (element.hasAttribute('data-original-padding-right')) {
-                    element.style.paddingRight = element.getAttribute('data-original-padding-right');
-                    element.removeAttribute('data-original-padding-right');
-                } else {
-                    element.style.paddingRight = '';
-                }
-            });
+            restorePadding(document.querySelectorAll('.mud-appbar'));
+            restorePadding(document.querySelectorAll('.mud-scroll-to-top'));
             
             // remove both lock classes to be sure it's unlocked
             element.classList.remove(lockclass);
