@@ -1,85 +1,10 @@
-﻿// Modern browsers: Use scrollbar-gutter to reserve space and prevent layout shifts
-// Supported in Chrome 94+, Firefox 97+, Safari 17.4+
-@supports (scrollbar-gutter: stable) {
-  html {
-    // Reserve space for scrollbar to prevent layout shift
-    scrollbar-gutter: stable;
-  }
-
-  // When scroll is locked, hide overflow on both html and body to hide the scrollbar
-  // but keep the reserved gutter space
-  body.scroll-locked,
-  body.scroll-locked-no-padding {
-    overflow: hidden;
-  }
-
-  html:has(body.scroll-locked),
-  html:has(body.scroll-locked-no-padding) {
-    overflow-y: hidden;
-  }
-
-  // When scrollbar-gutter is supported, we don't need padding compensation
-  .scroll-locked {
-    padding-right: 0;
-
-    .mud-layout {
-      .mud-appbar {
-        padding-right: 0;
-      }
-
-      .mud-main-content {
-        .mud-scroll-to-top {
-          padding-right: 0;
-        }
-      }
-    }
-  }
-
-  .scroll-locked-no-padding {
-    padding-right: 0;
-  }
+﻿.scroll-locked {
+  overflow: hidden;
+  // padding-right is applied dynamically via JavaScript based on actual scrollbar width
 }
 
-// Fallback for older browsers (Safari < 17.4, older embedded browsers)
-@supports not (scrollbar-gutter: stable) {
-  .scroll-locked {
-    padding-right: 8px;
-    overflow: hidden;
-
-    .mud-layout {
-      .mud-appbar {
-        padding-right: 8px;
-      }
-
-      .mud-main-content {
-        .mud-scroll-to-top {
-          padding-right: 8px;
-        }
-      }
-    }
-  }
-
-  .scroll-locked-no-padding {
-    overflow: hidden;
-  }
-
-  @-moz-document url-prefix() {
-    .scroll-locked {
-      padding-right: 17px; // the width of scrollbar in Firefox
-
-      .mud-layout {
-        .mud-appbar {
-          padding-right: 17px;
-        }
-
-        .mud-main-content {
-          .mud-scroll-to-top {
-            padding-right: 17px;
-          }
-        }
-      }
-    }
-  }
+.scroll-locked-no-padding {
+  overflow: hidden;
 }
 
 .mud-scroll-to-top {
