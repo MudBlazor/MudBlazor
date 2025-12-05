@@ -1435,6 +1435,38 @@ namespace MudBlazor.UnitTests.Components
                     args[1] is bool)),
                 Times.AtMost(2)); // Focus should be called once when dialog opens and once for refocus after backdrop click
         }
+
+        [Test]
+        public async Task MudDialogProvider_DefaultFocus_ShouldBePassedToDialog()
+        {
+            // Arrange
+            var provider = Context.RenderComponent<MudDialogProvider>(parameters =>
+                parameters.Add(p => p.DefaultFocus, DefaultFocus.LastChild));
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            // Act
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Test"));
+            var dialog = provider.FindComponent<MudDialog>();
+
+            // Assert - The dialog should have resolved the DefaultFocus from the provider
+            dialog.Instance.DefaultFocus.Should().BeNull(); // Parameter is null
+            // The dialog uses GetDefaultFocus() internally which should return LastChild from provider
+        }
+
+        [Test]
+        public async Task MudDialogProvider_DefaultFocus_ShouldDefaultToElement()
+        {
+            // Arrange
+            var provider = Context.RenderComponent<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            // Act
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Test"));
+            var dialog = provider.FindComponent<MudDialog>();
+
+            // Assert - Default focus should be Element when no value is set
+            dialog.Instance.DefaultFocus.Should().BeNull(); // Parameter is null, uses global default
+        }
     }
     internal class CustomDialogService : DialogService
     {

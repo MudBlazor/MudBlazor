@@ -54,6 +54,9 @@ namespace MudBlazor
         [CascadingParameter(Name = "IsNested")]
         private bool IsNested { get; set; }
 
+        [CascadingParameter]
+        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
+
         [Inject]
         protected IDialogService DialogService { get; set; } = null!;
 
@@ -182,11 +185,22 @@ namespace MudBlazor
         /// The element which will receive focus when this dialog is shown.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DefaultFocus.Element"/> in <see cref="MudGlobal.DialogDefaults.DefaultFocus"/>.
+        /// Defaults to <see cref="MudBlazor.DefaultFocus.Element"/> when not specified, or the value set on <see cref="MudDialogProvider.DefaultFocus"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public DefaultFocus DefaultFocus { get; set; } = MudGlobal.DialogDefaults.DefaultFocus;
+        public DefaultFocus? DefaultFocus { get; set; }
+
+        private DefaultFocus GetDefaultFocus()
+        {
+            if (DefaultFocus.HasValue)
+                return DefaultFocus.Value;
+
+            if (GlobalDialogOptions.DefaultFocus.HasValue)
+                return GlobalDialogOptions.DefaultFocus.Value;
+
+            return MudBlazor.DefaultFocus.Element;
+        }
 
         private bool IsInline => IsNested || DialogInstance is null;
 
@@ -225,7 +239,7 @@ namespace MudBlazor
                     [nameof(ContentClass)] = ContentClass,
                     [nameof(ActionsClass)] = ActionsClass,
                     [nameof(ContentStyle)] = ContentStyle,
-                    [nameof(DefaultFocus)] = DefaultFocus,
+                    [nameof(DefaultFocus)] = GetDefaultFocus(),
                 };
 #pragma warning restore CS0618 // Type or member is obsolete
 

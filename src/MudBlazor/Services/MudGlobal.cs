@@ -17,19 +17,6 @@ namespace MudBlazor;
 public static class MudGlobal
 {
     /// <summary>
-    /// Default settings for <see cref="MudDialog"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class DialogDefaults
-    {
-        /// <summary>
-        /// The element which will receive focus when this <see cref="MudDialog"/> is shown.
-        /// </summary>
-        public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
-    }
-
-    /// <summary>
     /// Default settings for <see cref="MudMenu"/>.
     /// <br/>
     /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
