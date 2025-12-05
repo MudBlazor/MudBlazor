@@ -59,7 +59,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     /// Defaults to <c>true</c>.
     /// When <c>true</c>, the theme will automatically change to Light Mode or Dark Mode as the system theme changes.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     public bool ObserveSystemDarkModeChange { get; set; } = true;
 
     /// <summary>
@@ -69,7 +69,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     /// Defaults to <c>false</c>.
     /// When this value changes, <see cref="IsDarkModeChanged"/> occurs.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     public bool IsDarkMode { get; set; }
 
     /// <summary>
@@ -85,7 +85,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     /// Returns <see cref="MudTheme.PaletteDark"/> when <see cref="IsDarkMode"/> is <c>true</c>; otherwise, returns <see cref="MudTheme.PaletteLight"/>.
     /// When this value changes, <see cref="CurrentPaletteChanged"/> occurs.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     public Palette? CurrentPalette { get; set; }
 
     /// <summary>
@@ -101,8 +101,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
             .WithEventCallback(() => IsDarkModeChanged);
-        _observeSystemDarkModeChangeState = registerScope
-            .RegisterParameter<bool>(nameof(ObserveSystemDarkModeChange))
+        _observeSystemDarkModeChangeState = registerScope.RegisterParameter<bool>(nameof(ObserveSystemDarkModeChange))
             .WithParameter(() => ObserveSystemDarkModeChange)
             .WithChangeHandler(OnObserveSystemDarkModeChangeChanged);
         _currentPaletteState = registerScope.RegisterParameter<Palette?>(nameof(CurrentPalette))

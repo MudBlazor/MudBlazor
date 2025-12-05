@@ -94,7 +94,7 @@ namespace MudBlazor
         /// <summary>
         /// The text displayed if the <see cref="Error"/> property is <c>true</c>.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorText { get; set; }
 
@@ -115,7 +115,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the text in <see cref="ErrorText"/> is displayed.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool Error { get; set; }
 
@@ -136,7 +136,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  When set and the <see cref="Error"/> property is <c>true</c>, an <c>aria-describedby</c> attribute is rendered to improve accessibility for users.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorId { get; set; }
 
@@ -157,7 +157,7 @@ namespace MudBlazor
         /// <remarks>
         /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.  If no converter is specified, a default will be chosen based on the kind of input.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public IConverter<T?, U?> Converter { get; set; } = null!;
 
@@ -167,7 +167,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public CultureInfo Culture { get; set; } = CultureInfo.CurrentUICulture;
 

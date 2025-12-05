@@ -141,7 +141,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, alpha options will be displayed and color output will be <c>RGBA</c>, <c>HSLA</c> or <c>HEXA</c> instead of <c>RGB</c>, <c>HSL</c> or <c>HEX</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowAlpha { get; set; } = true;
 
@@ -211,7 +211,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="ColorPickerView.Spectrum"/>.   The view can be changed if <c>ShowToolbar</c> is <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public ColorPickerView ColorPickerView { get; set; } = ColorPickerView.Spectrum;
 
@@ -231,14 +231,14 @@ namespace MudBlazor
         /// <remarks>
         /// You can use properties in <see cref="MudColor"/> to get color channel values such as <c>RGB</c>, <c>HSL</c>, <c>HEX</c> and more.  When this value changes, the <see cref="ValueChanged"/> event occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public MudColor? Value { get; set; } = "#594ae2";
 
         /// <summary>
         /// The currently selected value, as a string.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public override string? Text { get; set; }
 
@@ -332,7 +332,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>50</c> milliseconds between updates.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ThrottleInterval { get; set; } = 50;
 

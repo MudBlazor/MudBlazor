@@ -425,7 +425,7 @@ namespace MudBlazor
         /// <remarks>
         /// This property is passed into the <c>ToString()</c> method of the <see cref="Value"/> property, such as formatting <c>int</c>, <c>float</c>, <c>DateTime</c> and <c>TimeSpan</c> values.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? Format { get; set; }
 
@@ -435,7 +435,7 @@ namespace MudBlazor
         /// <remarks>
         /// When set takes precedence over any internally generated IDs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? InputId { get; set; }
 

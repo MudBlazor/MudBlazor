@@ -364,7 +364,7 @@ namespace MudBlazor
         /// <remarks>
         /// When this property changes, <see cref="OpenChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public bool Open { get; set; }
 

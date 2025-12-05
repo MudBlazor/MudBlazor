@@ -106,7 +106,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>False</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Value { get; set; }
 

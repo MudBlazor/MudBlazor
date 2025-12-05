@@ -358,7 +358,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c> (the first tab). When this value changes, <see cref="ActivePanelIndexChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Tabs.Behavior)]
         public int ActivePanelIndex { get; set; }
 

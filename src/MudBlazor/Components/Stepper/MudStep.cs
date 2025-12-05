@@ -34,10 +34,10 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     }
 
     private bool _disposed;
-    internal ParameterState<bool> CompletedState { get; private set; }
-    internal ParameterState<bool> DisabledState { get; private set; }
-    internal ParameterState<bool> HasErrorState { get; private set; }
-    internal ParameterState<bool> SkippedState { get; private set; }
+    internal readonly ParameterState<bool> CompletedState;
+    internal readonly ParameterState<bool> DisabledState;
+    internal readonly ParameterState<bool> HasErrorState;
+    internal readonly ParameterState<bool> SkippedState;
 
     internal string Styles => new StyleBuilder()
         .AddStyle(Style)
@@ -140,7 +140,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool Completed { get; set; }
 
@@ -154,7 +154,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Prevents this step from being selected.
     /// </summary>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool Disabled { get; set; }
 
@@ -171,7 +171,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool HasError { get; set; }
 
@@ -204,7 +204,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool Skipped { get; set; }
     /// <summary>

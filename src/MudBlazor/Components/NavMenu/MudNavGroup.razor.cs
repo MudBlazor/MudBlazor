@@ -125,7 +125,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public bool Disabled { get; set; }
 
@@ -145,7 +145,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When this value changes, <see cref="ExpandedChanged"/> occurs.  Can be bound via <c>@bind-Expanded</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public bool Expanded { get; set; }
 

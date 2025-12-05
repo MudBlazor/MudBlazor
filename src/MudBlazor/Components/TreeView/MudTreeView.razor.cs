@@ -250,7 +250,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public T? SelectedValue { get; set; }
 
@@ -266,7 +266,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
