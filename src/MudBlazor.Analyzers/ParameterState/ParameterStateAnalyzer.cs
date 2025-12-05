@@ -247,15 +247,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
         private bool HasParameterStateAttribute(IPropertySymbol propertySymbol)
         {
-            // Check for the ParameterStateAttribute by comparing the fully qualified name
-            // This avoids issues with symbol identity across compilation contexts
             foreach (var attribute in propertySymbol.GetAttributes())
             {
                 if (attribute.AttributeClass is null)
                     continue;
 
-                var attributeFullName = attribute.AttributeClass.ToDisplayString();
-                if (string.Equals(attributeFullName, ParameterStateAttributeFullName, StringComparison.Ordinal))
+                // Use symbol equality comparison with the cached attribute symbol
+                if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _parameterStateAttributeSymbol))
                 {
                     return true;
                 }

@@ -1,305 +1,315 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Immutable;
-using FluentAssertions;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Testing;
 using MudBlazor.Analyzers;
+using MudBlazor.UnitTests.Analyzers.Verifiers;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Analyzers;
 
+using VerifyCS = CSharpAnalyzerVerifier<ParameterStateAnalyzer>;
+
 /// <summary>
-/// Tests for ParameterStateAnalyzer using inline code and AdhocWorkspace following Microsoft's approach.
+/// Tests for ParameterStateAnalyzer following Microsoft's analyzer testing patterns.
 /// </summary>
 [TestFixture]
 public class ParameterStateAnalyzerTests
 {
-    // Base source code that defines the ParameterStateAttribute
-    private const string ParameterStateAttributeSource = @"
-namespace MudBlazor.State
-{
-    [System.AttributeUsage(System.AttributeTargets.Property)]
-    public class ParameterStateAttribute : System.Attribute { }
-}
-";
-
-    private static readonly MetadataReference[] References =
-    [
-        MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-        MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
-        MetadataReference.CreateFromFile(typeof(System.Threading.Tasks.Task).Assembly.Location)
-    ];
-
-    private static Diagnostic[] GetDiagnostics(string source)
-    {
-        var fullSource = ParameterStateAttributeSource + source;
-        var analyzer = new ParameterStateAnalyzer();
-
-        var projectId = ProjectId.CreateNewId("TestProject");
-        var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
-
-        var solution = new AdhocWorkspace()
-            .CurrentSolution
-            .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
-            .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-            .AddMetadataReferences(projectId, References)
-            .AddDocument(documentId, "Test0.cs", SourceText.From(fullSource));
-
-        var project = solution.GetProject(projectId)!;
-        var compilation = project.GetCompilationAsync().Result!;
-        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer));
-        var diagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
-
-        return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
-    }
-
     [Test]
     public void AnalyzerShouldReportSupportedDiagnostics()
     {
         var analyzer = new ParameterStateAnalyzer();
         var supportedDiagnostics = analyzer.SupportedDiagnostics;
 
-        supportedDiagnostics.Should().HaveCount(3);
-        supportedDiagnostics.Should().Contain(d => d.Id == "MUD0010");
-        supportedDiagnostics.Should().Contain(d => d.Id == "MUD0011");
-        supportedDiagnostics.Should().Contain(d => d.Id == "MUD0012");
+        Assert.That(supportedDiagnostics, Has.Length.EqualTo(3));
+        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0010"));
+        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0011"));
+        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0012"));
     }
 
     [Test]
     public void DiagnosticDescriptors_ShouldHaveCorrectProperties()
     {
         // Assert MUD0010
-        ParameterStateAnalyzer.ReadDescriptor.Id.Should().Be("MUD0010");
-        ParameterStateAnalyzer.ReadDescriptor.DefaultSeverity.Should().Be(DiagnosticSeverity.Warning);
-        ParameterStateAnalyzer.ReadDescriptor.IsEnabledByDefault.Should().BeTrue();
+        Assert.That(ParameterStateAnalyzer.ReadDescriptor.Id, Is.EqualTo("MUD0010"));
+        Assert.That(ParameterStateAnalyzer.ReadDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
+        Assert.That(ParameterStateAnalyzer.ReadDescriptor.IsEnabledByDefault, Is.True);
 
         // Assert MUD0011
-        ParameterStateAnalyzer.WriteDescriptor.Id.Should().Be("MUD0011");
-        ParameterStateAnalyzer.WriteDescriptor.DefaultSeverity.Should().Be(DiagnosticSeverity.Warning);
-        ParameterStateAnalyzer.WriteDescriptor.IsEnabledByDefault.Should().BeTrue();
+        Assert.That(ParameterStateAnalyzer.WriteDescriptor.Id, Is.EqualTo("MUD0011"));
+        Assert.That(ParameterStateAnalyzer.WriteDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
+        Assert.That(ParameterStateAnalyzer.WriteDescriptor.IsEnabledByDefault, Is.True);
 
         // Assert MUD0012
-        ParameterStateAnalyzer.ExternalAccessDescriptor.Id.Should().Be("MUD0012");
-        ParameterStateAnalyzer.ExternalAccessDescriptor.DefaultSeverity.Should().Be(DiagnosticSeverity.Warning);
-        ParameterStateAnalyzer.ExternalAccessDescriptor.IsEnabledByDefault.Should().BeTrue();
+        Assert.That(ParameterStateAnalyzer.ExternalAccessDescriptor.Id, Is.EqualTo("MUD0012"));
+        Assert.That(ParameterStateAnalyzer.ExternalAccessDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
+        Assert.That(ParameterStateAnalyzer.ExternalAccessDescriptor.IsEnabledByDefault, Is.True);
     }
 
     [Test]
-    public void MUD0010_ReadInsideMethod_ShouldReportDiagnostic()
+    public async Task MUD0010_ReadInsideMethod_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public int GetCounter()
     {
-        return Counter; // Should trigger MUD0010
+        return {|#0:Counter|};
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0010");
+        var expected = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0010_ReadInVariableAssignment_ShouldReportDiagnostic()
+    public async Task MUD0010_ReadInVariableAssignment_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public void Method()
     {
-        var x = Counter; // Should trigger MUD0010
+        var x = {|#0:Counter|};
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0010");
+        var expected = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0010_ReadAsMethodArgument_ShouldReportDiagnostic()
+    public async Task MUD0010_ReadAsMethodArgument_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public void Method()
     {
-        DoSomething(Counter); // Should trigger MUD0010
+        DoSomething({|#0:Counter|});
     }
 
     private void DoSomething(int value) { }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0010");
+        var expected = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0011_WriteInsideMethod_ShouldReportDiagnostic()
+    public async Task MUD0011_WriteInsideMethod_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public void SetCounter(int value)
     {
-        Counter = value; // Should trigger MUD0011
+        {|#0:Counter|} = value;
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0011");
+        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0011_CompoundAssignment_ShouldReportDiagnostic()
+    public async Task MUD0011_CompoundAssignment_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public void Increment()
     {
-        Counter += 1; // Should trigger MUD0011
+        {|#0:Counter|} += 1;
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0011");
+        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0011_Increment_ShouldReportDiagnostic()
+    public async Task MUD0011_Increment_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public void Increment()
     {
-        Counter++; // Should trigger MUD0011
+        {|#0:Counter|}++;
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0011");
+        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0011_Decrement_ShouldReportDiagnostic()
+    public async Task MUD0011_Decrement_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public void Decrement()
     {
-        Counter--; // Should trigger MUD0011
+        {|#0:Counter|}--;
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0011");
+        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0011_ConstructorAssignment_ShouldNotReportDiagnostic()
+    public async Task MUD0011_ConstructorAssignment_ShouldNotReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public MyComponent()
     {
-        Counter = 0; // Should NOT trigger MUD0011 - constructor is allowed
+        Counter = 0;
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Where(d => d.Id == "MUD0011").Should().BeEmpty();
+        await VerifyCS.VerifyAnalyzerAsync(source);
     }
 
     [Test]
-    public void MUD0011_SetParametersAsyncAssignment_ShouldNotReportDiagnostic()
+    public async Task MUD0011_SetParametersAsyncAssignment_ShouldNotReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
 using System.Threading.Tasks;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class MyComponent
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 
     public Task SetParametersAsync()
     {
-        Counter = 5; // Should NOT trigger MUD0011 - SetParametersAsync is allowed
+        Counter = 5;
         return Task.CompletedTask;
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Where(d => d.Id == "MUD0011").Should().BeEmpty();
+        await VerifyCS.VerifyAnalyzerAsync(source);
     }
 
     [Test]
-    public void MUD0012_ExternalRead_ShouldReportDiagnostic()
+    public async Task MUD0012_ExternalRead_ShouldReportDiagnostic()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class ComponentA
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 }
 
@@ -309,24 +319,29 @@ class ComponentB
 
     public int GetExternalCounter()
     {
-        return _componentA.Counter; // Should trigger MUD0012
+        return {|#0:_componentA.Counter|};
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0012");
+        var expected = VerifyCS.Diagnostic("MUD0012").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void MUD0010_ShouldNotReportForExternalAccess()
+    public async Task MUD0010_ShouldNotReportForExternalAccess()
     {
         var source = @"
-using MudBlazor.State;
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
 
 class ComponentA
 {
-    [ParameterState]
+    [MudBlazor.State.ParameterState]
     public int Counter { get; set; }
 }
 
@@ -336,44 +351,48 @@ class ComponentB
 
     public int GetExternalCounter()
     {
-        return _componentA.Counter; // Should trigger MUD0012, NOT MUD0010
+        return {|#0:_componentA.Counter|};
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Where(d => d.Id == "MUD0010").Should().BeEmpty();
-        diagnostics.Should().ContainSingle(d => d.Id == "MUD0012");
+        // External access should report MUD0012, not MUD0010
+        var expected = VerifyCS.Diagnostic("MUD0012").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
     [Test]
-    public void NoDiagnostic_WhenPropertyDoesNotHaveParameterStateAttribute()
+    public async Task NoDiagnostic_WhenPropertyDoesNotHaveParameterStateAttribute()
     {
         var source = @"
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
+
 class MyComponent
 {
     public int Counter { get; set; }
 
     public int GetCounter()
     {
-        return Counter; // Should NOT trigger any diagnostic
+        return Counter;
     }
 
     public void SetCounter(int value)
     {
-        Counter = value; // Should NOT trigger any diagnostic
+        Counter = value;
     }
 }";
 
-        var diagnostics = GetDiagnostics(source);
-
-        diagnostics.Should().BeEmpty();
+        await VerifyCS.VerifyAnalyzerAsync(source);
     }
 
     [Test]
-    public void NoDiagnostic_WhenAttributeNotAvailable()
+    public async Task NoDiagnostic_WhenAttributeNotAvailable()
     {
-        // Test with source that doesn't include ParameterStateAttribute at all
         var source = @"
 class MyComponent
 {
@@ -385,23 +404,6 @@ class MyComponent
     }
 }";
 
-        // Create a separate compilation without ParameterStateAttribute
-        var analyzer = new ParameterStateAnalyzer();
-        var projectId = ProjectId.CreateNewId("TestProject");
-        var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
-
-        var solution = new AdhocWorkspace()
-            .CurrentSolution
-            .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
-            .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-            .AddMetadataReferences(projectId, References)
-            .AddDocument(documentId, "Test0.cs", SourceText.From(source));
-
-        var project = solution.GetProject(projectId)!;
-        var compilation = project.GetCompilationAsync().Result!;
-        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer));
-        var diagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
-
-        diagnostics.Should().BeEmpty();
+        await VerifyCS.VerifyAnalyzerAsync(source);
     }
 }
