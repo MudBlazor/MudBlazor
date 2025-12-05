@@ -93,8 +93,15 @@ class MudScrollManager {
                 // Calculate the actual scrollbar width
                 const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
                 
+                // Store original padding-right of body before modification
+                if (!element.hasAttribute('data-original-padding-right')) {
+                    const originalPadding = window.getComputedStyle(element).paddingRight;
+                    element.setAttribute('data-original-padding-right', originalPadding);
+                }
+                const originalPadding = parseFloat(element.getAttribute('data-original-padding-right')) || 0;
+                
                 // Apply padding-right to body to compensate for scrollbar disappearance
-                element.style.paddingRight = `${scrollBarWidth}px`;
+                element.style.paddingRight = `${originalPadding + scrollBarWidth}px`;
                 
                 // Apply padding-right to appbar and scroll-to-top elements
                 this._adjustPadding(document.querySelectorAll('.mud-appbar'), scrollBarWidth);
@@ -114,8 +121,13 @@ class MudScrollManager {
         if (this._lockCount === 0) {
             const element = document.querySelector(selector) || document.body;
             
-            // Remove padding-right from body
-            element.style.paddingRight = '';
+            // Restore original padding-right for body
+            if (element.hasAttribute('data-original-padding-right')) {
+                element.style.paddingRight = element.getAttribute('data-original-padding-right');
+                element.removeAttribute('data-original-padding-right');
+            } else {
+                element.style.paddingRight = '';
+            }
             
             // Restore original padding-right for appbar and scroll-to-top elements
             this._restorePadding(document.querySelectorAll('.mud-appbar'));
