@@ -18,6 +18,7 @@ namespace MudBlazor.UnitTests.Components
             options.ContainerClass.Should().Be("mud-popover-provider");
             options.FlipMargin.Should().Be(0);
             options.ThrowOnDuplicateProvider.Should().Be(true);
+            options.ModalOverlay.Should().Be(false);
         }
 
         //[Test]
@@ -323,6 +324,17 @@ namespace MudBlazor.UnitTests.Components
         {
             var provider = new MudPopoverProvider();
             provider.Enabled.Should().BeTrue();
+            provider.ModalOverlay.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MudPopoverProvider_ModalOverlay_SyncsToPopoverOptions(bool modalOverlay)
+        {
+            var comp = Context.RenderComponent<MudPopoverProvider>(p => p.Add(x => x.ModalOverlay, modalOverlay));
+            var popoverService = Context.Services.GetRequiredService<IPopoverService>();
+            popoverService.PopoverOptions.ModalOverlay.Should().Be(modalOverlay);
         }
 
         [Test]
