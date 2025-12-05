@@ -15,6 +15,8 @@ class MudScrollManager {
                 const originalPadding = window.getComputedStyle(el).paddingRight;
                 el.setAttribute('data-original-padding-right', originalPadding);
             }
+            // getComputedStyle returns computed values in pixels (e.g., "16px")
+            // so parseFloat will correctly extract the numeric value
             const originalPadding = parseFloat(el.getAttribute('data-original-padding-right')) || 0;
             el.style.paddingRight = `${originalPadding + scrollBarWidth}px`;
         });
@@ -98,6 +100,8 @@ class MudScrollManager {
                     const originalPadding = window.getComputedStyle(element).paddingRight;
                     element.setAttribute('data-original-padding-right', originalPadding);
                 }
+                // getComputedStyle returns computed values in pixels (e.g., "16px")
+                // so parseFloat will correctly extract the numeric value
                 const originalPadding = parseFloat(element.getAttribute('data-original-padding-right')) || 0;
                 
                 // Apply padding-right to body to compensate for scrollbar disappearance
