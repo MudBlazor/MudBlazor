@@ -43,31 +43,6 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Default settings for <see cref="MudPopover"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class PopoverDefaults
-    {
-        /// <summary>
-        /// Prevents interaction with background elements.
-        /// </summary>
-        /// <remarks>
-        /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
-        /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
-        /// </remarks>
-        public static bool ModalOverlay { get; set; }
-
-        /// <summary>
-        /// The behavior applied when there is not enough space for a dropdown popover to be visible.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
-        /// </remarks>
-        public static OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
-    }
-
-    /// <summary>
     /// Default settings for <see cref="MudTooltip"/>.
     /// <br/>
     /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.

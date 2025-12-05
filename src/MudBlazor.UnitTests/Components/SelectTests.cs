@@ -1728,28 +1728,20 @@ namespace MudBlazor.UnitTests.Components
             var select = Context.RenderComponent<MudSelect<string>>();
 
             select.Instance.PopoverFixed.Should().BeFalse();
-            select.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+            select.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
         }
 
         [Test]
         public void PopoverSettings_OverridesDefaultValues()
         {
-            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
-            try
+            var select = Context.RenderComponent<MudSelect<string>>(p =>
             {
-                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
-                var select = Context.RenderComponent<MudSelect<string>>(p =>
-                {
-                    p.Add(p => p.PopoverFixed, true);
-                });
+                p.Add(p => p.PopoverFixed, true);
+                p.Add(p => p.OverflowBehavior, OverflowBehavior.FlipNever);
+            });
 
-                select.Instance.PopoverFixed.Should().BeTrue();
-                select.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
-            }
-            finally
-            {
-                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
-            }
+            select.Instance.PopoverFixed.Should().BeTrue();
+            select.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
         }
 #nullable disable
     }

@@ -1228,28 +1228,20 @@ namespace MudBlazor.UnitTests.Components
             var menu = Context.RenderComponent<MudMenu>();
 
             menu.Instance.PopoverFixed.Should().BeFalse();
-            menu.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+            menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
         }
 
         [Test]
         public void PopoverSettings_OverridesDefaultValues()
         {
-            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
-            try
+            var menu = Context.RenderComponent<MudMenu>(p =>
             {
-                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
-                var menu = Context.RenderComponent<MudMenu>(p =>
-                {
-                    p.Add(p => p.PopoverFixed, true);
-                });
+                p.Add(p => p.PopoverFixed, true);
+                p.Add(p => p.OverflowBehavior, OverflowBehavior.FlipNever);
+            });
 
-                menu.Instance.PopoverFixed.Should().BeTrue();
-                menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
-            }
-            finally
-            {
-                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
-            }
+            menu.Instance.PopoverFixed.Should().BeTrue();
+            menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
         }
     }
 }

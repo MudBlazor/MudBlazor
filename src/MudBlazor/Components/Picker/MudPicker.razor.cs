@@ -431,12 +431,12 @@ namespace MudBlazor
         /// Prevents interaction with background elements while the picker is open.
         /// </summary>
         /// <remarks>
-        /// <para>Defaults to <c>true</c>.</para>
+        /// <para>Defaults to <c>false</c>.</para>
         /// <para>Only possible to set to <c>false</c> when <see cref="PickerVariant"/> is <see cref="PickerVariant.Inline"/>.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
+        public bool Modal { get; set; }
 
         /// <summary>
         /// The location the popover opens, relative to its container.
