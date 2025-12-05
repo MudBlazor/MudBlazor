@@ -108,6 +108,12 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
+            // Check if read is allowed (only in constructor, even inside lambdas)
+            if (IsInsideConstructor(context.ContainingSymbol))
+            {
+                return;
+            }
+
             // It's a read from the same component - report MUD0010
             ReportReadDiagnostic(context, propertyReference);
         }
@@ -355,21 +361,74 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
         private static bool IsAllowedWriteContext(OperationAnalysisContext context)
         {
-            var containingSymbol = context.ContainingSymbol;
+            return IsInsideConstructorOrSetParametersAsync(context.ContainingSymbol);
+        }
 
-            // Check if we're in a constructor
-            if (containingSymbol is IMethodSymbol methodSymbol)
+        private static bool IsInsideConstructorOrSetParametersAsync(ISymbol? containingSymbol)
+        {
+            // Walk up the containing symbol chain to check if any ancestor is a constructor or SetParametersAsync
+            // This handles lambdas/anonymous methods defined inside constructors
+            while (containingSymbol is not null)
             {
-                if (methodSymbol.MethodKind == MethodKind.Constructor)
+                if (containingSymbol is IMethodSymbol methodSymbol)
                 {
-                    return true;
+                    // Check if it's a constructor
+                    if (methodSymbol.MethodKind == MethodKind.Constructor)
+                    {
+                        return true;
+                    }
+
+                    // Check if it's SetParametersAsync method
+                    if (string.Equals(methodSymbol.Name, SetParametersAsyncMethodName, StringComparison.Ordinal))
+                    {
+                        return true;
+                    }
+
+                    // For lambdas/anonymous methods, continue walking up to find the containing method
+                    if (methodSymbol.MethodKind == MethodKind.AnonymousFunction ||
+                        methodSymbol.MethodKind == MethodKind.LocalFunction)
+                    {
+                        containingSymbol = containingSymbol.ContainingSymbol;
+                        continue;
+                    }
+
+                    // For regular methods, stop here - it's not an allowed context
+                    return false;
                 }
 
-                // Check if we're in SetParametersAsync method
-                if (string.Equals(methodSymbol.Name, SetParametersAsyncMethodName, StringComparison.Ordinal))
+                containingSymbol = containingSymbol.ContainingSymbol;
+            }
+
+            return false;
+        }
+
+        private static bool IsInsideConstructor(ISymbol? containingSymbol)
+        {
+            // Walk up the containing symbol chain to check if any ancestor is a constructor
+            // This handles lambdas/anonymous methods defined inside constructors
+            while (containingSymbol is not null)
+            {
+                if (containingSymbol is IMethodSymbol methodSymbol)
                 {
-                    return true;
+                    // Check if it's a constructor
+                    if (methodSymbol.MethodKind == MethodKind.Constructor)
+                    {
+                        return true;
+                    }
+
+                    // For lambdas/anonymous methods, continue walking up to find the containing method
+                    if (methodSymbol.MethodKind == MethodKind.AnonymousFunction ||
+                        methodSymbol.MethodKind == MethodKind.LocalFunction)
+                    {
+                        containingSymbol = containingSymbol.ContainingSymbol;
+                        continue;
+                    }
+
+                    // For regular methods, stop here - it's not a constructor
+                    return false;
                 }
+
+                containingSymbol = containingSymbol.ContainingSymbol;
             }
 
             return false;
