@@ -87,6 +87,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
+            // Check if this property reference is inside a nameof expression
+            // nameof(Counter) should not trigger any diagnostic
+            if (IsInsideNameofExpression(propertyReference))
+            {
+                return;
+            }
+
             // Check if this property reference is the target of an assignment
             // If so, we handle it in the assignment analyzers, not here
             if (IsAssignmentTarget(propertyReference))
@@ -283,6 +290,21 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 return true;
             }
 
+            return false;
+        }
+
+        private static bool IsInsideNameofExpression(IPropertyReferenceOperation propertyReference)
+        {
+            // Walk up the operation tree to check if we're inside a nameof expression
+            var current = propertyReference.Parent;
+            while (current is not null)
+            {
+                if (current is INameOfOperation)
+                {
+                    return true;
+                }
+                current = current.Parent;
+            }
             return false;
         }
 

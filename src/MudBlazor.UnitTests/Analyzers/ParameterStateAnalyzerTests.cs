@@ -406,4 +406,30 @@ class MyComponent
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+    [Test]
+    public async Task NoDiagnostic_WhenUsingNameofOnParameterStateProperty()
+    {
+        var source = @"
+using System;
+
+namespace MudBlazor.State
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterStateAttribute : Attribute { }
+}
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+
+    public string GetPropertyName()
+    {
+        return nameof(Counter);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }
