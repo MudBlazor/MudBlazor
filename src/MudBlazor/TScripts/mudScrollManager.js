@@ -7,6 +7,31 @@ class MudScrollManager {
         this._lockCount = 0; // internal tracking for the # of overlay locks
     }
 
+    // Helper function to adjust padding for elements
+    _adjustPadding(elements, scrollBarWidth) {
+        elements.forEach(el => {
+            // Store original padding-right before modification
+            if (!el.hasAttribute('data-original-padding-right')) {
+                const originalPadding = window.getComputedStyle(el).paddingRight;
+                el.setAttribute('data-original-padding-right', originalPadding);
+            }
+            const originalPadding = parseFloat(el.getAttribute('data-original-padding-right')) || 0;
+            el.style.paddingRight = `${originalPadding + scrollBarWidth}px`;
+        });
+    }
+
+    // Helper function to restore original padding for elements
+    _restorePadding(elements) {
+        elements.forEach(el => {
+            if (el.hasAttribute('data-original-padding-right')) {
+                el.style.paddingRight = el.getAttribute('data-original-padding-right');
+                el.removeAttribute('data-original-padding-right');
+            } else {
+                el.style.paddingRight = '';
+            }
+        });
+    }
+
     //scrolls to year in MudDatePicker
     scrollToYear(elementId, offset) {
         let element = document.getElementById(elementId);
@@ -71,22 +96,9 @@ class MudScrollManager {
                 // Apply padding-right to body to compensate for scrollbar disappearance
                 element.style.paddingRight = `${scrollBarWidth}px`;
                 
-                // Helper function to adjust padding for elements
-                const adjustPadding = (elements, scrollBarWidth) => {
-                    elements.forEach(el => {
-                        // Store original padding-right before modification
-                        if (!el.hasAttribute('data-original-padding-right')) {
-                            const originalPadding = window.getComputedStyle(el).paddingRight;
-                            el.setAttribute('data-original-padding-right', originalPadding);
-                        }
-                        const originalPadding = parseFloat(el.getAttribute('data-original-padding-right')) || 0;
-                        el.style.paddingRight = `${originalPadding + scrollBarWidth}px`;
-                    });
-                };
-                
                 // Apply padding-right to appbar and scroll-to-top elements
-                adjustPadding(document.querySelectorAll('.mud-appbar'), scrollBarWidth);
-                adjustPadding(document.querySelectorAll('.mud-scroll-to-top'), scrollBarWidth);
+                this._adjustPadding(document.querySelectorAll('.mud-appbar'), scrollBarWidth);
+                this._adjustPadding(document.querySelectorAll('.mud-scroll-to-top'), scrollBarWidth);
                 
                 element.classList.add(lockclass);
             } else {
@@ -105,21 +117,9 @@ class MudScrollManager {
             // Remove padding-right from body
             element.style.paddingRight = '';
             
-            // Helper function to restore original padding for elements
-            const restorePadding = (elements) => {
-                elements.forEach(el => {
-                    if (el.hasAttribute('data-original-padding-right')) {
-                        el.style.paddingRight = el.getAttribute('data-original-padding-right');
-                        el.removeAttribute('data-original-padding-right');
-                    } else {
-                        el.style.paddingRight = '';
-                    }
-                });
-            };
-            
             // Restore original padding-right for appbar and scroll-to-top elements
-            restorePadding(document.querySelectorAll('.mud-appbar'));
-            restorePadding(document.querySelectorAll('.mud-scroll-to-top'));
+            this._restorePadding(document.querySelectorAll('.mud-appbar'));
+            this._restorePadding(document.querySelectorAll('.mud-scroll-to-top'));
             
             // remove both lock classes to be sure it's unlocked
             element.classList.remove(lockclass);
