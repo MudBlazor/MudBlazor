@@ -49,6 +49,7 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
             // Add reference assemblies for .NET
             // Keep the version in sync with the MudBlazor project
             ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
+            TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(Microsoft.AspNetCore.Components.ComponentBase).Assembly.Location));
             TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(MudBlazor._Imports).Assembly.Location));
         }
     }

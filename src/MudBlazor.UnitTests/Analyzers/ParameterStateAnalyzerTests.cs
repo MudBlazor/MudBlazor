@@ -365,4 +365,31 @@ class MyComponent
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+    [Test]
+    public async Task NoDiagnostic_WhenUsingConstructorWithParameterStateFramework()
+    {
+        var source = @"
+using System;
+using MudBlazor;
+using MudBlazor.State;
+
+class MyComponent : ComponentBaseWithState
+{
+    private readonly ParameterState<int> _counterState;
+
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+
+    public MyComponent()
+    {
+        Counter = 0;
+        using var registerScope = base.CreateRegisterScope();
+        _counterState = registerScope.RegisterParameter<int>(nameof(Counter))
+            .WithParameter(() => Counter);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }
