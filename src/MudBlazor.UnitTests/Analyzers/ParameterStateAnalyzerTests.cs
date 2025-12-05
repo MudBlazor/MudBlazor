@@ -2,9 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Testing;
 using MudBlazor.Analyzers;
 using MudBlazor.UnitTests.Analyzers.Verifiers;
 using NUnit.Framework;
@@ -55,12 +53,7 @@ public class ParameterStateAnalyzerTests
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -82,12 +75,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -109,12 +97,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -138,12 +121,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -165,12 +143,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -192,12 +165,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -219,12 +187,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -246,12 +209,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -273,12 +231,7 @@ class MyComponent
         var source = @"
 using System;
 using System.Threading.Tasks;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -300,12 +253,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class ComponentA
 {
@@ -332,12 +280,7 @@ class ComponentB
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class ComponentA
 {
@@ -365,12 +308,7 @@ class ComponentB
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {
@@ -412,12 +350,7 @@ class MyComponent
     {
         var source = @"
 using System;
-
-namespace MudBlazor.State
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ParameterStateAttribute : Attribute { }
-}
+using MudBlazor.State;
 
 class MyComponent
 {

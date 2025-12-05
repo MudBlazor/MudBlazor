@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -49,7 +47,9 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
         public Test()
         {
             // Add reference assemblies for .NET
-            ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
+            // Keep the version in sync with the MudBlazor project
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
+            TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(MudBlazor._Imports).Assembly.Location));
         }
     }
 }
