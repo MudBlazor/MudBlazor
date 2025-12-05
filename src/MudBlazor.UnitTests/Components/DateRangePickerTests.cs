@@ -1240,11 +1240,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input[id='event-range-end']").Should().NotBeNull();
         }
 
-        private class DateRangePickerImpl : MudDateRangePicker
-        {
-            public DateTime StartOfMonth() => base.GetCalendarStartOfMonth();
-        }
-
         [Test]
         public async Task StartMonth_SetInitially_IsRespected()
         {
@@ -1276,6 +1271,10 @@ namespace MudBlazor.UnitTests.Components
             Assert.That(dateRangeStart.Month == calendarStart.Month);
         }
 
+        private sealed class DateRangePickerImpl : MudDateRangePicker
+        {
+            public DateTime StartOfMonth() => GetCalendarStartOfMonth();
+        }
     }
 
     public static class DatePickerRenderedFragmentExtensions
