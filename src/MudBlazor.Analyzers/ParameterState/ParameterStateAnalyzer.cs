@@ -13,8 +13,15 @@ namespace MudBlazor.Analyzers;
 public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 {
     private const string ParameterStateAttributeFullName = "MudBlazor.State.ParameterStateAttribute";
+    private const string ParameterUsagePropertyName = "ParameterUsage";
     private const string SetParametersAsyncMethodName = "SetParametersAsync";
     private const string GetStateMethodName = "GetState";
+
+    // ParameterUsageOptions flag values (matching MudBlazor.State.ParameterUsageOptions)
+    private const int ParameterUsageNone = 0;
+    private const int ParameterUsageRead = 1 << 1;  // 2
+    private const int ParameterUsageWrite = 1 << 2; // 4
+    private const int ParameterUsageAll = ParameterUsageRead | ParameterUsageWrite; // 6
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
@@ -83,7 +90,7 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             var propertyReference = (IPropertyReferenceOperation)context.Operation;
             var propertySymbol = propertyReference.Property;
 
-            if (!HasParameterStateAttribute(propertySymbol))
+            if (!TryGetParameterStateAttribute(propertySymbol, out var parameterUsage))
             {
                 return;
             }
@@ -112,7 +119,17 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             // Check for external access (different containing type)
             if (IsExternalAccess(propertyReference, context))
             {
-                ReportExternalAccessDiagnostic(context, propertyReference);
+                // Only report MUD0012 if read checking is enabled
+                if (ShouldCheckRead(parameterUsage))
+                {
+                    ReportExternalAccessDiagnostic(context, propertyReference);
+                }
+                return;
+            }
+
+            // Only check reads if the Read flag is set
+            if (!ShouldCheckRead(parameterUsage))
+            {
                 return;
             }
 
@@ -140,7 +157,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
             var propertySymbol = propertyReference.Property;
 
-            if (!HasParameterStateAttribute(propertySymbol))
+            if (!TryGetParameterStateAttribute(propertySymbol, out var parameterUsage))
+            {
+                return;
+            }
+
+            // Only check writes if the Write flag is set
+            if (!ShouldCheckWrite(parameterUsage))
             {
                 return;
             }
@@ -175,7 +198,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
             var propertySymbol = propertyReference.Property;
 
-            if (!HasParameterStateAttribute(propertySymbol))
+            if (!TryGetParameterStateAttribute(propertySymbol, out var parameterUsage))
+            {
+                return;
+            }
+
+            // Only check writes if the Write flag is set
+            if (!ShouldCheckWrite(parameterUsage))
             {
                 return;
             }
@@ -210,7 +239,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
             var propertySymbol = propertyReference.Property;
 
-            if (!HasParameterStateAttribute(propertySymbol))
+            if (!TryGetParameterStateAttribute(propertySymbol, out var parameterUsage))
+            {
+                return;
+            }
+
+            // Only check writes if the Write flag is set
+            if (!ShouldCheckWrite(parameterUsage))
             {
                 return;
             }
@@ -245,7 +280,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
             var propertySymbol = propertyReference.Property;
 
-            if (!HasParameterStateAttribute(propertySymbol))
+            if (!TryGetParameterStateAttribute(propertySymbol, out var parameterUsage))
+            {
+                return;
+            }
+
+            // Only check writes if the Write flag is set
+            if (!ShouldCheckWrite(parameterUsage))
             {
                 return;
             }
@@ -266,8 +307,10 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             ReportWriteDiagnostic(context, propertyReference);
         }
 
-        private bool HasParameterStateAttribute(IPropertySymbol propertySymbol)
+        private bool TryGetParameterStateAttribute(IPropertySymbol propertySymbol, out int parameterUsage)
         {
+            parameterUsage = ParameterUsageAll; // Default value
+
             foreach (var attribute in propertySymbol.GetAttributes())
             {
                 if (attribute.AttributeClass is null)
@@ -276,10 +319,30 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 // Use symbol equality comparison with the cached attribute symbol
                 if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _parameterStateAttributeSymbol))
                 {
+                    // Try to get the ParameterUsage property value
+                    foreach (var namedArg in attribute.NamedArguments)
+                    {
+                        if (string.Equals(namedArg.Key, ParameterUsagePropertyName, StringComparison.Ordinal) &&
+                            namedArg.Value.Value is int usageValue)
+                        {
+                            parameterUsage = usageValue;
+                            break;
+                        }
+                    }
                     return true;
                 }
             }
             return false;
+        }
+
+        private static bool ShouldCheckRead(int parameterUsage)
+        {
+            return (parameterUsage & ParameterUsageRead) != 0;
+        }
+
+        private static bool ShouldCheckWrite(int parameterUsage)
+        {
+            return (parameterUsage & ParameterUsageWrite) != 0;
         }
 
         private static bool IsAssignmentTarget(IPropertyReferenceOperation propertyReference)

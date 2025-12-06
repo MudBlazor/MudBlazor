@@ -421,4 +421,181 @@ class ComponentB
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+    // Tests for ParameterUsageOptions
+
+    [Test]
+    public async Task ParameterUsageAll_ShouldTriggerAllDiagnostics()
+    {
+        // ParameterUsageOptions.All is the default, so this should trigger all diagnostics
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.All)]
+    public int Counter { get; set; }
+
+    public void Method()
+    {
+        var x = {|#0:Counter|};
+        {|#1:Counter|} = 5;
+    }
+}";
+
+        var expectedRead = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        var expectedWrite = VerifyCS.Diagnostic("MUD0011").WithLocation(1);
+        await VerifyCS.VerifyAnalyzerAsync(source, expectedRead, expectedWrite);
+    }
+
+    [Test]
+    public async Task ParameterUsageRead_ShouldTriggerReadDiagnosticButNotWrite()
+    {
+        // ParameterUsageOptions.Read should trigger MUD0010 and MUD0012 but NOT MUD0011
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.Read)]
+    public int Counter { get; set; }
+
+    public void Method()
+    {
+        var x = {|#0:Counter|};
+        Counter = 5; // Should NOT trigger MUD0011 when ParameterUsage = Read
+    }
+}";
+
+        var expectedRead = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expectedRead);
+    }
+
+    [Test]
+    public async Task ParameterUsageRead_ExternalAccess_ShouldTriggerMUD0012()
+    {
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.Read)]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public int GetExternalCounter()
+    {
+        return {|#0:_componentA.Counter|};
+    }
+}";
+
+        var expected = VerifyCS.Diagnostic("MUD0012").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
+    }
+
+    [Test]
+    public async Task ParameterUsageWrite_ShouldTriggerWriteDiagnosticButNotRead()
+    {
+        // ParameterUsageOptions.Write should trigger MUD0011 but NOT MUD0010 or MUD0012
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.Write)]
+    public int Counter { get; set; }
+
+    public void Method()
+    {
+        var x = Counter; // Should NOT trigger MUD0010 when ParameterUsage = Write
+        {|#0:Counter|} = 5;
+    }
+}";
+
+        var expectedWrite = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        await VerifyCS.VerifyAnalyzerAsync(source, expectedWrite);
+    }
+
+    [Test]
+    public async Task ParameterUsageWrite_ExternalAccess_ShouldNotTriggerMUD0012()
+    {
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.Write)]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public int GetExternalCounter()
+    {
+        return _componentA.Counter; // Should NOT trigger MUD0012 when ParameterUsage = Write
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task ParameterUsageNone_ShouldNotTriggerAnyDiagnostics()
+    {
+        // ParameterUsageOptions.None should not trigger any diagnostics
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.None)]
+    public int Counter { get; set; }
+
+    public void Method()
+    {
+        var x = Counter; // Should NOT trigger MUD0010
+        Counter = 5;     // Should NOT trigger MUD0011
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task ParameterUsageNone_ExternalAccess_ShouldNotTriggerMUD0012()
+    {
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.None)]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public int GetExternalCounter()
+    {
+        return _componentA.Counter; // Should NOT trigger MUD0012 when ParameterUsage = None
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }
