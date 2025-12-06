@@ -5,7 +5,7 @@
 namespace MudBlazor.State;
 
 [Flags]
-public enum ParameterUsageOptions 
+public enum ParameterUsageOptions
 {
     None = 0,
     Read = 1 << 1,
