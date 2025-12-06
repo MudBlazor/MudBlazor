@@ -14,6 +14,8 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 {
     private const string ParameterStateAttributeFullName = "MudBlazor.State.ParameterStateAttribute";
     private const string SetParametersAsyncMethodName = "SetParametersAsync";
+    private const string GetStateMethodName = "GetState";
+    private const string ComponentBaseWithStateExtensionsFullName = "MudBlazor.Extensions.ComponentBaseWithStateExtensions";
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
@@ -90,6 +92,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             // Check if this property reference is inside a nameof expression
             // nameof(Counter) should not trigger any diagnostic
             if (IsInsideNameofExpression(propertyReference))
+            {
+                return;
+            }
+
+            // Check if this property reference is inside a GetState method call
+            // GetState(x => x.Counter) should not trigger any diagnostic
+            if (IsInsideGetStateInvocation(propertyReference))
             {
                 return;
             }
@@ -308,6 +317,33 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 if (current is INameOfOperation)
                 {
                     return true;
+                }
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        private static bool IsInsideGetStateInvocation(IPropertyReferenceOperation propertyReference)
+        {
+            // Walk up the operation tree to check if we're inside a GetState method invocation
+            // GetState(x => x.Counter) should not trigger any diagnostic
+            var current = propertyReference.Parent;
+            while (current is not null)
+            {
+                if (current is IInvocationOperation invocation)
+                {
+                    var methodSymbol = invocation.TargetMethod;
+
+                    // Check if the method is named "GetState" and is defined in ComponentBaseWithStateExtensions
+                    if (string.Equals(methodSymbol.Name, GetStateMethodName, StringComparison.Ordinal))
+                    {
+                        var containingType = methodSymbol.ContainingType;
+                        if (containingType is not null &&
+                            string.Equals(containingType.ToDisplayString(), ComponentBaseWithStateExtensionsFullName, StringComparison.Ordinal))
+                        {
+                            return true;
+                        }
+                    }
                 }
                 current = current.Parent;
             }
