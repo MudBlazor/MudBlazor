@@ -641,7 +641,7 @@ namespace MudBlazor
 
             _userAttributesId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
 
-            if (InputId is null)
+            if (_inputIdState.Value is null)
             {
                 await UpdateInputIdStateAsync();
             }
