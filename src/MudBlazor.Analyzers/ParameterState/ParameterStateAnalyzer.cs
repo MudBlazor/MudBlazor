@@ -15,7 +15,6 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
     private const string ParameterStateAttributeFullName = "MudBlazor.State.ParameterStateAttribute";
     private const string SetParametersAsyncMethodName = "SetParametersAsync";
     private const string GetStateMethodName = "GetState";
-    private const string ComponentBaseWithStateExtensionsFullName = "MudBlazor.Extensions.ComponentBaseWithStateExtensions";
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
@@ -335,19 +334,43 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                     var methodSymbol = invocation.TargetMethod;
 
                     // Check if the method is named "GetState" and is defined in ComponentBaseWithStateExtensions
-                    if (string.Equals(methodSymbol.Name, GetStateMethodName, StringComparison.Ordinal))
+                    if (string.Equals(methodSymbol.Name, GetStateMethodName, StringComparison.Ordinal) &&
+                        IsComponentBaseWithStateExtensionsType(methodSymbol.ContainingType))
                     {
-                        var containingType = methodSymbol.ContainingType;
-                        if (containingType is not null &&
-                            string.Equals(containingType.ToDisplayString(), ComponentBaseWithStateExtensionsFullName, StringComparison.Ordinal))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
                 current = current.Parent;
             }
             return false;
+        }
+
+        private static bool IsComponentBaseWithStateExtensionsType(INamedTypeSymbol? typeSymbol)
+        {
+            if (typeSymbol is null)
+            {
+                return false;
+            }
+
+            // Check type name
+            if (!string.Equals(typeSymbol.Name, "ComponentBaseWithStateExtensions", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            // Check namespace
+            var containingNamespace = typeSymbol.ContainingNamespace;
+            if (containingNamespace is null || containingNamespace.IsGlobalNamespace)
+            {
+                return false;
+            }
+
+            // Build namespace string and compare
+            // Expected: MudBlazor.Extensions
+            return string.Equals(containingNamespace.Name, "Extensions", StringComparison.Ordinal) &&
+                   containingNamespace.ContainingNamespace is not null &&
+                   string.Equals(containingNamespace.ContainingNamespace.Name, "MudBlazor", StringComparison.Ordinal) &&
+                   (containingNamespace.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace ?? true);
         }
 
         private static bool IsExternalAccess(IPropertyReferenceOperation propertyReference, OperationAnalysisContext context)
