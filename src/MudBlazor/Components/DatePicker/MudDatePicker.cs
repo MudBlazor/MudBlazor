@@ -496,7 +496,6 @@ namespace MudBlazor
         }
 
         private void MoveToPreviousMonth(int numberOfMonths = 1)
-
         {
             if (FixMonth != null)
                 return;

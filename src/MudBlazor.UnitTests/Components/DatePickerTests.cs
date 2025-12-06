@@ -1463,7 +1463,7 @@ namespace MudBlazor.UnitTests.Components
             var datePicker = datePickerComponent.Instance;
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
-            //try to select month outside fixed year in date view
+            //try to select month outside fixed month in date view
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", ShiftKey = true }));
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", ShiftKey = true }));
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", ShiftKey = true }));
