@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Serialization;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
@@ -155,9 +156,8 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
 
-            var customCulture = new CultureInfo("en-US");
-            customCulture.DateTimeFormat.ShortDatePattern.Should().Be("M/d/yyyy");
-            customCulture.DateTimeFormat.ShortDatePattern = "dd MM yyyy";
+            var customCulture = new CultureInfo("en-US") { DateTimeFormat = { ShortDatePattern = "dd MM yyyy" } };
+            customCulture.DateTimeFormat.ShortDatePattern.Should().Be("dd MM yyyy");
             await comp.SetParamAsync(p => p.Culture, customCulture);
 
             await comp.SetParamAsync(p => p.Text, "23 10 2020");
@@ -166,10 +166,10 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be("26 10 2020");
 
             customCulture.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
-            await comp.SetParamAsync(p => p.Text, "13 10 2020");
+            await comp.SetParamAsync(p => p.Text, "2020-10-13");
             picker.Date.Should().Be(new DateTime(2020, 10, 13));
             await comp.SetParamAsync(p => p.Date, new DateTime(2020, 10, 16));
-            picker.Text.Should().Be("16 10 2020");
+            picker.Text.Should().Be("2020-10-16");
         }
 
         [Test]

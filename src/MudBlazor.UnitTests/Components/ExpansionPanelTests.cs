@@ -165,12 +165,12 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that ExpandAll method expands all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_ExpandAllAync()
+        public async Task MudExpansionPanel_ExpandAllAsync()
         {
             var panels = Context.RenderComponent<MudExpansionPanels>();
-            var panel1 = new MudExpansionPanel();
-            var panel2 = new MudExpansionPanel();
-            var panel3 = new MudExpansionPanel();
+            var panel1 = Context.RenderComponent<MudExpansionPanel>().Instance;
+            var panel2 = Context.RenderComponent<MudExpansionPanel>().Instance;
+            var panel3 = Context.RenderComponent<MudExpansionPanel>().Instance;
             await panels.Instance.AddPanelAsync(panel1);
             await panels.Instance.AddPanelAsync(panel2);
             await panels.Instance.AddPanelAsync(panel3);
@@ -193,9 +193,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task MudExpansionPanel_CollapseAllAsync()
         {
             var panels = Context.RenderComponent<MudExpansionPanels>();
-            var panel1 = new MudExpansionPanel();
-            var panel2 = new MudExpansionPanel();
-            var panel3 = new MudExpansionPanel();
+            var panel1 = Context.RenderComponent<MudExpansionPanel>().Instance;
+            var panel2 = Context.RenderComponent<MudExpansionPanel>().Instance;
+            var panel3 = Context.RenderComponent<MudExpansionPanel>().Instance;
             await panels.Instance.AddPanelAsync(panel1);
             await panels.Instance.AddPanelAsync(panel2);
             await panels.Instance.AddPanelAsync(panel3);
@@ -221,9 +221,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task MudExpansionPanel_CollapseAllExceptAsync()
         {
             var panels = Context.RenderComponent<MudExpansionPanels>();
-            var panel1 = new MudExpansionPanel();
-            var panel2 = new MudExpansionPanel();
-            var panel3 = new MudExpansionPanel();
+            var panel1 = Context.RenderComponent<MudExpansionPanel>().Instance;
+            var panel2 = Context.RenderComponent<MudExpansionPanel>().Instance;
+            var panel3 = Context.RenderComponent<MudExpansionPanel>().Instance;
             await panels.Instance.AddPanelAsync(panel1);
             await panels.Instance.AddPanelAsync(panel2);
             await panels.Instance.AddPanelAsync(panel3);

@@ -60,7 +60,7 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// The index of the currently active step.
     /// </summary>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public int ActiveIndex { get; set; } = -1;
 

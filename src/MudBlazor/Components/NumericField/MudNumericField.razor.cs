@@ -29,23 +29,16 @@ namespace MudBlazor
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
-        private bool _cultureHasValue = false;
         private MudInput<string> _elementReference = null!;
         private readonly string _elementId = Identifier.Create("numericField");
 
         private readonly Comparer _comparer = new(CultureInfo.InvariantCulture);
-        private readonly ParameterState<CultureInfo> _cultureInfo;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudNumericField()
         {
-            using var registerScope = CreateRegisterScope();
-            _cultureInfo = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
-                .WithParameter(() => Culture)
-                .WithChangeHandler((x) => _cultureHasValue = x.Value is not null);
-
             Validation = new Func<T, Task<bool>>(ValidateInput);
             #region parameters default depending on T
 
@@ -140,25 +133,16 @@ namespace MudBlazor
                 .Build();
 
         private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
-        private bool IsFormatted => Pattern is not null || Format is not null || _cultureHasValue;
 
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-
-            if (!firstRender)
-            {
-                return;
-            }
-
-            // Overrides the browser's culture since <input type="number"> does not consider culture.
-            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used 
-            // with the corresponding attributes applied.
-            if (!IsFormatted)
-            {
-                SetCulture(CultureInfo.InvariantCulture);
-            }
-        }
+        // Defensive null check with object pattern: GetCulture() is annotated as non-null, but DataGrid may return null in certain cases.
+        // In typical scenarios it is not null, as MudFormComponent sets a default culture and other components do not override it with null.
+        // The annotation could be changed in the future, but doing so would introduce unnecessary null checks in other components.
+        private bool IsFormatted =>
+            Pattern is not null ||
+            GetFormat() is not null ||
+            // Edgy way to check if the MudComponentForm.Culture is provided explicitly and is a different one than the default CurrentUICulture && InvariantCulture.
+            // If not, then we override to InvariantCulture to avoid issues with <input type="number">.
+            GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture);
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
@@ -329,6 +313,19 @@ namespace MudBlazor
             }
 
             await base.OnAfterRenderAsync(firstRender);
+
+            if (!firstRender)
+            {
+                return;
+            }
+
+            // Overrides the browser's culture since <input type="number"> does not consider culture.
+            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used 
+            // with the corresponding attributes applied.
+            if (!IsFormatted)
+            {
+                await SetCultureAsync(CultureInfo.InvariantCulture);
+            }
         }
 
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)

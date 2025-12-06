@@ -58,7 +58,7 @@ namespace MudBlazor
         /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
         /// This parameter will take effect when <see cref="MinDays"/> or <see cref="MaxDays"/> is set.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInCount { get; set; } = true;
 
@@ -138,8 +138,8 @@ namespace MudBlazor
 
                 Touched = true;
 
-                if (range?.Start is not null)
-                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+                if (range?.Start is not null && StartMonth == null)
+                    PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
 
                 _dateRange = range;
                 _value = range?.End;
@@ -147,7 +147,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    Converter.GetError = false;
+                    ResetConverterErrors();
                     if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
@@ -156,8 +156,8 @@ namespace MudBlazor
                     else
                     {
                         _rangeText = new Range<string>(
-                            Converter.Set(_dateRange.Start),
-                            Converter.Set(_dateRange.End));
+                            ConvertSet(_dateRange.Start),
+                            ConvertSet(_dateRange.End));
                         await SetTextAsync(_dateRange.ToString(Converter), false);
                     }
                 }
@@ -227,8 +227,8 @@ namespace MudBlazor
             if (_dateRange?.Start != null || _dateRange?.End != null)
             {
                 _rangeText = new Range<string>(
-                    Converter.Set(_dateRange.Start),
-                    Converter.Set(_dateRange.End));
+                    ConvertSet(_dateRange.Start),
+                    ConvertSet(_dateRange.End));
             }
 
             return SetTextAsync(_dateRange?.ToString(Converter), false);
@@ -498,14 +498,14 @@ namespace MudBlazor
         protected override DateTime GetCalendarStartOfMonth()
         {
             var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;
-            return date.StartOfMonth(Culture);
+            return date.StartOfMonth(GetCulture());
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = DateRange?.Start ?? DateTime.Today;
-            var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
-            var calenderYear = Culture.Calendar.GetYear(date);
+            var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
+            var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;
         }
     }

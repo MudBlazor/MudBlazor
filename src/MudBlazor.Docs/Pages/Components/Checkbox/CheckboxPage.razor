@@ -66,6 +66,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Aria">
+                <Description>
+                    The checkbox uses a <CodeInline Tag>label</CodeInline> element that wraps the input, which by default assigns any text provided via 
+                    the <CodeInline>Label</CodeInline> property as the accessible name for the checkbox. If this behavior doesn't suit your layout or 
+                    accessibility needs, you can use the <CodeInline>AriaLabel</CodeInline> property to explicitly set the accessible name. This overrides 
+                    the default labeling behavior and works independently of the <CodeInline>Label</CodeInline> or <CodeInline>ChildContent</CodeInline> properties.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxAriaExample)">
+                <CheckboxAriaExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Indeterminate State">
                 <Description>
                     When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.

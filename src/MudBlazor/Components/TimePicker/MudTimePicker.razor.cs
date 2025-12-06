@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 #nullable enable
 namespace MudBlazor
@@ -24,11 +25,9 @@ namespace MudBlazor
         private const string Format24Hours = "HH:mm";
         private const string Format12Hours = "hh:mm tt";
 
-        public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
+        public MudTimePicker()
         {
-            Converter.GetFunc = OnGet;
-            Converter.SetFunc = OnSet;
-            ((DefaultConverter<TimeSpan?>)Converter).Format = Format24Hours;
+            Converter = Conversions.From<TimeSpan?, string?>(OnSet, OnGet);
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
 
@@ -41,7 +40,7 @@ namespace MudBlazor
 
             var time = DateTime.Today.Add(timespan.Value);
 
-            return time.ToString(((DefaultConverter<TimeSpan?>)Converter).Format, Culture);
+            return time.ToString(Format24Hours, Culture);
         }
 
         private TimeSpan? OnGet(string? value)
@@ -51,7 +50,7 @@ namespace MudBlazor
                 return null;
             }
 
-            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out var time))
+            if (DateTime.TryParseExact(value, Format24Hours, Culture, DateTimeStyles.None, out var time))
             {
                 return time.TimeOfDay;
             }
@@ -76,12 +75,9 @@ namespace MudBlazor
             return null;
         }
 
-        private void HandleParsingError()
+        private static void HandleParsingError()
         {
-            const string ParsingErrorMessage = LanguageResource.Converter_InvalidTimeSpan;
-            Converter.GetError = true;
-            Converter.GetErrorMessage = (ParsingErrorMessage, []);
-            Converter.OnError?.Invoke(ParsingErrorMessage, []);
+            throw new ConversionException(LanguageResource.Converter_InvalidTimeSpan);
         }
 
         private bool _amPm = false;
@@ -165,13 +161,8 @@ namespace MudBlazor
 
                 _amPm = value;
 
-                if (Converter is DefaultConverter<TimeSpan?> defaultConverter && string.IsNullOrWhiteSpace(_timeFormat))
-                {
-                    defaultConverter.Format = AmPm ? Format12Hours : Format24Hours;
-                }
-
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
+                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
         }
 
@@ -200,13 +191,9 @@ namespace MudBlazor
                 }
 
                 _timeFormat = value;
-                if (Converter is DefaultConverter<TimeSpan?> defaultConverter)
-                {
-                    defaultConverter.Format = _timeFormat;
-                }
 
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
+                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
         }
 
@@ -238,7 +225,7 @@ namespace MudBlazor
                 _value = time;
                 if (updateValue)
                 {
-                    await SetTextAsync(Converter.Set(_value), false);
+                    await SetTextAsync(ConvertSet(_value), false);
                 }
 
                 UpdateTimeSetFromTime();
@@ -259,7 +246,7 @@ namespace MudBlazor
             Touched = true;
 
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(Converter.Get(value), false);
+            return SetTimeAsync(ConvertGet(value), false);
         }
 
         /// <inheritdoc />
@@ -861,6 +848,16 @@ namespace MudBlazor
             }
 
             StateHasChanged();
+        }
+
+        protected override string GetFormat()
+        {
+            if (!string.IsNullOrEmpty(TimeFormat))
+            {
+                return TimeFormat;
+            }
+
+            return AmPm ? Format12Hours : Format24Hours;
         }
 
         protected Task ChangeMinuteAsync(int minute)

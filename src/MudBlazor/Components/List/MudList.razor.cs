@@ -165,7 +165,7 @@ namespace MudBlazor
         /// <remarks>
         /// This value is updated when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Selecting)]
         public T? SelectedValue { get; set; }
 
@@ -184,7 +184,7 @@ namespace MudBlazor
         /// <remarks>
         /// This value is updated when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 

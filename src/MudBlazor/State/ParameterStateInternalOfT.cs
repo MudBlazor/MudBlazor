@@ -47,13 +47,60 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     public bool HasHandler => _parameterChangedHandler is not null;
 
     /// <inheritdoc />
+    [MemberNotNullWhen(true, nameof(_value), nameof(_initialValue))]
     public override bool IsInitialized => _isInitialized;
 
     /// <inheritdoc />
-    public override T? InitialValue => _initialValue;
+    public override T InitialValue
+    {
+        get
+        {
+            if (!IsInitialized)
+            {
+                return _getParameterValueFunc();
+            }
+
+            return _initialValue;
+        }
+    }
 
     /// <inheritdoc/>
-    public override T? Value => _value;
+    /// <remarks>
+    /// <para>
+    /// Some (bad) components may attempt to read parameter values before OnInitialized is called
+    /// (e.g., during SetParametersAsync). In that case, the state is not yet fully initialized,
+    /// and accessing the Value will return null even when the parameter has a default value, such as:
+    /// <code>[Parameter] string MyParameter { get; set; } = "some value";</code>
+    /// <br/>
+    /// To avoid this, if initialization has not yet occurred, fall back to the delegate
+    /// that retrieves the current parameter value.
+    /// <br/>
+    /// Important: Some incorrect tests bypass the normal Blazor lifecycle, which can lead to
+    /// incorrect state being read. For example:
+    /// </para>
+    /// <code>
+    ///      var panels = Context.RenderComponent&lt;MudExpansionPanels&gt;();
+    ///      var panel = new MudExpansionPanel();
+    ///      panels.Instance.AddPanelAsync(panel);
+    /// </code>
+    /// <para>
+    /// In this scenario, MudExpansionPanel is created outside Blazor's lifecycle, so
+    /// AddPanelAsync receives an invalid _expandedState.Value.
+    /// Such test patterns should be avoided—rewrite the tests to follow normal Blazor usage.
+    /// </para>
+    /// </remarks>
+    public override T Value
+    {
+        get
+        {
+            if (!IsInitialized)
+            {
+                return _getParameterValueFunc();
+            }
+
+            return _value;
+        }
+    }
 
     /// <summary>
     /// Gets the function to provide the comparer for the parameter.
@@ -67,14 +114,14 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
         _comparer = comparer ?? new ParameterEqualityComparerSwappable<T>(() => EqualityComparer<T>.Default);
-        _lastValue = default;
-        _value = default;
     }
 
     /// <inheritdoc/>
     public override Task SetValueAsync(T value)
     {
-        if (!_comparer.Equals(Value, value))
+        // Avoid using the Value property here because its getter includes an
+        // IsInitialized branch which may cause the SetValueAsync to be skipped.
+        if (!_comparer.Equals(_value, value))
         {
             _value = value;
             var eventCallback = _eventCallbackFunc();

@@ -214,7 +214,7 @@ namespace MudBlazor
         /// Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Responsive"/> or <see cref="DrawerVariant.Mini" />.
         /// </para>
         /// </remarks> 
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
 
@@ -224,7 +224,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  Raises the <see cref="OpenChanged"/> event upon change.  When bound via <c>@bind-Open</c>, this property is updated when this drawer closes itself.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool Open { get; set; }
 
@@ -267,7 +267,7 @@ namespace MudBlazor
         /// <summary>
         /// The position of this drawer when opened, relative to a <see cref="MudAppBar"/> when inside a <see cref="MudLayout"/>.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerClipMode ClipMode { get; set; }
 

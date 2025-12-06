@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Analyzers
 {
 #nullable enable
     [TestFixture]
-    [Ignore("Until a solution for matching SDK/roslyn package reference is found see https://github.com/dotnet/roslyn/issues/77979")]
+    //[Ignore("Until a solution for matching SDK/roslyn package reference is found see https://github.com/dotnet/roslyn/issues/77979")]
     public class ValidAttributeTests : BunitTest
     {
         ProjectCompilation Workspace { get; set; } = default!;
@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Analyzers
 
         private ExpectedDiagnostic IllegalAttributeErrorTextChangedOnMudCheckBox { get; set; } = new ExpectedDiagnostic(MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
             new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(303, 8), new LinePosition(303, 75)),
-            "Illegal Attribute 'ErrorTextChanged' on 'MudCheckBox'");
+            "Illegal Attribute 'RequiredErrorChanged' on 'MudCheckBox'");
 
         private ExpectedDiagnostic IllegalAttributeAvatarClassOnMudChip { get; set; } = new ExpectedDiagnostic(MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
             new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(318, 8), new LinePosition(318, 70)),

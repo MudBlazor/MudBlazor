@@ -123,7 +123,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to 0.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         public int GroupByOrder { get; set; }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         public bool GroupExpanded { get; set; }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         public bool Hidden { get; set; }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates whether this column is currently grouped.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         public bool Grouping { get; set; }
 
         /// <summary>

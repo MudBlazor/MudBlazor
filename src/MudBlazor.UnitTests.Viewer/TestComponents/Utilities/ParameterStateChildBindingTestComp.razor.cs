@@ -16,7 +16,7 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
     [Parameter]
     public string? Id { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public bool Expanded { get; set; }
 
     [Parameter]

@@ -36,7 +36,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, text will display properly for RTL languages such as Arabic, Hebrew, and Persian.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.RTLProvider.Behavior)]
         public bool RightToLeft { get; set; }
 

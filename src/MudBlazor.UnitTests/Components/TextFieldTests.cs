@@ -62,8 +62,10 @@ namespace MudBlazor.UnitTests.Components
             //
             0.0.ToString("F1", CultureInfo.InvariantCulture).Should().Be("0.0");
             //
-            await comp.InvokeAsync(() => textfield.Format = "F1");
-            await comp.InvokeAsync(() => textfield.Culture = CultureInfo.InvariantCulture);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Format, "F1")
+                .Add(x => x.Culture, CultureInfo.InvariantCulture));
+
             textfield.Value.Should().Be(0.0);
             textfield.Text.Should().Be("0.0");
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -241,12 +243,11 @@ namespace MudBlazor.UnitTests.Components
         [Test, CancelAfter(1000)]
         public async Task TextFieldUpdateLoopProtectionTest()
         {
-            var comp = Context.RenderComponent<MudTextField<string>>();
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Converter, Conversions.From<string, string>(s => $"{s}x", s => $"{s}y")));
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that textfields and other inputs are now protected against.
             var textfield = comp.Instance;
-            textfield.Converter.SetFunc = s => $"{s}x";
-            textfield.Converter.GetFunc = s => $"{s}y";
             await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", "A"));
             textfield.Value.Should().Be("A");
             textfield.Text.Should().Be("Ax");

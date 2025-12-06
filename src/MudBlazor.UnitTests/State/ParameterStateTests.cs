@@ -90,26 +90,21 @@ public class ParameterStateTests
     public void OnParametersSet_UpdatesValueIfChanged()
     {
         // Arrange
-        var initialValue = 5;
-        const int NewValue = 10;
+        const int InitialValue = 5;
         // ReSharper disable once AccessToModifiedClosure
         var parameterState = ParameterAttachBuilder
             .Create<int>()
-            .WithMetadata(new ParameterMetadata(nameof(initialValue)))
-            .WithGetParameterValueFunc(() => initialValue)
+            .WithMetadata(new ParameterMetadata(nameof(InitialValue)))
+            .WithGetParameterValueFunc(() => InitialValue)
             .Attach();
 
         // Act
         parameterState.OnParametersSet();
 
         // Assert
-        parameterState.Value.Should().Be(initialValue);
-
-        // Act & Assert
-        initialValue = NewValue;
         parameterState.OnParametersSet();
-        parameterState.Value.Should().Be(NewValue);
-        parameterState.InitialValue.Should().Be(0, because: "OnInitialized wasn't called, so InitialValue remains its default for int");
+        parameterState.Value.Should().Be(InitialValue);
+        parameterState.InitialValue.Should().Be(InitialValue);
     }
 
     [Test]

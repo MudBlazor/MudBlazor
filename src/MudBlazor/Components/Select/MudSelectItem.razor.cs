@@ -138,7 +138,7 @@ namespace MudBlazor
                 var converter = MudSelect?.Converter;
                 if (converter == null)
                     return $"{Value}";
-                return converter.Set(Value);
+                return converter.Convert(Value);
             }
         }
 
