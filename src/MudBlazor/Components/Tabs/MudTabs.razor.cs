@@ -306,14 +306,14 @@ namespace MudBlazor
         public RenderFragment<MudTabPanel>? PrePanelContent { get; set; }
 
         /// <summary>
-        /// The CSS classes applied to tab panels.
+        /// The CSS classes applied to all tab buttons.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string? TabPanelClass { get; set; }
+        public string? TabButtonsClass { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the tab header.
@@ -337,14 +337,14 @@ namespace MudBlazor
         public string? ActiveTabClass { get; set; }
 
         /// <summary>
-        /// The CSS classes applied to all tab panels.
+        /// The CSS classes applied to the element encasing the tab panels.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string? PanelClass { get; set; }
+        public string? TabPanelsClass { get; set; }
 
         /// <summary>
         /// The currently selected tab panel.
@@ -823,7 +823,7 @@ namespace MudBlazor
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
                 .AddClass($"mud-tabs-vertical", _isVerticalTabs)
-                .AddClass(PanelClass)
+                .AddClass(TabPanelsClass)
                 .Build();
 
         protected string SliderClass =>
@@ -882,7 +882,7 @@ namespace MudBlazor
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple", Ripple)
               .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
-              .AddClass(TabPanelClass)
+              .AddClass(TabButtonsClass)
               .AddClass(panel.Classname)
               .Build();
 

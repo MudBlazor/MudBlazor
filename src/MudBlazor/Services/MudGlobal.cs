@@ -57,6 +57,14 @@ public static class MudGlobal
         /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
         /// </remarks>
         public static bool ModalOverlay { get; set; }
+
+        /// <summary>
+        /// The behavior applied when there is not enough space for a dropdown popover to be visible.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
+        /// </remarks>
+        public static OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
     }
 
     /// <summary>

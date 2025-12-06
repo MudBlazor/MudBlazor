@@ -138,7 +138,7 @@ namespace MudBlazor
 
                 Touched = true;
 
-                if (range?.Start is not null)
+                if (range?.Start is not null && StartMonth == null)
                     PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
 
                 _dateRange = range;

@@ -47,6 +47,7 @@ jobs:
           prompt-path: .github/AutoTriage.prompt
           enabled: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.enabled) }}
           db-path: triage-db.json
+          max-triages: 40
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

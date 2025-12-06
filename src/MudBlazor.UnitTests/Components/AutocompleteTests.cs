@@ -2313,5 +2313,35 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClosedCount.Should().Be(0);
             comp.Instance.ClearCount.Should().Be(1);
         }
+
+        [Test]
+        public void PopoverSettings_SetsDefaultValues()
+        {
+            var auto = Context.RenderComponent<MudAutocomplete<string>>();
+
+            auto.Instance.PopoverFixed.Should().BeFalse();
+            auto.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+        }
+
+        [Test]
+        public void PopoverSettings_OverridesDefaultValues()
+        {
+            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
+            try
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
+                var auto = Context.RenderComponent<MudAutocomplete<string>>(p =>
+                {
+                    p.Add(p => p.PopoverFixed, true);
+                });
+
+                auto.Instance.PopoverFixed.Should().BeTrue();
+                auto.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+            }
+            finally
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
+            }
+        }
     }
 }
