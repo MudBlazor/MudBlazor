@@ -392,4 +392,33 @@ class MyComponent : ComponentBaseWithState
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+
+    [Test]
+    public async Task NoDiagnostic_ExternalAccessWhenUsingGetState()
+    {
+        var source = @"
+using System;
+using MudBlazor;
+using MudBlazor.State;
+using MudBlazor.Extensions;
+
+class ComponentA : ComponentBaseWithState
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public int GetExternalCounter()
+    {
+        return _componentA.GetState(x => x.Counter);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }
