@@ -772,7 +772,7 @@ namespace MudBlazor
 
         private async Task UpdateInputIdStateAsync()
         {
-            if (InputId is not null)
+            if (_inputIdState.Value is not null)
             {
                 return;
             }
