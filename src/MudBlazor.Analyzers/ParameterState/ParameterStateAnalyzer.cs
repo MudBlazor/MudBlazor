@@ -17,11 +17,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
     private const string SetParametersAsyncMethodName = "SetParametersAsync";
     private const string GetStateMethodName = "GetState";
 
-    // ParameterUsageOptions flag values (matching MudBlazor.State.ParameterUsageOptions)
-    private const int ParameterUsageNone = 0;
-    private const int ParameterUsageRead = 1 << 1;  // 2
-    private const int ParameterUsageWrite = 1 << 2; // 4
-    private const int ParameterUsageAll = ParameterUsageRead | ParameterUsageWrite; // 6
+    // ParameterUsageOptions flag values - must match MudBlazor.State.ParameterUsageOptions enum values
+    // Note: Analyzers cannot directly reference MudBlazor assembly, so values are duplicated here
+    // See: src/MudBlazor/State/ParameterUsageOptions.cs
+    private const int ParameterUsageNone = 0;                                       // ParameterUsageOptions.None
+    private const int ParameterUsageRead = 1 << 1;                                  // ParameterUsageOptions.Read = 2
+    private const int ParameterUsageWrite = 1 << 2;                                 // ParameterUsageOptions.Write = 4
+    private const int ParameterUsageAll = ParameterUsageRead | ParameterUsageWrite; // ParameterUsageOptions.All = 6
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
@@ -309,7 +311,8 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
         private bool TryGetParameterStateAttribute(IPropertySymbol propertySymbol, out int parameterUsage)
         {
-            parameterUsage = ParameterUsageAll; // Default value
+            // Default value matches ParameterStateAttribute.ParameterUsage default (ParameterUsageOptions.All)
+            parameterUsage = ParameterUsageAll;
 
             foreach (var attribute in propertySymbol.GetAttributes())
             {
@@ -322,10 +325,19 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                     // Try to get the ParameterUsage property value
                     foreach (var namedArg in attribute.NamedArguments)
                     {
-                        if (string.Equals(namedArg.Key, ParameterUsagePropertyName, StringComparison.Ordinal) &&
-                            namedArg.Value.Value is int usageValue)
+                        if (string.Equals(namedArg.Key, ParameterUsagePropertyName, StringComparison.Ordinal))
                         {
-                            parameterUsage = usageValue;
+                            // Enum values in attributes can be boxed as int or as the underlying enum type
+                            var value = namedArg.Value.Value;
+                            if (value is int intValue)
+                            {
+                                parameterUsage = intValue;
+                            }
+                            else if (value is not null)
+                            {
+                                // Convert enum to underlying int value
+                                parameterUsage = Convert.ToInt32(value);
+                            }
                             break;
                         }
                     }
