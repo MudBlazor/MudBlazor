@@ -4,8 +4,11 @@
 
 namespace MudBlazor.State;
 
-[AttributeUsage(AttributeTargets.Property)]
-public class ParameterStateAttribute : Attribute
+[Flags]
+public enum ParameterUsageOptions 
 {
-    public ParameterUsageOptions ParameterUsage { get; set; } = ParameterUsageOptions.All;
+    None = 0,
+    Read = 1 << 1,
+    Write = 1 << 2,
+    All = Read | Write
 }

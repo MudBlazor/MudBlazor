@@ -32,46 +32,37 @@ namespace MudBlazor
                 .WithParameter(() => Values)
                 .WithEventCallback(() => ValuesChanged)
                 .WithChangeHandler(OnValuesChanged);
-            _color = registerScope.RegisterParameter<Color>(nameof(Color))
+            registerScope.RegisterParameter<Color>(nameof(Color))
                 .WithParameter(() => Color)
                 .WithChangeHandler(OnParameterChanged);
-            _selectedClass = registerScope.RegisterParameter<string?>(nameof(SelectedClass))
+            registerScope.RegisterParameter<string?>(nameof(SelectedClass))
                 .WithParameter(() => SelectedClass)
                 .WithChangeHandler(OnParameterChanged);
-            _outline = registerScope.RegisterParameter<bool>(nameof(Outlined))
+            registerScope.RegisterParameter<bool>(nameof(Outlined))
                 .WithParameter(() => Outlined)
                 .WithChangeHandler(OnParameterChanged);
-            _delimiters = registerScope.RegisterParameter<bool>(nameof(Delimiters))
+            registerScope.RegisterParameter<bool>(nameof(Delimiters))
                 .WithParameter(() => Delimiters)
                 .WithChangeHandler(OnParameterChanged);
-            _rtl = registerScope.RegisterParameter<bool>(nameof(RightToLeft))
+            registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnParameterChanged);
-            _size = registerScope.RegisterParameter<Size>(nameof(Size))
+            registerScope.RegisterParameter<Size>(nameof(Size))
                 .WithParameter(() => Size)
                 .WithChangeHandler(OnParameterChanged);
-            _checkMark = registerScope.RegisterParameter<bool>(nameof(CheckMark))
+            registerScope.RegisterParameter<bool>(nameof(CheckMark))
                 .WithParameter(() => CheckMark)
                 .WithChangeHandler(OnParameterChanged);
-            _fixedContent = registerScope.RegisterParameter<bool>(nameof(FixedContent))
+            registerScope.RegisterParameter<bool>(nameof(FixedContent))
                 .WithParameter(() => FixedContent)
                 .WithChangeHandler(OnParameterChanged);
-            _disabled = registerScope.RegisterParameter<bool>(nameof(Disabled))
+            registerScope.RegisterParameter<bool>(nameof(Disabled))
                 .WithParameter(() => Disabled)
                 .WithChangeHandler(OnParameterChanged);
         }
 
         private readonly ParameterState<T?> _value;
         private readonly ParameterState<IEnumerable<T?>?> _values;
-        private readonly ParameterState<Color> _color;
-        private readonly ParameterState<string?> _selectedClass;
-        private readonly ParameterState<bool> _outline;
-        private readonly ParameterState<bool> _delimiters;
-        private readonly ParameterState<bool> _rtl;
-        private readonly ParameterState<Size> _size;
-        private readonly ParameterState<bool> _checkMark;
-        private readonly ParameterState<bool> _fixedContent;
-        private readonly ParameterState<bool> _disabled;
         private readonly List<MudToggleItem<T>> _items = new();
 
         protected string Classname => new CssBuilder("mud-toggle-group")
@@ -94,7 +85,7 @@ namespace MudBlazor
         /// <summary>
         /// Prevents the user from interacting with this toggle group.
         /// </summary>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
@@ -144,7 +135,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedClass { get; set; }
 
@@ -179,7 +170,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public bool Outlined { get; set; } = true;
 
@@ -189,7 +180,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public bool Delimiters { get; set; } = true;
 
@@ -209,7 +200,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
@@ -232,7 +223,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="Color.Primary"/>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
@@ -242,7 +233,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, the checkmark icons can be customized via <c>SelectedIcon</c> and <c>UnselectedIcon</c>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Behavior)]
         public bool CheckMark { get; set; }
 
@@ -252,7 +243,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Behavior)]
         public bool FixedContent { get; set; }
 
