@@ -484,8 +484,8 @@ namespace MudBlazor
             if (newMonth.Year != currentMonth.Year)
             {
                 var daysInMonth =
-                    Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                var monthsInYear = Culture.Calendar.GetMonthsInYear(currentMonth.Year);
+                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
                 newMonth = new DateTime(currentMonth.Year,
                     numberOfMonths - (monthsInYear - currentMonth.Month),
                     Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
@@ -506,8 +506,8 @@ namespace MudBlazor
             if (currentMonth.Year != newMonth.Year)
             {
                 var daysInMonth =
-                    Culture.Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                var monthsInYear = Culture.Calendar.GetMonthsInYear(currentMonth.Year);
+                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
                 newMonth = new DateTime(currentMonth.Year,
                     monthsInYear - (numberOfMonths - currentMonth.Month),
                     Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
