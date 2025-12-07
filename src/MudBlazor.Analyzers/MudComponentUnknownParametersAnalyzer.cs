@@ -20,7 +20,7 @@ namespace MudBlazor.Analyzers
         private static readonly LocalizableString _title = new LocalizableResourceString(nameof(Resources.MUD0002Title), Resources.ResourceManager, typeof(Resources));
         private static readonly LocalizableString _attributeMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0002MessageFormat), Resources.ResourceManager, typeof(Resources));
         private static readonly LocalizableString _description = new LocalizableResourceString(nameof(Resources.MUD0002Description), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableResourceString _url = new(nameof(Resources.MUD0002Url), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableResourceString _url = new(nameof(Resources.HelpLinkUrl), Resources.ResourceManager, typeof(Resources));
 
         private const string Category = "Attributes/Parameters";
         public const string DebugAnalyzerProperty = "build_property.MudDebugAnalyzer";

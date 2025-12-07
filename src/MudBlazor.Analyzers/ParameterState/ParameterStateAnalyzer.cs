@@ -462,8 +462,7 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             }
 
             // If the instance is 'this', it's not external access
-            if (propertyReference.Instance is IInstanceReferenceOperation instanceRef &&
-                instanceRef.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+            if (propertyReference.Instance is IInstanceReferenceOperation { ReferenceKind: InstanceReferenceKind.ContainingTypeInstance })
             {
                 return false;
             }

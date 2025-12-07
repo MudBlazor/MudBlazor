@@ -24,7 +24,8 @@ public sealed partial class ParameterStateAnalyzer
     public const string ExternalAccessDiagnosticId = "MUD0012";
 
     private const string Category = "Usage";
-    private const string HelpLinkUrl = "https://mudblazor.com/features/analyzers";
+
+    private static readonly LocalizableString HelpLinkUrl = new LocalizableResourceString(nameof(Resources.HelpLinkUrl), Resources.ResourceManager, typeof(Resources));
 
     private static readonly LocalizableString ReadTitle = new LocalizableResourceString(nameof(Resources.MUD0010Title), Resources.ResourceManager, typeof(Resources));
     private static readonly LocalizableString ReadMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0010MessageFormat), Resources.ResourceManager, typeof(Resources));
@@ -49,7 +50,7 @@ public sealed partial class ParameterStateAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: ReadDescription,
-        helpLinkUri: HelpLinkUrl);
+        helpLinkUri: HelpLinkUrl.ToString());
 
     /// <summary>
     /// Diagnostic descriptor for MUD0011: Writing to a parameter state property is not allowed.
@@ -62,7 +63,7 @@ public sealed partial class ParameterStateAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: WriteDescription,
-        helpLinkUri: HelpLinkUrl);
+        helpLinkUri: HelpLinkUrl.ToString());
 
     /// <summary>
     /// Diagnostic descriptor for MUD0012: External access of a parameter state property is not allowed.
@@ -75,7 +76,7 @@ public sealed partial class ParameterStateAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: ExternalAccessDescription,
-        helpLinkUri: HelpLinkUrl);
+        helpLinkUri: HelpLinkUrl.ToString());
 
     private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue = ImmutableArray.Create(
         ReadDescriptor,
