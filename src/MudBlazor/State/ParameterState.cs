@@ -72,9 +72,9 @@ public abstract class ParameterState<T>
     /// in that case <see cref="HasCallback"/> will be <c>true</c>.
     /// </para>
     /// <para>
-    /// <para>
     /// <b>NB!</b> Having a callback doesn't always mean the usage of Blazor's <c>@bind-</c> syntax.
     /// </para>
+    /// <para>
     /// When <see cref="HasCallback"/> is <c>true</c>, calling <see cref="SetValueAsync"/> triggers
     /// the associated <see cref="EventCallback{T}"/> so the parent can update its value and re-render — which in turn updates
     /// <see cref="RenderValue"/> when the parent supplies the new value.
