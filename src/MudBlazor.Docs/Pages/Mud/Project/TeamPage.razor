@@ -20,7 +20,7 @@
             Project leads who oversee development and review contributions in their free time.
         </MudText>
         <MudGrid>
-            @foreach (var member in TeamMemberData.GetCoreTeam())
+            @foreach (var member in TeamMemberData.GetTeam().Where(c => c.Team == Team.Core || c.Team == Team.CoreMaintainer))
             {
                 <MudItem xs="12" md="6">
                     <MudTeamCard Member="member" />
@@ -34,7 +34,7 @@
             Community members in close collaboration, recognized for their high-quality contributions.
         </MudText>
         <MudGrid>
-            @foreach (var contributor in TeamMemberData.GetContributionTeam())
+            @foreach (var contributor in TeamMemberData.GetTeam().Where(c => c.Team == Team.Contribution))
             {
                 <MudItem xs="12" md="6">
                     <MudTeamCard Member="contributor" />
@@ -42,8 +42,22 @@
             }
         </MudGrid>
 
+        @* Hall of Fame *@
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Tertiary">Hall of Fame</MudText>
+        <MudText Class="mb-8">
+            Previous team members who are no longer active, but whose contributions should not be forgotten.
+        </MudText>
+        <MudGrid>
+            @foreach (var contributor in TeamMemberData.GetHallOfFameTeam())
+            {
+                <MudItem xs="12" md="6">
+                    <MudTeamCard Member="contributor" DisplayTeam="true" />
+                </MudItem>
+            }
+        </MudGrid>
+
         @* Awesome Coders *@
-        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Tertiary">Awesome coders</MudText>
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true">Awesome coders</MudText>
         <MudText Class="mb-8">
             Developers who generously allowed us to reuse parts of their code.
         </MudText>
@@ -66,7 +80,7 @@
         </MudGrid>
 
         @* All Contributors *@
-        <MudText Typo="Typo.h4" Class="mt-16 mb-8">All contributors</MudText>
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true">All contributors</MudText>
         <MudText Class="mb-8">
             A growing community of developers who’ve contributed code on GitHub.
         </MudText>
