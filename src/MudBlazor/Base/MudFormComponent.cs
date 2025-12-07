@@ -834,6 +834,8 @@ namespace MudBlazor
 
         protected virtual string? GetFormat() => null;
 
+        internal IConverter<T?, U?> GetConverter() => _converterState.Value;
+
         protected virtual T? ConvertGet(U? input)
         {
             var converter = _converterState.Value;

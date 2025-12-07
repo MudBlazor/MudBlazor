@@ -73,7 +73,7 @@ namespace MudBlazor
             }
             className += $"-{drawer.GetPosition()}";
 
-            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
+            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.GetState<DrawerClipMode>(nameof(MudDrawer.ClipMode)).ToDescriptionString()}";
 
             return className;
         }
