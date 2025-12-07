@@ -35,7 +35,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers.TestComponents\MudBlazor.Analyzers.TestComponents.csproj" />
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" />
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj">
+      <!-- Some nemespaces are matching with the core, we must use alias -->
+      <Aliases>MudBlazorAnalyzer</Aliases>
+	</ProjectReference>
     <ProjectReference Include="..\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Viewer\MudBlazor.UnitTests.Viewer.csproj" />

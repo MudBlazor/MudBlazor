@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.CodeAnalysis;
-using MudBlazor.Analyzers;
 using MudBlazor.UnitTests.Analyzers.Verifiers;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Analyzers;
 
-using VerifyCS = CSharpAnalyzerVerifier<ParameterStateAnalyzer>;
+extern alias MudBlazorAnalyzer;
+using VerifyCS = CSharpAnalyzerVerifier<MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer>;
 
 /// <summary>
 /// Tests for ParameterStateAnalyzer following Microsoft's analyzer testing patterns.
@@ -20,7 +20,7 @@ public class ParameterStateAnalyzerTests
     [Test]
     public void AnalyzerShouldReportSupportedDiagnostics()
     {
-        var analyzer = new ParameterStateAnalyzer();
+        var analyzer = new MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer();
         var supportedDiagnostics = analyzer.SupportedDiagnostics;
 
         Assert.That(supportedDiagnostics, Has.Length.EqualTo(3));
@@ -33,19 +33,38 @@ public class ParameterStateAnalyzerTests
     public void DiagnosticDescriptors_ShouldHaveCorrectProperties()
     {
         // Assert MUD0010
-        Assert.That(ParameterStateAnalyzer.ReadDescriptor.Id, Is.EqualTo("MUD0010"));
-        Assert.That(ParameterStateAnalyzer.ReadDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
-        Assert.That(ParameterStateAnalyzer.ReadDescriptor.IsEnabledByDefault, Is.True);
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.Id, Is.EqualTo("MUD0010"));
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.IsEnabledByDefault, Is.True);
 
         // Assert MUD0011
-        Assert.That(ParameterStateAnalyzer.WriteDescriptor.Id, Is.EqualTo("MUD0011"));
-        Assert.That(ParameterStateAnalyzer.WriteDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
-        Assert.That(ParameterStateAnalyzer.WriteDescriptor.IsEnabledByDefault, Is.True);
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.Id, Is.EqualTo("MUD0011"));
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.IsEnabledByDefault, Is.True);
 
         // Assert MUD0012
-        Assert.That(ParameterStateAnalyzer.ExternalAccessDescriptor.Id, Is.EqualTo("MUD0012"));
-        Assert.That(ParameterStateAnalyzer.ExternalAccessDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
-        Assert.That(ParameterStateAnalyzer.ExternalAccessDescriptor.IsEnabledByDefault, Is.True);
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.Id, Is.EqualTo("MUD0012"));
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
+        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.IsEnabledByDefault, Is.True);
+    }
+
+    [Test]
+    public void ParameterUsageOptions_MustMatch()
+    {
+        void AssertEnumsMatch(Type enumA, Type enumB)
+        {
+            var namesA = Enum.GetNames(enumA);
+            var namesB = Enum.GetNames(enumB);
+            Assert.That(namesA, Is.EqualTo(namesB));
+
+            var valuesA = Enum.GetValues(enumA).Cast<object>().Select(v => (int)v);
+            var valuesB = Enum.GetValues(enumB).Cast<object>().Select(v => (int)v);
+            Assert.That(valuesA, Is.EqualTo(valuesB));
+        }
+        AssertEnumsMatch(
+            typeof(MudBlazor.State.ParameterUsageOptions),
+            typeof(MudBlazorAnalyzer.MudBlazor.State.ParameterUsageOptions)
+        );
     }
 
     [Test]

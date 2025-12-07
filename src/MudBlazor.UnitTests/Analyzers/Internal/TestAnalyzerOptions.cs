@@ -7,19 +7,21 @@ using MudBlazor.Analyzers;
 
 namespace MudBlazor.UnitTests.Analyzers.Internal
 {
+    extern alias MudBlazorAnalyzer;
+
 #nullable enable
     internal sealed class TestAnalyzerOptions : AnalyzerConfigOptionsProvider
     {
         private TestAnalyzerOptions(Dictionary<string, string> values) => _values = values ?? [];
 
         internal static AnalyzerOptions Create(
-            AllowedAttributePattern attributeProviderAttribute,
+            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern attributeProviderAttribute,
              ImmutableArray<AdditionalText> additionalText, string? attributeList = null)
         {
             return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
             {
-                [MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!,
-                [MudComponentUnknownParametersAnalyzer.AllowedAttributeListProperty] = attributeList ?? string.Empty
+                [MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!,
+                [MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AllowedAttributeListProperty] = attributeList ?? string.Empty
             }));
         }
 
