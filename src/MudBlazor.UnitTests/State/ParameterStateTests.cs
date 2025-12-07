@@ -36,9 +36,11 @@ public class ParameterStateTests
 
         // Assert
         eventFired.Should().BeTrue();
+        parameterState.HasCallback.Should().BeTrue();
         parameterState.IsInitialized.Should().BeTrue();
         parameterState.InitialValue.Should().Be(InitialValue);
         parameterState.Value.Should().Be(NewValue);
+        parameterState.RenderValue.Should().Be(InitialValue);
     }
 
     [Test]
@@ -60,6 +62,7 @@ public class ParameterStateTests
         await parameterState.SetValueAsync(InitialValue);
 
         // Assert
+        parameterState.HasCallback.Should().BeTrue();
         parameterState.IsInitialized.Should().BeTrue();
         parameterState.InitialValue.Should().Be(InitialValue);
         parameterState.Value.Should().Be(InitialValue);
@@ -81,6 +84,7 @@ public class ParameterStateTests
         parameterState.OnInitialized();
 
         // Assert
+        parameterState.HasCallback.Should().BeFalse();
         parameterState.InitialValue.Should().Be(InitialValue);
         parameterState.IsInitialized.Should().BeTrue();
         parameterState.Value.Should().Be(InitialValue);
