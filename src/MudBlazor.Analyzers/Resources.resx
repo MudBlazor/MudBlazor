@@ -136,7 +136,7 @@
     <value>Reading a parameter state property is not allowed. Use the backing ParameterState&lt;T&gt; instance instead.</value>
   </data>
   <data name="MUD0010MessageFormat" xml:space="preserve">
-    <value>Reading a parameter state property is not allowed. Use the backing ParameterState&lt;T&gt; instance instead.</value>
+    <value>Reading '{0}' parameter state property is not allowed. Use the backing ParameterState&lt;{1}&gt; instance instead.</value>
   </data>
   <data name="MUD0011Title" xml:space="preserve">
     <value>Writing to ParameterState property</value>
@@ -145,7 +145,7 @@
     <value>Writing to a parameter state property is not allowed. Use ParameterState&lt;T&gt;.SetValueAsync instead.</value>
   </data>
   <data name="MUD0011MessageFormat" xml:space="preserve">
-    <value>Writing to a parameter state property is not allowed. Use ParameterState&lt;T&gt;.SetValueAsync instead.</value>
+    <value>Writing to '{0}' parameter state property is not allowed. Use ParameterState&lt;{1}&gt;.SetValueAsync instead.</value>
   </data>
   <data name="MUD0012Title" xml:space="preserve">
     <value>External access of ParameterState property</value>
@@ -154,6 +154,6 @@
     <value>External access of a parameter state property is not allowed. Use GetState(x =&gt; x.PropertyName) instead.</value>
   </data>
   <data name="MUD0012MessageFormat" xml:space="preserve">
-    <value>External access of a parameter state property is not allowed. Use GetState(x =&gt; x.PropertyName) instead.</value>
+    <value>External access of '{0}' parameter state property is not allowed. Use GetState(x =&gt; x.{0}) instead.</value>
   </data>
 </root>

@@ -563,27 +563,43 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
 
         private static void ReportReadDiagnostic(OperationAnalysisContext context, IPropertyReferenceOperation propertyReference)
         {
+            var propertySymbol = propertyReference.Property;
+            var propertyName = propertySymbol.Name;
+            var propertyTypeName = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+
             var diagnostic = Diagnostic.Create(
                 ReadDescriptor,
-                propertyReference.Syntax.GetLocation());
+                propertyReference.Syntax.GetLocation(),
+                propertyName,
+                propertyTypeName);
 
             context.ReportDiagnostic(diagnostic);
         }
 
         private static void ReportWriteDiagnostic(OperationAnalysisContext context, IPropertyReferenceOperation propertyReference)
         {
+            var propertySymbol = propertyReference.Property;
+            var propertyName = propertySymbol.Name;
+            var propertyTypeName = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+
             var diagnostic = Diagnostic.Create(
                 WriteDescriptor,
-                propertyReference.Syntax.GetLocation());
+                propertyReference.Syntax.GetLocation(),
+                propertyName,
+                propertyTypeName);
 
             context.ReportDiagnostic(diagnostic);
         }
 
         private static void ReportExternalAccessDiagnostic(OperationAnalysisContext context, IPropertyReferenceOperation propertyReference)
         {
+            var propertySymbol = propertyReference.Property;
+            var propertyName = propertySymbol.Name;
+
             var diagnostic = Diagnostic.Create(
                 ExternalAccessDescriptor,
-                propertyReference.Syntax.GetLocation());
+                propertyReference.Syntax.GetLocation(),
+                propertyName);
 
             context.ReportDiagnostic(diagnostic);
         }

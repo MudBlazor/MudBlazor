@@ -85,7 +85,9 @@ class MyComponent
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0010")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -107,7 +109,9 @@ class MyComponent
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0010")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -131,7 +135,9 @@ class MyComponent
     private void DoSomething(int value) { }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0010")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -153,7 +159,9 @@ class MyComponent
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0011")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -175,7 +183,9 @@ class MyComponent
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0011")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -197,7 +207,9 @@ class MyComponent
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0011")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -219,7 +231,9 @@ class MyComponent
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0011")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -290,7 +304,9 @@ class ComponentB
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0012").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0012")
+            .WithLocation(0)
+            .WithArguments("Counter");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -318,7 +334,9 @@ class ComponentB
 }";
 
         // External access should report MUD0012, not MUD0010
-        var expected = VerifyCS.Diagnostic("MUD0012").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0012")
+            .WithLocation(0)
+            .WithArguments("Counter");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -463,8 +481,12 @@ class MyComponent
     }
 }";
 
-        var expectedRead = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
-        var expectedWrite = VerifyCS.Diagnostic("MUD0011").WithLocation(1);
+        var expectedRead = VerifyCS.Diagnostic("MUD0010")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
+        var expectedWrite = VerifyCS.Diagnostic("MUD0011")
+            .WithLocation(1)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expectedRead, expectedWrite);
     }
 
@@ -488,7 +510,9 @@ class MyComponent
     }
 }";
 
-        var expectedRead = VerifyCS.Diagnostic("MUD0010").WithLocation(0);
+        var expectedRead = VerifyCS.Diagnostic("MUD0010")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expectedRead);
     }
 
@@ -515,7 +539,9 @@ class ComponentB
     }
 }";
 
-        var expected = VerifyCS.Diagnostic("MUD0012").WithLocation(0);
+        var expected = VerifyCS.Diagnostic("MUD0012")
+            .WithLocation(0)
+            .WithArguments("Counter");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -539,7 +565,9 @@ class MyComponent
     }
 }";
 
-        var expectedWrite = VerifyCS.Diagnostic("MUD0011").WithLocation(0);
+        var expectedWrite = VerifyCS.Diagnostic("MUD0011")
+            .WithLocation(0)
+            .WithArguments("Counter", "int");
         await VerifyCS.VerifyAnalyzerAsync(source, expectedWrite);
     }
 
@@ -616,5 +644,54 @@ class ComponentB
 }";
 
         await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task MUD0010_GenericType_ShouldDisplayCorrectTypeName()
+    {
+        var source = @"
+using System;
+using System.Collections.Generic;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState]
+    public List<string> Items { get; set; }
+
+    public void Method()
+    {
+        var x = {|#0:Items|};
+    }
+}";
+
+        var expected = VerifyCS.Diagnostic("MUD0010")
+            .WithLocation(0)
+            .WithArguments("Items", "List<string>");
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
+    }
+
+    [Test]
+    public async Task MUD0011_StringType_ShouldDisplayCorrectTypeName()
+    {
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState]
+    public string Name { get; set; }
+
+    public void Method()
+    {
+        {|#0:Name|} = ""test"";
+    }
+}";
+
+        var expected = VerifyCS.Diagnostic("MUD0011")
+            .WithLocation(0)
+            .WithArguments("Name", "string");
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 }
