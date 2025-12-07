@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Immutable;
+using MudBlazor.State;
 
 namespace MudBlazor.Analyzers;
 
@@ -16,14 +17,6 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
     private const string ParameterUsagePropertyName = "ParameterUsage";
     private const string SetParametersAsyncMethodName = "SetParametersAsync";
     private const string GetStateMethodName = "GetState";
-
-    // ParameterUsageOptions flag values - must match MudBlazor.State.ParameterUsageOptions enum values
-    // Note: Analyzers cannot directly reference MudBlazor assembly, so values are duplicated here
-    // See: src/MudBlazor/State/ParameterUsageOptions.cs
-    private const int ParameterUsageNone = 0;                                       // ParameterUsageOptions.None
-    private const int ParameterUsageRead = 1 << 1;                                  // ParameterUsageOptions.Read = 2
-    private const int ParameterUsageWrite = 1 << 2;                                 // ParameterUsageOptions.Write = 4
-    private const int ParameterUsageAll = ParameterUsageRead | ParameterUsageWrite; // ParameterUsageOptions.All = 6
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
@@ -309,10 +302,10 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             ReportWriteDiagnostic(context, propertyReference);
         }
 
-        private bool TryGetParameterStateAttribute(IPropertySymbol propertySymbol, out int parameterUsage)
+        private bool TryGetParameterStateAttribute(IPropertySymbol propertySymbol, out ParameterUsageOptions parameterUsage)
         {
             // Default value matches ParameterStateAttribute.ParameterUsage default (ParameterUsageOptions.All)
-            parameterUsage = ParameterUsageAll;
+            parameterUsage = ParameterUsageOptions.All;
 
             foreach (var attribute in propertySymbol.GetAttributes())
             {
@@ -331,12 +324,12 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                             var value = namedArg.Value.Value;
                             if (value is int intValue)
                             {
-                                parameterUsage = intValue;
+                                parameterUsage = (ParameterUsageOptions)intValue;
                             }
                             else if (value is not null)
                             {
                                 // Convert enum to underlying int value
-                                parameterUsage = Convert.ToInt32(value);
+                                parameterUsage = (ParameterUsageOptions)Convert.ToInt32(value);
                             }
                             break;
                         }
@@ -347,14 +340,14 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             return false;
         }
 
-        private static bool ShouldCheckRead(int parameterUsage)
+        private static bool ShouldCheckRead(ParameterUsageOptions parameterUsage)
         {
-            return (parameterUsage & ParameterUsageRead) != 0;
+            return (parameterUsage & ParameterUsageOptions.Read) != 0;
         }
 
-        private static bool ShouldCheckWrite(int parameterUsage)
+        private static bool ShouldCheckWrite(ParameterUsageOptions parameterUsage)
         {
-            return (parameterUsage & ParameterUsageWrite) != 0;
+            return (parameterUsage & ParameterUsageOptions.Write) != 0;
         }
 
         private static bool IsAssignmentTarget(IPropertyReferenceOperation propertyReference)
