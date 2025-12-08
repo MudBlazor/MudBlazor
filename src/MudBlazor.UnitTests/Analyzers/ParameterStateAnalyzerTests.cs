@@ -945,4 +945,40 @@ class ComponentB
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+    [Test]
+    public async Task NoDiagnostic_SetParamAsyncPattern()
+    {
+        // Test the SetParamAsync pattern from bUnit which was reported as not working
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState]
+    public bool AutoCycle { get; set; }
+}
+
+static class Extensions
+{
+    public static Task SetParamAsync<T>(this T self, Expression<Func<T, object?>> exp, object? value)
+    {
+        return Task.CompletedTask;
+    }
+}
+
+class TestClass
+{
+    public async Task TestMethod()
+    {
+        var comp = new MyComponent();
+        await comp.SetParamAsync(p => p.AutoCycle, true); // Should NOT trigger MUD0012
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }

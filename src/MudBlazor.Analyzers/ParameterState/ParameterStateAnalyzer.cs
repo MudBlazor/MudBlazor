@@ -423,7 +423,7 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
         private static bool IsInsideLambdaConvertedToExpression(IPropertyReferenceOperation propertyReference)
         {
             // Walk up the operation tree to check if we're inside a lambda that's being converted to Expression<>
-            // This handles cases like: x.Add(y => y.Counter, value)
+            // This handles cases like: x.Add(y => y.Counter, value) or comp.SetParamAsync(p => p.Property, value)
             // where the lambda is passed as an Expression<Func<T, TValue>> parameter
             var current = propertyReference.Parent;
             while (current is not null)
@@ -432,31 +432,51 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 if (current is IAnonymousFunctionOperation anonymousFunction)
                 {
                     // Check if this lambda is being converted to an Expression type
-                    // The conversion happens at the parent level
-                    var parent = anonymousFunction.Parent;
-                    if (parent is IDelegateCreationOperation delegateCreation)
+                    // The conversion can happen at various levels in the operation tree
+                    if (IsLambdaConvertedToExpressionType(anonymousFunction))
                     {
-                        // Check if the target type is System.Linq.Expressions.Expression<>
-                        var targetType = delegateCreation.Type;
-                        if (IsExpressionType(targetType))
-                        {
-                            return true;
-                        }
-                    }
-                    // Also check for direct conversion operations
-                    else if (parent is IConversionOperation conversion)
-                    {
-                        var targetType = conversion.Type;
-                        if (IsExpressionType(targetType))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                     // Continue checking outer lambdas in case of nested scenarios
                     // Don't return false here - keep walking up the tree
                 }
                 current = current.Parent;
             }
+            return false;
+        }
+
+        private static bool IsLambdaConvertedToExpressionType(IAnonymousFunctionOperation anonymousFunction)
+        {
+            // Walk up from the lambda to find if it's being converted to an Expression type
+            // The operation tree can have various structures:
+            // 1. Lambda -> DelegateCreation -> Expression<>
+            // 2. Lambda -> Conversion -> Expression<>
+            // 3. Lambda -> Argument -> Conversion -> Expression<>
+            // 4. Lambda -> Argument -> DelegateCreation -> Expression<>
+            var parent = anonymousFunction.Parent;
+            
+            // Keep checking up to 2 levels up to handle argument wrapping
+            for (var level = 0; level < 2 && parent is not null; level++)
+            {
+                if (parent is IDelegateCreationOperation delegateCreation)
+                {
+                    if (IsExpressionType(delegateCreation.Type))
+                    {
+                        return true;
+                    }
+                }
+                else if (parent is IConversionOperation conversion)
+                {
+                    if (IsExpressionType(conversion.Type))
+                    {
+                        return true;
+                    }
+                }
+                
+                // Move to the next parent to handle argument wrapping
+                parent = parent.Parent;
+            }
+            
             return false;
         }
 
