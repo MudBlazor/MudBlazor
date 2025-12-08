@@ -452,6 +452,8 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                             return true;
                         }
                     }
+                    // Continue checking outer lambdas in case of nested scenarios
+                    // Don't return false here - keep walking up the tree
                 }
                 current = current.Parent;
             }
@@ -481,20 +483,35 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             }
 
             // Check if the namespace is System.Linq.Expressions
-            var containingNamespace = originalDefinition.ContainingNamespace;
-            if (containingNamespace is null || containingNamespace.IsGlobalNamespace)
+            return IsNamespaceMatch(originalDefinition.ContainingNamespace, "System", "Linq", "Expressions");
+        }
+
+        private static bool IsNamespaceMatch(INamespaceSymbol? namespaceSymbol, params string[] expectedParts)
+        {
+            if (namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace)
             {
                 return false;
             }
 
-            // Build the namespace path and check
-            // Expected: System.Linq.Expressions
-            return string.Equals(containingNamespace.Name, "Expressions", StringComparison.Ordinal) &&
-                   containingNamespace.ContainingNamespace is not null &&
-                   string.Equals(containingNamespace.ContainingNamespace.Name, "Linq", StringComparison.Ordinal) &&
-                   containingNamespace.ContainingNamespace.ContainingNamespace is not null &&
-                   string.Equals(containingNamespace.ContainingNamespace.ContainingNamespace.Name, "System", StringComparison.Ordinal) &&
-                   (containingNamespace.ContainingNamespace.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace ?? true);
+            // Walk backwards through the namespace parts (innermost to outermost)
+            // For "System.Linq.Expressions", we check Expressions -> Linq -> System
+            for (var i = expectedParts.Length - 1; i >= 0; i--)
+            {
+                if (namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace)
+                {
+                    return false;
+                }
+
+                if (!string.Equals(namespaceSymbol.Name, expectedParts[i], StringComparison.Ordinal))
+                {
+                    return false;
+                }
+
+                namespaceSymbol = namespaceSymbol.ContainingNamespace;
+            }
+
+            // After checking all expected parts, we should be at the global namespace
+            return namespaceSymbol?.IsGlobalNamespace ?? true;
         }
 
         private static bool IsComponentBaseWithStateExtensionsType(INamedTypeSymbol? typeSymbol)
@@ -510,19 +527,8 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 return false;
             }
 
-            // Check namespace
-            var containingNamespace = typeSymbol.ContainingNamespace;
-            if (containingNamespace is null || containingNamespace.IsGlobalNamespace)
-            {
-                return false;
-            }
-
-            // Build namespace string and compare
-            // Expected: MudBlazor.Extensions
-            return string.Equals(containingNamespace.Name, "Extensions", StringComparison.Ordinal) &&
-                   containingNamespace.ContainingNamespace is not null &&
-                   string.Equals(containingNamespace.ContainingNamespace.Name, "MudBlazor", StringComparison.Ordinal) &&
-                   (containingNamespace.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace ?? true);
+            // Check namespace: MudBlazor.Extensions
+            return IsNamespaceMatch(typeSymbol.ContainingNamespace, "MudBlazor", "Extensions");
         }
 
         private static bool IsExternalAccess(IPropertyReferenceOperation propertyReference, OperationAnalysisContext context)

@@ -908,4 +908,37 @@ class ComponentB
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+    [Test]
+    public async Task NoDiagnostic_NestedLambdaInExpression()
+    {
+        // Test that nested lambdas work correctly - outer is Expression, inner is delegate
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public void Method(Expression<Func<ComponentA, Func<int>>> selector)
+    {
+    }
+
+    public void TestMethod()
+    {
+        // Outer lambda is Expression, inner is a regular delegate
+        Method(x => () => x.Counter);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }
