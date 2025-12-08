@@ -15,7 +15,6 @@
             <MudStack Row Class="justify-center">
                 @foreach (var step in _stepper.Steps)
                 {
-                    @*Using the GetState extension on the component reference*@
                     <MudChip T="string" Color="@GetColor(step.Completed)">
                         @step.Title
                     </MudChip>
@@ -25,7 +24,6 @@
             <MudStack Row Class="justify-center">
                 @foreach (var step in _stepper.Steps)
                 {
-                    @*Directly accessing the property via component reference*@
                     <MudChip T="string" Color="@GetColor(step.Completed)">
                         @step.Title
                     </MudChip>
