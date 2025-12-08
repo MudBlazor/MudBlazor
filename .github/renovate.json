@@ -31,6 +31,15 @@
             "enabled": false
         },
         {
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp.Workspaces"
+            ],
+            "enabled": false
+        },
+        {
             "matchManagers": [
                 "nuget"
             ],
