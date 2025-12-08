@@ -9,7 +9,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace MudBlazor.Analyzers;
 
@@ -21,6 +23,7 @@ namespace MudBlazor.Analyzers;
 public sealed class ParameterStateCodeFixProvider : CodeFixProvider
 {
     private const string Title = "Use GetState to access ParameterState property";
+    private const string MudBlazorExtensionsNamespace = "MudBlazor.Extensions";
 
     /// <inheritdoc/>
     public override ImmutableArray<string> FixableDiagnosticIds =>
@@ -105,11 +108,9 @@ public sealed class ParameterStateCodeFixProvider : CodeFixProvider
         MemberAccessExpressionSyntax memberAccess,
         CancellationToken cancellationToken)
     {
-        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-        if (root is null)
-        {
-            return document;
-        }
+        // Use SyntaxGenerator for proper import handling
+        var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+        var generator = editor.Generator;
 
         // Get the instance expression (e.g., _componentA)
         var instanceExpression = memberAccess.Expression;
@@ -146,11 +147,35 @@ public sealed class ParameterStateCodeFixProvider : CodeFixProvider
         var newNode = getStateInvocation
             .WithLeadingTrivia(memberAccess.GetLeadingTrivia())
             .WithTrailingTrivia(memberAccess.GetTrailingTrivia())
-            .WithAdditionalAnnotations(Formatter.Annotation);
+            .WithAdditionalAnnotations(Formatter.Annotation, Simplifier.Annotation);
 
         // Replace the old member access with the new GetState invocation
-        var newRoot = root.ReplaceNode(memberAccess, newNode);
+        editor.ReplaceNode(memberAccess, newNode);
 
-        return document.WithSyntaxRoot(newRoot);
+        // Get the modified document
+        var newDocument = editor.GetChangedDocument();
+
+        // Add the using directive using the proper API
+        var root = await newDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        if (root is CompilationUnitSyntax compilationUnit)
+        {
+            var hasUsingDirective = compilationUnit.Usings.Any(u =>
+                u.Name?.ToString() == MudBlazorExtensionsNamespace);
+
+            if (!hasUsingDirective)
+            {
+                // Create the namespace import using SyntaxGenerator
+                var namespaceImport = generator.NamespaceImportDeclaration(MudBlazorExtensionsNamespace);
+
+                // Find the compilation unit and add the import
+                var newCompilationUnit = (CompilationUnitSyntax)generator.AddNamespaceImports(
+                    compilationUnit,
+                    namespaceImport);
+
+                return newDocument.WithSyntaxRoot(newCompilationUnit);
+            }
+        }
+
+        return newDocument;
     }
 }

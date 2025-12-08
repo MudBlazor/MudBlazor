@@ -220,4 +220,52 @@ class ComponentB
 
         await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
     }
+
+    [Test]
+    public async Task MUD0012_ExternalAccess_AddsUsingDirective_WhenMissing()
+    {
+        var source = @"using System;
+using MudBlazor;
+using MudBlazor.State;
+
+class ComponentA : ComponentBaseWithState
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public int GetExternalCounter()
+    {
+        return {|MUD0012:_componentA.Counter|};
+    }
+}";
+
+        // SyntaxGenerator.AddNamespaceImports appends at the end
+        var fixedSource = @"using System;
+using MudBlazor;
+using MudBlazor.State;
+using MudBlazor.Extensions;
+
+class ComponentA : ComponentBaseWithState
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public int GetExternalCounter()
+    {
+        return _componentA.GetState(x => x.Counter);
+    }
+}";
+
+        await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+    }
 }
