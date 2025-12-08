@@ -453,12 +453,10 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             // 2. Lambda -> Conversion -> Expression<>
             // 3. Lambda -> Argument -> Conversion -> Expression<>
             // 4. Lambda -> Argument -> DelegateCreation -> Expression<>
-            // 5. Lambda -> Argument -> Argument -> Conversion -> Expression<> (nested scenarios)
             var parent = anonymousFunction.Parent;
             
-            // Keep checking up to 3 levels up to handle various argument wrapping scenarios
-            // This handles nested lambda patterns like RenderComponent(x => { x.Add(y => y.Property, value); })
-            for (var level = 0; level < 3 && parent is not null; level++)
+            // Keep checking up to 2 levels up to handle argument wrapping
+            for (var level = 0; level < 2 && parent is not null; level++)
             {
                 if (parent is IDelegateCreationOperation delegateCreation)
                 {
@@ -475,7 +473,7 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                     }
                 }
                 
-                // Move to the next parent to handle argument wrapping and other intermediate operations
+                // Move to the next parent to handle argument wrapping
                 parent = parent.Parent;
             }
             
