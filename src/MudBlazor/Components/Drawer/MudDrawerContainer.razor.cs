@@ -14,7 +14,7 @@ namespace MudBlazor
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
-        private List<MudDrawer> _drawers = new();
+        private readonly List<MudDrawer> _drawers = new();
 
         protected virtual string Classname =>
             new CssBuilder()
@@ -59,7 +59,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private string GetDrawerClass(MudDrawer? drawer)
+        private static string GetDrawerClass(MudDrawer? drawer)
         {
             if (drawer is null)
             {
@@ -69,11 +69,11 @@ namespace MudBlazor
             var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
             if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
-                className += $"-{drawer.GetState<Breakpoint>(nameof(MudDrawer.Breakpoint)).ToDescriptionString()}";
+                className += $"-{drawer.Breakpoint.ToDescriptionString()}";
             }
             className += $"-{drawer.GetPosition()}";
 
-            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.GetState<DrawerClipMode>(nameof(MudDrawer.ClipMode)).ToDescriptionString()}";
+            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
 
             return className;
         }
@@ -98,7 +98,7 @@ namespace MudBlazor
             return drawer.Height;
         }
 
-        private string? GetMiniDrawerWidth(MudDrawer? drawer)
+        private static string? GetMiniDrawerWidth(MudDrawer? drawer)
         {
             if (drawer is null)
             {
