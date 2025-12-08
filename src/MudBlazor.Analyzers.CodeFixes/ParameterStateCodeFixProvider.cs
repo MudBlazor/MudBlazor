@@ -42,8 +42,9 @@ public sealed class ParameterStateCodeFixProvider : CodeFixProvider
         var diagnosticSpan = diagnostic.Location.SourceSpan;
 
         // Find the member access expression identified by the diagnostic
-        var node = root.FindNode(diagnosticSpan);
-        var memberAccess = node as MemberAccessExpressionSyntax ?? node.Parent as MemberAccessExpressionSyntax;
+        // Use getInnermostNodeForTie to handle cases where multiple nodes cover the span
+        var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+        var memberAccess = FindMemberAccessExpression(node);
 
         if (memberAccess is null)
         {
@@ -57,6 +58,46 @@ public sealed class ParameterStateCodeFixProvider : CodeFixProvider
                 createChangedDocument: c => ReplaceWithGetStateAsync(context.Document, memberAccess, c),
                 equivalenceKey: Title),
             diagnostic);
+    }
+
+    /// <summary>
+    /// Finds the MemberAccessExpressionSyntax from the given node, handling various syntax tree structures.
+    /// </summary>
+    private static MemberAccessExpressionSyntax? FindMemberAccessExpression(SyntaxNode node)
+    {
+        // Direct match
+        if (node is MemberAccessExpressionSyntax memberAccess)
+        {
+            return memberAccess;
+        }
+
+        // Check parent (common case when node is an identifier)
+        if (node.Parent is MemberAccessExpressionSyntax parentMemberAccess)
+        {
+            return parentMemberAccess;
+        }
+
+        // Check descendants (when the node spans more than the member access)
+        foreach (var descendant in node.DescendantNodes())
+        {
+            if (descendant is MemberAccessExpressionSyntax descendantMemberAccess)
+            {
+                return descendantMemberAccess;
+            }
+        }
+
+        // Walk up the tree to find the member access (for nested cases)
+        var current = node;
+        while (current is not null)
+        {
+            if (current is MemberAccessExpressionSyntax foundMemberAccess)
+            {
+                return foundMemberAccess;
+            }
+            current = current.Parent;
+        }
+
+        return null;
     }
 
     private static async Task<Document> ReplaceWithGetStateAsync(

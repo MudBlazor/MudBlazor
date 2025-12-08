@@ -40,7 +40,7 @@ class ComponentB
 
     public int GetExternalCounter()
     {
-        return [|_componentA.Counter|];
+        return {|MUD0012:_componentA.Counter|};
     }
 }";
 
@@ -90,7 +90,7 @@ class ComponentB
 
     public void Method()
     {
-        var x = [|_componentA.Name|];
+        var x = {|MUD0012:_componentA.Name|};
     }
 }";
 
@@ -140,7 +140,7 @@ class ComponentB
 
     public void Method()
     {
-        DoSomething([|_componentA.Counter|]);
+        DoSomething({|MUD0012:_componentA.Counter|});
     }
 
     private void DoSomething(int value) { }
@@ -193,7 +193,7 @@ class ComponentB
     public void Method()
     {
         var component = new ComponentA();
-        var x = [|component.Counter|];
+        var x = {|MUD0012:component.Counter|};
     }
 }";
 
