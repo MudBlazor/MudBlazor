@@ -41,7 +41,6 @@ public readonly struct ConversionResult<T>
     /// <summary>
     /// Indicates whether the conversion succeeded.
     /// Returns <c>true</c> when <see cref="ExceptionError"/> is <c>null</c>, otherwise <c>false</c>.
-    /// The <see cref="MemberNotNullWhenAttribute"/> on this member signals that <see cref="ExceptionError"/> is non-null when <c>Success</c> is <c>false</c>.
     /// </summary>
     [MemberNotNullWhen(false, nameof(ExceptionError))]
     public bool Success => ExceptionError is null;
