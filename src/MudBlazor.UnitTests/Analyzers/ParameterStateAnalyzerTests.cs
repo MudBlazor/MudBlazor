@@ -696,11 +696,15 @@ class MyComponent
     }
 
     // Tests for Expression<Func<>> - should NOT trigger MUD0012
+    // Expression trees are used for scenarios like reflection, LINQ providers, and test frameworks (e.g., bUnit)
+    // where the lambda is analyzed as data (expression tree) rather than executed as code.
+    // In these cases, the property access is not a direct external access but part of metadata.
 
     [Test]
     public async Task NoDiagnostic_WhenUsedInExpressionParameter()
     {
         // Property access inside Expression<Func<>> should not trigger MUD0012
+        // Expression trees are used for reflection-like scenarios
         var source = @"
 using System;
 using System.Linq.Expressions;

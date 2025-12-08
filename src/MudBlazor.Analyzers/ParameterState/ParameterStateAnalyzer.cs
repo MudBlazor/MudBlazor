@@ -510,8 +510,9 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 namespaceSymbol = namespaceSymbol.ContainingNamespace;
             }
 
-            // After checking all expected parts, we should be at the global namespace
-            return namespaceSymbol?.IsGlobalNamespace ?? true;
+            // After checking all expected parts, we should be at the global namespace or null (which represents global)
+            // The null case can occur in some edge cases with generated or special types
+            return namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace;
         }
 
         private static bool IsComponentBaseWithStateExtensionsType(INamedTypeSymbol? typeSymbol)
