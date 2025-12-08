@@ -244,7 +244,7 @@ class ComponentB
     }
 }";
 
-        // SyntaxGenerator.AddNamespaceImports appends at the end
+        // SyntaxGenerator.AddNamespaceImports appends the new using after the existing ones
         var fixedSource = @"using System;
 using MudBlazor;
 using MudBlazor.State;

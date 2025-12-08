@@ -155,7 +155,7 @@ public sealed class ParameterStateCodeFixProvider : CodeFixProvider
         // Get the modified document
         var newDocument = editor.GetChangedDocument();
 
-        // Add the using directive using the proper API
+        // Add the using directive using SyntaxGenerator which respects EditorConfig
         var root = await newDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
         if (root is CompilationUnitSyntax compilationUnit)
         {
@@ -167,7 +167,7 @@ public sealed class ParameterStateCodeFixProvider : CodeFixProvider
                 // Create the namespace import using SyntaxGenerator
                 var namespaceImport = generator.NamespaceImportDeclaration(MudBlazorExtensionsNamespace);
 
-                // Find the compilation unit and add the import
+                // Add the import using SyntaxGenerator which respects formatting settings
                 var newCompilationUnit = (CompilationUnitSyntax)generator.AddNamespaceImports(
                     compilationUnit,
                     namespaceImport);
