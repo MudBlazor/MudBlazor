@@ -470,7 +470,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
-            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            await textfieldcomp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DebounceInterval, 0));
             // Set invalid text
             comp.Find("input").Change("Quux");
             // check initial state
@@ -489,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
-            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            await textfieldcomp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DebounceInterval, 0));
             // Set valid text
             comp.Find("input").Change("Qux");
             // check initial state
