@@ -39,7 +39,7 @@
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj">
       <!-- Some nemespaces are matching with the core, we must use alias -->
       <Aliases>MudBlazorAnalyzer</Aliases>
-	</ProjectReference>
+    </ProjectReference>
     <ProjectReference Include="..\MudBlazor.Analyzers.CodeFixes\MudBlazor.Analyzers.CodeFixes.csproj">
       <Aliases>MudBlazorAnalyzer</Aliases>
     </ProjectReference>
