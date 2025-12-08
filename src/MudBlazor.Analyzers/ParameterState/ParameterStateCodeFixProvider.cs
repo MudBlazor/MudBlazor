@@ -1,0 +1,115 @@
+// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections.Immutable;
+using System.Composition;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+
+namespace MudBlazor.Analyzers;
+
+/// <summary>
+/// Code fix provider for MUD0012: External access of a parameter state property.
+/// Suggests replacing <c>instance.Property</c> with <c>instance.GetState(x => x.Property)</c>.
+/// </summary>
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ParameterStateCodeFixProvider)), Shared]
+public sealed class ParameterStateCodeFixProvider : CodeFixProvider
+{
+    private const string Title = "Use GetState to access ParameterState property";
+
+    /// <inheritdoc/>
+    public override ImmutableArray<string> FixableDiagnosticIds =>
+        ImmutableArray.Create(ParameterStateAnalyzer.ExternalAccessDiagnosticId);
+
+    /// <inheritdoc/>
+    public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+
+    /// <inheritdoc/>
+    public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+    {
+        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        if (root is null)
+        {
+            return;
+        }
+
+        var diagnostic = context.Diagnostics.First();
+        var diagnosticSpan = diagnostic.Location.SourceSpan;
+
+        // Find the member access expression identified by the diagnostic
+        var node = root.FindNode(diagnosticSpan);
+        var memberAccess = node as MemberAccessExpressionSyntax ?? node.Parent as MemberAccessExpressionSyntax;
+
+        if (memberAccess is null)
+        {
+            return;
+        }
+
+        // Register a code action that will invoke the fix
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: Title,
+                createChangedDocument: c => ReplaceWithGetStateAsync(context.Document, memberAccess, c),
+                equivalenceKey: Title),
+            diagnostic);
+    }
+
+    private static async Task<Document> ReplaceWithGetStateAsync(
+        Document document,
+        MemberAccessExpressionSyntax memberAccess,
+        CancellationToken cancellationToken)
+    {
+        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        if (root is null)
+        {
+            return document;
+        }
+
+        // Get the instance expression (e.g., _componentA)
+        var instanceExpression = memberAccess.Expression;
+
+        // Get the property name (e.g., Counter)
+        var propertyName = memberAccess.Name.Identifier.Text;
+
+        // Create the lambda parameter: x
+        var lambdaParameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier("x"));
+
+        // Create the lambda body: x.PropertyName
+        var lambdaBody = SyntaxFactory.MemberAccessExpression(
+            SyntaxKind.SimpleMemberAccessExpression,
+            SyntaxFactory.IdentifierName("x"),
+            SyntaxFactory.IdentifierName(propertyName));
+
+        // Create the lambda expression: x => x.PropertyName
+        var lambda = SyntaxFactory.SimpleLambdaExpression(lambdaParameter, lambdaBody);
+
+        // Create the argument list: (x => x.PropertyName)
+        var argumentList = SyntaxFactory.ArgumentList(
+            SyntaxFactory.SingletonSeparatedList(
+                SyntaxFactory.Argument(lambda)));
+
+        // Create the GetState method invocation: instance.GetState(x => x.PropertyName)
+        var getStateInvocation = SyntaxFactory.InvocationExpression(
+            SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                instanceExpression,
+                SyntaxFactory.IdentifierName("GetState")),
+            argumentList);
+
+        // Preserve trivia from the original expression
+        var newNode = getStateInvocation
+            .WithLeadingTrivia(memberAccess.GetLeadingTrivia())
+            .WithTrailingTrivia(memberAccess.GetTrailingTrivia())
+            .WithAdditionalAnnotations(Formatter.Annotation);
+
+        // Replace the old member access with the new GetState invocation
+        var newRoot = root.ReplaceNode(memberAccess, newNode);
+
+        return document.WithSyntaxRoot(newRoot);
+    }
+}
