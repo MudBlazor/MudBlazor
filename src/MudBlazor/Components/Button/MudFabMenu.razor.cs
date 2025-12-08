@@ -81,7 +81,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// When this property changes, <see cref="OpenChanged"/> occurs.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)]
+    [Parameter, ParameterState, Category(CategoryTypes.Menu.PopupBehavior)]
     public bool Open { get; set; }
 
     /// <summary>

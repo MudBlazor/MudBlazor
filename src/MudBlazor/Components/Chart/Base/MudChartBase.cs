@@ -143,7 +143,7 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     /// <remarks>
     /// When this property changes, the <see cref="SelectedIndexChanged"/> event occurs.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.Chart.Behavior)]
     public int SelectedIndex { get; set; }
 

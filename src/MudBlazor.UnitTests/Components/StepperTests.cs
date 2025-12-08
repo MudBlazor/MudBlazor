@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             });
             // check the steps
             stepper.Instance.Steps.Count.Should().Be(2);
-            stepper.Instance.Steps.All(x => x.Parent == stepper.Instance).Should().Be(true);
+            stepper.Instance.Steps.All(x => ((MudStep)x).Parent == stepper.Instance).Should().Be(true);
             stepper.Instance.Steps[0].Title.Should().Be("A");
             stepper.Instance.Steps[0].IsActive.Should().Be(true);
             stepper.Instance.Steps[1].Title.Should().Be("B");
@@ -387,15 +387,15 @@ namespace MudBlazor.UnitTests.Components
             stepper.WaitForAssertion(() => stepper.Instance.ActiveStep?.Title.Should().Be("C"));
             activeIndex.Should().Be(2);
             // remove active step C, stepper should fall back to B  
-            await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync(stepper.Instance.ActiveStep!));
+            await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync((MudStep)stepper.Instance.ActiveStep!));
             stepper.Instance.ActiveStep?.Title.Should().Be("B");
             activeIndex.Should().Be(1);
             // remove step A, stepper should remain on B, active index should fall back to 0  
-            await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync(stepper.Instance.Steps[0]));
+            await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync((MudStep)stepper.Instance.Steps[0]));
             stepper.Instance.ActiveStep?.Title.Should().Be("B");
             activeIndex.Should().Be(0);
             // remove active step B, stepper has no more steps, active index should be -1, active step should be null  
-            await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync(stepper.Instance.ActiveStep!));
+            await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync((MudStep)stepper.Instance.ActiveStep!));
             stepper.Instance.ActiveStep.Should().BeNull();
             activeIndex.Should().Be(-1);
         }
@@ -654,14 +654,14 @@ namespace MudBlazor.UnitTests.Components
             });
             stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(0);
             stepper.Instance.ActiveStep?.Title.Should().Be("A");
-            stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(false);
+            stepper.Instance.Steps[0].Completed.Should().Be(false);
             await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync());
             stepper.Instance.ActiveStep?.Title.Should().Be("B");
-            stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(true);
+            stepper.Instance.Steps[0].Completed.Should().Be(true);
             stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(1);
             stepper.Find(".mud-stepper-button-reset").Click();
             stepper.Instance.ActiveStep?.Title.Should().Be("A");
-            stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(false);
+            stepper.Instance.Steps[0].Completed.Should().Be(false);
             stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(0);
         }
 

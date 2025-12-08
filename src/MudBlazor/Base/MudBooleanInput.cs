@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -13,7 +14,10 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
-        public MudBooleanInput() : base(new BoolConverter<T?>()) { }
+        public MudBooleanInput()
+        {
+            Converter = BoolConverter<T?>.Instance;
+        }
 
         protected virtual string? Classname { get; set; }
         protected virtual string? LabelClassname { get; set; }
@@ -122,7 +126,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => Converter.Set(Value);
+        protected bool? BoolValue => ConvertSet(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
@@ -135,7 +139,8 @@ namespace MudBlazor
             {
                 Touched = true;
             }
-            return SetCheckedAsync(Converter.Get(value));
+
+            return SetCheckedAsync(ConvertGet(value));
         }
 
         protected async Task SetCheckedAsync(T? value)
@@ -154,15 +159,10 @@ namespace MudBlazor
             }
         }
 
-        protected override bool SetConverter(Converter<T?, bool?> value)
+        protected override async Task OnConverterChangedAsync()
         {
-            var changed = base.SetConverter(value);
-            if (changed)
-            {
-                SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
-            }
-
-            return changed;
+            await base.OnConverterChangedAsync();
+            await SetBoolValueAsync(ConvertSet(Value));
         }
 
         /// <summary>

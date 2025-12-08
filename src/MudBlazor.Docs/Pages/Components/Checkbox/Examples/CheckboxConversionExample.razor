@@ -1,83 +1,66 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudCheckBox @bind-Value="boolean">bool: @boolean</MudCheckBox>
-<MudCheckBox @bind-Value="nullable" Color="Color.Primary">bool?: @nullable</MudCheckBox>
-<MudCheckBox @bind-Value="integer" Color="Color.Secondary">int: @integer</MudCheckBox>
-<MudCheckBox @bind-Value="str" Color="Color.Tertiary">string: "@(str)"</MudCheckBox>
-<MudCheckBox @bind-Value="customstr" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudCheckBox>
-<MudCheckBox @bind-Value="obj" Converter="@(new ObjectToBoolConverter())">boxed bool: "@(obj.ToString())"</MudCheckBox>
+<MudCheckBox @bind-Value="_boolean">bool: @_boolean</MudCheckBox>
+<MudCheckBox @bind-Value="_nullableBoolean" Color="Color.Primary">bool?: @_nullableBoolean</MudCheckBox>
+<MudCheckBox @bind-Value="_integer" Color="Color.Secondary">int: @_integer</MudCheckBox>
+<MudCheckBox @bind-Value="_string" Color="Color.Tertiary">string: "@(_string)"</MudCheckBox>
+<MudCheckBox @bind-Value="_customString" Converter="@CustomStringToBoolConverter.Instance">custom string: "@(_customString)"</MudCheckBox>
+<MudCheckBox @bind-Value="_object" Converter="@ObjectToBoolConverter.Instance">boxed bool: "@(_object.ToString())"</MudCheckBox>
 
 @code{ 
-    public bool boolean { get; set; } = true;
-    public bool? nullable { get; set; } = true;
-    public int integer { get; set; } = 1;
-    public string str { get; set; } = "on";
-    public string customstr { get; set; } = CustomStringToBoolConverter.NullString;
-    public object obj { get; set; } = false;
+    private bool _boolean = true;
+    private bool? _nullableBoolean = true;
+    private int _integer = 1;
+    private string _string = "on";
+    private string _customString = CustomStringToBoolConverter.NullString;
+    private object _object = false;
 
-    public class ObjectToBoolConverter : BoolConverter<object>
+    private class ObjectToBoolConverter : IReversibleConverter<object, bool?>
     {
-        public ObjectToBoolConverter()
+        public bool? Convert(object input)
         {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
+            return input switch
+            {
+                null => null,
+                bool value => value,
+                _ => throw new InvalidCastException("Unable to convert object to bool?.")
+            };
         }
 
-        private object OnGet(bool? value) => value == true;
-
-        private bool? OnSet(object arg)
+        public object ConvertBack(bool? output)
         {
-            if (arg == null)
-                return null;
-            try
-            {
-                if (arg is bool)
-                    return (bool)arg;
-                else if (arg is bool?)
-                    return (bool?)arg;
-                else
-                {
-                    UpdateSetError("Unable to convert to bool? from type object");
-                    return null;
-                }
-            }
-            catch (FormatException e)
-            {
-                UpdateSetError("Conversion error: " + e.Message);
-                return null;
-            }
+            return output == true;
         }
+
+        public static ObjectToBoolConverter Instance { get; } = new();
     }
 
-    public class CustomStringToBoolConverter : BoolConverter<string>
+    private class CustomStringToBoolConverter : IReversibleConverter<string, bool?>
     {
-        public CustomStringToBoolConverter()
-        {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
-        }
-
         public const string TrueString = "Yes, please";
         public const string FalseString = "No, thanks";
         public const string NullString = "I don't know";
 
-        private string OnGet(bool? value) => value == null ? NullString : (value == true ? TrueString : FalseString);
-
-        private bool? OnSet(string arg)
+        public bool? Convert(string input)
         {
-            try
+            return input switch
             {
-                if (arg == TrueString)
-                    return true;
-                if (arg == FalseString)
-                    return false;
-                return null;
-            }
-            catch (FormatException e)
-            {
-                UpdateSetError("Conversion error: " + e.Message);
-                return null;
-            }
+                TrueString => true,
+                FalseString => false,
+                _ => null
+            };
         }
+
+        public string ConvertBack(bool? output)
+        {
+            return output switch
+            {
+                true => TrueString,
+                false => FalseString,
+                null => NullString
+            };
+        }
+
+        public static CustomStringToBoolConverter Instance { get; } = new();
     }
 }

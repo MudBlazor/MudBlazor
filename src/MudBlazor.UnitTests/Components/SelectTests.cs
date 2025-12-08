@@ -1721,6 +1721,36 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Instance.FormFieldChangedEventArgs.Should().NotBeNull());
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().BeEquivalentTo(comp.Instance.States.Take(2).Reverse());
         }
+
+        [Test]
+        public void PopoverSettings_SetsDefaultValues()
+        {
+            var select = Context.RenderComponent<MudSelect<string>>();
+
+            select.Instance.PopoverFixed.Should().BeFalse();
+            select.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+        }
+
+        [Test]
+        public void PopoverSettings_OverridesDefaultValues()
+        {
+            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
+            try
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
+                var select = Context.RenderComponent<MudSelect<string>>(p =>
+                {
+                    p.Add(p => p.PopoverFixed, true);
+                });
+
+                select.Instance.PopoverFixed.Should().BeTrue();
+                select.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+            }
+            finally
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
+            }
+        }
 #nullable disable
     }
 }
