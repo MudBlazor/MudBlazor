@@ -981,4 +981,61 @@ class TestClass
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+    [Test]
+    public async Task NoDiagnostic_RenderComponentWithNestedLambdas()
+    {
+        // Test the RenderComponent(x => { x.Add(y => y.Property, value); }) pattern
+        // This is a common bUnit pattern where the outer lambda is Action<> and inner is Expression<>
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class MudProgressCircular
+{
+    [MudBlazor.State.ParameterState]
+    public double Value { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public double Min { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public double Max { get; set; }
+}
+
+class ComponentParameterCollectionBuilder<T>
+{
+    public ComponentParameterCollectionBuilder<T> Add<TValue>(Expression<Func<T, TValue>> selector, TValue value)
+    {
+        return this;
+    }
+}
+
+class TestContext
+{
+    public object RenderComponent<T>(Action<ComponentParameterCollectionBuilder<T>> parameterBuilder)
+    {
+        return null;
+    }
+}
+
+class TestClass
+{
+    private TestContext Context = new TestContext();
+
+    public void TestMethod()
+    {
+        // Outer lambda is Action<>, inner lambdas are Expression<>
+        var comp = Context.RenderComponent<MudProgressCircular>(x =>
+        {
+            x.Add(y => y.Value, 100.0);  // Should NOT trigger MUD0012
+            x.Add(y => y.Min, 0.0);      // Should NOT trigger MUD0012
+            x.Add(y => y.Max, 200.0);    // Should NOT trigger MUD0012
+        });
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }
