@@ -454,7 +454,7 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             // 3. Lambda -> Argument -> Conversion -> Expression<>
             // 4. Lambda -> Argument -> DelegateCreation -> Expression<>
             var parent = anonymousFunction.Parent;
-            
+
             // Keep checking up to 2 levels up to handle argument wrapping
             for (var level = 0; level < 2 && parent is not null; level++)
             {
@@ -472,11 +472,11 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                         return true;
                     }
                 }
-                
+
                 // Move to the next parent to handle argument wrapping
                 parent = parent.Parent;
             }
-            
+
             return false;
         }
 
