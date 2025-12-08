@@ -28,7 +28,7 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
         => CSharpAnalyzerVerifier<TAnalyzer, DefaultVerifier>.Diagnostic(descriptor);
 
     /// <inheritdoc cref="AnalyzerVerifier{TAnalyzer, TTest, TVerifier}.VerifyAnalyzerAsync(string, DiagnosticResult[])"/>
-    public static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
+    public static Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
     {
         var test = new Test
         {
@@ -36,7 +36,7 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
         };
 
         test.ExpectedDiagnostics.AddRange(expected);
-        await test.RunAsync(CancellationToken.None);
+        return test.RunAsync(CancellationToken.None);
     }
 
     /// <summary>
