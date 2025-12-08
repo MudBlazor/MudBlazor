@@ -65,9 +65,9 @@ public static class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
 
     private static string NormalizeLineEndings(string input)
     {
-        var crlf = input.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+        var crlf = input.Replace(Environment.NewLine, "\n").Replace("\r", "\n").Replace("\n", Environment.NewLine);
         // Roslyn commonly expects a final newline at EOF
-        return crlf.EndsWith("\r\n", StringComparison.Ordinal) ? crlf : crlf + "\r\n";
+        return crlf.EndsWith(Environment.NewLine, StringComparison.Ordinal) ? crlf : crlf + Environment.NewLine;
     }
 
     /// <summary>
