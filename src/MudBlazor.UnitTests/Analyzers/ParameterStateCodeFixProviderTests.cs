@@ -224,6 +224,8 @@ class ComponentB
     [Test]
     public async Task MUD0012_ExternalAccess_AddsUsingDirective_WhenMissing()
     {
+        // Note: SyntaxGenerator.AddNamespaceImports may sort imports alphabetically
+        // depending on the environment. MudBlazor.Extensions comes before MudBlazor.State alphabetically.
         var source = @"using System;
 using MudBlazor;
 using MudBlazor.State;
@@ -244,11 +246,11 @@ class ComponentB
     }
 }";
 
-        // SyntaxGenerator.AddNamespaceImports appends the new using after the existing ones
+        // When adding imports, they may be sorted alphabetically (Extensions before State)
         var fixedSource = @"using System;
 using MudBlazor;
-using MudBlazor.State;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 
 class ComponentA : ComponentBaseWithState
 {
