@@ -35,7 +35,7 @@ public static class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
     {
         var test = new Test
         {
-            TestCode = source,
+            TestCode = NormalizeLineEndings(source),
         };
 
         test.ExpectedDiagnostics.AddRange(expected);
@@ -55,12 +55,19 @@ public static class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
     {
         var test = new Test
         {
-            TestCode = source,
-            FixedCode = fixedSource,
+            TestCode = NormalizeLineEndings(source),
+            FixedCode = NormalizeLineEndings(fixedSource),
         };
 
         test.ExpectedDiagnostics.AddRange(expected);
         return test.RunAsync(CancellationToken.None);
+    }
+
+    private static string NormalizeLineEndings(string input)
+    {
+        var crlf = input.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+        // Roslyn commonly expects a final newline at EOF
+        return crlf.EndsWith("\r\n", StringComparison.Ordinal) ? crlf : crlf + "\r\n";
     }
 
     /// <summary>
