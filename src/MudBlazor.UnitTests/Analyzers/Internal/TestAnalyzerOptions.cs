@@ -1,46 +1,39 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using MudBlazor.Analyzers;
 
-namespace MudBlazor.UnitTests.Analyzers.Internal
-{
-    extern alias MudBlazorAnalyzer;
+namespace MudBlazor.UnitTests.Analyzers.Internal;
+
+extern alias MudBlazorAnalyzer;
 
 #nullable enable
-    internal sealed class TestAnalyzerOptions : AnalyzerConfigOptionsProvider
+internal sealed class TestAnalyzerOptions : AnalyzerConfigOptionsProvider
+{
+    private TestAnalyzerOptions(Dictionary<string, string>? values) => _values = values ?? [];
+
+    internal static AnalyzerOptions Create(
+        MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern attributeProviderAttribute,
+        ImmutableArray<AdditionalText> additionalText, string? attributeList = null)
     {
-        private TestAnalyzerOptions(Dictionary<string, string> values) => _values = values ?? [];
-
-        internal static AnalyzerOptions Create(
-            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern attributeProviderAttribute,
-             ImmutableArray<AdditionalText> additionalText, string? attributeList = null)
+        return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>
         {
-            return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
-            {
-                [MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!,
-                [MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AllowedAttributeListProperty] = attributeList ?? string.Empty
-            }));
-        }
-
-        private readonly Dictionary<string, string> _values;
-
-        public override AnalyzerConfigOptions GlobalOptions => new TestAnalyzerConfigOptions(_values);
-        public override AnalyzerConfigOptions GetOptions(SyntaxTree tree) => new TestAnalyzerConfigOptions(_values);
-        public override AnalyzerConfigOptions GetOptions(AdditionalText textFile) => new TestAnalyzerConfigOptions(_values);
-
-        private sealed class TestAnalyzerConfigOptions(Dictionary<string, string> values) : AnalyzerConfigOptions
-        {
-            private readonly Dictionary<string, string> _values = values;
-
-            public override bool TryGetValue(string key, [NotNullWhen(returnValue: true)] out string? value)
-            {
-                return _values.TryGetValue(key, out value);
-            }
-        }
+            [MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString(),
+            [MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AllowedAttributeListProperty] = attributeList ?? string.Empty
+        }));
     }
 
-#nullable restore
+    private readonly Dictionary<string, string> _values;
+
+    public override AnalyzerConfigOptions GlobalOptions => new TestAnalyzerConfigOptions(_values);
+    public override AnalyzerConfigOptions GetOptions(SyntaxTree tree) => new TestAnalyzerConfigOptions(_values);
+    public override AnalyzerConfigOptions GetOptions(AdditionalText textFile) => new TestAnalyzerConfigOptions(_values);
+
+    private sealed class TestAnalyzerConfigOptions(Dictionary<string, string> values) : AnalyzerConfigOptions
+    {
+        public override bool TryGetValue(string key, [NotNullWhen(returnValue: true)] out string? value)
+        {
+            return values.TryGetValue(key, out value);
+        }
+    }
 }

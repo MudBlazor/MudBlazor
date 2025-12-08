@@ -1,74 +1,72 @@
 ﻿// Copyright (c) MudBlazor 2021
-// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
-using MudBlazor.Analyzers;
 
-namespace MudBlazor.UnitTests.Analyzers.Internal
-{
-    extern alias MudBlazorAnalyzer;
+namespace MudBlazor.UnitTests.Analyzers.Internal;
+
+extern alias MudBlazorAnalyzer;
 
 #nullable enable
-    internal class ExpectedDiagnostic
+internal class ExpectedDiagnostic
+{
+    internal ExpectedDiagnostic(DiagnosticDescriptor descriptor, FileLinePositionSpan position, string message)
     {
-        internal ExpectedDiagnostic(DiagnosticDescriptor descriptor, FileLinePositionSpan position, string message)
+        Descriptor = descriptor;
+        Position = position;
+        Message = message;
+    }
+
+    internal DiagnosticDescriptor Descriptor { get; }
+
+    internal FileLinePositionSpan Position { get; }
+
+    internal string Message { get; }
+
+    internal static List<Diagnostic> FilterToClass(IEnumerable<Diagnostic> diagnostics, string? className)
+    {
+        var results = new List<Diagnostic>();
+        foreach (var diagnostic in diagnostics)
         {
-            Descriptor = descriptor;
-            Position = position;
-            Message = message;
+            if (diagnostic.Properties.TryGetValue(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey, out var cn)
+                && string.Equals(cn, className))
+                results.Add(diagnostic);
         }
 
-        internal DiagnosticDescriptor Descriptor { get; private set; }
-        internal FileLinePositionSpan Position { get; private set; }
-        internal string Message { get; private set; }
+        return results;
+    }
 
-        internal static List<Diagnostic> FilterToClass(IEnumerable<Diagnostic> diagnostics, string? className)
+    private static IOrderedEnumerable<Diagnostic> SortToFileOrder(IReadOnlyList<Diagnostic> fileLinePositions)
+    {
+        return fileLinePositions
+            .OrderBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Line)
+            .ThenBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Character);
+    }
+
+    private static IOrderedEnumerable<ExpectedDiagnostic> SortToFileOrder(IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics)
+    {
+        return expectedDiagnostics
+            .OrderBy(x => x.Position.StartLinePosition.Line)
+            .ThenBy(x => x.Position.StartLinePosition.Character);
+    }
+
+    internal static void Compare(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics)
+    {
+        diagnostics.Count.Should().Be(expectedDiagnostics.Count);
+        var orderedDiagnostics = SortToFileOrder(diagnostics);
+        var orderedExpectedDiagnostics = SortToFileOrder(expectedDiagnostics);
+
+        for (var i = 0; i < orderedDiagnostics.Count(); i++)
         {
-            var results = new List<Diagnostic>();
-            foreach (var diagnostic in diagnostics)
-            {
-                if (diagnostic.Properties.TryGetValue(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey, out var cn)
-                    && string.Equals(cn, className))
-                    results.Add(diagnostic);
-            }
-
-            return results;
-        }
-
-        private static IOrderedEnumerable<Diagnostic> SortToFileOrder(IEnumerable<Diagnostic> fileLinePositions)
-        {
-            return fileLinePositions
-                .OrderBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Line)
-                .ThenBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Character);
-        }
-
-        private static IOrderedEnumerable<ExpectedDiagnostic> SortToFileOrder(IEnumerable<ExpectedDiagnostic> expectedDiagnostics)
-        {
-            return expectedDiagnostics
-                .OrderBy(x => x.Position.StartLinePosition.Line)
-                .ThenBy(x => x.Position.StartLinePosition.Character);
-        }
-
-        internal static void Compare(IEnumerable<Diagnostic> diagnostics, IEnumerable<ExpectedDiagnostic> expectedDiagnostics)
-        {
-            diagnostics.Count().Should().Be(expectedDiagnostics.Count());
-            var oderedDiagnostics = SortToFileOrder(diagnostics);
-            var orderedExpectedDiagnostics = SortToFileOrder(expectedDiagnostics);
-
-            for (var i = 0; i < oderedDiagnostics.Count(); i++)
-                TestMessage(oderedDiagnostics.ElementAt(i), orderedExpectedDiagnostics.ElementAt(i));
-        }
-
-        private static void TestMessage(Diagnostic diagnostic, ExpectedDiagnostic expectedDiagnostic)
-        {
-            diagnostic.GetMessage().Should().StartWith(expectedDiagnostic.Message);
+            TestMessage(orderedDiagnostics.ElementAt(i), orderedExpectedDiagnostics.ElementAt(i));
         }
     }
-#nullable restore
+
+    private static void TestMessage(Diagnostic diagnostic, ExpectedDiagnostic expectedDiagnostic)
+    {
+        diagnostic.GetMessage().Should().StartWith(expectedDiagnostic.Message);
+    }
 }
+#nullable restore
