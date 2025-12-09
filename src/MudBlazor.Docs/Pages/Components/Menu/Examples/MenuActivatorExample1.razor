@@ -2,7 +2,7 @@
 
 <MudMenu>
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@context.ToggleMenuAsync">Button</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@context.ToggleAsync">Button</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -13,7 +13,7 @@
 
 <MudMenu>
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@(() => context.ToggleMenuAsync())">Chip</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@(() => context.ToggleAsync())">Chip</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -24,7 +24,7 @@
 
 <MudMenu>
     <ActivatorContent>
-        <div @onclick="@context.ToggleMenuAsync" style="cursor: pointer">
+        <div @onclick="@context.ToggleAsync" style="cursor: pointer">
             <MudAvatar>
                 <MudImage Src="images/toiletvisit.jpg" />
             </MudAvatar>
