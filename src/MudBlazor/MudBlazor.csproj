@@ -99,7 +99,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\MudBlazor.Analyzers.CodeFixes\MudBlazor.Analyzers.CodeFixes.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
   
   <PropertyGroup>
@@ -111,6 +112,7 @@
     <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
     <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
       <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
       <!-- Add compiler visible properties to nuget for analyzers -->
       <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
     </ItemGroup>

@@ -195,10 +195,10 @@ namespace MudBlazor
         {
             if (HasMask)
             {
-                var textValue = Converter.Set(value);
+                var textValue = ConvertSet(value);
                 _mask.SetText(textValue);
                 textValue = Mask.GetCleanText();
-                value = Converter.Get(textValue);
+                value = ConvertGet(textValue);
             }
 
             return base.SetValueAsync(value, updateText, force);

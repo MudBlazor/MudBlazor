@@ -1,6 +1,4 @@
-﻿#pragma warning disable BL0005 // Set parameter outside component
-
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -117,7 +115,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
 
             // Disabled the sorting of the column
+#pragma warning disable BL0005
             mudTableSortLabels[0].Enabled = false;
+#pragma warning restore BL0005
 
             // Sort the first column
             await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
@@ -641,19 +641,20 @@ namespace MudBlazor.UnitTests.Components
         /// setting the selecteditems to null should create a new selecteditems collection
         /// </summary>
         [Test]
-        public void TableMultiSelectionSelectedItemsEqualsNull()
+        public async Task TableMultiSelectionSelectedItemsEqualsNull()
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest1>();
             // print the generated html
             // select elements needed for the test
-            var table = comp.FindComponent<MudTable<int>>().Instance;
-            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            var tableComponent = comp.FindComponent<MudTable<int>>();
+            //var table = comp.FindComponent<MudTable<int>>().Instance;
+            tableComponent.Instance.SelectedItems?.Count.Should().Be(0); // selected items should be empty
             // click checkboxes and verify selection text
             var inputs = comp.FindAll("input").ToArray();
             inputs[0].Change(true);
-            table.SelectedItems.Count.Should().Be(1);
-            comp.InvokeAsync(() => { table.SelectedItems = null; });
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems?.Count.Should().Be(1);
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedItems, null));
+            tableComponent.Instance.SelectedItems?.Count.Should().Be(0);
         }
 
 
@@ -664,7 +665,11 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = comp.FindComponent<MudTable<int>>().FindAll("input").ToArray();
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
-            foreach (var cbx in checkboxes) cbx.Change(true);
+            foreach (var cbx in checkboxes)
+            {
+                cbx.Change(true);
+            }
+
             table.SelectedItems.Count.Should().Be(3);
 
             foreach (var cbx in checkboxes) cbx.Change(false);
@@ -826,18 +831,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableMultiSelectionTest5>();
             // print the generated html
             // select elements needed for the test
-            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var tableComponent = comp.FindComponent<MudTable<int>>();
             var text = comp.FindComponent<MudText>();
             var checkboxRendered = comp.FindComponents<MudCheckBox<bool>>().ToArray();
             var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
-            table.SelectedItems.Count.Should().Be(4);
+            tableComponent.Instance.SelectedItems?.Count.Should().Be(4);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3 }");
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(2);
             // uncheck a row then switch to page 2 and both checkboxes on page 2 should be checked
             checkboxRendered[1].Find("input").Change(false);
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
             // switch page
-            await comp.InvokeAsync(() => table.CurrentPage = 1);
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 1));
             // now two checkboxes should be checked on page 2
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(2);
@@ -1114,7 +1119,7 @@ namespace MudBlazor.UnitTests.Components
         /// Changing filters should retain the selected items using Items (not ServerData)
         /// </summary>
         [Test]
-        public void TableMultiSelectionItemsTest1_FilterChange()
+        public async Task TableMultiSelectionItemsTest1_FilterChange()
         {
             var comp = Context.RenderComponent<TableMultiSelectionItemsTest1>();
             // select elements needed for the test
@@ -1132,9 +1137,9 @@ namespace MudBlazor.UnitTests.Components
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
 
             // Change filter
-            comp.Instance.StartDate = DateTime.Parse("2024-04-07 00:00:00");
-            comp.Instance.EndDate = DateTime.Parse("2024-04-13 00:00:00");
-            comp.Render();
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.StartDate, DateTime.Parse("2024-04-07 00:00:00"))
+                .Add(x => x.EndDate, DateTime.Parse("2024-04-13 00:00:00")));
 
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
@@ -1146,9 +1151,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
 
             // Clear filters
-            comp.Instance.StartDate = null;
-            comp.Instance.EndDate = null;
-            comp.Render();
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.StartDate, null)
+                .Add(x => x.EndDate, null));
 
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
@@ -1376,14 +1381,14 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<TableServerSideDataTest2>();
             var table = comp.FindComponent<MudTable<int>>();
-            table.Instance.CurrentPage = 2;
+            await table.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 2));
             var serverDataCallCount = 0;
             var originalServerDataFunc = table.Instance.ServerData;
-            table.Instance.ServerData = (state, cancellationToken) =>
+            await table.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, (state, cancellationToken) =>
             {
                 serverDataCallCount++;
-                return originalServerDataFunc(state, cancellationToken);
-            };
+                return originalServerDataFunc?.Invoke(state, cancellationToken);
+            }));
 
             // Act
 
@@ -1760,15 +1765,14 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the behavior of RowEditPreview. It should run after SelectedItem has been updated.
         /// </summary>
         [Test]
-        public void TableInlineEditCancel3Test()
+        public async Task TableInlineEditCancel3Test()
         {
             var comp = Context.RenderComponent<TableInlineEditCancelTest>();
+            var tableComponent = comp.FindComponent<MudTable<TableInlineEditCancelTest.Element>>();
             var taskCompletionSource = new TaskCompletionSource<bool>();
 
             // Get the table and define the RowEditPreview method
-            var instance = comp.Instance;
-            var table = instance.Table;
-            table.RowEditPreview = RowEditPreview;
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.RowEditPreview, RowEditPreview));
 
             // Click on the second row to trigger the RowEditPreview method
             var trs = comp.FindAll("tr");
@@ -1777,7 +1781,7 @@ namespace MudBlazor.UnitTests.Components
             void RowEditPreview(object item)
             {
                 // Get the value of the SelectedItem
-                var selectedItemValue = table.SelectedItem.Value;
+                var selectedItemValue = tableComponent.Instance.SelectedItem.Value;
 
                 // Get the value of the object from the RowEditPreview method
                 var rowEditPreviewValue = item.GetType().GetProperty("Value").GetValue(item, null).ToString();
@@ -2016,83 +2020,93 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public void TableGroupingTest()
+        public async Task TableGroupingTest()
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.TableInstance;
-            table.Context.HeaderRows.Count.Should().Be(1);
-            table.Context.GroupRows.Count.Should().Be(0);
-            table.Context.Rows.Count.Should().Be(9);
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            //var table = comp.Instance.TableInstance;
+            tableComponent.Instance.Context.HeaderRows.Count.Should().Be(1);
+            tableComponent.Instance.Context.GroupRows.Count.Should().Be(0);
+            tableComponent.Instance.Context.Rows.Count.Should().Be(9);
 
             IRefreshableElementCollection<IElement> Inputs() => comp.FindAll("input");
             IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button");
 
             // now, with multi selection:
-            table.MultiSelection = true;
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
+
             Inputs().Count.Should().Be(10);
             Inputs()[0].Change(true);
-            table.SelectedItems.Count.Should().Be(9);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(9);
             Inputs()[0].Change(false);
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(0);
 
             //group by Racing Category:
             comp = Context.RenderComponent<TableGroupingTest>();
-            table = comp.Instance.TableInstance;
-            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category" };
-            comp.Render();
-            table.Context.GroupRows.Count.Should().Be(4);
+            tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.GroupBy,
+                    new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category)
+                    {
+                        GroupName = "Category"
+                    }));
+
+            tableComponent.Instance.Context.GroupRows.Count.Should().Be(4);
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(18); // 1 table header + 4 group headers + 9 item rows + 4 group footers
 
             // multi selection:
-            table.MultiSelection = true;
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
 
             Inputs()[1].Change(true); // selecting only LMP1 category
-            table.SelectedItems.Count.Should().Be(2); // only one porsche and one audi
+            tableComponent.Instance.SelectedItems.Count.Should().Be(2); // only one porsche and one audi
             Inputs()[1].Change(false);
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(0);
 
             Inputs()[4].Change(true); // selecting only GTE category
-            table.SelectedItems.Count.Should().Be(3);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(3);
             Inputs()[4].Change(false);
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(0);
 
             Inputs()[0].Change(true); // all
-            table.SelectedItems.Count.Should().Be(9);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(9);
             Inputs()[0].Change(false);
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(0);
 
             //group by Racing Category and Brand:
             comp = Context.RenderComponent<TableGroupingTest>();
-            table = comp.Instance.TableInstance;
-            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>()
-            {
-                GroupName = "Category",
-                Selector = rc => rc.Category,
-                InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
-                {
-                    GroupName = "Brand",
-                    Selector = rc => rc.Brand
-                }
-            };
+            tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.GroupBy,
+                    new TableGroupDefinition<TableGroupingTest.RacingCar>()
+                    {
+                        GroupName = "Category",
+                        Selector = rc => rc.Category,
+                        InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+                        {
+                            GroupName = "Brand",
+                            Selector = rc => rc.Brand
+                        }
+                    }));
+
             comp.Render();
-            table.Context.GroupRows.Count.Should().Be(13); // 4 categories and 9 cars (can repeat on different categories)
+            tableComponent.Instance.Context.GroupRows.Count.Should().Be(13); // 4 categories and 9 cars (can repeat on different categories)
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36); // 1 table header + 13 group headers + 9 item rows + 13 group footers
 
             // multi selection:
-            table.MultiSelection = true;
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
             Inputs()[0].Change(true); // all
-            table.SelectedItems.Count.Should().Be(9);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(9);
             Inputs()[0].Change(false);
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(0);
 
             Inputs()[1].Change(true); // selecting only LMP1 category
-            table.SelectedItems.Count.Should().Be(2);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(2);
 
             // indentation:
-            table.GroupBy.Indentation = true;
+            tableComponent.Instance.GroupBy.Indentation = true;
             comp.Render();
             tr = comp.FindAll("tr.mud-table-row-group-indented-1").ToArray();
             tr.Length.Should().Be(27); // (4 LMP1 group (h / f) + 6 GTE + 4 GTE + 4 Formula 1) brands groups per category + 9 data rows
@@ -2100,9 +2114,9 @@ namespace MudBlazor.UnitTests.Components
             tr.Length.Should().Be(0); // indentation works with Level - 1 class. (level 1 doesn't need to be indented)
 
             // expand and collapse groups:
-            table.GroupBy.Indentation = false;
-            table.GroupBy.Expandable = true;
-            table.GroupBy.InnerGroup.Expandable = true;
+            tableComponent.Instance.GroupBy.Indentation = false;
+            tableComponent.Instance.GroupBy.Expandable = true;
+            tableComponent.Instance.GroupBy.InnerGroup.Expandable = true;
             comp.Render();
 
             Buttons().Count.Should().Be(13);// 4 categories and 9 cars (can repeat on different categories)
@@ -2122,33 +2136,33 @@ namespace MudBlazor.UnitTests.Components
 
             Inputs()[1].Change(false); // LMP1
 
-            table.GroupBy.Indentation = true;
-            table.GroupBy.Expandable = true;
-            table.GroupBy.IsInitiallyExpanded = true;
-            table.GroupBy.InnerGroup.Indentation = true;
-            table.GroupBy.InnerGroup.Expandable = true;
-            table.GroupBy.InnerGroup.IsInitiallyExpanded = true;
+            tableComponent.Instance.GroupBy.Indentation = true;
+            tableComponent.Instance.GroupBy.Expandable = true;
+            tableComponent.Instance.GroupBy.IsInitiallyExpanded = true;
+            tableComponent.Instance.GroupBy.InnerGroup.Indentation = true;
+            tableComponent.Instance.GroupBy.InnerGroup.Expandable = true;
+            tableComponent.Instance.GroupBy.InnerGroup.IsInitiallyExpanded = true;
 
 
             comp.Render();
 
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(0);
             Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
             Inputs()[1].Change(true); // LMP1
-            table.SelectedItems.Count.Should().Be(2);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(2);
 
             Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Buttons()[0].Click(); //collapse
             Buttons()[0].Click(); //expand
             //selected item should persist
-            table.SelectedItems.Count.Should().Be(2);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(2);
 
             Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Inputs()[1].Change(false);
-            table.SelectedItems.Count.Should().Be(0);
+            tableComponent.Instance.SelectedItems.Count.Should().Be(0);
 
             Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
@@ -2326,42 +2340,51 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public void TableGroupIsInitiallyExpandedTest()
+        public async Task TableGroupIsInitiallyExpandedTest()
         {
             // group by Racing Category and collapse groups as default:
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.TableInstance;
-            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null)
-            {
-                GroupName = "Category",
-                Expandable = true,
-                IsInitiallyExpanded = false
-            };
-            comp.Render();
-            table.Context.GroupRows.Count.Should().Be(4); // 4 categories
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.GroupBy,
+                    new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null)
+                    {
+                        GroupName = "Category",
+                        Expandable = true,
+                        IsInitiallyExpanded = false
+                    }));
+
+            tableComponent.Instance.Context.GroupRows.Count.Should().Be(4); // 4 categories
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(5); // 1 table header + 4 group headers
         }
 
         [Test]
-        public void ExpandAndCollapseAllGroupsTest()
+        public async Task ExpandAndCollapseAllGroupsTest()
         {
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.TableInstance;
-            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category", IsInitiallyExpanded = false, Expandable = true };
-            comp.Render();
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.GroupBy,
+                    new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category)
+                    {
+                        GroupName = "Category",
+                        IsInitiallyExpanded = false,
+                        Expandable = true
+                    }));
 
             // Header only since we have IsInitiallyExpanded = false
-            table.Context.GroupRows.Count.Should().Be(4);
+            tableComponent.Instance.Context.GroupRows.Count.Should().Be(4);
             comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
 
             // Expand all groups
-            table.ExpandAllGroups();
+            tableComponent.Instance.ExpandAllGroups();
             comp.Render();
             comp.FindAll("tr").ToArray().Length.Should().Be(18); // 1 table header + 4 group headers + 9 item rows + 4 group footers
 
             // Collapse all groups
-            table.CollapseAllGroups();
+            tableComponent.Instance.CollapseAllGroups();
             comp.Render();
             comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
         }
@@ -2689,20 +2712,21 @@ namespace MudBlazor.UnitTests.Components
         public async Task TestCurrentPageParameterTwoWayBinding()
         {
             var comp = Context.RenderComponent<TableCurrentPageParameterTwoWayBindingTest>();
-            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var tableComponent = comp.FindComponent<MudTable<int>>();
 
             // Assert starting page index is 0 (default).
-            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(0));
+            comp.WaitForAssertion(() => tableComponent.Instance.CurrentPage.Should().Be(0));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
 
             // Assert modification via code correctly renders the corresponding page.
-            await comp.InvokeAsync(() => table.CurrentPage = 1);
-            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(1));
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 1));
+
+            comp.WaitForAssertion(() => tableComponent.Instance.CurrentPage.Should().Be(1));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
 
             // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
             comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
-            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(2));
+            comp.WaitForAssertion(() => tableComponent.Instance.CurrentPage.Should().Be(2));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 

@@ -58,14 +58,14 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to the options in the <see cref="MudDialog"/> or options passed during <see cref="DialogService.ShowAsync(Type)"/> methods.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Misc)] // Behavior and Appearance
         public DialogOptions Options { get; set; } = DialogOptions.Default;
 
         /// <summary>
         /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Behavior)]
         public string? Title { get; set; }
 
@@ -317,7 +317,7 @@ namespace MudBlazor
         string IMudDialogInstance.ElementId => _elementId;
 
         /// <inheritdoc />
-        string? IMudDialogInstance.Title => Title;
+        string? IMudDialogInstance.Title => _titleState.Value;
 
         /// <inheritdoc />
         DialogOptions IMudDialogInstance.Options => GetDialogOptionsOrDefault;

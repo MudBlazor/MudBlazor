@@ -24,7 +24,6 @@ namespace MudBlazor
         private bool _isDisposed;
         private string? _prevIcon;
         private string? _nextIcon;
-        private bool _isRendered;
         private bool _isVerticalTabs;
         private bool _redraw;
         private bool _isSliderPositionDetermined;
@@ -307,14 +306,14 @@ namespace MudBlazor
         public RenderFragment<MudTabPanel>? PrePanelContent { get; set; }
 
         /// <summary>
-        /// The CSS classes applied to tab panels.
+        /// The CSS classes applied to all tab buttons.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string? TabPanelClass { get; set; }
+        public string? TabButtonsClass { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the tab header.
@@ -338,14 +337,14 @@ namespace MudBlazor
         public string? ActiveTabClass { get; set; }
 
         /// <summary>
-        /// The CSS classes applied to all tab panels.
+        /// The CSS classes applied to the element encasing the tab panels.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string? PanelClass { get; set; }
+        public string? TabPanelsClass { get; set; }
 
         /// <summary>
         /// The currently selected tab panel.
@@ -359,7 +358,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c> (the first tab). When this value changes, <see cref="ActivePanelIndexChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Tabs.Behavior)]
         public int ActivePanelIndex { get; set; }
 
@@ -533,8 +532,6 @@ namespace MudBlazor
                     await _activePanelIndexState.SetValueAsync(index.Value);
                 }
 
-                _isRendered = true;
-
                 var options = new KeyInterceptorOptions(
                     "mud-tab",
                     [
@@ -607,7 +604,7 @@ namespace MudBlazor
 
         internal async Task SetPanelRefAsync(ElementReference reference)
         {
-            if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
+            if (HasRendered && _resizeObserver!.IsElementObserved(reference) == false)
                 await _resizeObserver!.Observe(reference);
 
             _redraw = true;
@@ -826,7 +823,7 @@ namespace MudBlazor
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
                 .AddClass($"mud-tabs-vertical", _isVerticalTabs)
-                .AddClass(PanelClass)
+                .AddClass(TabPanelsClass)
                 .Build();
 
         protected string SliderClass =>
@@ -885,7 +882,7 @@ namespace MudBlazor
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple", Ripple)
               .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
-              .AddClass(TabPanelClass)
+              .AddClass(TabButtonsClass)
               .AddClass(panel.Classname)
               .Build();
 

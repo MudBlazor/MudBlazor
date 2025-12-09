@@ -4,7 +4,7 @@
 
 <MudColorPicker @ref="_picker"
                 @bind-Value="ColorValue"
-                TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })"
+                TextChanged="@OnTextChanged"
                 Palette="@Palette"
                 ShowToolbar="@ShowToolbar"
                 ShowTooltips="@ShowTooltips"
@@ -30,7 +30,7 @@
     public MudColor ColorValue { get; set; } = "#594ae2";
 
     [Parameter]
-    public string TextValue { get; set; } = "#594ae2";
+    public string? TextValue { get; set; } = "#594ae2";
 
     [Parameter]
     public IEnumerable<MudColor> Palette { get; set; } = ["#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff"];
@@ -91,6 +91,12 @@
         {
             await _picker.CloseAsync();
         });
+    }
+      
+    private void OnTextChanged(string? value)
+    {
+        TextValue = value;
+        ValueChangeCallbackCounter++;
     }
 }
 

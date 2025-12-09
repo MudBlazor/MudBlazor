@@ -1734,6 +1734,88 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Test if TabButtonClass and TabPanelsClass are applying the CSS classes properly to TabPanel
+        /// </summary>
+        [Test]
+        public void TabPanel_AppliesItsOwnCssClasses()
+        {
+            var tabButtonClasses = "class1";
+            var panelClasses = "class2";
+
+            var comp = Context.RenderComponent<TabPanelCssClassesMatchTest>(parameters => parameters
+                .Add(p => p.TabButtonClass, tabButtonClasses)
+                .Add(p => p.PanelClass, panelClasses));
+
+            var tabButtonRef = comp.Find(".mud-tab.mud-tab-panel");
+            tabButtonRef.ClassList.Should().Contain(tabButtonClasses);
+            tabButtonRef.ClassList.Should().NotContain(panelClasses);
+
+            var panelRef = comp.Find(":not(.mud-tab).mud-tab-panel");
+            panelRef.ClassList.Should().Contain(panelClasses);
+            panelRef.ClassList.Should().NotContain(tabButtonClasses);
+        }
+
+        /// <summary>
+        /// Test if TabButtonClass and TabPanelsClass are applying the CSS classes properly to Tabs
+        /// </summary>
+        [Test]
+        public void Tabs_AppliesItsOwnCssClasses()
+        {
+            var tabButtonClasses = "class1";
+            var tabPanelClasses = "class2";
+
+            var comp = Context.RenderComponent<TabsCssClassesMatchTest>(parameters => parameters
+                .Add(p => p.TabButtonClass, tabButtonClasses)
+                .Add(p => p.TabPanelClass, tabPanelClasses));
+
+            var tabButtonRef = comp.Find(".mud-tab.mud-tab-panel");
+            tabButtonRef.ClassList.Should().Contain(tabButtonClasses);
+            tabButtonRef.ClassList.Should().NotContain(tabPanelClasses);
+
+            var panelRef = comp.Find(".mud-tabs-panels");
+            panelRef.ClassList.Should().Contain(tabPanelClasses);
+            panelRef.ClassList.Should().NotContain(tabButtonClasses);
+        }
+
+        /// <summary>
+        /// Test if Tabs and TabPanels combined TabButtonClass and TabPanelsClass are applying the CSS classes properly
+        /// </summary>
+        [Test]
+        public void Tabs_And_TabPanel_CombinedClassesTest()
+        {
+            var comp = Context.RenderComponent<TabsAndTabPanelCssClassesMatchTest>();
+
+            var tabButtons = comp.FindAll(".mud-tab");
+            tabButtons.Should().AllSatisfy(x => x.ClassList.Should().Contain("mud-tabs-button-class"));
+
+            tabButtons[0].ClassList.Should().Contain("mud-tab-panel-button-class-1");
+            tabButtons[0].ClassList.Should().NotContain("mud-tabs-panel-class");
+            tabButtons[0].ClassList.Should().NotContain("mud-tab-panel-panel-class-1");
+
+            tabButtons[1].ClassList.Should().Contain("mud-tab-panel-button-class-2");
+            tabButtons[1].ClassList.Should().NotContain("mud-tabs-panel-class");
+            tabButtons[1].ClassList.Should().NotContain("mud-tab-panel-panel-class-2");
+
+            var tabsPanels = comp.Find(".mud-tabs-panels");
+            tabsPanels.ClassList.Should().Contain("mud-tabs-panel-class");
+            tabsPanels.ClassList.Should().NotContain("mud-tabs-button-class");
+
+            TabsAndTabPanelCssClassesMatchTest.SelectedTab = 0;
+            comp = Context.RenderComponent<TabsAndTabPanelCssClassesMatchTest>();
+            var activeTabPanel = comp.Find(":not(.mud-tab).mud-tab-panel");
+            activeTabPanel.ClassList.Should().Contain("mud-tab-panel-panel-class-1");
+            activeTabPanel.ClassList.Should().NotContain("mud-tab-panel-button-class-1");
+            activeTabPanel.ClassList.Should().NotContain("mud-tabs-panel-class");
+
+            TabsAndTabPanelCssClassesMatchTest.SelectedTab = 1;
+            comp = Context.RenderComponent<TabsAndTabPanelCssClassesMatchTest>();
+            activeTabPanel = comp.Find(":not(.mud-tab).mud-tab-panel");
+            activeTabPanel.ClassList.Should().Contain("mud-tab-panel-panel-class-2");
+            activeTabPanel.ClassList.Should().NotContain("mud-tab-panel-button-class-2");
+            activeTabPanel.ClassList.Should().NotContain("mud-tabs-panel-class");
+        }
+
+        /// <summary>
         /// Tests the behavior of mouse events on tab headers, including closing tabs via mouse actions.
         /// </summary>
         [Test]

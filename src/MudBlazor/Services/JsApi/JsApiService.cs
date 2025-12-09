@@ -6,6 +6,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// Provides JavaScript API services for various browser operations.
 /// </summary>
@@ -23,7 +24,7 @@ internal class JsApiService : IJsApiService
     }
 
     /// <inheritdoc />
-    public ValueTask CopyToClipboardAsync(string text)
+    public ValueTask CopyToClipboardAsync(string? text)
     {
         return _jsRuntime.InvokeVoidAsync("mudWindow.copyToClipboard", text);
     }

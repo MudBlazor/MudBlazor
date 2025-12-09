@@ -483,14 +483,6 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Determines whether two <see cref="MudColor"/> instances are not equal.
-        /// </summary>
-        /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
-        /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
-        /// <returns>True if the instances are not equal; otherwise, false.</returns>
-        public static bool operator !=(MudColor? lhs, MudColor? rhs) => !(lhs == rhs);
-
-        /// <summary>
         /// Determines whether two <see cref="MudColor"/> instances are equal.
         /// </summary>
         /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
@@ -517,6 +509,14 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
+        /// Determines whether two <see cref="MudColor"/> instances are not equal.
+        /// </summary>
+        /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
+        /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
+        /// <returns>True if the instances are not equal; otherwise, false.</returns>
+        public static bool operator !=(MudColor? lhs, MudColor? rhs) => !(lhs == rhs);
+
+        /// <summary>
         /// Converts a string representation of a color to a <see cref="MudColor"/> instance.
         /// </summary>
         /// <param name="input">The string representation of the color.</param>
@@ -536,6 +536,11 @@ namespace MudBlazor.Utilities
         /// <param name="mudColor">The MudColor instance to convert.</param>
         /// <returns>The 32-bit unsigned integer representation of the color.</returns>
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
+
+        /// <summary>
+        /// Represents an empty <see cref="MudColor"/> instance with default values (black with full opacity).
+        /// </summary>
+        public static readonly MudColor Empty = new();
 
         /// <summary>
         /// Parses a string representation of a color to a <see cref="MudColor"/> instance.
@@ -803,7 +808,7 @@ namespace MudBlazor.Utilities
         /// Provides comparison and hashing capabilities for <see cref="MudColor"/> using the
         /// specified <see cref="MudColorComparison"/> mode.
         /// </summary>
-        public sealed class MudColorComparer : IEqualityComparer<MudColor>
+        public sealed class MudColorComparer : IEqualityComparer<MudColor?>
         {
             /// <summary>
             /// Gets the comparison mode used by this comparer.
@@ -842,8 +847,13 @@ namespace MudBlazor.Utilities
             }
 
             /// <inheritdoc />
-            public int GetHashCode(MudColor mudColor)
+            public int GetHashCode(MudColor? mudColor)
             {
+                if (mudColor is null)
+                {
+                    return 0;
+                }
+
                 return Comparison switch
                 {
                     MudColorComparison.Rgba => mudColor._rgba.GetHashCode(),

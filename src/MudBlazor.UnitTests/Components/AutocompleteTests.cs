@@ -705,7 +705,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Quux");
             autocomplete.Text.Should().Be("Quux");
             // check validity
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
             autocomplete.ValidationErrors.Should().NotBeEmpty();
             autocomplete.ValidationErrors.Should().HaveCount(1);
             autocomplete.ValidationErrors[0].Should().Be("Should not be longer than 3");
@@ -724,7 +724,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Qux");
             autocomplete.Text.Should().Be("Qux");
             // check validity
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
             autocomplete.ValidationErrors.Should().BeEmpty();
         }
 
@@ -740,7 +740,7 @@ namespace MudBlazor.UnitTests.Components
 
             autocomplete.Required.Should().BeTrue();
 
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
 
             autocomplete.ValidationErrors.First().Should().Be("Required");
         }
@@ -2009,8 +2009,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudAutocomplete<int>>(parameters => parameters
                 .Add(p => p.ErrorId, "error-id")
-                .Add(p => p.Text, "not a number")
-                .Add(p => p.Converter, new DummyErrorConverter()));
+                .Add(p => p.CoerceValue, true)
+                .Add(p => p.Converter, new DummyErrorConverter())
+                .Add(p => p.Text, "not a number"));
 
             comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
             comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
@@ -2311,6 +2312,36 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.OpenedCount.Should().Be(0);
             comp.Instance.ClosedCount.Should().Be(0);
             comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        [Test]
+        public void PopoverSettings_SetsDefaultValues()
+        {
+            var auto = Context.RenderComponent<MudAutocomplete<string>>();
+
+            auto.Instance.PopoverFixed.Should().BeFalse();
+            auto.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+        }
+
+        [Test]
+        public void PopoverSettings_OverridesDefaultValues()
+        {
+            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
+            try
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
+                var auto = Context.RenderComponent<MudAutocomplete<string>>(p =>
+                {
+                    p.Add(p => p.PopoverFixed, true);
+                });
+
+                auto.Instance.PopoverFixed.Should().BeTrue();
+                auto.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+            }
+            finally
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
+            }
         }
     }
 }

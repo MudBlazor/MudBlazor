@@ -12,7 +12,7 @@
          Dense
          TransformOrigin="@Origin.BottomLeft"
          PopoverClass="menu-popover"
-         DropdownSettings="@_dropdownSettings"
+         OverflowBehavior="OverflowBehavior.FlipAlways"
          PositionAtCursor>
     <MudMenuItem Label="Enlist" />
     <MudMenuItem Label="Barracks" />
@@ -33,7 +33,6 @@
 
 @code {
     private MudMenu _contextMenu = null!;
-    private readonly DropdownSettings _dropdownSettings = new DropdownSettings() { OverflowBehavior = OverflowBehavior.FlipAlways };
 
     private async Task ListItem_Clicked(MouseEventArgs e)
     {

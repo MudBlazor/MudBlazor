@@ -4,25 +4,15 @@
 
 namespace MudBlazor.UnitTests.Dummy;
 
-public class DummyErrorConverter : Converter<int>
+public class DummyErrorConverter : IReversibleConverter<int, string>
 {
-    public DummyErrorConverter()
+    public string Convert(int input)
     {
-        SetFunc = OnSet;
-        GetFunc = OnGet;
-
-        UpdateGetError("Conversion error");
+        throw new InvalidOperationException("Conversion error");
     }
 
-    private int OnGet(string _)
+    public int ConvertBack(string input)
     {
-        UpdateGetError("Conversion error");
-        return 0;
-    }
-
-    private string OnSet(int _)
-    {
-        UpdateSetError("Conversion error");
-        return string.Empty;
+        throw new InvalidOperationException("Conversion error");
     }
 }

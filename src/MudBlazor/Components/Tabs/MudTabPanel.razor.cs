@@ -13,7 +13,7 @@ namespace MudBlazor;
 /// <summary>
 /// A tab as part of a <see cref="MudTabs"/> or <see cref="MudDynamicTabs"/> component.
 /// </summary>
-public partial class MudTabPanel
+public partial class MudTabPanel : MudComponentBase
 {
     private bool _disposed;
 
@@ -27,6 +27,12 @@ public partial class MudTabPanel
         new CssBuilder("mud-tab-panel")
             .AddClass("mud-tab-panel-hidden", !Visible)
             .AddClass(Class)
+            .Build();
+
+    internal string PanelClassname =>
+        new CssBuilder("mud-tab-panel")
+            .AddClass("mud-tab-panel-hidden", !Visible)
+            .AddClass(PanelClass)
             .Build();
 
     [CascadingParameter]
@@ -215,6 +221,16 @@ public partial class MudTabPanel
     [Parameter]
     [Category(CategoryTypes.Tabs.Appearance)]
     public string? SortKey { get; set; }
+
+    /// <summary>
+    /// The CSS classes applied to the panel. The <c>Class</c> property applies to the tab button only.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Appearance)]
+    public string? PanelClass { get; set; }
 
     /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)

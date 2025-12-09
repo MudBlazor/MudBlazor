@@ -62,8 +62,10 @@ namespace MudBlazor.UnitTests.Components
             //
             0.0.ToString("F1", CultureInfo.InvariantCulture).Should().Be("0.0");
             //
-            await comp.InvokeAsync(() => textfield.Format = "F1");
-            await comp.InvokeAsync(() => textfield.Culture = CultureInfo.InvariantCulture);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Format, "F1")
+                .Add(x => x.Culture, CultureInfo.InvariantCulture));
+
             textfield.Value.Should().Be(0.0);
             textfield.Text.Should().Be("0.0");
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -241,12 +243,11 @@ namespace MudBlazor.UnitTests.Components
         [Test, CancelAfter(1000)]
         public async Task TextFieldUpdateLoopProtectionTest()
         {
-            var comp = Context.RenderComponent<MudTextField<string>>();
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Converter, Conversions.From<string, string>(s => $"{s}x", s => $"{s}y")));
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that textfields and other inputs are now protected against.
             var textfield = comp.Instance;
-            textfield.Converter.SetFunc = s => $"{s}x";
-            textfield.Converter.GetFunc = s => $"{s}y";
             await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", "A"));
             textfield.Value.Should().Be("A");
             textfield.Text.Should().Be("Ax");
@@ -469,14 +470,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
-            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            await textfieldcomp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DebounceInterval, 0));
             // Set invalid text
             comp.Find("input").Change("Quux");
             // check initial state
             textfield.Value.Should().Be("Quux");
             textfield.Text.Should().Be("Quux");
             // check validity
-            await comp.InvokeAsync(() => textfield.Validate());
+            await comp.InvokeAsync(() => textfield.ValidateAsync());
             textfield.ValidationErrors.Should().NotBeEmpty();
             textfield.ValidationErrors.Should().HaveCount(1);
             textfield.ValidationErrors[0].Should().Be("Should not be longer than 3");
@@ -488,14 +489,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
-            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            await textfieldcomp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DebounceInterval, 0));
             // Set valid text
             comp.Find("input").Change("Qux");
             // check initial state
             textfield.Value.Should().Be("Qux");
             textfield.Text.Should().Be("Qux");
             // check validity
-            await comp.InvokeAsync(() => textfield.Validate());
+            await comp.InvokeAsync(() => textfield.ValidateAsync());
             textfield.ValidationErrors.Should().BeEmpty();
         }
 
@@ -518,7 +519,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var model = new TestFailingModel();
             var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
-            await comp.InvokeAsync(() => comp.Instance.Validate());
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
             comp.Instance.ValidationErrors[0].Should().Be("Foo");
@@ -541,7 +542,7 @@ namespace MudBlazor.UnitTests.Components
                 ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => (model as TestFailingModel2).Foo))
             //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
             );
-            await comp.InvokeAsync(() => comp.Instance.Validate());
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
             comp.Instance.ValidationErrors[0].Should().Be("Bar");
@@ -567,7 +568,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var model = new TestThrowingModel();
             var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
-            await comp.InvokeAsync(() => comp.Instance.Validate());
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
             comp.Instance.ValidationErrors[0].Should().Be("An unhandled exception occurred: This is a test exception");
@@ -718,7 +719,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var model = new TestDataAnnotationModel();
             var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo1)));
-            await comp.InvokeAsync(() => comp.Instance.Validate());
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
             comp.Instance.ValidationErrors[0].Should().Be($"The {nameof(TestDataAnnotationModel.Foo1)} field is required.");
@@ -726,7 +727,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 comp.Instance.Value = "Foo";
-                comp.Instance.Validate();
+                comp.Instance.ValidateAsync();
             });
             comp.Instance.GetState(x => x.Error).Should().BeFalse();
             comp.Instance.ValidationErrors.Should().HaveCount(0);
@@ -737,7 +738,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var model = new TestDataAnnotationModel();
             var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)));
-            await comp.InvokeAsync(() => comp.Instance.Validate());
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
             comp.Instance.ValidationErrors[0].Should().Be($"The {TestDataAnnotationModel.FooTwoDisplayName} field is required.");
@@ -752,7 +753,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudTextField<string>>(
                 ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)),
                 ComponentParameter.CreateParameter("Value", value));
-            await comp.InvokeAsync(() => comp.Instance.Validate());
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
             comp.Instance.ValidationErrors[0].Should().Be($"'{TestDataAnnotationModel.FooTwoDisplayName}' and '{nameof(TestDataAnnotationModel.Foo1)}' do not match.");
@@ -760,7 +761,7 @@ namespace MudBlazor.UnitTests.Components
             model.Foo1 = value;
             await comp.InvokeAsync(() =>
             {
-                comp.Instance.Validate();
+                comp.Instance.ValidateAsync();
             });
             comp.Instance.GetState(x => x.Error).Should().BeFalse();
             comp.Instance.ValidationErrors.Should().HaveCount(0);

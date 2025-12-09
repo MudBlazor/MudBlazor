@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.JSInterop;
 
+#nullable enable
 namespace MudBlazor.Services
 {
     /// <summary>
@@ -13,7 +14,7 @@ namespace MudBlazor.Services
     internal sealed class JsEvent : IJsEvent
     {
         private bool _disposed;
-        private string _elementId;
+        private string? _elementId;
         private bool _isObserving;
         private readonly IJSRuntime _jsRuntime;
         private readonly DotNetObjectReference<JsEvent> _dotNetRef;

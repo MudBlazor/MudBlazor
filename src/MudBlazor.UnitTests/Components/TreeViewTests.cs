@@ -677,6 +677,22 @@ namespace MudBlazor.UnitTests.Components
                 .Be("All Mail|Loaded 1|Loaded 3|Categories|Social|Loaded 2|Updates|Trash");
         }
 
+#nullable enable
+        [Test]
+        public async Task TreeViewServerData_BindsItems()
+        {
+            var comp = Context.RenderComponent<TreeViewServerTest>();
+            var target = comp.FindComponents<MudTreeViewItem<string?>>()
+                .First(x => x.Instance.Value == "All Mail");
+            await comp.InvokeAsync(target.Instance.ReloadAsync);
+
+            var root = comp.Instance.TreeItems.First(x => x.Value == "All Mail");
+            root.Children.Should().NotBeNull();
+            root.Children!.Should().HaveCount(1);
+            root.Children.First().Value.Should().StartWith("Loaded");
+        }
+#nullable disable
+
         [Test]
         public async Task TreeViewItem_ShouldBeAbleTo_ReloadInCollapsedState()
         {
