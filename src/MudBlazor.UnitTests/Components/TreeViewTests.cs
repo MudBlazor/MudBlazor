@@ -7,7 +7,6 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.TreeView;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -17,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
         {
-            var comp = Context.RenderComponent<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), true)]);
+            var comp = Context.RenderComponent<DisabledTreeViewTest>(parameters => parameters.Add(x => x.Disabled, true));
             comp.Find("div.mud-treeview-item-content").Click();
             var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
@@ -768,7 +767,7 @@ namespace MudBlazor.UnitTests.Components
             var itemExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
-            await item.SetParametersAndRenderAsync(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
+            await item.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.OnDoubleClick, new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
@@ -789,7 +788,7 @@ namespace MudBlazor.UnitTests.Components
 
             var tree = comp.FindComponent<MudTreeView<string>>();
 
-            await tree.SetParametersAndRenderAsync(Parameter(nameof(MudTreeView<string>.SelectedValueChanged), new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
+            await tree.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValueChanged, new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             selectedItem.Should().Be("content");
