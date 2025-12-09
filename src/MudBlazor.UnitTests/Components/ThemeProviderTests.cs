@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            var comp = Context.RenderComponent<MudThemeProvider>();
+            var comp = Context.Render<MudThemeProvider>();
 
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
             styleNodes.Should().HaveCount(3);
@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IsDarkModeTest()
         {
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
             comp.Should().NotBeNull();
             comp.Instance.GetState(x => x.IsDarkMode).Should().BeTrue();
@@ -326,7 +326,7 @@ namespace MudBlazor.UnitTests.Components
                 systemMockValue = newValue;
                 return Task.CompletedTask;
             }
-            var comp = Context.RenderComponent<MudThemeProvider>();
+            var comp = Context.Render<MudThemeProvider>();
             await comp.Instance.WatchSystemDarkModeAsync(SystemChangedResult);
             await comp.Instance.SystemDarkModeChangedAsync(true);
             systemMockValue.Should().BeTrue();
@@ -347,7 +347,7 @@ namespace MudBlazor.UnitTests.Components
                     Scope = scope
                 }
             };
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters.Add(p => p.Theme, mudTheme));
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters.Add(p => p.Theme, mudTheme));
             comp.Should().NotBeNull();
 
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
@@ -378,7 +378,7 @@ namespace MudBlazor.UnitTests.Components
                     Scope = Scope
                 }
             };
-            var comp = Context.RenderComponent<MudThemeProvider>(
+            var comp = Context.Render<MudThemeProvider>(
                 parameters =>
                     parameters.Add(p => p.Theme, mudTheme)
                         .Add(p => p.IsDarkMode, true)
@@ -409,7 +409,7 @@ namespace MudBlazor.UnitTests.Components
             // Arrange & Act
             Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
             Context.JSInterop.SetupVoid("watchDarkThemeMedia");
-            var themeProvider = Context.RenderComponent<ThemeProviderObserveSystemDarkModeChangeTest>();
+            var themeProvider = Context.Render<ThemeProviderObserveSystemDarkModeChangeTest>();
 
             // Assert
             Context.JSInterop.VerifyNotInvoke("watchDarkThemeMedia");
@@ -431,14 +431,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Dispose_ShouldInvokeJs()
+        public async Task Dispose_ShouldInvokeJs()
         {
             // Arrange
             Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
-            Context.RenderComponent<MudThemeProvider>();
+            Context.Render<MudThemeProvider>();
 
             //Act
-            Context.DisposeComponents();
+            await Context.DisposeComponentsAsync();
 
             // Assert
             Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia");
@@ -449,7 +449,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Act & Arrange
             Context.JSInterop.SetupVoid("watchDarkThemeMedia");
-            Context.RenderComponent<MudThemeProvider>();
+            Context.Render<MudThemeProvider>();
 
             // Assert
             Context.JSInterop.VerifyInvoke("watchDarkThemeMedia");
@@ -470,7 +470,7 @@ namespace MudBlazor.UnitTests.Components
                     Scope = Scope
                 }
             };
-            var comp = Context.RenderComponent<MudThemeProvider>(
+            var comp = Context.Render<MudThemeProvider>(
                 parameters =>
                     parameters.Add(p => p.Theme, mudTheme)
                         .Add(p => p.IsDarkMode, true)
@@ -487,7 +487,7 @@ namespace MudBlazor.UnitTests.Components
         public void CurrentPalette_ShouldBeLight_WhenNotInDarkMode()
         {
             // Arrange & Act
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, false));
 
             // Assert
@@ -499,7 +499,7 @@ namespace MudBlazor.UnitTests.Components
         public void CurrentPalette_ShouldBeDark_WhenInDarkMode()
         {
             // Arrange & Act
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
 
             // Assert
@@ -511,7 +511,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CurrentPalette_ShouldUpdateToLight_WhenDarkModeChangesToFalse()
         {
             // Arrange
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
 
             // Verify initial state
@@ -529,7 +529,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CurrentPalette_ShouldUpdateToDark_WhenDarkModeChangesToTrue()
         {
             // Arrange
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, false));
 
             // Verify initial state
@@ -556,7 +556,7 @@ namespace MudBlazor.UnitTests.Components
             };
 
             // Act
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.Theme, customTheme)
                 .Add(p => p.IsDarkMode, false));
 
@@ -571,7 +571,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
             Palette? capturedPalette = null;
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, false)
                 .Add(p => p.CurrentPaletteChanged, EventCallback.Factory.Create<Palette?>(this, palette => capturedPalette = palette)));
 
@@ -604,7 +604,7 @@ namespace MudBlazor.UnitTests.Components
                 }
             };
 
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.Theme, theme1)
                 .Add(p => p.IsDarkMode, false));
 
@@ -635,7 +635,7 @@ namespace MudBlazor.UnitTests.Components
                 }
             };
 
-            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.Theme, customTheme)
                 .Add(p => p.IsDarkMode, false));
 
@@ -654,7 +654,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CurrentPalette_Binding_ShouldWorkInTestComponent()
         {
             // Arrange
-            var comp = Context.RenderComponent<ThemeProviderCurrentPaletteTest>();
+            var comp = Context.Render<ThemeProviderCurrentPaletteTest>();
 
             // Initial state - light mode
             comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();

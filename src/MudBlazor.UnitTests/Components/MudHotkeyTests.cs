@@ -21,7 +21,7 @@ public class MudHotkeyTests : BunitTest
     public async Task Hotkey_ShouldShowChildContent()
     {
         // Arrange
-        var comp = Context.RenderComponent<MudHotkeyTest>(p => p.Add(x => x.HideChildContentOnRepress, false));
+        var comp = Context.Render<MudHotkeyTest>(p => p.Add(x => x.HideChildContentOnRepress, false));
         var hotKeyComponent = comp.FindComponent<MudHotkey>();
 
         // Act
@@ -36,7 +36,7 @@ public class MudHotkeyTests : BunitTest
     public async Task Hotkey_ShouldNotShowChildContent()
     {
         // Arrange
-        var comp = Context.RenderComponent<MudHotkeyTest>(p => p.Add(x => x.HideChildContentOnRepress, true));
+        var comp = Context.Render<MudHotkeyTest>(p => p.Add(x => x.HideChildContentOnRepress, true));
         var hotKeyComponent = comp.FindComponent<MudHotkey>();
         var hotKeyChildContent = () => comp.Find("#hotkey-child");
 
@@ -50,18 +50,18 @@ public class MudHotkeyTests : BunitTest
     }
 
     [Test]
-    public void Hotkey_JsTestComponentLifetimeCycle()
+    public async Task Hotkey_JsTestComponentLifetimeCycle()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>();
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()));
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()));
         Context.Services.AddSingleton(jsRuntimeMock.Object);
 
-        Context.RenderComponent<MudHotkeyTest>();
+        Context.Render<MudHotkeyTest>();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(1));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Never);
 
-        Context.DisposeComponents();
+        await Context.DisposeComponentsAsync();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(1));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
     }
@@ -74,7 +74,7 @@ public class MudHotkeyTests : BunitTest
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()));
         Context.Services.AddSingleton(jsRuntimeMock.Object);
 
-        var comp = Context.RenderComponent<MudHotkeyTest>();
+        var comp = Context.Render<MudHotkeyTest>();
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Key, JsKey.KeyB));
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.KeyModifiers, [JsKeyModifier.ShiftLeft]));
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, true));

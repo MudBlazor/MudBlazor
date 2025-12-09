@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PickerTest_Fundamentals()
         {
-            var comp = Context.RenderComponent<SimplePickerTest>();
+            var comp = Context.Render<SimplePickerTest>();
             var picker = comp.FindComponent<MudPicker<DateTime?>>();
 
             await comp.InvokeAsync(async () => await picker.Instance.SelectAsync());
@@ -31,17 +31,17 @@ namespace MudBlazor.UnitTests.Components
         {
             var value = new DisplayNameLabelClass();
 
-            var comp = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date));
+            var comp = Context.Render<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date));
             comp.Instance.Label.Should().Be("Date LabelAttribute"); //label should be set by the attribute
 
-            var comp2 = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date).Add(l => l.Label, "Label Parameter"));
+            var comp2 = Context.Render<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
 
         [Test]
         public void PickerHasImmediateText()
         {
-            var comp = Context.RenderComponent<MudPicker<DateTime?>>(parameters => parameters.Add(p => p.ImmediateText, true));
+            var comp = Context.Render<MudPicker<DateTime?>>(parameters => parameters.Add(p => p.ImmediateText, true));
             comp.Instance.ImmediateText.Should().Be(true);
         }
     }

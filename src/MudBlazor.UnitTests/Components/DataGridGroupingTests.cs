@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupExpandedTrueTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
+            var comp = Context.Render<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
             // until a change happens this bool tracks whether GroupExpanded is applied.
             dataGrid.Instance._groupInitialExpanded = true;
@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupExpandedTrueAsyncTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupExpandedAsyncTest>();
+            var comp = Context.Render<DataGridGroupExpandedAsyncTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupExpandedTrueServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupExpandedServerDataTest>();
+            var comp = Context.Render<DataGridGroupExpandedServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupExpandedFalseTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseTest>();
+            var comp = Context.Render<DataGridGroupExpandedFalseTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupExpandedFalseAsyncTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseAsyncTest>();
+            var comp = Context.Render<DataGridGroupExpandedFalseAsyncTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -108,7 +108,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupExpandedFalseServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseServerDataTest>();
+            var comp = Context.Render<DataGridGroupExpandedFalseServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -125,7 +125,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupCollapseAllTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupCollapseAllTest>();
+            var comp = Context.Render<DataGridGroupCollapseAllTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
@@ -144,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupExpandAllCollapseAllTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupExpandAllCollapseAllTest>();
+            var comp = Context.Render<DataGridGroupExpandAllCollapseAllTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
         {
             // Render the DataGridGroupingTest component for testing.
-            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+            var comp = Context.Render<DataGridColumnGroupingTest>();
 
             // Attempt to find the MudPopoverProvider component within the rendered component.
             // MudPopoverProvider is used to manage popovers in the component, including the grouping popover.
@@ -204,7 +204,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public void DataGridServerGroupUngroupingTest()
         {
-            var comp = Context.RenderComponent<DataGridServerDataColumnGroupingTest>();
+            var comp = Context.Render<DataGridServerDataColumnGroupingTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<Examples.Data.Models.Element>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
 
@@ -259,12 +259,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataGridGroupingTestBoundAndUnboundScenarios()
         {
-            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+            var comp = Context.Render<DataGridColumnGroupingTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
 
-            IRefreshableElementCollection<IElement> Rows() => dataGrid.FindAll("tr");
-            IRefreshableElementCollection<IElement> Cells() => dataGrid.FindAll("td");
+            IReadOnlyList<IElement> Rows() => dataGrid.FindAll("tr");
+            IReadOnlyList<IElement> Cells() => dataGrid.FindAll("td");
 
             // Assert that initially, before any user interaction, IsGenderGrouped and IsAgeGrouped should be false
             // The default grouping is by name
@@ -399,7 +399,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataGridGrouping_ManualGroupByOrderTest()
         {
-            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+            var comp = Context.Render<DataGridColumnGroupingTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
 
@@ -462,7 +462,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridGroupedWithServerDataPaginationTest()
         {
-            var comp = Context.RenderComponent<DataGridGroupableServerDataTest>();
+            var comp = Context.Render<DataGridGroupableServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupableServerDataTest.Item>>();
             var rows = dataGrid.FindAll("tr");
             rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
@@ -548,7 +548,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task GroupExpandClick_ShouldToggleExpandedState()
         {
             // Arrange
-            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+            var component = Context.Render<DataGridGroupingMultiLevelTest>();
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
@@ -583,7 +583,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_Grouping_TestGroupableSets()
         {
-            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+            var component = Context.Render<DataGridGroupingMultiLevelTest>();
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             // by default has a groupdefinition
@@ -605,7 +605,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_Grouping_GroupDefinition()
         {
-            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+            var component = Context.Render<DataGridGroupingMultiLevelTest>();
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
@@ -640,8 +640,8 @@ namespace MudBlazor.UnitTests.Components
         {
             // Tests the IsGrouping property of MudDataGrid to ensure it handles a change properly
             // and ensures the correct UI is rendered for column options
-            var provider = Context.RenderComponent<MudPopoverProvider>();
-            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
             provider.Should().NotBeNull();
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -673,7 +673,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataGrid_Grouping_ByNull()
         {
-            var comp = Context.RenderComponent<DataGridGroupByNullTest>();
+            var comp = Context.Render<DataGridGroupByNullTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupByNullTest.Fruit>>();
             // until a change happens this bool tracks whether GroupExpanded is applied.
             dataGrid.Instance._groupInitialExpanded = true;
@@ -696,7 +696,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DataGridGroupingTemplateSetAtGridLevel()
         {
-            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+            var component = Context.Render<DataGridGroupingMultiLevelTest>();
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
@@ -729,7 +729,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridGroupingTemplateDefault()
         {
             await Task.Yield();
-            var component = Context.RenderComponent<DataGridColumnGroupingTest>();
+            var component = Context.Render<DataGridColumnGroupingTest>();
 
             //grouping should be the built in default
             var groupRow = component.FindComponent<DataGridGroupRow<DataGridColumnGroupingTest.Model>>().Find(".mud-datagrid-group");
@@ -741,7 +741,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_MultilevelGrouping_ExpandSpecificNestedGroup()
         {
-            var comp = Context.RenderComponent<DataGridMultilevelGroupingNestedGroupExpansionTest>();
+            var comp = Context.Render<DataGridMultilevelGroupingNestedGroupExpansionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultilevelGroupingNestedGroupExpansionTest.Model>>();
             var subGroupColName = nameof(DataGridMultilevelGroupingNestedGroupExpansionTest.Model.SubGroup);
             var groupKey = new GroupKeyPath(["A", "X"]);

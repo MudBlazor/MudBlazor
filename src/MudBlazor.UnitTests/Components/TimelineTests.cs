@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimelineTest_DefaultValues()
         {
-            var comp = Context.RenderComponent<MudTimeline>();
+            var comp = Context.Render<MudTimeline>();
 
             comp.Instance.TimelineOrientation.Should().Be(TimelineOrientation.Vertical);
             comp.Instance.TimelinePosition.Should().Be(TimelinePosition.Alternate);
@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimelineTest()
         {
-            var comp = Context.RenderComponent<TimelineTest>();
+            var comp = Context.Render<TimelineTest>();
             // print the generated html
             //// select elements needed for the test
             var timeline = comp.FindComponent<MudTimeline>().Instance;
@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
 
         public async Task TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
         {
-            var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue("RightToLeft", rtl));
+            var comp = Context.Render<TimelineTest>(p => p.AddCascadingValue("RightToLeft", rtl));
 
             var timeline = comp.FindComponent<MudTimeline>();
 
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimelineTest_SelectItem()
         {
-            var comp = Context.RenderComponent<TimelineTest>();
+            var comp = Context.Render<TimelineTest>();
 
             var itemsDiv = comp.FindAll(".mud-timeline-item");
 
@@ -137,7 +137,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimelineTest_DotStyles()
         {
-            var comp = Context.RenderComponent<TimelineTest>();
+            var comp = Context.Render<TimelineTest>();
             var firstItem = comp.FindComponent<MudTimelineItem>();
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("");
 
@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void HorizontalTimelineInsideVerticalTimeline_Test()
         {
-            var comp = Context.RenderComponent<HorizontalTimelineInsideVerticalTimelineTest>();
+            var comp = Context.Render<HorizontalTimelineInsideVerticalTimelineTest>();
             // select elements needed for the test
             var timeline = comp.FindComponent<MudTimeline>().Instance;
             // validating some renders

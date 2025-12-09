@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void EventUtil_ShouldPreventRenderCycle()
         {
-            var comp = Context.RenderComponent<EventUtil1Test>();
+            var comp = Context.Render<EventUtil1Test>();
             comp.Find("#clicks").TrimmedText().Should().Be("Clicks: 0/0/0");
             comp.RenderCount.Should().Be(1);
             // normal click handler causes a re-render automatically (normal Blazor behavior)
