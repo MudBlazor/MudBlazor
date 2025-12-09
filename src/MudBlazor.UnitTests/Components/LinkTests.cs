@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Link;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components;
 
@@ -62,9 +61,9 @@ public class LinkTests : BunitTest
     [Test]
     public void DisabledProperty_DisplaysAsDisabled()
     {
-        var comp = Context.RenderComponent<MudLink>(
-            Parameter(nameof(MudLink.Href), "#"),
-            Parameter(nameof(MudLink.Disabled), true));
+        var comp = Context.RenderComponent<MudLink>(parameters => parameters
+            .Add(x => x.Href, "#")
+            .Add(x => x.Disabled, true));
 
         var linkElement = comp.Find("a");
         linkElement.GetAttribute("href").Should().BeNullOrEmpty();
