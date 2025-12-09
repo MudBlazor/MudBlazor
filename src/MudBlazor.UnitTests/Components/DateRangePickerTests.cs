@@ -10,7 +10,6 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -195,7 +194,8 @@ namespace MudBlazor.UnitTests.Components
         public void OpenPickerWithCustomStartMonth_SetDateRange_CheckValue()
         {
             var start = DateTime.Now.AddMonths(-1);
-            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.StartMonth), start));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.StartMonth, start));
             // clicking a day buttons to select a range and close
             comp
                 .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click();
@@ -206,21 +206,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.End.Value.Month.Should().Be(start.Month);
         }
 
-        public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenPicker(ComponentParameter parameter)
-        {
-            return OpenPicker(new ComponentParameter[] { parameter });
-        }
-
-        public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenPicker(ComponentParameter[] parameters = null)
+        public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudMudDateRangePickerTest>> parameterBuilder = null)
         {
             IRenderedComponent<SimpleMudMudDateRangePickerTest> comp;
-            if (parameters is null)
+            if (parameterBuilder is null)
             {
                 comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>();
             }
             else
             {
-                comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>(parameters);
+                comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>(parameterBuilder);
             }
 
             // should not be open
@@ -272,7 +267,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToYear_CheckYearsShown()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
             comp.Instance.DateRange.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -281,7 +277,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToYear_ClickYear_CheckMonthsShown()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
             comp.Instance.DateRange.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -292,7 +289,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToYear_ClickYear_CheckMonthsShown_Close_Reopen_CheckYearsShown()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
             comp.Instance.DateRange.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -310,7 +308,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToMonth_CheckMonthsShown()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Month));
             comp.Instance.DateRange.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
@@ -328,7 +327,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_ClickYear_CheckYearsShown()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Month));
             // should show years
             comp.FindAll("button.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -337,7 +337,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToMonth_Select3rdMonth_Select2ndDay_CheckDateRange()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Month));
             comp.Instance.DateRange.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
@@ -351,7 +352,8 @@ namespace MudBlazor.UnitTests.Components
 
         public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenTo12thMonth()
         {
-            var comp = OpenPicker(Parameter("PickerMonth", new DateTime(DateTime.Now.Year, 12, 01)));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.PickerMonth, new DateTime(DateTime.Now.Year, 12, 01)));
             comp.Instance.PickerMonth.Value.Month.Should().Be(12);
             return comp;
         }
@@ -429,8 +431,8 @@ namespace MudBlazor.UnitTests.Components
         public void SetPickerValue_CheckText()
         {
             var date = DateTime.Now;
-            var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(date, date.AddDays(5))));
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.DateRange, new DateRange(date, date.AddDays(5))));
             // select elements needed for the test
             var picker = comp.Instance;
 
@@ -447,7 +449,8 @@ namespace MudBlazor.UnitTests.Components
         public void SetPickerToday_CheckSelected()
         {
             var today = DateTime.Now.Date;
-            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(today, today)));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, new DateRange(today, today)));
             comp.FindAll("button.mud-selected").Count.Should().Be(1);
         }
 
@@ -455,7 +458,8 @@ namespace MudBlazor.UnitTests.Components
         public void IsDateDisabledFunc_DisablesCalendarDateButtons()
         {
             Func<DateTime, bool> isDisabledFunc = date => true;
-            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.IsDateDisabledFunc, isDisabledFunc));
 
             comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -471,10 +475,9 @@ namespace MudBlazor.UnitTests.Components
             var wasEventCallbackCalled = false;
 
             Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
-            var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
-                EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
-            );
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.IsDateDisabledFunc, isDisabledFunc)
+                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, new DateRange(twoDaysAgo, today)));
 
@@ -492,10 +495,9 @@ namespace MudBlazor.UnitTests.Components
 
             Func<DateTime, bool> isDisabledFunc = date => date == twoDaysAgo;
             var range = new DateRange(yesterday, today);
-            var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
-                EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
-            );
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.IsDateDisabledFunc, isDisabledFunc)
+                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, range));
 
@@ -516,7 +518,8 @@ namespace MudBlazor.UnitTests.Components
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
 
-            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.AdditionalDateClassesFunc, additionalDateClassesFunc));
 
             var daysCount = comp.FindAll("button.mud-picker-calendar-day")
                                 .Select(button => (IHtmlButtonElement)button)
@@ -560,9 +563,9 @@ namespace MudBlazor.UnitTests.Components
 
             var wasEventCallbackCalled = false;
 
-            var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.DateRange), dr1),
-                EventCallback(nameof(MudDateRangePicker.DateRangeChanged), (DateRange _) => wasEventCallbackCalled = true));
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.DateRange, dr1)
+                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, dr2));
 
@@ -575,7 +578,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var range = new DateRange();
 
-            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), range));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
 
             comp.Instance.DateRange.Should().NotBeNull();
             comp.Instance.DateRange.Start.Should().NotBe(default);
@@ -589,7 +593,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var range = new DateRange(null, null);
 
-            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), range));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
 
             comp.Instance.DateRange.Should().NotBeNull();
             comp.Instance.DateRange.Start.Should().NotBe(default);
@@ -607,7 +612,9 @@ namespace MudBlazor.UnitTests.Components
             var endDate = DateTime.Now.Date.AddDays(2);
 
             // create the component
-            var dateRangePickerComponent = Context.RenderComponent<MudDateRangePicker>(Parameter(nameof(MudDateRangePicker.Required), true), Parameter(nameof(MudDateRangePicker.RequiredError), errorMessage));
+            var dateRangePickerComponent = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.Required, true)
+                .Add(x => x.RequiredError, errorMessage));
 
             // select the instance to work with
             var dateRangePickerInstance = dateRangePickerComponent.Instance;
@@ -656,8 +663,8 @@ namespace MudBlazor.UnitTests.Components
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
 
             // Get access to the date range picker of the instance
-            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(
-                Parameter(nameof(AutoCloseDateRangePickerTest.DateRange), initialDateRange));
+            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(parameters => parameters
+                .Add(x => x.DateRange, initialDateRange));
 
             // Open the date range picker
             comp.Find("input").Click();
@@ -682,9 +689,9 @@ namespace MudBlazor.UnitTests.Components
                   new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
 
             // Get access to the date range picker of the instance
-            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(
-                Parameter(nameof(AutoCloseDateRangePickerTest.DateRange), initialDateRange),
-                Parameter(nameof(AutoCloseDateRangePickerTest.AutoClose), true));
+            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(parameters => parameters
+                .Add(x => x.DateRange, initialDateRange)
+                .Add(x => x.AutoClose, true));
 
             // Open the date range picker
             comp.Find("input").Click();
@@ -726,7 +733,8 @@ namespace MudBlazor.UnitTests.Components
             var today = DateTime.Today;
             var initialRange = new DateRange(new DateTime(today.Year, today.Month, 01), new DateTime(today.Year, today.Month, 05));
 
-            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(Parameter(nameof(AutoCloseDateRangePickerTest.DateRange), initialRange));
+            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(parameters => parameters
+                .Add(x => x.DateRange, initialRange));
 
             comp.Find("input").Click();
 
@@ -887,9 +895,9 @@ namespace MudBlazor.UnitTests.Components
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
 
             // Get access to the date range picker of the instance
-            var comp = Context.RenderComponent<DateRangePickerCloseOnClearTest>(
-                Parameter(nameof(DateRangePickerCloseOnClearTest.DateRange), initialDateRange),
-                Parameter(nameof(DateRangePickerCloseOnClearTest.CloseOnClear), closeOnClear));
+            var comp = Context.RenderComponent<DateRangePickerCloseOnClearTest>(parameters => parameters
+                .Add(x => x.DateRange, initialDateRange)
+                .Add(x => x.CloseOnClear, closeOnClear));
 
             // Open the date range picker
             comp.Find("input").Click();
@@ -934,11 +942,10 @@ namespace MudBlazor.UnitTests.Components
 
             var range = new DateRange(twoDaysAgo, today);
             Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
-            var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.AllowDisabledDatesInRange), true),
-                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
-                EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
-            );
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.AllowDisabledDatesInRange, true)
+                .Add(x => x.IsDateDisabledFunc, isDisabledFunc)
+                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, new DateRange(twoDaysAgo, today)));
 
