@@ -408,20 +408,17 @@ namespace MudBlazor.UnitTests.Components
             {
                 self.Bind(x => x.ActiveIndex, activeIndex, newValue => activeIndex = newValue);
             });
+            var stepper1 = Context.RenderComponent<MudStep>(parameters => parameters.Add(x => x.Title, "X"));
+            var stepper2 = Context.RenderComponent<MudStep>(parameters => parameters.Add(x => x.Title, "Y"));
             stepper.WaitForAssertion(() => stepper.RenderCount.Should().Be(1));
             activeIndex.Should().Be(-1);
             // adding a step changes active index to 0
-#pragma warning disable BL0005
-            var step = new MudStep() { Title = "X" };
-            step.IsActive.Should().Be(false); // <-- fight partial line coverage
-            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(step));
-#pragma warning restore BL0005
+            stepper1.Instance.IsActive.Should().Be(false); // <-- fight partial line coverage
+            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(stepper1.Instance));
             activeIndex.Should().Be(0);
             stepper.Instance.ActiveStep?.Title.Should().Be("X");
             // adding another step won't change active index
-#pragma warning disable BL0005
-            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(new MudStep() { Title = "Y" }));
-#pragma warning restore BL0005
+            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(stepper2.Instance));
             activeIndex.Should().Be(0);
             stepper.Instance.ActiveStep?.Title.Should().Be("X");
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Carousel;
@@ -22,9 +18,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CarouselTest>();
             // print the generated html
-            //// select elements needed for the test
-            var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
-            //// validating some renders
+            // select elements needed for the test
+            var carouselComponent = comp.FindComponent<MudCarousel<object>>();
+            var carousel = carouselComponent.Instance;
+            // validating some renders
             carousel.Should().NotBeNull();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-carousel-item").Count.Should().Be(1));
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
@@ -32,7 +29,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 pages
             carousel.LastContainer.Should().BeNull();
-            //// changing current index from 0 to 1
+            // changing current index from 0 to 1
             carousel.SelectedIndex.Should().Be(0);
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             var last = carousel.SelectedContainer;
@@ -44,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1); //last item continues on DOM because it need's to act with transition effect
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
-            //// changing current index from 1 to 0
+            // changing current index from 1 to 0
             last = carousel.SelectedContainer;
             await comp.InvokeAsync(() => carousel.Previous());
             carousel.SelectedIndex.Should().Be(0);
@@ -54,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
-            //// changing current index from 0 to 2 with MoveTo()
+            // changing current index from 0 to 2 with MoveTo()
             last = carousel.SelectedContainer;
             await comp.InvokeAsync(() => carousel.MoveTo(2));
             carousel.SelectedIndex.Should().Be(2);
@@ -64,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
-            //// changing current index from 2 to 0 with Next()
+            // changing current index from 2 to 0 with Next()
             last = carousel.SelectedContainer;
             await comp.InvokeAsync(() => carousel.Next());
             carousel.SelectedIndex.Should().Be(0);
@@ -74,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
-            //// changing current index from 0 to 2 with Previous()
+            // changing current index from 0 to 2 with Previous()
             last = carousel.SelectedContainer;
             await comp.InvokeAsync(() => carousel.Previous());
             carousel.SelectedIndex.Should().Be(2);
@@ -84,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
-            //// changing current index from 1 to 2 with Next() - rendering test
+            // changing current index from 1 to 2 with Next() - rendering test
             await comp.InvokeAsync(() => carousel.MoveTo(1)); //positioning only
             carousel.SelectedIndex.Should().Be(1);
             carousel.SelectedContainer.Should().Be(carousel.Items[1]);
@@ -96,11 +93,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
-            //// Forcing SelectedIndex value by setter (for binding purposes)
+            // Forcing SelectedIndex value by setter (for binding purposes)
             last = carousel.SelectedContainer;
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            await comp.InvokeAsync(() => carousel.SelectedIndex = 0);
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await carouselComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedIndex, 0));
             carousel.SelectedIndex.Should().Be(0);
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
@@ -108,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
-            ////Swipe from right to left
+            // Swipe from right to left
             last = carousel.SelectedContainer;
             var swipe = comp.Find("div.mud-carousel-swipe");
             await swipe.PointerDownAsync(new PointerEventArgs { ClientY = 0, ClientX = 150 });
@@ -120,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
-            ////Swipe from left to right
+            // Swipe from left to right
             last = carousel.SelectedContainer;
             await swipe.PointerDownAsync(new PointerEventArgs { ClientY = 0, ClientX = 20 });
             await swipe.PointerUpAsync(new PointerEventArgs { ClientY = 0, ClientX = 150 });
@@ -143,9 +138,9 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
             // adding some pages
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
             comp.Render();
             // playing with params
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 items
@@ -177,9 +172,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
             // adding some pages
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
 
             await comp.SetParamAsync(p => p.AutoCycle, true);
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
@@ -237,26 +232,23 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudCarousel<object>>();
 
             //Add some pages
-            comp.Instance.Items.Add(new MudCarouselItem());
-            comp.Instance.Items.Add(new MudCarouselItem());
-            comp.Instance.Items.Add(new MudCarouselItem());
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.RenderComponent<MudCarouselItem>().Instance);
 
             //Move the SelectedIndex from -1 to 0
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
 
             var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
-
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            comp.Instance.EnableSwipeGesture = false;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.EnableSwipeGesture, false));
             await comp.InvokeAsync(() => mudSwipeArea.OnPointerDown(new PointerEventArgs { ClientX = 200, ClientY = 0 }));
             await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
             comp.Instance.SelectedIndex.Should().Be(0);
 
-            comp.Instance.EnableSwipeGesture = true;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.EnableSwipeGesture, true));
             await comp.InvokeAsync(() => mudSwipeArea.OnPointerDown(new PointerEventArgs { ClientX = 200, ClientY = 0 }));
             await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
             comp.Instance.SelectedIndex.Should().Be(1);
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         }
 
         /// <summary>
@@ -304,15 +296,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
 
             // adding one page
-            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.RenderComponent<MudCarouselItem>().Instance));
 
             // check the new button amount
             comp.FindAll("button.mud-icon-button").Count.Should().Be(3); //left + right + 1 item
 
             // adding 3 more pages
-            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
-            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
-            await comp.InvokeAsync(() => comp.Instance.AddItem(new()));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.RenderComponent<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.RenderComponent<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.RenderComponent<MudCarouselItem>().Instance));
 
             // check the final button amount
             comp.FindAll("button.mud-icon-button").Count.Should().Be(6); //left + right + 4 items

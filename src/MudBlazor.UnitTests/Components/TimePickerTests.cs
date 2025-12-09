@@ -215,9 +215,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePickerTest_KeyboardNavigation()
         {
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             var comp = Context.RenderComponent<SimpleTimePickerTest>();
-            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
+            var timePickerComponent = comp.FindComponent<MudTimePicker>();
+            var timePicker = timePickerComponent.Instance;
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
@@ -303,18 +303,18 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             //When its disabled, keys should not work
-            timePicker.Disabled = true;
+            await timePickerComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+
             await timePicker.FocusAsync();
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            await comp.InvokeAsync(() => timePicker.TimeFormat = "hhmm");
-            await comp.InvokeAsync(() => timePicker.TimeFormat = "hhmm");
+            await timePickerComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TimeFormat, "hhmm")
+                .Add(x => x.ReadOnly, true));
 
-            timePicker.ReadOnly = true;
             await comp.InvokeAsync(timePicker.SubmitAsync);
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         }
 
         /// <summary>
