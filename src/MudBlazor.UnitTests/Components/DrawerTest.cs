@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Drawer;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;

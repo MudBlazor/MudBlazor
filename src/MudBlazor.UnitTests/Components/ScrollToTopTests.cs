@@ -1,7 +1,5 @@
-﻿using System;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Scroll;
 using NUnit.Framework;
 

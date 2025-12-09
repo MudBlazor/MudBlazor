@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -298,7 +299,7 @@ namespace MudBlazor
         internal async Task RegisterAsync(MudListItem<T> item)
         {
             _items.Add(item);
-            if (SelectedValue is not null && Equals(item.GetValue(), SelectedValue))
+            if (_selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
             {
                 item.SetSelected(true);
                 await _selectedValueState.SetValueAsync(item.GetValue());
@@ -357,11 +358,11 @@ namespace MudBlazor
         {
             if (SelectionMode == SelectionMode.MultiSelection)
             {
-                UpdateSelectedItems(new HashSet<T>(TopLevelList.SelectedValues ?? Array.Empty<T>(), Comparer));
+                UpdateSelectedItems(new HashSet<T>(TopLevelList.GetState<IReadOnlyCollection<T>?>(nameof(TopLevelList.SelectedValues)) ?? Array.Empty<T>(), Comparer));
             }
             else
             {
-                UpdateSelectedItem(TopLevelList.SelectedValue);
+                UpdateSelectedItem(TopLevelList.GetState<T?>(nameof(TopLevelList.SelectedValue)));
             }
             foreach (var childList in _childLists.ToArray())
                 childList.UpdateSelection();

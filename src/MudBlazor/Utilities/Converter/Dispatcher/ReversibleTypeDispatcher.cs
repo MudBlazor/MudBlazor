@@ -88,7 +88,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             var convType = converter.GetType();
 
             var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<,>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
             if (convertMethod is null)
             {
@@ -96,7 +96,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             }
 
             var convertBackMethodInterface = typeof(IReversibleConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            var convertBackMethod = convertBackMethodInterface.GetMethod(nameof(IReversibleConverter<,>.ConvertBack), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var convertBackMethod = convertBackMethodInterface.GetMethod(nameof(IReversibleConverter<TIn, TOut>.ConvertBack), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
             if (convertBackMethod is null)
             {

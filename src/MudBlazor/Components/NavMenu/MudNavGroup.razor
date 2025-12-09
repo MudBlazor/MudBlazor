@@ -34,7 +34,7 @@
             <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
     </button>
-    <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
+    <MudCollapse aria-hidden="@((!_navigationContext.Expanded).ToString().ToLowerInvariant())"
                  Expanded="@_navigationContext.Expanded"
                  MaxHeight="@MaxHeight"
                  Class="mud-navgroup-collapse">

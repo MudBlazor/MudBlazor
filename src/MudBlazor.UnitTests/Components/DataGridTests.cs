@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#pragma warning disable BL0005 // Set parameter outside component
-
 using System.Globalization;
 using System.Reflection;
 using AngleSharp.Css.Dom;
@@ -116,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+            await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortBy, x => x.Name));
             ////await comp.InvokeAsync(() => column.Instance.CompileSortBy());
 
             // Check the values of rows - should not be sorted and should be in the original order.
@@ -142,14 +140,13 @@ namespace MudBlazor.UnitTests.Components
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
-            dataGrid.Render();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.None));
             dataGrid.Instance.DropContainerHasChanged();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
@@ -234,7 +231,7 @@ namespace MudBlazor.UnitTests.Components
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizeServerDataTest.Item>>();
-            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+            await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortBy, x => x.Name));
 
             // Check the values of rows - should not be sorted and should be in the original order.
             cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
@@ -265,8 +262,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
-            dataGrid.Render();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.None));
             dataGrid.Instance.DropContainerHasChanged();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
@@ -388,21 +384,18 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
 
             // Add a FilterDefinition to filter where the Name = "C".
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizeServerDataTest.Item>
             {
-                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizeServerDataTest.Item>
-                {
-                    Column = dataGrid.Instance.RenderedColumns.First(),
-                    Operator = FilterOperator.String.Equal,
-                    Value = "C"
-                });
-            });
+                Column = dataGrid.Instance.RenderedColumns.First(),
+                Operator = FilterOperator.String.Equal,
+                Value = "C"
+            }));
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
 
-            dataGrid.Instance.Filterable = false;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Filterable, false));
         }
 
         [Test]
@@ -421,21 +414,18 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
 
             // Add a FilterDefinition to filter where the Name = "C".
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
             {
-                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
-                {
-                    Column = dataGrid.Instance.RenderedColumns.First(),
-                    Operator = FilterOperator.String.Equal,
-                    Value = "C"
-                });
-            });
+                Column = dataGrid.Instance.RenderedColumns.First(),
+                Operator = FilterOperator.String.Equal,
+                Value = "C"
+            }));
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
 
-            dataGrid.Instance.Filterable = false;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Filterable, false));
         }
 
         [Test]
@@ -554,7 +544,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
 
-            dataGrid.Instance.Filterable = false;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Filterable, false));
         }
 
         [Test]
@@ -777,7 +767,7 @@ namespace MudBlazor.UnitTests.Components
             // Make a task completion source
             var first = new TaskCompletionSource<GridData<int>>();
             // Set the ServerData function
-            await dataGrid.SetParamAsync(p =>
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p =>
                 p.VirtualizeServerData,
                 new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, cancellationToken) =>
                 {
@@ -785,7 +775,7 @@ namespace MudBlazor.UnitTests.Components
                     cancelToken = cancellationToken;
                     // Return a task that never completes
                     return first.Task;
-                }));
+                })));
 
             await Task.Delay(20);
 
@@ -797,9 +787,9 @@ namespace MudBlazor.UnitTests.Components
             // Arrange a server data refresh
             var second = new TaskCompletionSource<GridData<int>>();
             // Set the VirtualizeServerData function to a new method...
-            await dataGrid.SetParamAsync(p =>
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task));
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task)));
 
             await Task.Delay(20);
 
@@ -906,9 +896,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-table-pagination-actions");
             comp.Markup.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z");
             comp.Markup.Should().Contain("1-10 of 20");
-            await pagerContent.SetParamAsync(x => x.ShowNavigation, false);
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowNavigation, false));
             comp.Markup.Should().NotContain("mud-table-pagination-actions");
-            await pagerContent.SetParamAsync(x => x.ShowPageNumber, false);
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowPageNumber, false));
             comp.Markup.Should().NotContain("1-10 of 20");
         }
 
@@ -1215,9 +1205,11 @@ namespace MudBlazor.UnitTests.Components
 
             // we test to make sure that we can set and get the cancelCallback via the CancelledEditingItem property
             var cancelCallback = dataGrid.Instance.CanceledEditingItem;
-            await dataGrid.SetCallbackAsync(dg => dg.CanceledEditingItem, x => { });
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(dg => dg.CanceledEditingItem, () => { }));
             dataGrid.Instance.CanceledEditingItem.Should().NotBe(cancelCallback);
+#pragma warning disable BL0005
             dataGrid.Instance.CanceledEditingItem = cancelCallback;
+#pragma warning restore BL0005
             dataGrid.Instance.CanceledEditingItem.Should().Be(cancelCallback);
 
             // Set some parameters manually so that they are covered.
@@ -1363,8 +1355,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
-            dataGrid.Render();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.None));
             dataGrid.Instance.DropContainerHasChanged();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
@@ -3465,14 +3456,14 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<DataGridServerPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
-            dataGrid.Instance.CurrentPage = 2;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 2));
             var serverDataCallCount = 0;
             var originalServerDataFunc = dataGrid.Instance.ServerData;
-            dataGrid.Instance.ServerData = (state, token) =>
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, (state, token) =>
             {
                 serverDataCallCount++;
                 return originalServerDataFunc(state, token);
-            };
+            }));
 
             // Act
 
@@ -4462,7 +4453,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridCustomSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomSortableTest.Item>>();
-            dataGrid.Instance.SortMode = SortMode.Single;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.Single));
             dataGrid.Instance.SortMode.Should().Be(SortMode.Single);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
@@ -4502,12 +4493,12 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-desc").Should().Be(true);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
 
-            dataGrid.Instance.SortMode = SortMode.Multiple;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.Multiple));
             dataGrid.Instance.SortMode.Should().Be(SortMode.Multiple);
 
             //Assign a comparer to a column
             var column = dataGrid.FindComponent<Column<DataGridCustomSortableTest.Item>>();
-            await comp.InvokeAsync(() => column.Instance.Comparer = new MudBlazor.Utilities.NaturalComparer());
+            await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Comparer, new MudBlazor.Utilities.NaturalComparer()));
             //Clear sorting
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
@@ -4547,7 +4538,9 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("tbody.mud-table-body td")[3].TextContent.Should().Be("$87,000.00");
             var column = (PropertyColumn<DataGridFormatTest.Employee, int>)dataGrid.Instance.GetColumnByPropertyName("Salary");
+#pragma warning disable BL0005
             await comp.InvokeAsync(() => column.Format = "C0");
+#pragma warning restore BL0005
             comp.Find(".mud-switch-input").Change(new ChangeEventArgs { Value = true });
             comp.FindAll("tbody.mud-table-body td")[3].TextContent.Should().Be("$87,000");
         }
@@ -4560,10 +4553,10 @@ namespace MudBlazor.UnitTests.Components
 
             var initialFilterCount = dataGrid.Instance.FilteringRunCount;
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 1);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 2);
 
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
@@ -4571,7 +4564,7 @@ namespace MudBlazor.UnitTests.Components
 
 
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+            await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortBy, x => x.Name));
             dataGrid.Render();
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 4);
 
@@ -4581,7 +4574,7 @@ namespace MudBlazor.UnitTests.Components
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 6);
 
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
@@ -4592,8 +4585,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
-            dataGrid.Render();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.None));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 10);
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.Instance.DropContainerHasChanged();
@@ -4776,16 +4768,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridRedundantMenuTest()
+        public async Task DataGridRedundantMenuTest()
         {
             var comp = Context.RenderComponent<DataGridRedundantMenuTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridRedundantMenuTest.Model>>();
 
-            dataGrid.Instance.FilterMode = DataGridFilterMode.ColumnFilterRow;
-            dataGrid.Instance.SortMode = SortMode.None;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterRow)
+                .Add(x => x.SortMode, SortMode.None));
 
-            // Render after applying conditions
-            comp.Render();
 
             // Assert that the `column-options` span is present but empty
             var columnOptionsSpan = comp.Find(".column-options");
@@ -5043,14 +5034,15 @@ namespace MudBlazor.UnitTests.Components
         public async Task TestCurrentPageParameterTwoWayBinding()
         {
             var comp = Context.RenderComponent<DataGridCurrentPageParameterTwoWayBindingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<int>>().Instance;
+            var dataGridComponent = comp.FindComponent<MudDataGrid<int>>();
+            var dataGrid = dataGridComponent.Instance;
 
             // Assert starting page index is 0 (default).
             comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(0));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
 
             // Assert modification via code correctly renders the corresponding page.
-            await comp.InvokeAsync(() => dataGrid.CurrentPage = 1);
+            await dataGridComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 1));
             comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(1));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
 
@@ -5118,7 +5110,7 @@ namespace MudBlazor.UnitTests.Components
             selectedItem.Should().Be(5);
 
             // in multi selection toggle selection using row click method
-            await comp.SetParamAsync(x => x.MultiSelection, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
             comp.Render();
             await comp.Instance.SetSelectedItemAsync(4);
 
@@ -5136,7 +5128,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
 
             // Test single selection mode
-            await dataGrid.SetParamAsync(x => x.MultiSelection, false);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, false));
             comp.Render();
 
             // Select an item
@@ -5163,7 +5155,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedItemsChanged = false;
 
             // Test multi-selection mode
-            await dataGrid.SetParamAsync(x => x.MultiSelection, true);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
             comp.Render();
 
             // Select all items

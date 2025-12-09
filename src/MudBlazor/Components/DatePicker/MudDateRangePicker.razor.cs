@@ -158,7 +158,7 @@ namespace MudBlazor
                         _rangeText = new Range<string>(
                             ConvertSet(_dateRange.Start),
                             ConvertSet(_dateRange.End));
-                        await SetTextAsync(_dateRange.ToString(Converter), false);
+                        await SetTextAsync(_dateRange.ToString(GetConverter()), false);
                     }
                 }
 
@@ -231,7 +231,7 @@ namespace MudBlazor
                     ConvertSet(_dateRange.End));
             }
 
-            return SetTextAsync(_dateRange?.ToString(Converter), false);
+            return SetTextAsync(_dateRange?.ToString(GetConverter()), false);
         }
 
         protected override Task StringValueChangedAsync(string value)
@@ -330,12 +330,12 @@ namespace MudBlazor
 
         private DateRange ParseDateRangeValue(string value)
         {
-            return DateRange.TryParse(value, Converter, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
         }
 
         private DateRange ParseDateRangeValue(string start, string end)
         {
-            return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(start, end, GetConverter(), out var dateRange) ? dateRange : null;
         }
 
         protected override Task OnPickerClosedAsync()

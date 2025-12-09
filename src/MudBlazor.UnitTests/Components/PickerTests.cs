@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -24,9 +22,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(async () => await picker.Instance.SelectAsync());
             await comp.InvokeAsync(async () => await picker.Instance.SelectRangeAsync(0, 0));
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            await comp.InvokeAsync(() => picker.Instance.Disabled = true);
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await picker.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => picker.Instance.OnHandleKeyDownAsync(new KeyboardEventArgs()));
         }
 

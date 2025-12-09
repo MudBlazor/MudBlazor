@@ -207,7 +207,7 @@ public class ParameterStateUsageTests : BunitTest
         // Initial
         expanded.Should().BeFalse("Initial value is false.");
         comp.Instance.Expanded.Should().BeFalse();
-        comp.Instance.ExpandedStateValue.Should().BeFalse();
+        comp.Instance.ExpandedState.Value.Should().BeFalse();
         comp.Instance.ParameterChangedEvents.Should().BeEmpty();
 
         // Show
@@ -215,7 +215,7 @@ public class ParameterStateUsageTests : BunitTest
         alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
         expanded.Should().BeTrue("Two way binding must change when inner modification happen.");
         comp.Instance.Expanded.Should().BeFalse("We do not write to parameter directly.");
-        comp.Instance.ExpandedStateValue.Should().BeTrue("We do write to state, it should change.");
+        comp.Instance.ExpandedState.Value.Should().BeTrue("We do write to state, it should change.");
         comp.Instance.ParameterChangedEvents.Should().BeEmpty();
 
         // Hide
@@ -223,7 +223,7 @@ public class ParameterStateUsageTests : BunitTest
         alertTextFunc.Should().Throw<ComponentNotFoundException>();
         expanded.Should().BeFalse("Two way binding must change when inner modification happen.");
         comp.Instance.Expanded.Should().BeFalse("We do not write to parameter directly.");
-        comp.Instance.ExpandedStateValue.Should().BeFalse("We do write to state, it should change.");
+        comp.Instance.ExpandedState.Value.Should().BeFalse("We do write to state, it should change.");
         comp.Instance.ParameterChangedEvents.Should().BeEmpty();
 
         // Outer modifications
@@ -232,7 +232,7 @@ public class ParameterStateUsageTests : BunitTest
         await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Expanded, true));
         alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
         comp.Instance.Expanded.Should().BeTrue("We changed the parameter directly, must change.");
-        comp.Instance.ExpandedStateValue.Should().BeTrue("We sync on OnInitialized, must be same as Expanded.");
+        comp.Instance.ExpandedState.Value.Should().BeTrue("We sync on OnInitialized, must be same as Expanded.");
         comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
         {
             (false, true)
@@ -242,7 +242,7 @@ public class ParameterStateUsageTests : BunitTest
         await comp.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Expanded, false));
         alertTextFunc.Should().Throw<ComponentNotFoundException>();
         comp.Instance.Expanded.Should().BeFalse("We changed the parameter directly, must change.");
-        comp.Instance.ExpandedStateValue.Should().BeFalse("We sync on OnInitialized, must be same as Expanded.");
+        comp.Instance.ExpandedState.Value.Should().BeFalse("We sync on OnInitialized, must be same as Expanded.");
         comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
         {
             (false, true),
@@ -333,10 +333,25 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.Child3Instance.Expanded.Should().BeFalse();
         comp.Instance.Child4Instance.Expanded.Should().BeFalse();
 
-        comp.Instance.Child1Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child2Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child3Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child4Instance.ExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child1Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.Value.Should().BeFalse();
+
+        comp.Instance.Child1Instance.ExpandedState.InitialValue.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.InitialValue.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.InitialValue.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.InitialValue.Should().BeFalse();
+
+        comp.Instance.Child1Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.RenderValue.Should().BeFalse();
+
+        comp.Instance.Child1Instance.ExpandedState.HasCallback.Should().BeTrue();
+        comp.Instance.Child2Instance.ExpandedState.HasCallback.Should().BeTrue();
+        comp.Instance.Child3Instance.ExpandedState.HasCallback.Should().BeTrue();
+        comp.Instance.Child4Instance.ExpandedState.HasCallback.Should().BeFalse();
 
         comp.Instance.ExpandedChild1BindSyntax.Should().BeFalse();
         comp.Instance.ExpandedChild2VariableAndCallback.Should().BeFalse();
@@ -364,10 +379,20 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.Child3Instance.Expanded.Should().BeFalse();
         comp.Instance.Child4Instance.Expanded.Should().BeFalse();
 
-        comp.Instance.Child1Instance.ExpandedStateValue.Should().BeTrue();
-        comp.Instance.Child2Instance.ExpandedStateValue.Should().BeTrue();
-        comp.Instance.Child3Instance.ExpandedStateValue.Should().BeTrue();
-        comp.Instance.Child4Instance.ExpandedStateValue.Should().BeTrue();
+        comp.Instance.Child1Instance.ExpandedState.InitialValue.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.InitialValue.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.InitialValue.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.InitialValue.Should().BeFalse();
+
+        comp.Instance.Child1Instance.ExpandedState.Value.Should().BeTrue();
+        comp.Instance.Child2Instance.ExpandedState.Value.Should().BeTrue();
+        comp.Instance.Child3Instance.ExpandedState.Value.Should().BeTrue();
+        comp.Instance.Child4Instance.ExpandedState.Value.Should().BeTrue();
+
+        comp.Instance.Child1Instance.ExpandedState.RenderValue.Should().BeTrue();
+        comp.Instance.Child2Instance.ExpandedState.RenderValue.Should().BeTrue();
+        comp.Instance.Child3Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.RenderValue.Should().BeFalse();
 
         comp.Instance.ExpandedChild1BindSyntax.Should().BeTrue();
         comp.Instance.ExpandedChild2VariableAndCallback.Should().BeTrue();
@@ -395,10 +420,15 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.Child3Instance.Expanded.Should().BeFalse();
         comp.Instance.Child4Instance.Expanded.Should().BeFalse();
 
-        comp.Instance.Child1Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child2Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child3Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child4Instance.ExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child1Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.Value.Should().BeFalse();
+
+        comp.Instance.Child1Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.RenderValue.Should().BeFalse();
 
         comp.Instance.ExpandedChild1BindSyntax.Should().BeFalse();
         comp.Instance.ExpandedChild2VariableAndCallback.Should().BeFalse();
@@ -427,10 +457,15 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.Child3Instance.Expanded.Should().BeFalse();
         comp.Instance.Child4Instance.Expanded.Should().BeTrue();
 
-        comp.Instance.Child1Instance.ExpandedStateValue.Should().BeTrue();
-        comp.Instance.Child2Instance.ExpandedStateValue.Should().BeTrue();
-        comp.Instance.Child3Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child4Instance.ExpandedStateValue.Should().BeTrue();
+        comp.Instance.Child1Instance.ExpandedState.Value.Should().BeTrue();
+        comp.Instance.Child2Instance.ExpandedState.Value.Should().BeTrue();
+        comp.Instance.Child3Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.Value.Should().BeTrue();
+
+        comp.Instance.Child1Instance.ExpandedState.RenderValue.Should().BeTrue();
+        comp.Instance.Child2Instance.ExpandedState.RenderValue.Should().BeTrue();
+        comp.Instance.Child3Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.RenderValue.Should().BeTrue();
 
         comp.Instance.ExpandedChild1BindSyntax.Should().BeTrue();
         comp.Instance.ExpandedChild2VariableAndCallback.Should().BeTrue();
@@ -457,10 +492,15 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.Child3Instance.Expanded.Should().BeFalse();
         comp.Instance.Child4Instance.Expanded.Should().BeFalse();
 
-        comp.Instance.Child1Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child2Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child3Instance.ExpandedStateValue.Should().BeFalse();
-        comp.Instance.Child4Instance.ExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child1Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.Value.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.Value.Should().BeFalse();
+
+        comp.Instance.Child1Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child2Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child3Instance.ExpandedState.RenderValue.Should().BeFalse();
+        comp.Instance.Child4Instance.ExpandedState.RenderValue.Should().BeFalse();
 
         comp.Instance.ExpandedChild1BindSyntax.Should().BeFalse();
         comp.Instance.ExpandedChild2VariableAndCallback.Should().BeFalse();

@@ -18,22 +18,20 @@ namespace MudBlazor
     public partial class MudNavGroup : MudComponentBase
     {
         private readonly ParameterState<bool> _expandedState;
-        private readonly ParameterState<bool> _disabledState;
-        private readonly ParameterState<NavigationContext?> _parentNavigationContextState;
         private NavigationContext _navigationContext = new(false, true);
 
         public MudNavGroup()
         {
             using var registerScope = CreateRegisterScope();
-            _disabledState = registerScope.RegisterParameter<bool>(nameof(Disabled))
-                .WithParameter(() => Disabled)
-                .WithChangeHandler(UpdateNavigationContext);
-            _parentNavigationContextState = registerScope.RegisterParameter<NavigationContext?>(nameof(ParentNavigationContext))
-                .WithParameter(() => ParentNavigationContext)
-                .WithChangeHandler(UpdateNavigationContext);
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
                 .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(UpdateNavigationContext);
+            registerScope.RegisterParameter<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(UpdateNavigationContext);
+            registerScope.RegisterParameter<NavigationContext?>(nameof(ParentNavigationContext))
+                .WithParameter(() => ParentNavigationContext)
                 .WithChangeHandler(UpdateNavigationContext);
         }
 
@@ -46,7 +44,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-nav-group")
                 .AddClass(Class)
-                .AddClass("mud-nav-group-disabled", _disabledState.Value)
+                .AddClass("mud-nav-group-disabled", Disabled)
                 .Build();
 
         protected string ButtonClassname =>
@@ -63,11 +61,11 @@ namespace MudBlazor
 
         protected string ExpandIconClassname =>
             new CssBuilder("mud-nav-link-expand-icon")
-                .AddClass("mud-transform", _expandedState.Value && _disabledState.Value is false)
-                .AddClass("mud-transform-disabled", _expandedState.Value && _disabledState.Value)
+                .AddClass("mud-transform", _expandedState.Value && !Disabled)
+                .AddClass("mud-transform-disabled", _expandedState.Value && Disabled)
                 .Build();
 
-        protected int ButtonTabIndex => _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true } or { Expanded: false } ? -1 : 0;
+        protected int ButtonTabIndex => Disabled || ParentNavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
 
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }
@@ -125,7 +123,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public bool Disabled { get; set; }
 
@@ -204,9 +202,8 @@ namespace MudBlazor
         private void UpdateNavigationContext()
             => _navigationContext = _navigationContext with
             {
-                Disabled = _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true },
-                Expanded = _expandedState.Value
-                           && _parentNavigationContextState.Value is null or { Expanded: true }
+                Disabled = Disabled || ParentNavigationContext is { Disabled: true },
+                Expanded = _expandedState.Value && ParentNavigationContext is null or { Expanded: true }
             };
     }
 }

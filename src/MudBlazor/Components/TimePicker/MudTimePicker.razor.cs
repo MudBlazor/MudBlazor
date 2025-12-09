@@ -40,7 +40,7 @@ namespace MudBlazor
 
             var time = DateTime.Today.Add(timespan.Value);
 
-            return time.ToString(Format24Hours, Culture);
+            return time.ToString(Format24Hours, GetCulture());
         }
 
         private TimeSpan? OnGet(string? value)
@@ -50,7 +50,7 @@ namespace MudBlazor
                 return null;
             }
 
-            if (DateTime.TryParseExact(value, Format24Hours, Culture, DateTimeStyles.None, out var time))
+            if (DateTime.TryParseExact(value, Format24Hours, GetCulture(), DateTimeStyles.None, out var time))
             {
                 return time.TimeOfDay;
             }

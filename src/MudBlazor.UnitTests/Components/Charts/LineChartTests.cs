@@ -5,7 +5,6 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts

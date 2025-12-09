@@ -1,0 +1,20 @@
+@using MudBlazor.State
+
+<ComponentA @ref="_componentA" Counter="10" />
+
+@code {
+    private ComponentA _componentA = null!;
+
+    // External access (read) - should trigger MUD0012
+    public int GetExternalCounter()
+    {
+        return _componentA.Counter; // MUD0012
+    }
+
+    // Note: External write tests are commented out because they also trigger BL0005
+    // which is a Blazor built-in analyzer that prevents setting component parameters
+    // from outside. Our MUD0012 diagnostic would also fire on these.
+    
+    // For the analyzer test, we only need to verify that external READ access is detected.
+    // External WRITE access would be caught by both BL0005 and MUD0012.
+}

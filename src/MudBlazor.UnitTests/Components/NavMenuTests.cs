@@ -1,6 +1,5 @@
 ﻿using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
 
