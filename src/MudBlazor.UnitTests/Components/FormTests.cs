@@ -238,7 +238,7 @@ namespace MudBlazor.UnitTests.Components
         public void FormValidationTest1()
         {
             var validationFunc = new Func<string, bool>(x => x?.StartsWith("Marilyn") == true);
-            var comp = Context.RenderComponent<FormValidationTest>(parameters => parameters.Add(p => p.validation, validationFunc));
+            var comp = Context.RenderComponent<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldcomp.Instance;
@@ -289,7 +289,7 @@ namespace MudBlazor.UnitTests.Components
                     return "Not a star!";
                 return null;
             });
-            var comp = Context.RenderComponent<FormValidationTest>(parameters => parameters.Add(p => p.validation, validationFunc));
+            var comp = Context.RenderComponent<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
             form.IsValid.Should().Be(false);
@@ -350,7 +350,7 @@ namespace MudBlazor.UnitTests.Components
                 await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
             });
-            var comp = Context.RenderComponent<FormValidationTest>(parameters => parameters.Add(p => p.validation, validationFunc));
+            var comp = Context.RenderComponent<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
             var textFieldComp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldComp.Instance;
             // validate initial field state

@@ -1537,7 +1537,7 @@ namespace MudBlazor.UnitTests.Components
             // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
-            await comp.SetParametersAndRenderAsync();
+            comp.Render();
             // drop container
             comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");

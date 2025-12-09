@@ -167,12 +167,11 @@ namespace MudBlazor.UnitTests.Components
         {
             //Arrange
             var label = Parameter(nameof(MudTextField<string>.Label), "label");
-            var placeholder = Parameter(nameof(MudTextField<string>.Placeholder), "placeholder");
             //with no placeholder, label is not shrinked
             var comp = Context.RenderComponent<MudTextField<string>>(label);
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrinked
-            await comp.SetParametersAndRenderAsync(placeholder);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Placeholder, "placeholder"));
             comp.Markup.Should().Contain("shrink");
         }
 
