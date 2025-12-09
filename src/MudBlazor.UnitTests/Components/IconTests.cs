@@ -1,7 +1,6 @@
 ﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
@@ -14,15 +13,16 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShouldRenderIconWithStyle()
         {
             var colorStyle = "color: greenyellow;";
-            var icon = Parameter(nameof(MudIcon.Icon), Icons.Material.Filled.Add);
-            var style = Parameter(nameof(MudIcon.Style), colorStyle);
-            var comp = Context.RenderComponent<MudIcon>(icon, style);
+            var comp = Context.RenderComponent<MudIcon>(parameters => parameters
+                .Add(x => x.Icon, Icons.Material.Filled.Add)
+                .Add(x => x.Style, colorStyle));
             comp.Markup.Trim().Should().StartWith("<svg")
                 .And.Contain(Icons.Material.Filled.Add)
                 .And.Contain($"style=\"{colorStyle}\"");
 
-            icon = Parameter(nameof(MudIcon.Icon), "customicon");
-            await comp.SetParametersAndRenderAsync(icon, style);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Icon, "customicon")
+                .Add(x => x.Style, colorStyle));
             comp.Markup.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"style=\"{colorStyle}\"");
@@ -36,14 +36,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var title = "Title and tooltip";
             //svg
-            var icon = Parameter(nameof(MudIcon.Icon), Icons.Material.Filled.Add);
-            var titleParam = Parameter(nameof(MudIcon.Title), title);
-            var comp = Context.RenderComponent<MudIcon>(icon, titleParam);
+            var comp = Context.RenderComponent<MudIcon>(parameters => parameters
+                .Add(x => x.Icon, Icons.Material.Filled.Add)
+                .Add(x => x.Title, title));
             comp.Find("svg Title").TextContent.Should().Be(title);
 
             //class
-            icon = Parameter(nameof(MudIcon.Icon), "customicon");
-            await comp.SetParametersAndRenderAsync(icon, titleParam);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Icon, "customicon")
+                .Add(x => x.Title, title));
             comp.Markup.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");
