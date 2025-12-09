@@ -252,7 +252,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckBoxTest_KeyboardInput()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            await comp.SetParamAsync(x => x.TriState, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TriState, true));
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -280,7 +280,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
             //Backspace should not change state on non-tristate checkbox
-            await comp.SetParamAsync(x => x.TriState, false);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TriState, false));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
             //Check tristate space key
@@ -290,7 +290,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
-            await comp.SetParamAsync(x => x.Disabled, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
         }
@@ -301,8 +301,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckBoxTest_KeyboardDisabled()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            await comp.SetParamAsync(x => x.TriState, true);
-            await comp.SetParamAsync(x => x.KeyboardEnabled, false);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TriState, true)
+                .Add(x => x.KeyboardEnabled, false));
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -330,7 +331,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             //Backspace should not change state on non-tristate checkbox
-            await comp.SetParamAsync(x => x.TriState, null);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TriState, false));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
             //Check tristate space key
@@ -340,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
-            await comp.SetParamAsync(x => x.Disabled, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
         }

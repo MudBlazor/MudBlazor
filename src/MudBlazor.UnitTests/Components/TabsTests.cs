@@ -1128,7 +1128,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
         {
             var comp = Context.RenderComponent<TabPanelIconColorTest>();
-            await comp.SetParamAsync(x => x.DisableTab, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DisableTab, true));
             await comp.SetParametersAndRenderAsync(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
             var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");

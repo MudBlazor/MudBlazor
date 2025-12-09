@@ -1453,13 +1453,13 @@ namespace MudBlazor.UnitTests.Components
             // Make a task completion source
             var first = new TaskCompletionSource<TableData<int>>();
             // Set the ServerData function
-            await table.SetParamAsync(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            await table.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
             {
                 // Remember the cancellation token
                 cancelToken = cancellationToken;
                 // Return a task that never completes
                 return first.Task;
-            }));
+            })));
 
             await Task.Delay(20);
 
@@ -1471,11 +1471,11 @@ namespace MudBlazor.UnitTests.Components
             // Arrange a table refresh
             var second = new TaskCompletionSource<TableData<int>>();
             // Set the ServerData function to a new method...
-            await table.SetParamAsync(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            await table.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
             {
                 // ... which returns the second task.
                 return second.Task;
-            }));
+            })));
 
             await Task.Delay(20);
 
@@ -2677,16 +2677,16 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
 
             // scroll down
-            await virtualized.SetParamAsync(
+            await virtualized.SetParametersAndRenderAsync(parameters => parameters.Add(
                 v => v.Items,
-                table.Instance.Items.ToList().GetRange(1000, 100));
+                table.Instance.Items.ToList().GetRange(1000, 100)));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_1000");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(false);
 
             // scroll up
-            await virtualized.SetParamAsync(
+            await virtualized.SetParametersAndRenderAsync(parameters => parameters.Add(
                 v => v.Items,
-                table.Instance.Items.ToList().GetRange(0, 100));
+                table.Instance.Items.ToList().GetRange(0, 100)));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
         }

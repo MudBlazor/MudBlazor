@@ -767,7 +767,7 @@ namespace MudBlazor.UnitTests.Components
             // Make a task completion source
             var first = new TaskCompletionSource<GridData<int>>();
             // Set the ServerData function
-            await dataGrid.SetParamAsync(p =>
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p =>
                 p.VirtualizeServerData,
                 new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, cancellationToken) =>
                 {
@@ -775,7 +775,7 @@ namespace MudBlazor.UnitTests.Components
                     cancelToken = cancellationToken;
                     // Return a task that never completes
                     return first.Task;
-                }));
+                })));
 
             await Task.Delay(20);
 
@@ -787,9 +787,9 @@ namespace MudBlazor.UnitTests.Components
             // Arrange a server data refresh
             var second = new TaskCompletionSource<GridData<int>>();
             // Set the VirtualizeServerData function to a new method...
-            await dataGrid.SetParamAsync(p =>
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task));
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task)));
 
             await Task.Delay(20);
 
@@ -896,9 +896,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-table-pagination-actions");
             comp.Markup.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z");
             comp.Markup.Should().Contain("1-10 of 20");
-            await pagerContent.SetParamAsync(x => x.ShowNavigation, false);
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowNavigation, false));
             comp.Markup.Should().NotContain("mud-table-pagination-actions");
-            await pagerContent.SetParamAsync(x => x.ShowPageNumber, false);
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowPageNumber, false));
             comp.Markup.Should().NotContain("1-10 of 20");
         }
 
@@ -1205,7 +1205,7 @@ namespace MudBlazor.UnitTests.Components
 
             // we test to make sure that we can set and get the cancelCallback via the CancelledEditingItem property
             var cancelCallback = dataGrid.Instance.CanceledEditingItem;
-            await dataGrid.SetCallbackAsync(dg => dg.CanceledEditingItem, x => { });
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(dg => dg.CanceledEditingItem, () => { }));
             dataGrid.Instance.CanceledEditingItem.Should().NotBe(cancelCallback);
 #pragma warning disable BL0005
             dataGrid.Instance.CanceledEditingItem = cancelCallback;
@@ -5110,7 +5110,7 @@ namespace MudBlazor.UnitTests.Components
             selectedItem.Should().Be(5);
 
             // in multi selection toggle selection using row click method
-            await comp.SetParamAsync(x => x.MultiSelection, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
             comp.Render();
             await comp.Instance.SetSelectedItemAsync(4);
 
@@ -5128,7 +5128,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
 
             // Test single selection mode
-            await dataGrid.SetParamAsync(x => x.MultiSelection, false);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, false));
             comp.Render();
 
             // Select an item
@@ -5155,7 +5155,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedItemsChanged = false;
 
             // Test multi-selection mode
-            await dataGrid.SetParamAsync(x => x.MultiSelection, true);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
             comp.Render();
 
             // Select all items

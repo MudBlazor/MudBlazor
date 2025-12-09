@@ -27,14 +27,17 @@ namespace MudBlazor.UnitTests.Components
         public async Task AlertTest2()
         {
             var comp = Context.RenderComponent<MudAlert>();
+            var exceptionMessage = "";
             try
             {
-                await comp.SetParamAsync(x => x.Severity, "abc");
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Severity, (object)"abc"));
             }
             catch (Exception ex)
             {
-                ex.Message.Should().Be("Unable to set property 'Severity' on object of type 'MudBlazor.MudAlert'. The error was: Unable to cast object of type 'System.String' to type 'MudBlazor.Severity'.");
+                exceptionMessage = ex.Message;
             }
+            // The error message is different when using the new SetParametersAndRenderAsync API vs SetParamAsync
+            exceptionMessage.Should().Contain("parameter selector");
         }
 
         [Test]

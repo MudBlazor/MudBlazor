@@ -589,7 +589,7 @@ namespace MudBlazor.UnitTests.Components
             // by default has a groupdefinition
             dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
             // turn off grouping for the whole grid
-            await dataGrid.SetParamAsync(x => x.Groupable, false);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Groupable, false));
             dataGrid.Render();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
 

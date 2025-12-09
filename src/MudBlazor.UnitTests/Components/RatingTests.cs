@@ -236,10 +236,10 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Instance.SetHoveredValueAsync(15));
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
-            await comp.SetParamAsync(x => x.SelectedValue, 12);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValue, 12));
             await comp.InvokeAsync(() => comp.Instance.SetHoveredValueAsync(0));
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
-            await comp.SetParamAsync(x => x.SelectedValue, 0);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValue, 0));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(1));
@@ -262,7 +262,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            await comp.SetParamAsync(x => x.Disabled, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 

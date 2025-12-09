@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            await comp.SetParamAsync(c => c.Button1Displayed, false);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(c => c.Button1Displayed, false));
 
             // Assert
 

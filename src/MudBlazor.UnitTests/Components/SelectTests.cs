@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
-            await comp.InvokeAsync(async () => await select.SetParamAsync(x => x.ListClass, "my-list-class"));
+            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ListClass, "my-list-class")));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
         }
 
@@ -27,9 +27,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectTest_CheckLayerClass()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
-            await comp.InvokeAsync(async () => await comp.SetParamAsync(x => x.OuterClass, "my-outer-class"));
-            await comp.InvokeAsync(async () => await comp.SetParamAsync(x => x.Class, "my-main-class"));
-            await comp.InvokeAsync(async () => await comp.SetParamAsync(x => x.InputClass, "my-input-class"));
+            await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.OuterClass, "my-outer-class")));
+            await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Class, "my-main-class")));
+            await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InputClass, "my-input-class")));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-outer-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-main-class"));
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-input-class"));
@@ -403,7 +403,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            await select.SetCallbackAsync(s => s.TextChanged, x => text = x);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.TextChanged, (Action<string>)(x => text = x)));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -448,16 +448,16 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            await select.SetCallbackAsync(s => s.TextChanged, x =>
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.TextChanged, (Action<string>)(x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
-              });
-            await select.SetCallbackAsync(s => s.SelectedValuesChanged, x =>
+              })));
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, (Action<IEnumerable<string>>)(x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
-              });
+              })));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -508,17 +508,17 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            await select.SetParamAsync(s => s.MultiSelection, true);
-            await select.SetCallbackAsync(s => s.TextChanged, x =>
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.MultiSelection, true));
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.TextChanged, (Action<string>)(x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
-              });
-            await select.SetCallbackAsync(s => s.SelectedValuesChanged, x =>
+              })));
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, (Action<IEnumerable<string>>)(x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
-              });
+              })));
 
             var selectElement = comp.Find("div.mud-input-control");
             selectElement.MouseDown();
@@ -550,7 +550,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
-            await select.SetCallbackAsync(s => s.OnBlur, x => eventCounter++);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.OnBlur, () => eventCounter++));
             await comp.InvokeAsync(async () =>
             {
                 await select.Instance.OpenMenu();
@@ -583,11 +583,11 @@ namespace MudBlazor.UnitTests.Components
                 // select elements needed for the test
                 var select = comp.FindComponent<MudSelect<string>>();
                 string validatedValue = null;
-                await select.SetParamAsync(x => x.Validation, new Func<string, bool>(value =>
+                await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Validation, new Func<string, bool>(value =>
                 {
                     validatedValue = value; // NOTE: select does only update the value for T string
                     return true;
-                }));
+                })));
                 var menu = comp.Find("div.mud-popover");
                 var input = comp.Find("div.mud-input-control");
                 // check initial state
@@ -624,11 +624,11 @@ namespace MudBlazor.UnitTests.Components
             // select element needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            await select.SetParamAsync(x => x.Validation, (object)new Func<string, bool>(value =>
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Validation, (object)new Func<string, bool>(value =>
             {
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
-            }));
+            })));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // Open the menu
@@ -723,11 +723,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            await select.SetParamAsync(x => x.Validation, (object)new Func<string, bool>(value =>
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Validation, (object)new Func<string, bool>(value =>
             {
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
-            }));
+            })));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -933,7 +933,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
             await comp.InvokeAsync(() => select.Instance.CloseMenu());
-            await select.SetParamAsync(x => x.Value, null);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, null));
             await comp.InvokeAsync(() => select.Instance.OpenMenu());
             // no option should be hilited
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
@@ -1024,18 +1024,18 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await select.SetParamAsync(x => x.Disabled, true);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Try to add null item and check the value should not changed.
             await comp.InvokeAsync(() => select.Instance.Add(null));
             comp.WaitForAssertion(() => select.Instance._items.Count.Should().Be(4));
 
-            await select.SetParamAsync(x => x.Disabled, false);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
-            await select.SetParamAsync(x => x.Disabled, true);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
@@ -1157,11 +1157,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
 
-            await select.SetParamAsync(x => x.Disabled, true);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
 
-            await select.SetParamAsync(x => x.Disabled, false);
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
             //Test the keyup event
             await comp.InvokeAsync(() => select.Instance.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keyup", }));
             comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
@@ -1254,7 +1254,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValueChangeCount.Should().Be(0);
             comp.Instance.ValuesChangeCount.Should().Be(0);
 
-            await comp.InvokeAsync(async () => await select.SetParamAsync(x => x.Value, "1"));
+            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "1")));
             await comp.InvokeAsync(() => select.Instance.ForceUpdate());
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
@@ -1262,7 +1262,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Changing value programmatically without ForceUpdate should change value, but should not fire change events
             // Its by design, so this part can be change if design changes
-            await comp.InvokeAsync(async () => await select.SetParamAsync(x => x.Value, "2"));
+            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "2")));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
             select.Instance.Value.Should().Be("2");
