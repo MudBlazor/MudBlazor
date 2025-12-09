@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]

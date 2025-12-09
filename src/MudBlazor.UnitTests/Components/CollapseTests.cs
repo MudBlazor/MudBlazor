@@ -3,9 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
 using Bunit;
-using Bunit.Web.AngleSharp;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Collapse;
 using NUnit.Framework;

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;

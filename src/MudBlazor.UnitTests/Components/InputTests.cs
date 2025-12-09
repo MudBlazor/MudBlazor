@@ -21,5 +21,4 @@ public class InputTests : BunitTest
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
         comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
     }
-#nullable disable
 }

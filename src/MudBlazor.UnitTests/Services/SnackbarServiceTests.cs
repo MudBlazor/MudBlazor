@@ -6,7 +6,6 @@ using Bunit.TestDoubles;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services;

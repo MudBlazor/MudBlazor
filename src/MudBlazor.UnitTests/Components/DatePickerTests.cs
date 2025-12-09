@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.Serialization;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;

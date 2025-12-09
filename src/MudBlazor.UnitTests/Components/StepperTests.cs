@@ -1,15 +1,13 @@
-﻿#nullable enable
-using System;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using MudBlazor;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Stepper;
 using NUnit.Framework;
 
+#nullable enable
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
