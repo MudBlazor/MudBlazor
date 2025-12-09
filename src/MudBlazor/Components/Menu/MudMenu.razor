@@ -18,15 +18,14 @@
     {
         @if (ParentMenu is null)
         {
-            <div @onclick="ToggleMenuAsync"
-                 @onkeydown="HandleActivatorKeydown"
+            <div @onkeydown="HandleActivatorKeydown"
                  disabled="@Disabled"
                  class="@ActivatorClassname"
                  tabindex="0"
                  role="button"
                  aria-haspopup="true"
                  aria-expanded="@_openState.Value">
-                @ActivatorContent(new MenuContext(this))
+                @ActivatorContent(_menuContext!)
             </div>
         }
         else
@@ -40,7 +39,7 @@
                          aria-haspopup="true"
                          aria-expanded="@_openState.Value"
                          aria-label="@AriaLabel">
-                @ActivatorContent(new MenuContext(this))
+                @ActivatorContent(_menuContext!)
             </MudMenuItem>
         }
     }
