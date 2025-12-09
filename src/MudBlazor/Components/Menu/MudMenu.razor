@@ -25,7 +25,7 @@
                  role="button"
                  aria-haspopup="true"
                  aria-expanded="@_openState.Value">
-                @ActivatorContent(_menuContext!)
+                @ActivatorContent(_menuContext)
             </div>
         }
         else
@@ -39,7 +39,7 @@
                          aria-haspopup="true"
                          aria-expanded="@_openState.Value"
                          aria-label="@AriaLabel">
-                @ActivatorContent(_menuContext!)
+                @ActivatorContent(_menuContext)
             </MudMenuItem>
         }
     }

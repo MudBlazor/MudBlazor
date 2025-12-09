@@ -36,19 +36,19 @@ namespace MudBlazor
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
         private DateTime _lastKeyboardActivation = DateTime.MinValue;
-        private MenuContext? _menuContext;
+        private readonly MenuContext _menuContext;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudMenu()
         {
+            _menuContext = new MenuContext(this);
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
                 .WithEventCallback(() => OpenChanged)
                 .WithChangeHandler(OnOpenChanged);
-            _menuContext = new MenuContext(this);
         }
 
         /// <summary>
