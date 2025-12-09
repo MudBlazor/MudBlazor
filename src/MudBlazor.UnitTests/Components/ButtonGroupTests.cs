@@ -2,7 +2,6 @@
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.ButtonGroup;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {

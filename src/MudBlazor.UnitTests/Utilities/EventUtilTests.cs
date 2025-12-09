@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Components;
 using MudBlazor.UnitTests.TestComponents.Utilities;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Utilities
 {
