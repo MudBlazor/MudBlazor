@@ -382,9 +382,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MudToggleIconTest()
         {
             var comp = Context.RenderComponent<MudToggleIconButton>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            await comp.InvokeAsync(() => comp.Instance.Disabled = true);
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => comp.Instance.SetToggledAsync(true));
             comp.WaitForAssertion(() => comp.Instance.Toggled.Should().BeFalse());
         }
