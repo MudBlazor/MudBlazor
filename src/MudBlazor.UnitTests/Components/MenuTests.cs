@@ -629,27 +629,27 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Label, "Test Menu"));
             var menu = comp.Instance;
 
-            // Act - Open menu via OpenMenuAsync
+            // Act - Open menu via OpenAsync
             await comp.InvokeAsync(() => menu.OpenMenuAsync(EventArgs.Empty));
-            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when OpenMenuAsync is called"));
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when OpenAsync is called"));
 
-            // Act - Close menu via CloseMenuAsync
+            // Act - Close menu via CloseAsync
             await comp.InvokeAsync(() => menu.CloseMenuAsync());
-            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when CloseMenuAsync is called"));
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when CloseAsync is called"));
 
-            // Act - Use ToggleMenuAsync to open
+            // Act - Use ToggleAsync to open
             await comp.InvokeAsync(() => menu.ToggleMenuAsync(EventArgs.Empty));
-            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when ToggleMenuAsync is called"));
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when ToggleAsync is called"));
 
-            // Act - Use ToggleMenuAsync to close
+            // Act - Use ToggleAsync to close
             await comp.InvokeAsync(() => menu.ToggleMenuAsync(EventArgs.Empty));
-            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when ToggleMenuAsync is called again"));
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when ToggleAsync is called again"));
 
-            // Act - Use CloseAllMenusAsync
+            // Act - Use CloseAllAsync
             await comp.InvokeAsync(() => menu.OpenMenuAsync(EventArgs.Empty));
             comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeTrue());
             await comp.InvokeAsync(() => menu.CloseAllMenusAsync());
-            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when CloseAllMenusAsync is called"));
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when CloseAllAsync is called"));
         }
 
         [Test]
@@ -663,7 +663,7 @@ namespace MudBlazor.UnitTests.Components
             var button = comp.Find("button.mud-button-root");
             button.Should().NotBeNull();
 
-            // Click the button - the context.ToggleMenuAsync should toggle the menu
+            // Click the button - the context.ToggleAsync should toggle the menu
             await button.ClickAsync(new MouseEventArgs());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 

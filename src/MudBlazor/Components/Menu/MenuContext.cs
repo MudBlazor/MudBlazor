@@ -38,15 +38,13 @@ public sealed class MenuContext
     /// the menu will be positioned at the coordinates from <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.
     /// </param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public Task OpenMenuAsync(EventArgs? args = null)
-        => _menu.OpenMenuAsync(args ?? EventArgs.Empty);
+    public Task OpenAsync(EventArgs? args = null) => _menu.OpenMenuAsync(args ?? EventArgs.Empty);
 
     /// <summary>
     /// Closes the menu and any open sub-menus.
     /// </summary>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public Task CloseMenuAsync()
-        => _menu.CloseMenuAsync();
+    public Task CloseAsync() => _menu.CloseMenuAsync();
 
     /// <summary>
     /// Toggles the menu between open and closed states.
@@ -56,13 +54,11 @@ public sealed class MenuContext
     /// the menu will be positioned at the coordinates from <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.
     /// </param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public Task ToggleMenuAsync(EventArgs? args = null)
-        => _menu.ToggleMenuAsync(args ?? EventArgs.Empty);
+    public Task ToggleAsync(EventArgs? args = null) => _menu.ToggleMenuAsync(args ?? EventArgs.Empty);
 
     /// <summary>
     /// Closes all menus in the hierarchy, starting from the top-most parent.
     /// </summary>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public Task CloseAllMenusAsync()
-        => _menu.CloseAllMenusAsync();
+    public Task CloseAllAsync() => _menu.CloseAllMenusAsync();
 }

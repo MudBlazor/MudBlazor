@@ -241,14 +241,14 @@ namespace MudBlazor
         /// Overrides the default button with custom content that receives a <see cref="MenuContext"/>.
         /// </summary>
         /// <remarks>
-        /// <para>The context provides methods to control the menu: <see cref="MenuContext.OpenMenuAsync"/>,
-        /// <see cref="MenuContext.CloseMenuAsync"/>, <see cref="MenuContext.ToggleMenuAsync"/>, and
-        /// <see cref="MenuContext.CloseAllMenusAsync"/>.</para>
+        /// <para>The context provides methods to control the menu: <see cref="MenuContext.OpenAsync"/>,
+        /// <see cref="MenuContext.CloseAsync"/>, <see cref="MenuContext.ToggleAsync"/>, and
+        /// <see cref="MenuContext.CloseAllAsync"/>.</para>
         /// <para>Example usage:</para>
         /// <code>
         /// &lt;MudMenu&gt;
         ///     &lt;ActivatorContent&gt;
-        ///         &lt;MudButton OnClick="@context.ToggleMenuAsync"&gt;Open Menu&lt;/MudButton&gt;
+        ///         &lt;MudButton OnClick="@context.ToggleAsync"&gt;Open Menu&lt;/MudButton&gt;
         ///     &lt;/ActivatorContent&gt;
         ///     &lt;ChildContent&gt;
         ///         &lt;MudMenuItem&gt;Item 1&lt;/MudMenuItem&gt;

@@ -29,7 +29,7 @@
 
 <MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
     <ActivatorContent>
-        <div @onpointerenter="@context.OpenMenuAsync" @onpointerleave="@context.CloseMenuAsync">
+        <div @onpointerenter="@context.OpenAsync" @onpointerleave="@context.CloseMenuAsync">
             <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse Over</MudChip>
         </div>
     </ActivatorContent>
