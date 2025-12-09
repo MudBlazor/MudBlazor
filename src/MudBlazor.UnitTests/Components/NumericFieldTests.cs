@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#pragma warning disable BL0005 // Set parameter outside component
-
 using System.Globalization;
 using Bunit;
 using FluentAssertions;
@@ -13,7 +11,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
-using MudBlazor.Utilities.Converter;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -420,7 +417,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Invert MouseWheel
-            numericField.InvertMouseWheel = true;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
 
             //MouseWheel up
             await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
@@ -431,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Try with different step
-            numericField.Step = 0.5;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
 
             //MouseWheel up
             await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
@@ -466,7 +463,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Invert MouseWheel
-            numericField.InvertMouseWheel = true;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
 
             //MouseWheel up
             comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
@@ -477,7 +474,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Try with different step
-            numericField.Step = 0.5;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
 
             //MouseWheel up
             comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });

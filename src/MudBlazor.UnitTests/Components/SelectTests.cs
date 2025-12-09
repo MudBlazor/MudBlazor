@@ -334,11 +334,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            var itemWithNullValue = new MudSelectItem<int?> { Value = null };
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            var itemWithNullValue = Context.RenderComponent<MudSelectItem<int?>>(parameters => parameters.Add(x => x.Value, null));
 
-            var registerAction = () => select.Instance.RegisterShadowItem(itemWithNullValue);
+            var registerAction = () => select.Instance.RegisterShadowItem(itemWithNullValue.Instance);
 
             registerAction.Should().NotThrow();
         }
@@ -365,12 +363,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            var itemWithNullValue = new MudSelectItem<int?> { Value = null };
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            var itemWithNullValue = Context.RenderComponent<MudSelectItem<int?>>(parameters => parameters.Add(x => x.Value, null));
 
-            select.Instance.RegisterShadowItem(itemWithNullValue);
-            var unregisterAction = () => select.Instance.UnregisterShadowItem(itemWithNullValue);
+            select.Instance.RegisterShadowItem(itemWithNullValue.Instance);
+            var unregisterAction = () => select.Instance.UnregisterShadowItem(itemWithNullValue.Instance);
 
             unregisterAction.Should().NotThrow();
         }
@@ -1402,15 +1398,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task MultiSelectAttributesOrder()
         {
             var comp = Context.RenderComponent<MultiSelectTest5>();
-            var select = comp.FindComponent<MudSelect<string>>().Instance;
+            var selectComponent = comp.FindComponent<MudSelect<string>>();
+            var select = selectComponent.Instance;
             select.SelectedValues.Count().Should().Be(2);
             select.Text.Should().Be("Programista, test");
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            await comp.InvokeAsync(() =>
-            {
-                select.SelectedValues = new List<string> { "test" };
-            });
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await selectComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new List<string> { "test" }));
             select.SelectedValues.Count().Should().Be(1);
             select.Text.Should().Be("test");
         }

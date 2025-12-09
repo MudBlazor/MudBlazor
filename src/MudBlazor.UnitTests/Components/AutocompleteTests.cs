@@ -1,8 +1,6 @@
 ﻿// Copyright (c) mudblazor 2021
 // License MIT
 
-#pragma warning disable BL0005 // Set parameter outside component
-
 using System.Reflection;
 using AngleSharp.Dom;
 using Bunit;
@@ -13,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
-using MudBlazor.Examples.Data;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
@@ -698,7 +695,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteValidationDataAttrTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DebounceInterval, 0));
             // Set invalid option
             await comp.InvokeAsync(() => autocomplete.SelectOptionAsync("Quux"));
             // check initial state
@@ -717,7 +714,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteValidationDataAttrTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
-            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DebounceInterval, 0));
             // Set valid option
             await comp.InvokeAsync(() => autocomplete.SelectOptionAsync("Qux"));
             // check initial state
@@ -1218,7 +1215,7 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
                 //Check popover is closed if coerce text is true (it fixed with a PR)
-                autocomplete.CoerceText = true;
+                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CoerceText, true));
                 await comp.InvokeAsync(() => autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
                 await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
@@ -1295,7 +1292,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test a bugfix where changing the icon property would not cause the icon to visually change until the autocomplete was opened or closed
         /// </summary>
         [Test]
-        public void Autocomplete_Should_ChangeAdornmentIcon()
+        public async Task Autocomplete_Should_ChangeAdornmentIcon()
         {
             var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Material.Filled.Abc);
             var comp = Context.RenderComponent<AutocompleteAdornmentChange>(icon);
@@ -1304,7 +1301,7 @@ namespace MudBlazor.UnitTests.Components
             var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
 
             // change icon and render again
-            instance.Icon = Icons.Material.Filled.Remove;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Icon, Icons.Material.Filled.Remove));
 
             comp.Render();
 
@@ -1509,10 +1506,7 @@ namespace MudBlazor.UnitTests.Components
 
             const string testText = "testText";
             string eventText = null;
-            autocompleteComponent.Instance.TextChanged = new EventCallbackFactory().Create<string>(this, v =>
-            {
-                eventText = v;
-            });
+            await autocompleteComponent.SetCallbackAsync(x => x.TextChanged, v => eventText = v);
 
             // Act
             // enter a text so the TextChanged event will fire
@@ -1805,7 +1799,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.DebounceInterval, 0));
 
             int? count = null;
-            comp.Instance.ReturnedItemsCountChanged = new EventCallbackFactory().Create<int>(this, v => count = v);
+            await comp.SetCallbackAsync(x => x.ReturnedItemsCountChanged, v => count = v);
 
             comp.Find("input").Input("Lorem");
             comp.WaitForAssertion(() => count.Should().Be(1));

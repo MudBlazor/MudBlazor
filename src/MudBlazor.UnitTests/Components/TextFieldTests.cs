@@ -1,6 +1,4 @@
-﻿#pragma warning disable BL0005 // Set parameter outside component
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq.Expressions;
 using Bunit;
@@ -604,24 +602,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextField_CharacterCount()
+        public async Task TextField_CharacterCount()
         {
             var comp = Context.RenderComponent<MudTextField<string>>();
             var inputControl = comp.FindComponent<MudInputControl>();
             //Condition 1
-            comp.Instance.Counter = null;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Counter, null));
             inputControl.Instance.CounterText.Should().Be("");
             //Condition 2
-            comp.Instance.Counter = 25;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Counter, 25));
             comp.Find("input").Change("Test text");
             inputControl.Instance.CounterText.Should().Be("9 / 25");
             //Condition 3
-            comp.Instance.Counter = 0;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Counter, 0));
             comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
             inputControl.Instance.CounterText.Should().Be("56");
             //Condition 4
-            comp.Instance.Counter = 25;
-            comp.Instance.MaxLength = 30;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Counter, 25)
+                .Add(x => x.MaxLength, 30));
             comp.Find("input").Change("Test text with total of25");
             inputControl.Instance.CounterText.Should().Be("25 / 25");
             //Condition 5
@@ -724,9 +723,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValidationErrors.Should().HaveCount(1);
             comp.Instance.ValidationErrors[0].Should().Be($"The {nameof(TestDataAnnotationModel.Foo1)} field is required.");
             comp.Instance.GetErrorText().Should().Be($"The {nameof(TestDataAnnotationModel.Foo1)} field is required.");
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "Foo"));
             await comp.InvokeAsync(() =>
             {
-                comp.Instance.Value = "Foo";
                 comp.Instance.ValidateAsync();
             });
             comp.Instance.GetState(x => x.Error).Should().BeFalse();
