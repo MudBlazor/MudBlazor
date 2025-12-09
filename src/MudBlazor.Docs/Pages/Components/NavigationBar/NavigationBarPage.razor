@@ -1,0 +1,77 @@
+﻿@page "/components/navigationbar"
+
+<DocsPage>
+    <DocsPageHeader Title="Navigation Bar" Component="@nameof(MudNavigationBar)" />
+    <DocsPageContent>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>MudNavigationBar provides navigation menu, especially for mobile view.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Item Count">
+                <Description>MudNavigationBar supports unlimited items. But it is recommended to place 2 to 5 items.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarItemCountExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarItemCountExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="FAB Content">
+                <Description>You can also place a primary action content via <CodeInline>FabContent</CodeInline> render fragment.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarFabExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarFabExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>MudNavigationBar has several visual options. Try it on the example.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarCustomizationExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarCustomizationExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Navigation Context With Href">
+                <Description>If the Href parameter is set, child items behave like links and navigate to the specified URL. The OnSelectionChange event is triggered automatically.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarHrefExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarHrefExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Swipe Navigation">
+                <Description>You can navigate to the next or previous item using a MudSwipeArea in combination with the NavigateAdjacentAsync method.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarSwipeExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarSwipeExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    Although the MudNavigationBar is designed for mobile use, it also supports keyboard navigation.
+                    <br />
+                    Press <CodeInline>Tab</CodeInline> to focus on the next item, <CodeInline>Shift+Tab</CodeInline> to focus the previous item, and <CodeInline>Enter</CodeInline> to select.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarKeyboardNavigationExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarKeyboardNavigationExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Custom Content">
+                <Description>You can fully customize the appearance of a MudNavigationBarItem using the ChildContent render fragment.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarCustomExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarCustomExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
