@@ -37,21 +37,6 @@ public static class IRenderedComponentExtensions
     }
 
     /// <summary>
-    /// Render the component under test again with the provided <paramref name="parameters"/>.
-    /// </summary>
-    /// <param name="renderedComponent">The rendered component to re-render with new parameters.</param>
-    /// <param name="parameters">Parameters to pass to the component upon rendered.</param>
-    /// <typeparam name="TComponent">The type of the component.</typeparam>
-    public static Task SetParametersAndRenderAsync<TComponent>(this IRenderedComponentBase<TComponent> renderedComponent, params ComponentParameter[] parameters)
-        where TComponent : IComponent
-    {
-        ArgumentNullException.ThrowIfNull(parameters);
-        ArgumentNullException.ThrowIfNull(renderedComponent);
-
-        return SetParametersAndRenderAsync(renderedComponent, ToParameterView(parameters));
-    }
-
-    /// <summary>
     /// Render the component under test again with the provided parameters from the <paramref name="parameterBuilder"/>.
     /// </summary>
     /// <param name="renderedComponent">The rendered component to re-render with new parameters.</param>

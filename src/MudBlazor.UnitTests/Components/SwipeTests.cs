@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(ComponentParameter.CreateParameter("PreventDefault", true));
+            var comp = Context.RenderComponent<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             comp.WaitForState(() => comp.Instance.PreventDefault);
             comp.Instance._listenerIds.Should().BeEquivalentTo(listenerIds);
@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(ComponentParameter.CreateParameter("PreventDefault", true));
+            var comp = Context.RenderComponent<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             var handler = Context.JSInterop.SetupVoid(invocation => invocation.Identifier == "mudElementRef.removeDefaultPreventingHandlers")
                 .SetVoidResult();

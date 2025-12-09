@@ -293,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
         //[Test]
         //public async Task NumericField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
         //{
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Required", true));
+        //    var comp = ctx.RenderComponent<MudNumericField<int?>>(parameters => parameters.Add(p => p.Required, true));
         //    var numericField = comp.Instance;
         //    comp.Find("input").Change("A");
         //    comp.Find("input").Blur();

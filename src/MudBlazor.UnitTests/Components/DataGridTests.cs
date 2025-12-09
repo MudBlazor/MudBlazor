@@ -1213,14 +1213,11 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.CanceledEditingItem.Should().Be(cancelCallback);
 
             // Set some parameters manually so that they are covered.
-            var parameters = new[]
-            {
-                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true),
-                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ReadOnly), false),
-                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Cell),
-                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditTrigger), DataGridEditTrigger.OnRowClick)
-            };
-            await dataGrid.SetParametersAndRenderAsync(parameters);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
 
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
@@ -3697,9 +3694,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridShowMenuIconTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridShowMenuIconTest.Item>>();
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().BeEmpty();
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ShowMenuIcon), true));
-            await dataGrid.SetParametersAndRenderAsync(parameters.ToArray());
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowMenuIcon, true));
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().NotBeEmpty();
         }
 
@@ -3713,9 +3708,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".filter-button").Click();
             var input = comp.FindComponent<MudTextField<string>>();
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(input.Instance.Value), "test"));
-            await input.SetParametersAndRenderAsync(parameters.ToArray());
+            await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "test"));
             comp.Find(".apply-filter-button").Click();
 
             await comp.InvokeAsync(() =>
@@ -3869,19 +3862,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomFilteringTest.Model>>();
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.Filterable), false));
-            await dataGrid.SetParametersAndRenderAsync(parameters.ToArray());
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Filterable, false));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".filter-button").Should().BeEmpty();
-            parameters.Clear();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.Filterable), true));
-            await dataGrid.SetParametersAndRenderAsync(parameters.ToArray());
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Filterable, true));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".filter-button").Should().NotBeEmpty();
-            parameters.Clear();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ShowFilterIcons), false));
-            await dataGrid.SetParametersAndRenderAsync(parameters.ToArray());
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowFilterIcons, false));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".filter-button").Should().BeEmpty();
         }
@@ -4609,9 +4596,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(2);
 
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.SelectOnRowClick), false));
-            await dataGrid.SetParametersAndRenderAsync(parameters.ToArray());
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectOnRowClick, false));
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
@@ -4648,12 +4633,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
 
-            var parameters = new List<ComponentParameter>
-            {
-                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.SelectOnRowClick), false)
-            };
-
-            await dataGrid.SetParametersAndRenderAsync(parameters.ToArray());
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectOnRowClick, false));
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));

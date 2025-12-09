@@ -90,9 +90,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextFieldWithNullableTypes()
         {
-            var comp = Context.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Value", 17));
+            var comp = Context.RenderComponent<MudTextField<int?>>(parameters => parameters.Add(p => p.Value, 17));
             // print the generated html
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", null));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, null));
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
             comp.Find("input").Change("");
@@ -246,7 +246,7 @@ namespace MudBlazor.UnitTests.Components
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that textfields and other inputs are now protected against.
             var textfield = comp.Instance;
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
             textfield.Value.Should().Be("A");
             textfield.Text.Should().Be("Ax");
             comp.Find("input").Change("B");
@@ -259,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
         {
             string changed_value = null;
             var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("ValueChanged", x => changed_value = x));
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Text", "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "A"));
             changed_value.Should().Be("A");
         }
 
@@ -268,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
         {
             string changed_text = null;
             var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("TextChanged", x => changed_text = x));
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
             changed_text.Should().Be("A");
         }
 
@@ -293,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
         {
-            var comp = Context.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Required", true));
+            var comp = Context.RenderComponent<MudTextField<int?>>(parameters => parameters.Add(p => p.Required, true));
             var textfield = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
@@ -414,7 +414,7 @@ namespace MudBlazor.UnitTests.Components
                 .And
                 .HaveElementAt(1, 5); // MaxLines
 
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
 
             Context.JSInterop.Invocations["mudInputAutoGrow.adjustHeight"].Single()
                .Arguments
@@ -516,7 +516,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Failing()
         {
             var model = new TestFailingModel();
-            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.For, (Expression<Func<string>>)(() => model.Foo)));
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
@@ -536,8 +536,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Override_Failing()
         {
             TestFailingModel model = new TestFailingModel2();
-            var comp = Context.RenderComponent<MudTextField<string>>(
-                ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => (model as TestFailingModel2).Foo))
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.For, (Expression<Func<string>>)(() => (model as TestFailingModel2).Foo))
             //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
             );
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
@@ -565,7 +565,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Throwing()
         {
             var model = new TestThrowingModel();
-            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.For, (Expression<Func<string>>)(() => model.Foo)));
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
@@ -717,7 +717,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Data_Annotation_Resolve_Name_Of_Field()
         {
             var model = new TestDataAnnotationModel();
-            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo1)));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.For, (Expression<Func<string>>)(() => model.Foo1)));
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
@@ -736,7 +736,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Data_Annotation_Resolve_Display_Name_Of_Field()
         {
             var model = new TestDataAnnotationModel();
-            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.For, (Expression<Func<string>>)(() => model.Foo2)));
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
@@ -749,9 +749,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var model = new TestDataAnnotationModel();
             var value = "Foo";
-            var comp = Context.RenderComponent<MudTextField<string>>(
-                ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)),
-                ComponentParameter.CreateParameter("Value", value));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.For, (Expression<Func<string>>)(() => model.Foo2))
+                .Add(p => p.Value, value));
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
@@ -841,9 +841,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_True_Should_OnlyHaveInputErrorWhenValueChanged()
         {
-            var comp = Context.RenderComponent<MudTextField<int?>>(
-                ComponentParameter.CreateParameter("Required", true),
-                ComponentParameter.CreateParameter("OnlyValidateIfDirty", true));
+            var comp = Context.RenderComponent<MudTextField<int?>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.OnlyValidateIfDirty, true));
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus
@@ -884,9 +884,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
         {
-            var comp = Context.RenderComponent<MudTextField<int?>>(
-                ComponentParameter.CreateParameter("Required", true),
-                ComponentParameter.CreateParameter("OnlyValidateIfDirty", false));
+            var comp = Context.RenderComponent<MudTextField<int?>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.OnlyValidateIfDirty, false));
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus
