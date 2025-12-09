@@ -292,9 +292,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[4].Click(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
-            //Activator content menu -- right click (must use contextmenu event on the wrapper div with new MenuContext pattern)
-            var rightClickActivator = comp.FindAll("div.mud-menu-activator")[1]; // The second menu-activator div contains the right-click menu
-            await rightClickActivator.TriggerEventAsync("oncontextmenu", new MouseEventArgs() { Button = 2 });
+            //Activator content menu -- right click (must trigger contextmenu on the user's div inside ActivatorContent)
+            // Find the div that wraps the button in the right-click ActivatorContent (it has the @oncontextmenu handler)
+            var rightClickMenus = comp.FindAll("div.mud-menu");
+            var rightClickMenu = rightClickMenus.FirstOrDefault(m => m.QuerySelector("div[style*='inline-block']") != null);
+            var userDiv = rightClickMenu?.QuerySelector("div[style*='inline-block']");
+            userDiv.Should().NotBeNull("User's div with contextmenu handler should exist");
+            await userDiv!.TriggerEventAsync("oncontextmenu", new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);

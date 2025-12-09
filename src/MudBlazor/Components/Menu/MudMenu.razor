@@ -6,9 +6,9 @@
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
-     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)"
-     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick)"
+     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick && ActivatorContent is null ? ToggleMenuAsync : null)!)"
+     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
+     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
      @onkeydown="TrackKeyboardInteraction">
     @if (GetActivatorHidden())
     {
