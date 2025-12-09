@@ -2085,7 +2085,8 @@ namespace MudBlazor.UnitTests.Components
                         Selector = rc => rc.Category,
                         InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
                         {
-                            GroupName = "Brand", Selector = rc => rc.Brand
+                            GroupName = "Brand",
+                            Selector = rc => rc.Brand
                         }
                     }));
 
@@ -2368,7 +2369,9 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.GroupBy,
                     new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category)
                     {
-                        GroupName = "Category", IsInitiallyExpanded = false, Expandable = true
+                        GroupName = "Category",
+                        IsInitiallyExpanded = false,
+                        Expandable = true
                     }));
 
             // Header only since we have IsInitiallyExpanded = false
