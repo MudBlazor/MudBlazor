@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxTest2()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(ComponentParameter.CreateParameter("Value", true));
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(parameters => parameters.Add(x => x.Value, true));
             // select elements needed for the test
             var box = comp.Instance;
             // check initial state
@@ -131,7 +131,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxTriStateTest()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool?>>(ComponentParameter.CreateParameter("TriState", true));
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>(parameters => parameters.Add(x => x.TriState, true));
             // print the generated html
             // select elements needed for the test
             var box = comp.Instance;
