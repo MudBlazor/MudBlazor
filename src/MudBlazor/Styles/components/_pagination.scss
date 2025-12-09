@@ -96,3 +96,27 @@
     transform: scaleX(-1);
   }
 }
+
+.mud-pagination-ellipsis-button {
+  min-width: var(--mud-button-min-width, 36px);
+  padding: var(--mud-button-size-small-padding, 0 8px);
+  margin: 0 2px;
+}
+
+.mud-pagination-ellipsis-input {
+  .mud-input-control {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  input {
+    text-align: center;
+    font-size: inherit;
+    line-height: normal;
+  }
+
+  display: inline-flex;
+  align-items: center;
+  margin: 0 !important;
+  padding: 0 !important;
+}

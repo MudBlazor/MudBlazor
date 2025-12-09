@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -18,6 +19,10 @@ namespace MudBlazor
         private ParameterState<int> _selectedState;
         private ParameterState<int> _middleCountState;
         private ParameterState<int> _boundaryCountState;
+
+        private bool _isEditingStartEllipsis = false;
+        private bool _isEditingEndEllipsis = false;
+        private int? _ellipsisInputValue;
 
         private string Classname =>
             new CssBuilder("mud-pagination")
@@ -401,6 +406,92 @@ namespace MudBlazor
             var newPageIndex = Math.Max(1, Math.Min(pageIndex, _countState.Value));
 
             await _selectedState.SetValueAsync(newPageIndex);
+        }
+
+        // Field to reference the input element for focusing
+        private MudNumericField<int?>? _ellipsisInputReference;
+
+        private async Task HandleEllipsisClick(bool isStartEllipsis)
+        {
+            if (isStartEllipsis)
+            {
+                _isEditingStartEllipsis = true;
+                _isEditingEndEllipsis = false;
+            }
+            else
+            {
+                _isEditingStartEllipsis = false;
+                _isEditingEndEllipsis = true;
+            }
+
+            _ellipsisInputValue = null;
+
+            await Task.Yield(); // Ensure the UI updates before focusing
+
+            if (_ellipsisInputReference is not null)
+            {
+                await _ellipsisInputReference.FocusAsync();
+            }
+        }
+
+        private async Task HandleEllipsisInputKeyDown(KeyboardEventArgs e, bool isStartEllipsis)
+        {
+            if (e.Key == "Enter")
+            {
+                if ((_ellipsisInputValue is { } pageNumber) && pageNumber >= 1 && pageNumber <= _countState.Value)
+                {
+                    await SetSelectedAsync(pageNumber);
+                }
+
+                if (isStartEllipsis)
+                {
+                    _isEditingStartEllipsis = false;
+                }
+                else
+                {
+                    _isEditingEndEllipsis = false;
+                }
+
+                _ellipsisInputValue = null;
+                StateHasChanged();
+            }
+            else if (e.Key == "Escape")
+            {
+                if (isStartEllipsis)
+                {
+                    _isEditingStartEllipsis = false;
+                }
+                else
+                {
+                    _isEditingEndEllipsis = false;
+                }
+
+                _ellipsisInputValue = null;
+                StateHasChanged();
+            }
+        }
+
+        private void HandleEllipsisInputBlur(bool isStartEllipsis)
+        {
+            var needsStateChange = false;
+
+            if (isStartEllipsis && _isEditingStartEllipsis)
+            {
+                _isEditingStartEllipsis = false;
+                _ellipsisInputValue = null;
+                needsStateChange = true;
+            }
+            else if (!isStartEllipsis && _isEditingEndEllipsis)
+            {
+                _isEditingEndEllipsis = false;
+                _ellipsisInputValue = null;
+                needsStateChange = true;
+            }
+
+            if (needsStateChange)
+            {
+                StateHasChanged();
+            }
         }
     }
 }
