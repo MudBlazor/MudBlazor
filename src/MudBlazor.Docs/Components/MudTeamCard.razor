@@ -9,9 +9,22 @@
         <CardHeaderContent>
             <div class="d-flex flex-row justify-space-between">
                 <div class="d-flex flex-column">
-                    <MudText Typo="Typo.h6">@Member.Name</MudText>
-
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@Member.GitHub</MudText>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                        <MudText Typo="Typo.h6">@Member.Name</MudText>
+                        @if (!DisplayTeam && Member.Team == Team.CoreMaintainer)
+                        {
+                            <MudChip T="string" Variant="Variant.Text" Color="Color.Primary">@Member.Team.ToDescriptionString()</MudChip>
+                        }
+                    </MudStack>
+                    
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@Member.GitHub</MudText>
+                        @if (DisplayTeam)
+                        {
+                            <MudChip T="string" Variant="Variant.Text" Color="@(Member.Team == Team.Contribution ? Color.Secondary : Color.Primary)" Size="Size.Small">@Member.Team.ToDescriptionString()</MudChip>
+                        }
+                    </MudStack>
+                    
                 </div>
 
                 @if (!string.IsNullOrWhiteSpace(Member.From))
@@ -24,6 +37,7 @@
                         </MudText>
                     </div>
                 }
+                
             </div>
         </CardHeaderContent>
     </MudCardHeader>
@@ -57,5 +71,7 @@
 </MudCard>
 
 @code {
+
     [Parameter] public TeamMember Member { get; set; }
+    [Parameter] public bool DisplayTeam { get; set; }
 }

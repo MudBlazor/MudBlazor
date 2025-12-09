@@ -173,7 +173,7 @@ namespace MudBlazor
         /// <remarks>
         /// Can be bound via <c>@bind-Visible</c> to show and hide an inlined MessageBox.  Has no effect on previously opened message boxes.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.MessageBox.Behavior)]
         public bool Visible { get; set; }
 

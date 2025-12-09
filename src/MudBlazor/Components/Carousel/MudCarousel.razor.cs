@@ -92,7 +92,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="MudCarouselItem"/> items will be rotated after the delay specified in <see cref="AutoCycleTime" />.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]
         public bool AutoCycle { get; set; } = true;
 
@@ -102,7 +102,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="TimeSpan.Zero"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]
         public TimeSpan AutoCycleTime { get; set; } = TimeSpan.FromSeconds(5);
 

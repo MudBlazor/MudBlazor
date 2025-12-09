@@ -176,7 +176,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Must be equal or less than <see cref="MaxValue"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Rating.Data)]
         public int SelectedValue { get; set; } = 0;
 

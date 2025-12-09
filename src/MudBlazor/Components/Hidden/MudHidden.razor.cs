@@ -55,7 +55,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Hidden { get; set; } = true;
 

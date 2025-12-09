@@ -32,7 +32,6 @@ namespace MudBlazor
         private Timer? _debounceTimer;
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
-        private Func<T?, string?>? _toStringFunc;
         private bool _handleNextFocus;
 
         [Inject]
@@ -171,21 +170,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<T?, string?>? ToStringFunc
-        {
-            get => _toStringFunc;
-            set
-            {
-                if (_toStringFunc == value)
-                    return;
-
-                _toStringFunc = value;
-                Converter = new Converter<T>
-                {
-                    SetFunc = _toStringFunc ?? (x => x?.ToString()),
-                };
-            }
-        }
+        public Func<T?, string?>? ToStringFunc { get; set; }
 
         /// <summary>
         /// Shows the progress indicator during searches.
@@ -411,15 +396,24 @@ namespace MudBlazor
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// The behavior of the dropdown popover menu
+        /// Displays the dropdown popover in a fixed position, even while scrolling.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
-        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+        public bool PopoverFixed { get; set; }
+
+        /// <summary>
+        /// The behavior applied when there is not enough space for the dropdown popover to be visible.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="MudGlobal.PopoverDefaults.OverflowBehavior" />.
+        /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
+        [Parameter]
+        public OverflowBehavior OverflowBehavior { get; set; } = MudGlobal.PopoverDefaults.OverflowBehavior;
 
         /// <summary>
         /// The function used to determine if an item should be disabled.
@@ -843,7 +837,7 @@ namespace MudBlazor
 
             try
             {
-                return Converter.Set(item);
+                return ConvertSet(item);
             }
             catch (NullReferenceException)
             {
@@ -1153,12 +1147,19 @@ namespace MudBlazor
 
             _debounceTimer?.Dispose();
 
-            var value = Converter.Get(Text);
+            var value = ConvertGet(Text);
             await SetValueAsync(value, updateText: false);
 
             // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
             // CoerceValue is always true at this point, so we can set the value to true rather than checking the property again
             _isValueCoerced = true;
+        }
+
+        protected override string? ConvertSet(T? input)
+        {
+            return ToStringFunc is not null
+                ? ToStringFunc(input)
+                : base.ConvertSet(input);
         }
 
         /// <inheritdoc />

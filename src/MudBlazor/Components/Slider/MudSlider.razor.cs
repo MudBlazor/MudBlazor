@@ -107,7 +107,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  When this value changes, <see cref="ValueChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Slider.Data)]
         public T Value { get; set; } = T.Zero;
 
@@ -117,7 +117,7 @@ namespace MudBlazor
         /// <remarks>
         /// When this value changes, <see cref="NullableValueChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Slider.Data)]
         public T? NullableValue { get; set; } = default;
 

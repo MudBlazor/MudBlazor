@@ -119,7 +119,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0.0</c>.  Usually a percentage.  Should be lower than <see cref="Max"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Min { get; set; } = 0.0;
 
@@ -129,7 +129,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>100.0</c>.  Usually a percentage.  Should be higher than <see cref="Min"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Max { get; set; } = 100.0;
 
@@ -139,7 +139,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>false</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Value { get; set; }
 
@@ -149,7 +149,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Only shows when <see cref="Buffer"/> is <c>true</c> and <see cref="Indeterminate"/> is <c>false</c>.  Typically a value greater than <see cref="Value"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue { get; set; }
 

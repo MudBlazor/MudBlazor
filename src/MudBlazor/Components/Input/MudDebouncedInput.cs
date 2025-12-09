@@ -1,6 +1,7 @@
 ﻿using System.Timers;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
+using MudBlazor.Utilities.Converter.Base;
 using Timer = System.Timers.Timer;
 
 namespace MudBlazor
@@ -27,7 +28,7 @@ namespace MudBlazor
         /// <summary>
         /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public double DebounceInterval { get; set; }
 
@@ -56,7 +57,7 @@ namespace MudBlazor
             var suppressTextUpdate = !updateValue
                                      && _debounceIntervalState.Value > 0
                                      && _timer is { Enabled: true }
-                                     && (!Value?.Equals(Converter.Get(Text)) ?? false);
+                                     && (!Value?.Equals(ConvertGet(Text)) ?? false);
 
             return suppressTextUpdate
                 ? Task.CompletedTask
