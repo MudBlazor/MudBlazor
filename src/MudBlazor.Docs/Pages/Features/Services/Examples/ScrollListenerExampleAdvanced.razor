@@ -8,33 +8,61 @@
 <style>
     #wrapper {
         width: 50%;
-    }
+        height: 100%;
+    }    
 
     #scroll {
-        height: 20rem;
-        width: 100%;
         padding: 16px;
-        background-color: var(--mud-palette-background);
         overflow-y: scroll;
         scrollbar-width: none;
+    }
+
+    .slider-container {
+        display: flex;
+        justify-content: center;
+        min-width: 15%;
+    }
+
+    input[type=range][orient=vertical] {
+        -webkit-appearance: none; 
+        writing-mode: vertical-lr;
+        direction: rtl;
+        appearance: slider-vertical;
+        width: 16px;
+        vertical-align: bottom;
+        height: 20rem;
+        outline: none;
+        border-radius: var(--mud-palette-borderradius);
+        accent-color: var(--mud-palette-primary);       
     }
 </style>
 
 <MudStack id="wrapper" Row="true" AlignItems="AlignItems.Center" Spacing="0">
-    <div id="scroll" Class="d-flex flex-column gap-4 rounded">
+    <MudPaper id="scroll" Height="20rem" Width="100%" Class="d-flex flex-column gap-4">
         @for (var i = 0; i < 100; i++)
         {
             <MudPaper Class="pa-8" Style="@($"background-color: {ColorPalette[i % ColorPalette.Length]};")" Outlined="true"/>
         }
-    </div>
-    <div>
-        <MudSlider @bind-Value="_scrollBarValue" @bind-Value:after="OnScrollBarValueChanged" Step="0.1" Vertical="true"/>
+    </MudPaper>
+    <div class="slider-container">
+        <div>
+            <input type="range"
+                orient="vertical"
+                min="0"
+                max="100"
+                step="1"
+                value="@_scrollBarValue"
+                @oninput="HandleSliderInput"
+                class="mud-slider-input"
+                aria-valuenow="@_scrollBarValue"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                role="slider" />
+        </div>
     </div>
 </MudStack>
 
-
-@code {
-
+@code {    
     private const string ScrollId = "#scroll";
 
     private static readonly string[] ColorPalette =
@@ -62,6 +90,15 @@
     public void Dispose()
     {
         _scrollListenerRect?.Dispose();
+    }
+
+    private void HandleSliderInput(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out var value))
+        {
+            _scrollBarValue = value;
+            OnScrollBarValueChanged();
+        }
     }
 
     private void ScrollListenerRectOnScroll(object sender, ScrollEventArgs e)
