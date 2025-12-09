@@ -4775,7 +4775,7 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterRow)
-                .Add(x=> x.SortMode, SortMode.None));
+                .Add(x => x.SortMode, SortMode.None));
 
 
             // Assert that the `column-options` span is present but empty
