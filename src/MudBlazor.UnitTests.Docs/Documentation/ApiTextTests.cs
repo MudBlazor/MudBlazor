@@ -20,7 +20,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_HandleMalformedXmlDocs()
     {
-        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x=> x.Text, "Sorry guys, I was drunk when I <see cref wrote these docs, </burp>"));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Sorry guys, I was drunk when I <see cref wrote these docs, </burp>"));
         comp.Markup.Should().Be("<span class=\"mud-typography mud-typography-caption mud-warning-text\">XML documentation error.</span>");
     }
 
