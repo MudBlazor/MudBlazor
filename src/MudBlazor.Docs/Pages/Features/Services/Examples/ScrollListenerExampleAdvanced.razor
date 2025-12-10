@@ -27,7 +27,7 @@
         }
     </MudPaper>
     <MudStack Class="mud-width-full">
-        <MudSlider @bind-Value="_scrollBarValue" @bind-Value:after="OnScrollBarValueChanged" Step="0.1" Vertical="true"/>
+        <MudSlider @bind-Value="_scrollBarValue" @bind-Value:after="OnScrollBarValueChanged" Step="0.1" Vertical="true" />
     </MudStack>
 </MudStack>
 
@@ -51,7 +51,7 @@
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-            _scrollListenerRect = ScrollListenerFactory.Create(ScrollId, 10, true);
+            _scrollListenerRect = ScrollListenerFactory.Create(ScrollId, 0, true);
             _scrollListenerRect.OnScroll += ScrollListenerRectOnScroll;
         }
     }
@@ -71,6 +71,6 @@
     private void OnScrollBarValueChanged()
     {
         var scrollTo = (100 - _scrollBarValue) / 100 * _scrollHeight;
-        ScrollManager.ScrollToAsync(ScrollId, 0, Convert.ToInt32(scrollTo), ScrollBehavior.Smooth);
+        ScrollManager.ScrollToAsync(ScrollId, 0, Convert.ToInt32(scrollTo), ScrollBehavior.Auto);
     }
 }
