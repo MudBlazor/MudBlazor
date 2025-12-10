@@ -40,9 +40,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<BadgeClickTest>();
             var badge = comp.FindComponent<MudBadge>();
             var numeric = comp.FindComponent<MudNumericField<int>>();
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(0));
             await comp.InvokeAsync(() => badge.Instance.HandleBadgeClick(new MouseEventArgs()));
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(1));
         }
 
         [Test]
