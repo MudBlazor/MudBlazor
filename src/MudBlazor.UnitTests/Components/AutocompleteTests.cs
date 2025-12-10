@@ -22,21 +22,27 @@ namespace MudBlazor.UnitTests.Components
     public class AutocompleteTests : BunitTest
     {
         [Test]
-        public void Autocomplete_Should_Handle_Converter_WithStrict()
+        public async Task Autocomplete_Should_Handle_Converter_WithStrict()
         {
             var comp = Context.Render<AutocompleteConverterStrictTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteConverterStrictTest.ConverterElement>>();
             comp.Markup.Should().NotContain("mud-popover-open");
 
-            // Don't replace autocompleteComponent with comp, as then the test will be flaky (problem after migrating to bUnit 2.x)
-            IElement ButtonActivator() => autocompleteComponent.Find(".mud-button-root.mud-no-activator");
+            // https://github.com/bUnit-dev/bUnit/discussions/474
+            // https://github.com/bUnit-dev/bUnit/issues/517
+            // https://github.com/bUnit-dev/bUnit/issues/634
+            Func<Task> ButtonClicker = async () =>
+            {
+                var button = autocompleteComponent.WaitForElement(".mud-button-root.mud-no-activator");
+                await autocompleteComponent.InvokeAsync(() => button.Click());
+            };
 
-            ButtonActivator().Click(); // open popover
+            await ButtonClicker(); // open popover
             var pop = comp.WaitForElement("div.mud-popover"); // doesn't return until popover exists
             comp.WaitForAssertion(() => pop.ClassList.Should().Contain("mud-popover-open")); // wait for popover to open
             var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>();
             items.Count.Should().Be(10, "The popover should contain 10 items."); // default maxitems is 10
-            ButtonActivator().Click(); // close popover
+            await ButtonClicker(); // close popover
             comp.WaitForAssertion(() => pop.ClassList.Should().NotContain("mud-popover-open"));
 
             // set search
