@@ -340,13 +340,13 @@ namespace MudBlazor.UnitTests.Components
 
             var overlay = comp.Find(CssSelector);
 
-            overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 1 });
+            await overlay.PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 1 });
 
             var expectedColor = new MudColor(74, 70, 112, 255);
 
             await CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
 
-            overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 0 });
+            await overlay.PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 0 });
 
             await CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
