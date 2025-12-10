@@ -954,7 +954,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.Instance.OpenPicker();
 
             var expectedColors = _mudGridDefaultColors;
-            
+
             comp.WaitForElement(".mud-picker-color-grid").Children[0].Click();
             comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
