@@ -898,8 +898,8 @@ namespace MudBlazor.UnitTests.Components
             var fileName = "cat.jpg";
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
-            var comp = Context.RenderComponent<FormWithFileUploadTest>(
-                ComponentParameterFactory.Parameter(nameof(FormWithFileUploadTest.File), defaultFile));
+            var comp = Context.RenderComponent<FormWithFileUploadTest>(parameters =>
+                parameters.Add(x => x.File, defaultFile));
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
@@ -943,7 +943,7 @@ namespace MudBlazor.UnitTests.Components
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
             var comp = Context.RenderComponent<FormWithFileUploadTest>(
-                ComponentParameterFactory.Parameter(nameof(FormWithFileUploadTest.File), defaultFile));
+                parameters => parameters.Add(x => x.File, defaultFile));
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;

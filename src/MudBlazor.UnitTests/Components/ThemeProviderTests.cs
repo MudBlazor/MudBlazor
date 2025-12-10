@@ -508,7 +508,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CurrentPalette_ShouldUpdateToLight_WhenDarkModeChangesToFalse()
+        public async Task CurrentPalette_ShouldUpdateToLight_WhenDarkModeChangesToFalse()
         {
             // Arrange
             var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
@@ -518,7 +518,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteDark>();
 
             // Act
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.IsDarkMode, false));
 
             // Assert
@@ -526,7 +526,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CurrentPalette_ShouldUpdateToDark_WhenDarkModeChangesToTrue()
+        public async Task CurrentPalette_ShouldUpdateToDark_WhenDarkModeChangesToTrue()
         {
             // Arrange
             var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
@@ -536,7 +536,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteLight>();
 
             // Act
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
 
             // Assert
@@ -567,7 +567,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CurrentPaletteChanged_ShouldFire_WhenDarkModeChanges()
+        public async Task CurrentPaletteChanged_ShouldFire_WhenDarkModeChanges()
         {
             // Arrange
             Palette? capturedPalette = null;
@@ -576,7 +576,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.CurrentPaletteChanged, EventCallback.Factory.Create<Palette?>(this, palette => capturedPalette = palette)));
 
             // Act
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
 
             // Assert
@@ -585,7 +585,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CurrentPalette_ShouldUpdate_WhenThemeChanges()
+        public async Task CurrentPalette_ShouldUpdate_WhenThemeChanges()
         {
             // Arrange
             var theme1 = new MudTheme
@@ -612,7 +612,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.CurrentPalette)!.Primary.Should().Be(new MudColor(Colors.Blue.Default));
 
             // Act
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Theme, theme2));
 
             // Assert
@@ -620,7 +620,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CurrentPalette_ShouldReflectBothDarkModeAndThemeChanges()
+        public async Task CurrentPalette_ShouldReflectBothDarkModeAndThemeChanges()
         {
             // Arrange
             var customTheme = new MudTheme
@@ -643,7 +643,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.CurrentPalette)!.Primary.Should().Be(new MudColor(Colors.Blue.Default));
 
             // Act - switch to dark mode
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
 
             // Assert - should use dark palette
