@@ -14,11 +14,11 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<SimpleTimePickerTest> comp;
             if (parameterBuilder is null)
             {
-                comp = Context.RenderComponent<SimpleTimePickerTest>();
+                comp = Context.Render<SimpleTimePickerTest>();
             }
             else
             {
-                comp = Context.RenderComponent<SimpleTimePickerTest>(parameterBuilder);
+                comp = Context.Render<SimpleTimePickerTest>(parameterBuilder);
             }
 
             // should not be open
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerOpenButtonDefaultAriaLabel()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePicker_Should_Clear()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
@@ -159,7 +159,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             var picker = comp.Instance;
 
             // valid time
@@ -197,7 +197,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>();
+            var comp = Context.Render<SimpleTimePickerTest>();
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
             await comp.Instance.Open();
@@ -210,7 +210,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePickerTest_KeyboardNavigation()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>();
+            var comp = Context.Render<SimpleTimePickerTest>();
             var timePickerComponent = comp.FindComponent<MudTimePicker>();
             var timePicker = timePickerComponent.Instance;
 
@@ -318,7 +318,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
-            var comp = Context.RenderComponent<MudTimePicker>(parameters
+            var comp = Context.Render<MudTimePicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
             comp.Find("input").Id.Should().NotBeNullOrEmpty();
@@ -333,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
         public void DatePickerWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
             var expectedId = "test-id";
-            var comp = Context.RenderComponent<MudTimePicker>(parameters
+            var comp = Context.Render<MudTimePicker>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
@@ -349,7 +349,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerInputId()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters => parameters
+            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters
                 .Add(c => c.InputId, "start-time"));
 
             comp.Find("input[id='start-time']").Should().NotBeNull();

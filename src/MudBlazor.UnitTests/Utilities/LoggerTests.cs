@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Utilities
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
             Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
-            var comp = Context.RenderComponent<LoggerTest>();
+            var comp = Context.Render<LoggerTest>();
 
             var entries = logger.GetEntries();
             entries.Count.Should().Be(4);

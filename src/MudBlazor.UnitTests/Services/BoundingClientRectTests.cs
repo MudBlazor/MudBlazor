@@ -8,12 +8,12 @@ namespace MudBlazor.UnitTests.Components;
 [TestFixture]
 public class BoundingClientRectTests
 {
-    private Bunit.TestContext _ctx;
+    private Bunit.BunitContext _ctx;
 
     [SetUp]
     public void Setup()
     {
-        _ctx = new Bunit.TestContext();
+        _ctx = new Bunit.BunitContext();
         _ctx.AddTestServices();
     }
 

@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithSeparators()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
             {
                 new("Link 1", "link1"),
                 new("Link 2", "link2"),
@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithIcons()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
             {
                 new("Link 1", "link1", icon: Icons.Material.Filled.Home),
                 new("Link 2", "link2", icon: Icons.Material.Filled.List),
@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldCollapseWhenMaxItemsIsReached()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
                 .Add(x => x.MaxItems, (byte)4)
                 .Add(x => x.Items, new List<BreadcrumbItem>
                 {
@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudBreadcrumbs_Other()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
                 .Add(x => x.MaxItems, (byte)4)
                 .Add(x => x.Items, new List<BreadcrumbItem>
                 {

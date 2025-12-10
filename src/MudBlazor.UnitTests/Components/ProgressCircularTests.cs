@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
             var valueValue = -400;
             var strokeWidthValue = 50;
 
-            var comp = Context.RenderComponent<MudProgressCircular>(x =>
+            var comp = Context.Render<MudProgressCircular>(x =>
                 {
                     x.Add(y => y.Value, valueValue);
                     x.Add(y => y.Min, minValue);
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void TestClassesForRounded(bool rounded)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Rounded, rounded));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Rounded, rounded));
 
             var container = comp.Find(".mud-progress-circular-circle");
 
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Indeterminate, indeterminate));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Indeterminate, indeterminate));
 
             var container = comp.Find(".mud-progress-circular");
 
@@ -130,7 +130,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Size, size));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Size, size));
 
             var container = comp.Find(".mud-progress-circular");
 
@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Color, color));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Color, color));
 
             var container = comp.Find(".mud-progress-circular");
 
@@ -158,7 +158,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(0, "24 24 40 40")]
         public void MudProgressCircular_ShouldHaveCorrectViewBox_BasedOnStrokeWidth(int strokeWidth, string expectedViewBox)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(parameters => parameters
+            var comp = Context.Render<MudProgressCircular>(parameters => parameters
                 .Add(p => p.StrokeWidth, strokeWidth)
             );
 
@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
             viewBoxAttribute.Should().Be(expectedViewBox);
 
             // Test with Indeterminate = true as well
-            var compIndeterminate = Context.RenderComponent<MudProgressCircular>(parameters => parameters
+            var compIndeterminate = Context.Render<MudProgressCircular>(parameters => parameters
                 .Add(p => p.StrokeWidth, strokeWidth)
                 .Add(p => p.Indeterminate, true)
             );

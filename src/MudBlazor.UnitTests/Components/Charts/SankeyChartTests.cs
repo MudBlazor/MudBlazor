@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void EmptyData()
         {
-            var sankey = Context.RenderComponent<Sankey<double>>();
+            var sankey = Context.Render<Sankey<double>>();
             sankey.Markup.Should().Contain("mud-chart");
         }
 
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Charts
 
         private IRenderedComponent<MudChart<double>> RenderSankey(List<SankeyEdge<double>> edges, SankeyChartOptions options = null)
         {
-            var result = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var result = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Sankey)
                 .Add(p => p.ChartSeries, [new() { Name = "Sankey Test", Data = edges }])
                 .Add(p => p.ChartOptions, options ?? new SankeyChartOptions()));

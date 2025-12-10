@@ -10,7 +10,7 @@ public class TextTests : BunitTest
     [Test]
     public void DefaultPropertyValues()
     {
-        var comp = Context.RenderComponent<MudText>();
+        var comp = Context.Render<MudText>();
 
         comp.Instance.Typo.Should().Be(Typo.body1);
         comp.Instance.Align.Should().Be(Align.Inherit);
@@ -24,7 +24,7 @@ public class TextTests : BunitTest
     public void CustomAttributes_ShouldRender()
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .AddUnmatched("data-test", "test-value")
         );
 
@@ -44,7 +44,7 @@ public class TextTests : BunitTest
     public void Align_And_RightToLeft_AppliesCorrectClass(Align align, bool rightToLeft, string expectedClass)
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .Add(p => p.Align, align)
             .Add(p => p.RightToLeft, rightToLeft)
         );
@@ -66,7 +66,7 @@ public class TextTests : BunitTest
     public void ColorProperty_AppliesCorrectClass(Color color, string expectedClass)
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .Add(p => p.Color, color)
         );
 
@@ -80,7 +80,7 @@ public class TextTests : BunitTest
     public void GutterBottom_AppliesCorrectClass(bool gutterBottom)
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .Add(p => p.GutterBottom, gutterBottom)
         );
 
@@ -99,7 +99,7 @@ public class TextTests : BunitTest
     public void ChildContent_IsRenderedInsideComponent()
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .AddChildContent("Hello, World!")
         );
 
@@ -123,7 +123,7 @@ public class TextTests : BunitTest
     public void Typo_ChangesTag(Typo typo, string expectedTag)
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .Add(p => p.Typo, typo)
         );
 
@@ -141,7 +141,7 @@ public class TextTests : BunitTest
     public void ActualTag_With_TypoProperty_Or_HtmlTagProperty(Typo typo, string htmlTag, string expectedTag)
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .Add(p => p.Typo, typo)
             .Add(p => p.HtmlTag, htmlTag)
         );
@@ -155,7 +155,7 @@ public class TextTests : BunitTest
     public void InlineProperty_AppliesCorrectClass(bool inline)
     {
         // Arrange
-        var comp = Context.RenderComponent<MudText>(builder => builder
+        var comp = Context.Render<MudText>(builder => builder
             .Add(p => p.Inline, inline)
         );
 

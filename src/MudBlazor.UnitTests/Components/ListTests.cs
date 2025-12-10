@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ListRenderTest()
         {
-            var comp = Context.RenderComponent<ListSelectionTest>();
+            var comp = Context.Render<ListSelectionTest>();
             var listItem = comp.FindComponent<MudListItem<string>>();
             comp.Markup.Should().Contain("Sparkling Water");
             comp.Markup.Should().NotContain("Roger Waters");
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ListSelectionTest()
         {
-            var comp = Context.RenderComponent<ListSelectionTest>();
+            var comp = Context.Render<ListSelectionTest>();
             var list = comp.FindComponent<MudList<string>>().Instance;
             list.SelectedValue.Should().Be(null);
             // we have seven choices, none is active
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ListToggleSelectionTest()
         {
-            var comp = Context.RenderComponent<ListSelectionTest>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
+            var comp = Context.Render<ListSelectionTest>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
             var list = comp.FindComponent<MudList<string>>().Instance;
             list.SelectedValue.Should().Be(null);
             // we have seven choices, none is active
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ListMultiSelectionInitialValuesTest()
         {
-            var comp = Context.RenderComponent<ListMultiSelectionTest>(self => self.Add(x => x.SelectedValues, ["Milk", "Cafe Latte"]));
+            var comp = Context.Render<ListMultiSelectionTest>(self => self.Add(x => x.SelectedValues, ["Milk", "Cafe Latte"]));
             var list = comp.FindComponent<MudList<string>>().Instance;
             comp.Find("p.selected-values").TrimmedText().Should().Be("Cafe Latte, Milk");
             var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
@@ -106,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ListMultiSelectionBindingTest()
         {
-            var comp = Context.RenderComponent<ListMultiSelectionBindingTest>();
+            var comp = Context.Render<ListMultiSelectionBindingTest>();
             var list1 = comp.FindComponents<MudList<string>>().FirstOrDefault(x => x.Instance.Class == "list-1");
             var list2 = comp.FindComponents<MudList<string>>().FirstOrDefault(x => x.Instance.Class == "list-2");
             list1.FindComponents<MudListItem<string>>().Count.Should().Be(8);
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ListWithPreSelectedValueTest()
         {
-            var comp = Context.RenderComponent<ListSelectionInitialValueTest>();
+            var comp = Context.Render<ListSelectionInitialValueTest>();
             var list = comp.FindComponent<MudList<string>>().Instance;
             list.SelectedValue.Should().Be("Sparkling Water");
             // we have seven choices, 1 is active because of the initial value of SelectedValue
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark)]
         public void ListColorTest(Color color)
         {
-            var comp = Context.RenderComponent<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
+            var comp = Context.Render<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
 
             var list = comp.FindComponent<MudList<string>>().Instance;
             list.SelectedValue.Should().Be("Sparkling Water");
@@ -228,7 +228,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, true, 4)]
         public void ListDenseInheritanceTest(bool dense, bool? innerListDense, int expectedDenseClassCount)
         {
-            var comp = Context.RenderComponent<ListDenseInheritanceTest>(x => x.Add(c => c.Dense, dense).Add(c => c.InnerListDense, innerListDense));
+            var comp = Context.Render<ListDenseInheritanceTest>(x => x.Add(c => c.Dense, dense).Add(c => c.InnerListDense, innerListDense));
 
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount); // 7 choices, 2 groups
@@ -237,7 +237,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ListItem_HasRipple_WhenRippleIsTrue()
         {
-            var comp = Context.RenderComponent<ListItemRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
+            var comp = Context.Render<ListItemRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, false));
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ListItemTabIndexTest()
         {
-            var comp = Context.RenderComponent<ListItemTabIndexTest>();
+            var comp = Context.Render<ListItemTabIndexTest>();
             comp.FindAll("div")[1].GetAttribute("tabindex").Should().Be("-1");
         }
 
@@ -260,7 +260,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, false, false)]
         public void SettingGuttersOnList_Should_OverrideGuttersOnItemsWithoutGuttersSettingTest(bool listGutters, bool? itemGutters, bool resultingGutters)
         {
-            var comp = Context.RenderComponent<ListItemGuttersTest>(self => self
+            var comp = Context.Render<ListItemGuttersTest>(self => self
                 .Add(x => x.ListGutters, listGutters)
                 .Add(x => x.ItemGutters, itemGutters)
             );
