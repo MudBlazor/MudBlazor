@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
         /// Value should not change immediately. Should respect the Debounce Interval
         /// </summary>
         [Test]
-        public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
+        public void ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
         {
             var comp = Context.Render<MudNumericField<int?>>(parameters => parameters
                 .Add(x => x.DebounceInterval, 200d));
@@ -139,12 +139,11 @@ namespace MudBlazor.UnitTests.Components
             numericField.Value.Should().BeNull();
             numericField.Text.Should().Be("100");
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
-            await Task.Delay(100);
+            comp.WaitForAssertion(() => numericField.Value.Should().NotBe(100), TimeSpan.FromMilliseconds(100));
             numericField.Value.Should().BeNull();
             numericField.Text.Should().Be("100");
-            //More than 200 ms had elapsed, so Value should be updated
-            await Task.Delay(150);
-            numericField.Value.Should().Be(100);
+            //More than 200 ms had elapsed, so Value should be updated (CPU time will likely take more than 200ms)
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(100), TimeSpan.FromMilliseconds(300));
             numericField.Text.Should().Be("100");
         }
 
