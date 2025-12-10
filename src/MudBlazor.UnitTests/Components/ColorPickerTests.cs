@@ -829,7 +829,7 @@ namespace MudBlazor.UnitTests.Components
                 var colorElement = collectionView.Children[i];
                 colorElement.Click();
 
-                comp.Instance.ColorValue.Should().Be(expectedColor);
+                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
                 comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
 
             }
@@ -879,7 +879,7 @@ namespace MudBlazor.UnitTests.Components
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 comp.InvokeAsync(() => colorElement.Click());
-                comp.Instance.ColorValue.Should().Be(expectedColor);
+                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }
@@ -954,11 +954,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.Instance.OpenPicker();
 
             var expectedColors = _mudGridDefaultColors;
-
-            var gridView = comp.Find(".mud-picker-color-grid");
-            gridView.Children[0].Click();
-
-            comp.Instance.ColorValue.Should().Be(expectedColors[0]);
+            
+            comp.WaitForElement(".mud-picker-color-grid").Children[0].Click();
+            comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
@@ -979,10 +977,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridPaletteDefaultColors;
 
-            var gridView = comp.Find(".mud-picker-color-view-collection");
-            gridView.Children[0].Click();
-
-            comp.Instance.ColorValue.Should().Be(expectedColors[0]);
+            comp.WaitForElement(".mud-picker-color-view-collection").Children[0].Click();
+            comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
@@ -1026,7 +1022,7 @@ namespace MudBlazor.UnitTests.Components
                 item.Click();
             }
 
-            comp.Instance.ColorValue.Should().NotBe(_defaultColor);
+            comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().NotBe(_defaultColor));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
