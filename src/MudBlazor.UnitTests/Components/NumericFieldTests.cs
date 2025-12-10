@@ -662,15 +662,15 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Min, (T)min)
                 .Add(x => x.Step, value)
                 .Add(x => x.Value, value));
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
             // setting min and max to value will cover the boundary checking code
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.Max, value)
                 .Add(x => x.Min, value));
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
         }
 
@@ -685,15 +685,15 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Min, (T?)min)
                 .Add(x => x.Step, value)
                 .Add(x => x.Value, value));
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
             // setting min and max to value will cover the boundary checking code
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.Max, value)
                 .Add(x => x.Min, value));
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
         }
 
@@ -703,7 +703,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudNumericField<T?>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, value));
 
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
             comp.Instance.Value.Should().Be(value);
 
             comp.Find("input").Change("");
@@ -713,7 +713,7 @@ namespace MudBlazor.UnitTests.Components
             else
                 value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
 
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
         }
 
@@ -725,12 +725,12 @@ namespace MudBlazor.UnitTests.Components
 
             // test max overflow
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Max));
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
             comp.Instance.Value.Should().Be(comp.Instance.Max);
 
             // test min overflow
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Min));
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(comp.Instance.Min);
         }
 
@@ -742,12 +742,12 @@ namespace MudBlazor.UnitTests.Components
 
             // test max overflow
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Max));
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
             comp.Instance.Value.Should().Be(comp.Instance.Max);
 
             // test min overflow
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Min));
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(comp.Instance.Min);
         }
 

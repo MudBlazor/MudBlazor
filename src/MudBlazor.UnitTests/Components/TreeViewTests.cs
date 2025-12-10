@@ -1223,7 +1223,6 @@ namespace MudBlazor.UnitTests.Components
             var exception = Assert.Throws<InvalidOperationException>(() =>
             {
                 var comp = Context.RenderComponent<TreeViewTest8>();
-                comp.Render();
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 

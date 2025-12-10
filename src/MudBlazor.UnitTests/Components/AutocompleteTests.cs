@@ -854,7 +854,7 @@ namespace MudBlazor.UnitTests.Components
 
             // ToggleMenu to open menu and Clear to close it and check the text and value
             await comp.InvokeAsync(autocomplete.ToggleMenuAsync);
-            await comp.InvokeAsync(() => autocomplete.ClearAsync().Wait());
+            await comp.InvokeAsync(() => autocomplete.ClearAsync());
             comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
@@ -867,7 +867,7 @@ namespace MudBlazor.UnitTests.Components
             items.First().Markup.Should().Contain("California");
 
             // Clearing it and check the close status text and value again
-            await comp.InvokeAsync(() => autocomplete.ClearAsync().Wait());
+            await comp.InvokeAsync(() => autocomplete.ClearAsync());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");

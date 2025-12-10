@@ -250,22 +250,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_FireValueChangedOnTextParameterChange()
+        public void TextField_Should_FireValueChangedOnTextParameterChange()
         {
             string changed_value = null;
-            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
-                .Add(p => p.ValueChanged, x => changed_value = x));
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "A"));
+            _ = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.ValueChanged, x => changed_value = x)
+                .Add(p => p.Text, "A"));
             changed_value.Should().Be("A");
         }
 
         [Test]
-        public async Task TextField_Should_FireTextChangedOnValueParameterChange()
+        public void TextField_Should_FireTextChangedOnValueParameterChange()
         {
             string changed_text = null;
-            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
-                .Add(p => p.TextChanged, x => changed_text = x));
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
+            _ = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.TextChanged, x => changed_text = x)
+                .Add(p => p.Value, "A"));
             changed_text.Should().Be("A");
         }
 
