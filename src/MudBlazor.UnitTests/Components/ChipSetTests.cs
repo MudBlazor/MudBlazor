@@ -272,7 +272,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSet_MultiSelection_AfterChipArraySetNull_ShouldBeAbleToSelectSameChip()
+        public async Task ChipSet_MultiSelection_AfterChipArraySetNull_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.Render<ChipSetClearSelectionTest>();
             var chipSet = comp.FindComponent<MudChipSet<string>>();
@@ -280,24 +280,24 @@ namespace MudBlazor.UnitTests.Components
             // Select one chip
             comp.FindAll("button.mud-chip")[0].Click();
 
-            comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
 
             // Set chip array to null
             comp.FindAll("button")[0].Click();
 
-            comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => chipSet.Instance.SelectedValues.Count.Should().Be(0));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
 
             // Select same chip again
             comp.FindAll("button.mud-chip")[0].Click();
 
-            comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
         }
 
         [Test]
-        public void ChipSet_MultiSelection_AfterChipArraySetEmpty_ShouldBeAbleToSelectSameChip()
+        public async Task ChipSet_MultiSelection_AfterChipArraySetEmpty_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.Render<ChipSetClearSelectionTest>();
             var chipSet = comp.FindComponent<MudChipSet<string>>();
@@ -305,19 +305,19 @@ namespace MudBlazor.UnitTests.Components
             // Select one chip
             comp.FindAll("button.mud-chip")[0].Click();
 
-            comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
 
             // Set chip array to empty
             comp.Find("#set-empty").Click();
 
-            comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => chipSet.Instance.SelectedValues.Count.Should().Be(0));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
 
             // Select same chip again
             comp.FindAll("button.mud-chip")[0].Click();
 
-            comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
         }
 

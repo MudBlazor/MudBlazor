@@ -501,7 +501,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test verifies that both scenarios update the ToggleGroupItem Selected state
         /// </summary>
         [Test]
-        public void ToggleGroup_ToggleSelectionTest()
+        public async Task ToggleGroup_ToggleSelectionTest()
         {
             var comp = Context.Render<ToggleGroupInterceptValueTest>();
             IElement GetYesButton() => comp.FindAll(".mud-toggle-group .mud-toggle-item")[0];
@@ -530,14 +530,14 @@ namespace MudBlazor.UnitTests.Components
 
             // change to yes
             GetYesButton().Click();
-            comp.WaitForAssertion(() => GetYesButton().ClassList.Should().Contain("mud-toggle-item-selected"));
+            await comp.WaitForAssertionAsync(() => GetYesButton().ClassList.Should().Contain("mud-toggle-item-selected"));
             GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected");
             GetMaybeButton().ClassList.Should().NotContain("mud-toggle-item-selected");
             comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Accepted);
 
             // change to maybe
             GetMaybeButton().Click();
-            comp.WaitForAssertion(() => GetYesButton().ClassList.Should().NotContain("mud-toggle-item-selected"));
+            await comp.WaitForAssertionAsync(() => GetYesButton().ClassList.Should().NotContain("mud-toggle-item-selected"));
             GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected");
             GetMaybeButton().ClassList.Should().Contain("mud-toggle-item-selected");
             comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Maybe);
@@ -548,7 +548,7 @@ namespace MudBlazor.UnitTests.Components
             // click yes with failure enabled to simulate no change
             GetYesButton().Click();
             // check value has not changed, should still be maybe
-            comp.WaitForAssertion(() => comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Maybe, "Value should not have changed form Maybe"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Maybe, "Value should not have changed form Maybe"));
             // check selected has not changed, should still be maybe
             GetYesButton().ClassList.Should().NotContain("mud-toggle-item-selected", "Selection should not have changed from maybe.");
             GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected", "Selection should not have changed from maybe.");

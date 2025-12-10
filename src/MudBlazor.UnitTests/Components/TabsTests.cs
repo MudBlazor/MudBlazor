@@ -705,12 +705,12 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Instance.SetPanelActiveAsync(4);
 
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
                 GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.01));
 
             await comp.Instance.AddPanelAsync();
 
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
                 GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.01));
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
@@ -1364,7 +1364,7 @@ namespace MudBlazor.UnitTests.Components
             await tabs.ItemUpdated(dropInfo);
 
             // Assert that OnItemDropped was called
-            comp.WaitForAssertion(() => onItemDroppedCalled.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => onItemDroppedCalled.Should().BeTrue());
             finalDropInfo.Should().Be(dropInfo);
         }
 #nullable disable
@@ -1507,7 +1507,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Tab_DragAndDrop_ActiveIndexShouldNotChangeDisplay()
+        public async Task Tab_DragAndDrop_ActiveIndexShouldNotChangeDisplay()
         {
             // defaulting the ActiveIndex to something other than 0 caused a display issue where it tried to make
             // that tab the FIRST tab putting any leading tabs underneath an arrow to "go left" (or right if rtl)
@@ -1529,7 +1529,7 @@ namespace MudBlazor.UnitTests.Components
             cbox.Change(true);
             comp.Render();
             // drop container
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // all tabs should show
             divs.Count.Should().Be(4);
@@ -1563,13 +1563,13 @@ namespace MudBlazor.UnitTests.Components
             // clicking a tab should activate it and update the class
             divs[2].Click(); // activate Three
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
-            comp.WaitForAssertion(() => divs[2].ClassList.Contains("mud-tab-active").Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => divs[2].ClassList.Contains("mud-tab-active").Should().BeTrue());
             // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
             await comp.SetParametersAndRenderAsync(p => p.Add(p => p.ActiveTabClass, "test-active"));
             // drop container
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // all tabs should show
             divs.Count.Should().Be(4);
@@ -1579,8 +1579,8 @@ namespace MudBlazor.UnitTests.Components
             divs[3].InnerHtml.Should().Be("Four");
             divs[3].Click();
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
-            comp.WaitForAssertion(() => divs[3].ClassList.Contains("mud-tab-active").Should().BeTrue());
-            comp.WaitForAssertion(() => divs[3].ClassList.Contains("test-active").Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => divs[3].ClassList.Contains("mud-tab-active").Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => divs[3].ClassList.Contains("test-active").Should().BeTrue());
         }
 
         /// <summary>
