@@ -281,7 +281,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TestSemaphore_RenderInParallel()
+        public async Task TestSemaphore_RenderInParallel()
         {
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
@@ -300,10 +300,10 @@ namespace MudBlazor.UnitTests.Components
 
             var component = Context.Render<RenderMultipleHiddenInParallel>();
 
-            component.WaitForAssertion(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            component.WaitForAssertion(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            component.WaitForAssertion(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            component.WaitForAssertion(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
         }
     }
 }
