@@ -13,7 +13,6 @@ using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -122,8 +121,7 @@ namespace MudBlazor.UnitTests.Components
         {
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
-            var immediate = Parameter(nameof(MudTextField<string>.Immediate), true);
-            var comp = Context.RenderComponent<MudTextField<string>>(immediate);
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.Immediate, true));
             var textField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -139,8 +137,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInTextFieldTest()
         {
-            var interval = Parameter(nameof(MudTextField<string>.DebounceInterval), 200d);
-            var comp = Context.RenderComponent<MudTextField<string>>(interval);
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
             var textField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -166,9 +163,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
-            var label = Parameter(nameof(MudTextField<string>.Label), "label");
             //with no placeholder, label is not shrinked
-            var comp = Context.RenderComponent<MudTextField<string>>(label);
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.Label, "label"));
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrinked
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Placeholder, "placeholder"));
@@ -221,7 +217,7 @@ namespace MudBlazor.UnitTests.Components
                 .NotEmpty()
                 .Length(1, 100)
                 .CreditCard());
-            var comp = Context.RenderComponent<MudTextField<string>>(Parameter(nameof(MudTextField<string>.Validation), validator.Validation));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters.Add(p => p.Validation, validator.Validation));
             var textfield = comp.Instance;
             // first try a valid credit card number
             comp.Find("input").Change("4012 8888 8888 1881");
@@ -257,7 +253,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_FireValueChangedOnTextParameterChange()
         {
             string changed_value = null;
-            var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("ValueChanged", x => changed_value = x));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.ValueChanged, x => changed_value = x));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "A"));
             changed_value.Should().Be("A");
         }
@@ -266,7 +263,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_FireTextChangedOnValueParameterChange()
         {
             string changed_text = null;
-            var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("TextChanged", x => changed_text = x));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.TextChanged, x => changed_text = x));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
             changed_text.Should().Be("A");
         }
@@ -276,9 +274,9 @@ namespace MudBlazor.UnitTests.Components
         {
             string changed_value = null;
             string changed_text = null;
-            var comp = Context.RenderComponent<MudTextField<string>>(
-                EventCallback<string>("ValueChanged", x => changed_value = x),
-                EventCallback<string>("TextChanged", x => changed_text = x)
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.ValueChanged, x => changed_value = x)
+                .Add(p => p.TextChanged, x => changed_text = x)
             );
             comp.Find("input").Change("B");
             changed_value.Should().Be("B");
@@ -332,9 +330,9 @@ namespace MudBlazor.UnitTests.Components
         public void TextFieldMultiline_CheckRenderedText()
         {
             var text = "Hello world!";
-            var comp = Context.RenderComponent<MudTextField<string>>(
-                Parameter(nameof(MudTextField<string>.Text), text),
-                Parameter(nameof(MudTextField<string>.Lines), 2));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Text, text)
+                .Add(p => p.Lines, 2));
             // print the generated html
             // select elements needed for the test
             comp.Find("textarea").InnerHtml.Should().Be(text);
@@ -348,9 +346,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TextFieldMultilineWithMask_CheckRendered()
         {
-            var comp = Context.RenderComponent<MudTextField<string>>(
-                Parameter(nameof(MudTextField<string>.Mask), new RegexMask(@"\d")),
-                Parameter(nameof(MudTextField<string>.Lines), 2));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new RegexMask(@"\d"))
+                .Add(p => p.Lines, 2));
             comp.Find("textarea").Should().NotBeNull();
         }
 
@@ -401,9 +399,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AutoGrowTextField_Should_InvokeJavaScriptInitOnRender()
         {
-            var comp = Context.RenderComponent<MudTextField<string>>(
-                Parameter(nameof(MudTextField<string>.AutoGrow), true),
-                Parameter(nameof(MudTextField<string>.MaxLines), 5));
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.AutoGrow, true)
+                .Add(p => p.MaxLines, 5));
 
             Context.JSInterop.VerifyInvoke("mudInputAutoGrow.initAutoGrow", 1);
             Context.JSInterop.Invocations["mudInputAutoGrow.initAutoGrow"].Single()
@@ -1063,8 +1061,8 @@ namespace MudBlazor.UnitTests.Components
         public void DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
         {
             var defaultValue = "test";
-            var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>(
-                Parameter(nameof(MudTextField<string>.Value), defaultValue));
+            var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>(parameters => parameters
+                .Add(p => p.Value, defaultValue));
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Text.Should().Be(defaultValue);
         }

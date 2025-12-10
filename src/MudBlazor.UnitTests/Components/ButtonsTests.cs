@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.Button;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -41,10 +40,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldRenderAnAnchorIfLinkIsSetAndIsNotDisabled()
         {
-            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            var target = Parameter(nameof(MudButton.Target), "_blank");
-            var disabled = Parameter(nameof(MudButton.Disabled), true);
-            var comp = Context.RenderComponent<MudButton>(link, target);
+            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank"));
             //Link property is set, so it has to render an anchor element
             comp.Instance
                 .HtmlTag
@@ -62,7 +60,10 @@ namespace MudBlazor.UnitTests.Components
                 .And
                 .NotContain("__internal_stopPropagation_onclick");
 
-            comp = Context.RenderComponent<MudButton>(link, target, disabled);
+            comp = Context.RenderComponent<MudButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank")
+                .Add(p => p.Disabled, true));
             comp.Instance.HtmlTag.Should().Be("button");
 
         }
@@ -73,9 +74,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldRenderRelIfSet()
         {
-            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            var rel = Parameter(nameof(MudButton.Rel), "nofollow");
-            var comp = Context.RenderComponent<MudButton>(link, rel);
+            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Rel, "nofollow"));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -89,11 +90,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldHaveNoopenerOverridenByRel()
         {
-            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudButton.Target), "_blank");
-            var rel = Parameter(nameof(MudButton.Rel), "nofollow");
-            var comp = Context.RenderComponent<MudButton>(link, target, rel);
+            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank")
+                .Add(p => p.Rel, "nofollow"));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -107,10 +107,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldHaveHaveNoRelWhenSetToEmpty()
         {
-            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            var rel = Parameter(nameof(MudButton.Rel), "");
-            var target = Parameter(nameof(MudButton.Target), "_blank");
-            var comp = Context.RenderComponent<MudButton>(link, rel, target);
+            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Rel, "")
+                .Add(p => p.Target, "_blank"));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -124,10 +124,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldNotRenderRelIfNullAndTargetNotBlank()
         {
-            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            var rel = Parameter(nameof(MudButton.Rel), null);
-            var target = Parameter(nameof(MudButton.Target), "_notblank");
-            var comp = Context.RenderComponent<MudButton>(link, rel, target);
+            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Rel, null)
+                .Add(p => p.Target, "_notblank"));
             comp
                 .Find("a")
                 .HasAttribute("rel")
@@ -161,9 +161,9 @@ namespace MudBlazor.UnitTests.Components
         public void MudIconButtonShouldRenderAnAnchorIfLinkIsSet()
         {
             using var ctx = new Bunit.TestContext();
-            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            var target = Parameter(nameof(MudIconButton.Target), "_blank");
-            var comp = ctx.RenderComponent<MudIconButton>(link, target);
+            var comp = ctx.RenderComponent<MudIconButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank"));
             //Link property is set, so it has to render an anchor element
             comp.Instance
                 .HtmlTag
@@ -186,9 +186,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldRenderRelIfSet()
         {
-            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
-            var comp = Context.RenderComponent<MudIconButton>(link, rel);
+            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Rel, "nofollow"));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -202,11 +202,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldHaveNoopenerOverridenByRel()
         {
-            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudIconButton.Target), "_blank");
-            var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
-            var comp = Context.RenderComponent<MudIconButton>(link, target, rel);
+            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank")
+                .Add(p => p.Rel, "nofollow"));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -220,11 +219,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldHaveHaveNoRelWhenSetToEmpty()
         {
-            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudIconButton.Target), "_blank");
-            var rel = Parameter(nameof(MudIconButton.Rel), "");
-            var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
+            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank")
+                .Add(p => p.Rel, ""));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -238,10 +236,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldNotRenderRelIfNullAndTargetNotBlank()
         {
-            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            var rel = Parameter(nameof(MudIconButton.Rel), null);
-            var target = Parameter(nameof(MudIconButton.Target), "_notblank");
-            var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
+            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Rel, null)
+                .Add(p => p.Target, "_notblank"));
             comp
                 .Find("a")
                 .HasAttribute("rel")
@@ -274,9 +272,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldRenderAnAnchorIfLinkIsSet()
         {
-            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            var target = Parameter(nameof(MudFab.Target), "_blank");
-            var comp = Context.RenderComponent<MudFab>(link, target);
+            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank"));
             //Link property is set, so it has to render an anchor element
             comp.Instance
                 .HtmlTag
@@ -311,9 +309,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldRenderRelIfSet()
         {
-            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            var rel = Parameter(nameof(MudFab.Rel), "nofollow");
-            var comp = Context.RenderComponent<MudFab>(link, rel);
+            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Rel, "nofollow"));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -327,11 +325,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldHaveNoopenerOverridenByRel()
         {
-            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudFab.Target), "_blank");
-            var rel = Parameter(nameof(MudFab.Rel), "nofollow");
-            var comp = Context.RenderComponent<MudFab>(link, target, rel);
+            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank")
+                .Add(p => p.Rel, "nofollow"));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -345,11 +342,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldHaveHaveNoRelWhenSetToEmpty()
         {
-            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudFab.Target), "_blank");
-            var rel = Parameter(nameof(MudFab.Rel), "");
-            var comp = Context.RenderComponent<MudFab>(link, target, rel);
+            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Target, "_blank")
+                .Add(p => p.Rel, ""));
             comp
                 .Find("a")
                 .GetAttribute("rel")
@@ -363,10 +359,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldNotRenderRelIfNullAndTargetNotBlank()
         {
-            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            var rel = Parameter(nameof(MudFab.Rel), null);
-            var target = Parameter(nameof(MudFab.Target), "_notblank");
-            var comp = Context.RenderComponent<MudFab>(link, rel, target);
+            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+                .Add(p => p.Href, "https://www.google.com")
+                .Add(p => p.Rel, null)
+                .Add(p => p.Target, "_notblank"));
             comp
                 .Find("a")
                 .HasAttribute("rel")

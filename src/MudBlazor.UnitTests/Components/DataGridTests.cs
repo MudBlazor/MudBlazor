@@ -18,7 +18,6 @@ using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -434,9 +433,9 @@ namespace MudBlazor.UnitTests.Components
             var serverDataFunc =
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
-                Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
-                    Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>())
+                Context.RenderComponent<MudDataGrid<TestModel1>>(parameters => parameters
+                    .Add(p => p.ServerData, serverDataFunc)
+                    .Add(p => p.Items, Array.Empty<TestModel1>())
                 )
             );
             exception.Message.Should().Be(
@@ -452,9 +451,9 @@ namespace MudBlazor.UnitTests.Components
             var serverDataFunc =
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
-                Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
-                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                Context.RenderComponent<MudDataGrid<TestModel1>>(parameters => parameters
+                    .Add(p => p.ServerData, serverDataFunc)
+                    .Add(p => p.QuickFilter, (TestModel1 x) => true)
                 )
             );
             exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
@@ -466,9 +465,9 @@ namespace MudBlazor.UnitTests.Components
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
-                Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc),
-                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                Context.RenderComponent<MudDataGrid<TestModel1>>(parameters => parameters
+                    .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
+                    .Add(p => p.QuickFilter, (TestModel1 x) => true)
                 )
             );
             exception.Message.Should().Be("Do not supply both 'VirtualizeServerData' and 'QuickFilter'.");
@@ -482,9 +481,9 @@ namespace MudBlazor.UnitTests.Components
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
-                Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
-                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                Context.RenderComponent<MudDataGrid<TestModel1>>(parameters => parameters
+                    .Add(p => p.ServerData, serverDataFunc)
+                    .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
                 )
             );
 
@@ -501,9 +500,9 @@ namespace MudBlazor.UnitTests.Components
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
-                Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>()),
-                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                Context.RenderComponent<MudDataGrid<TestModel1>>(parameters => parameters
+                    .Add(p => p.Items, Array.Empty<TestModel1>())
+                    .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
                 )
             );
 
@@ -633,8 +632,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataGridMultiSelectionTest_Should_Not_Render_Footer_If_ShowInFooter_Is_False()
         {
-            var comp = Context.RenderComponent<DataGridMultiSelectionTest>(
-                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGrid.DataGridMultiSelectionTest.ShowInFooter), false));
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>(parameters => parameters
+                .Add(p => p.ShowInFooter, false));
             comp.FindAll("td.footer-cell").Should().BeEmpty();
         }
 
