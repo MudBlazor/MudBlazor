@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShouldRenderIconWithStyle()
         {
             var colorStyle = "color: greenyellow;";
-            var comp = Context.RenderComponent<MudIcon>(parameters => parameters
+            var comp = Context.Render<MudIcon>(parameters => parameters
                 .Add(x => x.Icon, Icons.Material.Filled.Add)
                 .Add(x => x.Style, colorStyle));
             comp.Markup.Trim().Should().StartWith("<svg")
@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var title = "Title and tooltip";
             //svg
-            var comp = Context.RenderComponent<MudIcon>(parameters => parameters
+            var comp = Context.Render<MudIcon>(parameters => parameters
                 .Add(x => x.Icon, Icons.Material.Filled.Add)
                 .Add(x => x.Title, title));
             comp.Find("svg Title").TextContent.Should().Be(title);
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldParseCorrectSyntax()
         {
-            var comp = Context.RenderComponent<MudIcon>(parameters =>
+            var comp = Context.Render<MudIcon>(parameters =>
                 parameters.Add(parameter => parameter.Icon, "material-symbols-outlined/database"));
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined\" aria-hidden=\"true\" role=\"img\">database</span>");
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldNotParseWhenWrongSyntax()
         {
-            var comp = Context.RenderComponent<MudIcon>(parameters =>
+            var comp = Context.Render<MudIcon>(parameters =>
                 parameters.Add(parameter => parameter.Icon, "material-symbols-outlined(database)"));
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined(database)\" aria-hidden=\"true\" role=\"img\"></span>");
@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldNotParseWhenEmpty()
         {
-            var comp = Context.RenderComponent<MudIcon>(parameters =>
+            var comp = Context.Render<MudIcon>(parameters =>
                 parameters.Add(parameter => parameter.Icon, string.Empty));
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium \" aria-hidden=\"true\" role=\"img\"></span>");
@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldUseChildContentWhenAssigned()
         {
-            var comp = Context.RenderComponent<MudIcon>(parameters =>
+            var comp = Context.Render<MudIcon>(parameters =>
                 parameters
                     .Add(parameter => parameter.Icon, "material-symbols-outlined")
                     .AddChildContent("database"));
@@ -92,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldBeEmptyChildContent()
         {
-            var comp = Context.RenderComponent<MudIcon>(parameters =>
+            var comp = Context.Render<MudIcon>(parameters =>
                 parameters
                     .Add(parameter => parameter.Icon, "material-symbols-outlined"));
 

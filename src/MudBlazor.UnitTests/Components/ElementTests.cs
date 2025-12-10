@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Should_Render_An_Anchor_And_Then_A_Button()
         {
-            var comp = Context.RenderComponent<MudElement>(parameters => parameters
+            var comp = Context.Render<MudElement>(parameters => parameters
                 .Add(x => x.HtmlTag, "a")
                 .Add(x => x.Class, "mud-button-root"));
             comp.MarkupMatches("<a class=\"mud-button-root\"></a>");
@@ -31,13 +31,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudElement_Should_Not_Attach_A_Null_Event()
         {
-            var comp = Context.RenderComponent<ElementTestEventNull>();
+            var comp = Context.Render<ElementTestEventNull>();
 
             //initially, renders just an empty span, because AttachEvent is false;
             comp.MarkupMatches("<span></span>");
 
             //we set AttachEvent to true, so it has to attach the mouseover event
-            var comp2 = Context.RenderComponent<ElementTestEventNull>(parameters => parameters.Add(x => x.AttachEvent, true));
+            var comp2 = Context.Render<ElementTestEventNull>(parameters => parameters.Add(x => x.AttachEvent, true));
 
             //because we didn't hovered yet the element, the WasHovered property is false
             comp2.Instance.WasHovered.Should().BeFalse();
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ElementReferenceCapture()
         {
-            var comp = Context.RenderComponent<ElementReferenceExceptionTest>();
+            var comp = Context.Render<ElementReferenceExceptionTest>();
             comp.Find("#element-button").Click();
         }
     }

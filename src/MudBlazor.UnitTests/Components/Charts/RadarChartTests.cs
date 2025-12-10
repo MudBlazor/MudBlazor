@@ -19,7 +19,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_BasicRendering_NoData()
     {
-        var comp = Context.RenderComponent<Radar<double>>();
+        var comp = Context.Render<Radar<double>>();
         comp.Markup.Should().Contain("<svg");
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(0);
         comp.FindAll("path.mud-chart-axis-line").Count.Should().Be(0); // No labels, no data, so no axes.
@@ -32,7 +32,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new[] { "A", "B", "C" };
         var options = new RadarChartOptions { ShowDataMarkers = true, AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> {
                 new() { Name = "Series", Data = seriesData },
                 new() { Name = "Other Series", Data = new double[] { 5,15,25 } } // Add another series
@@ -62,7 +62,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_BasicRendering_WithData_InferAxesFromData()
     {
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartOptions, new RadarChartOptions() { AggregationOption = AggregationOption.GroupByLabel })
             .Add(p => p.Width, "300px")
@@ -75,7 +75,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_BasicRendering_WithData_AndLabels()
     {
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30, 40 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C", "D" })
             .Add(p => p.ChartOptions, new RadarChartOptions() { AggregationOption = AggregationOption.GroupByLabel })
@@ -91,7 +91,7 @@ public class RadarChartTests : BunitTest
     public void RadarChart_Option_ShowGridLines_And_GridLevels()
     {
         var options = new RadarChartOptions { ShowGridLines = true, GridLevels = 3, AggregationOption = AggregationOption.GroupByLabel };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -105,7 +105,7 @@ public class RadarChartTests : BunitTest
     public void RadarChart_Option_ShowGridLines_False()
     {
         var options = new RadarChartOptions { ShowGridLines = false };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -119,7 +119,7 @@ public class RadarChartTests : BunitTest
     public void RadarChart_Option_ShowAxisLabels_True()
     {
         var options = new RadarChartOptions { ShowAxisLabels = true, AggregationOption = AggregationOption.GroupByDataSet };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "Axis1", "Axis2", "Axis3" })
             .Add(p => p.ChartOptions, options)
@@ -134,7 +134,7 @@ public class RadarChartTests : BunitTest
     public void RadarChart_Option_ShowAxisLabels_False()
     {
         var options = new RadarChartOptions { ShowAxisLabels = false };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "Axis1", "Axis2", "Axis3" })
             .Add(p => p.ChartOptions, options)
@@ -149,7 +149,7 @@ public class RadarChartTests : BunitTest
     {
         var options = new RadarChartOptions { ShowDataMarkers = true, DataPointRadius = 4 };
         var seriesData = new double[] { 10, 20, 30, 40 };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = seriesData } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C", "D" })
             .Add(p => p.ChartOptions, options)
@@ -163,7 +163,7 @@ public class RadarChartTests : BunitTest
     public void RadarChart_Option_ShowDataPoints_False()
     {
         var options = new RadarChartOptions { ShowDataMarkers = false };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30, 40 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C", "D" })
             .Add(p => p.ChartOptions, options)
@@ -181,7 +181,7 @@ public class RadarChartTests : BunitTest
             new() { Name = "Series1", Data = new double[] { 10, 20, 30 } },
             new() { Name = "Series2", Data = new double[] { 15, 25, 35 } }
         };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, new RadarChartOptions() { AggregationOption = AggregationOption.GroupByDataSet })
@@ -195,7 +195,7 @@ public class RadarChartTests : BunitTest
     public void RadarChart_Interaction_SelectedIndex()
     {
         var selectedIndex = -1;
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> {
                 new() { Name = "Series1", Data = new double[] { 10, 20, 30 } },
                 new() { Name = "Series2", Data = new double[] { 15, 25, 35 } }
@@ -221,7 +221,7 @@ public class RadarChartTests : BunitTest
     public void RadarChart_Option_AngleOffset()
     {
         var options = new RadarChartOptions { AngleOffset = 45, AggregationOption = AggregationOption.GroupByLabel };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -243,7 +243,7 @@ public class RadarChartTests : BunitTest
         };
         string[] xAxisLabels = { "Cat A", "Cat B", "Cat C", "Cat D" };
 
-        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Radar)
             .Add(p => p.Height, "400px")
             .Add(p => p.Width, "400px")
@@ -303,7 +303,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_Should_ApplyWidthAndHeight()
     {
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.Width, "500px")
@@ -332,7 +332,7 @@ public class RadarChartTests : BunitTest
             AggregationOption = AggregationOption.GroupByDataSet
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -364,7 +364,7 @@ public class RadarChartTests : BunitTest
             ShowLegend = true,
             AggregationOption = AggregationOption.GroupByDataSet
         };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -390,7 +390,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_Should_RenderGracefully_WhenChartOptionsIsNull()
     {
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, null) // Set ChartOptions to null
@@ -418,7 +418,7 @@ public class RadarChartTests : BunitTest
             new() { Name = "Series2", Data = new double[] { 15, 25, 35 } }
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -446,7 +446,7 @@ public class RadarChartTests : BunitTest
             GridLineWidth = 3,
             AggregationOption = AggregationOption.GroupByLabel // Ensures grid lines are typically generated
         };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -473,7 +473,7 @@ public class RadarChartTests : BunitTest
             AxisLineWidth = 2,
             AggregationOption = AggregationOption.GroupByLabel // Ensures axis lines are rendered
         };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" }) // Labels are needed for axes to be drawn
             .Add(p => p.ChartOptions, options)
@@ -502,7 +502,7 @@ public class RadarChartTests : BunitTest
             AggregationOption = AggregationOption.GroupByLabel
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = seriesData } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C", "D" })
             .Add(p => p.ChartOptions, options)
@@ -532,7 +532,7 @@ public class RadarChartTests : BunitTest
             AngleOffset = angleOffset,
             AggregationOption = AggregationOption.GroupByDataSet
         };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -554,7 +554,7 @@ public class RadarChartTests : BunitTest
             GridLevels = 2,
             AggregationOption = AggregationOption.GroupByLabel
         };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -574,7 +574,7 @@ public class RadarChartTests : BunitTest
             GridLevels = 2,
             AggregationOption = AggregationOption.GroupByLabel
         };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -588,7 +588,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_Should_RenderEmpty_WhenChartSeriesIsNull()
     {
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, null)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" }) // Provide labels to define axes
             .Add(p => p.Width, "300px")
@@ -602,7 +602,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_Should_RenderEmpty_WhenChartSeriesIsEmpty()
     {
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>>())
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" }) // Provide labels to define axes
             .Add(p => p.Width, "300px")
@@ -624,7 +624,7 @@ public class RadarChartTests : BunitTest
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -648,7 +648,7 @@ public class RadarChartTests : BunitTest
         };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.ChartOptions, options)
@@ -673,7 +673,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new string[] { "Label1", "Label2", "Label3" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByLabel };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -703,7 +703,7 @@ public class RadarChartTests : BunitTest
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -729,7 +729,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new string[] { "A", "B", "C", "D" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -755,7 +755,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new string[] { "A", "B", "C", "D" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -779,7 +779,7 @@ public class RadarChartTests : BunitTest
     {
         var chartLabels = new[] { "Axis One", "Axis Two", "Axis Three" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet, ShowAxisLabels = true };
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -802,7 +802,7 @@ public class RadarChartTests : BunitTest
             new() { Name = "Series2", Data = new double[] { 15, 25, 35, 45 } }
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -820,7 +820,7 @@ public class RadarChartTests : BunitTest
     {
         var chartLabels = new[] { "Very Long Axis Label Name That Might Cause Wrapping or Truncation Issues", "Axis with !@#$%^&*()_+[]{};:'\",.<>/?\\|`~", "Short" };
         var options = new RadarChartOptions { ShowAxisLabels = true, AggregationOption = AggregationOption.GroupByDataSet }; // GroupByDataSet for simpler label mapping
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -844,7 +844,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new[] { "A", "B" }; // Fewer labels than data points
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet, ShowAxisLabels = true };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = seriesData } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -869,7 +869,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new[] { "A", "B", "C", "D", "E" }; // More labels than data points
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet, ShowAxisLabels = true };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = seriesData } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -896,7 +896,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new[] { "Cost", "Performance", "Usability" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = seriesName, Data = seriesData } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -932,7 +932,7 @@ public class RadarChartTests : BunitTest
             builder.CloseElement();
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = seriesName, Data = seriesData } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -960,7 +960,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new[] { "Alpha", "Beta", "Gamma" };
         var options = new RadarChartOptions { ShowDataMarkers = true, DataPointRadius = 3, AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = seriesName, Data = seriesData } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -1019,7 +1019,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new[] { "P1", "P2", "P3" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = seriesName, Data = seriesData } })
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -1047,7 +1047,7 @@ public class RadarChartTests : BunitTest
         var chartLabels = new[] { "A", "B", "C" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, initialSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -1088,7 +1088,7 @@ public class RadarChartTests : BunitTest
         var seriesData = new List<ChartSeries<double>> { new() { Name = "ProductX", Data = new double[] { 10, 20, 30 } } };
         var options = new RadarChartOptions { ShowAxisLabels = true, AggregationOption = AggregationOption.GroupByDataSet };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, seriesData)
             .Add(p => p.ChartLabels, initialLabels)
             .Add(p => p.ChartOptions, options)
@@ -1127,7 +1127,7 @@ public class RadarChartTests : BunitTest
         var series = new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } };
         var labels = new[] { "A", "B", "C" };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartLabels, labels)
             .Add(p => p.ChartOptions, initialOptions)
@@ -1185,7 +1185,7 @@ public class RadarChartTests : BunitTest
             ShowAxisLabels = true // To verify axis labels
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, options)
@@ -1225,7 +1225,7 @@ public class RadarChartTests : BunitTest
             ShowAxisLabels = true
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, originalChartSeries)
             .Add(p => p.ChartLabels, originalChartLabels)
             .Add(p => p.ChartOptions, options)
@@ -1263,7 +1263,7 @@ public class RadarChartTests : BunitTest
             builder.CloseElement();
         };
 
-        var comp = Context.RenderComponent<Radar<double>>(parameters => parameters
+        var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
             .Add(p => p.CustomGraphics, customGraphicsFragment)

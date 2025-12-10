@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Pagination;
 using NUnit.Framework;
@@ -27,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PaginationControlButtonClickTest(Page controlButton, int numberOfClicks, int initiallySelectedPage, int expectedSelectedPage, bool expectedDisabled)
         {
-            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var comp = Context.Render<PaginationButtonTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
@@ -59,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PaginationControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
         {
-            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var comp = Context.Render<PaginationButtonTest>();
 
             //get control button
             var button = FindControlButton(comp, controlButton);
@@ -81,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PaginationPageButtonAriaLabelTest(int index, string label)
         {
-            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var comp = Context.Render<PaginationButtonTest>();
             var buttons = comp.FindAll(".mud-pagination-item button");
             var button = buttons[index];
             button.Attributes.GetNamedItem("aria-label")?.Value.Should().Be(label);
@@ -103,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PaginationControlButtonEventCallbackTest(Page controlButton, int expectedButtonClickedValue)
         {
-            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var comp = Context.Render<PaginationButtonTest>();
 
             //Click control button
             FindControlButton(comp, controlButton).Click();
@@ -119,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void HidePageButtonTest()
         {
-            var comp = Context.RenderComponent<PaginationHidePageButtonsTest>();
+            var comp = Context.Render<PaginationHidePageButtonsTest>();
 
             comp.FindAll(".mud-pagination-item button").Count.Should().Be(2);
         }
@@ -138,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task PaginationPageButtonClickTest(int clickIndexPage, int initiallySelectedPage,
             int expectedSelectedPage)
         {
-            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var comp = Context.Render<PaginationButtonTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
@@ -154,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         //returns the specified control button
-        private static IElement FindControlButton(IRenderedFragment comp, Page controlButton)
+        private static IElement FindControlButton(IRenderedComponent<IComponent> comp, Page controlButton)
         {
             var buttons = comp.FindAll(".mud-pagination-item button");
             var button = controlButton switch
@@ -182,7 +183,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PaginationNavigateToPageTest(Page page, int expectedSelectedPage)
         {
-            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var comp = Context.Render<PaginationButtonTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
 
@@ -207,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PaginationNavigateToPageTest(int page, int expectedSelectedPage)
         {
-            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var comp = Context.Render<PaginationButtonTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
 
@@ -234,7 +235,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PaginationCountWithoutEllipsisTest(int count, int middleCount, int boundaryCount)
         {
-            var comp = Context.RenderComponent<PaginationCountTest>();
+            var comp = Context.Render<PaginationCountTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             comp.Find(".mud-pagination-test-middle-count input").Change(middleCount.ToString());
@@ -279,7 +280,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task PaginationCountWithEllipsisTest(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
         {
-            var comp = Context.RenderComponent<PaginationCountTest>();
+            var comp = Context.Render<PaginationCountTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //set count variables
@@ -305,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PaginationStylesTest()
         {
-            var comp = Context.RenderComponent<PaginationStylesTest>();
+            var comp = Context.Render<PaginationStylesTest>();
 
             var buttons = comp.FindAll(".mud-pagination-item button");
             var pagination = comp.Find("ul.mud-pagination");

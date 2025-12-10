@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void StepperContent_ShouldDisplayActiveStepContent()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step =>
                 {
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
             MudStepContext? firstStepContext = null;
             MudStepContext? secondStepContext = null;
 
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step =>
                 {
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Stepper_ShouldDisplayContentOfActiveStep()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, true);
                 self.AddChildContent<MudStep>(step =>
@@ -140,7 +140,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Stepper_ShouldNavigateViaNextAndPrevious()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, false);
                 self.AddChildContent<MudStep>(step =>
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Stepper_ShouldBeginWithFirstEnabledStep()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, true));
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, true));
@@ -205,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PreviousAndNext_ShouldCorrectlyHandleDisabledSteps()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, true);
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, true));
@@ -231,7 +231,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Stepper_ShouldBeAbleToSkipSkippableSteps()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, false);
                 self.AddChildContent<MudStep>(step =>
@@ -269,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ActiveIndex_ShouldBeTwoWayBindable()
         {
-            var comp = Context.RenderComponent<StepperTwoWayBindingTestComponent>();
+            var comp = Context.Render<StepperTwoWayBindingTestComponent>();
             var stepper1 = comp.FindComponents<MudStepper>()[0];
             var stepper2 = comp.FindComponents<MudStepper>()[1];
             stepper1.Instance.ActiveStep?.Title.Should().Be("A");
@@ -299,7 +299,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ManipulatingStepsProgrammatically_ShouldUpdateTheUi()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step =>
                 {
@@ -345,7 +345,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FirstStep_ShouldBeActiveIfActiveIndexNotSet()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "A"));
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "B"));
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InitialActiveIndex_ShouldBeRespectedIfSet()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.ActiveIndex, 1);
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "A"));
@@ -374,7 +374,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task RemoveStep_ShouldUpdateActiveIndex()
         {
             int activeIndex = 2;
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Bind(x => x.ActiveIndex, activeIndex, newValue => activeIndex = newValue);
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "A"));
@@ -401,13 +401,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task AddStep_ShouldUpdateActiveIndexAndStep()
         {
             int activeIndex = -1;
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Bind(x => x.ActiveIndex, activeIndex, newValue => activeIndex = newValue);
             });
-            var stepper1 = Context.RenderComponent<MudStep>(parameters => parameters.Add(x => x.Title, "X"));
-            var stepper2 = Context.RenderComponent<MudStep>(parameters => parameters.Add(x => x.Title, "Y"));
-            stepper.WaitForAssertion(() => stepper.RenderCount.Should().Be(1));
+            var stepper1 = Context.Render<MudStep>(parameters => parameters.Add(x => x.Title, "X"));
+            var stepper2 = Context.Render<MudStep>(parameters => parameters.Add(x => x.Title, "Y"));
             activeIndex.Should().Be(-1);
             // adding a step changes active index to 0
             stepper1.Instance.IsActive.Should().Be(false); // <-- fight partial line coverage
@@ -423,7 +422,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Stepper_ShouldNavigateViaProgrammaticApi()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, false);
                 self.AddChildContent<MudStep>(step =>
@@ -471,7 +470,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CompletedContent_ShouldShowUpIfAllStepsAreComplete_Horizontal()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.CompletedContent, markupFactory => markupFactory.AddMarkupContent(0, "voilà"));
                 self.AddChildContent<MudStep>(step =>
@@ -499,7 +498,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CompletedContent_ShouldShowUpIfAllStepsAreComplete_Vertical()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.Vertical, true);
                 self.Add(x => x.CompletedContent, markupFactory => markupFactory.AddMarkupContent(0, "voilà"));
@@ -526,7 +525,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task UpdatingStepProperties_ShouldUpdateStepper()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step =>
                 {
@@ -570,7 +569,7 @@ namespace MudBlazor.UnitTests.Components
         {
             int aClick = 0;
             int bClick = 0;
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, true);
                 self.AddChildContent<MudStep>(step =>
@@ -595,9 +594,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ActionContentTemplate_ShouldReplaceTheNavButtons()
         {
-            var stepper = Context.RenderComponent<MudStepper>();
+            var stepper = Context.Render<MudStepper>();
             stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(2, "because no action content defined"); // prev, next
-            stepper = Context.RenderComponent<MudStepper>(self =>
+            stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.Tag, "je ne sais pas");
                 // this replaces the action buttons prev, skip and next with just text
@@ -610,13 +609,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShowReset_ShouldControlResetButtonVisibilty()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.ShowResetButton, true);
             });
             stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(3); // reset, previous, next
             stepper.FindAll(".mud-card-actions .mud-stepper-button-reset").Count.Should().Be(1);
-            stepper = Context.RenderComponent<MudStepper>(self =>
+            stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.ShowResetButton, false);
             });
@@ -627,7 +626,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ResetButton_ShouldResetActiveStep()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.ShowResetButton, true);
                 self.AddChildContent<MudStep>(step =>
@@ -673,7 +672,7 @@ namespace MudBlazor.UnitTests.Components
                 args.Cancel = cancel;
                 return Task.CompletedTask;
             }
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
                 self.Add(x => x.ShowResetButton, true);
@@ -716,7 +715,7 @@ namespace MudBlazor.UnitTests.Components
                 args.Cancel = cancel;
                 return Task.CompletedTask;
             }
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
                 self.Add(x => x.ShowResetButton, true);
@@ -760,7 +759,7 @@ namespace MudBlazor.UnitTests.Components
                 args.Cancel = cancel;
                 return Task.CompletedTask;
             }
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
                 self.Add(x => x.ShowResetButton, true);
@@ -791,7 +790,7 @@ namespace MudBlazor.UnitTests.Components
                 args.Cancel = cancel;
                 return Task.CompletedTask;
             }
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
                 self.Add(x => x.ShowResetButton, true);
@@ -824,7 +823,7 @@ namespace MudBlazor.UnitTests.Components
                 args.Cancel = cancel;
                 return Task.CompletedTask;
             }
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
                 self.Add(x => x.ShowResetButton, true);
@@ -863,7 +862,7 @@ namespace MudBlazor.UnitTests.Components
                 args.Cancel = cancel;
                 return Task.CompletedTask;
             }
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
                 self.Add(x => x.ShowResetButton, true);
@@ -929,7 +928,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void HasCompletedClassIfLinear()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.CompletedStepColor, Color.Success);
                 self.Add(x => x.CurrentStepColor, Color.Secondary);
@@ -949,7 +948,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, false)]
         public void HasRippleClass(bool ripple, bool hasClass)
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.Ripple, ripple);
 
@@ -976,7 +975,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, false)]
         public void HasClickableClassIfNonLinear(bool nonLinear, bool hasClass)
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, nonLinear);
 
@@ -1005,7 +1004,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Stepper_ShouldHandleNullChildContent()
         {
-            var stepper = Context.RenderComponent<MudStepper>(self =>
+            var stepper = Context.Render<MudStepper>(self =>
             {
                 self.AddChildContent<MudStep>(step =>
                 {

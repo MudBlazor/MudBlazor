@@ -20,7 +20,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Boolean()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Boolean"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Boolean"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">bool</code>");
     }
 
@@ -30,7 +30,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_BooleanArray()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Boolean[]"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Boolean[]"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">bool[]</code>");
     }
 
@@ -40,7 +40,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Int32()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int32"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int32"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">int</code>");
     }
 
@@ -50,7 +50,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Int32Array()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int32[]"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int32[]"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">int[]</code>");
     }
 
@@ -60,7 +60,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Int64()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int64"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int64"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">long</code>");
     }
 
@@ -70,7 +70,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Int64Array()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int64[]"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Int64[]"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">long[]</code>");
     }
 
@@ -80,7 +80,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_String()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.String"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.String"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">string</code>");
     }
 
@@ -90,7 +90,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_StringArray()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.String[]"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.String[]"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">string[]</code>");
     }
 
@@ -100,7 +100,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Double()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Double"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Double"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">double</code>");
     }
 
@@ -110,7 +110,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_DoubleArray()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Double[]"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Double[]"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">double[]</code>");
     }
 
@@ -120,7 +120,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Single()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Single"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Single"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">float</code>");
     }
 
@@ -130,7 +130,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_SingleArray()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Single[]"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Single[]"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">float[]</code>");
     }
 
@@ -140,7 +140,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Object()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Object"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Object"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">object</code>");
     }
 
@@ -150,7 +150,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_ObjectArray()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Object[]"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Object[]"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">object[]</code>");
     }
 
@@ -160,7 +160,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_Void()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Void"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Void"));
         comp.Markup.Should().Be("<code class=\"docs-code docs-code-primary\">void</code>");
     }
 
@@ -170,7 +170,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_MudBlazor_Component()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.MudAlert"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.MudAlert"));
         // There should be a link to MudAlert
         comp.Markup.Should().Contain("<a href=\"/api/MudAlert\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">MudAlert</a>");
     }
@@ -181,7 +181,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_MudBlazor_Enums()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.Adornment"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.Adornment"));
         // There should be a link to Adornment
         comp.Markup.Should().Contain("<a href=\"/api/Adornment\"");
         comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">Adornment</a>");
@@ -193,7 +193,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_External_MicrosoftType()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "Microsoft.AspNetCore.Components.RenderFragment"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "Microsoft.AspNetCore.Components.RenderFragment"));
         // There should be a link to Microsoft docs
         comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/Microsoft.AspNetCore.Components.RenderFragment\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">");
         // There should be a Link icon
@@ -206,7 +206,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     [Test]
     public void ApiTypeLink_External_SystemType()
     {
-        var comp = Context.RenderComponent<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Guid"));
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Guid"));
         // There should be a link to Microsoft docs
         comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/System.Guid\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">");
         // There should be a Link icon

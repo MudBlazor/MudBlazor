@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void LineChartEmptyData()
         {
-            var comp = Context.RenderComponent<Bar<double>>();
+            var comp = Context.Render<Bar<double>>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -265,7 +265,7 @@ namespace MudBlazor.UnitTests.Charts
                 new ChartSeries<double>() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")

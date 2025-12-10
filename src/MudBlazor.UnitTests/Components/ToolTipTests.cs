@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public async Task RenderContent(bool usingFocusout)
         {
-            var comp = Context.RenderComponent<TooltipWithTextTest>(p => p.Add(
+            var comp = Context.Render<TooltipWithTextTest>(p => p.Add(
                 x => x.TooltipTextContent, "my tooltip content text"
                 ));
 
@@ -82,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NoPopoverIfThereIsNoContent()
         {
-            var comp = Context.RenderComponent<TooltipWithTextTest>(p => p.Add(
+            var comp = Context.Render<TooltipWithTextTest>(p => p.Add(
                 x => x.TooltipTextContent, null
                 ));
 
@@ -101,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public async Task RenderTooltipFragment(bool usingFocusout)
         {
-            var comp = Context.RenderComponent<TooltipWithRenderFragmentContentTest>();
+            var comp = Context.Render<TooltipWithRenderFragmentContentTest>();
 
             // content should always be visible
             var button = comp.Find("#sample-button");
@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, new[] { "mud-tooltip-root", "mud-tooltip-inline" })]
         public void ContainerClass_PropertyRelations(bool inlineValue, string[] expectedClasses)
         {
-            var comp = Context.RenderComponent<ToolTipContainerPropertyTest>(p =>
+            var comp = Context.Render<ToolTipContainerPropertyTest>(p =>
             p.Add(x => x.Inline, inlineValue));
 
             comp.Nodes.Last().Should().BeAssignableTo<IHtmlElement>();
@@ -161,7 +161,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InnerClass_ChildContentWrapper()
         {
-            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>();
+            var comp = Context.Render<ToolTipPopoverClassPropertyTest>();
 
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
@@ -176,7 +176,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, new[] { "mud-tooltip", "mud-tooltip-arrow" })]
         public async Task PopoverClass_PropertyArrow(bool arrowValue, string[] expectedClasses)
         {
-            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>(p =>
+            var comp = Context.Render<ToolTipPopoverClassPropertyTest>(p =>
             p.Add(x => x.Arrow, arrowValue));
 
             var button = comp.Find("button");
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, new[] { "mud-tooltip", "mud-theme-dark" })]
         public async Task PopoverClass_PropertyColor(Color colorValue, string[] expectedClasses)
         {
-            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>(p =>
+            var comp = Context.Render<ToolTipPopoverClassPropertyTest>(p =>
             p.Add(x => x.Color, colorValue));
 
             var button = comp.Find("button");
@@ -212,7 +212,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Success, false, new[] { "mud-tooltip", "mud-theme-success" })]
         public async Task PopoverClass_PropertyColorAndArrow(Color colorValue, bool arrowValue, string[] expectedClasses)
         {
-            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>(p =>
+            var comp = Context.Render<ToolTipPopoverClassPropertyTest>(p =>
             {
                 p.Add(x => x.Color, colorValue);
                 p.Add(x => x.Arrow, arrowValue);
@@ -242,7 +242,7 @@ namespace MudBlazor.UnitTests.Components
 
         public async Task PopoverClass_Placement(Placement placementValue, bool rtlValue, string[] expectedClasses)
         {
-            var comp = Context.RenderComponent<ToolTipPlacementPropertyTest>(p =>
+            var comp = Context.Render<ToolTipPlacementPropertyTest>(p =>
             {
                 p.Add(x => x.Placement, placementValue);
                 p.Add(x => x.RightToLeft, rtlValue);
@@ -259,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_On_Focus()
         {
-            var comp = Context.RenderComponent<ToolTipPlacementPropertyTest>();
+            var comp = Context.Render<ToolTipPlacementPropertyTest>();
 
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onfocusin", new FocusEventArgs());
@@ -272,7 +272,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_On_Click()
         {
-            var comp = Context.RenderComponent<TooltipClickTest>();
+            var comp = Context.Render<TooltipClickTest>();
             var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
             tooltipComp.Visible.Should().BeFalse();
             var button = comp.Find("button");
@@ -288,7 +288,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public async Task Visible_ByDefault(bool usingFocusout)
         {
-            var comp = Context.RenderComponent<TooltipVisiblePropTest>(p =>
+            var comp = Context.Render<TooltipVisiblePropTest>(p =>
             {
                 p.Add(x => x.TooltipVisible, true);
             });
@@ -315,7 +315,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_Style_Respected()
         {
-            var comp = Context.RenderComponent<TestComponents.Tooltip.TooltipStylingTest>();
+            var comp = Context.Render<TestComponents.Tooltip.TooltipStylingTest>();
             var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onpointerup", new PointerEventArgs());
@@ -327,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Tooltip_Disabled_Default_False()
         {
-            var comp = Context.RenderComponent<TooltipDisabledPropertyTest>();
+            var comp = Context.Render<TooltipDisabledPropertyTest>();
             var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
             tooltipComp.Disabled.Should().BeFalse();
         }
@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_Disabled_Button_OnFocusIn_NoPopover()
         {
-            var comp = Context.RenderComponent<TooltipDisabledPropertyTest>(p =>
+            var comp = Context.Render<TooltipDisabledPropertyTest>(p =>
             {
                 p.Add(x => x.TooltipDisabled, true);
             });
@@ -348,7 +348,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_Disabled_Button_OnPointerEnter_NoPopover()
         {
-            var comp = Context.RenderComponent<TooltipDisabledPropertyTest>(p =>
+            var comp = Context.Render<TooltipDisabledPropertyTest>(p =>
             {
                 p.Add(x => x.TooltipDisabled, true);
             });
@@ -363,7 +363,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public async Task Tooltip_Handle_Pointer_Events(bool showOnHover)
         {
-            var comp = Context.RenderComponent<MudTooltip>(parameters => parameters
+            var comp = Context.Render<MudTooltip>(parameters => parameters
                 .Add(x => x.ShowOnHover, showOnHover)
                 .Add(x => x.ShowOnClick, true)
                 .Add(x => x.Text, "tooltip text")

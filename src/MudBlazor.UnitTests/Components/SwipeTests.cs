@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SwipeTest_1()
         {
-            var comp = Context.RenderComponent<SwipeAreaTest>();
+            var comp = Context.Render<SwipeAreaTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             await comp.InvokeAsync(() => swipe.Instance._yDown = 50);
@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SwipeTest_2()
         {
-            var comp = Context.RenderComponent<SwipeAreaOnSwipeEndTest>();
+            var comp = Context.Render<SwipeAreaOnSwipeEndTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             // Swipe below the sensitivity should not make change.
@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             comp.WaitForState(() => comp.Instance.PreventDefault);
             comp.Instance._listenerIds.Should().BeEquivalentTo(listenerIds);
@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             var handler = Context.JSInterop.SetupVoid(invocation => invocation.Identifier == "mudElementRef.removeDefaultPreventingHandlers")
                 .SetVoidResult();

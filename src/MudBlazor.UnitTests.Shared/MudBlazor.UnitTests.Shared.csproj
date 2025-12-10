@@ -10,7 +10,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.40.0" />
+    <PackageReference Include="bunit" Version="2.2.2" />
     <PackageReference Include="nunit" Version="4.4.0" />
   </ItemGroup>
 

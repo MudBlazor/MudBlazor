@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToolBarWrapContentTest()
         {
-            var component = Context.RenderComponent<ToolBarWrapContentTest>();
+            var component = Context.Render<ToolBarWrapContentTest>();
             var mudToolBar = component.Find(".mud-toolbar");
 
             mudToolBar.ClassList.Should().Contain("mud-toolbar-wrap-content");
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToolBar_WrapContent_ShouldBeFalseByDefault()
         {
-            var comp = Context.RenderComponent<MudToolBar>();
+            var comp = Context.Render<MudToolBar>();
             comp.Instance.WrapContent.Should().Be(false);
         }
     }

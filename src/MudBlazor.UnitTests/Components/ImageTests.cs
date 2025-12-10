@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_GeneralStructure()
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.Fluid, true);
                 p.Add(x => x.Src, "https://myimgsource.com/image.png");
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_ObjectFitToClassMapping(ObjectFit fit, string expectedClass)
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.ObjectFit, fit);
             });
@@ -85,7 +85,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_ObjectPositionToClassMapping(ObjectPosition position, string expectedClass)
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.ObjectPosition, position);
             });
@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
             var initialSrc = "primary-image.jpg";
             var fallbackSrc = "fallback-image.jpg";
 
-            var comp = Context.RenderComponent<MudImage>(parameters => parameters
+            var comp = Context.Render<MudImage>(parameters => parameters
                 .Add(p => p.Src, initialSrc)
                 .Add(p => p.FallbackSrc, fallbackSrc)
             );
@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var initialSrc = "primary-image.jpg";
 
-            var comp = Context.RenderComponent<MudImage>(parameters => parameters
+            var comp = Context.Render<MudImage>(parameters => parameters
                 .Add(p => p.Src, initialSrc)
             );
 

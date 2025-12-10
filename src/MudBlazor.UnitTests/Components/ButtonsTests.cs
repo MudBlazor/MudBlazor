@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldRenderAButtonByDefault()
         {
-            var comp = Context.RenderComponent<MudButton>();
+            var comp = Context.Render<MudButton>();
             //no HtmlTag nor Link properties are set, so HtmlTag is button by default
             comp.Instance
                 .HtmlTag
@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldRenderAnAnchorIfLinkIsSetAndIsNotDisabled()
         {
-            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+            var comp = Context.Render<MudButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank"));
             //Link property is set, so it has to render an anchor element
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
                 .And
                 .NotContain("__internal_stopPropagation_onclick");
 
-            comp = Context.RenderComponent<MudButton>(parameters => parameters
+            comp = Context.Render<MudButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank")
                 .Add(p => p.Disabled, true));
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldRenderRelIfSet()
         {
-            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+            var comp = Context.Render<MudButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Rel, "nofollow"));
             comp
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldHaveNoopenerOverridenByRel()
         {
-            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+            var comp = Context.Render<MudButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank")
                 .Add(p => p.Rel, "nofollow"));
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldHaveHaveNoRelWhenSetToEmpty()
         {
-            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+            var comp = Context.Render<MudButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Rel, "")
                 .Add(p => p.Target, "_blank"));
@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldNotRenderRelIfNullAndTargetNotBlank()
         {
-            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+            var comp = Context.Render<MudButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Rel, null)
                 .Add(p => p.Target, "_notblank"));
@@ -141,7 +141,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldRenderAButtonByDefault()
         {
-            var comp = Context.RenderComponent<MudIconButton>();
+            var comp = Context.Render<MudIconButton>();
             //no HtmlTag nor Link properties are set, so HtmlTag is button by default
             comp.Instance
                 .HtmlTag
@@ -160,8 +160,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldRenderAnAnchorIfLinkIsSet()
         {
-            using var ctx = new Bunit.TestContext();
-            var comp = ctx.RenderComponent<MudIconButton>(parameters => parameters
+            using var ctx = new Bunit.BunitContext();
+            var comp = ctx.Render<MudIconButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank"));
             //Link property is set, so it has to render an anchor element
@@ -186,7 +186,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldRenderRelIfSet()
         {
-            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+            var comp = Context.Render<MudIconButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Rel, "nofollow"));
             comp
@@ -202,7 +202,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldHaveNoopenerOverridenByRel()
         {
-            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+            var comp = Context.Render<MudIconButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank")
                 .Add(p => p.Rel, "nofollow"));
@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldHaveHaveNoRelWhenSetToEmpty()
         {
-            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+            var comp = Context.Render<MudIconButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank")
                 .Add(p => p.Rel, ""));
@@ -236,7 +236,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldNotRenderRelIfNullAndTargetNotBlank()
         {
-            var comp = Context.RenderComponent<MudIconButton>(parameters => parameters
+            var comp = Context.Render<MudIconButton>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Rel, null)
                 .Add(p => p.Target, "_notblank"));
@@ -253,7 +253,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldRenderAButtonByDefault()
         {
-            var comp = Context.RenderComponent<MudFab>();
+            var comp = Context.Render<MudFab>();
             //no HtmlTag nor Link properties are set, so HtmlTag is button by default
             comp.Instance
                 .HtmlTag
@@ -272,7 +272,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldRenderAnAnchorIfLinkIsSet()
         {
-            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+            var comp = Context.Render<MudFab>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank"));
             //Link property is set, so it has to render an anchor element
@@ -297,7 +297,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldNotRenderIconIfNoneSpecified()
         {
-            var comp = Context.RenderComponent<MudFab>();
+            var comp = Context.Render<MudFab>();
             comp.Markup
                 .Should()
                 .NotContainAny("mud-icon-root");
@@ -309,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldRenderRelIfSet()
         {
-            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+            var comp = Context.Render<MudFab>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Rel, "nofollow"));
             comp
@@ -325,7 +325,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldHaveNoopenerOverridenByRel()
         {
-            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+            var comp = Context.Render<MudFab>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank")
                 .Add(p => p.Rel, "nofollow"));
@@ -342,7 +342,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldHaveHaveNoRelWhenSetToEmpty()
         {
-            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+            var comp = Context.Render<MudFab>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Target, "_blank")
                 .Add(p => p.Rel, ""));
@@ -359,7 +359,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldNotRenderRelIfNullAndTargetNotBlank()
         {
-            var comp = Context.RenderComponent<MudFab>(parameters => parameters
+            var comp = Context.Render<MudFab>(parameters => parameters
                 .Add(p => p.Href, "https://www.google.com")
                 .Add(p => p.Rel, null)
                 .Add(p => p.Target, "_notblank"));
@@ -373,7 +373,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudToggleIconTest()
         {
-            var comp = Context.RenderComponent<MudToggleIconButton>();
+            var comp = Context.Render<MudToggleIconButton>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => comp.Instance.SetToggledAsync(true));
             comp.WaitForAssertion(() => comp.Instance.Toggled.Should().BeFalse());
@@ -382,7 +382,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonSizesTest()
         {
-            var comp = Context.RenderComponent<ButtonSizeIconSizeTest>();
+            var comp = Context.Render<ButtonSizeIconSizeTest>();
 
             var buttons = comp.Nodes.Where(n => n.NodeName.Equals("BUTTON")).ToArray();
             buttons.Length.Should().Be(6);
@@ -396,7 +396,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonIconSizesTest()
         {
-            var comp = Context.RenderComponent<ButtonSizeIconSizeTest>();
+            var comp = Context.Render<ButtonSizeIconSizeTest>();
 
             var buttons = comp.Nodes.Where(n => n.NodeName.Equals("BUTTON")).ToArray();
 
@@ -428,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ButtonsNestedDisabledTest()
         {
-            var comp = Context.RenderComponent<ButtonsNestedDisabledTest>();
+            var comp = Context.Render<ButtonsNestedDisabledTest>();
 
             comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeFalse();
@@ -444,10 +444,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ButtonsOnClickErrorContentCaughtException()
         {
-            var comp = Context.RenderComponent<ButtonErrorContenCaughtException>();
+            var comp = Context.Render<ButtonErrorContenCaughtException>();
             var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
-            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button.mud-button-root");
+            IReadOnlyList<IElement> Buttons() => comp.FindAll("button.mud-button-root");
             IElement MudButton() => Buttons()[0];
             IElement MudFab() => Buttons()[1];
             IElement MudIconButton() => Buttons()[2];
