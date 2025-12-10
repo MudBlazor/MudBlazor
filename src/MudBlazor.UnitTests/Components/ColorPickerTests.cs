@@ -59,11 +59,11 @@ namespace MudBlazor.UnitTests.Components
             "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
         };
 
-        private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
+        private async Task CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {
             if (checkInstanceValue)
             {
-                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
+                await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
             }
 
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
@@ -164,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(40, 256.78, _defaultYForColorPanel)]
-        public void SetR(byte r, double selectorXPosition, double selectorYPosition)
+        public async Task SetR(byte r, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -173,12 +173,12 @@ namespace MudBlazor.UnitTests.Components
             var expectedColor = comp.Instance.ColorValue.SetR(r);
             rInput.Change(expectedColor.R.ToString());
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
 
         [Test]
         [TestCase(240, 196.3, 14.71)]
-        public void SetG(byte g, double selectorXPosition, double selectorYPosition)
+        public async Task SetG(byte g, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -188,12 +188,12 @@ namespace MudBlazor.UnitTests.Components
 
             gInput.Change(expectedColor.G.ToString());
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
 
         [Test]
         [TestCase(90, 55.47, 161.76)]
-        public void SetB(byte b, double selectorXPosition, double selectorYPosition)
+        public async Task SetB(byte b, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -203,12 +203,12 @@ namespace MudBlazor.UnitTests.Components
 
             bInput.Change(expectedColor.B.ToString());
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
 
         [Test]
         [TestCase(0.9, _defaultXForColorPanel, _defaultYForColorPanel)]
-        public void SetA_InRGBMode(double a, double selectorXPosition, double selectorYPosition)
+        public async Task SetA_InRGBMode(double a, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -218,12 +218,12 @@ namespace MudBlazor.UnitTests.Components
 
             aInput.Change(a.ToString(CultureInfo.CurrentUICulture));
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
 
         [Test]
         [TestCase(90, 208.46, _defaultYForColorPanel)]
-        public void SetH(int h, double selectorXPosition, double selectorYPosition)
+        public async Task SetH(int h, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
 
@@ -233,12 +233,12 @@ namespace MudBlazor.UnitTests.Components
 
             hInput.Change(expectedColor.H.ToString());
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
 
         [Test]
         [TestCase(0.4, 134.88, 61.76)]
-        public void SetS(double s, double selectorXPosition, double selectorYPosition)
+        public async Task SetS(double s, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
 
@@ -248,12 +248,12 @@ namespace MudBlazor.UnitTests.Components
 
             sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
 
         [Test]
         [TestCase(0.67, 163.43, 23.53)]
-        public void SetL(double l, double selectorXPosition, double selectorYPosition)
+        public async Task SetL(double l, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
 
@@ -262,12 +262,12 @@ namespace MudBlazor.UnitTests.Components
             var expectedColor = comp.Instance.ColorValue.SetL(l);
             lColor.Change(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
 
         [Test]
         [TestCase(0.5, _defaultXForColorPanel, _defaultYForColorPanel)]
-        public void SetAlpha_AsHLS(double a, double selectorXPosition, double selectorYPosition)
+        public async Task SetAlpha_AsHLS(double a, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
 
@@ -276,12 +276,12 @@ namespace MudBlazor.UnitTests.Components
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
             lColor.Change(a.ToString(CultureInfo.CurrentUICulture));
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
 
         [Test]
         [TestCase("#8cb829ff", 242.48, 69.61)]
-        public void SetColorInput(string colorHexString, double selectorXPosition, double selectorYPosition)
+        public async Task SetColorInput(string colorHexString, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
 
@@ -292,12 +292,12 @@ namespace MudBlazor.UnitTests.Components
             var expectedColor = colorHexString;
             lColor.Change(colorHexString);
 
-            CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HEX);
+            await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HEX);
         }
 
         [Test]
         [TestCase("#8qb829ff")]
-        public void SetColorInput_InvalidNoChange(string colorHexString)
+        public async Task SetColorInput_InvalidNoChange(string colorHexString)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
 
@@ -308,11 +308,11 @@ namespace MudBlazor.UnitTests.Components
             var expectedColor = _defaultColor;
             hexInput.Change(colorHexString);
 
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HEX);
+            await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HEX);
         }
 
         [Test]
-        public void SetAlphaSlider()
+        public async Task SetAlphaSlider()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -326,12 +326,12 @@ namespace MudBlazor.UnitTests.Components
 
                 hueColorSlider[0].Input(i.ToString());
 
-                CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
+                await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
         }
 
         [Test]
-        public void PointerMove()
+        public async Task PointerMove()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -344,15 +344,15 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = new MudColor(74, 70, 112, 255);
 
-            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
 
             overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 0 });
 
-            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
 
         [Test]
-        public void SetHueSlider()
+        public async Task SetHueSlider()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -366,12 +366,12 @@ namespace MudBlazor.UnitTests.Components
 
                 hueColorSlider[0].Input(i.ToString());
 
-                CheckColorRelatedValues(comp, 208.46, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
+                await CheckColorRelatedValues(comp, 208.46, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
         }
 
         [Test]
-        public void Click_ColorPanel()
+        public async Task Click_ColorPanel()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -385,11 +385,11 @@ namespace MudBlazor.UnitTests.Components
             MudColor color = "#232232ff";
             var expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
 
-            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
 
         [Test]
-        public void Click_ModeButton()
+        public async Task Click_ModeButton()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
@@ -397,19 +397,19 @@ namespace MudBlazor.UnitTests.Components
             var modeButton = comp.Find(".mud-picker-control-switch button");
 
             //default to rgb
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
 
             // click to switch to HSL
             modeButton.Click();
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HSL);
+            await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HSL);
 
             //click again to switch to hex
             modeButton.Click();
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HEX);
+            await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HEX);
 
             //click last time to reset to RGB
             modeButton.Click();
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
         }
 
         [Test]
@@ -914,7 +914,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void GridCompactView_ChooseColor()
+        public async Task GridCompactView_ChooseColor()
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
             {
@@ -934,7 +934,7 @@ namespace MudBlazor.UnitTests.Components
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 colorElement.Click();
-                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
+                await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }
@@ -1065,12 +1065,12 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 2);
             var expectedColor = _defaultColor;
 
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);
+            await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);
             comp.FindComponent<MudColorPicker>().Instance.Value.Should().Be(_defaultColor);
         }
 
         [Test]
-        public void SetHLS_NotChangeRBG_ButCallbackFired()
+        public async Task SetHLS_NotChangeRBG_ButCallbackFired()
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
             {
@@ -1081,12 +1081,12 @@ namespace MudBlazor.UnitTests.Components
             var sColor = GetColorInput(comp, 1);
 
             var colorValue = comp.Instance.ColorValue.ToString(MudColorOutputFormats.HexA);
-            CheckColorRelatedValues(comp, 11.37, 7.84, comp.Instance.ColorValue, ColorPickerMode.HSL);
+            await CheckColorRelatedValues(comp, 11.37, 7.84, comp.Instance.ColorValue, ColorPickerMode.HSL);
 
             var expectedColor = comp.Instance.ColorValue.SetS(comp.Instance.ColorValue.S - 0.01);
             sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
 
-            CheckColorRelatedValues(comp, 11.37, 7.84, expectedColor, ColorPickerMode.HSL);
+            await CheckColorRelatedValues(comp, 11.37, 7.84, expectedColor, ColorPickerMode.HSL);
             var colorValueAfterChange = comp.Instance.ColorValue.ToString(MudColorOutputFormats.HexA);
 
             colorValue.Should().Be(colorValueAfterChange);
@@ -1094,20 +1094,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RTL_AlphaSliderInverseStyle()
+        public async Task RTL_AlphaSliderInverseStyle()
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
             {
                 p.AddCascadingValue("RightToLeft", true);
             });
 
-            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, comp.Instance.ColorValue, ColorPickerMode.RGB, true, true);
+            await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, comp.Instance.ColorValue, ColorPickerMode.RGB, true, true);
         }
 
         [Test]
         [TestCase(false)]
         [TestCase(true)]
-        public void Spectrum_DragPointer(bool disableDragEffect)
+        public async Task Spectrum_DragPointer(bool disableDragEffect)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
             {
@@ -1124,7 +1124,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Color should update as soon as pointer is down.
             overlay.PointerDown(new PointerEventArgs { OffsetX = x1, OffsetY = y1 });
-            CheckColorRelatedValues(comp, x1, y1, expectedColor1, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, x1, y1, expectedColor1, ColorPickerMode.RGB);
 
             const double x2 = 117.0;
             const double y2 = 140.0;
@@ -1135,16 +1135,16 @@ namespace MudBlazor.UnitTests.Components
             // Color shouldn't update if the drag effect is disabled.
             if (disableDragEffect)
             {
-                CheckColorRelatedValues(comp, x1, y1, expectedColor1, ColorPickerMode.RGB);
+                await CheckColorRelatedValues(comp, x1, y1, expectedColor1, ColorPickerMode.RGB);
             }
             else
             {
-                CheckColorRelatedValues(comp, x2, y2, expectedColor2, ColorPickerMode.RGB);
+                await CheckColorRelatedValues(comp, x2, y2, expectedColor2, ColorPickerMode.RGB);
             }
 
             // Color should update when pointer is released regardless of drag being enabled.
             overlay.PointerUp(new PointerEventArgs { OffsetX = x2, OffsetY = y2 });
-            CheckColorRelatedValues(comp, x2, y2, expectedColor2, ColorPickerMode.RGB);
+            await CheckColorRelatedValues(comp, x2, y2, expectedColor2, ColorPickerMode.RGB);
         }
 
         [Test]
