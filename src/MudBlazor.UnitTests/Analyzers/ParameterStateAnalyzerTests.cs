@@ -694,4 +694,348 @@ class MyComponent
             .WithArguments("Name", "string");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
+
+    // Tests for Expression<Func<>> - should NOT trigger MUD0012
+    // Expression trees are used for scenarios like reflection, LINQ providers, and test frameworks (e.g., bUnit)
+    // where the lambda is analyzed as data (expression tree) rather than executed as code.
+    // In these cases, the property access is not a direct external access but part of metadata.
+
+    [Test]
+    public async Task NoDiagnostic_WhenUsedInExpressionParameter()
+    {
+        // Property access inside Expression<Func<>> should not trigger MUD0012
+        // Expression trees are used for reflection-like scenarios
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public void Method(Expression<Func<ComponentA, int>> selector)
+    {
+        selector.Compile();
+    }
+
+    public void TestMethod()
+    {
+        Method(x => x.Counter); // Should NOT trigger MUD0012
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task NoDiagnostic_WhenUsedInBUnitAddMethod()
+    {
+        // Simulates the bUnit ComponentParameterCollectionBuilder.Add pattern
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class MudProgressLinear
+{
+    [MudBlazor.State.ParameterState]
+    public double Min { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public double Max { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public double Value { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public double BufferValue { get; set; }
+}
+
+class ComponentParameterCollectionBuilder<T>
+{
+    public ComponentParameterCollectionBuilder<T> Add<TValue>(Expression<Func<T, TValue>> selector, TValue value)
+    {
+        return this;
+    }
+}
+
+class TestClass
+{
+    public void CheckingPercentageAndBufferValue(double min, double max, double value, double buffervalue)
+    {
+        var builder = new ComponentParameterCollectionBuilder<MudProgressLinear>();
+        builder.Add(y => y.Min, min);
+        builder.Add(y => y.Max, max);
+        builder.Add(y => y.Value, value);
+        builder.Add(y => y.BufferValue, buffervalue);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task NoDiagnostic_WhenUsedInNestedExpressionParameter()
+    {
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public void GenericMethod<T, TValue>(Expression<Func<T, TValue>> selector)
+    {
+    }
+
+    public void TestMethod()
+    {
+        GenericMethod((ComponentA x) => x.Counter);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task MUD0012_NormalExternalAccess_ShouldStillTrigger()
+    {
+        // Normal external access (not in Expression) should still trigger MUD0012
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public void DirectAccess()
+    {
+        var x = {|#0:_componentA.Counter|}; // Should trigger MUD0012
+    }
+}";
+
+        var expected = VerifyCS.Diagnostic("MUD0012")
+            .WithLocation(0)
+            .WithArguments("Counter");
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
+    }
+
+    [Test]
+    public async Task MUD0012_MixedAccess_ShouldOnlyTriggerForDirectAccess()
+    {
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public void Method(Expression<Func<ComponentA, int>> selector)
+    {
+    }
+
+    public void TestMethod()
+    {
+        Method(x => x.Counter); // Should NOT trigger
+        var y = {|#0:_componentA.Counter|}; // Should trigger MUD0012
+    }
+}";
+
+        var expected = VerifyCS.Diagnostic("MUD0012")
+            .WithLocation(0)
+            .WithArguments("Counter");
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
+    }
+
+    [Test]
+    public async Task NoDiagnostic_WhenUsedInExpressionWithMultipleProperties()
+    {
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public string Name { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public void Method<T, TValue>(Expression<Func<T, TValue>> selector)
+    {
+    }
+
+    public void TestMethod()
+    {
+        Method((ComponentA x) => x.Counter);
+        Method((ComponentA x) => x.Name);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task NoDiagnostic_NestedLambdaInExpression()
+    {
+        // Test that nested lambdas work correctly - outer is Expression, inner is delegate
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+}
+
+class ComponentB
+{
+    private ComponentA _componentA = new ComponentA();
+
+    public void Method(Expression<Func<ComponentA, Func<int>>> selector)
+    {
+    }
+
+    public void TestMethod()
+    {
+        // Outer lambda is Expression, inner is a regular delegate
+        Method(x => () => x.Counter);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task NoDiagnostic_SetParamAsyncPattern()
+    {
+        // Test the SetParamAsync pattern from bUnit which was reported as not working
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState]
+    public bool AutoCycle { get; set; }
+}
+
+static class Extensions
+{
+    public static Task SetParamAsync<T>(this T self, Expression<Func<T, object?>> exp, object? value)
+    {
+        return Task.CompletedTask;
+    }
+}
+
+class TestClass
+{
+    public async Task TestMethod()
+    {
+        var comp = new MyComponent();
+        await comp.SetParamAsync(p => p.AutoCycle, true); // Should NOT trigger MUD0012
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
+
+    [Test]
+    public async Task NoDiagnostic_RenderComponentWithNestedLambdas()
+    {
+        // Test the RenderComponent(x => { x.Add(y => y.Property, value); }) pattern
+        // This is a common bUnit pattern where the outer lambda is Action<> and inner is Expression<>
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class MudProgressCircular
+{
+    [MudBlazor.State.ParameterState]
+    public double Value { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public double Min { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public double Max { get; set; }
+}
+
+class ComponentParameterCollectionBuilder<T>
+{
+    public ComponentParameterCollectionBuilder<T> Add<TValue>(Expression<Func<T, TValue>> selector, TValue value)
+    {
+        return this;
+    }
+}
+
+class TestContext
+{
+    public object RenderComponent<T>(Action<ComponentParameterCollectionBuilder<T>> parameterBuilder)
+    {
+        return null;
+    }
+}
+
+class TestClass
+{
+    private TestContext Context = new TestContext();
+
+    public void TestMethod()
+    {
+        // Outer lambda is Action<>, inner lambdas are Expression<>
+        var comp = Context.RenderComponent<MudProgressCircular>(x =>
+        {
+            x.Add(y => y.Value, 100.0);  // Should NOT trigger MUD0012
+            x.Add(y => y.Min, 0.0);      // Should NOT trigger MUD0012
+            x.Add(y => y.Max, 200.0);    // Should NOT trigger MUD0012
+        });
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source);
+    }
 }

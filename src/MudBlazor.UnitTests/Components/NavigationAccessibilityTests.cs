@@ -1,11 +1,10 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-using System.Linq;
+
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Navigation;
 using NUnit.Framework;
 

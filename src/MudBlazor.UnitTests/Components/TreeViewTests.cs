@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -7,7 +6,6 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.TreeView;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -17,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
         {
-            var comp = Context.RenderComponent<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), true)]);
+            var comp = Context.RenderComponent<DisabledTreeViewTest>(parameters => parameters.Add(x => x.Disabled, true));
             comp.Find("div.mud-treeview-item-content").Click();
             var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
@@ -768,7 +766,7 @@ namespace MudBlazor.UnitTests.Components
             var itemExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
-            await item.SetParametersAndRenderAsync(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
+            await item.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.OnDoubleClick, new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
@@ -789,7 +787,7 @@ namespace MudBlazor.UnitTests.Components
 
             var tree = comp.FindComponent<MudTreeView<string>>();
 
-            await tree.SetParametersAndRenderAsync(Parameter(nameof(MudTreeView<string>.SelectedValueChanged), new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
+            await tree.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValueChanged, new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             selectedItem.Should().Be("content");
@@ -835,7 +833,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Test updating the treeview root.
             comp.Instance.SimulateUpdateRoot = true;
-            await treeView.SetParamAsync(x => x.Items, await comp.Instance.LoadServerData(null));
+            var items = await comp.Instance.LoadServerData(null);
+            await treeView.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, items));
             comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
 
             // Test reloading the treeview item.
@@ -1224,7 +1223,6 @@ namespace MudBlazor.UnitTests.Components
             var exception = Assert.Throws<InvalidOperationException>(() =>
             {
                 var comp = Context.RenderComponent<TreeViewTest8>();
-                comp.SetParametersAndRenderAsync().Wait();
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 

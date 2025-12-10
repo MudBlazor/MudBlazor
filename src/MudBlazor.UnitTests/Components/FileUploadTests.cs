@@ -126,8 +126,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var fileName = "cat.jpg";
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", []);
-            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>(
-                ComponentParameterFactory.Parameter(nameof(FileUploadWithDragAndDropActivatorTest.File), defaultFile));
+            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>(parameters =>
+                parameters.Add(x => x.File, defaultFile));
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = fileUploadComp.Instance;
 

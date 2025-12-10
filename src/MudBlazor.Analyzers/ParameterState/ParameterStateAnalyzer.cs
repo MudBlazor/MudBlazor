@@ -104,6 +104,13 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
+            // Check if this property reference is inside a lambda converted to Expression<>
+            // x.Add(y => y.Counter, value) should not trigger any diagnostic
+            if (IsInsideLambdaConvertedToExpression(propertyReference))
+            {
+                return;
+            }
+
             // Check if this property reference is the target of an assignment
             // If so, we handle it in the assignment analyzers, not here
             if (IsAssignmentTarget(propertyReference))
@@ -413,6 +420,121 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
             return false;
         }
 
+        private static bool IsInsideLambdaConvertedToExpression(IPropertyReferenceOperation propertyReference)
+        {
+            // Walk up the operation tree to check if we're inside a lambda that's being converted to Expression<>
+            // This handles cases like: x.Add(y => y.Counter, value) or comp.SetParamAsync(p => p.Property, value)
+            // where the lambda is passed as an Expression<Func<T, TValue>> parameter
+            var current = propertyReference.Parent;
+            while (current is not null)
+            {
+                // Check if we're inside an anonymous function (lambda or anonymous method)
+                if (current is IAnonymousFunctionOperation anonymousFunction)
+                {
+                    // Check if this lambda is being converted to an Expression type
+                    // The conversion can happen at various levels in the operation tree
+                    if (IsLambdaConvertedToExpressionType(anonymousFunction))
+                    {
+                        return true;
+                    }
+                    // Continue checking outer lambdas in case of nested scenarios
+                    // Don't return false here - keep walking up the tree
+                }
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        private static bool IsLambdaConvertedToExpressionType(IAnonymousFunctionOperation anonymousFunction)
+        {
+            // Walk up from the lambda to find if it's being converted to an Expression type
+            // The operation tree can have various structures:
+            // 1. Lambda -> DelegateCreation -> Expression<>
+            // 2. Lambda -> Conversion -> Expression<>
+            // 3. Lambda -> Argument -> Conversion -> Expression<>
+            // 4. Lambda -> Argument -> DelegateCreation -> Expression<>
+            var parent = anonymousFunction.Parent;
+
+            // Keep checking up to 2 levels up to handle argument wrapping
+            for (var level = 0; level < 2 && parent is not null; level++)
+            {
+                if (parent is IDelegateCreationOperation delegateCreation)
+                {
+                    if (IsExpressionType(delegateCreation.Type))
+                    {
+                        return true;
+                    }
+                }
+                else if (parent is IConversionOperation conversion)
+                {
+                    if (IsExpressionType(conversion.Type))
+                    {
+                        return true;
+                    }
+                }
+
+                // Move to the next parent to handle argument wrapping
+                parent = parent.Parent;
+            }
+
+            return false;
+        }
+
+        private static bool IsExpressionType(ITypeSymbol? typeSymbol)
+        {
+            if (typeSymbol is not INamedTypeSymbol namedType)
+            {
+                return false;
+            }
+
+            // Check if it's a generic type
+            if (!namedType.IsGenericType)
+            {
+                return false;
+            }
+
+            // Get the original definition (removes type arguments)
+            var originalDefinition = namedType.OriginalDefinition;
+
+            // Check if the type name is "Expression"
+            if (!string.Equals(originalDefinition.Name, "Expression", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            // Check if the namespace is System.Linq.Expressions
+            return IsNamespaceMatch(originalDefinition.ContainingNamespace, "System", "Linq", "Expressions");
+        }
+
+        private static bool IsNamespaceMatch(INamespaceSymbol? namespaceSymbol, params string[] expectedParts)
+        {
+            if (namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace)
+            {
+                return false;
+            }
+
+            // Walk backwards through the namespace parts (innermost to outermost)
+            // For "System.Linq.Expressions", we check Expressions -> Linq -> System
+            for (var i = expectedParts.Length - 1; i >= 0; i--)
+            {
+                if (namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace)
+                {
+                    return false;
+                }
+
+                if (!string.Equals(namespaceSymbol.Name, expectedParts[i], StringComparison.Ordinal))
+                {
+                    return false;
+                }
+
+                namespaceSymbol = namespaceSymbol.ContainingNamespace;
+            }
+
+            // After checking all expected parts, we should be at the global namespace or null (which represents global)
+            // The null case can occur in some edge cases with generated or special types
+            return namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace;
+        }
+
         private static bool IsComponentBaseWithStateExtensionsType(INamedTypeSymbol? typeSymbol)
         {
             if (typeSymbol is null)
@@ -426,19 +548,8 @@ public sealed partial class ParameterStateAnalyzer : DiagnosticAnalyzer
                 return false;
             }
 
-            // Check namespace
-            var containingNamespace = typeSymbol.ContainingNamespace;
-            if (containingNamespace is null || containingNamespace.IsGlobalNamespace)
-            {
-                return false;
-            }
-
-            // Build namespace string and compare
-            // Expected: MudBlazor.Extensions
-            return string.Equals(containingNamespace.Name, "Extensions", StringComparison.Ordinal) &&
-                   containingNamespace.ContainingNamespace is not null &&
-                   string.Equals(containingNamespace.ContainingNamespace.Name, "MudBlazor", StringComparison.Ordinal) &&
-                   (containingNamespace.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace ?? true);
+            // Check namespace: MudBlazor.Extensions
+            return IsNamespaceMatch(typeSymbol.ContainingNamespace, "MudBlazor", "Extensions");
         }
 
         private static bool IsExternalAccess(IPropertyReferenceOperation propertyReference, OperationAnalysisContext context)
