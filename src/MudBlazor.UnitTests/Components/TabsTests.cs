@@ -1507,7 +1507,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Tab_DragAndDrop_ActiveIndexShouldNotChangeDisplay()
+        public void Tab_DragAndDrop_ActiveIndexShouldNotChangeDisplay()
         {
             // defaulting the ActiveIndex to something other than 0 caused a display issue where it tried to make
             // that tab the FIRST tab putting any leading tabs underneath an arrow to "go left" (or right if rtl)
