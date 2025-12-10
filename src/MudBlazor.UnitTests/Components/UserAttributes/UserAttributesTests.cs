@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Charts;
 using MudBlazor.Services;
 using NUnit.Framework;
-using TestContext = Bunit.TestContext;
 
 namespace MudBlazor.UnitTests.UserAttributes
 {
@@ -31,10 +30,10 @@ namespace MudBlazor.UnitTests.UserAttributes
         }
 
         [Test]
-        public void AllMudComponents_ShouldForwardUserAttributes()
+        public async Task AllMudComponents_ShouldForwardUserAttributes()
         {
             // Arrange
-            using var testContext = new TestContext();
+            await using var testContext = new BunitContext();
             testContext.AddTestServices();
             testContext.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 

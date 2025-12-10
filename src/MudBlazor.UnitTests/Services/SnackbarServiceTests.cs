@@ -13,12 +13,12 @@ namespace MudBlazor.UnitTests.Services;
 [TestFixture]
 public class SnackbarServiceTests : BunitTest
 {
-    private FakeNavigationManager _navigationManager;
+    private BunitNavigationManager _navigationManager;
 
     public override void Setup()
     {
         base.Setup();
-        _navigationManager = Context.Services.GetRequiredService<FakeNavigationManager>();
+        _navigationManager = Context.Services.GetRequiredService<BunitNavigationManager>();
     }
 
     [Test]

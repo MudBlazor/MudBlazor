@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void DonutChartEmptyData()
         {
-            var comp = Context.RenderComponent<Donut<double>>();
+            var comp = Context.Render<Donut<double>>();
             comp.Markup.Should().Contain("mud-chart-donut");
         }
 
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Charts
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
                 "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Charts
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
                 "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
@@ -134,7 +134,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 0, 0 };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.ChartSeries, [data]));
 
@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests.Charts
             string[] chartLabels = { "Area A", "Area B", "Area C", "Area D" };
             var chartSeries = new List<ChartSeries<double>>() { new() { Data = chartData } };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")

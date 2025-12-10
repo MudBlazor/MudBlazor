@@ -280,7 +280,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextParameterTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
                 .Add(x => x.HighlightedText, "item"));
             comp.MarkupMatches("This is the first <mark>item</mark>");
@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextsParameterWithOneElementTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
                 .Add(x => x.HighlightedTexts, new string[] { "item" }));
             comp.MarkupMatches("This is the first <mark>item</mark>");
@@ -304,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextsParameterWithMultipleElementsTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
                 .Add(x => x.HighlightedTexts, new string[] { "item", "This" }));
             comp.MarkupMatches("<mark>This</mark> is the first <mark>item</mark>");
@@ -316,7 +316,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithOneElementTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
                 .Add(x => x.HighlightedText, "This")
                 .Add(x => x.HighlightedTexts, new string[] { "item" }));
@@ -329,7 +329,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithMultipleElementsTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
                 .Add(x => x.HighlightedText, "This")
                 .Add(x => x.HighlightedTexts, new string[] { "item", "first" }));
@@ -342,7 +342,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_Nulls_Test()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, null)
                 .Add(x => x.HighlightedText, null));
             comp.MarkupMatches(string.Empty);
@@ -354,7 +354,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupWithRegexTextTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
                 .Add(x => x.HighlightedText, "["));
             comp.MarkupMatches("This is the first item");
@@ -366,7 +366,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUntilNextBoundaryTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
                 .Add(x => x.HighlightedText, "it")
                 .Add(x => x.UntilNextBoundary, true));
@@ -379,7 +379,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudHighlighterMarkupCaseSensitiveTest()
         {
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, "This is this")
                 .Add(x => x.HighlightedText, "this")
                 .Add(x => x.CaseSensitive, true));
@@ -404,7 +404,7 @@ namespace MudBlazor.UnitTests.Components
             var rawOutput = "&lt;i&gt;<mark>Mud</mark>Blazor&lt;/i&gt;";
             var formattedOutput = "<i><mark>Mud</mark>Blazor</i>";
 
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, markupText)
                 .Add(p => p.HighlightedText, searchFor)
                 .Add(p => p.Markup, false)
@@ -412,7 +412,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().Contain(rawOutput);
 
-            comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, markupText)
                 .Add(p => p.HighlightedText, searchFor)
                 .Add(p => p.Markup, true)
@@ -424,7 +424,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlInText_ShouldHighlightCorrectly()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "<span>Hello</span> World")
                 .Add(p => p.HighlightedText, "Hello")
                 .Add(p => p.Markup, true)
@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlSensitiveCharInHighlightedText_ShouldEncodeAndHighlight()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Hello <World>")
                 .Add(p => p.HighlightedText, "<World>")
                 .Add(p => p.Markup, true)
@@ -448,7 +448,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlInText_ShouldNotHighlightInTags()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "<div class='foo'>div content div</div>")
                 .Add(p => p.HighlightedText, "div")
                 .Add(p => p.Markup, true)
@@ -460,7 +460,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlTag_ShouldNotHighlight()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Hello <i>Mud</i> World")
                 .Add(p => p.HighlightedText, "<i>")
                 .Add(p => p.Markup, true)
@@ -472,7 +472,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_TextWithHtmlEntities_HighlightedTextIsEntityText()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Hello &amp; World")
                 .Add(p => p.HighlightedText, "&amp;")
                 .Add(p => p.Markup, true)
@@ -484,7 +484,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_HighlightedTextWithSingleQuotes_ShouldHighlight()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "This is a 'quoted' text and a \"double quoted\" text.")
                 .Add(p => p.HighlightedText, "'quoted'")
                 .Add(p => p.Markup, true)
@@ -496,7 +496,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_HighlightedTextWithDoubleQuotes_ShouldHighlight()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "This is a 'quoted' text and a \"double quoted\" text.")
                 .Add(p => p.HighlightedText, "\"double quoted\"")
                 .Add(p => p.Markup, true)
@@ -508,7 +508,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_HighlightedTextAsAttributeValue_ShouldNotHighlightInAttribute()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "<i>MudBlazor</i> is <span style='color:red'>important</span>")
                 .Add(p => p.HighlightedText, "nothing")
                 .Add(p => p.Markup, true)
@@ -520,7 +520,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_FormattingPreservation_ItalicsAndColor()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "<i>MudBlazor</i> is <span style='color:red'>important</span>")
                 .Add(p => p.HighlightedText, "MudBlazor")
                 .Add(p => p.Markup, true)
@@ -532,7 +532,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_FormattingPreservation_Bold()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Normal <b>bold</b> normal")
                 .Add(p => p.HighlightedText, "bold")
                 .Add(p => p.Markup, true)
@@ -544,7 +544,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_NonStandardTag_NoHighlight()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Hello <ambitious> world")
                 .Add(p => p.HighlightedText, "")
                 .Add(p => p.Markup, true)
@@ -556,7 +556,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_NonStandardTag_WithHighlightAfterTag()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Hello <ambitious> world")
                 .Add(p => p.HighlightedText, "world")
                 .Add(p => p.Markup, true)
@@ -568,7 +568,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_NonStandardTag_WithHighlightInsideTag()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Hello <ambitious> world")
                 .Add(p => p.HighlightedText, "bit")
                 .Add(p => p.Markup, true)
@@ -580,7 +580,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_NoFragments_RendersTextAsMarkupString()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Some text")
                 .Add(p => p.HighlightedText, "zip")
                 .Add(p => p.Markup, true)
@@ -592,7 +592,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_MarkupTrue_WithClass_RendersMarkWithClass()
         {
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, "Highlight this")
                 .Add(p => p.HighlightedText, "Highlight")
                 .Add(p => p.Markup, true)
@@ -609,7 +609,7 @@ namespace MudBlazor.UnitTests.Components
             var initialHighlightedText = "highlight";
 
             // 1. Render initially with Markup = true
-            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+            var comp = Context.Render<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, initialText)
                 .Add(p => p.HighlightedText, initialHighlightedText)
                 .Add(p => p.Markup, true)
