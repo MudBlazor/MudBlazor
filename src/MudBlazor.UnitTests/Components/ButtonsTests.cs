@@ -376,7 +376,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudToggleIconButton>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => comp.Instance.SetToggledAsync(true));
-            comp.WaitForAssertion(() => comp.Instance.Toggled.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Toggled.Should().BeFalse());
         }
 
         [Test]

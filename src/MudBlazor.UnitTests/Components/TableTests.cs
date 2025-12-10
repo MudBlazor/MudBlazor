@@ -1258,18 +1258,18 @@ namespace MudBlazor.UnitTests.Components
         /// (IEnumerable variation).
         /// </summary>
         [Test]
-        public void TableServerSideDataTest4()
+        public async Task TableServerSideDataTest4()
         {
             var comp = Context.Render<TableServerSideDataTest4>();
-            comp.WaitForAssertion(() => comp.FindAll("tr").Count.Should().Be(4)); // three rows + header row
-            comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("1"));
-            comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
-            comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("3"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tr").Count.Should().Be(4)); // three rows + header row
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("3"));
             comp.FindAll("div.mud-select-input")[0].MouseDown(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
-            comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
-            comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
-            comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("1"));
         }
 
         /// <summary>
@@ -1277,7 +1277,7 @@ namespace MudBlazor.UnitTests.Components
         /// (IQueryable variation).
         /// </summary>
         [Test]
-        public void TableServerSideDataTest4b()
+        public async Task TableServerSideDataTest4b()
         {
             var comp = Context.Render<TableServerSideDataTest4b>();
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
@@ -1286,9 +1286,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
             comp.FindAll("div.mud-select-input")[0].MouseDown(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
-            comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
-            comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
-            comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("1"));
         }
 
         /// <summary>
@@ -1466,7 +1466,7 @@ namespace MudBlazor.UnitTests.Components
             // Test
 
             // Make sure this first request was not canceled
-            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange a table refresh
             var second = new TaskCompletionSource<TableData<int>>();
@@ -1482,7 +1482,7 @@ namespace MudBlazor.UnitTests.Components
             // Test
 
             // Make sure this second request DID cancel the first request's token
-            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
         /// <summary>
@@ -2475,7 +2475,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests checks that RowsPerPage Parameter is two-way bindable
         /// </summary>
         [Test]
-        public void RowsPerPageParameterTwoWayBinding()
+        public async Task RowsPerPageParameterTwoWayBinding()
         {
             var rowsPerPage = 5;
             var newRowsPerPage = 25;
@@ -2496,7 +2496,7 @@ namespace MudBlazor.UnitTests.Components
             //Now select the 25 and check it
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            comp.WaitForAssertion(() => rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly"));
+            await comp.WaitForAssertionAsync(() => rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly"));
         }
 
         /// <summary>
@@ -2583,18 +2583,18 @@ namespace MudBlazor.UnitTests.Components
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
         [Test]
-        public void RowsPerPageChangeValueFromCode()
+        public async Task RowsPerPageChangeValueFromCode()
         {
             var testComponent = Context.Render<TablePagerChangeRowsPerPageTest>();
             var table = testComponent.FindComponent<MudTable<string>>().Instance;
             var buttonComponent = testComponent.FindComponent<MudButton>();
-            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+            await testComponent.WaitForAssertionAsync(() => table.RowsPerPage.Should().Be(35));
             //Toggle the rows per page value from 35 to 10
             buttonComponent.Find("button").Click();
-            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(10));
+            await testComponent.WaitForAssertionAsync(() => table.RowsPerPage.Should().Be(10));
             //Toggle the rows per page value from 10 back to  to 35
             buttonComponent.Find("button").Click();
-            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+            await testComponent.WaitForAssertionAsync(() => table.RowsPerPage.Should().Be(35));
         }
 
         /// <summary>
@@ -2715,19 +2715,19 @@ namespace MudBlazor.UnitTests.Components
             var tableComponent = comp.FindComponent<MudTable<int>>();
 
             // Assert starting page index is 0 (default).
-            comp.WaitForAssertion(() => tableComponent.Instance.CurrentPage.Should().Be(0));
-            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => tableComponent.Instance.CurrentPage.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
 
             // Assert modification via code correctly renders the corresponding page.
             await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 1));
 
-            comp.WaitForAssertion(() => tableComponent.Instance.CurrentPage.Should().Be(1));
-            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
+            await comp.WaitForAssertionAsync(() => tableComponent.Instance.CurrentPage.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
 
             // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
             comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
-            comp.WaitForAssertion(() => tableComponent.Instance.CurrentPage.Should().Be(2));
-            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+            await comp.WaitForAssertionAsync(() => tableComponent.Instance.CurrentPage.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
         /// <summary>
