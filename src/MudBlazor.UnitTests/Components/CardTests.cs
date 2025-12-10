@@ -19,9 +19,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<CardChildContentTest>();
             var button = comp.FindComponent<MudButton>();
             var numeric = comp.FindComponent<MudNumericField<int>>();
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(0));
             await comp.InvokeAsync(() => button.Instance.OnClick.InvokeAsync());
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(1));
         }
     }
 }
