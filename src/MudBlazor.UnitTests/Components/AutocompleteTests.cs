@@ -32,17 +32,18 @@ namespace MudBlazor.UnitTests.Components
             IElement ButtonActivator() => autocompleteComponent.Find(".mud-button-root.mud-no-activator");
 
             ButtonActivator().Click(); // open popover
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var pop = comp.WaitForElement("div.mud-popover"); // doesn't return until popover exists
+            comp.WaitForAssertion(() => pop.ClassList.Should().Contain("mud-popover-open")); // wait for popover to open
             var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>();
             items.Count.Should().Be(10, "The popover should contain 10 items."); // default maxitems is 10
             ButtonActivator().Click(); // close popover
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => pop.ClassList.Should().NotContain("mud-popover-open"));
 
             // set search
             autocompleteComponent.Find("input").Input("he");
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
-            filteredItems.Length.Should().Be(4, "The popover should contain 4 items.");
+            comp.WaitForAssertion(() => pop.ClassList.Should().Contain("mud-popover-open"));
+            var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>();
+            filteredItems.Count.Should().Be(4, "The popover should contain 4 items.");
         }
 
         /// <summary>
