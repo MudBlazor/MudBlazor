@@ -1440,11 +1440,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePickerTest_KeyboardNavigation_FixYear_CannotBeChanged()
         {
-            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
-            await comp.SetParamAsync(parameter => parameter.Date, startDate);
-            await comp.SetParamAsync(parameter => parameter.OpenTo, OpenTo.Month);
-            await comp.SetParamAsync(parameter => parameter.FixYear, 2022);
+            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(x => x.Date, startDate)
+                .Add(x => x.OpenTo, OpenTo.Month)
+                .Add(x => x.FixYear, 2022));
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
@@ -1462,11 +1462,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePickerTest_KeyboardNavigation_FixMonth_CannotBeChanged()
         {
-            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
-            await comp.SetParamAsync(parameter => parameter.Date, startDate);
-            await comp.SetParamAsync(parameter => parameter.OpenTo, OpenTo.Date);
-            await comp.SetParamAsync(parameter => parameter.FixMonth, 12);
+            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(x => x.Date, startDate)
+                .Add(x => x.OpenTo, OpenTo.Date)
+                .Add(x => x.FixMonth, 12));
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
