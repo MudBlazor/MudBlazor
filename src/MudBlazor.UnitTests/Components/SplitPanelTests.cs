@@ -62,7 +62,7 @@ public class SplitPanelTests : BunitTest
     public async Task ExecutesUpdateJsCall()
     {
         var comp = Context.RenderComponent<SplitPanelTest>();
-        await comp.SetParamAsync(c => c.Horizontal, true);
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(c => c.Horizontal, true));
 
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_update");
         invocation.Arguments.Count.Should().Be(5);
