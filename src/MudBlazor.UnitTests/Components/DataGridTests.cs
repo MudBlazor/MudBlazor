@@ -781,7 +781,7 @@ namespace MudBlazor.UnitTests.Components
             // Test
 
             // Make sure this first request was not canceled
-            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange a server data refresh
             var second = new TaskCompletionSource<GridData<int>>();
@@ -795,7 +795,7 @@ namespace MudBlazor.UnitTests.Components
             // Test
 
             // Make sure this second request DID cancel the first request's token
-            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
         [Test]
@@ -1140,7 +1140,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridFormValidationErrorsPreventUpdateTest()
+        public async Task DataGridFormValidationErrorsPreventUpdateTest()
         {
             var comp = Context.Render<DataGridFormValidationErrorsPreventUpdateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormValidationErrorsPreventUpdateTest.Model>>();
@@ -1153,7 +1153,7 @@ namespace MudBlazor.UnitTests.Components
 
             // edit data
             field.Instance.Value.Should().Be("Augusta_Homenick26@mud.com");
-            field.WaitForElement("input").Change("not-a-valid-email-address");
+            (await field.WaitForElementAsync("input")).Change("not-a-valid-email-address");
 
             // check the change occurred
             field.Instance.Value.Should().Be("not-a-valid-email-address");
@@ -1162,7 +1162,7 @@ namespace MudBlazor.UnitTests.Components
             field.Markup.Should().Contain("This is not a valid e-mail address");
 
             var button = comp.FindComponents<MudButton>().Single(b => b.Markup.Contains("Save"));
-            button.WaitForElement("button").Click();
+            (await button.WaitForElementAsync("button")).Click();
 
             // dialog should still be open and the items data should not have been updated
             using AssertionScope scope = new();
@@ -2778,19 +2778,19 @@ namespace MudBlazor.UnitTests.Components
                 if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count == 0)
                 {
                     FilterButton().Click();
-                    comp.WaitForElement(".filter-operator");
+                    await comp.WaitForElementAsync(".filter-operator");
                 }
 
                 // Open the operator dropdown and select an item
                 await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-                var listItems = comp.WaitForElements(".mud-list .mud-list-item");
+                var listItems = await comp.WaitForElementsAsync(".mud-list .mud-list-item");
                 listItems[operatorIndex].Click();
 
                 // Click the overlay to close the dropdown and commit the selection
                 comp.Find(".mud-overlay").Click();
 
                 // Assert that the number of active filters is correct
-                comp.WaitForAssertion(() =>
+                await comp.WaitForAssertionAsync(() =>
                 {
                     dataGrid.Instance.FilterDefinitions.Count.Should().Be(expectedFilterCount);
                 });
@@ -2804,7 +2804,7 @@ namespace MudBlazor.UnitTests.Components
 
             // 1. Initial state: Open the filter panel and confirm it's visible
             FilterButton().Click();
-            comp.WaitForAssertion(() => comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1));
 
             // 2. Test operators that should be removed when their value is empty
             await SelectFilterOperator(0, 0); // "contains"
@@ -3024,12 +3024,12 @@ namespace MudBlazor.UnitTests.Components
             };
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
-            comp.WaitForAssertion(() => dataGrid.Instance.FilterDefinitions.Should().Contain(filterDefinition));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.FilterDefinitions.Should().Contain(filterDefinition));
 
             var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
             await comp.InvokeAsync(() => filter.RemoveFilterAsync());
 
-            comp.WaitForAssertion(() => dataGrid.Instance.FilterDefinitions.Should().NotContain(filterDefinition));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.FilterDefinitions.Should().NotContain(filterDefinition));
         }
 
         [Test]
@@ -3270,16 +3270,16 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridHierarchyColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(2));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(2));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
             // one is disabled and will not be expanded
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4));
         }
 
         [Test]
-        public void DataGrid_RowDetail_ExpandCollapseAllWithOneTest()
+        public async Task DataGrid_RowDetail_ExpandCollapseAllWithOneTest()
         {
             var comp = Context.Render<DataGridHierarchyColumnTest>(p => p
                 .Add(x => x.LimitRowsToOne, true)
@@ -3287,12 +3287,12 @@ namespace MudBlazor.UnitTests.Components
             );
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
             var headerToggle = dataGrid.Find("th button.mud-hierarchy-toggle-button");
             headerToggle.Click();
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(1));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(1));
             headerToggle.Click();
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
         }
 
         [Test]
@@ -3499,7 +3499,7 @@ namespace MudBlazor.UnitTests.Components
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
 
-            dataGrid.WaitForAssertion(() =>
+            await dataGrid.WaitForAssertionAsync(() =>
             {
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
             });
@@ -3517,7 +3517,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             // Wait for switches, icons and buttons to appear
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
             {
                 var switches = comp.FindComponents<MudSwitch<bool>>();
                 switches.Count.Should().Be(6);
@@ -3528,7 +3528,7 @@ namespace MudBlazor.UnitTests.Components
                 buttons[1].Find("button").Click();
             });
 
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
             {
                 comp.FindAll(".mud-table-head th").Count.Should().Be(7);
             });
@@ -3540,13 +3540,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideAllColumnsAsync());
-            dataGrid.WaitForAssertion(() =>
+            await dataGrid.WaitForAssertionAsync(() =>
             {
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
             });
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumnsAsync());
-            dataGrid.WaitForAssertion(() =>
+            await dataGrid.WaitForAssertionAsync(() =>
             {
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
             });
@@ -3895,7 +3895,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_ColumnFilterMenu_OpensAtCursorPosition()
+        public async Task DataGrid_ColumnFilterMenu_OpensAtCursorPosition()
         {
             // https://github.com/MudBlazor/MudBlazor/issues/11518
             var comp = Context.Render<DataGridServerDataColumnFilterMenuTest>();
@@ -3910,7 +3910,7 @@ namespace MudBlazor.UnitTests.Components
                 PageX = openPosition.Left
             };
             comp.Find(".filter-button").Click(mouseArgs);
-            comp.WaitForAssertion(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
         }
 
         [Test]
@@ -4859,7 +4859,7 @@ namespace MudBlazor.UnitTests.Components
             columnMenu.Click();
 
             // Click on the menu item 'Hide'
-            comp.WaitForAssertion(() => comp.FindAll(".mud-menu-item").ElementAt(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-menu-item").ElementAt(1));
             var hideMenuItem = comp.FindAll(".mud-menu-item").ElementAt(1);
             hideMenuItem.Click();
 
@@ -5017,18 +5017,18 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = dataGridComponent.Instance;
 
             // Assert starting page index is 0 (default).
-            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(0));
-            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => dataGrid.CurrentPage.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
 
             // Assert modification via code correctly renders the corresponding page.
             await dataGridComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 1));
-            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(1));
-            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
+            await comp.WaitForAssertionAsync(() => dataGrid.CurrentPage.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
 
             // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
             comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
-            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(2));
-            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+            await comp.WaitForAssertionAsync(() => dataGrid.CurrentPage.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
         /// <summary>
@@ -5165,7 +5165,7 @@ namespace MudBlazor.UnitTests.Components
             firstRow.Click();
 
             // Verify events for row click
-            comp.WaitForAssertion(() => comp.Instance.SelectedItemChanged.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedItemChanged.Should().BeTrue());
             comp.Instance.SelectedItemsChanged.Should().BeTrue();
 
             // Reset event flags
@@ -5174,7 +5174,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridHeaderToggleHierarchyTest()
+        public async Task DataGridHeaderToggleHierarchyTest()
         {
             // Render with EnableHeaderToggle = true to enable header toggle functionality
             var comp = Context.Render<DataGridHierarchyColumnTest>(parameters =>
@@ -5197,12 +5197,12 @@ namespace MudBlazor.UnitTests.Components
 
             // Click the toggle button to collapse all hierarchies
             toggleButton.Click();
-            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
 
             // Click again to expand all
             toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
             toggleButton.Click();
-            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4)); // one disabled
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4)); // one disabled
         }
 
         [Test]
@@ -5293,11 +5293,11 @@ namespace MudBlazor.UnitTests.Components
 
             // When collapsed + LTR
             var collapsedIcon = accessor.GetGroupIcon();
-            comp.WaitForAssertion(() => collapsedIcon.Should().Be(Icons.Material.Filled.ChevronRight));
+            await comp.WaitForAssertionAsync(() => collapsedIcon.Should().Be(Icons.Material.Filled.ChevronRight));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.RightToLeft, true));
             // When collapsed + RTL
-            comp.WaitForAssertion(() => accessor.GetGroupIcon().Should().Be(Icons.Material.Filled.ChevronLeft));
+            await comp.WaitForAssertionAsync(() => accessor.GetGroupIcon().Should().Be(Icons.Material.Filled.ChevronLeft));
         }
 
         [Test]
@@ -5371,7 +5371,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridHierarchyInitiallyExpandedServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedServerDataTest.Model>>();
 
-            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Ira|27|Success|"));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = Ira|27|Success|"));
             comp.Markup.Should().Contain("uid = Anders|24|Error|");
 
             comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
@@ -5394,7 +5394,7 @@ namespace MudBlazor.UnitTests.Components
             nextButton.Should().NotBeNull();
             nextButton.Click();
 
-            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
 
             comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
             comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
@@ -5406,7 +5406,7 @@ namespace MudBlazor.UnitTests.Components
             prevButton.Should().NotBeNull();
             prevButton.Click();
 
-            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
 
             comp.Markup.Should().NotContain("uid = Ira|27|Success|");
             comp.Markup.Should().NotContain("uid = Sam|56|Normal|");

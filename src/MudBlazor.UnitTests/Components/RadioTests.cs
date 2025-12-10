@@ -217,7 +217,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioTest_KeyboardInput()
+        public async Task RadioTest_KeyboardInput()
         {
             var comp = Context.Render<RadioGroupTest1>();
             // print the generated html
@@ -226,10 +226,10 @@ namespace MudBlazor.UnitTests.Components
             radio.Instance.Value.Should().Be(null);
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be(null));
 
             //Can't tabbed around the radios in test.
         }
@@ -243,12 +243,12 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
             await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
-            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
             await radio.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
-            comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
         }
 
         [Test]

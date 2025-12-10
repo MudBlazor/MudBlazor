@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase;
+
+<div id="@_containerId" style="@Style" class="@Classname" @attributes="@UserAttributes">
+    <div class="@ClassnameFirstPanel">
+        @FirstPanel
+    </div>
+    <div class="@ClassnameDivider" 
+         tabindex="0" 
+         role="separator" 
+         aria-label="Resize panels" 
+         aria-orientation="@(Horizontal ? "horizontal" : "vertical")"></div>
+    <div class="@ClassnameSecondPanel">
+        @SecondPanel
+    </div>
+</div>

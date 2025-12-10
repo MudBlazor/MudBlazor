@@ -16,29 +16,29 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudSwitch<bool>>();
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(true));
         }
 
         [Test]

@@ -320,7 +320,7 @@ namespace MudBlazor.UnitTests.Components
 
             // this doesn't work on CI?
             // check render count. first render is just setup, second render renders the active step 
-            // stepper.WaitForAssertion(() => stepper.RenderCount.Should().Be(2));
+            // await stepper.WaitForAssertionAsync(() => stepper.RenderCount.Should().Be(2));
 
             // disable step 1
             stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(false);
@@ -343,7 +343,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void FirstStep_ShouldBeActiveIfActiveIndexNotSet()
+        public async Task FirstStep_ShouldBeActiveIfActiveIndexNotSet()
         {
             var stepper = Context.Render<MudStepper>(self =>
             {
@@ -351,14 +351,14 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "B"));
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "C"));
             });
-            stepper.WaitForAssertion(() => stepper.Instance.ActiveStep?.Title.Should().Be("A"));
+            await stepper.WaitForAssertionAsync(() => stepper.Instance.ActiveStep?.Title.Should().Be("A"));
             stepper.FindAll(".mud-step-label-icon")[0].TextContent.Trimmed().Should().Be("1");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
             stepper.FindAll(".mud-step-label-icon")[2].TextContent.Trimmed().Should().Be("3");
         }
 
         [Test]
-        public void InitialActiveIndex_ShouldBeRespectedIfSet()
+        public async Task InitialActiveIndex_ShouldBeRespectedIfSet()
         {
             var stepper = Context.Render<MudStepper>(self =>
             {
@@ -367,7 +367,7 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "B"));
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "C"));
             });
-            stepper.WaitForAssertion(() => stepper.Instance.ActiveStep?.Title.Should().Be("B"));
+            await stepper.WaitForAssertionAsync(() => stepper.Instance.ActiveStep?.Title.Should().Be("B"));
         }
 
         [Test]
@@ -381,7 +381,7 @@ namespace MudBlazor.UnitTests.Components
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "B"));
                 self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "C"));
             });
-            stepper.WaitForAssertion(() => stepper.Instance.ActiveStep?.Title.Should().Be("C"));
+            await stepper.WaitForAssertionAsync(() => stepper.Instance.ActiveStep?.Title.Should().Be("C"));
             activeIndex.Should().Be(2);
             // remove active step C, stepper should fall back to B  
             await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync((MudStep)stepper.Instance.ActiveStep!));

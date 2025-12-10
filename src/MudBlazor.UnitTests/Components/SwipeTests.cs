@@ -19,10 +19,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerCancelAsync(new PointerEventArgs()));
-            comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => swipe.Instance._xDown.Should().Be(null));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
-            comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => swipe.Instance._xDown.Should().Be(null));
         }
 
         [Test]
@@ -36,15 +36,15 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 20, ClientY = 20 }));
 
-            comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
-            comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDelta.Should().Be(null));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 150, ClientY = 200 }));
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 50 }));
 
-            comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
-            comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(-200));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDelta.Should().Be(-200));
         }
 
         [Test]

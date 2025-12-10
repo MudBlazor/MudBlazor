@@ -144,21 +144,21 @@ namespace MudBlazor.UnitTests.Components
             var panel = comp.FindComponent<MudExpansionPanel>();
             await panel.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Disabled, true));
 
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.ToggleExpansionAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ToggleExpansionAsync checks for Disabled, so nothing happens
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ToggleExpansionAsync checks for Disabled, so nothing happens
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.ExpandAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeTrue()); // ExpandAsync ignores Disabled
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeTrue()); // ExpandAsync ignores Disabled
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.CollapseAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ExpandAsync ignores Disabled
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ExpandAsync ignores Disabled
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
         }
 
         /// <summary>
@@ -250,52 +250,52 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<ExpansionPanelTwoWayBIndingTest>();
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion2);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion3);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion4);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeTrue());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion3);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion2);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion1);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
         }
 
         /// <summary>

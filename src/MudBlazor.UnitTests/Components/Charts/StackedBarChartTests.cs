@@ -570,7 +570,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Selection_LegendClick_ShouldUpdateSelectedIndexAndFireEvent()
+        public async Task StackedBarChart_Selection_LegendClick_ShouldUpdateSelectedIndexAndFireEvent()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -599,7 +599,7 @@ namespace MudBlazor.UnitTests.Charts
 
             // Click the second legend item (index 1)
             legendItems[1].Click();
-            comp.WaitForAssertion(() => selectedIndex.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => selectedIndex.Should().Be(1));
             eventFiredCount.Should().Be(1);
 
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1);
@@ -607,7 +607,7 @@ namespace MudBlazor.UnitTests.Charts
             // Click the first legend item (index 0)
             legendItems = comp.FindAll("div.mud-chart-legend-item");
             legendItems[0].Click();
-            comp.WaitForAssertion(() => selectedIndex.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => selectedIndex.Should().Be(0));
             eventFiredCount.Should().Be(2);
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0);
         }
