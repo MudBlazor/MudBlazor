@@ -11,7 +11,7 @@ public class SplitPanelTests : BunitTest
     [Test]
     public void RendersCorrectly()
     {
-        var comp = Context.RenderComponent<SplitPanelTest>();
+        var comp = Context.Render<SplitPanelTest>();
         comp.FindAll(".mud-split-panel").Count.Should().Be(1);
 
         var childPanels = comp.FindAll(".child-panel");
@@ -22,7 +22,7 @@ public class SplitPanelTests : BunitTest
     [Test]
     public void VisualParametersRenderCorrectly()
     {
-        var comp = Context.RenderComponent<MudSplitPanel>(parameters => parameters
+        var comp = Context.Render<MudSplitPanel>(parameters => parameters
             .Add(p => p.FirstPanel, builder => builder.AddContent(0, "First Panel"))
             .Add(p => p.SecondPanel, builder => builder.AddContent(0, "Second Panel"))
             .Add(p => p.Horizontal, true)
@@ -47,13 +47,13 @@ public class SplitPanelTests : BunitTest
     }
 
     [Test]
-    public void ExecutesBuildDestroyJsCalls()
+    public async Task ExecutesBuildDestroyJsCalls()
     {
-        Context.RenderComponent<SplitPanelTest>();
+        Context.Render<SplitPanelTest>();
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel.build");
         invocation.Arguments.Count.Should().Be(6);
 
-        Context.DisposeComponents();
+        await Context.DisposeComponentsAsync();
         invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_destroy");
         invocation.Arguments.Count.Should().Be(1);
     }
@@ -61,7 +61,7 @@ public class SplitPanelTests : BunitTest
     [Test]
     public async Task ExecutesUpdateJsCall()
     {
-        var comp = Context.RenderComponent<SplitPanelTest>();
+        var comp = Context.Render<SplitPanelTest>();
         await comp.SetParametersAndRenderAsync(parameters => parameters.Add(c => c.Horizontal, true));
 
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_update");
@@ -71,7 +71,7 @@ public class SplitPanelTests : BunitTest
     [Test]
     public async Task ExecutesResetSizesJsCall()
     {
-        var comp = Context.RenderComponent<SplitPanelTest>();
+        var comp = Context.Render<SplitPanelTest>();
         await comp.Instance.ResetSizesAsync();
 
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_resetSizes");
