@@ -1,16 +1,13 @@
-﻿#nullable enable
-using System;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using MudBlazor;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Stepper;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
+#nullable enable
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
@@ -408,20 +405,17 @@ namespace MudBlazor.UnitTests.Components
             {
                 self.Bind(x => x.ActiveIndex, activeIndex, newValue => activeIndex = newValue);
             });
+            var stepper1 = Context.RenderComponent<MudStep>(parameters => parameters.Add(x => x.Title, "X"));
+            var stepper2 = Context.RenderComponent<MudStep>(parameters => parameters.Add(x => x.Title, "Y"));
             stepper.WaitForAssertion(() => stepper.RenderCount.Should().Be(1));
             activeIndex.Should().Be(-1);
             // adding a step changes active index to 0
-#pragma warning disable BL0005
-            var step = new MudStep() { Title = "X" };
-            step.IsActive.Should().Be(false); // <-- fight partial line coverage
-            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(step));
-#pragma warning restore BL0005
+            stepper1.Instance.IsActive.Should().Be(false); // <-- fight partial line coverage
+            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(stepper1.Instance));
             activeIndex.Should().Be(0);
             stepper.Instance.ActiveStep?.Title.Should().Be("X");
             // adding another step won't change active index
-#pragma warning disable BL0005
-            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(new MudStep() { Title = "Y" }));
-#pragma warning restore BL0005
+            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(stepper2.Instance));
             activeIndex.Should().Be(0);
             stepper.Instance.ActiveStep?.Title.Should().Be("X");
         }
@@ -553,20 +547,20 @@ namespace MudBlazor.UnitTests.Components
 
             // disable step 1
             stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(false);
-            await stepper.FindComponents<MudStep>()[0].SetParametersAndRenderAsync(Parameter(nameof(MudStep.Disabled), true));
+            await stepper.FindComponents<MudStep>()[0].SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(true);
             // fail step 2
             stepper.FindAll(".mud-step")[1].ClassList.Should().NotContain("mud-step-error");
             stepper.FindAll(".mud-step-label-icon")[1].ClassList.Should().NotContain("mud-error");
             stepper.FindAll(".mud-step-label-content")[1].ClassList.Should().NotContain("mud-error-text");
-            await stepper.FindComponents<MudStep>()[1].SetParametersAndRenderAsync(Parameter(nameof(MudStep.HasError), true));
+            await stepper.FindComponents<MudStep>()[1].SetParametersAndRenderAsync(parameters => parameters.Add(x => x.HasError, true));
             stepper.FindAll(".mud-step")[1].ClassList.Should().Contain("mud-step-error");
             stepper.FindAll(".mud-step-label-icon")[1].ClassList.Should().Contain("mud-error");
             stepper.FindAll(".mud-step-label-content")[1].ClassList.Should().Contain("mud-error-text");
             // complete step 3
             stepper.FindAll(".mud-step")[2].ClassList.Should().NotContain("mud-step-completed");
             stepper.FindAll(".mud-step-label-icon")[2].QuerySelectorAll("path").Should().BeEmpty(); // no svg icon if not completed
-            await stepper.FindComponents<MudStep>()[2].SetParametersAndRenderAsync(Parameter(nameof(MudStep.Completed), true));
+            await stepper.FindComponents<MudStep>()[2].SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Completed, true));
             stepper.FindAll(".mud-step-label-icon")[2].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step")[2].ClassList.Should().Contain("mud-step-completed");
         }

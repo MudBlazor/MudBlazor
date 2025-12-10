@@ -5,7 +5,6 @@
 using FluentAssertions;
 using MudBlazor.Docs.Components;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Docs.Documentation;
 
@@ -21,7 +20,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_HandleMalformedXmlDocs()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Sorry guys, I was drunk when I <see cref wrote these docs, </burp>"));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Sorry guys, I was drunk when I <see cref wrote these docs, </burp>"));
         comp.Markup.Should().Be("<span class=\"mud-typography mud-typography-caption mud-warning-text\">XML documentation error.</span>");
     }
 
@@ -31,7 +30,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderJustText()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Gets or sets the icon for this widget."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Gets or sets the icon for this widget."));
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Gets or sets the icon for this widget.</span>");
     }
 
@@ -41,7 +40,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderNullText()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", null));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, null));
         comp.Markup.Should().Be("");
     }
 
@@ -51,7 +50,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderEmptyText()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", ""));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, ""));
         comp.Markup.Should().Be("");
     }
 
@@ -61,7 +60,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeHref_SelfClosing()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "For the best Blazor components, go to <see href=\"https://www.mudblazor.com\" /> right now."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "For the best Blazor components, go to <see href=\"https://www.mudblazor.com\" /> right now."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">For the best Blazor components, go to </span>");
         // Then a link to https://www.mudblazor.com with the same text
@@ -76,7 +75,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeHref_WithText()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "For the best Blazor components, go to <see href=\"https://www.mudblazor.com\">MudBlazor</see> right now."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "For the best Blazor components, go to <see href=\"https://www.mudblazor.com\">MudBlazor</see> right now."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">For the best Blazor components, go to </span>");
         // Then a link to "MudBlazor" (text)
@@ -91,7 +90,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeHref_EmptyUrl()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "For another Blazor library, go to <see href=\"\" />."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "For another Blazor library, go to <see href=\"\" />."));
         // The link should be skipped completely
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">For another Blazor library, go to </span><span class=\"mud-typography mud-typography-caption\">.</span>");
     }
@@ -102,7 +101,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_ExistingProperty()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Occurs when <see cref=\"P:MudBlazor.MudComponentBase.Class\" /> has changed."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Occurs when <see cref=\"P:MudBlazor.MudComponentBase.Class\" /> has changed."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Occurs when </span>");
         // Then a link to /api/MudComponentBase#Class
@@ -117,7 +116,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_NonExistantProperty()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Occurs when <see cref=\"P:MudBlazor.NotExistingType.NotExistingProperty\" /> has changed."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Occurs when <see cref=\"P:MudBlazor.NotExistingType.NotExistingProperty\" /> has changed."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Occurs when </span>");
         // There's no valid link, just a span for the non-existant property
@@ -132,7 +131,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_ExistingMethod()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "When set, calls <see cref=\"M:MudBlazor.AggregateDefinition`1.SimpleAvg\" /> to receive viewport changes."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "When set, calls <see cref=\"M:MudBlazor.AggregateDefinition`1.SimpleAvg\" /> to receive viewport changes."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">When set, calls </span>");
         // Then a link to /api/AggregateDefinition`1#SimpleAvg
@@ -147,7 +146,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_NonExistantMethod()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "When set, calls <see cref=\"M:MudBlazor.NotExistingType.NotExistingMethod\" /> to do stuff."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "When set, calls <see cref=\"M:MudBlazor.NotExistingType.NotExistingMethod\" /> to do stuff."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">When set, calls </span>");
         // There's no valid link, just a span for the non-existant method
@@ -162,7 +161,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_ExistingField()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Shows when set to <see cref=\"F:MudBlazor.Adornment.End\" />."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Shows when set to <see cref=\"F:MudBlazor.Adornment.End\" />."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Shows when set to </span>");
         // There should be a link to /api/Adornment
@@ -177,7 +176,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_NonExistantField()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Shows when set to <see cref=\"F:MudBlazor.Adornment.EndOfTheUniverse\" />."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Shows when set to <see cref=\"F:MudBlazor.Adornment.EndOfTheUniverse\" />."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Shows when set to </span>");
         // There should be a text span
@@ -192,7 +191,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_ExistingEvent()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Gets set when the <see cref=\"E:MudBlazor.MudAlert.OnClick\" /> event occurs."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Gets set when the <see cref=\"E:MudBlazor.MudAlert.OnClick\" /> event occurs."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Gets set when the </span>");
         // There should be a link to /api/MudAlert#OnClick
@@ -207,7 +206,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_NonExistantEvent()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Gets set when the <see cref=\"E:MudBlazor.MudAlert.OnSmokeAlarmInYourHouse\" /> event occurs."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "Gets set when the <see cref=\"E:MudBlazor.MudAlert.OnSmokeAlarmInYourHouse\" /> event occurs."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Gets set when the </span>");
         // There should be a text span
@@ -222,7 +221,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_External_MicrosoftType()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "The button can contain a <see cref=\"T:Microsoft.AspNetCore.Components.RenderFragment\" />."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "The button can contain a <see cref=\"T:Microsoft.AspNetCore.Components.RenderFragment\" />."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">The button can contain a </span>");
         // There should be a link to Microsoft docs
@@ -239,7 +238,7 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderSeeCref_External_SystemType()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "The popover unique ID is a <see cref=\"T:System.Guid\" />."));
+        var comp = Context.RenderComponent<ApiText>(parameters => parameters.Add(x => x.Text, "The popover unique ID is a <see cref=\"T:System.Guid\" />."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">The popover unique ID is a </span>");
         // There should be a link to Microsoft docs

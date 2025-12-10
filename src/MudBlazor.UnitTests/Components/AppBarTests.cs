@@ -6,7 +6,6 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.AppBar;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -19,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithModifiedToolBarClass()
         {
-            var comp = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.ToolBarClass), "test-class"));
+            var comp = Context.RenderComponent<MudAppBar>(parameters => parameters.Add(x => x.ToolBarClass, "test-class"));
 
             // Find the Toolbar inside the AppBar
             comp.Find("div").ToMarkup()
@@ -47,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomSetFalse()
         {
-            var bar = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), false));
+            var bar = Context.RenderComponent<MudAppBar>(parameters => parameters.Add(x => x.Bottom, false));
             bar.Markup
                .Should()
                .StartWith("<header")
@@ -61,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomSetTrue()
         {
-            var bar = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), true));
+            var bar = Context.RenderComponent<MudAppBar>(parameters => parameters.Add(x => x.Bottom, true));
             bar.Markup
                .Should()
                .StartWith("<footer")
@@ -95,7 +94,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithContextualSetFalse()
         {
-            var comp = Context.RenderComponent<ContextualAppBarTest>(Parameter(nameof(ContextualAppBarTest.IsContextual), false));
+            var comp = Context.RenderComponent<ContextualAppBarTest>(parameters => parameters.Add(x => x.IsContextual, false));
             var bar = comp.FindComponent<MudAppBar>();
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.List;
@@ -21,8 +18,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("Sparkling Water");
             comp.Markup.Should().NotContain("Roger Waters");
             comp.Markup.Should().NotContain("High Hopes");
-            await listItem.SetParamAsync(x => x.Text, "Roger Waters");
-            await listItem.SetParamAsync(x => x.SecondaryText, "High Hopes");
+            await listItem.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Text, "Roger Waters")
+                .Add(x => x.SecondaryText, "High Hopes"));
             comp.Markup.Should().NotContain("Sparkling Water");
             comp.Markup.Should().Contain("Roger Waters");
             comp.Markup.Should().Contain("High Hopes");

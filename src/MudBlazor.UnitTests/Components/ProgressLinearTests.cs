@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Globalization;
+﻿using System.Globalization;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;

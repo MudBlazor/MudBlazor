@@ -45,9 +45,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-button-root")[0].Click();
 
             var menuItems = comp.FindComponents<MudMenuItem>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            menuItems[2].Instance.Disabled = true;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await menuItems[2].SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
 
             comp.FindAll("a.mud-menu-item")[1].Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));

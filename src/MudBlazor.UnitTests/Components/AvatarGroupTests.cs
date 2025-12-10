@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Linq;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.AvatarGroup;
 using NUnit.Framework;

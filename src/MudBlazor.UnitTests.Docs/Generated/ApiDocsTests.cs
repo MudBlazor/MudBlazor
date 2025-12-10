@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
         public async Task MudAlert_API_Test_Example()
         {
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
-            var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter("TypeName", "MudAlert"));
+            var comp = ctx.RenderComponent<Api>(parameters => parameters.Add(x => x.TypeName, "MudAlert"));
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
             comp.Markup.Should().NotContain("Sorry, the type").And.NotContain("could not be found");
             var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));
