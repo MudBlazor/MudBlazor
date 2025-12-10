@@ -3,28 +3,22 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class TimePickerTests : BunitTest
     {
-        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter parameter)
-        {
-            return OpenPicker([parameter]);
-        }
-
-        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter[] parameters = null)
+        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleTimePickerTest>> parameterBuilder = null)
         {
             IRenderedComponent<SimpleTimePickerTest> comp;
-            if (parameters is null)
+            if (parameterBuilder is null)
             {
-                comp = Context.RenderComponent<SimpleTimePickerTest>();
+                comp = Context.Render<SimpleTimePickerTest>();
             }
             else
             {
-                comp = Context.RenderComponent<SimpleTimePickerTest>(parameters);
+                comp = Context.Render<SimpleTimePickerTest>(parameterBuilder);
             }
 
             // should not be open
@@ -39,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerOpenButtonDefaultAriaLabel()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
@@ -47,14 +41,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePicker_Should_Clear()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
             picker.Text.Should().Be(null);
             picker.Time.Should().Be(null);
-            await comp.SetParamAsync(p => p.Clearable, true);
-            await comp.SetParamAsync(p => p.Time, new TimeSpan(637940935730000000));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.Time, new TimeSpan(637940935730000000)));
             picker.Time.Should().Be(new TimeSpan(637940935730000000));
             picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
 
@@ -97,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToHours_CheckMinutesHidden()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
+            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -105,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHours()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
+            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
             // Are minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click on the minutes input
@@ -122,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToMinutes_CheckHoursHidden()
         {
-            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
+            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Minutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -130,7 +125,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimeEditModeMinutes_CheckHoursHidden()
         {
-            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyMinutes));
+            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyMinutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -138,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimeEditModeHours_CheckMinutesHidden()
         {
-            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyHours));
+            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyHours));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -146,7 +141,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimeEditModeNormal_CheckMinutesHidden()
         {
-            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.Normal));
+            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.Normal));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -164,7 +159,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             var picker = comp.Instance;
 
             // valid time
@@ -202,7 +197,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>();
+            var comp = Context.Render<SimpleTimePickerTest>();
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
             await comp.Instance.Open();
@@ -215,9 +210,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePickerTest_KeyboardNavigation()
         {
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            var comp = Context.RenderComponent<SimpleTimePickerTest>();
-            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
+            var comp = Context.Render<SimpleTimePickerTest>();
+            var timePickerComponent = comp.FindComponent<MudTimePicker>();
+            var timePicker = timePickerComponent.Instance;
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
@@ -237,7 +232,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            await comp.SetParamAsync(x => x.Time, new TimeSpan(02, 00, 00));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Time, new TimeSpan(02, 00, 00)));
             comp.WaitForAssertion(() => comp.Instance.Time.Should().Be(new TimeSpan(02, 00, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
@@ -275,7 +270,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", CtrlKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 00, 00)));
 
-            await comp.SetParamAsync(x => x.Time, new TimeSpan(03, 56, 00));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Time, new TimeSpan(03, 56, 00)));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(04, 01, 00)));
 
@@ -303,18 +298,18 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             //When its disabled, keys should not work
-            timePicker.Disabled = true;
+            await timePickerComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+
             await timePicker.FocusAsync();
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            await comp.InvokeAsync(() => timePicker.TimeFormat = "hhmm");
-            await comp.InvokeAsync(() => timePicker.TimeFormat = "hhmm");
+            await timePickerComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TimeFormat, "hhmm")
+                .Add(x => x.ReadOnly, true));
 
-            timePicker.ReadOnly = true;
             await comp.InvokeAsync(timePicker.SubmitAsync);
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         }
 
         /// <summary>
@@ -323,7 +318,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
-            var comp = Context.RenderComponent<MudTimePicker>(parameters
+            var comp = Context.Render<MudTimePicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
             comp.Find("input").Id.Should().NotBeNullOrEmpty();
@@ -338,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
         public void DatePickerWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
             var expectedId = "test-id";
-            var comp = Context.RenderComponent<MudTimePicker>(parameters
+            var comp = Context.Render<MudTimePicker>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
@@ -354,7 +349,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerInputId()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters => parameters
+            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters
                 .Add(c => c.InputId, "start-time"));
 
             comp.Find("input[id='start-time']").Should().NotBeNull();

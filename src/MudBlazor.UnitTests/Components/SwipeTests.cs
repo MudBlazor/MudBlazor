@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.SwipeArea;
 using NUnit.Framework;
 
@@ -14,7 +12,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SwipeTest_1()
         {
-            var comp = Context.RenderComponent<SwipeAreaTest>();
+            var comp = Context.Render<SwipeAreaTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             await comp.InvokeAsync(() => swipe.Instance._yDown = 50);
@@ -30,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SwipeTest_2()
         {
-            var comp = Context.RenderComponent<SwipeAreaOnSwipeEndTest>();
+            var comp = Context.Render<SwipeAreaOnSwipeEndTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             // Swipe below the sensitivity should not make change.
@@ -57,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(ComponentParameter.CreateParameter("PreventDefault", true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             comp.WaitForState(() => comp.Instance.PreventDefault);
             comp.Instance._listenerIds.Should().BeEquivalentTo(listenerIds);
@@ -75,12 +73,12 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(ComponentParameter.CreateParameter("PreventDefault", true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             var handler = Context.JSInterop.SetupVoid(invocation => invocation.Identifier == "mudElementRef.removeDefaultPreventingHandlers")
                 .SetVoidResult();
 
-            await comp.SetParamAsync(x => x.PreventDefault, false);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.PreventDefault, false));
 
             comp.Instance.PreventDefault.Should().Be(false);
             comp.Instance._listenerIds.Should().BeNull();

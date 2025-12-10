@@ -1,13 +1,8 @@
-﻿
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Snackbar;
 using NUnit.Framework;
 
@@ -23,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         public void SnackbarSetUp()
         {
             _service = Context.Services.GetService<ISnackbar>();
-            _provider = Context.RenderComponent<MudSnackbarProvider>();
+            _provider = Context.Render<MudSnackbarProvider>();
             _provider.Find("#mud-snackbar-container").InnerHtml.Trimmed().Should().BeEmpty();
         }
 
@@ -100,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TestWithRenderFragmentLiteral()
         {
-            var testComponent = Context.RenderComponent<SnackbarRenderFragmentMessageTest>();
+            var testComponent = Context.Render<SnackbarRenderFragmentMessageTest>();
 
             testComponent.Find("button").Click();
             _provider.WaitForAssertion(() =>
@@ -112,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TestWithCustomComponent()
         {
-            var testComponent = Context.RenderComponent<SnackbarCustomComponentMessageTest>();
+            var testComponent = Context.Render<SnackbarCustomComponentMessageTest>();
 
             testComponent.Find("button").Click();
             _provider.WaitForAssertion(() =>
@@ -241,7 +236,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SnackbarIconConfigurationTest()
         {
-            var testComponent = Context.RenderComponent<SnackbarIconConfiguationTest>();
+            var testComponent = Context.Render<SnackbarIconConfiguationTest>();
 
             testComponent.Find("button").Click();
 

@@ -5,7 +5,6 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -40,7 +39,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void PieChartEmptyData()
         {
-            var comp = Context.RenderComponent<Pie<double>>(parameters => parameters
+            var comp = Context.Render<Pie<double>>(parameters => parameters
                 .Add(p => p.ChartSeries, null));
 
             comp.Markup.Should().Contain("mud-chart-pie");
@@ -56,7 +55,7 @@ namespace MudBlazor.UnitTests.Charts
                 "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
                 "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.Height, "300px")
@@ -102,7 +101,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -139,7 +138,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 0, 0 };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.ChartSeries, [data]));
 
@@ -156,7 +155,7 @@ namespace MudBlazor.UnitTests.Charts
             // The `ChartSeries.Visible` property might not apply here in the same way as for other charts if we want to hide slices.
             // Instead, the legend interaction directly controls visibility of slices.
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")

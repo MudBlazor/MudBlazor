@@ -11,7 +11,7 @@ public class InputTests : BunitTest
     [Test]
     public async Task ReadOnlyShouldNotHaveClearButton()
     {
-        var comp = Context.RenderComponent<MudInput<string>>(p => p
+        var comp = Context.Render<MudInput<string>>(p => p
             .Add(x => x.Text, "some value")
             .Add(x => x.Clearable, true)
             .Add(x => x.ReadOnly, false));
@@ -21,5 +21,4 @@ public class InputTests : BunitTest
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
         comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
     }
-#nullable disable
 }
