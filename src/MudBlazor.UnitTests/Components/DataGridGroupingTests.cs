@@ -40,16 +40,16 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridGroupExpandedAsyncTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
 
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             dataGrid.Render();
             // after all groups are collapsed
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
             // datagrid should not be expanded with the new category since CollapseAll collapsed it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
         }
 
         [Test]
@@ -58,15 +58,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridGroupExpandedServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
 
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             dataGrid.Render();
             // after all groups are collapsed
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() => comp.Instance.AddFruit());
             // datagrid should not be expanded with the new category since CollapseAll collapsed it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
         }
 
         [Test]
@@ -93,16 +93,16 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridGroupExpandedFalseAsyncTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
 
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             dataGrid.Render();
             // after all groups are expanded
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
             // datagrid should not be collapsed with the new category since ExpandAll expanded it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(10));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(10));
         }
 
         [Test]
@@ -111,15 +111,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridGroupExpandedFalseServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
 
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             dataGrid.Render();
             // after all groups are expanded
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             await comp.InvokeAsync(() => comp.Instance.AddFruit());
             // datagrid should not be collapsed with the new category since ExpandAll expanded it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(10));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(10));
         }
 
         [Test]
@@ -257,7 +257,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridGroupingTestBoundAndUnboundScenarios()
+        public async Task DataGridGroupingTestBoundAndUnboundScenarios()
         {
             var comp = Context.Render<DataGridColumnGroupingTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
@@ -324,7 +324,7 @@ namespace MudBlazor.UnitTests.Components
             var headerOption = comp.Find("th.age .mud-menu button");
             headerOption.Click();
 
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
             {
                 var items = popoverProvider.FindComponents<MudMenuItem>();
                 items.Count.Should().BeGreaterThan(0);
@@ -572,12 +572,12 @@ namespace MudBlazor.UnitTests.Components
             expandButton.Should().NotBeNull();
 
             expandButton().Click(); // collapse the group
-            row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
-            row.WaitForAssertion(() => GetCount(false));
+            await row.WaitForAssertionAsync(() => row.Instance._expanded.Should().BeFalse());
+            await row.WaitForAssertionAsync(() => GetCount(false));
 
             expandButton().Click(); // expand the group
-            row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
-            row.WaitForAssertion(() => GetCount(true));
+            await row.WaitForAssertionAsync(() => row.Instance._expanded.Should().BeTrue());
+            await row.WaitForAssertionAsync(() => GetCount(true));
         }
 
         [Test]
@@ -587,7 +587,7 @@ namespace MudBlazor.UnitTests.Components
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             // by default has a groupdefinition
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
             // turn off grouping for the whole grid
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Groupable, false));
             dataGrid.Render();
@@ -610,7 +610,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
             // grouping is already setup make sure group definition is not null and it's first inner definition is not null
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
             dataGrid.Instance._groupDefinition.InnerGroup.Should().NotBeNull();
             dataGrid.Instance._groupDefinition.Grouping.Should().BeNullOrEmpty();
             // _groupDefinition is the definition for all the groups but isn't combined into the items until display so we need to 
@@ -644,7 +644,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
             provider.Should().NotBeNull();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             var menus = comp.FindAll("span.column-options button[aria-label='Column options']");
             menus.Count.Should().Be(3); // one for each column
             var countMenu = menus[1]; // 2nd column options (Count)
@@ -656,7 +656,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(x => x.Add(x => x.Groupable, false));
             // no change in grid rows since Grouping did not change
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
 
             menus = comp.FindAll("span.column-options button[aria-label='Column options']");
             menus.Count.Should().Be(3); // one for each column

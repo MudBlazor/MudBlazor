@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().BeNull();
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
-            comp.WaitForAssertion(() => textField.Value.Should().Be("Some Value"));
+            await comp.WaitForAssertionAsync(() => textField.Value.Should().Be("Some Value"));
         }
 
         /// <summary>
@@ -669,7 +669,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextField_Should_UpdateOnBoundValueChange_WhenFocused_WithTextUpdateSuppressionOff()
+        public async Task TextField_Should_UpdateOnBoundValueChange_WhenFocused_WithTextUpdateSuppressionOff()
         {
             var comp = Context.Render<TextFieldUpdateViaBindingTest>();
             var input = comp.FindComponent<MudInput<string>>();
@@ -683,9 +683,9 @@ namespace MudBlazor.UnitTests.Components
             input.Instance.Text.Should().Be("The Stormlight Archive");
             // now hit Enter to cause the clearing of the focused text field
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => comp.Find("span").TrimmedText().Should().Be("value:"));
-            comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
-            comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
+            await comp.WaitForAssertionAsync(() => comp.Find("span").TrimmedText().Should().Be("value:"));
+            await comp.WaitForAssertionAsync(() => input.Instance.Value.Should().Be(""));
+            await comp.WaitForAssertionAsync(() => input.Instance.Text.Should().Be(""));
         }
 
         [Test]
@@ -762,10 +762,10 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.Error).Should().BeFalse();
             comp.Instance.ValidationErrors.Should().HaveCount(0);
 
-            comp.WaitForAssertion(() => comp.Instance.GetInputType().Should().Be(InputType.Text));
+            await comp.WaitForAssertionAsync(() => comp.Instance.GetInputType().Should().Be(InputType.Text));
             await comp.InvokeAsync(async () => await comp.Instance.SelectAsync());
             await comp.InvokeAsync(async () => await comp.Instance.SelectRangeAsync(0, 1));
-            comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
         }
 
         [Test]
@@ -1001,7 +1001,7 @@ namespace MudBlazor.UnitTests.Components
                 })
             );
             comp.Find("input").Change("A");
-            comp.WaitForAssertion(() => callCounter.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => callCounter.Should().Be(1));
             comp.Find("input").Blur();
             await Task.Delay(TimeSpan.FromMilliseconds(200));
             callCounter.Should().Be(1);

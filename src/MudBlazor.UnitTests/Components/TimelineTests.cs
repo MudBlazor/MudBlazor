@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             var timeline = comp.FindComponent<MudTimeline>().Instance;
             //// validating some renders
             timeline.Should().NotBeNull();
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-timeline").Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-timeline").Count.Should().Be(1));
             comp.FindAll("div.mud-timeline-item").Count.Should().Be(5);
             var items = comp.FindComponents<MudTimelineItem>();
             items.Count.Should().Be(5);
@@ -153,14 +153,14 @@ namespace MudBlazor.UnitTests.Components
         /// Test horizontal timeline inside vertical timeline.
         /// </summary>
         [Test]
-        public void HorizontalTimelineInsideVerticalTimeline_Test()
+        public async Task HorizontalTimelineInsideVerticalTimeline_Test()
         {
             var comp = Context.Render<HorizontalTimelineInsideVerticalTimelineTest>();
             // select elements needed for the test
             var timeline = comp.FindComponent<MudTimeline>().Instance;
             // validating some renders
             timeline.Should().NotBeNull();
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-timeline").Count.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-timeline").Count.Should().Be(2));
             comp.FindAll("div.mud-timeline-item").Count.Should().Be(9);
             var items = comp.FindComponents<MudTimelineItem>();
             items.Count.Should().Be(9);

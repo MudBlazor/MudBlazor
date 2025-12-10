@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         /// </para>
         /// </summary>
         [Test]
-        public void InlineDialogTest()
+        public async Task InlineDialogTest()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -109,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
             comp1.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
             comp1.Find("button").Click();
-            comp1.WaitForAssertion(() =>
+            await comp1.WaitForAssertionAsync(() =>
                 comp.Find("div.mud-dialog-container").Should().NotBe(null)
             );
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/8746
         /// </summary>
         [Test]
-        public void InlineDialogShowMethodTest()
+        public async Task InlineDialogShowMethodTest()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -137,7 +137,7 @@ namespace MudBlazor.UnitTests.Components
 
             // open the dialog
             comp1.Find(".open-dialog-button").Click();
-            comp1.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
+            await comp1.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
 
             comp.Markup.Should().Contain("Here be dragons");
 
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
             // close by click on ok button
             comp.Find(".mud-message-box button").Click();
 
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), timeout: TimeSpan.FromSeconds(5));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), timeout: TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace MudBlazor.UnitTests.Components
         /// Nested dialogs should not appear unless manually shown
         /// </summary>
         [Test]
-        public void NestedInlineDialogTest()
+        public async Task NestedInlineDialogTest()
         {
             var provider = Context.Render<MudDialogProvider>();
             provider.Markup.Trim().Should().BeEmpty();
@@ -211,14 +211,14 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
             comp.Find("button").Click();
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
                 provider.Find("div.mud-dialog-container").Should().NotBe(null)
             );
             provider.Find("p.mud-typography").TrimmedText().Should().Be("Scorpiany!");
             provider.FindComponents<MudText>().Count.Should().Be(2); //counts both the dialog header and the text in our test component
 
             provider.Find("button").Click(); //open nested dialog
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
                 provider.Find(".nested").Should().NotBe(null)
             );
 
@@ -233,7 +233,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            await ImproveChanceOfSuccess(() =>
+            await ImproveChanceOfSuccess(async () =>
             {
                 var comp = Context.Render<MudDialogProvider>();
                 comp.Markup.Trim().Should().BeEmpty();
@@ -243,20 +243,18 @@ namespace MudBlazor.UnitTests.Components
                 var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
                 // open the dialog
                 comp1.Find("button").Click();
-                comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
+                await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
                 // close by click outside
                 comp.Find("div.mud-overlay").Click();
-                comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+                await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
                 // open again
                 comp1.Find("button").Click();
-                comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
+                await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
                     TimeSpan.FromSeconds(5));
                 // close again by click outside
-                comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
+                await comp.WaitForAssertionAsync(() => comp.Find("div.mud-overlay").Should().NotBeNull());
                 comp.Find("div.mud-overlay").Click();
-                comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
-
-                return Task.CompletedTask;
+                await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
             });
         }
 
@@ -265,7 +263,7 @@ namespace MudBlazor.UnitTests.Components
         /// Dialog inline should not be closed after any event inside
         /// </summary>
         [Test]
-        public void InlineDialogShouldNotCloseAfterStateHasChanged()
+        public async Task InlineDialogShouldNotCloseAfterStateHasChanged()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -278,7 +276,7 @@ namespace MudBlazor.UnitTests.Components
             // rate star
             comp.Find("span.mud-rating-item").FirstElementChild.Click();
             // check if is still opened
-            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
@@ -343,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void PassingEventCallbackToDialogViaParameters()
+        public async Task PassingEventCallbackToDialogViaParameters()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -357,7 +355,7 @@ namespace MudBlazor.UnitTests.Components
             var tf = comp.FindComponent<MudTextField<string>>();
             tf.Find("input").Input("User input ...");
             // the user input should be passed out of the dialog into the outer component and displayed there.
-            testComp.WaitForAssertion(() =>
+            await testComp.WaitForAssertionAsync(() =>
                 testComp.Find("p").TextContent.Trim().Should().Be("Search Text:  User input ...")
             );
         }
@@ -394,14 +392,14 @@ namespace MudBlazor.UnitTests.Components
 
             //Dialog should not be closable through backdrop click
             comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().NotBeEmpty(), TimeSpan.FromSeconds(5));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().NotBeEmpty(), TimeSpan.FromSeconds(5));
 
             //Allow dismiss
             customDialogReference.AllowDismiss = true;
 
             //Dialog should now be closable through backdrop click
             comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
@@ -505,7 +503,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/4871
         /// </summary>
         [Test]
-        public void InlineDialogBug4871Test()
+        public async Task InlineDialogBug4871Test()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -516,14 +514,14 @@ namespace MudBlazor.UnitTests.Components
             comp1.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
             comp1.Find("button").Click();
-            comp1.WaitForAssertion(() =>
+            await comp1.WaitForAssertionAsync(() =>
                 comp.Find("div.mud-dialog-container").Should().NotBe(null)
             );
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
             // close by click on ok button
             comp.FindAll("button").Last().Click();
-            comp.WaitForAssertion(() => comp.FindComponent<MudMessageBox>());
+            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudMessageBox>());
             var messageBox = comp.FindComponent<MudMessageBox>();
             messageBox.Should().NotBeNull();
             messageBox.Instance.YesText.Should().Be("BUG4871");
@@ -657,9 +655,9 @@ namespace MudBlazor.UnitTests.Components
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
             var dialogReference = await dialogReferenceLazy.Value;
-            comp.WaitForAssertion(() => dialogReference.Should().NotBe(null));
+            await comp.WaitForAssertionAsync(() => dialogReference.Should().NotBe(null));
             comp.Find("button").Click();
-            comp.WaitForAssertion(() => comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
             comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
             // check if tag is ok
@@ -784,14 +782,14 @@ namespace MudBlazor.UnitTests.Components
 
             //Dialog should not be closable through backdrop click
             comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().NotBeEmpty(), TimeSpan.FromSeconds(5));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().NotBeEmpty(), TimeSpan.FromSeconds(5));
 
             //Allow dismiss
             customDialogReference.AllowDismiss = true;
 
             //Dialog should now be closable through backdrop click
             comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>

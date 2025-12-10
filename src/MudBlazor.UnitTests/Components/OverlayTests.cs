@@ -392,7 +392,7 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    public void Overlay_StartClosedTest()
+    public async Task Overlay_StartClosedTest()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>(MockBehavior.Loose);
 
@@ -416,7 +416,7 @@ public class OverlayTests : BunitTest
         var button = comp.Find("button");
         button.Click();
         // verify dialog is open
-        comp.WaitForAssertion(() => dialog.FindComponent<MudOverlay>().Should().NotBeNull());
+        await comp.WaitForAssertionAsync(() => dialog.FindComponent<MudOverlay>().Should().NotBeNull());
 
         // verify lockScroll was called
         jsRuntimeMock.Verify(

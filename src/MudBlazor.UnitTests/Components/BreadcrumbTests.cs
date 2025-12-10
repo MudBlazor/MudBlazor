@@ -67,14 +67,14 @@ namespace MudBlazor.UnitTests.Components
                     new("Link 5", "link5", disabled: true)
                 }));
 
-            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Collapsed.Should().BeTrue());
             await comp.InvokeAsync(() => comp.Instance.Expand());
-            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Collapsed.Should().BeFalse());
 
             await comp.InvokeAsync(() => comp.Instance.Expand());
-            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Collapsed.Should().BeFalse());
 
-            comp.WaitForAssertion(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
+            await comp.WaitForAssertionAsync(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
         }
     }
 }

@@ -259,40 +259,40 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Value.Should().Be(null);
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(true));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(false));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(false));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(false));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(false));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(true));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(true));
 
             //Backspace should not change state on non-tristate checkbox
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TriState, false));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(true));
             //Check tristate space key
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(false));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(false));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(true));
         }
         /// <summary>
         /// Test if the keyboard-disabling switch works
@@ -310,40 +310,40 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Value.Should().Be(null);
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             //Backspace should not change state on non-tristate checkbox
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TriState, false));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
             //Check tristate space key
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(null));
         }
 
         [Test]

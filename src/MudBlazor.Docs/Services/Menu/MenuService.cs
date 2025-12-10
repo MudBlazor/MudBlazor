@@ -80,6 +80,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
+            .AddItem("Split Panel", typeof(MudSplitPanel))
             .AddItem("Hotkey", typeof(MudHotkey))
 
             //GROUPS
