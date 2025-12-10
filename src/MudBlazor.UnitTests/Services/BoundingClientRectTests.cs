@@ -1,123 +1,120 @@
 ﻿using FluentAssertions;
+using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests.Components
+namespace MudBlazor.UnitTests.Components;
+
+[TestFixture]
+public class BoundingClientRectTests
 {
-    [TestFixture]
-    public class BoundingClientRectTests
+    private Bunit.TestContext _ctx;
+
+    [SetUp]
+    public void Setup()
     {
-        private Bunit.TestContext ctx;
+        _ctx = new Bunit.TestContext();
+        _ctx.AddTestServices();
+    }
 
-        [SetUp]
-        public void Setup()
+    [TearDown]
+    public void TearDown() => _ctx.Dispose();
+
+    [Test]
+    public void Detect_Boundaries()
+    {
+        var client = new BoundingClientRect
         {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
+            Top = -10,
+            Left = -10,
+            Height = 100,
+            Width = 100,
+            ScrollX = 100,
+            ScrollY = 100,
+            WindowHeight = 1000,
+            WindowWidth = 1000
+        };
 
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
+        client.IsOutsideBottom.Should().BeFalse();
+        client.IsOutsideTop.Should().BeTrue();
+        client.IsOutsideLeft.Should().BeTrue();
+        client.IsOutsideRight.Should().BeFalse();
+    }
 
-        [Test]
-        public void Detect_Boundaries()
+    [Test]
+    public void BoundingClientRectProperties_ShouldBeSetAndComputedCorrectly()
+    {
+        // Arrange
+        var rect = new BoundingClientRect
         {
-            var client = new BoundingClientRect();
-            client.Top = -10;
-            client.Left = -10;
+            Top = 10,
+            Left = 20,
+            Width = 100,
+            Height = 200,
+            WindowHeight = 1080,
+            WindowWidth = 1920,
+            ScrollX = 5,
+            ScrollY = 10
+        };
 
-            client.Height = 100;
-            client.Width = 100;
+        // Act
+        var clone = rect.Clone();
 
-            client.ScrollX = 100;
-            client.ScrollY = 100;
+        // Assert
+        clone.Top.Should().Be(rect.Top);
+        clone.Left.Should().Be(rect.Left);
+        clone.Width.Should().Be(rect.Width);
+        clone.Height.Should().Be(rect.Height);
+        clone.WindowHeight.Should().Be(rect.WindowHeight);
+        clone.WindowWidth.Should().Be(rect.WindowWidth);
+        clone.ScrollX.Should().Be(rect.ScrollX);
+        clone.ScrollY.Should().Be(rect.ScrollY);
 
-            client.WindowHeight = 1000;
-            client.WindowWidth = 1000;
+        // Check computed properties
+        clone.Bottom.Should().Be(rect.Top + rect.Height);
+        clone.Right.Should().Be(rect.Left + rect.Width);
+        clone.AbsoluteLeft.Should().Be(rect.Left + rect.ScrollX);
+        clone.AbsoluteTop.Should().Be(rect.Top + rect.ScrollY);
+        clone.AbsoluteRight.Should().Be(rect.Right + rect.ScrollX);
+        clone.AbsoluteBottom.Should().Be(rect.Bottom + rect.ScrollY);
 
-            client.IsOutsideBottom.Should().BeFalse();
-            client.IsOutsideTop.Should().BeTrue();
-            client.IsOutsideLeft.Should().BeTrue();
-            client.IsOutsideRight.Should().BeFalse();
-        }
+        // Check if the rect is outside the viewport
+        clone.IsOutsideBottom.Should().BeFalse();
+        clone.IsOutsideLeft.Should().BeFalse();
+        clone.IsOutsideTop.Should().BeFalse();
+        clone.IsOutsideRight.Should().BeFalse();
+    }
 
-        [Test]
-        public void BoundingClientRectProperties_ShouldBeSetAndComputedCorrectly()
-        {
-            // Arrange
-            var rect = new BoundingClientRect
-            {
-                Top = 10,
-                Left = 20,
-                Width = 100,
-                Height = 200,
-                WindowHeight = 1080,
-                WindowWidth = 1920,
-                ScrollX = 5,
-                ScrollY = 10
-            };
+    [Test]
+    public void BoundingClientRectIsEqualTo_ShouldReturnTrueForEqualRects()
+    {
+        // Arrange
+        var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
+        var rect2 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
 
-            // Act
-            var clone = rect.Clone();
+        // Act & Assert
+        rect1.IsEqualTo(rect2).Should().BeTrue();
+    }
 
-            // Assert
-            clone.Top.Should().Be(rect.Top);
-            clone.Left.Should().Be(rect.Left);
-            clone.Width.Should().Be(rect.Width);
-            clone.Height.Should().Be(rect.Height);
-            clone.WindowHeight.Should().Be(rect.WindowHeight);
-            clone.WindowWidth.Should().Be(rect.WindowWidth);
-            clone.ScrollX.Should().Be(rect.ScrollX);
-            clone.ScrollY.Should().Be(rect.ScrollY);
+    [Test]
+    public void BoundingClientRectIsEqualTo_ShouldReturnFalseForDifferentRects()
+    {
+        // Arrange
+        var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
+        var rect2 = new BoundingClientRect { Top = 10, Left = 30, Width = 100, Height = 200 };
 
-            // Check computed properties
-            clone.X.Should().Be(rect.Left);
-            clone.Y.Should().Be(rect.Top);
-            clone.Bottom.Should().Be(rect.Top + rect.Height);
-            clone.Right.Should().Be(rect.Left + rect.Width);
-            clone.AbsoluteLeft.Should().Be(rect.Left + rect.ScrollX);
-            clone.AbsoluteTop.Should().Be(rect.Top + rect.ScrollY);
-            clone.AbsoluteRight.Should().Be(rect.Right + rect.ScrollX);
-            clone.AbsoluteBottom.Should().Be(rect.Bottom + rect.ScrollY);
+        // Act & Assert
+        rect1.IsEqualTo(rect2).Should().BeFalse();
+    }
 
-            // Check if the rect is outside of the viewport
-            clone.IsOutsideBottom.Should().BeFalse();
-            clone.IsOutsideLeft.Should().BeFalse();
-            clone.IsOutsideTop.Should().BeFalse();
-            clone.IsOutsideRight.Should().BeFalse();
-        }
+    [Test]
+    public void BoundingClientRectIsEqualTo_ShouldReturnFalseWhenEitherIsNull()
+    {
+        // Arrange
+        var rect = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
 
-        [Test]
-        public void BoundingClientRectIsEqualTo_ShouldReturnTrueForEqualRects()
-        {
-            // Arrange
-            var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
-            var rect2 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
-
-            // Act & Assert
-            rect1.IsEqualTo(rect2).Should().BeTrue();
-        }
-
-        [Test]
-        public void BoundingClientRectIsEqualTo_ShouldReturnFalseForDifferentRects()
-        {
-            // Arrange
-            var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
-            var rect2 = new BoundingClientRect { Top = 10, Left = 30, Width = 100, Height = 200 };
-
-            // Act & Assert
-            rect1.IsEqualTo(rect2).Should().BeFalse();
-        }
-
-        [Test]
-        public void BoundingClientRectIsEqualTo_ShouldReturnFalseWhenEitherIsNull()
-        {
-            // Arrange
-            var rect = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
-
-            // Act & Assert
-            rect.IsEqualTo(null).Should().BeFalse();
-            ((BoundingClientRect)null).IsEqualTo(rect).Should().BeFalse();
-        }
+        // Act & Assert
+        rect.IsEqualTo(null).Should().BeFalse();
+        ((BoundingClientRect)null).IsEqualTo(rect).Should().BeFalse();
     }
 }

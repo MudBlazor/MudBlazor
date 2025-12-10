@@ -40,7 +40,7 @@
             @if (!_completed) {
                 <MudIconButton OnClick="@(() => stepper.PreviousStepAsync())" Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" Disabled="@(_index <= 0)" />
                 <MudSpacer />
-                @if (stepper.Steps[_index].Skippable == true)
+                @if (stepper.Steps[_index].Skippable)
                 {
                     <MudIconButton OnClick="@(() => stepper.SkipCurrentStepAsync())" Icon="@stepper.SkipButtonIcon" Color="Color.Primary" />
                 }
@@ -49,7 +49,6 @@
         </ActionContent>
     </MudStepper>
 </MudPaper>
-
 
 @code {
     private int _index;

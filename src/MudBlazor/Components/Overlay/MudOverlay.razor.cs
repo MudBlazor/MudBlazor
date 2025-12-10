@@ -69,7 +69,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.Overlay.Behavior)]
     public bool Visible { get; set; }
 

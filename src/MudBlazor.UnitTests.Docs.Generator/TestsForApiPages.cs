@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using MudBlazor.Charts;
 
 namespace MudBlazor.UnitTests.Docs.Generator;
@@ -228,6 +229,7 @@ public partial class TestsForApiPages
                 && !IsExcluded(type)
                 // ... which aren't interfaces
                 && !type.IsInterface
+                && !ImplementsConverterInterface(type)
                 // ... which aren't source generators
                 && !type.Name.Contains("SourceGenerator")
                 // ... which aren't extension classes
@@ -249,7 +251,7 @@ public partial class TestsForApiPages
             cb.IndentLevel++;
             // Create Api.razor with a type
             cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
-            cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{type.Name}""));");
+            cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(parameters => parameters.Add(x => x.TypeName, ""{type.Name}""));");
             cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
             // Make sure docs for the type were actually found
             cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {type.Name} was not found"");");
@@ -280,7 +282,7 @@ public partial class TestsForApiPages
             cb.IndentLevel++;
             // Create Api.razor with a type
             cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{url}""));");
-            cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{component}""));");
+            cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(parameters => parameters.Add(x => x.TypeName, ""{component}""));");
             cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
             // Make sure docs for the type were actually found
             cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {component} was not found"");");
@@ -310,6 +312,16 @@ public partial class TestsForApiPages
         }
 
         return false;
+    }
+
+    private static bool ImplementsConverterInterface(Type type)
+    {
+        if (!type.IsClass) return false;
+
+        return type
+            .GetInterfaces()
+            .Any(i => i.IsGenericType
+                      && i.GetGenericTypeDefinition() == typeof(IConverter<,>));
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -23,7 +24,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T?>>?> _itemsState;
-        private Converter<T> _converter = new DefaultConverter<T>();
+        private readonly IConverter<T?, string?> _converter = new DefaultConverter<T?>();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
         public MudTreeViewItem()
@@ -212,7 +213,7 @@ namespace MudBlazor
         /// <summary>
         /// The child items underneath this item.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Data)]
         public IReadOnlyCollection<ITreeItemData<T?>>? Items { get; set; }
 
@@ -228,7 +229,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Expanding)]
         public bool Expanded { get; set; }
 
@@ -244,7 +245,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. Can be set alongside other items if <see cref="MudTreeView{T}.SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool Selected { get; set; }
 
@@ -389,7 +390,7 @@ namespace MudBlazor
             return Value;
         }
 
-        private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Set(Value) : Text;
+        private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Convert(Value) : Text;
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
 

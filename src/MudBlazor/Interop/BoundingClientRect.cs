@@ -1,85 +1,147 @@
-﻿namespace MudBlazor.Interop
-{
+﻿namespace MudBlazor.Interop;
 #nullable enable
-    public class BoundingClientRect
+
+/// <summary>
+/// Represents the bounding rectangle of an element.
+/// </summary>
+public class BoundingClientRect
+{
+    /// <summary>
+    /// The vertical offset to the top edge.
+    /// </summary>
+    public double Top { get; set; }
+
+    /// <summary>
+    /// The horizontal offset relative to the left edge.
+    /// </summary>
+    public double Left { get; set; }
+
+    /// <summary>
+    /// The vertical offset relative to the bottom edge.
+    /// </summary>
+    /// <returns>
+    /// <see cref="Top"/> + <see cref="Height"/>
+    /// </returns>
+    public double Bottom => Top + Height;
+
+    /// <summary>
+    /// The horizontal offset to the right edge.
+    /// </summary>
+    /// <returns>
+    /// <see cref="Left"/> + <see cref="Width"/>
+    /// </returns>
+    public double Right => Left + Width;
+
+    /// <summary>
+    /// The width of this rectangle.
+    /// </summary>
+    public double Width { get; set; }
+
+    /// <summary>
+    /// The height of this rectangle.
+    /// </summary>
+    public double Height { get; set; }
+
+    /// <summary>
+    /// Width of the viewport.
+    /// </summary>
+    public double WindowWidth { get; set; }
+
+    /// <summary>
+    /// Height of the viewport.
+    /// </summary>
+    public double WindowHeight { get; set; }
+
+    /// <summary>
+    /// The horizontal scrolled offset.
+    /// </summary>
+    public double ScrollX { get; set; }
+
+    /// <summary>
+    /// The vertical scrolled offset.
+    /// </summary>
+    public double ScrollY { get; set; }
+
+    /// <summary>
+    /// The horizontal offset including the horizontal scroll.
+    /// </summary>
+    /// <returns>
+    /// <see cref="Left"/> + <see cref="ScrollX"/>
+    /// </returns>
+    public double AbsoluteLeft => Left + ScrollX;
+
+    /// <summary>
+    /// The vertical offset including the vertical scroll.
+    /// </summary>
+    /// <returns>
+    /// <see cref="Top"/> + <see cref="ScrollY"/>
+    /// </returns>
+    public double AbsoluteTop => Top + ScrollY;
+
+    /// <summary>
+    /// The horizontal offset from the right edge including the horizontal scroll.
+    /// </summary>
+    /// <returns>
+    /// <see cref="Right"/> + <see cref="ScrollX"/>
+    /// </returns>
+    public double AbsoluteRight => Right + ScrollX;
+
+    /// <summary>
+    /// The vertical offset from the bottom edge including the vertical scroll.
+    /// </summary>
+    /// <returns>
+    /// <see cref="Bottom"/> + <see cref="ScrollY"/>
+    /// </returns>
+    public double AbsoluteBottom => Bottom + ScrollY;
+
+    /// <summary>
+    /// Whether the rect is outside the viewport on the bottom side.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Bottom"/> &gt; <see cref="WindowHeight"/>
+    /// </returns>
+    public bool IsOutsideBottom => Bottom > WindowHeight;
+
+    /// <summary>
+    /// Whether the rect is outside the viewport on the left side.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Left"/> &lt; <c>0</c>
+    /// </returns>
+    public bool IsOutsideLeft => Left < 0;
+
+    /// <summary>
+    /// Whether the rect is outside the viewport on the top side.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Top"/> &lt; <c>0</c>
+    /// </returns>
+    public bool IsOutsideTop => Top < 0;
+
+    /// <summary>
+    /// Whether the rect is outside the viewport on the right side.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Right"/> &gt; <see cref="WindowWidth"/>
+    /// </returns>
+    public bool IsOutsideRight => Right > WindowWidth;
+
+    /// <summary>
+    /// Creates a shallow copy of the current <see cref="BoundingClientRect"/> instance.
+    /// </summary>
+    /// <returns>A new <see cref="BoundingClientRect"/> instance</returns>
+    public BoundingClientRect Clone()
     {
-        public double Top { get; set; }
-        public double Left { get; set; }
-
-        public double Width { get; set; }
-        public double Height { get; set; }
-
-        /// <summary>
-        /// height of the viewport
-        /// </summary>
-        public double WindowHeight { get; set; }
-
-        /// <summary>
-        /// width of the viewport
-        /// </summary>
-        public double WindowWidth { get; set; }
-
-        /// <summary>
-        /// the horizontal offset since the left of the page
-        /// </summary>
-        public double ScrollX { get; set; }
-
-        /// <summary>
-        /// the vertical offset since the top of the page
-        /// </summary>
-        public double ScrollY { get; set; }
-
-        // computed properties, read only
-        public double X => Left;
-        public double Y => Top;
-        public double Bottom => Top + Height;
-        public double Right => Left + Width;
-
-        public double AbsoluteLeft => Left + ScrollX;
-
-        public double AbsoluteTop => Top + ScrollY;
-
-        public double AbsoluteRight => Right + ScrollX;
-
-        public double AbsoluteBottom => Bottom + ScrollY;
-
-        //check if the rect is outside of the viewport
-        public bool IsOutsideBottom => Bottom > WindowHeight;
-
-        public bool IsOutsideLeft => Left < 0;
-
-        public bool IsOutsideTop => Top < 0;
-
-        public bool IsOutsideRight => Right > WindowWidth;
-
-        public BoundingClientRect Clone()
+        return new BoundingClientRect
         {
-            return new BoundingClientRect
-            {
-                Left = Left,
-                Top = Top,
-                Width = Width,
-                Height = Height,
-                WindowHeight = WindowHeight,
-                WindowWidth = WindowWidth,
-                ScrollX = ScrollX,
-                ScrollY = ScrollY
-            };
-        }
-    }
-    public static class BoundingClientRectExtensions
-    {
-        public static bool IsEqualTo(this BoundingClientRect? sourceRect, BoundingClientRect? targetRect)
-        {
-            if (sourceRect is null || targetRect is null) return false;
-            return sourceRect.Top == targetRect.Top
-                && sourceRect.Left == targetRect.Left
-                && sourceRect.Width == targetRect.Width
-                && sourceRect.Height == targetRect.Height
-                && sourceRect.WindowHeight == targetRect.WindowHeight
-                && sourceRect.WindowWidth == targetRect.WindowWidth
-                && sourceRect.ScrollX == targetRect.ScrollX
-                && sourceRect.ScrollY == targetRect.ScrollY;
-        }
+            Top = Top,
+            Left = Left,
+            Width = Width,
+            Height = Height,
+            WindowWidth = WindowWidth,
+            WindowHeight = WindowHeight,
+            ScrollX = ScrollX,
+            ScrollY = ScrollY
+        };
     }
 }

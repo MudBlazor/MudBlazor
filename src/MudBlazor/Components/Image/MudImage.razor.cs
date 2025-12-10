@@ -49,7 +49,7 @@ public partial class MudImage : MudComponentBase
     /// <summary>
     /// The path to the image.
     /// </summary>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.Image.Behavior)]
     public string? Src { get; set; }
 

@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#pragma warning disable BL0005 // Set parameter outside component
-
 using System.Globalization;
 using Bunit;
 using FluentAssertions;
@@ -14,7 +12,6 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -63,8 +60,10 @@ namespace MudBlazor.UnitTests.Components
             //
             0.0.ToString("F1", CultureInfo.InvariantCulture).Should().Be("0.0");
             //
-            await comp.InvokeAsync(() => numericField.Format = "F1");
-            await comp.InvokeAsync(() => numericField.Culture = CultureInfo.InvariantCulture);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Format, "F1")
+                .Add(x => x.Culture, CultureInfo.InvariantCulture));
+
             numericField.Value.Should().Be(0.0);
             numericField.Text.Should().Be("0.0");
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -91,9 +90,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_WithNullableTypes_ShouldAllowNulls<T>(T value) where T : struct
         {
-            var comp = Context.RenderComponent<MudNumericField<T?>>(ComponentParameter.CreateParameter("Value", value));
+            var comp = Context.RenderComponent<MudNumericField<T?>>(parameters => parameters.Add(x => x.Value, value));
             // print the generated html
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", null));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, null));
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
             comp.Find("input").Change("");
@@ -109,8 +108,8 @@ namespace MudBlazor.UnitTests.Components
         {
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
-            var immediate = Parameter(nameof(MudNumericField<int?>.Immediate), true);
-            var comp = Context.RenderComponent<MudNumericField<int?>>(immediate);
+            var comp = Context.RenderComponent<MudNumericField<int?>>(parameters => parameters
+                .Add(x => x.Immediate, true));
             var numericField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -127,8 +126,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
         {
-            var interval = Parameter(nameof(MudNumericField<int?>.DebounceInterval), 200d);
-            var comp = Context.RenderComponent<MudNumericField<int?>>(interval);
+            var comp = Context.RenderComponent<MudNumericField<int?>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 200d));
             var numericField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -157,13 +156,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
-            var label = Parameter(nameof(MudNumericField<int?>.Label), "label");
-            var placeholder = Parameter(nameof(MudNumericField<int?>.Placeholder), "placeholder");
             //with no placeholder, label is not shrunk
-            var comp = Context.RenderComponent<MudNumericField<int?>>(label);
+            var comp = Context.RenderComponent<MudNumericField<int?>>(parameters => parameters
+                .Add(x => x.Label, "label"));
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrunk
-            await comp.SetParametersAndRenderAsync(placeholder);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Placeholder, "placeholder"));
             comp.Markup.Should().Contain("shrink");
         }
 
@@ -198,7 +197,9 @@ namespace MudBlazor.UnitTests.Components
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .Length(1, 100));
-            var comp = Context.RenderComponent<MudNumericField<decimal>>(Parameter(nameof(MudNumericField<decimal>.Validation), validator.Validation), Parameter(nameof(MudNumericField<decimal>.Max), 100M));
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                .Add(x => x.Validation, validator.Validation)
+                .Add(x => x.Max, 100M));
             var numericField = comp.Instance;
             // first try a valid value
             comp.Find("input").Change(99);
@@ -237,13 +238,12 @@ namespace MudBlazor.UnitTests.Components
         [Test, CancelAfter(1000)]
         public async Task NumericFieldUpdateLoopProtectionTest()
         {
-            var comp = Context.RenderComponent<MudNumericField<int>>();
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.Converter, Conversions.From((int s) => s.ToString(), int.Parse)));
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that numericFields and other inputs are now protected against.
             var numericField = comp.Instance;
-            numericField.Converter.SetFunc = s => s.ToString();
-            numericField.Converter.GetFunc = s => int.Parse(s);
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", 1));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1));
             numericField.Value.Should().Be(1);
             numericField.Text.Should().Be("1");
             comp.Find("input").Change("3");
@@ -255,8 +255,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericField_Should_FireValueChangedOnTextParameterChange()
         {
             var changed_value = 4;
-            var comp = Context.RenderComponent<MudNumericField<int>>(EventCallback<int>("ValueChanged", x => changed_value = x));
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Text", "4"));
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.ValueChanged, x => changed_value = x));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Text, "4"));
             changed_value.Should().Be(4);
         }
 
@@ -264,8 +265,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericField_Should_FireTextChangedOnValueParameterChange()
         {
             var changed_text = "4";
-            var comp = Context.RenderComponent<MudNumericField<int>>(EventCallback<string>("TextChanged", x => changed_text = x));
-            await comp.SetParametersAndRenderAsync(ComponentParameter.CreateParameter("Value", 4));
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.TextChanged, x => changed_text = x));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 4));
             changed_text.Should().Be("4");
         }
 
@@ -274,10 +276,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var changed_value = 4;
             string changed_text = null;
-            var comp = Context.RenderComponent<MudNumericField<int>>(
-                EventCallback<int>("ValueChanged", x => changed_value = x),
-                EventCallback<string>("TextChanged", x => changed_text = x)
-            );
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.ValueChanged, x => changed_value = x)
+                .Add(x => x.TextChanged, x => changed_text = x));
             comp.Find("input").Change("4");
             changed_value.Should().Be(4);
             changed_text.Should().Be("4");
@@ -292,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
         //[Test]
         //public async Task NumericField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
         //{
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Required", true));
+        //    var comp = ctx.RenderComponent<MudNumericField<int?>>(parameters => parameters.Add(p => p.Required, true));
         //    var numericField = comp.Instance;
         //    comp.Find("input").Change("A");
         //    comp.Find("input").Blur();
@@ -336,9 +337,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldTest_KeyboardInput()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
-            await comp.SetParamAsync(x => x.Culture, CultureInfo.InvariantCulture);
-            await comp.SetParamAsync(x => x.Format, "F2");
-            await comp.SetParamAsync(x => x.Value, 1234.56);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "F2")
+                .Add(x => x.Value, 1234.56));
             // print the generated html
             // select elements needed for the test
             var numericField = comp.Instance;
@@ -368,10 +370,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldTest_KeyboardInput_Disabled()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
-            await comp.SetParamAsync(x => x.Culture, CultureInfo.InvariantCulture);
-            await comp.SetParamAsync(x => x.Format, "F2");
-            await comp.SetParamAsync(x => x.Value, 1234.56);
-            await comp.SetParamAsync(x => x.Disabled, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "F2")
+                .Add(x => x.Value, 1234.56)
+                .Add(x => x.Disabled, true));
             comp.Instance.Value.Should().Be(1234.56);
             comp.Instance.Text.Should().Be("1234.56");
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
@@ -387,10 +390,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldTest_KeyboardInput_Readonly()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
-            await comp.SetParamAsync(x => x.Culture, CultureInfo.InvariantCulture);
-            await comp.SetParamAsync(x => x.Format, "F2");
-            await comp.SetParamAsync(x => x.Value, 1234.56);
-            await comp.SetParamAsync(x => x.ReadOnly, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "F2")
+                .Add(x => x.Value, 1234.56)
+                .Add(x => x.ReadOnly, true));
             comp.Instance.Value.Should().Be(1234.56);
             comp.Instance.Text.Should().Be("1234.56");
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
@@ -406,7 +410,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldTest_MouseWheel()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
-            await comp.SetParamAsync(x => x.Value, 1234.56);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
             var numericField = comp.Instance;
 
             //MouseWheel up
@@ -418,7 +422,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Invert MouseWheel
-            numericField.InvertMouseWheel = true;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
 
             //MouseWheel up
             await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
@@ -429,7 +433,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Try with different step
-            numericField.Step = 0.5;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
 
             //MouseWheel up
             await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
@@ -452,7 +456,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldTest_Wheel_Firefox()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
-            await comp.SetParamAsync(x => x.Value, 1234.56);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
             var numericField = comp.Instance;
 
             //MouseWheel up
@@ -464,7 +468,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Invert MouseWheel
-            numericField.InvertMouseWheel = true;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
 
             //MouseWheel up
             comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
@@ -475,7 +479,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Try with different step
-            numericField.Step = 0.5;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
 
             //MouseWheel up
             comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
@@ -595,9 +599,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericField_Validation<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
-            await comp.SetParamAsync(x => x.Max, value);
-            await comp.SetParamAsync(x => x.Min, value);
-            await comp.SetParamAsync(x => x.Value, value);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Max, value)
+                .Add(x => x.Min, value)
+                .Add(x => x.Value, value));
             var numericField = comp.Instance;
             numericField.Value.Should().Be(value);
             await comp.InvokeAsync(numericField.ValidateAsync);
@@ -610,8 +615,9 @@ namespace MudBlazor.UnitTests.Components
             var min = (T)Convert.ChangeType(1, typeof(T));
             var max = (T)Convert.ChangeType(10, typeof(T));
             var comp = Context.RenderComponent<MudNumericField<T>>();
-            await comp.SetParamAsync(x => x.Min, min);
-            await comp.SetParamAsync(x => x.Max, max);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Min, min)
+                .Add(x => x.Max, max));
 
             comp.Find("input").Change("15");
             comp.Find("input").Blur();
@@ -630,8 +636,9 @@ namespace MudBlazor.UnitTests.Components
             var min = (T)Convert.ChangeType(1, typeof(T));
             var max = (T)Convert.ChangeType(10, typeof(T));
             var comp = Context.RenderComponent<MudNumericField<T?>>();
-            await comp.SetParamAsync(x => x.Min, min);
-            await comp.SetParamAsync(x => x.Max, max);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Min, min)
+                .Add(x => x.Max, max));
 
             comp.Find("input").Change("15");
             comp.Find("input").Blur();
@@ -650,18 +657,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudNumericField<T>>();
             var max = Convert.ChangeType(10, typeof(T));
             var min = Convert.ChangeType(0, typeof(T));
-            await comp.SetParamAsync(x => x.Max, max);
-            await comp.SetParamAsync(x => x.Min, min);
-            await comp.SetParamAsync(x => x.Step, value);
-            await comp.SetParamAsync(x => x.Value, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Max, (T)max)
+                .Add(x => x.Min, (T)min)
+                .Add(x => x.Step, value)
+                .Add(x => x.Value, value));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
             // setting min and max to value will cover the boundary checking code
-            await comp.SetParamAsync(x => x.Max, value);
-            await comp.SetParamAsync(x => x.Min, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Max, value)
+                .Add(x => x.Min, value));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
         }
 
@@ -671,18 +680,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudNumericField<T?>>();
             var max = Convert.ChangeType(10, typeof(T));
             var min = Convert.ChangeType(0, typeof(T));
-            await comp.SetParamAsync(x => x.Max, max);
-            await comp.SetParamAsync(x => x.Min, min);
-            await comp.SetParamAsync(x => x.Step, value);
-            await comp.SetParamAsync(x => x.Value, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Max, (T?)max)
+                .Add(x => x.Min, (T?)min)
+                .Add(x => x.Step, value)
+                .Add(x => x.Value, value));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
             // setting min and max to value will cover the boundary checking code
-            await comp.SetParamAsync(x => x.Max, value);
-            await comp.SetParamAsync(x => x.Min, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Max, value)
+                .Add(x => x.Min, value));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
         }
 
@@ -690,9 +701,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct
         {
             var comp = Context.RenderComponent<MudNumericField<T?>>();
-            await comp.SetParamAsync(x => x.Step, value);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, value));
 
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Increment());
             comp.Instance.Value.Should().Be(value);
 
             comp.Find("input").Change("");
@@ -702,7 +713,7 @@ namespace MudBlazor.UnitTests.Components
             else
                 value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
 
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(value);
         }
 
@@ -710,16 +721,16 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericField_Increment_Decrement_OverflowHandled<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
-            await comp.SetParamAsync(x => x.Step, value);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, value));
 
             // test max overflow
-            await comp.SetParamAsync(x => x.Value, comp.Instance.Max);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Max));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
             comp.Instance.Value.Should().Be(comp.Instance.Max);
 
             // test min overflow
-            await comp.SetParamAsync(x => x.Value, comp.Instance.Min);
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Min));
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(comp.Instance.Min);
         }
 
@@ -727,16 +738,16 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldNullable_Increment_Decrement_OverflowHandled<T>(T value) where T : struct
         {
             var comp = Context.RenderComponent<MudNumericField<T?>>();
-            await comp.SetParamAsync(x => x.Step, value);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, value));
 
             // test max overflow
-            await comp.SetParamAsync(x => x.Value, comp.Instance.Max);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Max));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
             comp.Instance.Value.Should().Be(comp.Instance.Max);
 
             // test min overflow
-            await comp.SetParamAsync(x => x.Value, comp.Instance.Min);
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, comp.Instance.Min));
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.Value.Should().Be(comp.Instance.Min);
         }
 
@@ -748,9 +759,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldCanBeCleared(int min, int max, int value)
         {
             var comp = Context.RenderComponent<MudNumericField<int?>>();
-            await comp.SetParamAsync(x => x.Min, min);
-            await comp.SetParamAsync(x => x.Max, max);
-            await comp.SetParamAsync(x => x.Value, value);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Min, min)
+                .Add(x => x.Max, max)
+                .Add(x => x.Value, value));
 
             comp.Find("input").Change("");
             comp.Find("input").Blur();
@@ -765,8 +777,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldWithCurrencyFormat()
         {
             var comp = Context.RenderComponent<MudNumericField<int?>>();
-            await comp.SetParamAsync(x => x.Format, "€0");
-            await comp.SetParamAsync(x => x.Culture, CultureInfo.InvariantCulture);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Format, "€0")
+                .Add(x => x.Culture, CultureInfo.InvariantCulture));
             // print the generated html
             // select elements needed for the test
             var numericField = comp.Instance;
@@ -774,10 +787,12 @@ namespace MudBlazor.UnitTests.Components
             numericField.Text.Should().Be(null);
             //
             77.ToString("€0", CultureInfo.InvariantCulture).Should().Be("€77");
-            var conv = new DefaultConverter<int?>();
-            conv.Format = "€0";
-            conv.Culture = CultureInfo.InvariantCulture;
-            conv.Set(77).Should().Be("€77");
+            var conv = new DefaultConverter<int?>()
+            {
+                Culture = () => CultureInfo.InvariantCulture,
+                Format = () => "€0"
+            };
+            conv.Convert(77).Should().Be("€77");
             //
             comp.FindAll("input").First().Change("1234");
             comp.FindAll("input").First().Blur();
@@ -798,14 +813,14 @@ namespace MudBlazor.UnitTests.Components
             numericField.Text.Should().Be(null);
 
             // comma separator
-            await comp.SetParamAsync(x => x.Culture, CultureInfo.InvariantCulture);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Culture, CultureInfo.InvariantCulture));
             comp.FindAll("input").First().Change("1,000");
             comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
 
             // period separator
-            await comp.SetParamAsync(x => x.Culture, new CultureInfo("de-DE", false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Culture, new CultureInfo("de-DE", false)));
             comp.FindAll("input").First().Change("1.000");
             comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
@@ -840,7 +855,7 @@ namespace MudBlazor.UnitTests.Components
             }
             // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
-            comp.Instance.Value.Should().Be(converter.Get(currentText));
+            comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
             numericField.Text.Should().Be(currentText);
         }
 
@@ -849,10 +864,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var defaultValue = 1;
             var converter = new DefaultConverter<int>();
-            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>(
-                Parameter(nameof(MudNumericField<int>.Value), defaultValue));
+            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>(parameters => parameters
+                .Add(x => x.Value, defaultValue));
             var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
-            textfield.Text.Should().Be(converter.Set(defaultValue));
+            textfield.Text.Should().Be(converter.Convert(defaultValue));
         }
 
         /// <summary>
@@ -996,11 +1011,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("pattern");
             field.GetAttribute("type").Should().Be("number");
 
-            var usePattern = Parameter(nameof(NumericFieldRenderTest.UsePattern), true);
-
-            await comp.SetParametersAndRenderAsync(usePattern);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.UsePattern, true));
             comp.Markup.Should().Contain("pattern");
             field.GetAttribute("type").Should().Be("text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.UsePattern, false));
+
+            comp.Markup.Should().NotContain("pattern");
+            field.GetAttribute("type").Should().Be("number");
         }
 
         [Test]
@@ -1008,13 +1028,14 @@ namespace MudBlazor.UnitTests.Components
         public void Should_ignore_default_culture()
         {
             var comp = Context.RenderComponent<NumericFieldRenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<decimal>>();
 
             comp.Find("input").Change("123.45");
             comp.Find("input").Blur();
 
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
-            comp.Instance.NumericField.Text.Should().Be("123.45");
-            comp.Instance.NumericField.Culture.Name.Should().Be("");
+            numericField.Instance.Text.Should().Be("123.45");
+            numericField.Instance.GetState(x => x.Culture).Name.Should().Be("");
         }
 
         [Test]
@@ -1044,7 +1065,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
             comp.Instance.Text.Should().Be("123,45");
-            comp.Instance.Culture.Name.Should().Be("ru-RU");
+            comp.Instance.GetState(x => x.Culture).Name.Should().Be("ru-RU");
         }
 
         [Test]

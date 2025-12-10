@@ -1,58 +1,55 @@
 @page "/customization/default-theme"
-
-@using System.Reflection
 @using System.Text.RegularExpressions
 @using MudBlazor.Docs.Extensions
 
 <DocsPage>
-    <DocsPageHeader Title="Default Theme" SubTitle="Here's the default theme class with the default values." />
+    <DocsPageHeader Title="Default Theme" SubTitle="Here's the default theme class with the default values."/>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="MudTheme" />
+            <SectionHeader Title="MudTheme"/>
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="Palette"/>
-                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" FixedHeader="true" Outlined="true">
                         <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Default Light</th>
-                                <th>Default Dark</th>
-                                <th>CSS Variable</th>
-                            </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Default Light</th>
+                            <th>Default Dark</th>
+                            <th>CSS Variable</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach (var Row in ApiPalette)
-                            {
-                                <tr>
-                                    <td>@Row.Name</td>
-                                    <td>@Row.Type</td>
-                                    <td>
+                        @foreach (var Row in _apiPalette)
+                        {
+                            <tr>
+                                <td>@Row.Name</td>
+                                <td>@Row.Type</td>
+                                <td>
+                                    <div class="d-inline-flex align-center">
+                                        <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Default}")"/>
+                                        @Row.Default
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (!Row.Default.Equals(Row.Dark))
+                                    {
                                         <div class="d-inline-flex align-center">
-                                            <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Default}")"/>
-                                            @Row.Default
+                                            <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Dark}")"/>
+                                            @Row.Dark
                                         </div>
-                                        
-                                    </td>
-                                    <td>
-                                        @if (!Row.Default.Equals(Row.Dark))
-                                        {
-                                            <div class="d-inline-flex align-center">
-                                                <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Dark}")"/>
-                                                @Row.Dark
-                                            </div>
-                                        }
-                                    </td>
-                                    <td>@Row.CSSVariable</td>
-                                </tr>
-                            }
+                                    }
+                                </td>
+                                <td>@Row.CSSVariable</td>
+                            </tr>
+                        }
                         </tbody>
                     </MudSimpleTable>
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Shadows"/>
-                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true" Outlined="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -63,7 +60,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var Row in ApiShadow)
+                        @foreach (var Row in _apiShadow)
                         {
                             <tr>
                                 <td>@Row.Name</td>
@@ -78,7 +75,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="LayoutProperties"/>
-                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true" Outlined="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -89,7 +86,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var Row in ApiLayout)
+                        @foreach (var Row in _apiLayout)
                         {
                             <tr>
                                 <td>@Row.Name</td>
@@ -104,7 +101,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Typography"/>
-                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true" Outlined="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -115,7 +112,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var Row in ApiTypography)
+                        @foreach (var Row in _apiTypography)
                         {
                             <tr>
                                 @if (Row.IsHeader)
@@ -133,10 +130,10 @@
                                     <td>
                                         @if (Row.CSSVariable.Contains("default-family"))
                                         {
-                                            string fontFamily = "";
-                                            if (mudTheme.Typography.Default.FontFamily is not null)
+                                            var fontFamily = "";
+                                            if (_mudTheme.Typography.Default.FontFamily is not null)
                                             {
-                                                foreach (string font in mudTheme.Typography.Default.FontFamily)
+                                                foreach (var font in _mudTheme.Typography.Default.FontFamily)
                                                 {
                                                     if (fontFamily == "")
                                                     {
@@ -148,13 +145,13 @@
                                                     }
                                                 }
                                             }
+
                                             @fontFamily
                                         }
                                         else
                                         {
                                             @Row.Default
                                         }
-                                        
                                     </td>
                                     <td>@Row.CSSVariable</td>
                                     <td>@Row.CSSClass</td>
@@ -166,7 +163,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="ZIndex"/>
-                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true" Outlined="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -177,7 +174,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var Row in ApiZindex)
+                        @foreach (var Row in _apiZindex)
                         {
                             <tr>
                                 <td>@Row.Name</td>
@@ -190,21 +187,18 @@
                         </tbody>
                     </MudSimpleTable>
                 </DocsPageSection>
-                
             </SectionSubGroups>
         </DocsPageSection>
-
     </DocsPageContent>
 </DocsPage>
 
 @code {
-    MudTheme mudTheme = new MudTheme();
-
-    private List<ApiDefaultTheme> ApiPalette = new List<ApiDefaultTheme>();
-    private List<ApiDefaultTheme> ApiShadow = new List<ApiDefaultTheme>();
-    private List<ApiDefaultTheme> ApiLayout = new List<ApiDefaultTheme>();
-    private List<ApiDefaultTheme> ApiTypography= new List<ApiDefaultTheme>();
-    private List<ApiDefaultTheme> ApiZindex= new List<ApiDefaultTheme>();
+    private readonly MudTheme _mudTheme = new();
+    private readonly List<ApiDefaultTheme> _apiPalette = [];
+    private readonly List<ApiDefaultTheme> _apiShadow = [];
+    private readonly List<ApiDefaultTheme> _apiLayout = [];
+    private readonly List<ApiDefaultTheme> _apiTypography = [];
+    private readonly List<ApiDefaultTheme> _apiZindex = [];
 
     protected override void OnInitialized()
     {
@@ -217,129 +211,130 @@
 
     private void LoadPalette()
     {
-#pragma warning disable CS0618
         foreach (var value in typeof(Palette).GetProperties())
-#pragma warning restore CS0618
         {
-            var newprop = new ApiDefaultTheme()
+            var newProp = new ApiDefaultTheme
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
-                Default = value.GetValue(mudTheme.PaletteLight, null),
-                Dark = value.GetValue(mudTheme.PaletteDark, null),
+                Default = value.GetValue(_mudTheme.PaletteLight, null),
+                Dark = value.GetValue(_mudTheme.PaletteDark, null),
                 CSSVariable = $"--mud-palette-{GetCssVar(value.Name)}"
             };
-            ApiPalette.Add(newprop);
+            _apiPalette.Add(newProp);
         }
     }
 
     private void LoadShadows()
     {
-        ApiShadow.Add(new ApiDefaultTheme()
+        _apiShadow.Add(new ApiDefaultTheme
         {
             Name = "Elevation",
             Type = "String[]",
             Default = "System.String[]"
         });
-        for (int i = 0; i < mudTheme.Shadows.Elevation.Length; i++)
+        for (var i = 0; i < _mudTheme.Shadows.Elevation.Length; i++)
         {
-            int a = i;
-            ApiShadow.Add(new ApiDefaultTheme()
+            _apiShadow.Add(new ApiDefaultTheme
             {
-                Name = $"Elevation[{a}]",
+                Name = $"Elevation[{i}]",
                 Type = "String",
-                Default = mudTheme.Shadows.Elevation.GetValue(a),
-                CSSVariable = $"--mud-elevation-{a}",
-                CSSClass = $"mud-elevation-{a}"
+                Default = _mudTheme.Shadows.Elevation.GetValue(i),
+                CSSVariable = $"--mud-elevation-{i}",
+                CSSClass = $"mud-elevation-{i}"
             });
         }
     }
-    
+
     private void LoadLayout()
     {
         foreach (var value in typeof(LayoutProperties).GetProperties())
         {
-            ApiLayout.Add(new ApiDefaultTheme()
+            _apiLayout.Add(new ApiDefaultTheme
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
-                Default = value.GetValue(mudTheme.LayoutProperties, null),
+                Default = value.GetValue(_mudTheme.LayoutProperties, null),
                 CSSVariable = $"--mud-{GetCssVar(value.Name)}"
             });
         }
     }
-    
+
     private void LoadTypography()
     {
         foreach (var _typography in typeof(Typography).GetProperties())
         {
-            ApiTypography.Add(new ApiDefaultTheme()
+            _apiTypography.Add(new ApiDefaultTheme
             {
                 Name = _typography.Name,
                 Type = _typography.PropertyType.ConvertToCSharpSource(),
                 IsHeader = true
             });
-            foreach (var item in _typography.GetValue(mudTheme.Typography, null).GetType().GetProperties())
+            foreach (var item in _typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperties() ?? [])
             {
-                ApiTypography.Add(new ApiDefaultTheme()
+                _apiTypography.Add(new ApiDefaultTheme
                 {
-                    Name = _typography.GetValue(mudTheme.Typography, null).GetType().GetProperty(item.Name).Name,
-                    Type = _typography.GetValue(mudTheme.Typography, null).GetType().GetProperty(item.Name).PropertyType.ConvertToCSharpSource(),
-                    Default = _typography.GetValue(mudTheme.Typography, null).GetType().GetProperty(item.Name).GetValue(_typography.GetValue(mudTheme.Typography, null), null),
-                    CSSVariable = $"--mud-typography-{_typography.Name.ToLower()}{GetCssVar(_typography.GetValue(mudTheme.Typography, null).GetType().GetProperty(item.Name).Name)}"
+                    Name = _typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperty(item.Name)?.Name,
+                    Type = _typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperty(item.Name)?.PropertyType.ConvertToCSharpSource(),
+                    Default = _typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperty(item.Name)?.GetValue(_typography.GetValue(_mudTheme.Typography, null), null),
+                    CSSVariable = $"--mud-typography-{_typography.Name.ToLower()}{GetCssVar(_typography.GetValue(_mudTheme.Typography, null)?.GetType().GetProperty(item.Name)?.Name)}"
                 });
             }
         }
     }
-    
+
     private void LoadZIndexes()
     {
         foreach (var value in typeof(ZIndex).GetProperties())
         {
-            ApiZindex.Add(new ApiDefaultTheme()
+            _apiZindex.Add(new ApiDefaultTheme
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
-                Default = value.GetValue(mudTheme.ZIndex, null),
+                Default = value.GetValue(_mudTheme.ZIndex, null),
                 CSSVariable = $"--mud-zindex-{GetCssVar(value.Name)}"
             });
         }
     }
 
-    private string GetCssVar(string value)
+    private static string GetCssVar(string value)
     {
         if (value == "AppBar")
         {
             return value.ToLowerInvariant();
         }
-        else if (value.Contains("ContrastText"))
+
+        if (value.Contains("ContrastText"))
         {
             return value.Replace("ContrastText", "-Text").ToLowerInvariant();
         }
-        else if (value.Contains("Font"))
+
+        if (value.Contains("Font"))
         {
             return value.Replace("Font", "-").ToLowerInvariant();
         }
-        else if (value.Contains("LineHeight"))
+
+        if (value.Contains("LineHeight"))
         {
             return value.Replace("LineHeight", "-LineHeight").ToLowerInvariant();
         }
-        else if (value.Contains("LetterSpacing"))
+
+        if (value.Contains("LetterSpacing"))
         {
             return value.Replace("LetterSpacing", "-LetterSpacing").ToLowerInvariant();
         }
-        else if (value.Contains("TextTransform"))
+
+        if (value.Contains("TextTransform"))
         {
             return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
         }
-        else if (value.Contains("BorderRadius"))
+
+        if (value.Contains("BorderRadius"))
         {
             return value.Replace("BorderRadius", "-BorderRadius").ToLowerInvariant();
         }
-        else
-        {
-            return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLowerInvariant();
-        }
+
+        return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLowerInvariant();
     }
 
     private class ApiDefaultTheme
@@ -352,4 +347,5 @@
         public string CSSVariable { get; set; }
         public bool IsHeader { get; set; }
     }
+
 }

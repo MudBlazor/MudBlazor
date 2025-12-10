@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void KeepTabs_Not_AliveTest()
         {
-            var comp = Context.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
+            var comp = Context.RenderComponent<TabsKeepAliveTest>(parameters => parameters.Add(p => p.KeepPanelsAlive, false));
             // only one panel should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
@@ -1128,7 +1128,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
         {
             var comp = Context.RenderComponent<TabPanelIconColorTest>();
-            await comp.SetParamAsync(x => x.DisableTab, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DisableTab, true));
             await comp.SetParametersAndRenderAsync(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
             var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
@@ -1398,8 +1398,8 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in natural order
              */
-            var comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortDirection", SortDirection.None)
+            var comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortDirection, SortDirection.None)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
@@ -1409,8 +1409,8 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically ascending order
              */
-            comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending)
+            comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortDirection, SortDirection.Ascending)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("1");
@@ -1420,8 +1420,8 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically descending order
              */
-            comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
+            comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortDirection, SortDirection.Descending)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("3");
@@ -1438,9 +1438,9 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in natural order
              */
-            var comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortDirection", SortDirection.None),
-                ComponentParameter.CreateParameter("SortKeys", sortKeys)
+            var comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortDirection, SortDirection.None)
+                .Add(p => p.SortKeys, sortKeys)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
             // sort order is per markup: 2, 1, 3, 4. Keys are ignored as list is unsorted.
@@ -1452,9 +1452,9 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically ascending order
              */
-            comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending),
-                ComponentParameter.CreateParameter("SortKeys", sortKeys)
+            comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortDirection, SortDirection.Ascending)
+                .Add(p => p.SortKeys, sortKeys)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
             // sort order is: 4, a=3, b=1, c=2
@@ -1466,9 +1466,9 @@ namespace MudBlazor.UnitTests.Components
             /* ***
              * all labels should be present and in lexicographically descending order
              */
-            comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending),
-                ComponentParameter.CreateParameter("SortKeys", sortKeys)
+            comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortDirection, SortDirection.Descending)
+                .Add(p => p.SortKeys, sortKeys)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
             // sort order is: c=2, b=1, a=3, 4
@@ -1487,9 +1487,9 @@ namespace MudBlazor.UnitTests.Components
              * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
-            var comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
-                ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
+            var comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortComparer, new LabelSortTest.TestComparer())
+                .Add(p => p.SortDirection, SortDirection.Descending)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
@@ -1506,9 +1506,9 @@ namespace MudBlazor.UnitTests.Components
              * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
-            var comp = Context.RenderComponent<LabelSortTest>(
-                ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
-                ComponentParameter.CreateParameter("SortDirection", null)
+            var comp = Context.RenderComponent<LabelSortTest>(parameters => parameters
+                .Add(p => p.SortComparer, new LabelSortTest.TestComparer())
+                .Add(p => p.SortDirection, null)
             );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
@@ -1537,7 +1537,7 @@ namespace MudBlazor.UnitTests.Components
             // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
-            await comp.SetParametersAndRenderAsync();
+            comp.Render();
             // drop container
             comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
@@ -1731,6 +1731,88 @@ namespace MudBlazor.UnitTests.Components
             wrapperDiv.Should().NotBeNull();
             var tooltipDiv = comp.Find(".mud-tabs-tabbar-content .mud-tooltip-root .mud-popover-cascading-value");
             tooltipDiv.Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Test if TabButtonClass and TabPanelsClass are applying the CSS classes properly to TabPanel
+        /// </summary>
+        [Test]
+        public void TabPanel_AppliesItsOwnCssClasses()
+        {
+            var tabButtonClasses = "class1";
+            var panelClasses = "class2";
+
+            var comp = Context.RenderComponent<TabPanelCssClassesMatchTest>(parameters => parameters
+                .Add(p => p.TabButtonClass, tabButtonClasses)
+                .Add(p => p.PanelClass, panelClasses));
+
+            var tabButtonRef = comp.Find(".mud-tab.mud-tab-panel");
+            tabButtonRef.ClassList.Should().Contain(tabButtonClasses);
+            tabButtonRef.ClassList.Should().NotContain(panelClasses);
+
+            var panelRef = comp.Find(":not(.mud-tab).mud-tab-panel");
+            panelRef.ClassList.Should().Contain(panelClasses);
+            panelRef.ClassList.Should().NotContain(tabButtonClasses);
+        }
+
+        /// <summary>
+        /// Test if TabButtonClass and TabPanelsClass are applying the CSS classes properly to Tabs
+        /// </summary>
+        [Test]
+        public void Tabs_AppliesItsOwnCssClasses()
+        {
+            var tabButtonClasses = "class1";
+            var tabPanelClasses = "class2";
+
+            var comp = Context.RenderComponent<TabsCssClassesMatchTest>(parameters => parameters
+                .Add(p => p.TabButtonClass, tabButtonClasses)
+                .Add(p => p.TabPanelClass, tabPanelClasses));
+
+            var tabButtonRef = comp.Find(".mud-tab.mud-tab-panel");
+            tabButtonRef.ClassList.Should().Contain(tabButtonClasses);
+            tabButtonRef.ClassList.Should().NotContain(tabPanelClasses);
+
+            var panelRef = comp.Find(".mud-tabs-panels");
+            panelRef.ClassList.Should().Contain(tabPanelClasses);
+            panelRef.ClassList.Should().NotContain(tabButtonClasses);
+        }
+
+        /// <summary>
+        /// Test if Tabs and TabPanels combined TabButtonClass and TabPanelsClass are applying the CSS classes properly
+        /// </summary>
+        [Test]
+        public void Tabs_And_TabPanel_CombinedClassesTest()
+        {
+            var comp = Context.RenderComponent<TabsAndTabPanelCssClassesMatchTest>();
+
+            var tabButtons = comp.FindAll(".mud-tab");
+            tabButtons.Should().AllSatisfy(x => x.ClassList.Should().Contain("mud-tabs-button-class"));
+
+            tabButtons[0].ClassList.Should().Contain("mud-tab-panel-button-class-1");
+            tabButtons[0].ClassList.Should().NotContain("mud-tabs-panel-class");
+            tabButtons[0].ClassList.Should().NotContain("mud-tab-panel-panel-class-1");
+
+            tabButtons[1].ClassList.Should().Contain("mud-tab-panel-button-class-2");
+            tabButtons[1].ClassList.Should().NotContain("mud-tabs-panel-class");
+            tabButtons[1].ClassList.Should().NotContain("mud-tab-panel-panel-class-2");
+
+            var tabsPanels = comp.Find(".mud-tabs-panels");
+            tabsPanels.ClassList.Should().Contain("mud-tabs-panel-class");
+            tabsPanels.ClassList.Should().NotContain("mud-tabs-button-class");
+
+            TabsAndTabPanelCssClassesMatchTest.SelectedTab = 0;
+            comp = Context.RenderComponent<TabsAndTabPanelCssClassesMatchTest>();
+            var activeTabPanel = comp.Find(":not(.mud-tab).mud-tab-panel");
+            activeTabPanel.ClassList.Should().Contain("mud-tab-panel-panel-class-1");
+            activeTabPanel.ClassList.Should().NotContain("mud-tab-panel-button-class-1");
+            activeTabPanel.ClassList.Should().NotContain("mud-tabs-panel-class");
+
+            TabsAndTabPanelCssClassesMatchTest.SelectedTab = 1;
+            comp = Context.RenderComponent<TabsAndTabPanelCssClassesMatchTest>();
+            activeTabPanel = comp.Find(":not(.mud-tab).mud-tab-panel");
+            activeTabPanel.ClassList.Should().Contain("mud-tab-panel-panel-class-2");
+            activeTabPanel.ClassList.Should().NotContain("mud-tab-panel-button-class-2");
+            activeTabPanel.ClassList.Should().NotContain("mud-tabs-panel-class");
         }
 
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.Switch;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
@@ -37,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
-            await comp.SetParamAsync(x => x.Disabled, true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
         }

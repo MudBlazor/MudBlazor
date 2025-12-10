@@ -3,7 +3,6 @@ using FluentAssertions;
 using MudBlazor.Components.Highlighter;
 using MudBlazor.UnitTests.TestComponents.Highlighter;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Components.Highlighter.Splitter;
 
 namespace MudBlazor.UnitTests.Components
@@ -281,9 +280,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextParameterTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "item");
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, TEXT)
+                .Add(x => x.HighlightedText, "item"));
             comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
@@ -293,9 +292,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextsParameterWithOneElementTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
-            var highlightedTexts = Parameter(nameof(MudHighlighter.HighlightedTexts), new string[] { "item" });
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedTexts);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, TEXT)
+                .Add(x => x.HighlightedTexts, new string[] { "item" }));
             comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
@@ -305,9 +304,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextsParameterWithMultipleElementsTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
-            var highlightedTexts = Parameter(nameof(MudHighlighter.HighlightedTexts), new string[] { "item", "This" });
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedTexts);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, TEXT)
+                .Add(x => x.HighlightedTexts, new string[] { "item", "This" }));
             comp.MarkupMatches("<mark>This</mark> is the first <mark>item</mark>");
         }
 
@@ -317,10 +316,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithOneElementTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
-            var highlightedTexts = Parameter(nameof(MudHighlighter.HighlightedTexts), new string[] { "item" });
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "This");
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, highlightedTexts);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, TEXT)
+                .Add(x => x.HighlightedText, "This")
+                .Add(x => x.HighlightedTexts, new string[] { "item" }));
             comp.MarkupMatches("<mark>This</mark> is the first <mark>item</mark>");
         }
 
@@ -330,10 +329,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithMultipleElementsTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
-            var highlightedTexts = Parameter(nameof(MudHighlighter.HighlightedTexts), new string[] { "item", "first" });
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "This");
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, highlightedTexts);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, TEXT)
+                .Add(x => x.HighlightedText, "This")
+                .Add(x => x.HighlightedTexts, new string[] { "item", "first" }));
             comp.MarkupMatches("<mark>This</mark> is the <mark>first</mark> <mark>item</mark>");
         }
 
@@ -343,9 +342,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighter_Nulls_Test()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), null);
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), null);
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, null)
+                .Add(x => x.HighlightedText, null));
             comp.MarkupMatches(string.Empty);
         }
 
@@ -355,9 +354,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupWithRegexTextTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "[");
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, TEXT)
+                .Add(x => x.HighlightedText, "["));
             comp.MarkupMatches("This is the first item");
         }
 
@@ -367,11 +366,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudHighlighterMarkupUntilNextBoundaryTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "it");
-            var untilNextBoundary = Parameter(nameof(MudHighlighter.UntilNextBoundary), true);
-            var comp = Context
-                .RenderComponent<MudHighlighter>(text, highlightedText, untilNextBoundary);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, TEXT)
+                .Add(x => x.HighlightedText, "it")
+                .Add(x => x.UntilNextBoundary, true));
             comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
@@ -381,16 +379,17 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudHighlighterMarkupCaseSensitiveTest()
         {
-            var text = Parameter(nameof(MudHighlighter.Text), "This is this");
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "this");
-            var caseSensitive = Parameter(nameof(MudHighlighter.CaseSensitive), true);
-            var caseInSensitive = Parameter(nameof(MudHighlighter.CaseSensitive), false);
-            var comp = Context
-                .RenderComponent<MudHighlighter>(text, highlightedText, caseSensitive);
+            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+                .Add(x => x.Text, "This is this")
+                .Add(x => x.HighlightedText, "this")
+                .Add(x => x.CaseSensitive, true));
             //Case sensitive
             comp.MarkupMatches("This is <mark>this</mark>");
             //Case insensitive
-            await comp.SetParametersAndRenderAsync(text, highlightedText, caseInSensitive);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Text, "This is this")
+                .Add(x => x.HighlightedText, "this")
+                .Add(x => x.CaseSensitive, false));
             comp.MarkupMatches("<mark>This</mark> is <mark>this</mark>");
         }
 

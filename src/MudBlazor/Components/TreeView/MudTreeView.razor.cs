@@ -50,7 +50,7 @@ namespace MudBlazor
         private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
 
         private HashSet<T> _selection;
-        private HashSet<MudTreeViewItem<T>> _childItems = new();
+        private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
         private bool _isFirstRender = true;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
@@ -250,7 +250,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public T? SelectedValue { get; set; }
 
@@ -266,7 +266,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 

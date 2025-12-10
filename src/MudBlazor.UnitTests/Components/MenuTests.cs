@@ -45,9 +45,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-button-root")[0].Click();
 
             var menuItems = comp.FindComponents<MudMenuItem>();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            menuItems[2].Instance.Disabled = true;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await menuItems[2].SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
 
             comp.FindAll("a.mud-menu-item")[1].Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
@@ -1220,6 +1218,36 @@ namespace MudBlazor.UnitTests.Components
                 .GetValue(menu)!;
 
             focusedIndex.Should().Be(menuItems.Count - 1);
+        }
+
+        [Test]
+        public void PopoverSettings_SetsDefaultValues()
+        {
+            var menu = Context.RenderComponent<MudMenu>();
+
+            menu.Instance.PopoverFixed.Should().BeFalse();
+            menu.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+        }
+
+        [Test]
+        public void PopoverSettings_OverridesDefaultValues()
+        {
+            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
+            try
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
+                var menu = Context.RenderComponent<MudMenu>(p =>
+                {
+                    p.Add(p => p.PopoverFixed, true);
+                });
+
+                menu.Instance.PopoverFixed.Should().BeTrue();
+                menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+            }
+            finally
+            {
+                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
+            }
         }
     }
 }

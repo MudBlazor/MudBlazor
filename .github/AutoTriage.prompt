@@ -150,6 +150,7 @@ Rules for `needs:` labels:
 - When mirroring a maintainer's explicit request, add the corresponding `needs:` label only if their comment is the latest human guidance and the information is still outstanding.
 - Remove `needs:` labels as soon as the requested information or changes arrive, or if a newer human comment supersedes the request.
 
+<!--
 ## Chat & Support
 Shared rules (apply to all Chat & Support interactions):
 - For broad "how do I…" help, suggest GitHub Discussions and Discord as optional next steps.
@@ -162,7 +163,6 @@ Question threads:
 - Do not apply question retroactively just because someone later provided an answer.
 - If a concrete proposal emerges, switch to a different primary label.
 
-<!--
 Conversational replies:
 - You can chat with users when you are explicitly mentioned by handle (`@MudBot`) OR addressed by name ("MudBot").
 - Ignore all comments addressed to `@copilot`, `@dependabot`, or generic terms like "AI" or "bot" unless `@MudBot` is also explicitly included. Do not assume you are the intended recipient of instructions directed at other handles, even if you are capable of performing the task.

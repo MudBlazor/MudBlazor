@@ -24,8 +24,8 @@
     <MudToggleGroup T="string" Dense="true"  />
 }
 
-@*bind-ErrorText will create ErrorTextChanged event which is invalid*@
-<MudCheckBox Value="@bindx" @bind-ErrorText=@bindx />
+@*bind-RequiredError will create RequiredErrorChanged event which is invalid*@
+<MudCheckBox Value="@bindx" @bind-RequiredError=@bindx />
 
 @*bind-Value will mean a TypeInference class in source generator*@
 <MudChip @bind-Value="@bindx" Text="Href set" @bind-Value:after="Test" AvatarClass="@bindx" />
