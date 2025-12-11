@@ -40,6 +40,8 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+            // Set default value to ensure ParameterState never holds null
+            SelectedValues = new HashSet<T?>();
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
@@ -202,6 +204,8 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAsync(item.Value, updateText: true);
+                // Update ParameterState to keep SelectedValues in sync
+                await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             }
 
             HighlightItem(item);
@@ -780,16 +784,23 @@ namespace MudBlazor
                 // CloseMenu(true) doesn't close popover in BSS
                 await CloseMenu(false);
 
-                if (EqualityComparer<T>.Default.Equals(Value, value))
+                // Update internal selected values and ParameterState
+                _selectedValues.Clear();
+                _selectedValues.Add(value);
+                
+                // Early return if value hasn't changed (but after updating SelectedValues)
+                // Use Comparer if available, otherwise use default
+                var comparer = Comparer ?? EqualityComparer<T?>.Default;
+                if (comparer.Equals(Value, value))
                 {
+                    // Still need to publish SelectedValues to ParameterState in case it wasn't initialized
+                    await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
                     StateHasChanged();
                     return;
                 }
 
                 await SetValueAsync(value);
                 _elementReference.SetText(Text).CatchAndLog();
-                _selectedValues.Clear();
-                _selectedValues.Add(value);
             }
 
             HighlightItemForValueAsync(value);
