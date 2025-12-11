@@ -69,7 +69,7 @@
                     }
                 }
 
-                <MudPopover Open="@_openState.Value"
+                <MudPopover Open="@Open"
                             Class="@PopoverClass"
                             MaxHeight="@MaxHeight"
                             RelativeWidth="@RelativeWidth"
@@ -144,7 +144,7 @@
 </CascadingValue>
 
 <MudOverlay AutoClose
-            Visible="@_openState.Value"
+            Visible="Open"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
             Modal="@Modal" />

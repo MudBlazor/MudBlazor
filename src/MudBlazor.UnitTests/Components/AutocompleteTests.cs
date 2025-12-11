@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
-using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
@@ -912,7 +911,7 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComponent.Find("div.mud-input-control").Focus();
 
             // ensure popup is open
-            await component.WaitForAssertionAsync(() => autocompleteInstance.GetState(x => x.Open).Should().BeTrue("Input has been focused and should open the popup"));
+            await component.WaitForAssertionAsync(() => autocompleteInstance.Open.Should().BeTrue("Input has been focused and should open the popup"));
 
             // get the matching states
             var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
@@ -1083,7 +1082,7 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComponent.Find("div.mud-input-control").Focus();
 
             // ensure popup is open
-            await component.WaitForAssertionAsync(() => autocompleteInstance.GetState(x => x.Open).Should().BeTrue("Input has been focused and should open the popup"));
+            await component.WaitForAssertionAsync(() => autocompleteInstance.Open.Should().BeTrue("Input has been focused and should open the popup"));
 
             // get the matching states
             var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
@@ -1100,7 +1099,7 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComponent.Find(TagNames.Input).Input(string.Empty);
 
             // wait till popup is visible
-            await component.WaitForAssertionAsync(() => autocompleteInstance.GetState(x => x.Open).Should().BeTrue());
+            await component.WaitForAssertionAsync(() => autocompleteInstance.Open.Should().BeTrue());
 
             // update found elements
             matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
@@ -1675,7 +1674,7 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComponent.Find("div.mud-input-control").Focus();
 
             // ensure popup is open
-            await component.WaitForAssertionAsync(() => autocompleteInstance.GetState(x => x.Open).Should().BeTrue("Input has been focused and should open the popup"));
+            await component.WaitForAssertionAsync(() => autocompleteInstance.Open.Should().BeTrue("Input has been focused and should open the popup"));
 
             // get the matching states
             var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
@@ -2172,7 +2171,7 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComponent.Find("div.mud-input-control").Focus();
 
             // Ensure popup is open
-            await component.WaitForAssertionAsync(() => autocompleteInstance.GetState(x => x.Open).Should().BeTrue("Input has been focused and should open the popup"));
+            await component.WaitForAssertionAsync(() => autocompleteInstance.Open.Should().BeTrue("Input has been focused and should open the popup"));
 
             // Get the initial matching states (items in the dropdown)
             var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
@@ -2228,7 +2227,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompleteInstance = comp.Instance;
             autocompleteInstance.OnAdornmentClick.HasDelegate.Should().Be(attachDelegate);
             await comp.InvokeAsync(async () => await autocompleteInstance.AdornmentClickHandlerAsync());
-            autocompleteInstance.GetState(x => x.Open).Should().Be(!attachDelegate);
+            autocompleteInstance.Open.Should().Be(!attachDelegate);
         }
 
         [Test]

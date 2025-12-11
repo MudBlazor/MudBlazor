@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
-using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -24,6 +23,7 @@ namespace MudBlazor
         private int _selectedListItemIndex;
         private int _elementKey = 0;
         private int _returnedItemsCount;
+        private bool _open;
         private bool _opening;
         private bool _isValueCoerced;
         private MudInput<string> _elementReference = null!;
@@ -33,7 +33,6 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private bool _handleNextFocus;
-        private readonly ParameterState<bool> _openState;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
@@ -503,12 +502,24 @@ namespace MudBlazor
         /// <remarks>
         /// When this property changes, the <see cref="OpenChanged"/> event will occur.
         /// </remarks>
-        [Parameter, ParameterState]
-        public bool Open { get; set; }
+        public bool Open
+        {
+            get => _open;
+            // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
+            // Note: setting Open will not open or close it. Use ToggleMenuAsync() for that.
+            protected set
+            {
+                if (_open == value)
+                    return;
+                _open = value;
+
+                OpenChanged.InvokeAsync(_open).CatchAndLog();
+            }
+        }
 
         private bool IsLoading => _currentSearchTask is { IsCompleted: false };
 
-        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _openState.Value ? CloseIcon : OpenIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
 
         /// <summary>
         /// Returns a value for the <c>autocomplete</c> attribute, either supplied by default or the one specified in the attribute overrides.
@@ -520,10 +531,6 @@ namespace MudBlazor
             Adornment = Adornment.End;
             IconSize = Size.Medium;
             Immediate = true;
-            using var registerScope = CreateRegisterScope();
-            _openState = registerScope.RegisterParameter<bool>(nameof(Open))
-                .WithParameter(() => Open)
-                .WithEventCallback(() => OpenChanged);
         }
 
         /// <summary>
@@ -535,7 +542,14 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
+                // #1 needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
+                // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
+                _open = false;
+
                 await SetValueAsync(value);
+
+                // needs to be open to run the rest of the code
+                _open = true;
 
                 if (_items != null)
                     _selectedListItemIndex = Array.IndexOf(_items, value);
@@ -554,7 +568,7 @@ namespace MudBlazor
                     await _elementReference.SetText(optionText);
                 }
 
-                await _openState.SetValueAsync(false);
+                Open = false;
                 StateHasChanged();
             }
             finally
@@ -641,17 +655,14 @@ namespace MudBlazor
         /// <remarks>
         /// Will have no effect if the autocomplete is disabled or read-only.
         /// </remarks>
-        public async Task ToggleMenuAsync()
+        public Task ToggleMenuAsync()
         {
-            if (!_openState.Value && (GetDisabledState() || GetReadOnlyState()))
+            if (!Open && (GetDisabledState() || GetReadOnlyState()))
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            if (_openState.Value)
-                await CloseMenuAsync();
-            else
-                await OpenMenuAsync();
+            return Open ? CloseMenuAsync() : OpenMenuAsync();
         }
 
         /// <summary>
@@ -661,7 +672,7 @@ namespace MudBlazor
         {
             CancelToken();
             _debounceTimer?.Dispose();
-            await _openState.SetValueAsync(false); // Before restoring position and triggering changes, make sure that we close the popover
+            Open = false; // Before restoring position and triggering changes, make sure that we close the popover
             StateHasChanged();
             await RestoreScrollPositionAsync();
             await CoerceTextToValueAsync();
@@ -674,7 +685,7 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
-                await _openState.SetValueAsync(false);
+                Open = false;
                 StateHasChanged();
                 return;
             }
@@ -691,7 +702,7 @@ namespace MudBlazor
                 if (ProgressIndicatorInPopoverTemplate != null)
                 {
                     // Open before searching if a progress indicator is defined.
-                    await _openState.SetValueAsync(true);
+                    Open = true;
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
@@ -771,7 +782,7 @@ namespace MudBlazor
             if (_isFocused || !wasFocused)
             {
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
-                await _openState.SetValueAsync(true);
+                Open = true;
             }
 
             _opening = false;
@@ -799,7 +810,7 @@ namespace MudBlazor
             try
             {
                 _isCleared = true;
-                await _openState.SetValueAsync(false);
+                Open = false;
 
                 await SetTextAsync(string.Empty, updateValue: false);
                 await SetValueAsync(default, updateText: false);
@@ -842,7 +853,7 @@ namespace MudBlazor
             {
                 // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUpAsync.
                 case "Tab":
-                    if (_openState.Value)
+                    if (Open)
                     {
                         if (SelectValueOnTab)
                             await OnEnterKeyAsync();
@@ -850,7 +861,7 @@ namespace MudBlazor
                     await CloseMenuAsync();
                     break;
                 case "ArrowDown":
-                    if (_openState.Value)
+                    if (Open)
                     {
                         await SelectAdjacentItemAsync(+1);
                     }
@@ -864,7 +875,7 @@ namespace MudBlazor
                     {
                         await CloseMenuAsync();
                     }
-                    else if (!_openState.Value)
+                    else if (!Open)
                     {
                         await OpenMenuAsync();
                     }
@@ -884,7 +895,7 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
-                    if (_openState.Value)
+                    if (Open)
                     {
                         await OnEnterKeyAsync();
                     }
@@ -976,7 +987,7 @@ namespace MudBlazor
 
         internal async Task OnEnterKeyAsync()
         {
-            if (!_openState.Value || _items == null || _items.Length == 0)
+            if (!Open || _items == null || _items.Length == 0)
             {
                 // When Immediate is enabled, then the CoerceValue is set by TextChanged
                 // So only coerce the value on enter when Immediate is disabled
@@ -994,8 +1005,8 @@ namespace MudBlazor
             }
             finally
             {
-                if (_openState.Value)
-                    await _openState.SetValueAsync(false);
+                if (Open)
+                    Open = false;
             }
         }
 
@@ -1045,7 +1056,7 @@ namespace MudBlazor
         private async Task OnInputActivatedAsync(bool openMenu)
         {
             // The click event also triggers the focus event so we don't want to unnecessarily handle both.
-            if (openMenu && !_openState.Value && !_opening && !GetReadOnlyState())
+            if (openMenu && !Open && !_opening && !GetReadOnlyState())
             {
                 await OpenMenuAsync();
             }
@@ -1059,6 +1070,7 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
             if (_items?.Length > 0)
                 _items = [];
+            _open = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
@@ -1076,7 +1088,7 @@ namespace MudBlazor
             else
             {
                 await ToggleMenuAsync();
-                if (_openState.Value)
+                if (Open)
                     await FocusAsync();
             }
         }
@@ -1101,7 +1113,7 @@ namespace MudBlazor
 
         private Task OnOverlayClosedAsync()
         {
-            if (_openState.Value)
+            if (Open)
             {
                 return CloseMenuAsync();
             }
