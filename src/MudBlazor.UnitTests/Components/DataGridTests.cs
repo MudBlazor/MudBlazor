@@ -5395,6 +5395,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () =>
             {
                 var nextButton = comp.Find("button[aria-label='Next page']");
+                nextButton.Should().NotBeNull("Expected a Next Page Button.");
                 await nextButton.ClickAsync();
             });
 
@@ -5409,6 +5410,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () =>
             {
                 var prevButton = comp.Find("button[aria-label='Previous page']");
+                prevButton.Should().NotBeNull("Expected a Previous Page Button.");
                 await prevButton.ClickAsync();
             });
 
