@@ -449,12 +449,12 @@ namespace MudBlazor
         {
             var value = arg.Value;
             var set = value ?? new HashSet<T?>(Comparer);
-            
+
             // Update internal HashSet with new values - make a defensive copy to avoid shared references
             _selectedValues = new HashSet<T?>(set, Comparer);
-            
+
             SelectionChangedFromOutside?.Invoke(_selectedValues);
-            
+
             if (!MultiSelection)
             {
                 await SetValueAsync(_selectedValues.FirstOrDefault());
@@ -787,7 +787,7 @@ namespace MudBlazor
                 // Update internal selected values and ParameterState
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
-                
+
                 // Early return if value hasn't changed (but after updating SelectedValues)
                 // Use Comparer if available, otherwise use default
                 var comparer = Comparer ?? EqualityComparer<T?>.Default;
