@@ -32,6 +32,11 @@ public class SyntheticParameterStateContainer
 {
     private readonly ParameterContainer _parameterContainer = new() { AutoVerify = false };
     private bool _isFirstRender = true;
+    
+    /// <summary>
+    /// Exposes the internal ParameterContainer for benchmarking direct lookups.
+    /// </summary>
+    internal ParameterContainer ParameterContainer => _parameterContainer;
 
     /// <summary>
     /// Creates a scope for registering parameters, similar to ComponentBaseWithState.
