@@ -491,7 +491,7 @@ namespace MudBlazor
         {
             // Apply comparer and refresh selected values
             _selectedValues = new HashSet<T?>(_selectedValues, arg.Value);
-            await _selectedValuesState.SetValueAsync(_selectedValues);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, arg.Value));
         }
 
         /// <summary>
@@ -794,7 +794,8 @@ namespace MudBlazor
             }
 
             HighlightItemForValueAsync(value);
-            await _selectedValuesState.SetValueAsync(_selectedValues);
+            // Create a new HashSet to ensure ParameterState detects the change
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T?)(object?)Text, updateText: false);
@@ -1040,7 +1041,7 @@ namespace MudBlazor
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
-            await _selectedValuesState.SetValueAsync(_selectedValues);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
@@ -1242,7 +1243,7 @@ namespace MudBlazor
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
-            await _selectedValuesState.SetValueAsync(_selectedValues);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
         }
 
@@ -1281,7 +1282,7 @@ namespace MudBlazor
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
-            await _selectedValuesState.SetValueAsync(_selectedValues);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
