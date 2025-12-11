@@ -44,6 +44,9 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
                 .WithChangeHandler(() => UpdateTextPropertyAsync(false));
+            registerScope.RegisterParameter<IEqualityComparer<T?>?>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChangedAsync);
             _selectedValuesState = registerScope.RegisterParameter<IEnumerable<T?>?>(nameof(SelectedValues))
                 .WithParameter(() => SelectedValues)
                 .WithEventCallback(() => SelectedValuesChanged)
@@ -483,6 +486,13 @@ namespace MudBlazor
         [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public IEqualityComparer<T?>? Comparer { get; set; }
+
+        private async Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
+        {
+            // Apply comparer and refresh selected values
+            _selectedValues = new HashSet<T?>(_selectedValues, arg.Value);
+            await _selectedValuesState.SetValueAsync(_selectedValues);
+        }
 
         /// <summary>
         /// The function for the <c>Text</c> in drop-down items.
