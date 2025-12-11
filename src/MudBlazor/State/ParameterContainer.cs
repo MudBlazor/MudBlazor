@@ -216,7 +216,17 @@ internal class ParameterContainer : IParameterContainer
     }
 
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator()
+    {
+        // If flattened dictionary is already created, use it for better performance
+        if (_flattenedParameters.IsValueCreated)
+        {
+            return ((IEnumerable<IParameterComponentLifeCycle>)_flattenedParameters.Value.Values).GetEnumerator();
+        }
+        
+        // Otherwise, iterate through scope containers (avoid forcing dictionary creation)
+        return _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
+    }
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
