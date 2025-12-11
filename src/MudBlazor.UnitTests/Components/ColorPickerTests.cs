@@ -340,13 +340,13 @@ namespace MudBlazor.UnitTests.Components
 
             var overlay = comp.Find(CssSelector);
 
-            overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 1 });
+            await overlay.PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 1 });
 
             var expectedColor = new MudColor(74, 70, 112, 255);
 
             await CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
 
-            overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 0 });
+            await overlay.PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y, Buttons = 0 });
 
             await CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
             const double x = 99.2;
             const double y = 200.98;
 
-            overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y });
+            await overlay.PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y });
 
             MudColor color = "#232232ff";
             var expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
@@ -400,27 +400,27 @@ namespace MudBlazor.UnitTests.Components
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
 
             // click to switch to HSL
-            modeButton.Click();
+            await modeButton.ClickAsync();
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HSL);
 
             //click again to switch to hex
-            modeButton.Click();
+            await modeButton.ClickAsync();
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HEX);
 
             //click last time to reset to RGB
-            modeButton.Click();
+            await modeButton.ClickAsync();
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
         }
 
         [Test]
-        public void ColorPalette_Interaction()
+        public async Task ColorPalette_Interaction()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
             var colorDot = comp.Find(_colorDotCssSelector);
             // no collection
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
-            colorDot.Click();
+            await colorDot.ClickAsync();
 
             // collection found
             var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
@@ -434,21 +434,21 @@ namespace MudBlazor.UnitTests.Components
                 styleAttribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
             }
 
-            colorDot.Click();
+            await colorDot.ClickAsync();
 
             // again no collection visible
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
         }
 
         [Test]
-        public void ColorPalette_CustomColors()
+        public async Task ColorPalette_CustomColors()
         {
             var expectedColors = new MudColor[] { "#23af3daa", "#56a23dff", "#56a85dff" };
 
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.Palette, expectedColors));
 
             var colorDot = comp.Find(_colorDotCssSelector);
-            colorDot.Click();
+            await colorDot.ClickAsync();
 
             // collection found
             var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
@@ -462,14 +462,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ColorPalette_SelectColor()
+        public async Task ColorPalette_SelectColor()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
 
             var colorDot = comp.Find(_colorDotCssSelector);
             // no collection
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
-            colorDot.Click();
+            await colorDot.ClickAsync();
 
             var expectedColors = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
 
@@ -477,14 +477,14 @@ namespace MudBlazor.UnitTests.Components
             {
                 var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
 
-                colorsToSelectPanel.Children[i].Click();
+                await colorsToSelectPanel.Children[i].ClickAsync();
                 colorDot = comp.Find(_colorDotCssSelector);
 
                 var styleAttribute = colorDot.GetAttribute("style");
                 styleAttribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
                 comp.Instance.ColorValue.Should().Be(expectedColors[i]);
 
-                colorDot.Click();
+                await colorDot.ClickAsync();
             }
         }
 
@@ -707,7 +707,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleViewMode()
+        public async Task ToggleViewMode()
         {
             var comp = Context.Render<MudColorPicker>(p =>
             {
@@ -726,7 +726,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in buttonMapper)
             {
-                Buttons()[item.Key].Click();
+                await Buttons()[item.Key].ClickAsync();
 
                 _ = comp.Find(item.Value.Item2);
             }
@@ -812,7 +812,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void PaletteView_ChooseColor()
+        public async Task PaletteView_ChooseColor()
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
             {
@@ -827,9 +827,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 var expectedColor = expectedColors[i];
                 var colorElement = collectionView.Children[i];
-                colorElement.Click();
+                await colorElement.ClickAsync();
 
-                comp.Instance.ColorValue.Should().Be(expectedColor);
+                await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
                 comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
 
             }
@@ -861,7 +861,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void GridView_ChooseColor()
+        public async Task GridView_ChooseColor()
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
             {
@@ -878,8 +878,8 @@ namespace MudBlazor.UnitTests.Components
                 var colorElement = collectionView.Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
-                comp.InvokeAsync(() => colorElement.Click());
-                comp.Instance.ColorValue.Should().Be(expectedColor);
+                await comp.InvokeAsync(() => colorElement.ClickAsync());
+                await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }
@@ -933,7 +933,7 @@ namespace MudBlazor.UnitTests.Components
                 var colorElement = gridView.Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
-                colorElement.Click();
+                await colorElement.ClickAsync();
                 await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
@@ -955,10 +955,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridDefaultColors;
 
-            var gridView = comp.Find(".mud-picker-color-grid");
-            gridView.Children[0].Click();
-
-            comp.Instance.ColorValue.Should().Be(expectedColors[0]);
+            await (await comp.WaitForElementAsync(".mud-picker-color-grid")).Children[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
@@ -979,10 +977,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridPaletteDefaultColors;
 
-            var gridView = comp.Find(".mud-picker-color-view-collection");
-            gridView.Children[0].Click();
-
-            comp.Instance.ColorValue.Should().Be(expectedColors[0]);
+            await (await comp.WaitForElementAsync(".mud-picker-color-view-collection")).Children[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
@@ -1019,14 +1015,14 @@ namespace MudBlazor.UnitTests.Components
 
             if (view == ColorPickerView.Spectrum)
             {
-                item.PointerDown();
+                await item.PointerDownAsync();
             }
             else
             {
-                item.Click();
+                await item.ClickAsync();
             }
 
-            comp.Instance.ColorValue.Should().NotBe(_defaultColor);
+            await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().NotBe(_defaultColor));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
@@ -1123,14 +1119,14 @@ namespace MudBlazor.UnitTests.Components
             var overlay = comp.Find(CssSelector);
 
             // Color should update as soon as pointer is down.
-            overlay.PointerDown(new PointerEventArgs { OffsetX = x1, OffsetY = y1 });
+            await overlay.PointerDownAsync(new PointerEventArgs { OffsetX = x1, OffsetY = y1 });
             await CheckColorRelatedValues(comp, x1, y1, expectedColor1, ColorPickerMode.RGB);
 
             const double x2 = 117.0;
             const double y2 = 140.0;
             var expectedColor2 = new MudColor(74, 70, 112, 255);
 
-            overlay.PointerMove(new PointerEventArgs { OffsetX = x2, OffsetY = y2, Buttons = 1 });
+            await overlay.PointerMoveAsync(new PointerEventArgs { OffsetX = x2, OffsetY = y2, Buttons = 1 });
 
             // Color shouldn't update if the drag effect is disabled.
             if (disableDragEffect)
@@ -1143,7 +1139,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // Color should update when pointer is released regardless of drag being enabled.
-            overlay.PointerUp(new PointerEventArgs { OffsetX = x2, OffsetY = y2 });
+            await overlay.PointerUpAsync(new PointerEventArgs { OffsetX = x2, OffsetY = y2 });
             await CheckColorRelatedValues(comp, x2, y2, expectedColor2, ColorPickerMode.RGB);
         }
 
@@ -1210,18 +1206,18 @@ namespace MudBlazor.UnitTests.Components
 
             //open the color picker
             var inputField = comp.Find(".mud-input-slot");
-            inputField.Click();
+            await inputField.ClickAsync();
 
             //asset that the picker is open in grid mode
             var grid = comp.Find(".mud-picker-color-grid");
 
             //find spectrum button and click
             var spectrumButton = comp.FindAll(_mudToolbarButtonsCssSelector)[1];
-            spectrumButton.Click();
+            await spectrumButton.ClickAsync();
 
             //find the overlay and click any position
             var overlay = comp.Find(CssSelector);
-            overlay.PointerDown(new PointerEventArgs { OffsetX = 10.5, OffsetY = 10.5 });
+            await overlay.PointerDownAsync(new PointerEventArgs { OffsetX = 10.5, OffsetY = 10.5 });
 
             //ensure that the spectrum mode is still open and not the color grid
             _ = comp.Find(".mud-picker-color-overlay");
