@@ -223,7 +223,7 @@ internal class ParameterContainer : IParameterContainer
         {
             return ((IEnumerable<IParameterComponentLifeCycle>)_flattenedParameters.Value.Values).GetEnumerator();
         }
-        
+
         // Otherwise, iterate through scope containers (avoid forcing dictionary creation)
         return _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
     }
