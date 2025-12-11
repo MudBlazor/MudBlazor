@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -39,7 +40,7 @@ namespace MudBlazor
                 if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
-                    InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
+                    InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.GetState(x => x.SelectedValues)));
                 }
                 else
                 {
