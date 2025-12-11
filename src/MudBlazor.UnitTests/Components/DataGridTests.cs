@@ -5387,10 +5387,8 @@ namespace MudBlazor.UnitTests.Components
                 iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
 
                 var toggleButton = comp.FindAll("tr")[iraIndex - 2].QuerySelector("button");
-                if (toggleButton != null)
-                {
-                    await toggleButton.ClickAsync();
-                }
+                toggleButton.Should().NotBeNull("Expected a toggle button above the Ira detail row");
+                await toggleButton.ClickAsync();
             });
 
             // Go to next page
