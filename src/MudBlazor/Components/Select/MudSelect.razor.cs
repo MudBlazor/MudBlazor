@@ -470,7 +470,11 @@ namespace MudBlazor
                 }
             }
 
-            FieldChanged(_selectedValues);
+            // Only fire FieldChanged after the first render to avoid triggering during initialization
+            if (HasRendered)
+            {
+                FieldChanged(_selectedValues);
+            }
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T?)(object?)Text, updateText: false);
         }
