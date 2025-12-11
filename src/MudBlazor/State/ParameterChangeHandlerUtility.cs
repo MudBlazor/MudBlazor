@@ -18,18 +18,18 @@ internal static class ParameterChangeHandlerUtility
     /// Uses <see cref="ParameterHandlerUniquenessComparer"/> to check for duplicates.
     /// </summary>
     /// <param name="snapshots">The list of snapshots to add to.</param>
-    /// <param name="snapshot">The snapshot to add if unique.</param>
-    public static void AddSnapshotIfUnique(List<IParameterStateInvocationSnapshot> snapshots, IParameterStateInvocationSnapshot snapshot)
+    /// <param name="targetSnapshot">The snapshot to add if unique.</param>
+    public static void AddSnapshotIfUnique(List<IParameterStateInvocationSnapshot> snapshots, IParameterStateInvocationSnapshot targetSnapshot)
     {
-        for (int i = 0; i < snapshots.Count; i++)
+        foreach (var snapshot in snapshots)
         {
-            if (ParameterHandlerUniquenessComparer.Default.Equals(snapshots[i], snapshot))
+            if (ParameterHandlerUniquenessComparer.Default.Equals(snapshot, targetSnapshot))
             {
                 return;
             }
         }
 
-        snapshots.Add(snapshot);
+        snapshots.Add(targetSnapshot);
     }
 
     /// <summary>
