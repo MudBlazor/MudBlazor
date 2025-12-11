@@ -445,14 +445,9 @@ namespace MudBlazor
         {
             var value = arg.Value;
             var set = value ?? new HashSet<T?>(Comparer);
-            var selectedValues = arg.LastValue ?? new HashSet<T?>(Comparer);
             
-            // Update internal HashSet with new values
-            _selectedValues.Clear();
-            foreach (var item in set)
-            {
-                _selectedValues.Add(item);
-            }
+            // Update internal HashSet with new values - make a defensive copy to avoid shared references
+            _selectedValues = new HashSet<T?>(set, Comparer);
             
             SelectionChangedFromOutside?.Invoke(_selectedValues);
             
