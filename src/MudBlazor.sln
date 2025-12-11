@@ -42,8 +42,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.UnitTests.Shared"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Analyzers.CodeFixes", "MudBlazor.Analyzers.CodeFixes\MudBlazor.Analyzers.CodeFixes.csproj", "{1EEFF0BA-3AA3-45E4-805A-BA636AB46907}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Benchmarks", "MudBlazor.Benchmarks\MudBlazor.Benchmarks.csproj", "{88D55372-9CC8-4782-B847-65674458AE5B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,10 +108,6 @@ Global
 		{1EEFF0BA-3AA3-45E4-805A-BA636AB46907}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EEFF0BA-3AA3-45E4-805A-BA636AB46907}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EEFF0BA-3AA3-45E4-805A-BA636AB46907}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88D55372-9CC8-4782-B847-65674458AE5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88D55372-9CC8-4782-B847-65674458AE5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88D55372-9CC8-4782-B847-65674458AE5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88D55372-9CC8-4782-B847-65674458AE5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
