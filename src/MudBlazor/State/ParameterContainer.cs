@@ -102,7 +102,15 @@ internal class ParameterContainer : IParameterContainer
             return;
         }
 
-        // Optimized: Avoid LINQ + ToHashSet allocation by using manual iteration
+        var parametersHandlerShouldFire = CollectChangedHandlers(parameters);
+
+        await baseSetParametersAsync(parameters);
+
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(parametersHandlerShouldFire);
+    }
+
+    private List<IParameterStateInvocationSnapshot>? CollectChangedHandlers(ParameterView parameters)
+    {
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
         
         foreach (var scopeContainer in _parameterScopeContainers)
@@ -112,37 +120,12 @@ internal class ParameterContainer : IParameterContainer
                 if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
                 {
                     parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
-                    
-                    var snapshot = parameter.CreateInvocationSnapshot();
-                    
-                    // Check for duplicates (ParameterHandlerUniquenessComparer logic)
-                    var isDuplicate = false;
-                    for (int i = 0; i < parametersHandlerShouldFire.Count; i++)
-                    {
-                        if (ParameterHandlerUniquenessComparer.Default.Equals(parametersHandlerShouldFire[i], snapshot))
-                        {
-                            isDuplicate = true;
-                            break;
-                        }
-                    }
-                    
-                    if (!isDuplicate)
-                    {
-                        parametersHandlerShouldFire.Add(snapshot);
-                    }
+                    ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot());
                 }
             }
         }
 
-        await baseSetParametersAsync(parameters);
-
-        if (parametersHandlerShouldFire is not null)
-        {
-            foreach (var parameterHandlerShouldFire in parametersHandlerShouldFire)
-            {
-                await parameterHandlerShouldFire.ParameterChangeHandleAsync();
-            }
-        }
+        return parametersHandlerShouldFire;
     }
 
     /// <inheritdoc/>

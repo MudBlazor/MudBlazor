@@ -7,6 +7,7 @@ using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
+using MudBlazor.State.Invocation;
 
 namespace MudBlazor.State;
 
@@ -114,17 +115,27 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// <param name="parameters">The ParameterView coming from Blazor's <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
-        var parametersHandlerShouldFire = _parameters.Value.Values
-            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
-            .Select(x => x.CreateInvocationSnapshot())
-            .ToHashSet(ParameterHandlerUniquenessComparer.Default);
+        var parametersHandlerShouldFire = CollectChangedHandlers(parameters);
 
         await baseSetParametersAsync(parameters);
 
-        foreach (var parameterHandlerShouldFire in parametersHandlerShouldFire)
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(parametersHandlerShouldFire);
+    }
+
+    private List<IParameterStateInvocationSnapshot>? CollectChangedHandlers(ParameterView parameters)
+    {
+        List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
+        
+        foreach (var parameter in _parameters.Value.Values)
         {
-            await parameterHandlerShouldFire.ParameterChangeHandleAsync();
+            if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
+            {
+                parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
+                ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot());
+            }
         }
+
+        return parametersHandlerShouldFire;
     }
 
     /// <inheritdoc/>
