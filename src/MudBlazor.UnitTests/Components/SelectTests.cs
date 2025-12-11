@@ -108,9 +108,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[0].TextContent.Should().Be("Cardinale");
-            items[0].TextContent.Should().Be("Diavolo");
-            items[0].TextContent.Should().Be("Margarita");
-            items[0].TextContent.Should().Be("Spinaci");
+            items[1].TextContent.Should().Be("Diavolo");
+            items[2].TextContent.Should().Be("Margarita");
+            items[3].TextContent.Should().Be("Spinaci");
             await items[2].ClickAsync();
             Input().GetAttribute("value").Should().Be("Margarita");
         }

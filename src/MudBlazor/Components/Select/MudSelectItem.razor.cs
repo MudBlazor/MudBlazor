@@ -136,10 +136,8 @@ namespace MudBlazor
         {
             get
             {
-                var converter = MudSelect?.GetConverter();
-                if (converter == null)
-                    return $"{Value}";
-                return converter.Convert(Value);
+                // Use the parent's ConvertValueToString which delegates to ConvertSet (handles ToStringFunc)
+                return MudSelect?.ConvertValueToString(Value) ?? $"{Value}";
             }
         }
 

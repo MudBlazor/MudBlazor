@@ -993,6 +993,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Internal method for MudSelectItem to access the converted string value.
+        /// </summary>
+        internal string? ConvertValueToString(T? value) => ConvertSet(value);
+
+        /// <summary>
         /// Throws an exception if the specified item is not compatible with this component.
         /// </summary>
         /// <param name="selectItem">The item to compare.  Should be of type <c>T</c> for this component.</param>
