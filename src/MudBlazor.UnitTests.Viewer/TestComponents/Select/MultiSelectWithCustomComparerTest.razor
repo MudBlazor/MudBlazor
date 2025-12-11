@@ -37,6 +37,7 @@
         _selected.Clear();
         _selected.Add(new Coffee("lat", "Selected Cafe Latte"));
         _selected.Add(new Coffee("esp", "Selected Espresso"));
+        StateHasChanged();
     }
 
     private class Coffee(string key, string name)
