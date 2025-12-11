@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -209,7 +209,7 @@ public class ParameterStateComparerBenchmark
             .WithEventCallback(() => _stringCallback);
 
         await _container.SimulateFirstRenderAsync(ParameterView.Empty);
-        
+
         // 100 SetValueAsync calls with same value (should trigger equality check each time)
         for (int i = 0; i < 100; i++)
         {
@@ -230,7 +230,7 @@ public class ParameterStateComparerBenchmark
             .WithComparer(_customStringComparer);
 
         await _container.SimulateFirstRenderAsync(ParameterView.Empty);
-        
+
         // 100 SetValueAsync calls with same value (should trigger equality check each time)
         for (int i = 0; i < 100; i++)
         {

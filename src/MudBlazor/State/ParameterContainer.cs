@@ -22,10 +22,10 @@ internal class ParameterContainer : IParameterContainer
 {
     private readonly Lazy<bool> _lazyVerify;
     private readonly List<IParameterScopeContainer> _parameterScopeContainers = new();
-    
+
     // Flattened dictionary for O(1) parameter lookups (created lazily on first TryGetValue call)
     private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _flattenedParameters;
-    
+
     // Cache handler count for fast path optimization
     private int _handlerCount = -1;  // -1 means not computed yet
 
@@ -94,7 +94,7 @@ internal class ParameterContainer : IParameterContainer
         }
 
         VerifyOnAuto();
-        
+
         // Fast path: if no parameters have change handlers, skip handler detection entirely
         if (GetHandlerCount() == 0)
         {
@@ -112,7 +112,7 @@ internal class ParameterContainer : IParameterContainer
     private List<IParameterStateInvocationSnapshot>? CollectChangedHandlers(ParameterView parameters)
     {
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
-        
+
         foreach (var scopeContainer in _parameterScopeContainers)
         {
             foreach (var parameter in scopeContainer)
@@ -176,7 +176,7 @@ internal class ParameterContainer : IParameterContainer
             }
         }
     }
-    
+
     /// <summary>
     /// Creates a flattened dictionary from all parameter scope containers for O(1) lookups.
     /// This is called lazily on first TryGetValue call.
@@ -190,7 +190,7 @@ internal class ParameterContainer : IParameterContainer
                 parameter => parameter,
                 StringComparer.Ordinal);  // Parameter names are case-sensitive
     }
-    
+
     /// <summary>
     /// Gets the total count of parameters with change handlers.
     /// This is computed once and cached for the fast path optimization.
@@ -211,7 +211,7 @@ internal class ParameterContainer : IParameterContainer
                 }
             }
         }
-        
+
         return _handlerCount;
     }
 

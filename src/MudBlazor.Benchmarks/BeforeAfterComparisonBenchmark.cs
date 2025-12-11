@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -161,7 +161,7 @@ public class BeforeAfterComparisonBenchmark
     {
         // Create 3 scopes (simulates base class + derived class + component)
         var paramsPerScope = ParameterCount / 3;
-        
+
         for (int scope = 0; scope < 3; scope++)
         {
             using var registerScope = _container!.CreateRegisterScope();

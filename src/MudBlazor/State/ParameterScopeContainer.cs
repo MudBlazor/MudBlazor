@@ -125,7 +125,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     private List<IParameterStateInvocationSnapshot>? CollectChangedHandlers(ParameterView parameters)
     {
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
-        
+
         foreach (var parameter in _parameters.Value.Values)
         {
             if (parameter.HasHandler && parameter.HasParameterChanged(parameters))

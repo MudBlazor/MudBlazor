@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -32,7 +32,7 @@ public class SyntheticParameterStateContainer
 {
     private readonly ParameterContainer _parameterContainer = new() { AutoVerify = false };
     private bool _isFirstRender = true;
-    
+
     /// <summary>
     /// Exposes the internal ParameterContainer for benchmarking direct lookups.
     /// </summary>
@@ -68,7 +68,7 @@ public class SyntheticParameterStateContainer
             {
                 // base.SetParametersAsync assigns [Parameter] properties here
                 // Then triggers OnInitialized (first render only) and OnParametersSet
-                
+
                 // OnInitialized - only on first render
                 _parameterContainer.OnInitialized();
                 _isFirstRender = false;
@@ -99,7 +99,7 @@ public class SyntheticParameterStateContainer
             {
                 // base.SetParametersAsync assigns [Parameter] properties here
                 // OnInitialized is skipped on re-renders
-                
+
                 // OnParametersSet - called directly on re-renders
                 _parameterContainer.OnParametersSet();
 
