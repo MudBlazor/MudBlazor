@@ -32,6 +32,7 @@ namespace MudBlazor
         protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
+        private readonly ParameterState<string?> _textState;
         private readonly ParameterState<string?> _formatState;
         private readonly ParameterState<string?> _inputIdState;
 
@@ -44,6 +45,10 @@ namespace MudBlazor
             };
 
             using var registerScope = CreateRegisterScope();
+            _textState = registerScope.RegisterParameter<string?>(nameof(Text))
+                .WithParameter(() => Text)
+                .WithEventCallback(() => TextChanged)
+                .WithChangeHandler(OnTextParameterChangedAsync);
             _formatState = registerScope.RegisterParameter<string?>(nameof(Format))
                 .WithParameter(() => Format)
                 .WithChangeHandler(OnCultureAndFormatChangedAsync);
@@ -304,7 +309,7 @@ namespace MudBlazor
         /// <summary>
         /// The text displayed in the input.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
 
@@ -353,7 +358,7 @@ namespace MudBlazor
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<string> TextChanged { get; set; }
+        public EventCallback<string?> TextChanged { get; set; }
 
         /// <summary>
         /// Occurs when the input loses focus.
@@ -442,27 +447,6 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
-
-        protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
-        {
-            if (Text != text)
-            {
-                Text = text;
-                _validated = false;
-
-                if (!string.IsNullOrEmpty(Text))
-                {
-                    Touched = true;
-                }
-
-                if (updateValue)
-                {
-                    await UpdateValuePropertyAsync(false);
-                }
-
-                await TextChanged.InvokeAsync(Text);
-            }
-        }
 
         /// <summary>
         /// Occurs when the value has changed internally.
@@ -597,7 +581,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            return SetValueAsync(ConvertGet(Text), updateText);
+            return SetValueAsync(ConvertGet(ReadText), updateText);
         }
 
         protected override string? GetFormat() => _formatState.Value;
@@ -665,12 +649,6 @@ namespace MudBlazor
             var hasValue = parameters.Contains<T>(nameof(Value));
 
             await base.SetParametersAsync(parameters);
-
-            // Refresh Value from Text
-            if (hasText && !hasValue)
-            {
-                await UpdateValuePropertyAsync(false);
-            }
 
             // Refresh Text from Value
             if (hasValue && !hasText)
@@ -762,6 +740,54 @@ namespace MudBlazor
                 : errorId ?? helperId ?? null;
         }
 
+        protected internal string? ReadText => _textState.Value;
+
+        protected Task SetTextAsyncRaw(string? text) => _textState.SetValueAsync(text);
+
+        protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
+        {
+            // Should we have another method that just do  await _textState.SetValueAsync(text); without extras?
+            if (ReadText == text)
+            {
+                return;
+            }
+
+            _validated = false;
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                Touched = true;
+            }
+
+            await _textState.SetValueAsync(text);
+            if (updateValue)
+            {
+                await UpdateValuePropertyAsync(false);
+            }
+
+            //await InvokeAsync(StateHasChanged);
+        }
+
+        //protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
+        //{
+        //    if (ReadText != text)
+        //    {
+        //        _validated = false;
+
+        //        if (!string.IsNullOrEmpty(text))
+        //        {
+        //            Touched = true;
+        //        }
+
+        //        if (updateValue)
+        //        {
+        //            await UpdateValuePropertyAsync(false);
+        //        }
+
+        //        await SetTextAsyncTask(text);
+        //    }
+        //}
+
         /// <summary>
         /// The type of input received by this component.
         /// </summary>
@@ -769,6 +795,11 @@ namespace MudBlazor
         /// Defaults to <see cref="InputType.Text"/>.
         /// </remarks>
         internal virtual InputType GetInputType() => InputType.Text;
+
+        private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
+        {
+            return SetValueAsync(ConvertGet(arg.Value), false);
+        }
 
         private async Task UpdateInputIdStateAsync()
         {

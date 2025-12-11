@@ -45,7 +45,7 @@
                   aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
-            @Text
+            @ReadText
             </textarea>
         @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
     }
