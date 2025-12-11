@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
 using MudBlazor.UnitTests.TestData;
@@ -161,9 +162,9 @@ namespace MudBlazor.UnitTests.Components
                 await comp.WaitForAssertionAsync(() => select.Instance.Text.Should().Be("2, 1, 3"));
                 items[0].Click();
                 await comp.WaitForAssertionAsync(() => select.Instance.Text.Should().Be("2, 3"));
-                select.Instance.SelectedValues.Count().Should().Be(2);
-                select.Instance.SelectedValues.Should().Contain("2");
-                select.Instance.SelectedValues.Should().Contain("3");
+                select.Instance.GetState(x => x.SelectedValues).Count().Should().Be(2);
+                select.Instance.GetState(x => x.SelectedValues).Should().Contain("2");
+                select.Instance.GetState(x => x.SelectedValues).Should().Contain("3");
                 const string @unchecked =
                     "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
                 const string @checked =
@@ -701,17 +702,17 @@ namespace MudBlazor.UnitTests.Components
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click the first checkbox to select all
             var items = comp.FindAll("div.mud-list-item").ToArray();
-            select.Instance.SelectedValues.Should().HaveCount(0);
+            select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(0);
             items[0].Click();
             // validate the result. all items that are not disabled should be selected
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().HaveCount(3));
-            select.Instance.SelectedValues.ElementAt(0).Should().Be("FirstA");
-            select.Instance.SelectedValues.ElementAt(1).Should().Be("SecondA");
-            select.Instance.SelectedValues.ElementAt(2).Should().Be("ThirdA");
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(3));
+            select.Instance.GetState(x => x.SelectedValues).ElementAt(0).Should().Be("FirstA");
+            select.Instance.GetState(x => x.SelectedValues).ElementAt(1).Should().Be("SecondA");
+            select.Instance.GetState(x => x.SelectedValues).ElementAt(2).Should().Be("ThirdA");
             // now click the first checkbox again to unselect all
             items[0].Click();
             // validate the result. all items should be un-selected
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().HaveCount(0));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(0));
         }
 
         [Test]
@@ -1101,7 +1102,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "2", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().Be("2"));
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().HaveCount(1));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(1));
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.Render(); // <-- this is necessary for reliable passing of the test
@@ -1140,28 +1141,28 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().Contain("Jaguar"));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().Contain("Jaguar"));
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().NotContain("Jaguar"));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Jaguar"));
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().Contain("Leopard"));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().Contain("Leopard"));
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
 
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
 
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
             //Test the keyup event
             await comp.InvokeAsync(() => select.Instance.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keyup", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.SelectedValues.Should().NotContain("Tiger"));
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Tab", Type = "keydown", }));
             await comp.InvokeAsync(() => select.Instance.OnKeyUp.InvokeAsync(new KeyboardEventArgs() { Key = "Tab" }));
@@ -1199,7 +1200,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValues.Should().HaveCount(0));
+            await comp.WaitForAssertionAsync(() => comp.Instance.GetState(x => x.SelectedValues).Should().HaveCount(0));
             await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(null));
         }
 
@@ -1326,12 +1327,12 @@ namespace MudBlazor.UnitTests.Components
             await items[1].ClickAsync(new MouseEventArgs());
             await inputs[0].MouseDownAsync(new MouseEventArgs());
             select.Value.Should().Be("2");
-            select.SelectedValues.Should().Contain("2");
+            select.GetState(x => x.SelectedValues).Should().Contain("2");
 
             await comp.Find("#clear-string").ClickAsync(new MouseEventArgs());
 
             select.Value.Should().BeNullOrEmpty();
-            select.SelectedValues.Should().BeEmpty();
+            select.GetState(x => x.SelectedValues).Should().BeEmpty();
             select.ValidationErrors.First().Should().Be("Required");
 
             //test resetting string values
@@ -1341,12 +1342,12 @@ namespace MudBlazor.UnitTests.Components
             await items[1].ClickAsync(new MouseEventArgs());
             await inputs[0].MouseDownAsync(new MouseEventArgs());
             select.Value.Should().Be("2");
-            select.SelectedValues.Should().Contain("2");
+            select.GetState(x => x.SelectedValues).Should().Contain("2");
 
             await comp.Find("#reset-string").ClickAsync(new MouseEventArgs());
 
             select.Value.Should().BeNullOrEmpty();
-            select.SelectedValues.Should().BeEmpty();
+            select.GetState(x => x.SelectedValues).Should().BeEmpty();
             select.ValidationErrors.Should().BeEmpty();
 
             //test clearing object values
@@ -1397,10 +1398,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MultiSelectTest5>();
             var selectComponent = comp.FindComponent<MudSelect<string>>();
             var select = selectComponent.Instance;
-            select.SelectedValues.Count().Should().Be(2);
+            select.GetState(x => x.SelectedValues).Count().Should().Be(2);
             select.Text.Should().Be("Programista, test");
             await selectComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new List<string> { "test" }));
-            select.SelectedValues.Count().Should().Be(1);
+            select.GetState(x => x.SelectedValues).Count().Should().Be(1);
             select.Text.Should().Be("test");
         }
 
