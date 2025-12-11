@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using AngleSharp.Dom;
+using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -64,28 +65,54 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().BeNullOrEmpty();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             // click and check if it has toggled the menu
-            input.MouseDown();
+            await input.MouseDownAsync();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
-            items[1].Click();
+            await items[1].ClickAsync();
             // menu should be closed now
             await comp.WaitForAssertionAsync(() => menu.ClassList.Should().NotContain("mud-popover-open"));
             select.Instance.Value.Should().Be("2");
             // now we cheat and click the list without opening the menu ;)
 
-            input.MouseDown();
+            await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             items = comp.FindAll("div.mud-list-item").ToArray();
 
-            items[0].Click();
+            await items[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().Be("1"));
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
             await @switch.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Value, true));
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             await comp.WaitForAssertionAsync(() => @switch.Instance.Value.Should().Be(false));
+        }
+
+        [Test]
+        public async Task SelectTestCustomToString()
+        {
+            var comp = Context.Render<SelectCustomToStringTest>();
+            var select = comp.FindComponent<MudSelect<SelectCustomToStringTest.Pizza>>();
+            var menu = comp.Find("div.mud-popover");
+            IElement Input() => comp.Find("input[value]");
+            // check popover class
+            menu.ClassList.Should().Contain("select-popover-class");
+            // check initial state
+            select.Instance.Value.Should().NotBeNull();
+            Input().GetAttribute("value").Should().Be("Diavolo");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            // click and check if it has toggled the menu
+            await Input().MouseDownAsync();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[0].TextContent.Should().Be("Cardinale");
+            items[0].TextContent.Should().Be("Diavolo");
+            items[0].TextContent.Should().Be("Margarita");
+            items[0].TextContent.Should().Be("Spinaci");
+            await items[2].ClickAsync();
+            Input().GetAttribute("value").Should().Be("Margarita");
         }
 
         [Test]
