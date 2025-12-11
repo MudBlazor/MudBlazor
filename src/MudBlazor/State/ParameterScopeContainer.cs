@@ -114,7 +114,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
         var parametersHandlerShouldFire = _parameters.Value.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .Select(x => x.CreateInvocationSnapshot())
-            .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
+            .ToHashSet(ParameterHandlerUniquenessComparer.Default);
 
         await baseSetParametersAsync(parameters);
 
