@@ -67,7 +67,10 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     {
         IsLocked = true;
         var parameters = _parameterStatesReader.ReadParameters();
-        var dictionary = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        var dictionary = parameters.ToFrozenDictionary(
+            parameter => parameter.Metadata.ParameterName,
+            parameter => parameter,
+            StringComparer.Ordinal);  // Parameter names are case-sensitive; use Ordinal for best performance
         _parameterStatesReader.Complete();
 
         return dictionary;
