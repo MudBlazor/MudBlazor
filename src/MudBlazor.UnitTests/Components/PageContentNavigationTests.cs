@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultValues()
         {
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             comp.Instance.ActiveSection.Should().BeNull();
             comp.Instance.Sections.Should().BeEmpty();
@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public async Task AddSection(bool withUpdate)
         {
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("my section 2", "my-id-2");
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(mockedScrollSpy);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("different section", "my-id-2");
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(mockedScrollSpy);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
+            var comp = Context.Render<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
 
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("my section 2", "my-id-2");
@@ -153,7 +153,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(spyMock);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my first section", "my-id1");
             var section2 = new MudPageContentSection("my second section", "my-id2");
@@ -191,7 +191,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(spyMock);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
+            var comp = Context.Render<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
 
             spyMock.SpyingInitiated.Should().BeTrue();
             spyMock.SpyingClassSelector.Should().Be("my-section-class");
@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task HideContentIfOnlyOneSectionIsAdded()
         {
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section = new MudPageContentSection("my section", "my-id");
 

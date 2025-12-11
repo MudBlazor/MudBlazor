@@ -279,15 +279,24 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// The behavior of the dropdown popover menu
+        /// Displays the dropdown popover in a fixed position, even while scrolling.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
-        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+        public bool PopoverFixed { get; set; }
+
+        /// <summary>
+        /// The behavior applied when there is not enough space for the dropdown popover to be visible.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="MudGlobal.PopoverDefaults.OverflowBehavior" />.
+        /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
+        [Parameter]
+        public OverflowBehavior OverflowBehavior { get; set; } = MudGlobal.PopoverDefaults.OverflowBehavior;
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.

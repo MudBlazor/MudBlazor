@@ -14,12 +14,10 @@ namespace MudBlazor
     /// </summary>
     public partial class MudRTLProvider : MudComponentBase
     {
-        private readonly ParameterState<bool> _rtlState;
-
         public MudRTLProvider()
         {
             var registerScope = CreateRegisterScope();
-            _rtlState = registerScope.RegisterParameter<bool>(nameof(RightToLeft))
+            registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnRightToLeftParameterChange);
         }
@@ -36,7 +34,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, text will display properly for RTL languages such as Arabic, Hebrew, and Persian.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.RTLProvider.Behavior)]
         public bool RightToLeft { get; set; }
 

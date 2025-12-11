@@ -79,7 +79,7 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
             var convType = converter.GetType();
 
             var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<,>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
             if (convertMethod is null)
             {

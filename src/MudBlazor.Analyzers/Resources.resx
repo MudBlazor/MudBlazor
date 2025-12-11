@@ -123,10 +123,37 @@
   <data name="MUD0002Title" xml:space="preserve">
     <value>Unknown MudBlazor attribute/parameter</value>
   </data>
-  <data name="MUD0002Url" xml:space="preserve">
+  <data name="HelpLinkUrl" xml:space="preserve">
     <value>https://mudblazor.com/features/analyzers</value>
   </data>
   <data name="MUD0002MessageFormat" xml:space="preserve">
     <value>Illegal Attribute '{0}' on '{1}' using pattern '{2}' source location '{3}'</value>
+  </data>
+  <data name="MUD0010Title" xml:space="preserve">
+    <value>Reading ParameterState property</value>
+  </data>
+  <data name="MUD0010Description" xml:space="preserve">
+    <value>Reading a parameter state property is not allowed.</value>
+  </data>
+  <data name="MUD0010MessageFormat" xml:space="preserve">
+    <value>Reading '{0}' parameter state property is not allowed. Use the backing ParameterState&lt;{1}&gt;.Value instance instead.</value>
+  </data>
+  <data name="MUD0011Title" xml:space="preserve">
+    <value>Writing to ParameterState property</value>
+  </data>
+  <data name="MUD0011Description" xml:space="preserve">
+    <value>Writing to a parameter state property is not allowed.</value>
+  </data>
+  <data name="MUD0011MessageFormat" xml:space="preserve">
+    <value>Writing to '{0}' parameter state property is not allowed. Use the backing ParameterState&lt;{1}&gt;.SetValueAsync instead.</value>
+  </data>
+  <data name="MUD0012Title" xml:space="preserve">
+    <value>External access of ParameterState property</value>
+  </data>
+  <data name="MUD0012Description" xml:space="preserve">
+    <value>External access of a parameter state property is not allowed.</value>
+  </data>
+  <data name="MUD0012MessageFormat" xml:space="preserve">
+    <value>External access of '{0}' parameter state property is not allowed. Use GetState(x =&gt; x.{0}) instead.</value>
   </data>
 </root>

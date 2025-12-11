@@ -6,7 +6,6 @@ using Bunit.TestDoubles;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services;
@@ -14,12 +13,12 @@ namespace MudBlazor.UnitTests.Services;
 [TestFixture]
 public class SnackbarServiceTests : BunitTest
 {
-    private FakeNavigationManager _navigationManager;
+    private BunitNavigationManager _navigationManager;
 
     public override void Setup()
     {
         base.Setup();
-        _navigationManager = Context.Services.GetRequiredService<FakeNavigationManager>();
+        _navigationManager = Context.Services.GetRequiredService<BunitNavigationManager>();
     }
 
     [Test]

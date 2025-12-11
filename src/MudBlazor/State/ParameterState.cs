@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Builder;
 
 namespace MudBlazor.State;
 
@@ -19,9 +20,67 @@ namespace MudBlazor.State;
 public abstract class ParameterState<T>
 {
     /// <summary>
-    /// Gets the current value.
+    /// Gets the current logical value tracked by the <see cref="ParameterState{T}"/>.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// When you call <see cref="SetValueAsync"/> the <see cref="Value"/> is updated immediately in the local
+    /// <see cref="ParameterState{T}"/> instance so subsequent reads within the same render/logic will see the
+    /// new value.
+    /// </para>
+    /// <para>
+    /// The <see cref="Value"/> represents the child component's current notion of the parameter. It may differ from
+    /// <see cref="RenderValue"/> until the parent re-renders and supplies the updated value (see <see cref="HasCallback"/>).
+    /// </para>
+    /// </remarks>
     public abstract T Value { get; }
+
+    /// <summary>
+    /// Gets the value most recently received from the parent component's render.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <see cref="RenderValue"/> represents the parameter value as provided by the parent component during the
+    /// last parameter set/render. It is the value that should be shown to the user when you want to reflect
+    /// what the parent actually rendered.
+    /// </para>
+    /// <para>
+    /// Example: when you call <see cref="SetValueAsync"/> the local <see cref="Value"/> will change immediately,
+    /// but <see cref="RenderValue"/> will only update if the parent component participates in two-way binding
+    /// (see <see cref="HasCallback"/>). In two-way binding the child typically invokes the <see cref="EventCallback{T}"/>
+    /// and the parent responds by updating the parameter and re-rendering; when that happens the child will receive
+    /// the new value from the parent and <see cref="RenderValue"/> will be updated accordingly.
+    /// </para>
+    /// </remarks>
+    public abstract T RenderValue { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this parameter has an associated <see cref="EventCallback{T}"/> on the component.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <c>true</c> when the component defines an <see cref="EventCallback{T}"/> parameter that corresponds to the parameter
+    /// (conventionally named <c>{ParameterName}Changed</c>). For example:
+    /// <code>
+    /// [Parameter]
+    /// public int Counter { get; set; }
+    /// 
+    /// [Parameter]
+    /// public EventCallback&lt;int&gt; CounterChanged { get; set; }
+    /// </code>
+    /// If you supply the <see cref="EventCallback{T}"/> to <see cref="RegisterParameterBuilder{T}.WithEventCallback"/> then
+    /// in that case <see cref="HasCallback"/> will be <c>true</c>.
+    /// </para>
+    /// <para>
+    /// <b>NB!</b> Having a callback doesn't always mean the usage of Blazor's <c>@bind-</c> syntax.
+    /// </para>
+    /// <para>
+    /// When <see cref="HasCallback"/> is <c>true</c>, calling <see cref="SetValueAsync"/> triggers
+    /// the associated <see cref="EventCallback{T}"/> so the parent can update its value and re-render — which in turn updates
+    /// <see cref="RenderValue"/> when the parent supplies the new value.
+    /// </para>
+    /// </remarks>
+    public abstract bool HasCallback { get; }
 
     /// <summary>
     /// Gets a value indicating whether the object is initialized.
@@ -45,7 +104,18 @@ public abstract class ParameterState<T>
     /// </summary>
     /// <remarks>
     /// Note: you should never set the parameter's property directly from within the component.
-    /// Instead, use SetValueAsync on the ParameterState object.
+    /// Instead, use <see cref="SetValueAsync"/> on the <see cref="ParameterState{T}"/> object.
+    /// <para>
+    /// When the parameter has an associated callback (<see cref="HasCallback"/> is <c>true</c>), calling this method will
+    /// invoke the associated <see cref="EventCallback{T}"/> so the parent can update its state and
+    /// re-render. The child's <see cref="RenderValue"/> will then be updated when the parent supplies the new
+    /// value on the next render.
+    /// </para>
+    /// <para>
+    /// When <see cref="HasCallback"/> is <c>false</c>, invoking <see cref="SetValueAsync"/> updates the child's local
+    /// <see cref="Value"/> but does not notify the parent; therefore <see cref="RenderValue"/> will only change when
+    /// the parent explicitly supplies a different value.
+    /// </para>
     /// </remarks>
     /// <param name="value">New parameter's value.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>

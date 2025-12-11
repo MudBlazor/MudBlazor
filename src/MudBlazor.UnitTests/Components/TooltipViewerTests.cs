@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Tooltip_InlineTrue_Allows_FullWidth_Child()
         {
-            var comp = Context.RenderComponent<TooltipFullWidthViewerTest>();
+            var comp = Context.Render<TooltipFullWidthViewerTest>();
 
             var inlineWrapper = comp.Find(".mud-tooltip-root.mud-tooltip-inline");
             inlineWrapper.Should().NotBeNull();
@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Tooltip_InlineFalse_Control_Renders_FullWidth_Child()
         {
-            var comp = Context.RenderComponent<TooltipFullWidthViewerTest>();
+            var comp = Context.Render<TooltipFullWidthViewerTest>();
             comp.Find("#btn-block-full").TagName.Should().Be("BUTTON");
         }
     }

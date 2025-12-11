@@ -12,63 +12,63 @@ public class FabMenuTests : BunitTest
     [Test]
     public void RendersCorrectly()
     {
-        var comp = Context.RenderComponent<FabMenuTest>();
+        var comp = Context.Render<FabMenuTest>();
         comp.FindAll(".mud-fab-menu").Count.Should().Be(1);
         comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0);
         comp.FindAll(".mud-fab-menu-item").Count.Should().Be(3);
     }
 
     [Test]
-    public void RendersCorrectlyOnClick()
+    public async Task RendersCorrectlyOnClick()
     {
-        var comp = Context.RenderComponent<FabMenuTest>();
+        var comp = Context.Render<FabMenuTest>();
 
         comp.FindAll(".mud-fab-menu-button")[0].Click();
-        comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
+        await comp.WaitForAssertionAsync(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
 
         comp.FindAll(".mud-fab-menu-item")[0].Click();
-        comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
+        await comp.WaitForAssertionAsync(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
     }
 
     [Test]
-    public void RendersCorrectlyOnTouch()
+    public async Task RendersCorrectlyOnTouch()
     {
-        var compNoHover = Context.RenderComponent<FabMenuTest>();
+        var compNoHover = Context.Render<FabMenuTest>();
 
         compNoHover.FindAll(".mud-fab-menu-button")[0].TouchStart();
         compNoHover.FindAll(".mud-fab-menu-button")[0].Click();
-        compNoHover.WaitForAssertion(() => { compNoHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
+        await compNoHover.WaitForAssertionAsync(() => { compNoHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
 
         compNoHover.FindAll(".mud-fab-menu-button")[0].TouchStart();
         compNoHover.FindAll(".mud-fab-menu-item")[0].Click();
-        compNoHover.WaitForAssertion(() => { compNoHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
+        await compNoHover.WaitForAssertionAsync(() => { compNoHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
 
-        var compHover = Context.RenderComponent<FabMenuTest>(ComponentParameter.CreateParameter("OpenOnMouseHover", true));
+        var compHover = Context.Render<FabMenuTest>(parameters => parameters.Add(p => p.OpenOnMouseHover, true));
 
         compHover.FindAll(".mud-fab-menu-button")[0].TouchStart();
         compHover.FindAll(".mud-fab-menu-button")[0].Click();
-        compHover.WaitForAssertion(() => { compHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
+        await compHover.WaitForAssertionAsync(() => { compHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
 
         compHover.FindAll(".mud-fab-menu-button")[0].TouchStart();
         compHover.FindAll(".mud-fab-menu-item")[0].Click();
-        compHover.WaitForAssertion(() => { compHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
+        await compHover.WaitForAssertionAsync(() => { compHover.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
     }
 
     [Test]
-    public void RendersCorrectlyOnHover()
+    public async Task RendersCorrectlyOnHover()
     {
-        var comp = Context.RenderComponent<FabMenuTest>(ComponentParameter.CreateParameter("OpenOnMouseHover", true));
+        var comp = Context.Render<FabMenuTest>(parameters => parameters.Add(p => p.OpenOnMouseHover, true));
 
         comp.FindAll(".mud-fab-menu-container")[0].TriggerEvent("onmouseenter", new MouseEventArgs());
-        comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
+        await comp.WaitForAssertionAsync(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
 
         comp.FindAll(".mud-fab-menu-item")[0].Click();
-        comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
+        await comp.WaitForAssertionAsync(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
 
         comp.FindAll(".mud-fab-menu-container")[0].TriggerEvent("onmouseenter", new MouseEventArgs());
-        comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
+        await comp.WaitForAssertionAsync(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(1); });
 
         comp.FindAll(".mud-fab-menu-container")[0].TriggerEvent("onmouseleave", new MouseEventArgs());
-        comp.WaitForAssertion(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
+        await comp.WaitForAssertionAsync(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
     }
 }

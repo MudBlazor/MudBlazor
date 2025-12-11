@@ -317,7 +317,7 @@ namespace MudBlazor
         string IMudDialogInstance.ElementId => _elementId;
 
         /// <inheritdoc />
-        string? IMudDialogInstance.Title => Title;
+        string? IMudDialogInstance.Title => _titleState.Value;
 
         /// <inheritdoc />
         DialogOptions IMudDialogInstance.Options => GetDialogOptionsOrDefault;

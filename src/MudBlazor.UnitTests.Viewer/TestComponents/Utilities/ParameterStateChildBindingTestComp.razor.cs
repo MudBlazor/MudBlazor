@@ -22,7 +22,7 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
     [Parameter]
     public EventCallback<bool> ExpandedChanged { get; set; }
 
-    public bool ExpandedStateValue => _expandedState.Value;
+    public ParameterState<bool> ExpandedState => _expandedState;
 
     public IReadOnlyList<(bool lastValue, bool value)> ParameterChangedEvents => _parameterChangedEvents;
 

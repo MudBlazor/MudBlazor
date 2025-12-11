@@ -1,7 +1,5 @@
-﻿using System;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Scroll;
 using NUnit.Framework;
 
@@ -16,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ScrollToTopTest()
         {
-            var comp = Context.RenderComponent<ScrollToTopTest>();
+            var comp = Context.Render<ScrollToTopTest>();
 
             comp.Instance.Clicked.Should().BeFalse(because: "Not clicked yet");
 

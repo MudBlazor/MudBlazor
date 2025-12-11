@@ -8,7 +8,7 @@ namespace MudBlazor.UnitTests.Shared.Extensions
 {
     public static class TestContextExtensions
     {
-        public static void AddTestServices(this TestContext ctx)
+        public static void AddTestServices(this BunitContext ctx)
         {
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());

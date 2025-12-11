@@ -554,7 +554,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         theme.AppendLine($"--{Zindex}-tooltip: {_theme.ZIndex.Tooltip};");
 
         // Native HTML control light/dark mode
-        theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
+        theme.AppendLine($"--mud-native-html-color-scheme: {(_isDarkModeState.Value ? "dark" : "light")};");
     }
 
     /// <inheritdoc />

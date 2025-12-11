@@ -47,6 +47,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     public bool HasHandler => _parameterChangedHandler is not null;
 
     /// <inheritdoc />
+    public override bool HasCallback => _eventCallbackFunc().HasDelegate;
+
+    /// <inheritdoc />
     [MemberNotNullWhen(true, nameof(_value), nameof(_initialValue))]
     public override bool IsInitialized => _isInitialized;
 
@@ -101,6 +104,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
             return _value;
         }
     }
+
+    /// <inheritdoc/>
+    public override T RenderValue => _getParameterValueFunc();
 
     /// <summary>
     /// Gets the function to provide the comparer for the parameter.

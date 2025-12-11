@@ -135,7 +135,7 @@ namespace MudBlazor
         {
             get
             {
-                var converter = MudSelect?.Converter;
+                var converter = MudSelect?.GetConverter();
                 if (converter == null)
                     return $"{Value}";
                 return converter.Convert(Value);

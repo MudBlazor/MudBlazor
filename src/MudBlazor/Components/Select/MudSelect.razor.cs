@@ -2,10 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -30,10 +30,20 @@ namespace MudBlazor
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = new HashSet<T?>();
         protected internal List<MudSelectItem<T>> _items = new();
-        private string _elementId = Identifier.Create("select");
+        private readonly string _elementId = Identifier.Create("select");
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTime _lastSearchTime = DateTime.MinValue;
+
+        public MudSelect()
+        {
+            Adornment = Adornment.End;
+            IconSize = Size.Medium;
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<bool>(nameof(MultiSelection))
+                .WithParameter(() => MultiSelection)
+                .WithChangeHandler(() => UpdateTextPropertyAsync(false));
+        }
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
@@ -213,15 +223,24 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The behavior of the dropdown popover menu
+        /// Displays the dropdown popover in a fixed position, even while scrolling.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
-        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+        public bool PopoverFixed { get; set; }
+
+        /// <summary>
+        /// The behavior applied when there is not enough space for the dropdown popover to be visible.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="MudGlobal.PopoverDefaults.OverflowBehavior" />.
+        /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
+        [Parameter]
+        public OverflowBehavior OverflowBehavior { get; set; } = MudGlobal.PopoverDefaults.OverflowBehavior;
 
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
@@ -474,12 +493,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T?, string?>? ToStringFunc { get; set; }
 
-        public MudSelect()
-        {
-            Adornment = Adornment.End;
-            IconSize = Size.Medium;
-        }
-
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
@@ -575,28 +588,15 @@ namespace MudBlazor
 
         internal event Action<ICollection<T?>>? SelectionChangedFromOutside;
 
-        private bool _multiSelection;
-
         /// <summary>
         /// Allows multiple values to be selected via checkboxes.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>false</c>, only one value can be selected at a time.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool MultiSelection
-        {
-            get => _multiSelection;
-            set
-            {
-                if (_multiSelection != value)
-                {
-                    _multiSelection = value;
-                    UpdateTextPropertyAsync(false).CatchAndLog();
-                }
-            }
-        }
+        public bool MultiSelection { get; set; }
 
         /// <summary>
         /// The list of choices the user can select.

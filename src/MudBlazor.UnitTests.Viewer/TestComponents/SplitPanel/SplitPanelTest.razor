@@ -1,0 +1,13 @@
+﻿<MudSplitPanel @ref="_panel" Horizontal="@Horizontal">
+    <FirstPanel>Panel</FirstPanel>
+    <SecondPanel>Panel</SecondPanel>
+</MudSplitPanel>
+
+@code {
+    private MudSplitPanel _panel = null!;
+    
+    [Parameter]
+    public bool Horizontal { get; set; }
+
+    public Task ResetSizesAsync() => _panel.ResetSizesAsync();
+}
