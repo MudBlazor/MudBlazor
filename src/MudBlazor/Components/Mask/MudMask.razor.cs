@@ -143,7 +143,7 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             if (ReadText != Mask.Text)
-                await SetTextAsync(Mask.Text, updateValue: false);
+                await SetTextAndUpdateValueAsync(Mask.Text, updateValue: false);
             await base.OnInitializedAsync();
         }
 
@@ -269,7 +269,7 @@ namespace MudBlazor
             _updating = true;
             try
             {
-                await base.SetTextAsync(text, updateValue: false);
+                await base.SetTextAndUpdateValueAsync(text, updateValue: false);
                 if (Clearable)
                     UpdateClearable();
                 var v = ConvertGet(cleanText);

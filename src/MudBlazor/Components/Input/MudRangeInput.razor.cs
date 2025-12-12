@@ -156,7 +156,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -171,7 +171,7 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -195,7 +195,7 @@ namespace MudBlazor
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await _elementReferenceStart.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }

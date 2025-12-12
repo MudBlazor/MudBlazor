@@ -557,7 +557,7 @@ namespace MudBlazor
                 var optionText = GetItemString(value);
 
                 if (!_isCleared)
-                    await SetTextAsync(optionText, false);
+                    await SetTextAndUpdateValueAsync(optionText, false);
 
                 _debounceTimer?.Dispose();
 
@@ -583,7 +583,7 @@ namespace MudBlazor
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
             {
-                await SetTextAsyncRaw(text);
+                await SetTextAsync(text);
             }
         }
 
@@ -814,7 +814,7 @@ namespace MudBlazor
                 _isCleared = true;
                 Open = false;
 
-                await SetTextAsync(string.Empty, updateValue: false);
+                await SetTextAndUpdateValueAsync(string.Empty, updateValue: false);
                 await SetValueAsync(default, updateText: false);
 
                 await _elementReference.ResetAsync();
@@ -1074,7 +1074,7 @@ namespace MudBlazor
                 _items = [];
             _open = true;
             await SetValueAsync(default, false);
-            await SetTextAsync(null, false);
+            await SetTextAndUpdateValueAsync(null, false);
             _selectedListItemIndex = 0;
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
@@ -1137,7 +1137,7 @@ namespace MudBlazor
 
             // Don't update the value to prevent the popover from opening again after coercion
             if (text != ReadText)
-                return SetTextAsync(text, updateValue: false);
+                return SetTextAndUpdateValueAsync(text, updateValue: false);
 
             return Task.CompletedTask;
         }
@@ -1229,7 +1229,7 @@ namespace MudBlazor
             if (text == null)
                 return;
 
-            await SetTextAsync(text, true);
+            await SetTextAndUpdateValueAsync(text, true);
         }
 
         private async Task ListItemOnClickAsync(T item)

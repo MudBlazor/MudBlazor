@@ -177,7 +177,7 @@ namespace MudBlazor
             if (!Immediate)
                 return Task.CompletedTask;
             _isFocused = true;
-            return SetTextAsync(args?.Value as string);
+            return SetTextAndUpdateValueAsync(args?.Value as string);
         }
 
         protected async Task OnChange(ChangeEventArgs? args)
@@ -186,7 +186,7 @@ namespace MudBlazor
             await OnInternalInputChanged.InvokeAsync(args);
             if (!Immediate)
             {
-                await SetTextAsync(args?.Value as string);
+                await SetTextAndUpdateValueAsync(args?.Value as string);
             }
         }
 
@@ -266,7 +266,7 @@ namespace MudBlazor
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
@@ -356,7 +356,7 @@ namespace MudBlazor
         public Task SetText(string? text)
         {
             _internalText = text;
-            return SetTextAsync(text);
+            return SetTextAndUpdateValueAsync(text);
         }
 
         // Certain HTML5 inputs (dates and color) have a native placeholder

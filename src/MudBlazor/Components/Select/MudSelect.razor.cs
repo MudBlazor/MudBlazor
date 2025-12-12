@@ -470,7 +470,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
                 }
             }
 
@@ -593,7 +593,7 @@ namespace MudBlazor
             }
 
             return MultiSelection
-                ? SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)))
+                ? SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)))
                 : base.UpdateTextPropertyAsync(updateValue);
         }
 
@@ -772,7 +772,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)), updateValue: false);
+                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)), updateValue: false);
                 }
 
                 UpdateSelectAllChecked();
@@ -1052,7 +1052,7 @@ namespace MudBlazor
         protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetValueAsync(default, false);
-            await SetTextAsync(default, false);
+            await SetTextAndUpdateValueAsync(default, false);
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
@@ -1067,7 +1067,7 @@ namespace MudBlazor
         {
             // The Text property of the control is updated
             var customText = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
-            await SetTextAsyncRaw(customText);
+            await SetTextAsync(customText);
 
             // The comparison is made on the multiSelectionText variable
             if (_multiSelectionText != text)
@@ -1254,7 +1254,7 @@ namespace MudBlazor
         public async Task ClearAsync()
         {
             await SetValueAsync(default, false);
-            await SetTextAsync(default, false);
+            await SetTextAndUpdateValueAsync(default, false);
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
@@ -1292,7 +1292,7 @@ namespace MudBlazor
             }
             else
             {
-                await SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
             }
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value

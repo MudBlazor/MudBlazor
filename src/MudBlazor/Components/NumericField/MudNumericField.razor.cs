@@ -477,7 +477,7 @@ namespace MudBlazor
 
         private Task OnInputValueChanged(string text)
         {
-            return SetTextAsync(text);
+            return SetTextAndUpdateValueAsync(text);
         }
 
         //avoids the format to use scientific notation for large or small number in floating points types, while covering all options

@@ -37,7 +37,7 @@
                               Typo="@Typo"
                               TextUpdateSuppression="@TextUpdateSuppression"
                               Value="@ReadText"
-                              ValueChanged="(s) => SetTextAsync(s)"
+                              ValueChanged="(s) => SetTextAndUpdateValueAsync(s)"
                               Placeholder="@Placeholder"
                               Disabled=@GetDisabledState()
                               Underline="@Underline"

@@ -456,7 +456,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            return SetTextAsync(ConvertSet(Value), updateValue);
+            return SetTextAndUpdateValueAsync(ConvertSet(Value), updateValue);
         }
 
         /// <summary>
@@ -706,7 +706,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async Task ResetValueAsync()
         {
-            await SetTextAsync(null, updateValue: true);
+            await SetTextAndUpdateValueAsync(null, updateValue: true);
             _isDirty = false;
             _validated = false;
             await base.ResetValueAsync();
@@ -750,9 +750,9 @@ namespace MudBlazor
 
         protected internal string? ReadText => _textState.Value;
 
-        protected Task SetTextAsyncRaw(string? text) => _textState.SetValueAsync(text);
+        protected Task SetTextAsync(string? text) => _textState.SetValueAsync(text);
 
-        protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
+        protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {
             if (ReadText == text)
             {
