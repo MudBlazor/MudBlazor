@@ -5,31 +5,30 @@ using MudBlazor.Charts;
 
 #nullable enable
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Indicates the technique used to smooth lines connecting values in a <see cref="MudAxisLineChartBase{T, TOptions}"/>.
+/// </summary>
+public enum InterpolationOption
 {
     /// <summary>
-    /// Indicates the technique used to smooth lines connecting values in a <see cref="MudAxisLineChartBase{T, TOptions}"/>.
+    /// Lines are smoothed to pass through each data point as a natural spline.
     /// </summary>
-    public enum InterpolationOption
-    {
-        /// <summary>
-        /// Lines are smoothed to pass through each data point as a natural spline.
-        /// </summary>
-        NaturalSpline,
+    NaturalSpline,
 
-        /// <summary>
-        /// Lines are smoothed to pass through each data point as an end-point spline.
-        /// </summary>
-        EndSlope,
+    /// <summary>
+    /// Lines are smoothed to pass through each data point as an end-point spline.
+    /// </summary>
+    EndSlope,
 
-        /// <summary>
-        /// Lines are smoothed to pass through each data point as a periodic spline.
-        /// </summary>
-        Periodic,
+    /// <summary>
+    /// Lines are smoothed to pass through each data point as a periodic spline.
+    /// </summary>
+    Periodic,
 
-        /// <summary>
-        /// Lines are straight from one point to the next.
-        /// </summary>
-        Straight
-    }
+    /// <summary>
+    /// Lines are straight from one point to the next.
+    /// </summary>
+    Straight
 }

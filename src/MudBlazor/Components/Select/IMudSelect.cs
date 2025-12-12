@@ -4,15 +4,14 @@
 
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor
-{
-    internal interface IMudSelect
-    {
-        void CheckGenericTypeMatch(object select_item);
-        bool MultiSelection { get; set; }
-    }
+namespace MudBlazor;
 
-    internal interface IMudShadowSelect
-    {
-    }
+internal interface IMudSelect
+{
+    void CheckGenericTypeMatch(object select_item);
+    bool MultiSelection { get; set; }
+}
+
+internal interface IMudShadowSelect
+{
 }

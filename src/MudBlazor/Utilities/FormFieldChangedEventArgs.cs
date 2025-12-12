@@ -9,11 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using MudBlazor.Interfaces;
 
-namespace MudBlazor.Utilities
+namespace MudBlazor.Utilities;
+
+public class FormFieldChangedEventArgs
 {
-    public class FormFieldChangedEventArgs
-    {
-        public IFormComponent Field { get; set; }
-        public object NewValue { get; set; }
-    }
+    public IFormComponent Field { get; set; }
+    public object NewValue { get; set; }
 }

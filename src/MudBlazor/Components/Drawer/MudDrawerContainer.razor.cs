@@ -2,148 +2,146 @@
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
 
+/// <summary>
+/// A container for a <see cref="MudDrawer"/> component.
+/// </summary>
+/// <seealso cref="MudDrawer"/>
+/// <seealso cref="MudDrawerHeader"/>
+public partial class MudDrawerContainer : MudComponentBase
+{
+    protected bool Fixed { get; set; } = false;
+    private readonly List<MudDrawer> _drawers = new();
+
+    protected virtual string Classname =>
+        new CssBuilder()
+            .AddClass(GetDrawerClass(FindLeftDrawer()))
+            .AddClass(GetDrawerClass(FindRightDrawer()))
+            .AddClass(Class)
+            .Build();
+
+    protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("--mud-drawer-width-left", GetDrawerWidth(FindLeftDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindLeftDrawer())))
+            .AddStyle("--mud-drawer-width-right", GetDrawerWidth(FindRightDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindRightDrawer())))
+            .AddStyle("--mud-drawer-height-top", GetDrawerHeight(FindTopDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindTopDrawer())))
+            .AddStyle("--mud-drawer-height-bottom", GetDrawerHeight(FindBottomDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindBottomDrawer())))
+            .AddStyle("--mud-drawer-width-mini-left", GetMiniDrawerWidth(FindLeftMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindLeftMiniDrawer())))
+            .AddStyle("--mud-drawer-width-mini-right", GetMiniDrawerWidth(FindRightMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindRightMiniDrawer())))
+            .AddStyle(Style)
+            .Build();
+
+    [CascadingParameter(Name = "RightToLeft")]
+    public bool RightToLeft { get; set; }
+
     /// <summary>
-    /// A container for a <see cref="MudDrawer"/> component.
+    /// The custom content inside this drawer.
     /// </summary>
-    /// <seealso cref="MudDrawer"/>
-    /// <seealso cref="MudDrawerHeader"/>
-    public partial class MudDrawerContainer : MudComponentBase
+    [Parameter]
+    [Category(CategoryTypes.Drawer.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
+
+    internal void Add(MudDrawer drawer)
     {
-        protected bool Fixed { get; set; } = false;
-        private readonly List<MudDrawer> _drawers = new();
+        if (Fixed && !drawer.IsFixed)
+            return;
 
-        protected virtual string Classname =>
-            new CssBuilder()
-                .AddClass(GetDrawerClass(FindLeftDrawer()))
-                .AddClass(GetDrawerClass(FindRightDrawer()))
-                .AddClass(Class)
-                .Build();
+        _drawers.Add(drawer);
+        StateHasChanged();
+    }
 
-        protected string Stylename =>
-            new StyleBuilder()
-                .AddStyle("--mud-drawer-width-left", GetDrawerWidth(FindLeftDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindLeftDrawer())))
-                .AddStyle("--mud-drawer-width-right", GetDrawerWidth(FindRightDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindRightDrawer())))
-                .AddStyle("--mud-drawer-height-top", GetDrawerHeight(FindTopDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindTopDrawer())))
-                .AddStyle("--mud-drawer-height-bottom", GetDrawerHeight(FindBottomDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindBottomDrawer())))
-                .AddStyle("--mud-drawer-width-mini-left", GetMiniDrawerWidth(FindLeftMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindLeftMiniDrawer())))
-                .AddStyle("--mud-drawer-width-mini-right", GetMiniDrawerWidth(FindRightMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindRightMiniDrawer())))
-                .AddStyle(Style)
-                .Build();
+    internal void Remove(MudDrawer drawer)
+    {
+        _drawers.Remove(drawer);
+        StateHasChanged();
+    }
 
-        [CascadingParameter(Name = "RightToLeft")]
-        public bool RightToLeft { get; set; }
-
-        /// <summary>
-        /// The custom content inside this drawer.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Drawer.Behavior)]
-        public RenderFragment? ChildContent { get; set; }
-
-        internal void Add(MudDrawer drawer)
+    private static string GetDrawerClass(MudDrawer? drawer)
+    {
+        if (drawer is null)
         {
-            if (Fixed && !drawer.IsFixed)
-                return;
-
-            _drawers.Add(drawer);
-            StateHasChanged();
+            return string.Empty;
         }
 
-        internal void Remove(MudDrawer drawer)
+        var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
+        if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
         {
-            _drawers.Remove(drawer);
-            StateHasChanged();
+            className += $"-{drawer.Breakpoint.ToDescriptionString()}";
+        }
+        className += $"-{drawer.GetPosition()}";
+
+        className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
+
+        return className;
+    }
+
+    private static string? GetDrawerWidth(MudDrawer? drawer)
+    {
+        if (drawer is null)
+        {
+            return string.Empty;
         }
 
-        private static string GetDrawerClass(MudDrawer? drawer)
+        return drawer.Width;
+    }
+
+    private static string? GetDrawerHeight(MudDrawer? drawer)
+    {
+        if (drawer is null)
         {
-            if (drawer is null)
-            {
-                return string.Empty;
-            }
-
-            var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
-            if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
-            {
-                className += $"-{drawer.Breakpoint.ToDescriptionString()}";
-            }
-            className += $"-{drawer.GetPosition()}";
-
-            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
-
-            return className;
+            return string.Empty;
         }
 
-        private static string? GetDrawerWidth(MudDrawer? drawer)
-        {
-            if (drawer is null)
-            {
-                return string.Empty;
-            }
+        return drawer.Height;
+    }
 
-            return drawer.Width;
+    private static string? GetMiniDrawerWidth(MudDrawer? drawer)
+    {
+        if (drawer is null)
+        {
+            return string.Empty;
         }
 
-        private static string? GetDrawerHeight(MudDrawer? drawer)
-        {
-            if (drawer is null)
-            {
-                return string.Empty;
-            }
+        return drawer.MiniWidth;
+    }
 
-            return drawer.Height;
-        }
+    private MudDrawer? FindLeftDrawer()
+    {
+        var anchor = RightToLeft ? Anchor.End : Anchor.Start;
 
-        private static string? GetMiniDrawerWidth(MudDrawer? drawer)
-        {
-            if (drawer is null)
-            {
-                return string.Empty;
-            }
+        return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Left);
+    }
 
-            return drawer.MiniWidth;
-        }
+    private MudDrawer? FindRightDrawer()
+    {
+        var anchor = RightToLeft ? Anchor.Start : Anchor.End;
 
-        private MudDrawer? FindLeftDrawer()
-        {
-            var anchor = RightToLeft ? Anchor.End : Anchor.Start;
+        return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Right);
+    }
 
-            return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Left);
-        }
+    private MudDrawer? FindTopDrawer()
+    {
+        return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Top);
+    }
 
-        private MudDrawer? FindRightDrawer()
-        {
-            var anchor = RightToLeft ? Anchor.Start : Anchor.End;
+    private MudDrawer? FindBottomDrawer()
+    {
+        return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Bottom);
+    }
 
-            return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Right);
-        }
+    private MudDrawer? FindLeftMiniDrawer()
+    {
+        var anchor = RightToLeft ? Anchor.End : Anchor.Start;
 
-        private MudDrawer? FindTopDrawer()
-        {
-            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Top);
-        }
+        return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Left));
+    }
 
-        private MudDrawer? FindBottomDrawer()
-        {
-            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Bottom);
-        }
+    private MudDrawer? FindRightMiniDrawer()
+    {
+        var anchor = RightToLeft ? Anchor.Start : Anchor.End;
 
-        private MudDrawer? FindLeftMiniDrawer()
-        {
-            var anchor = RightToLeft ? Anchor.End : Anchor.Start;
-
-            return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Left));
-        }
-
-        private MudDrawer? FindRightMiniDrawer()
-        {
-            var anchor = RightToLeft ? Anchor.Start : Anchor.End;
-
-            return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Right));
-        }
+        return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Right));
     }
 }

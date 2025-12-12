@@ -4,17 +4,15 @@
 
 using System;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
-    public class LabelAttribute : Attribute
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+public class LabelAttribute : Attribute
+{
+    public LabelAttribute(string name)
     {
-        public LabelAttribute(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; }
+        Name = name;
     }
+
+    public string Name { get; }
 }

@@ -4,23 +4,21 @@
 
 using System.Globalization;
 
-namespace MudBlazor.Utilities
-{
+namespace MudBlazor.Utilities;
 #nullable enable
-    public static class WebUnitsExtensions
-    {
-        public static string ToPx(this int val) => $"{val}px";
-        public static string ToPx(this int? val) => val != null ? val.Value.ToPx() : string.Empty;
-        public static string ToPx(this long val) => $"{val}px";
-        public static string ToPx(this long? val) => val != null ? val.Value.ToPx() : string.Empty;
-        public static string ToPx(this double val) => $"{val.ToString("0.##", CultureInfo.InvariantCulture)}px";
-        public static string ToPx(this double? val) => val != null ? val.Value.ToPx() : string.Empty;
+public static class WebUnitsExtensions
+{
+    public static string ToPx(this int val) => $"{val}px";
+    public static string ToPx(this int? val) => val != null ? val.Value.ToPx() : string.Empty;
+    public static string ToPx(this long val) => $"{val}px";
+    public static string ToPx(this long? val) => val != null ? val.Value.ToPx() : string.Empty;
+    public static string ToPx(this double val) => $"{val.ToString("0.##", CultureInfo.InvariantCulture)}px";
+    public static string ToPx(this double? val) => val != null ? val.Value.ToPx() : string.Empty;
 
-        public static string ToPercent(this int val) => $"{val}%";
-        public static string ToPercent(this int? val) => val != null ? val.Value.ToPercent() : string.Empty;
-        public static string ToPercent(this long val) => $"{val}%";
-        public static string ToPercent(this long? val) => val != null ? val.Value.ToPercent() : string.Empty;
-        public static string ToPercent(this double val) => $"{val.ToString("0.##", CultureInfo.InvariantCulture)}%";
-        public static string ToPercent(this double? val) => val != null ? val.Value.ToPercent() : string.Empty;
-    }
+    public static string ToPercent(this int val) => $"{val}%";
+    public static string ToPercent(this int? val) => val != null ? val.Value.ToPercent() : string.Empty;
+    public static string ToPercent(this long val) => $"{val}%";
+    public static string ToPercent(this long? val) => val != null ? val.Value.ToPercent() : string.Empty;
+    public static string ToPercent(this double val) => $"{val.ToString("0.##", CultureInfo.InvariantCulture)}%";
+    public static string ToPercent(this double? val) => val != null ? val.Value.ToPercent() : string.Empty;
 }

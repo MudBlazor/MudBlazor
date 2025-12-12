@@ -17,942 +17,940 @@ using MudBlazor.Utilities.Comparer;
 using MudBlazor.Utilities.Converter.Base;
 using static System.String;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
-    /// <summary>
-    /// Represents a base class for designing form input components.
-    /// </summary>
-    /// <typeparam name="T">The complex type managed by this input.</typeparam>
-    /// <typeparam name="U">The value type managed by this input.</typeparam>
-    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
+/// <summary>
+/// Represents a base class for designing form input components.
+/// </summary>
+/// <typeparam name="T">The complex type managed by this input.</typeparam>
+/// <typeparam name="U">The value type managed by this input.</typeparam>
+public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
+{
+    private ConversionResult<T?>? _getConversionResult;
+    // ReSharper disable NotAccessedField.Local maybe we use it later, original converter didn't read the set errors
+    private ConversionResult<U?>? _setConversionResult;
+    // ReSharper restore NotAccessedField.Local
+    protected readonly ParameterState<bool> ErrorState;
+    protected readonly ParameterState<string?> ErrorIdState;
+    protected readonly ParameterState<string?> ErrorTextState;
+    private readonly ParameterState<CultureInfo> _cultureState;
+    private readonly ParameterState<IConverter<T?, U?>> _converterState;
+
+    [Inject]
+    private InternalMudLocalizer Localizer { get; set; } = null!;
+
+    protected MudFormComponent()
     {
-        private ConversionResult<T?>? _getConversionResult;
-        // ReSharper disable NotAccessedField.Local maybe we use it later, original converter didn't read the set errors
-        private ConversionResult<U?>? _setConversionResult;
-        // ReSharper restore NotAccessedField.Local
-        protected readonly ParameterState<bool> ErrorState;
-        protected readonly ParameterState<string?> ErrorIdState;
-        protected readonly ParameterState<string?> ErrorTextState;
-        private readonly ParameterState<CultureInfo> _cultureState;
-        private readonly ParameterState<IConverter<T?, U?>> _converterState;
+        using var registerScope = CreateRegisterScope();
+        ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
+            .WithParameter(() => ErrorText)
+            .WithEventCallback(() => ErrorTextChanged);
+        ErrorState = registerScope.RegisterParameter<bool>(nameof(Error))
+            .WithParameter(() => Error)
+            .WithEventCallback(() => ErrorChanged);
+        ErrorIdState = registerScope.RegisterParameter<string?>(nameof(ErrorId))
+            .WithParameter(() => ErrorId)
+            .WithEventCallback(() => ErrorIdChanged);
+        _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
+            .WithParameter(() => Culture)
+            .WithChangeHandler(OnCultureAndFormatChangedAsync)
+            .WithComparer(ReferenceCultureComparer.Default);
+        _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
+            .WithParameter(() => Converter)
+            .WithChangeHandler(args => OnConverterChangedAsync(args));
+    }
 
-        [Inject]
-        private InternalMudLocalizer Localizer { get; set; } = null!;
+    [CascadingParameter]
+    internal IForm? Form { get; set; }
 
-        protected MudFormComponent()
+    /// <summary>
+    /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
+    /// If it is sub-component, it will NOT do form validation!!
+    /// </summary>
+    [CascadingParameter(Name = "SubscribeToParentForm")]
+    internal bool SubscribeToParentForm { get; set; } = true;
+
+    /// <summary>
+    /// Requires an input value.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>true</c>, an error with the text in <see cref="RequiredError"/> will be shown during validation if no input was given.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public bool Required { get; set; }
+
+    /// <summary>
+    /// The text displayed during validation if no input was given.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>"Required"</c>.  This text is only shown when <see cref="Required"/> is <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public string RequiredError { get; set; } = "Required";
+
+    /// <summary>
+    /// The text displayed if the <see cref="Error"/> property is <c>true</c>.
+    /// </summary>
+    [Parameter, ParameterState]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public string? ErrorText { get; set; }
+
+    /// <summary>
+    /// Raised when the <see cref="ErrorText"/> parameter value changes.
+    /// </summary>
+    /// <remarks>
+    /// This callback is triggered to support two-way binding of the <see cref="ErrorText"/> parameter.
+    /// The callback receives the updated <see cref="ErrorText"/> value.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public EventCallback<string?> ErrorTextChanged { get; set; }
+
+    /// <summary>
+    /// Displays an error.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>true</c>, the text in <see cref="ErrorText"/> is displayed.
+    /// </remarks>
+    [Parameter, ParameterState]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public bool Error { get; set; }
+
+    /// <summary>
+    /// Raised when the <see cref="Error"/> parameter value changes.
+    /// </summary>
+    /// <remarks>
+    /// This callback is triggered to support two-way binding of the <see cref="Error"/> parameter.
+    /// The callback receives the updated <see cref="Error"/> value.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public EventCallback<bool> ErrorChanged { get; set; }
+
+    /// <summary>
+    /// The ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  When set and the <see cref="Error"/> property is <c>true</c>, an <c>aria-describedby</c> attribute is rendered to improve accessibility for users.
+    /// </remarks>
+    [Parameter, ParameterState]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public string? ErrorId { get; set; }
+
+    /// <summary>
+    /// Raised when the <see cref="ErrorId"/> parameter value changes.
+    /// </summary>
+    /// <remarks>
+    /// This callback is triggered to support two-way binding of the <see cref="ErrorId"/> parameter.
+    /// The callback receives the updated <see cref="ErrorId"/> value.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public EventCallback<string?> ErrorIdChanged { get; set; }
+
+    /// <summary>
+    /// The type converter for this input.
+    /// </summary>
+    /// <remarks>
+    /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.  If no converter is specified, a default will be chosen based on the kind of input.
+    /// </remarks>
+    [Parameter, ParameterState]
+    [Category(CategoryTypes.FormComponent.Behavior)]
+    public IConverter<T?, U?> Converter { get; set; } = null!;
+
+    /// <summary>
+    /// The culture used to format and interpret values such as dates and currency.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+    /// </remarks>
+    [Parameter, ParameterState]
+    [Category(CategoryTypes.FormComponent.Behavior)]
+    public CultureInfo Culture { get; set; } = CultureInfo.CurrentUICulture;
+
+    protected virtual void OnConversionErrorOccurred(string error)
+    {
+        /* Descendants can override this method to catch conversion errors */
+    }
+
+    /// <summary>
+    /// Indicates a problem has occurred during conversion.
+    /// </summary>
+    /// <remarks>
+    /// When <c>true</c>, the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
+    /// </remarks>
+    [MemberNotNullWhen(true, nameof(ConversionErrorMessage))]
+    public bool ConversionError => _getConversionResult is { Success: false };
+
+    /// <summary>
+    /// The error describing why type conversion failed.
+    /// </summary>
+    /// <remarks>
+    /// When set, returns the reason that the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
+    /// </remarks>
+    public string? ConversionErrorMessage
+    {
+        get
         {
-            using var registerScope = CreateRegisterScope();
-            ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
-                .WithParameter(() => ErrorText)
-                .WithEventCallback(() => ErrorTextChanged);
-            ErrorState = registerScope.RegisterParameter<bool>(nameof(Error))
-                .WithParameter(() => Error)
-                .WithEventCallback(() => ErrorChanged);
-            ErrorIdState = registerScope.RegisterParameter<string?>(nameof(ErrorId))
-                .WithParameter(() => ErrorId)
-                .WithEventCallback(() => ErrorIdChanged);
-            _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
-                .WithParameter(() => Culture)
-                .WithChangeHandler(OnCultureAndFormatChangedAsync)
-                .WithComparer(ReferenceCultureComparer.Default);
-            _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
-                .WithParameter(() => Converter)
-                .WithChangeHandler(args => OnConverterChangedAsync(args));
-        }
-
-        [CascadingParameter]
-        internal IForm? Form { get; set; }
-
-        /// <summary>
-        /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
-        /// If it is sub-component, it will NOT do form validation!!
-        /// </summary>
-        [CascadingParameter(Name = "SubscribeToParentForm")]
-        internal bool SubscribeToParentForm { get; set; } = true;
-
-        /// <summary>
-        /// Requires an input value.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, an error with the text in <see cref="RequiredError"/> will be shown during validation if no input was given.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public bool Required { get; set; }
-
-        /// <summary>
-        /// The text displayed during validation if no input was given.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>"Required"</c>.  This text is only shown when <see cref="Required"/> is <c>true</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public string RequiredError { get; set; } = "Required";
-
-        /// <summary>
-        /// The text displayed if the <see cref="Error"/> property is <c>true</c>.
-        /// </summary>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public string? ErrorText { get; set; }
-
-        /// <summary>
-        /// Raised when the <see cref="ErrorText"/> parameter value changes.
-        /// </summary>
-        /// <remarks>
-        /// This callback is triggered to support two-way binding of the <see cref="ErrorText"/> parameter.
-        /// The callback receives the updated <see cref="ErrorText"/> value.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public EventCallback<string?> ErrorTextChanged { get; set; }
-
-        /// <summary>
-        /// Displays an error.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the text in <see cref="ErrorText"/> is displayed.
-        /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public bool Error { get; set; }
-
-        /// <summary>
-        /// Raised when the <see cref="Error"/> parameter value changes.
-        /// </summary>
-        /// <remarks>
-        /// This callback is triggered to support two-way binding of the <see cref="Error"/> parameter.
-        /// The callback receives the updated <see cref="Error"/> value.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public EventCallback<bool> ErrorChanged { get; set; }
-
-        /// <summary>
-        /// The ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.  When set and the <see cref="Error"/> property is <c>true</c>, an <c>aria-describedby</c> attribute is rendered to improve accessibility for users.
-        /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public string? ErrorId { get; set; }
-
-        /// <summary>
-        /// Raised when the <see cref="ErrorId"/> parameter value changes.
-        /// </summary>
-        /// <remarks>
-        /// This callback is triggered to support two-way binding of the <see cref="ErrorId"/> parameter.
-        /// The callback receives the updated <see cref="ErrorId"/> value.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public EventCallback<string?> ErrorIdChanged { get; set; }
-
-        /// <summary>
-        /// The type converter for this input.
-        /// </summary>
-        /// <remarks>
-        /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.  If no converter is specified, a default will be chosen based on the kind of input.
-        /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public IConverter<T?, U?> Converter { get; set; } = null!;
-
-        /// <summary>
-        /// The culture used to format and interpret values such as dates and currency.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
-        /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public CultureInfo Culture { get; set; } = CultureInfo.CurrentUICulture;
-
-        protected virtual void OnConversionErrorOccurred(string error)
-        {
-            /* Descendants can override this method to catch conversion errors */
-        }
-
-        /// <summary>
-        /// Indicates a problem has occurred during conversion.
-        /// </summary>
-        /// <remarks>
-        /// When <c>true</c>, the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
-        /// </remarks>
-        [MemberNotNullWhen(true, nameof(ConversionErrorMessage))]
-        public bool ConversionError => _getConversionResult is { Success: false };
-
-        /// <summary>
-        /// The error describing why type conversion failed.
-        /// </summary>
-        /// <remarks>
-        /// When set, returns the reason that the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
-        /// </remarks>
-        public string? ConversionErrorMessage
-        {
-            get
-            {
-                if (_getConversionResult is not { Success: false } result)
-                    return null;
-
-                if (result.ErrorMessageKey is not null)
-                    return Localizer[result.ErrorMessageKey, result.ErrorMessageArgs];
-
-                return result.ExceptionError.Message;
-            }
-        }
-
-        /// <summary>
-        /// Indicates any error, conversion error, or validation error with this input.
-        /// </summary>
-        /// <remarks>
-        /// When <c>true</c>, the <see cref="Error"/> property is <c>true</c>, or <see cref="ConversionError"/> is <c>true</c>, or one or more <see cref="ValidationErrors"/> exists.
-        /// </remarks>
-        public bool HasErrors => ErrorState.Value || ConversionError || ValidationErrors.Count > 0;
-
-        /// <summary>
-        /// The current error or conversion error.
-        /// </summary>
-        /// <returns>
-        /// This property returns the value in <see cref="ErrorText"/> or <see cref="ConversionErrorMessage"/>.
-        /// </returns>
-        public string? GetErrorText()
-        {
-            // ErrorText is either set from outside or the first validation error
-            if (!IsNullOrWhiteSpace(ErrorTextState.Value))
-            {
-                return ErrorTextState.Value;
-            }
-
-            if (!IsNullOrWhiteSpace(ConversionErrorMessage))
-            {
-                return ConversionErrorMessage;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Indicates whether the user has interacted with this input or the focus has been released.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the user has performed input, or focus has moved away from this input.  This property is typically used to show the <see cref="RequiredError"/> text only after the user has interacted with this input.
-        /// </remarks>
-        public bool Touched { get; protected set; }
-
-        #region MudForm Validation
-
-        /// <summary>
-        /// The list of problems with the current input value.
-        /// </summary>
-        /// <remarks>
-        /// When using a <see cref="MudForm"/>, this property is updated when validation has been performed.  Use the <see cref="Validation"/> property to control what validations are performed.
-        /// </remarks>
-        public List<string> ValidationErrors { get; set; } = new();
-
-        /// <summary>
-        /// The function used to detect problems with the input.
-        /// </summary>
-        /// <remarks>
-        /// When using a <see cref="MudForm"/>, this property can be any of several kinds of functions:
-        /// <para>
-        /// 1. A <c>Func&lt;T,bool&gt;</c> or <c>Func&lt;T,Task&lt;bool&gt;&gt;</c> function.  Returns <c>true</c> if valid.  When <c>false</c>, a standard <c>"Invalid"</c> message is shown.
-        /// </para>
-        /// <para>
-        /// 2. A <c>Func&lt;T,string&gt;</c> or <c>Func&lt;T,Task&lt;string&gt;&gt;</c> function.  Returns <c>null</c> if valid, or a string explaining the error.
-        /// </para>
-        /// <para>
-        /// 3. A <c>Func&lt;T,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;T,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Returns an empty list if valid, or a list of validation errors.
-        /// </para>
-        /// <para>
-        /// 3. A <c>Func&lt;object,string,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;object,string,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Given the form model and path to the member, returns an empty list if valid, or a list of validation errors.
-        /// </para>
-        /// <para>
-        /// 4. A <see cref="ValidationAttribute"/> object.
-        /// </para>
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public object? Validation { get; set; }
-
-        /// <summary>
-        /// This is the form component's value.
-        /// </summary>
-        protected T? _value;
-
-        protected Task BeginValidationAfterAsync(Task task)
-        {
-            Func<Task> execute = async () =>
-            {
-                var value = ReadValue();
-
-                await task;
-
-                // we validate only if the value hasn't changed while we waited for task.
-                // if it has in fact changed, another validate call will follow anyway
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
-                {
-                    await BeginValidateAsync();
-                }
-            };
-
-            return execute();
-        }
-
-        protected Task BeginValidateAsync()
-        {
-            Func<Task> execute = async () =>
-            {
-                var value = ReadValue();
-
-                await ValidateValue();
-
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
-                {
-                    EditFormValidate();
-                }
-            };
-
-            return execute();
-        }
-
-        /// <summary>
-        /// Causes validation to be performed for this input.
-        /// </summary>
-        /// <remarks>
-        /// When using a <see cref="MudForm"/>, the input is validated via the function set in the <see cref="Validation"/> property.
-        /// </remarks>
-        public Task ValidateAsync()
-        {
-            // when a validation is forced, we must set Touched to true, because for untouched fields with
-            // no value, validation does nothing due to the way forms are expected to work (display errors
-            // only after fields have been touched).
-            Touched = true;
-            return ValidateValue();
-        }
-
-        protected virtual async Task ValidateValue()
-        {
-            // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
-            if (EditContext is not null)
-            {
-                return;
-            }
-
-            var changed = false;
-            var errors = new List<string>();
-            try
-            {
-                // conversion error
-                if (ConversionError)
-                {
-                    errors.Add(ConversionErrorMessage);
-                }
-                // validation errors
-                if (Validation is ValidationAttribute validationAttribute)
-                {
-                    ValidateWithAttribute(validationAttribute, ReadValue(), errors);
-                }
-                else if (Validation is Func<T?, bool> funcBooleanValidation)
-                {
-                    ValidateWithFunc(funcBooleanValidation, ReadValue(), errors);
-                }
-                else if (Validation is Func<T?, string?> funcStringValidation)
-                {
-                    ValidateWithFunc(funcStringValidation, ReadValue(), errors);
-                }
-                else if (Validation is Func<T?, IEnumerable<string?>> funcEnumerableValidation)
-                {
-                    ValidateWithFunc(funcEnumerableValidation, ReadValue(), errors);
-                }
-                else if (Validation is Func<object, string, IEnumerable<string?>> funcModelWithFullPathOfMember)
-                {
-                    ValidateModelWithFullPathOfMember(funcModelWithFullPathOfMember, errors);
-                }
-                else
-                {
-                    var value = ReadValue();
-
-                    if (Validation is Func<T?, Task<bool>> funcTaskBooleanValidation)
-                    {
-                        await ValidateWithFunc(funcTaskBooleanValidation, ReadValue(), errors);
-                    }
-                    else if (Validation is Func<T?, Task<string?>> funcTaskStringValidation)
-                    {
-                        await ValidateWithFunc(funcTaskStringValidation, ReadValue(), errors);
-                    }
-                    else if (Validation is Func<T?, Task<IEnumerable<string?>>> funcTaskEnumerableValidation)
-                    {
-                        await ValidateWithFunc(funcTaskEnumerableValidation, ReadValue(), errors);
-                    }
-                    else if (Validation is Func<object, string, Task<IEnumerable<string?>>> funcTaskModelWithFullPathOfMember)
-                    {
-                        await ValidateModelWithFullPathOfMember(funcTaskModelWithFullPathOfMember, errors);
-                    }
-
-                    changed = !EqualityComparer<T>.Default.Equals(value, ReadValue());
-                }
-
-                // Run each validation attributes of the property targeted with `For`
-                if (_validationAttrsFor is not null)
-                {
-                    foreach (var attr in _validationAttrsFor)
-                    {
-                        ValidateWithAttribute(attr, ReadValue(), errors);
-                    }
-                }
-
-                // required error (must be last, because it is least important!)
-                if (Required)
-                {
-                    if (Touched && !HasValue(ReadValue()))
-                    {
-                        errors.Add(RequiredError);
-                    }
-                }
-            }
-            finally
-            {
-                // If Value has changed while we were validating it, ignore results and exit
-                if (!changed)
-                {
-                    // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
-                    // if Error and ErrorText are set by the user, setting them here will have no effect.
-                    // if Error, create an error id that can be used by aria-describedby on input control
-                    ValidationErrors = errors;
-                    await ErrorState.SetValueAsync(errors.Count > 0);
-                    await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
-                    await ErrorIdState.SetValueAsync(HasErrors ? Guid.NewGuid().ToString() : null);
-                    Form?.Update(this);
-                    StateHasChanged();
-                }
-            }
-        }
-
-        protected virtual bool HasValue(T? value)
-        {
-            if (value is string valueString)
-            {
-                return !IsNullOrWhiteSpace(valueString);
-            }
-
-            return value is not null;
-        }
-
-        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
-        protected virtual void ValidateWithAttribute(ValidationAttribute attr, T? value, List<string> errors)
-        {
-            try
-            {
-                // The validation context is applied either on the '_fieldIdentifier.Model', `EditContext.Model`, or `this` as a stub subject.
-                // Complex validation with fields references (like `CompareAttribute`) should use an EditContext or For when not using EditContext.
-                // Prioritize more specific validation context of the input component (_fieldIdentifier) over the one from the more general, surrounding form (EditContext).
-                var validationContextSubject = _fieldIdentifier.Model ?? EditContext?.Model ?? this;
-                var validationContext = new ValidationContext(validationContextSubject);
-                if (validationContext.MemberName is null && !IsNullOrEmpty(_fieldIdentifier.FieldName))
-                {
-                    validationContext.MemberName = _fieldIdentifier.FieldName;
-                }
-
-                var validationResult = attr.GetValidationResult(value, validationContext);
-                if (validationResult != ValidationResult.Success)
-                {
-                    if (!IsNullOrEmpty(validationResult?.ErrorMessage))
-                    {
-                        errors.Add(validationResult.ErrorMessage);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
-                // Or log using proper logger.
-                errors.Add($"An unhandled exception occurred: {e.Message}");
-            }
-        }
-
-        protected virtual void ValidateWithFunc(Func<T?, bool> func, T? value, List<string> errors)
-        {
-            try
-            {
-                if (!func(value))
-                {
-                    errors.Add("Invalid");
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual void ValidateWithFunc(Func<T?, string?> func, T? value, List<string> errors)
-        {
-            try
-            {
-                var error = func(value);
-                if (!IsNullOrEmpty(error))
-                {
-                    errors.Add(error);
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual void ValidateWithFunc(Func<T?, IEnumerable<string?>> func, T? value, List<string> errors)
-        {
-            try
-            {
-                foreach (var error in func(value))
-                {
-                    if (!IsNullOrEmpty(error))
-                    {
-                        errors.Add(error);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual void ValidateModelWithFullPathOfMember(Func<object, string, IEnumerable<string?>> func, List<string> errors)
-        {
-            try
-            {
-                if (Form?.Model is null)
-                {
-                    return;
-                }
-
-                if (For is null)
-                {
-                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
-                    return;
-                }
-
-                foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
-                {
-                    if (!IsNullOrEmpty(error))
-                    {
-                        errors.Add(error);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual async Task ValidateWithFunc(Func<T?, Task<bool>> func, T? value, List<string> errors)
-        {
-            try
-            {
-                if (!await func(value))
-                {
-                    errors.Add("Invalid");
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual async Task ValidateWithFunc(Func<T?, Task<string?>> func, T? value, List<string> errors)
-        {
-            try
-            {
-                var error = await func(value);
-                if (!IsNullOrEmpty(error))
-                {
-                    errors.Add(error);
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual async Task ValidateWithFunc(Func<T?, Task<IEnumerable<string?>>> func, T? value, List<string> errors)
-        {
-            try
-            {
-                foreach (var error in await func(value))
-                {
-                    if (!IsNullOrEmpty(error))
-                    {
-                        errors.Add(error);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual async Task ValidateModelWithFullPathOfMember(Func<object, string, Task<IEnumerable<string?>>> func, List<string> errors)
-        {
-            try
-            {
-                if (Form?.Model is null)
-                {
-                    return;
-                }
-
-                if (For is null)
-                {
-                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
-                    return;
-                }
-
-                foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
-                {
-                    if (!IsNullOrEmpty(error))
-                    {
-                        errors.Add(error);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        /// <summary>
-        /// Notify the Form that a field has changed if SubscribeToParentForm is true
-        /// </summary>
-        protected void FieldChanged(object? newValue)
-        {
-            if (SubscribeToParentForm)
-            {
-                Form?.FieldChanged(this, newValue);
-            }
-        }
-
-        /// <summary>
-        /// Clears the input and any validation errors.
-        /// </summary>
-        /// <remarks>
-        /// When called, the <c>Value</c>, <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
-        /// </remarks>
-        public async Task ResetAsync()
-        {
-            await ResetValueAsync();
-            await ResetValidationAsync();
-        }
-
-        protected virtual async Task ResetValueAsync()
-        {
-            /* to be overridden */
-            await WriteValueAsync(default);
-            Touched = false;
-            await InvokeAsync(StateHasChanged);
-        }
-
-        /// <summary>
-        /// Clears any validation errors.
-        /// </summary>
-        /// <remarks>
-        /// When called, the <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
-        /// </remarks>
-        public virtual async Task ResetValidationAsync()
-        {
-            await ErrorState.SetValueAsync(false);
-            ValidationErrors.Clear();
-            await ErrorTextState.SetValueAsync(null);
-            ResetConverterErrors();
-            await InvokeAsync(StateHasChanged);
-        }
-
-        #endregion
-
-        #region --> Blazor EditForm validation support
-
-        /// <summary>
-        /// The context used to perform validation.
-        /// </summary>
-        /// <remarks>
-        /// When using an <see cref="EditForm"/>, gets a context used to perform validation.
-        /// </remarks>
-        [CascadingParameter]
-        private EditContext? EditContext { get; set; }
-
-        /// <summary>
-        /// Triggers field to be validated.
-        /// </summary>
-        internal void EditFormValidate()
-        {
-            if (!IsNullOrEmpty(_fieldIdentifier.FieldName))
-            {
-                EditContext?.NotifyFieldChanged(_fieldIdentifier);
-            }
-        }
-
-        /// <summary>
-        /// The model field containing validation attributes.
-        /// </summary>
-        /// <remarks>
-        /// When using an <see cref="EditForm"/>, this property is used to find data annotation validation attributes such as <see cref="MaxLengthAttribute"/> used to perform validation.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public Expression<Func<T>>? For { get; set; }
-
-        /// <summary>
-        /// Indicates whether the <see cref="For"/> property is <c>null</c>.
-        /// </summary>
-        [MemberNotNullWhen(false, nameof(For))]
-        public bool IsForNull => For is null;
-
-        /// <summary>
-        /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.
-        /// </summary>
-        private IEnumerable<ValidationAttribute>? _validationAttrsFor;
-
-        private async void OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
-        {
-            try
-            {
-                if (EditContext is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
-                {
-                    var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
-                    var hasError = errorMessages.Length > 0;
-                    //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
-                    await ErrorState.SetValueAsync(hasError);
-                    await ErrorTextState.SetValueAsync(hasError ? errorMessages[0] : null);
-
-                    ValidationErrors.Clear();
-                    ValidationErrors.AddRange(errorMessages);
-
-                    await InvokeAsync(StateHasChanged);
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception, "An unexpected exception occurred: {ExceptionMessage}", exception.Message);
-            }
-        }
-
-        /// <summary>
-        /// Points to a field of the model for which validation messages should be displayed.
-        /// </summary>
-        private FieldIdentifier _fieldIdentifier;
-
-        /// <summary>
-        /// To find out whether or not For parameter has changed we keep a separate reference
-        /// </summary>
-        private Expression<Func<T>>? _currentFor;
-
-        /// <summary>
-        /// To find out whether or not EditContext parameter has changed we keep a separate reference
-        /// </summary>
-        private EditContext? _currentEditContext;
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
-            if (For is not null && For != _currentFor)
-            {
-                // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
-                if (EditContext is null)
-                {
-                    // Extract validation attributes
-                    // Sourced from https://stackoverflow.com/a/43076222/4839162
-                    // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
-                    var expression = (MemberExpression)For.Body;
-
-                    // Currently we have no solution for this which is trimming incompatible
-                    // A possible solution is to use source gen
-#pragma warning disable IL2075
-                    var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
-#pragma warning restore IL2075
-                    _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
-                }
-
-                _fieldIdentifier = FieldIdentifier.Create(For);
-                _currentFor = For;
-            }
-
-            if (EditContext is not null && EditContext != _currentEditContext)
-            {
-                DetachValidationStateChangedListener();
-                EditContext.OnValidationStateChanged += OnValidationStateChanged;
-                _currentEditContext = EditContext;
-            }
-        }
-
-        private void DetachValidationStateChangedListener()
-        {
-            if (_currentEditContext is not null)
-            {
-                _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
-            }
-        }
-
-        #endregion
-
-        protected override Task OnInitializedAsync()
-        {
-            RegisterAsFormComponent();
-            return base.OnInitializedAsync();
-        }
-
-        protected virtual void RegisterAsFormComponent()
-        {
-            if (SubscribeToParentForm)
-            {
-                Form?.Add(this);
-            }
-        }
-
-        protected Task SetCultureAsync(CultureInfo newCultureInfo)
-        {
-            ArgumentNullException.ThrowIfNull(newCultureInfo);
-            // Skip InjectCultureAndFormatToConverter.
-            // The converter relies on Func delegates that read Culture/Format at runtime
-            // The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
-            return _cultureState.SetValueAsync(newCultureInfo);
-        }
-
-        protected virtual Task OnCultureAndFormatChangedAsync() => Task.CompletedTask;
-
-        protected virtual CultureInfo GetCulture() => _cultureState.Value;
-
-        protected virtual string? GetFormat() => null;
-
-        internal IConverter<T?, U?> GetConverter() => _converterState.Value;
-
-        protected virtual T? ConvertGet(U? input)
-        {
-            var converter = GetConverter();
-            if (converter is null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(Converter)} parameter cannot be null. " +
-                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
-                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
-                );
-            }
-            var result = converter.TryConvertBack(input);
-            _getConversionResult = result;
-            HandleConversionResult(result);
-
-            return result.Value;
-        }
-
-        protected virtual U? ConvertSet(T? input)
-        {
-            var converter = GetConverter();
-            if (converter is null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(Converter)} parameter cannot be null. " +
-                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
-                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
-                );
-            }
-            var result = converter.TryConvert(input);
-            _setConversionResult = result;
-            HandleConversionResult(result);
-
-            return result.Value;
-        }
-
-        protected virtual Task OnConverterChangedAsync()
-        {
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
-
-            return Task.CompletedTask;
-        }
-
-        private Task OnConverterChangedAsync(ParameterChangedEventArgs<IConverter<T?, U?>> args) => args.Value is null
-            ? throw new InvalidOperationException(nameof(Converter))
-            : OnConverterChangedAsync();
-
-        private void HandleConversionResult<TResult>(ConversionResult<TResult?> result)
-        {
-            if (result.Success)
-            {
-                return;
-            }
+            if (_getConversionResult is not { Success: false } result)
+                return null;
 
             if (result.ErrorMessageKey is not null)
+                return Localizer[result.ErrorMessageKey, result.ErrorMessageArgs];
+
+            return result.ExceptionError.Message;
+        }
+    }
+
+    /// <summary>
+    /// Indicates any error, conversion error, or validation error with this input.
+    /// </summary>
+    /// <remarks>
+    /// When <c>true</c>, the <see cref="Error"/> property is <c>true</c>, or <see cref="ConversionError"/> is <c>true</c>, or one or more <see cref="ValidationErrors"/> exists.
+    /// </remarks>
+    public bool HasErrors => ErrorState.Value || ConversionError || ValidationErrors.Count > 0;
+
+    /// <summary>
+    /// The current error or conversion error.
+    /// </summary>
+    /// <returns>
+    /// This property returns the value in <see cref="ErrorText"/> or <see cref="ConversionErrorMessage"/>.
+    /// </returns>
+    public string? GetErrorText()
+    {
+        // ErrorText is either set from outside or the first validation error
+        if (!IsNullOrWhiteSpace(ErrorTextState.Value))
+        {
+            return ErrorTextState.Value;
+        }
+
+        if (!IsNullOrWhiteSpace(ConversionErrorMessage))
+        {
+            return ConversionErrorMessage;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Indicates whether the user has interacted with this input or the focus has been released.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>true</c>, the user has performed input, or focus has moved away from this input.  This property is typically used to show the <see cref="RequiredError"/> text only after the user has interacted with this input.
+    /// </remarks>
+    public bool Touched { get; protected set; }
+
+#region MudForm Validation
+
+    /// <summary>
+    /// The list of problems with the current input value.
+    /// </summary>
+    /// <remarks>
+    /// When using a <see cref="MudForm"/>, this property is updated when validation has been performed.  Use the <see cref="Validation"/> property to control what validations are performed.
+    /// </remarks>
+    public List<string> ValidationErrors { get; set; } = new();
+
+    /// <summary>
+    /// The function used to detect problems with the input.
+    /// </summary>
+    /// <remarks>
+    /// When using a <see cref="MudForm"/>, this property can be any of several kinds of functions:
+    /// <para>
+    /// 1. A <c>Func&lt;T,bool&gt;</c> or <c>Func&lt;T,Task&lt;bool&gt;&gt;</c> function.  Returns <c>true</c> if valid.  When <c>false</c>, a standard <c>"Invalid"</c> message is shown.
+    /// </para>
+    /// <para>
+    /// 2. A <c>Func&lt;T,string&gt;</c> or <c>Func&lt;T,Task&lt;string&gt;&gt;</c> function.  Returns <c>null</c> if valid, or a string explaining the error.
+    /// </para>
+    /// <para>
+    /// 3. A <c>Func&lt;T,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;T,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Returns an empty list if valid, or a list of validation errors.
+    /// </para>
+    /// <para>
+    /// 3. A <c>Func&lt;object,string,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;object,string,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Given the form model and path to the member, returns an empty list if valid, or a list of validation errors.
+    /// </para>
+    /// <para>
+    /// 4. A <see cref="ValidationAttribute"/> object.
+    /// </para>
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public object? Validation { get; set; }
+
+    /// <summary>
+    /// This is the form component's value.
+    /// </summary>
+    protected T? _value;
+
+    protected Task BeginValidationAfterAsync(Task task)
+    {
+        Func<Task> execute = async () =>
+        {
+            var value = ReadValue();
+
+            await task;
+
+            // we validate only if the value hasn't changed while we waited for task.
+            // if it has in fact changed, another validate call will follow anyway
+            if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
             {
-                OnConversionError(result.ErrorMessageKey, result.ErrorMessageArgs);
+                await BeginValidateAsync();
+            }
+        };
+
+        return execute();
+    }
+
+    protected Task BeginValidateAsync()
+    {
+        Func<Task> execute = async () =>
+        {
+            var value = ReadValue();
+
+            await ValidateValue();
+
+            if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
+            {
+                EditFormValidate();
+            }
+        };
+
+        return execute();
+    }
+
+    /// <summary>
+    /// Causes validation to be performed for this input.
+    /// </summary>
+    /// <remarks>
+    /// When using a <see cref="MudForm"/>, the input is validated via the function set in the <see cref="Validation"/> property.
+    /// </remarks>
+    public Task ValidateAsync()
+    {
+        // when a validation is forced, we must set Touched to true, because for untouched fields with
+        // no value, validation does nothing due to the way forms are expected to work (display errors
+        // only after fields have been touched).
+        Touched = true;
+        return ValidateValue();
+    }
+
+    protected virtual async Task ValidateValue()
+    {
+        // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+        if (EditContext is not null)
+        {
+            return;
+        }
+
+        var changed = false;
+        var errors = new List<string>();
+        try
+        {
+            // conversion error
+            if (ConversionError)
+            {
+                errors.Add(ConversionErrorMessage);
+            }
+            // validation errors
+            if (Validation is ValidationAttribute validationAttribute)
+            {
+                ValidateWithAttribute(validationAttribute, ReadValue(), errors);
+            }
+            else if (Validation is Func<T?, bool> funcBooleanValidation)
+            {
+                ValidateWithFunc(funcBooleanValidation, ReadValue(), errors);
+            }
+            else if (Validation is Func<T?, string?> funcStringValidation)
+            {
+                ValidateWithFunc(funcStringValidation, ReadValue(), errors);
+            }
+            else if (Validation is Func<T?, IEnumerable<string?>> funcEnumerableValidation)
+            {
+                ValidateWithFunc(funcEnumerableValidation, ReadValue(), errors);
+            }
+            else if (Validation is Func<object, string, IEnumerable<string?>> funcModelWithFullPathOfMember)
+            {
+                ValidateModelWithFullPathOfMember(funcModelWithFullPathOfMember, errors);
             }
             else
             {
-                OnConversionError(result.ExceptionError.Message, []);
+                var value = ReadValue();
+
+                if (Validation is Func<T?, Task<bool>> funcTaskBooleanValidation)
+                {
+                    await ValidateWithFunc(funcTaskBooleanValidation, ReadValue(), errors);
+                }
+                else if (Validation is Func<T?, Task<string?>> funcTaskStringValidation)
+                {
+                    await ValidateWithFunc(funcTaskStringValidation, ReadValue(), errors);
+                }
+                else if (Validation is Func<T?, Task<IEnumerable<string?>>> funcTaskEnumerableValidation)
+                {
+                    await ValidateWithFunc(funcTaskEnumerableValidation, ReadValue(), errors);
+                }
+                else if (Validation is Func<object, string, Task<IEnumerable<string?>>> funcTaskModelWithFullPathOfMember)
+                {
+                    await ValidateModelWithFullPathOfMember(funcTaskModelWithFullPathOfMember, errors);
+                }
+
+                changed = !EqualityComparer<T>.Default.Equals(value, ReadValue());
             }
-        }
 
-        private void OnConversionError(string error, object[] arguments)
-        {
-            // note: we need to update the form here because the conversion error might lead to not updating the value
-            // ... which leads to not updating the form
-            Touched = true;
-            Form?.Update(this);
-            OnConversionErrorOccurred(Localizer[error, arguments]);
-        }
-
-        private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
-        {
-            if (_converterState.Value is ICultureAwareConverter cultureAwareConverter)
+            // Run each validation attributes of the property targeted with `For`
+            if (_validationAttrsFor is not null)
             {
-                cultureAwareConverter.Culture = culture;
-                cultureAwareConverter.Format = format;
+                foreach (var attr in _validationAttrsFor)
+                {
+                    ValidateWithAttribute(attr, ReadValue(), errors);
+                }
             }
-        }
 
-        protected void ResetConverterErrors()
-        {
-            _getConversionResult = null;
-            _setConversionResult = null;
-        }
-
-        protected virtual T? ReadValue() => _value;
-
-        protected virtual Task WriteValueAsync(T? value)
-        {
-            _value = value;
-
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Called to dispose this instance.
-        /// </summary>
-        protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
-
-        /// <inheritdoc />
-        public async ValueTask DisposeAsync()
-        {
-            try
+            // required error (must be last, because it is least important!)
+            if (Required)
             {
-                Form?.Remove(this);
+                if (Touched && !HasValue(ReadValue()))
+                {
+                    errors.Add(RequiredError);
+                }
             }
-            catch
+        }
+        finally
+        {
+            // If Value has changed while we were validating it, ignore results and exit
+            if (!changed)
             {
-                // ignored
+                // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
+                // if Error and ErrorText are set by the user, setting them here will have no effect.
+                // if Error, create an error id that can be used by aria-describedby on input control
+                ValidationErrors = errors;
+                await ErrorState.SetValueAsync(errors.Count > 0);
+                await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
+                await ErrorIdState.SetValueAsync(HasErrors ? Guid.NewGuid().ToString() : null);
+                Form?.Update(this);
+                StateHasChanged();
+            }
+        }
+    }
+
+    protected virtual bool HasValue(T? value)
+    {
+        if (value is string valueString)
+        {
+            return !IsNullOrWhiteSpace(valueString);
+        }
+
+        return value is not null;
+    }
+
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
+    protected virtual void ValidateWithAttribute(ValidationAttribute attr, T? value, List<string> errors)
+    {
+        try
+        {
+            // The validation context is applied either on the '_fieldIdentifier.Model', `EditContext.Model`, or `this` as a stub subject.
+            // Complex validation with fields references (like `CompareAttribute`) should use an EditContext or For when not using EditContext.
+            // Prioritize more specific validation context of the input component (_fieldIdentifier) over the one from the more general, surrounding form (EditContext).
+            var validationContextSubject = _fieldIdentifier.Model ?? EditContext?.Model ?? this;
+            var validationContext = new ValidationContext(validationContextSubject);
+            if (validationContext.MemberName is null && !IsNullOrEmpty(_fieldIdentifier.FieldName))
+            {
+                validationContext.MemberName = _fieldIdentifier.FieldName;
             }
 
+            var validationResult = attr.GetValidationResult(value, validationContext);
+            if (validationResult != ValidationResult.Success)
+            {
+                if (!IsNullOrEmpty(validationResult?.ErrorMessage))
+                {
+                    errors.Add(validationResult.ErrorMessage);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
+            // Or log using proper logger.
+            errors.Add($"An unhandled exception occurred: {e.Message}");
+        }
+    }
+
+    protected virtual void ValidateWithFunc(Func<T?, bool> func, T? value, List<string> errors)
+    {
+        try
+        {
+            if (!func(value))
+            {
+                errors.Add("Invalid");
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    protected virtual void ValidateWithFunc(Func<T?, string?> func, T? value, List<string> errors)
+    {
+        try
+        {
+            var error = func(value);
+            if (!IsNullOrEmpty(error))
+            {
+                errors.Add(error);
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    protected virtual void ValidateWithFunc(Func<T?, IEnumerable<string?>> func, T? value, List<string> errors)
+    {
+        try
+        {
+            foreach (var error in func(value))
+            {
+                if (!IsNullOrEmpty(error))
+                {
+                    errors.Add(error);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    protected virtual void ValidateModelWithFullPathOfMember(Func<object, string, IEnumerable<string?>> func, List<string> errors)
+    {
+        try
+        {
+            if (Form?.Model is null)
+            {
+                return;
+            }
+
+            if (For is null)
+            {
+                errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                return;
+            }
+
+            foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
+            {
+                if (!IsNullOrEmpty(error))
+                {
+                    errors.Add(error);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    protected virtual async Task ValidateWithFunc(Func<T?, Task<bool>> func, T? value, List<string> errors)
+    {
+        try
+        {
+            if (!await func(value))
+            {
+                errors.Add("Invalid");
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    protected virtual async Task ValidateWithFunc(Func<T?, Task<string?>> func, T? value, List<string> errors)
+    {
+        try
+        {
+            var error = await func(value);
+            if (!IsNullOrEmpty(error))
+            {
+                errors.Add(error);
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    protected virtual async Task ValidateWithFunc(Func<T?, Task<IEnumerable<string?>>> func, T? value, List<string> errors)
+    {
+        try
+        {
+            foreach (var error in await func(value))
+            {
+                if (!IsNullOrEmpty(error))
+                {
+                    errors.Add(error);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    protected virtual async Task ValidateModelWithFullPathOfMember(Func<object, string, Task<IEnumerable<string?>>> func, List<string> errors)
+    {
+        try
+        {
+            if (Form?.Model is null)
+            {
+                return;
+            }
+
+            if (For is null)
+            {
+                errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                return;
+            }
+
+            foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
+            {
+                if (!IsNullOrEmpty(error))
+                {
+                    errors.Add(error);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            errors.Add("Error in validation func: " + e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Notify the Form that a field has changed if SubscribeToParentForm is true
+    /// </summary>
+    protected void FieldChanged(object? newValue)
+    {
+        if (SubscribeToParentForm)
+        {
+            Form?.FieldChanged(this, newValue);
+        }
+    }
+
+    /// <summary>
+    /// Clears the input and any validation errors.
+    /// </summary>
+    /// <remarks>
+    /// When called, the <c>Value</c>, <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
+    /// </remarks>
+    public async Task ResetAsync()
+    {
+        await ResetValueAsync();
+        await ResetValidationAsync();
+    }
+
+    protected virtual async Task ResetValueAsync()
+    {
+        /* to be overridden */
+        await WriteValueAsync(default);
+        Touched = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Clears any validation errors.
+    /// </summary>
+    /// <remarks>
+    /// When called, the <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
+    /// </remarks>
+    public virtual async Task ResetValidationAsync()
+    {
+        await ErrorState.SetValueAsync(false);
+        ValidationErrors.Clear();
+        await ErrorTextState.SetValueAsync(null);
+        ResetConverterErrors();
+        await InvokeAsync(StateHasChanged);
+    }
+
+#endregion
+
+#region --> Blazor EditForm validation support
+
+    /// <summary>
+    /// The context used to perform validation.
+    /// </summary>
+    /// <remarks>
+    /// When using an <see cref="EditForm"/>, gets a context used to perform validation.
+    /// </remarks>
+    [CascadingParameter]
+    private EditContext? EditContext { get; set; }
+
+    /// <summary>
+    /// Triggers field to be validated.
+    /// </summary>
+    internal void EditFormValidate()
+    {
+        if (!IsNullOrEmpty(_fieldIdentifier.FieldName))
+        {
+            EditContext?.NotifyFieldChanged(_fieldIdentifier);
+        }
+    }
+
+    /// <summary>
+    /// The model field containing validation attributes.
+    /// </summary>
+    /// <remarks>
+    /// When using an <see cref="EditForm"/>, this property is used to find data annotation validation attributes such as <see cref="MaxLengthAttribute"/> used to perform validation.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Validation)]
+    public Expression<Func<T>>? For { get; set; }
+
+    /// <summary>
+    /// Indicates whether the <see cref="For"/> property is <c>null</c>.
+    /// </summary>
+    [MemberNotNullWhen(false, nameof(For))]
+    public bool IsForNull => For is null;
+
+    /// <summary>
+    /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.
+    /// </summary>
+    private IEnumerable<ValidationAttribute>? _validationAttrsFor;
+
+    private async void OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        try
+        {
+            if (EditContext is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
+            {
+                var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
+                var hasError = errorMessages.Length > 0;
+                //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
+                await ErrorState.SetValueAsync(hasError);
+                await ErrorTextState.SetValueAsync(hasError ? errorMessages[0] : null);
+
+                ValidationErrors.Clear();
+                ValidationErrors.AddRange(errorMessages);
+
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (Exception exception)
+        {
+            Logger.LogError(exception, "An unexpected exception occurred: {ExceptionMessage}", exception.Message);
+        }
+    }
+
+    /// <summary>
+    /// Points to a field of the model for which validation messages should be displayed.
+    /// </summary>
+    private FieldIdentifier _fieldIdentifier;
+
+    /// <summary>
+    /// To find out whether or not For parameter has changed we keep a separate reference
+    /// </summary>
+    private Expression<Func<T>>? _currentFor;
+
+    /// <summary>
+    /// To find out whether or not EditContext parameter has changed we keep a separate reference
+    /// </summary>
+    private EditContext? _currentEditContext;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+        if (For is not null && For != _currentFor)
+        {
+            // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+            if (EditContext is null)
+            {
+                // Extract validation attributes
+                // Sourced from https://stackoverflow.com/a/43076222/4839162
+                // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
+                var expression = (MemberExpression)For.Body;
+
+                // Currently we have no solution for this which is trimming incompatible
+                // A possible solution is to use source gen
+#pragma warning disable IL2075
+                var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
+#pragma warning restore IL2075
+                _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+            }
+
+            _fieldIdentifier = FieldIdentifier.Create(For);
+            _currentFor = For;
+        }
+
+        if (EditContext is not null && EditContext != _currentEditContext)
+        {
             DetachValidationStateChangedListener();
-            await DisposeAsyncCore();
-            GC.SuppressFinalize(this);
+            EditContext.OnValidationStateChanged += OnValidationStateChanged;
+            _currentEditContext = EditContext;
         }
+    }
+
+    private void DetachValidationStateChangedListener()
+    {
+        if (_currentEditContext is not null)
+        {
+            _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
+        }
+    }
+
+#endregion
+
+    protected override Task OnInitializedAsync()
+    {
+        RegisterAsFormComponent();
+        return base.OnInitializedAsync();
+    }
+
+    protected virtual void RegisterAsFormComponent()
+    {
+        if (SubscribeToParentForm)
+        {
+            Form?.Add(this);
+        }
+    }
+
+    protected Task SetCultureAsync(CultureInfo newCultureInfo)
+    {
+        ArgumentNullException.ThrowIfNull(newCultureInfo);
+        // Skip InjectCultureAndFormatToConverter.
+        // The converter relies on Func delegates that read Culture/Format at runtime
+        // The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
+        return _cultureState.SetValueAsync(newCultureInfo);
+    }
+
+    protected virtual Task OnCultureAndFormatChangedAsync() => Task.CompletedTask;
+
+    protected virtual CultureInfo GetCulture() => _cultureState.Value;
+
+    protected virtual string? GetFormat() => null;
+
+    internal IConverter<T?, U?> GetConverter() => _converterState.Value;
+
+    protected virtual T? ConvertGet(U? input)
+    {
+        var converter = GetConverter();
+        if (converter is null)
+        {
+            throw new InvalidOperationException(
+                $"{nameof(Converter)} parameter cannot be null. " +
+                "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
+                "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
+            );
+        }
+        var result = converter.TryConvertBack(input);
+        _getConversionResult = result;
+        HandleConversionResult(result);
+
+        return result.Value;
+    }
+
+    protected virtual U? ConvertSet(T? input)
+    {
+        var converter = GetConverter();
+        if (converter is null)
+        {
+            throw new InvalidOperationException(
+                $"{nameof(Converter)} parameter cannot be null. " +
+                "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
+                "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
+            );
+        }
+        var result = converter.TryConvert(input);
+        _setConversionResult = result;
+        HandleConversionResult(result);
+
+        return result.Value;
+    }
+
+    protected virtual Task OnConverterChangedAsync()
+    {
+        InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+
+        return Task.CompletedTask;
+    }
+
+    private Task OnConverterChangedAsync(ParameterChangedEventArgs<IConverter<T?, U?>> args) => args.Value is null
+        ? throw new InvalidOperationException(nameof(Converter))
+        : OnConverterChangedAsync();
+
+    private void HandleConversionResult<TResult>(ConversionResult<TResult?> result)
+    {
+        if (result.Success)
+        {
+            return;
+        }
+
+        if (result.ErrorMessageKey is not null)
+        {
+            OnConversionError(result.ErrorMessageKey, result.ErrorMessageArgs);
+        }
+        else
+        {
+            OnConversionError(result.ExceptionError.Message, []);
+        }
+    }
+
+    private void OnConversionError(string error, object[] arguments)
+    {
+        // note: we need to update the form here because the conversion error might lead to not updating the value
+        // ... which leads to not updating the form
+        Touched = true;
+        Form?.Update(this);
+        OnConversionErrorOccurred(Localizer[error, arguments]);
+    }
+
+    private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
+    {
+        if (_converterState.Value is ICultureAwareConverter cultureAwareConverter)
+        {
+            cultureAwareConverter.Culture = culture;
+            cultureAwareConverter.Format = format;
+        }
+    }
+
+    protected void ResetConverterErrors()
+    {
+        _getConversionResult = null;
+        _setConversionResult = null;
+    }
+
+    protected virtual T? ReadValue() => _value;
+
+    protected virtual Task WriteValueAsync(T? value)
+    {
+        _value = value;
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Called to dispose this instance.
+    /// </summary>
+    protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            Form?.Remove(this);
+        }
+        catch
+        {
+            // ignored
+        }
+
+        DetachValidationStateChangedListener();
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 }

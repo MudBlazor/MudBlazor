@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+public enum ContentNavigationExpandBehaviour
 {
-    public enum ContentNavigationExpandBehaviour
-    {
-        Always,
-        WhenSectionIsActive,
-    }
+    Always,
+    WhenSectionIsActive,
 }

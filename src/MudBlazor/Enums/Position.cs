@@ -1,22 +1,21 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+public enum Position
 {
-    public enum Position
-    {
-        [Description("bottom")]
-        Bottom,
-        [Description("center")]
-        Center,
-        [Description("top")]
-        Top,
-        [Description("left")]
-        Left,
-        [Description("right")]
-        Right,
-        [Description("start")]
-        Start,
-        [Description("end")]
-        End
-    }
+    [Description("bottom")]
+    Bottom,
+    [Description("center")]
+    Center,
+    [Description("top")]
+    Top,
+    [Description("left")]
+    Left,
+    [Description("right")]
+    Right,
+    [Description("start")]
+    Start,
+    [Description("end")]
+    End
 }

@@ -1,51 +1,49 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
+/// <summary>
+/// Represents an image displayed as part of a <see cref="MudCard"/>.
+/// </summary>
+/// <seealso cref="MudCard" />
+/// <seealso cref="MudCardActions" />
+/// <seealso cref="MudCardContent" />
+/// <seealso cref="MudCardHeader" />
+public partial class MudCardMedia : MudComponentBase
+{
+    protected string StyleString => StyleBuilder.Default($"background-image:url(\"{Image}\");height: {Height}px;")
+        .AddStyle(Style)
+        .Build();
+
+    protected string Classname => new CssBuilder("mud-card-media")
+        .AddClass(Class)
+        .Build();
+
     /// <summary>
-    /// Represents an image displayed as part of a <see cref="MudCard"/>.
+    /// Text for the <c>title</c> attribute which provides a basic tooltip.
     /// </summary>
-    /// <seealso cref="MudCard" />
-    /// <seealso cref="MudCardActions" />
-    /// <seealso cref="MudCardContent" />
-    /// <seealso cref="MudCardHeader" />
-    public partial class MudCardMedia : MudComponentBase
-    {
-        protected string StyleString => StyleBuilder.Default($"background-image:url(\"{Image}\");height: {Height}px;")
-            .AddStyle(Style)
-            .Build();
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Card.Behavior)]
+    public string? Title { get; set; }
 
-        protected string Classname => new CssBuilder("mud-card-media")
-            .AddClass(Class)
-            .Build();
+    /// <summary>
+    /// The URL of the image to display.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Card.Behavior)]
+    public string? Image { get; set; }
 
-        /// <summary>
-        /// Text for the <c>title</c> attribute which provides a basic tooltip.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Card.Behavior)]
-        public string? Title { get; set; }
-
-        /// <summary>
-        /// The URL of the image to display.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Card.Behavior)]
-        public string? Image { get; set; }
-
-        /// <summary>
-        /// The height, in pixels, of the <see cref="Image"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>300</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Card.Behavior)]
-        public int Height { get; set; } = 300;
-    }
+    /// <summary>
+    /// The height, in pixels, of the <see cref="Image"/>.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>300</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Card.Behavior)]
+    public int Height { get; set; } = 300;
 }

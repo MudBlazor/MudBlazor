@@ -6,40 +6,38 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
-    public static class ExpressionExtensions
+public static class ExpressionExtensions
+{
+    public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)
     {
-        public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)
-        {
-            var resultingString = string.Empty;
-            var p = property.Body as MemberExpression;
+        var resultingString = string.Empty;
+        var p = property.Body as MemberExpression;
 
-            while (p is not null)
+        while (p is not null)
+        {
+            if (p.Expression is MemberExpression)
             {
-                if (p.Expression is MemberExpression)
-                {
-                    resultingString = p.Member.Name + (resultingString != string.Empty ? "." : string.Empty) + resultingString;
-                }
-                p = p.Expression as MemberExpression;
+                resultingString = p.Member.Name + (resultingString != string.Empty ? "." : string.Empty) + resultingString;
             }
-            return resultingString;
+            p = p.Expression as MemberExpression;
         }
+        return resultingString;
+    }
 
-        /// <summary>
-        /// Returns the display name attribute of the provided field property as a string. If this attribute is missing, the member name will be returned.
-        /// </summary>
-        public static string GetLabelString<T>(this Expression<Func<T>> expression)
-        {
-            var memberExpression = (MemberExpression)expression.Body;
+    /// <summary>
+    /// Returns the display name attribute of the provided field property as a string. If this attribute is missing, the member name will be returned.
+    /// </summary>
+    public static string GetLabelString<T>(this Expression<Func<T>> expression)
+    {
+        var memberExpression = (MemberExpression)expression.Body;
 
-            // Currently we have no solution for this which is trimming incompatible
-            // A possible solution is to use source gen
+        // Currently we have no solution for this which is trimming incompatible
+        // A possible solution is to use source gen
 #pragma warning disable IL2075
-            var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
+        var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
 #pragma warning restore IL2075
-            return propertyInfo?.GetCustomAttributes(typeof(LabelAttribute), true).Cast<LabelAttribute>().FirstOrDefault()?.Name ?? string.Empty;
-        }
+        return propertyInfo?.GetCustomAttributes(typeof(LabelAttribute), true).Cast<LabelAttribute>().FirstOrDefault()?.Name ?? string.Empty;
     }
 }

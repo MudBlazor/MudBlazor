@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+public enum Severity
 {
-    public enum Severity
-    {
-        [Description("normal")]
-        Normal,
-        [Description("info")]
-        Info,
-        [Description("success")]
-        Success,
-        [Description("warning")]
-        Warning,
-        [Description("error")]
-        Error
-    }
+    [Description("normal")]
+    Normal,
+    [Description("info")]
+    Info,
+    [Description("success")]
+    Success,
+    [Description("warning")]
+    Warning,
+    [Description("error")]
+    Error
 }

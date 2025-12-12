@@ -4,108 +4,106 @@
 using System.Diagnostics;
 using static System.String;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
-    internal class SnackBarMessageState
+internal class SnackBarMessageState
+{
+    private string AnimationId { get; }
+    public bool UserHasInteracted { get; set; }
+    public SnackbarOptions Options { get; }
+    public SnackbarState SnackbarState { get; set; }
+    public Stopwatch Stopwatch { get; } = new Stopwatch();
+
+    public SnackBarMessageState(SnackbarOptions options)
     {
-        private string AnimationId { get; }
-        public bool UserHasInteracted { get; set; }
-        public SnackbarOptions Options { get; }
-        public SnackbarState SnackbarState { get; set; }
-        public Stopwatch Stopwatch { get; } = new Stopwatch();
+        Options = options;
+        AnimationId = Identifier.Create();
+        SnackbarState = SnackbarState.Init;
+    }
+    private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
 
-        public SnackBarMessageState(SnackbarOptions options)
+    public bool ShowActionButton => !IsNullOrWhiteSpace(Options.Action);
+    public bool ShowCloseIcon => Options.ShowCloseIcon;
+
+    public bool HideIcon => Options.HideIcon;
+    public string Icon => Options.Icon;
+    public Color IconColor => Options.IconColor;
+    public Size IconSize => Options.IconSize;
+
+    public string ProgressBarStyle
+    {
+        get
         {
-            Options = options;
-            AnimationId = Identifier.Create();
-            SnackbarState = SnackbarState.Init;
+            var duration = RemainingTransitionMilliseconds(Options.VisibleStateDuration);
+            return $"width:100;animation:{AnimationId} {duration}ms;";
         }
-        private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
+    }
 
-        public bool ShowActionButton => !IsNullOrWhiteSpace(Options.Action);
-        public bool ShowCloseIcon => Options.ShowCloseIcon;
-
-        public bool HideIcon => Options.HideIcon;
-        public string Icon => Options.Icon;
-        public Color IconColor => Options.IconColor;
-        public Size IconSize => Options.IconSize;
-
-        public string ProgressBarStyle
+    public string AnimationStyle
+    {
+        get
         {
-            get
+            const string Template = "opacity: {0}; animation: {1}ms linear {2};";
+
+            switch (SnackbarState)
             {
-                var duration = RemainingTransitionMilliseconds(Options.VisibleStateDuration);
-                return $"width:100;animation:{AnimationId} {duration}ms;";
+                case SnackbarState.Showing:
+                    var showingDuration = RemainingTransitionMilliseconds(Options.ShowTransitionDuration);
+                    return Format(Template, Opacity, showingDuration, AnimationId);
+
+                case SnackbarState.Hiding:
+                    var hidingDuration = RemainingTransitionMilliseconds(Options.HideTransitionDuration);
+                    return Format(Template, 0, hidingDuration, AnimationId);
+
+                case SnackbarState.Visible:
+                    return $"opacity: {Opacity};";
+
+                default:
+                    return Empty;
             }
         }
+    }
 
-        public string AnimationStyle
+    public string SnackbarClass
+    {
+        get
         {
-            get
+            var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
+
+            if (Options.SnackbarVariant != Variant.Filled)
             {
-                const string Template = "opacity: {0}; animation: {1}ms linear {2};";
-
-                switch (SnackbarState)
-                {
-                    case SnackbarState.Showing:
-                        var showingDuration = RemainingTransitionMilliseconds(Options.ShowTransitionDuration);
-                        return Format(Template, Opacity, showingDuration, AnimationId);
-
-                    case SnackbarState.Hiding:
-                        var hidingDuration = RemainingTransitionMilliseconds(Options.HideTransitionDuration);
-                        return Format(Template, 0, hidingDuration, AnimationId);
-
-                    case SnackbarState.Visible:
-                        return $"opacity: {Opacity};";
-
-                    default:
-                        return Empty;
-                }
+                baseTypeClass += Options.BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
             }
-        }
 
-        public string SnackbarClass
+            var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
+
+            if (Options.OnClick != null && !ShowActionButton)
+                result += " force-cursor";
+
+            return result;
+        }
+    }
+
+    public string TransitionClass
+    {
+        get
         {
-            get
+            var template = "@keyframes " + AnimationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
+
+            return SnackbarState switch
             {
-                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
-
-                if (Options.SnackbarVariant != Variant.Filled)
-                {
-                    baseTypeClass += Options.BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
-                }
-
-                var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
-
-                if (Options.OnClick != null && !ShowActionButton)
-                    result += " force-cursor";
-
-                return result;
-            }
+                SnackbarState.Showing => Format(template, "opacity", "0%", Opacity),
+                SnackbarState.Hiding => Format(template, "opacity", Opacity, "0%"),
+                SnackbarState.Visible => Format(template, "width", "100%", "0%"),
+                _ => Empty,
+            };
         }
+    }
 
-        public string TransitionClass
-        {
-            get
-            {
-                var template = "@keyframes " + AnimationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
+    private int RemainingTransitionMilliseconds(int transitionDuration)
+    {
+        var duration = transitionDuration - (int)Stopwatch.ElapsedMilliseconds;
 
-                return SnackbarState switch
-                {
-                    SnackbarState.Showing => Format(template, "opacity", "0%", Opacity),
-                    SnackbarState.Hiding => Format(template, "opacity", Opacity, "0%"),
-                    SnackbarState.Visible => Format(template, "width", "100%", "0%"),
-                    _ => Empty,
-                };
-            }
-        }
-
-        private int RemainingTransitionMilliseconds(int transitionDuration)
-        {
-            var duration = transitionDuration - (int)Stopwatch.ElapsedMilliseconds;
-
-            return duration >= 0 ? duration : 0;
-        }
+        return duration >= 0 ? duration : 0;
     }
 }

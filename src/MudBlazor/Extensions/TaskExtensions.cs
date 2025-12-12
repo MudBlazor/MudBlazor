@@ -5,69 +5,67 @@
 using System;
 using System.Threading.Tasks;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
 #pragma warning disable CS1998
-    public static class TaskExtensions
+public static class TaskExtensions
+{
+    /// <summary>
+    /// Executes the <see cref="Task"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
+    /// </summary>
+    /// <param name="task">The task to be executed.</param>
+    /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
+    public static async void CatchAndLog(this Task task, bool ignoreExceptions = false)
     {
-        /// <summary>
-        /// Executes the <see cref="Task"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
-        /// </summary>
-        /// <param name="task">The task to be executed.</param>
-        /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
-        public static async void CatchAndLog(this Task task, bool ignoreExceptions = false)
+        try
         {
-            try
+            await task;
+        }
+        catch (Exception ex)
+        {
+            if (!ignoreExceptions)
             {
-                await task;
-            }
-            catch (Exception ex)
-            {
-                if (!ignoreExceptions)
-                {
-                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
-                }
+                MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
             }
         }
+    }
 
-        /// <summary>
-        /// Executes the <see cref="ValueTask"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
-        /// </summary>
-        /// <param name="task">The task to be executed.</param>
-        /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
-        public static async void CatchAndLog(this ValueTask task, bool ignoreExceptions = false)
+    /// <summary>
+    /// Executes the <see cref="ValueTask"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
+    /// </summary>
+    /// <param name="task">The task to be executed.</param>
+    /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
+    public static async void CatchAndLog(this ValueTask task, bool ignoreExceptions = false)
+    {
+        try
         {
-            try
+            await task;
+        }
+        catch (Exception ex)
+        {
+            if (!ignoreExceptions)
             {
-                await task;
-            }
-            catch (Exception ex)
-            {
-                if (!ignoreExceptions)
-                {
-                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
-                }
+                MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
             }
         }
+    }
 
-        /// <summary>
-        /// Executes the <see cref="ValueTask{T}"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
-        /// </summary>
-        /// <param name="task">The task to be executed.</param>
-        /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
-        public static async void CatchAndLog<T>(this ValueTask<T> task, bool ignoreExceptions = false)
+    /// <summary>
+    /// Executes the <see cref="ValueTask{T}"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
+    /// </summary>
+    /// <param name="task">The task to be executed.</param>
+    /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
+    public static async void CatchAndLog<T>(this ValueTask<T> task, bool ignoreExceptions = false)
+    {
+        try
         {
-            try
+            await task;
+        }
+        catch (Exception ex)
+        {
+            if (!ignoreExceptions)
             {
-                await task;
-            }
-            catch (Exception ex)
-            {
-                if (!ignoreExceptions)
-                {
-                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
-                }
+                MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
             }
         }
     }

@@ -4,11 +4,9 @@
 
 using System.Globalization;
 
-namespace MudBlazor.Extensions
-{
+namespace MudBlazor.Extensions;
 #nullable enable
-    public static class DoubleExtensions
-    {
-        public static string ToInvariantString(this double input) => input.ToString(CultureInfo.InvariantCulture);
-    }
+public static class DoubleExtensions
+{
+    public static string ToInvariantString(this double input) => input.ToString(CultureInfo.InvariantCulture);
 }

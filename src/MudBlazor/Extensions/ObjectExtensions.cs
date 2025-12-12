@@ -1,16 +1,14 @@
-﻿namespace MudBlazor.Extensions
-{
+﻿namespace MudBlazor.Extensions;
 #nullable enable
-    public static class ObjectExtensions
+public static class ObjectExtensions
+{
+    public static T? As<T>(this object? self)
     {
-        public static T? As<T>(this object? self)
+        if (self is T selfT)
         {
-            if (self is T selfT)
-            {
-                return selfT;
-            }
-
-            return default;
+            return selfT;
         }
+
+        return default;
     }
 }

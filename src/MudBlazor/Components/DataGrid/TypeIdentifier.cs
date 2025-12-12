@@ -6,137 +6,135 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
-    internal class TypeIdentifier
+internal class TypeIdentifier
+{
+    private static readonly HashSet<Type> _numericTypes = new()
     {
-        private static readonly HashSet<Type> _numericTypes = new()
-        {
-            typeof(int),
-            typeof(double),
-            typeof(decimal),
-            typeof(long),
-            typeof(short),
-            typeof(sbyte),
-            typeof(byte),
-            typeof(ulong),
-            typeof(ushort),
-            typeof(uint),
-            typeof(float),
-            typeof(BigInteger),
-            typeof(int?),
-            typeof(double?),
-            typeof(decimal?),
-            typeof(long?),
-            typeof(short?),
-            typeof(sbyte?),
-            typeof(byte?),
-            typeof(ulong?),
-            typeof(ushort?),
-            typeof(uint?),
-            typeof(float?),
-            typeof(BigInteger?),
-        };
+        typeof(int),
+        typeof(double),
+        typeof(decimal),
+        typeof(long),
+        typeof(short),
+        typeof(sbyte),
+        typeof(byte),
+        typeof(ulong),
+        typeof(ushort),
+        typeof(uint),
+        typeof(float),
+        typeof(BigInteger),
+        typeof(int?),
+        typeof(double?),
+        typeof(decimal?),
+        typeof(long?),
+        typeof(short?),
+        typeof(sbyte?),
+        typeof(byte?),
+        typeof(ulong?),
+        typeof(ushort?),
+        typeof(uint?),
+        typeof(float?),
+        typeof(BigInteger?),
+    };
 
-        public static bool IsString(Type? type)
+    public static bool IsString(Type? type)
+    {
+        if (type is null)
         {
-            if (type is null)
-            {
-                return false;
-            }
-
-            return type == typeof(string);
+            return false;
         }
 
-        public static bool IsNumber(Type? type)
+        return type == typeof(string);
+    }
+
+    public static bool IsNumber(Type? type)
+    {
+        return type is not null && _numericTypes.Contains(type);
+    }
+
+    public static bool IsEnum(Type? type)
+    {
+        if (type is null)
         {
-            return type is not null && _numericTypes.Contains(type);
+            return false;
         }
 
-        public static bool IsEnum(Type? type)
+        if (type.IsEnum)
         {
-            if (type is null)
-            {
-                return false;
-            }
-
-            if (type.IsEnum)
-            {
-                return true;
-            }
-
-            var underlyingType = Nullable.GetUnderlyingType(type);
-
-            return underlyingType is { IsEnum: true };
+            return true;
         }
 
-        public static bool IsDateTime(Type? type)
+        var underlyingType = Nullable.GetUnderlyingType(type);
+
+        return underlyingType is { IsEnum: true };
+    }
+
+    public static bool IsDateTime(Type? type)
+    {
+        if (type is null)
         {
-            if (type is null)
-            {
-                return false;
-            }
-
-            if (type == typeof(DateTime))
-            {
-                return true;
-            }
-
-            var underlyingType = Nullable.GetUnderlyingType(type);
-
-            return underlyingType is not null && underlyingType == typeof(DateTime);
+            return false;
         }
 
-        public static bool IsDateOnly(Type? type)
+        if (type == typeof(DateTime))
         {
-            if (type is null)
-            {
-                return false;
-            }
-
-            if (type == typeof(DateOnly))
-            {
-                return true;
-            }
-
-            var underlyingType = Nullable.GetUnderlyingType(type);
-
-            return underlyingType is not null && underlyingType == typeof(DateOnly);
+            return true;
         }
 
-        public static bool IsBoolean(Type? type)
+        var underlyingType = Nullable.GetUnderlyingType(type);
+
+        return underlyingType is not null && underlyingType == typeof(DateTime);
+    }
+
+    public static bool IsDateOnly(Type? type)
+    {
+        if (type is null)
         {
-            if (type is null)
-            {
-                return false;
-            }
-
-            if (type == typeof(bool))
-            {
-                return true;
-            }
-
-            var underlyingType = Nullable.GetUnderlyingType(type);
-
-            return underlyingType is not null && underlyingType == typeof(bool);
+            return false;
         }
 
-        public static bool IsGuid(Type? type)
+        if (type == typeof(DateOnly))
         {
-            if (type is null)
-            {
-                return false;
-            }
-
-            if (type == typeof(Guid))
-            {
-                return true;
-            }
-
-            var underlyingType = Nullable.GetUnderlyingType(type);
-
-            return underlyingType is not null && underlyingType == typeof(Guid);
+            return true;
         }
+
+        var underlyingType = Nullable.GetUnderlyingType(type);
+
+        return underlyingType is not null && underlyingType == typeof(DateOnly);
+    }
+
+    public static bool IsBoolean(Type? type)
+    {
+        if (type is null)
+        {
+            return false;
+        }
+
+        if (type == typeof(bool))
+        {
+            return true;
+        }
+
+        var underlyingType = Nullable.GetUnderlyingType(type);
+
+        return underlyingType is not null && underlyingType == typeof(bool);
+    }
+
+    public static bool IsGuid(Type? type)
+    {
+        if (type is null)
+        {
+            return false;
+        }
+
+        if (type == typeof(Guid))
+        {
+            return true;
+        }
+
+        var underlyingType = Nullable.GetUnderlyingType(type);
+
+        return underlyingType is not null && underlyingType == typeof(Guid);
     }
 }

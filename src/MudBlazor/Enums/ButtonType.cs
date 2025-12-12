@@ -1,28 +1,27 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Indicates the behavior performed when a button is clicked.
+/// </summary>
+public enum ButtonType
 {
     /// <summary>
-    /// Indicates the behavior performed when a button is clicked.
+    /// A regular click occurs.
     /// </summary>
-    public enum ButtonType
-    {
-        /// <summary>
-        /// A regular click occurs.
-        /// </summary>
-        [Description("button")]
-        Button,
+    [Description("button")]
+    Button,
 
-        /// <summary>
-        /// The button will submit a form.
-        /// </summary>
-        [Description("submit")]
-        Submit,
+    /// <summary>
+    /// The button will submit a form.
+    /// </summary>
+    [Description("submit")]
+    Submit,
 
-        /// <summary>
-        /// The button resets a form.
-        /// </summary>
-        [Description("reset")]
-        Reset
-    }
+    /// <summary>
+    /// The button resets a form.
+    /// </summary>
+    [Description("reset")]
+    Reset
 }

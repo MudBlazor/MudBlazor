@@ -1,75 +1,73 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-namespace MudBlazor
-{
+namespace MudBlazor;
 #nullable enable
-    public class SnackbarConfiguration : CommonSnackbarOptions
+public class SnackbarConfiguration : CommonSnackbarOptions
+{
+    private bool _newestOnTop;
+    private bool _preventDuplicates;
+    private int _maxDisplayedSnackbars;
+    private string _positionClass = string.Empty;
+    private bool _clearAfterNavigation;
+
+    internal event Action? OnUpdate;
+
+    public bool NewestOnTop
     {
-        private bool _newestOnTop;
-        private bool _preventDuplicates;
-        private int _maxDisplayedSnackbars;
-        private string _positionClass = string.Empty;
-        private bool _clearAfterNavigation;
-
-        internal event Action? OnUpdate;
-
-        public bool NewestOnTop
+        get => _newestOnTop;
+        set
         {
-            get => _newestOnTop;
-            set
-            {
-                _newestOnTop = value;
-                OnUpdate?.Invoke();
-            }
+            _newestOnTop = value;
+            OnUpdate?.Invoke();
         }
+    }
 
-        public bool PreventDuplicates
+    public bool PreventDuplicates
+    {
+        get => _preventDuplicates;
+        set
         {
-            get => _preventDuplicates;
-            set
-            {
-                _preventDuplicates = value;
-                OnUpdate?.Invoke();
-            }
+            _preventDuplicates = value;
+            OnUpdate?.Invoke();
         }
+    }
 
-        public int MaxDisplayedSnackbars
+    public int MaxDisplayedSnackbars
+    {
+        get => _maxDisplayedSnackbars;
+        set
         {
-            get => _maxDisplayedSnackbars;
-            set
-            {
-                _maxDisplayedSnackbars = value;
-                OnUpdate?.Invoke();
-            }
+            _maxDisplayedSnackbars = value;
+            OnUpdate?.Invoke();
         }
+    }
 
-        public string PositionClass
+    public string PositionClass
+    {
+        get => _positionClass;
+        set
         {
-            get => _positionClass;
-            set
-            {
-                _positionClass = value;
-                OnUpdate?.Invoke();
-            }
+            _positionClass = value;
+            OnUpdate?.Invoke();
         }
+    }
 
-        public bool ClearAfterNavigation
+    public bool ClearAfterNavigation
+    {
+        get => _clearAfterNavigation;
+        set
         {
-            get => _clearAfterNavigation;
-            set
-            {
-                _clearAfterNavigation = value;
-                OnUpdate?.Invoke();
-            }
+            _clearAfterNavigation = value;
+            OnUpdate?.Invoke();
         }
+    }
 
-        public SnackbarConfiguration()
-        {
-            PositionClass = Defaults.Classes.Position.TopRight;
-            NewestOnTop = false;
-            PreventDuplicates = true;
-            MaxDisplayedSnackbars = 5;
-        }
+    public SnackbarConfiguration()
+    {
+        PositionClass = Defaults.Classes.Position.TopRight;
+        NewestOnTop = false;
+        PreventDuplicates = true;
+        MaxDisplayedSnackbars = 5;
     }
 }

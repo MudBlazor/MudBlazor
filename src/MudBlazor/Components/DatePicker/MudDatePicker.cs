@@ -3,442 +3,459 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Represents a picker for dates.
+/// </summary>
+/// <seealso cref="MudDateRangePicker"/>
+public class MudDatePicker : MudBaseDatePicker
 {
+    private DateTime? _selectedDate;
+
     /// <summary>
-    /// Represents a picker for dates.
+    /// Occurs when the <see cref="Date"/> has changed.
     /// </summary>
-    /// <seealso cref="MudDateRangePicker"/>
-    public class MudDatePicker : MudBaseDatePicker
+    [Parameter]
+    public EventCallback<DateTime?> DateChanged { get; set; }
+
+    /// <summary>
+    /// The currently selected date.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Data)]
+    public DateTime? Date
     {
-        private DateTime? _selectedDate;
+        get => _value;
+        set => SetDateAsync(value, true).CatchAndLog();
+    }
 
-        /// <summary>
-        /// Occurs when the <see cref="Date"/> has changed.
-        /// </summary>
-        [Parameter]
-        public EventCallback<DateTime?> DateChanged { get; set; }
+    private DateTime _lastSetTime = DateTime.MinValue;
+    private const int DebounceTimeoutMs = 100;
 
-        /// <summary>
-        /// The currently selected date.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public DateTime? Date
+    protected async Task SetDateAsync(DateTime? date, bool updateValue)
+    {
+        if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
         {
-            get => _value;
-            set => SetDateAsync(value, true).CatchAndLog();
+            date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
         }
 
-        private DateTime _lastSetTime = DateTime.MinValue;
-        private const int DebounceTimeoutMs = 100;
+        var now = DateTime.UtcNow;
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue)
+        /* See #7866 for more details
+         * When the date is set in the UI, this method gets called with the same value multiple time. This guard
+         * debounces the value to the same value in a short time frame is ignored
+         */
+        if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
         {
-            if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
-            {
-                date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
-            }
-
-            var now = DateTime.UtcNow;
-
-            /* See #7866 for more details
-             * When the date is set in the UI, this method gets called with the same value multiple time. This guard
-             * debounces the value to the same value in a short time frame is ignored
-             */
-            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
-            {
-                return;
-            }
-
-            _lastSetTime = now;
-
-            // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
-            // will be null. We need to check if the text has been set my the user and if so handle tha validation
-            // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
-            {
-                Touched = true;
-
-                HighlightedDate = date;
-
-                if (date is not null && IsDateDisabledFunc(date.Value.Date))
-                {
-                    await SetTextAsync(null, false);
-                    return;
-                }
-
-                if (date is not null)
-                    PickerMonth = new DateTime(GetCulture().Calendar.GetYear(date.Value),
-                        GetCulture().Calendar.GetMonth(date.Value),
-                        1,
-                        GetCulture().Calendar);
-
-                _value = date;
-
-                if (updateValue)
-                {
-                    ResetConverterErrors();
-                    await SetTextAsync(ConvertSet(_value), false);
-                }
-
-                await DateChanged.InvokeAsync(_value);
-                await BeginValidateAsync();
-                FieldChanged(_value);
-            }
+            return;
         }
 
-        protected override Task DateFormatChangedAsync(string newFormat)
+        _lastSetTime = now;
+
+        // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
+        // will be null. We need to check if the text has been set my the user and if so handle tha validation
+        // without this the UI doesn't display a validation error correctly
+        if (_value != date || (date is null && Text != null))
         {
             Touched = true;
-            return SetTextAsync(ConvertSet(_value), false);
-        }
 
-        protected override Task StringValueChangedAsync(string value)
-        {
-            Touched = true;
-            // Update the date property (without updating back the Value property)
-            return SetDateAsync(ConvertGet(value), false);
-        }
+            HighlightedDate = date;
 
-        protected override string GetDayClasses(int month, DateTime day)
-        {
-            var b = new CssBuilder("mud-day");
-            b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
-                return b.AddClass("mud-hidden").Build();
-            if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
-                return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
-            if (day == TimeProvider.GetLocalNow().Date)
-                return b.AddClass("mud-current mud-button-outlined")
-                        .AddClass(
-                            $"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text")
-                        .Build();
-            return b.Build();
-        }
-
-        protected override async Task OnDayClickedAsync(DateTime dateTime)
-        {
-            await FocusAsync();
-            _selectedDate = dateTime;
-            if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
+            if (date is not null && IsDateDisabledFunc(date.Value.Date))
             {
-                await Task.Run(() => InvokeAsync(SubmitAsync));
-
-                if (PickerVariant != PickerVariant.Static)
-                {
-                    await Task.Delay(ClosingDelay);
-                    await CloseAsync(false);
-                }
-            }
-        }
-
-        /// <summary>
-        /// user clicked on a month
-        /// </summary>
-        /// <param name="month"></param>
-        protected override async Task OnMonthSelectedAsync(DateTime month)
-        {
-            await FocusAsync();
-            PickerMonth = month;
-            var nextView = GetNextView();
-            if (nextView == null)
-            {
-                _selectedDate = _selectedDate.HasValue
-                    ?
-                    //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
-                    new DateTime(
-                        GetCulture().Calendar.GetYear(month),
-                        GetCulture().Calendar.GetMonth(month),
-                        GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetHour(_selectedDate.Value),
-                        GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                        GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                        (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                        GetCulture().Calendar,
-                        _selectedDate.Value.Kind)
-                    //We can assume day here, as it was not set yet. If a fix value is set, it will be overridden in Submit
-                    : new DateTime(GetCulture().Calendar.GetYear(month),
-                        GetCulture().Calendar.GetMonth(month),
-                        1,
-                        GetCulture().Calendar);
-                await SubmitAndCloseAsync();
-            }
-            else
-            {
-                CurrentView = (OpenTo)nextView;
-            }
-        }
-
-        /// <summary>
-        /// user clicked on a year
-        /// </summary>
-        /// <param name="year"></param>
-        protected override async Task OnYearClickedAsync(int year)
-        {
-            await FocusAsync();
-            var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, GetCulture().Calendar.GetMonth(current), 1, GetCulture().Calendar);
-            var nextView = GetNextView();
-            if (nextView == null)
-            {
-                _selectedDate = _selectedDate.HasValue
-                    ?
-                    //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
-                    new DateTime(
-                        year,
-                        GetCulture().Calendar.GetMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetHour(_selectedDate.Value),
-                        GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                        GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                        (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                        GetCulture().Calendar,
-                        _selectedDate.Value.Kind)
-                    //We can assume month and day here, as they were not set yet
-                    : new DateTime(year, 1, 1, GetCulture().Calendar);
-                await SubmitAndCloseAsync();
-            }
-            else
-            {
-                CurrentView = (OpenTo)nextView;
-            }
-        }
-
-        protected override Task OnOpenedAsync()
-        {
-            _selectedDate = null;
-
-            return base.OnOpenedAsync();
-        }
-
-        protected internal override async Task SubmitAsync()
-        {
-            if (GetReadOnlyState())
+                await SetTextAsync(null, false);
                 return;
-            if (_selectedDate == null)
-                return;
+            }
 
-            if (FixYear.HasValue ||
-                FixMonth.HasValue || FixDay.HasValue)
-                _selectedDate = new DateTime(FixYear ?? GetCulture().Calendar.GetYear(_selectedDate.Value),
-                    FixMonth ?? GetCulture().Calendar.GetMonth(_selectedDate.Value),
-                    FixDay ?? GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
+            if (date is not null)
+                PickerMonth = new DateTime(GetCulture().Calendar.GetYear(date.Value),
+                    GetCulture().Calendar.GetMonth(date.Value),
+                    1,
+                    GetCulture().Calendar);
+
+            _value = date;
+
+            if (updateValue)
+            {
+                ResetConverterErrors();
+                await SetTextAsync(ConvertSet(_value), false);
+            }
+
+            await DateChanged.InvokeAsync(_value);
+            await BeginValidateAsync();
+            FieldChanged(_value);
+        }
+    }
+
+    protected override Task DateFormatChangedAsync(string newFormat)
+    {
+        Touched = true;
+        return SetTextAsync(ConvertSet(_value), false);
+    }
+
+    protected override Task StringValueChangedAsync(string value)
+    {
+        Touched = true;
+        // Update the date property (without updating back the Value property)
+        return SetDateAsync(ConvertGet(value), false);
+    }
+
+    protected override string GetDayClasses(int month, DateTime day)
+    {
+        var b = new CssBuilder("mud-day");
+        b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
+        if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            return b.AddClass("mud-hidden").Build();
+        if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
+            return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
+        if (day == TimeProvider.GetLocalNow().Date)
+            return b.AddClass("mud-current mud-button-outlined")
+                .AddClass(
+                    $"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text")
+                .Build();
+        return b.Build();
+    }
+
+    protected override async Task OnDayClickedAsync(DateTime dateTime)
+    {
+        await FocusAsync();
+        _selectedDate = dateTime;
+        if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
+        {
+            await Task.Run(() => InvokeAsync(SubmitAsync));
+
+            if (PickerVariant != PickerVariant.Static)
+            {
+                await Task.Delay(ClosingDelay);
+                await CloseAsync(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// user clicked on a month
+    /// </summary>
+    /// <param name="month"></param>
+    protected override async Task OnMonthSelectedAsync(DateTime month)
+    {
+        await FocusAsync();
+        PickerMonth = month;
+        var nextView = GetNextView();
+        if (nextView == null)
+        {
+            _selectedDate = _selectedDate.HasValue
+                ?
+                //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
+                new DateTime(
+                    GetCulture().Calendar.GetYear(month),
+                    GetCulture().Calendar.GetMonth(month),
+                    GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
                     GetCulture().Calendar.GetHour(_selectedDate.Value),
                     GetCulture().Calendar.GetMinute(_selectedDate.Value),
                     GetCulture().Calendar.GetSecond(_selectedDate.Value),
                     (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
+                    GetCulture().Calendar,
+                    _selectedDate.Value.Kind)
+                //We can assume day here, as it was not set yet. If a fix value is set, it will be overridden in Submit
+                : new DateTime(GetCulture().Calendar.GetYear(month),
+                    GetCulture().Calendar.GetMonth(month),
+                    1,
                     GetCulture().Calendar);
-
-            await SetDateAsync(_selectedDate, true);
-            _selectedDate = null;
+            await SubmitAndCloseAsync();
         }
-
-        /// <inheritdoc />
-        public override async Task ClearAsync(bool close = true)
+        else
         {
-            _selectedDate = null;
-            await SetDateAsync(null, true);
-
-            if (AutoClose)
-            {
-                await CloseAsync(false);
-            }
+            CurrentView = (OpenTo)nextView;
         }
+    }
 
-        protected override string GetTitleDateString()
+    /// <summary>
+    /// user clicked on a year
+    /// </summary>
+    /// <param name="year"></param>
+    protected override async Task OnYearClickedAsync(int year)
+    {
+        await FocusAsync();
+        var current = GetMonthStart(0);
+        PickerMonth = new DateTime(year, GetCulture().Calendar.GetMonth(current), 1, GetCulture().Calendar);
+        var nextView = GetNextView();
+        if (nextView == null)
         {
-            return FormatTitleDate(_selectedDate ?? Date);
+            _selectedDate = _selectedDate.HasValue
+                ?
+                //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
+                new DateTime(
+                    year,
+                    GetCulture().Calendar.GetMonth(_selectedDate.Value),
+                    GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
+                    GetCulture().Calendar.GetHour(_selectedDate.Value),
+                    GetCulture().Calendar.GetMinute(_selectedDate.Value),
+                    GetCulture().Calendar.GetSecond(_selectedDate.Value),
+                    (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
+                    GetCulture().Calendar,
+                    _selectedDate.Value.Kind)
+                //We can assume month and day here, as they were not set yet
+                : new DateTime(year, 1, 1, GetCulture().Calendar);
+            await SubmitAndCloseAsync();
         }
-
-        protected override DateTime GetCalendarStartOfMonth()
+        else
         {
-            var date = StartMonth ?? Date ?? TimeProvider.GetLocalNow().Date;
-            return date.StartOfMonth(GetCulture());
+            CurrentView = (OpenTo)nextView;
         }
+    }
 
-        protected override int GetCalendarYear(DateTime yearDate)
+    protected override Task OnOpenedAsync()
+    {
+        _selectedDate = null;
+
+        return base.OnOpenedAsync();
+    }
+
+    protected internal override async Task SubmitAsync()
+    {
+        if (GetReadOnlyState())
+            return;
+        if (_selectedDate == null)
+            return;
+
+        if (FixYear.HasValue ||
+            FixMonth.HasValue || FixDay.HasValue)
+            _selectedDate = new DateTime(FixYear ?? GetCulture().Calendar.GetYear(_selectedDate.Value),
+                FixMonth ?? GetCulture().Calendar.GetMonth(_selectedDate.Value),
+                FixDay ?? GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
+                GetCulture().Calendar.GetHour(_selectedDate.Value),
+                GetCulture().Calendar.GetMinute(_selectedDate.Value),
+                GetCulture().Calendar.GetSecond(_selectedDate.Value),
+                (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
+                GetCulture().Calendar);
+
+        await SetDateAsync(_selectedDate, true);
+        _selectedDate = null;
+    }
+
+    /// <inheritdoc />
+    public override async Task ClearAsync(bool close = true)
+    {
+        _selectedDate = null;
+        await SetDateAsync(null, true);
+
+        if (AutoClose)
         {
-            var date = Date ?? TimeProvider.GetLocalNow().Date;
-            var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
-            var calenderYear = GetCulture().Calendar.GetYear(date);
-            return calenderYear - diff;
+            await CloseAsync(false);
         }
+    }
 
-        //To be completed on next PR
-        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
+    protected override string GetTitleDateString()
+    {
+        return FormatTitleDate(_selectedDate ?? Date);
+    }
+
+    protected override DateTime GetCalendarStartOfMonth()
+    {
+        var date = StartMonth ?? Date ?? TimeProvider.GetLocalNow().Date;
+        return date.StartOfMonth(GetCulture());
+    }
+
+    protected override int GetCalendarYear(DateTime yearDate)
+    {
+        var date = Date ?? TimeProvider.GetLocalNow().Date;
+        var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
+        var calenderYear = GetCulture().Calendar.GetYear(date);
+        return calenderYear - diff;
+    }
+
+    //To be completed on next PR
+    protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
+    {
+        if (GetDisabledState() || GetReadOnlyState())
+            return;
+        await base.OnHandleKeyDownAsync(args);
+        switch (args.Key)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-            await base.OnHandleKeyDownAsync(args);
-            switch (args.Key)
-            {
-                case "ArrowRight":
-                    if (!Open)
-                        break;
-                    if (args.ShiftKey && CurrentView is OpenTo.Date or OpenTo.Month)
-                    {
-                        MoveToNextMonth();
-                        PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
-                    }
-                    else
-                        switch (CurrentView)
-                        {
-                            case OpenTo.Date:
-                                var currentDay = HighlightedDate ?? GetMonthStart(0);
-                                var newDay = currentDay.AddDays(1);
-                                // move to first day of current month when we overflow to next month
-                                if (newDay.Month != currentDay.Month || _selectedDate == null)
-                                    newDay = currentDay.StartOfMonth(GetCulture());
-                                HighlightedDate = _selectedDate = newDay;
-                                break;
-                            case OpenTo.Month:
-                                MoveToNextMonth();
-                                break;
-                        }
+            case "ArrowRight":
+                if (!Open)
                     break;
-                case "ArrowLeft":
-                    if (!Open)
-                        break;
-                    if (args.ShiftKey && CurrentView is OpenTo.Date or OpenTo.Month)
+                if (args.ShiftKey && CurrentView is OpenTo.Date or OpenTo.Month)
+                {
+                    MoveToNextMonth();
+                    PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
+                }
+                else
+                    switch (CurrentView)
                     {
-                        MoveToPreviousMonth();
-                        PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
+                        case OpenTo.Date:
+                            var currentDay = HighlightedDate ?? GetMonthStart(0);
+                            var newDay = currentDay.AddDays(1);
+                            // move to first day of current month when we overflow to next month
+                            if (newDay.Month != currentDay.Month || _selectedDate == null)
+                                newDay = currentDay.StartOfMonth(GetCulture());
+                            HighlightedDate = _selectedDate = newDay;
+                            break;
+                        case OpenTo.Month:
+                            MoveToNextMonth();
+                            break;
                     }
-                    else
-                        switch (CurrentView)
-                        {
-                            case OpenTo.Date:
-                                var currentDay = HighlightedDate ?? GetMonthStart(0);
-                                var newDay = currentDay.AddDays(-1);
-                                // move to last day of current month when we overflow to previous month
-                                if (newDay.Month != currentDay.Month || _selectedDate == null)
-                                    newDay = currentDay.EndOfMonth(GetCulture());
-                                HighlightedDate = _selectedDate = newDay;
-                                break;
-                            case OpenTo.Month:
-                                MoveToPreviousMonth();
-                                break;
-                        }
+                break;
+            case "ArrowLeft":
+                if (!Open)
                     break;
-                case "ArrowUp":
-                    if (!Open && !Editable)
+                if (args.ShiftKey && CurrentView is OpenTo.Date or OpenTo.Month)
+                {
+                    MoveToPreviousMonth();
+                    PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
+                }
+                else
+                    switch (CurrentView)
                     {
-                        Open = true;
+                        case OpenTo.Date:
+                            var currentDay = HighlightedDate ?? GetMonthStart(0);
+                            var newDay = currentDay.AddDays(-1);
+                            // move to last day of current month when we overflow to previous month
+                            if (newDay.Month != currentDay.Month || _selectedDate == null)
+                                newDay = currentDay.EndOfMonth(GetCulture());
+                            HighlightedDate = _selectedDate = newDay;
+                            break;
+                        case OpenTo.Month:
+                            MoveToPreviousMonth();
+                            break;
                     }
-                    else if (args.AltKey)
+                break;
+            case "ArrowUp":
+                if (!Open && !Editable)
+                {
+                    Open = true;
+                }
+                else if (args.AltKey)
+                {
+                    Open = false;
+                }
+                else if (args.ShiftKey && CurrentView is OpenTo.Month or OpenTo.Date)
+                {
+                    MoveToPreviousYear();
+                    PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
+                }
+                else
+                {
+                    switch (CurrentView)
                     {
-                        Open = false;
-                    }
-                    else if (args.ShiftKey && CurrentView is OpenTo.Month or OpenTo.Date)
-                    {
-                        MoveToPreviousYear();
-                        PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
-                    }
-                    else
-                    {
-                        switch (CurrentView)
-                        {
-                            case OpenTo.Year:
-                                MoveToPreviousYear();
-                                break;
-                            case OpenTo.Month:
-                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
-                                var newMonth = currentMonth.AddMonths(-3);
-                                // move to last row months of current year when we overflow to previous year
-                                if (currentMonth.Year != newMonth.Year)
-                                {
-                                    var daysInMonth =
-                                        GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                                    var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
-                                    newMonth = new DateTime(currentMonth.Year,
-                                        monthsInYear - (3 - currentMonth.Month),
-                                        Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                                        GetCulture().Calendar);
-                                }
+                        case OpenTo.Year:
+                            MoveToPreviousYear();
+                            break;
+                        case OpenTo.Month:
+                            var currentMonth = HighlightedDate ?? GetMonthStart(0);
+                            var newMonth = currentMonth.AddMonths(-3);
+                            // move to last row months of current year when we overflow to previous year
+                            if (currentMonth.Year != newMonth.Year)
+                            {
+                                var daysInMonth =
+                                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                                var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
+                                newMonth = new DateTime(currentMonth.Year,
+                                    monthsInYear - (3 - currentMonth.Month),
+                                    Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
+                                    GetCulture().Calendar);
+                            }
 
-                                HighlightedDate = _selectedDate = newMonth;
-                                break;
-                            case OpenTo.Date:
-                                var currentDay = HighlightedDate ?? GetMonthStart(0);
-                                var newDay = currentDay.AddDays(-7);
-                                // move to last same week day of current month when we overflow to previous month
-                                if (newDay.Month != currentDay.Month || _selectedDate == null)
-                                {
-                                    newDay = currentDay.LastWeekDayOfMonth(currentDay.DayOfWeek, GetCulture());
-                                }
+                            HighlightedDate = _selectedDate = newMonth;
+                            break;
+                        case OpenTo.Date:
+                            var currentDay = HighlightedDate ?? GetMonthStart(0);
+                            var newDay = currentDay.AddDays(-7);
+                            // move to last same week day of current month when we overflow to previous month
+                            if (newDay.Month != currentDay.Month || _selectedDate == null)
+                            {
+                                newDay = currentDay.LastWeekDayOfMonth(currentDay.DayOfWeek, GetCulture());
+                            }
 
-                                HighlightedDate = _selectedDate = newDay;
-                                break;
-                        }
+                            HighlightedDate = _selectedDate = newDay;
+                            break;
                     }
+                }
 
-                    break;
-                case "ArrowDown":
-                    if (Open == false && Editable == false)
+                break;
+            case "ArrowDown":
+                if (Open == false && Editable == false)
+                {
+                    Open = true;
+                }
+                else if (args.ShiftKey && CurrentView is OpenTo.Month or OpenTo.Date)
+                {
+                    MoveToNextYear();
+                    PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
+                }
+                else
+                {
+                    switch (CurrentView)
                     {
-                        Open = true;
-                    }
-                    else if (args.ShiftKey && CurrentView is OpenTo.Month or OpenTo.Date)
-                    {
-                        MoveToNextYear();
-                        PickerMonth = HighlightedDate!.Value.StartOfMonth(GetCulture());
-                    }
-                    else
-                    {
-                        switch (CurrentView)
-                        {
-                            case OpenTo.Year:
-                                MoveToNextYear();
-                                break;
-                            case OpenTo.Month:
-                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
-                                var newMonth = currentMonth.AddMonths(3);
-                                // move to first row of months of current year when we overflow to previous year
-                                if (currentMonth.Year != newMonth.Year)
-                                {
-                                    var daysInMonth =
-                                        GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                                    var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
-                                    newMonth = new DateTime(currentMonth.Year,
-                                        3 - (monthsInYear - currentMonth.Month),
-                                        Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                                        GetCulture().Calendar);
-                                }
+                        case OpenTo.Year:
+                            MoveToNextYear();
+                            break;
+                        case OpenTo.Month:
+                            var currentMonth = HighlightedDate ?? GetMonthStart(0);
+                            var newMonth = currentMonth.AddMonths(3);
+                            // move to first row of months of current year when we overflow to previous year
+                            if (currentMonth.Year != newMonth.Year)
+                            {
+                                var daysInMonth =
+                                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                                var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
+                                newMonth = new DateTime(currentMonth.Year,
+                                    3 - (monthsInYear - currentMonth.Month),
+                                    Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
+                                    GetCulture().Calendar);
+                            }
 
-                                HighlightedDate = _selectedDate = newMonth;
-                                break;
-                            case OpenTo.Date:
-                                var currentDay = HighlightedDate ?? GetMonthStart(0);
-                                var newDay = currentDay.AddDays(7);
-                                // move to same week day of beginning of current month when we overflow to next month
-                                if (newDay.Month != currentDay.Month || _selectedDate == null)
-                                    newDay = currentDay.FirstWeekDayOfMonth(currentDay.DayOfWeek, GetCulture());
-                                HighlightedDate = _selectedDate = newDay;
-                                break;
-                        }
+                            HighlightedDate = _selectedDate = newMonth;
+                            break;
+                        case OpenTo.Date:
+                            var currentDay = HighlightedDate ?? GetMonthStart(0);
+                            var newDay = currentDay.AddDays(7);
+                            // move to same week day of beginning of current month when we overflow to next month
+                            if (newDay.Month != currentDay.Month || _selectedDate == null)
+                                newDay = currentDay.FirstWeekDayOfMonth(currentDay.DayOfWeek, GetCulture());
+                            HighlightedDate = _selectedDate = newDay;
+                            break;
                     }
+                }
 
-                    break;
-                case "Escape":
+                break;
+            case "Escape":
+                await ReturnDateBackUpAsync();
+                break;
+            case "Backspace":
+                var previousView = GetPreviousView();
+                if (previousView != null)
+                {
+                    CurrentView = (OpenTo)previousView;
+                    if (CurrentView == OpenTo.Year)
+                        // there is second render when opening with enter unlike with mouse click, which resets scroll to
+                        // beginning of list, so reset the flag again
+                        _scrollToYearAfterRender = true;
+                }
+                else
                     await ReturnDateBackUpAsync();
-                    break;
-                case "Backspace":
-                    var previousView = GetPreviousView();
-                    if (previousView != null)
-                    {
-                        CurrentView = (OpenTo)previousView;
-                        if (CurrentView == OpenTo.Year)
-                            // there is second render when opening with enter unlike with mouse click, which resets scroll to
-                            // beginning of list, so reset the flag again
-                            _scrollToYearAfterRender = true;
-                    }
-                    else
-                        await ReturnDateBackUpAsync();
 
-                    break;
-                case "Enter":
-                case "NumpadEnter":
+                break;
+            case "Enter":
+            case "NumpadEnter":
+                if (!Open)
+                {
+                    await OpenAsync();
+                    if (CurrentView == OpenTo.Year)
+                        // there is second render when opening with enter unlike with mouse click, which resets scroll to
+                        // beginning of list, so reset the flag again
+                        _scrollToYearAfterRender = true;
+                }
+                else
+                {
+                    await CommitView();
+                }
+
+                break;
+            case " ":
+                if (!Editable)
+                {
                     if (!Open)
                     {
                         await OpenAsync();
@@ -449,144 +466,126 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await CommitView();
+                        await SubmitAsync();
+                        await CloseAsync();
+                        _inputReference?.SetText(Text);
                     }
+                }
 
-                    break;
-                case " ":
-                    if (!Editable)
-                    {
-                        if (!Open)
-                        {
-                            await OpenAsync();
-                            if (CurrentView == OpenTo.Year)
-                                // there is second render when opening with enter unlike with mouse click, which resets scroll to
-                                // beginning of list, so reset the flag again
-                                _scrollToYearAfterRender = true;
-                        }
-                        else
-                        {
-                            await SubmitAsync();
-                            await CloseAsync();
-                            _inputReference?.SetText(Text);
-                        }
-                    }
-
-                    break;
-            }
-
-            StateHasChanged();
+                break;
         }
 
-        private async Task CommitView()
+        StateHasChanged();
+    }
+
+    private async Task CommitView()
+    {
+        switch (CurrentView)
         {
-            switch (CurrentView)
-            {
-                case OpenTo.Date:
-                    if (HighlightedDate != null)
-                        await OnDayClickedAsync(HighlightedDate.Value);
-                    break;
-                case OpenTo.Year:
-                    if (HighlightedDate != null)
-                        await OnYearClickedAsync(GetCulture().Calendar.GetYear(HighlightedDate.Value));
-                    break;
-                case OpenTo.Month:
-                    if (HighlightedDate != null)
-                        await OnMonthSelectedAsync(HighlightedDate.Value.StartOfMonth(GetCulture()));
-                    break;
-                default:
-                    await SubmitAsync();
-                    _inputReference?.SetText(Text);
-                    await CloseAsync();
-                    break;
-            }
+            case OpenTo.Date:
+                if (HighlightedDate != null)
+                    await OnDayClickedAsync(HighlightedDate.Value);
+                break;
+            case OpenTo.Year:
+                if (HighlightedDate != null)
+                    await OnYearClickedAsync(GetCulture().Calendar.GetYear(HighlightedDate.Value));
+                break;
+            case OpenTo.Month:
+                if (HighlightedDate != null)
+                    await OnMonthSelectedAsync(HighlightedDate.Value.StartOfMonth(GetCulture()));
+                break;
+            default:
+                await SubmitAsync();
+                _inputReference?.SetText(Text);
+                await CloseAsync();
+                break;
+        }
+    }
+
+    private void MoveToNextMonth()
+    {
+        var currentMonth = HighlightedDate ?? GetMonthStart(0);
+        var newMonth = currentMonth.AddMonths(1);
+        // move to first month of current year when we overflow to next year
+        if (newMonth.Year != currentMonth.Year)
+        {
+            var daysInMonth =
+                GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+            newMonth = new DateTime(currentMonth.Year,
+                1,
+                Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
+                GetCulture().Calendar);
         }
 
-        private void MoveToNextMonth()
-        {
-            var currentMonth = HighlightedDate ?? GetMonthStart(0);
-            var newMonth = currentMonth.AddMonths(1);
-            // move to first month of current year when we overflow to next year
-            if (newMonth.Year != currentMonth.Year)
-            {
-                var daysInMonth =
-                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                newMonth = new DateTime(currentMonth.Year,
-                    1,
-                    Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                    GetCulture().Calendar);
-            }
+        HighlightedDate = _selectedDate = newMonth;
+    }
 
-            HighlightedDate = _selectedDate = newMonth;
+    private void MoveToPreviousMonth()
+    {
+        var currentMonth = HighlightedDate ?? GetMonthStart(0);
+        var newMonth = currentMonth.AddMonths(-1);
+        // move to last month of current year when we overflow to previous year
+        if (currentMonth.Year != newMonth.Year)
+        {
+            var daysInMonth =
+                GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+            newMonth = new DateTime(currentMonth.Year,
+                GetCulture().Calendar.GetMonthsInYear(currentMonth.Year),
+                Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
+                GetCulture().Calendar);
         }
 
-        private void MoveToPreviousMonth()
+        HighlightedDate = _selectedDate = newMonth;
+    }
+
+    private void MoveToNextYear()
+    {
+        var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(1);
+        if (GetCulture().Calendar.GetYear(newYear) > GetMaxYear())
+            return;
+        HighlightedDate = _selectedDate = newYear;
+        ScrollToYearAsync(HighlightedDate).CatchAndLog();
+    }
+
+    private void MoveToPreviousYear()
+    {
+        var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(-1);
+        if (GetCulture().Calendar.GetYear(newYear) < GetMinYear())
+            return;
+        HighlightedDate = _selectedDate = newYear;
+        ScrollToYearAsync(HighlightedDate).CatchAndLog();
+    }
+
+    private Task ReturnDateBackUpAsync() => CloseAsync(false);
+
+    /// <summary>
+    /// Scrolls to the date.
+    /// </summary>
+    public void GoToDate()
+    {
+        if (Date.HasValue)
         {
-            var currentMonth = HighlightedDate ?? GetMonthStart(0);
-            var newMonth = currentMonth.AddMonths(-1);
-            // move to last month of current year when we overflow to previous year
-            if (currentMonth.Year != newMonth.Year)
-            {
-                var daysInMonth =
-                    GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                newMonth = new DateTime(currentMonth.Year,
-                    GetCulture().Calendar.GetMonthsInYear(currentMonth.Year),
-                    Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                    GetCulture().Calendar);
-            }
-
-            HighlightedDate = _selectedDate = newMonth;
-        }
-
-        private void MoveToNextYear()
-        {
-            var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(1);
-            if (GetCulture().Calendar.GetYear(newYear) > GetMaxYear())
-                return;
-            HighlightedDate = _selectedDate = newYear;
-            ScrollToYearAsync(HighlightedDate).CatchAndLog();
-        }
-
-        private void MoveToPreviousYear()
-        {
-            var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(-1);
-            if (GetCulture().Calendar.GetYear(newYear) < GetMinYear())
-                return;
-            HighlightedDate = _selectedDate = newYear;
-            ScrollToYearAsync(HighlightedDate).CatchAndLog();
-        }
-
-        private Task ReturnDateBackUpAsync() => CloseAsync(false);
-
-        /// <summary>
-        /// Scrolls to the date.
-        /// </summary>
-        public void GoToDate()
-        {
-            if (Date.HasValue)
-            {
-                PickerMonth = new DateTime(GetCulture().Calendar.GetYear(Date.Value),
-                    GetCulture().Calendar.GetMonth(Date.Value),
-                    1,
-                    GetCulture().Calendar);
-                ScrollToYearAsync().CatchAndLog();
-            }
-        }
-
-        /// <summary>
-        /// Scrolls to the defined date.
-        /// </summary>
-        public async Task GoToDate(DateTime date, bool submitDate = true)
-        {
-            PickerMonth = new DateTime(GetCulture().Calendar.GetYear(date),
-                GetCulture().Calendar.GetMonth(date),
+            PickerMonth = new DateTime(GetCulture().Calendar.GetYear(Date.Value),
+                GetCulture().Calendar.GetMonth(Date.Value),
                 1,
                 GetCulture().Calendar);
-            if (submitDate)
-            {
-                await SetDateAsync(date, true);
-                ScrollToYearAsync().CatchAndLog();
-            }
+            ScrollToYearAsync().CatchAndLog();
+        }
+    }
+
+    /// <summary>
+    /// Scrolls to the defined date.
+    /// </summary>
+    public async Task GoToDate(DateTime date, bool submitDate = true)
+    {
+        PickerMonth = new DateTime(GetCulture().Calendar.GetYear(date),
+            GetCulture().Calendar.GetMonth(date),
+            1,
+            GetCulture().Calendar);
+        if (submitDate)
+        {
+            await SetDateAsync(date, true);
+            ScrollToYearAsync().CatchAndLog();
         }
     }
 }

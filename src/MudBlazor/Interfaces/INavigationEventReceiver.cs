@@ -1,10 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace MudBlazor.Interfaces
-{
+namespace MudBlazor.Interfaces;
 #nullable enable
-    public interface INavigationEventReceiver
-    {
-        Task OnNavigation();
-    }
+public interface INavigationEventReceiver
+{
+    Task OnNavigation();
 }

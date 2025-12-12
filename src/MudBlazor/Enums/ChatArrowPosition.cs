@@ -9,35 +9,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// The position of the Chat Bubble Arrow
+/// </summary>
+public enum ChatArrowPosition
 {
     /// <summary>
-    /// The position of the Chat Bubble Arrow
+    /// The arrow is attached to the top.
     /// </summary>
-    public enum ChatArrowPosition
-    {
-        /// <summary>
-        /// The arrow is attached to the top.
-        /// </summary>
-        [Description("top")]
-        Top,
+    [Description("top")]
+    Top,
 
-        /// <summary>
-        /// The arrow is attached to the middle.
-        /// </summary>
-        [Description("middle")]
-        Middle,
+    /// <summary>
+    /// The arrow is attached to the middle.
+    /// </summary>
+    [Description("middle")]
+    Middle,
 
-        /// <summary>
-        /// The arrow is attached to the bottom.
-        /// </summary>
-        [Description("bottom")]
-        Bottom,
+    /// <summary>
+    /// The arrow is attached to the bottom.
+    /// </summary>
+    [Description("bottom")]
+    Bottom,
 
-        /// <summary>
-        /// The arrow is not shown.
-        /// </summary>
-        [Description("none")]
-        None,
-    }
+    /// <summary>
+    /// The arrow is not shown.
+    /// </summary>
+    [Description("none")]
+    None,
 }
