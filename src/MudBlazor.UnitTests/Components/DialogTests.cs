@@ -327,17 +327,17 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
 
             var textField = comp.FindComponent<MudInput<string>>().Instance;
-            textField.Text.Should().Be("test");
+            textField.ReadText.Should().Be("test");
 
             comp.Find("input").Change("new_test");
             comp.Find("input").Blur();
-            textField.Text.Should().Be("new_test");
+            textField.ReadText.Should().Be("new_test");
 
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
             ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
-            textField.Text.Should().Be("new_test");
+            textField.ReadText.Should().Be("new_test");
         }
 
         [Test]
@@ -715,17 +715,17 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
 
             var textField = comp.FindComponent<MudInput<string>>().Instance;
-            textField.Text.Should().Be("test");
+            textField.ReadText.Should().Be("test");
 
             comp.Find("input").Change("new_test");
             comp.Find("input").Blur();
-            textField.Text.Should().Be("new_test");
+            textField.ReadText.Should().Be("new_test");
 
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
             ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
-            textField.Text.Should().Be("new_test");
+            textField.ReadText.Should().Be("new_test");
         }
 
         /// <summary>
@@ -936,7 +936,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
 
             var textField = comp.FindComponent<MudInput<string>>().Instance;
-            textField.Text.Should().Be("test");
+            textField.ReadText.Should().Be("test");
         }
 
         [Test]

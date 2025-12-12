@@ -124,7 +124,7 @@ namespace MudBlazor
                 HighlightItem(item);
                 break;
             }
-            await _elementReference.SetText(Text);
+            await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
         private ValueTask ScrollToItemAsync(MudSelectItem<T>? item)
@@ -209,7 +209,7 @@ namespace MudBlazor
             }
 
             HighlightItem(item);
-            await _elementReference.SetText(Text);
+            await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
 
@@ -231,7 +231,7 @@ namespace MudBlazor
             {
                 HighlightItem(item);
             }
-            await _elementReference.SetText(Text);
+            await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
 
@@ -480,7 +480,7 @@ namespace MudBlazor
                 FieldChanged(_selectedValues);
             }
             if (MultiSelection && typeof(T) == typeof(string))
-                await SetValueAsync((T?)(object?)Text, updateText: false);
+                await SetValueAsync((T?)(object?)ReadText, updateText: false);
         }
 
         /// <summary>
@@ -800,7 +800,7 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(value);
-                _elementReference.SetText(Text).CatchAndLog();
+                _elementReference.SetText(ReadText).CatchAndLog();
             }
 
             HighlightItemForValueAsync(value);
@@ -808,7 +808,7 @@ namespace MudBlazor
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                await SetValueAsync((T?)(object?)Text, updateText: false);
+                await SetValueAsync((T?)(object?)ReadText, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
@@ -1066,7 +1066,7 @@ namespace MudBlazor
             Func<List<string?>?, string>? multiSelectionTextFunc = null)
         {
             // The Text property of the control is updated
-            Text = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
+            await SetTextAsync(multiSelectionTextFunc?.Invoke(selectedConvertedValues), false);
 
             // The comparison is made on the multiSelectionText variable
             if (_multiSelectionText != text)
@@ -1076,6 +1076,7 @@ namespace MudBlazor
                     Touched = true;
                 if (updateValue)
                     await UpdateValuePropertyAsync(false);
+                //it should be await SetTextAsyncRaw(_multiSelectionText); but makes more tests to fail, why?
                 await TextChanged.InvokeAsync(_multiSelectionText);
             }
         }
@@ -1205,7 +1206,7 @@ namespace MudBlazor
                     }
 
                     await SelectOption(index);
-                    await _elementReference.SetText(Text);
+                    await _elementReference.SetText(ReadText);
                     break;
                 case "a":
                 case "A":
@@ -1300,7 +1301,7 @@ namespace MudBlazor
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
+                SetValueAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
         }
 
         /// <summary>

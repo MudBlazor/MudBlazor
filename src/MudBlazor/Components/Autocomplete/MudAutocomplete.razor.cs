@@ -577,12 +577,16 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
             base.OnInitialized();
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
-                Text = text;
+            {
+                //Should be await SetTextAsync(text ,false) but makes more tests to fail
+                await SetTextAsyncRaw(text);
+                //await TextChanged.InvokeAsync(text);
+            }
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -617,7 +621,7 @@ namespace MudBlazor
         {
             _debounceTimer?.Dispose();
 
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(ReadText))
                 await SetValueAsync(default(T), updateText);
             else if (Immediate)
                 await CoerceValueToTextAsync();
@@ -683,7 +687,7 @@ namespace MudBlazor
         /// </summary>
         public async Task OpenMenuAsync()
         {
-            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
             {
                 Open = false;
                 StateHasChanged();
@@ -706,9 +710,9 @@ namespace MudBlazor
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
-                searchingWhileSelected = !_isValueCoerced && !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
+                searchingWhileSelected = !_isValueCoerced && !Strict && Value != null && (Value.ToString() == ReadText || (ToStringFunc != null && ToStringFunc(Value) == ReadText));
                 _cancellationTokenSrc ??= new CancellationTokenSource();
-                var searchText = searchingWhileSelected ? string.Empty : Text;
+                var searchText = searchingWhileSelected ? string.Empty : ReadText;
                 var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
 
                 _currentSearchTask = searchTask;
@@ -1126,7 +1130,7 @@ namespace MudBlazor
             if (!CoerceText)
                 return Task.CompletedTask;
 
-            if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
+            if (ResetValueOnEmptyText && string.IsNullOrEmpty(ReadText))
                 return Task.CompletedTask;
 
             _debounceTimer?.Dispose();
@@ -1134,7 +1138,7 @@ namespace MudBlazor
             var text = Value == null ? null : GetItemString(Value);
 
             // Don't update the value to prevent the popover from opening again after coercion
-            if (text != Text)
+            if (text != ReadText)
                 return SetTextAsync(text, updateValue: false);
 
             return Task.CompletedTask;
@@ -1147,7 +1151,7 @@ namespace MudBlazor
 
             _debounceTimer?.Dispose();
 
-            var value = ConvertGet(Text);
+            var value = ConvertGet(ReadText);
             await SetValueAsync(value, updateText: false);
 
             // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
@@ -1224,8 +1228,6 @@ namespace MudBlazor
 
         private async Task OnTextChangedAsync(string? text)
         {
-            await base.TextChanged.InvokeAsync(text);
-
             if (text == null)
                 return;
 

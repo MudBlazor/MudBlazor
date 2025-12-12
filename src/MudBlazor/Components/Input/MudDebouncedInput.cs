@@ -57,7 +57,7 @@ namespace MudBlazor
             var suppressTextUpdate = !updateValue
                                      && _debounceIntervalState.Value > 0
                                      && _timer is { Enabled: true }
-                                     && (!Value?.Equals(ConvertGet(Text)) ?? false);
+                                     && (!Value?.Equals(ConvertGet(ReadText)) ?? false);
 
             return suppressTextUpdate
                 ? Task.CompletedTask
@@ -123,7 +123,7 @@ namespace MudBlazor
         private async Task OnTimerTickGuiThread()
         {
             await base.UpdateValuePropertyAsync(false);
-            await OnDebounceIntervalElapsed.InvokeAsync(Text);
+            await OnDebounceIntervalElapsed.InvokeAsync(ReadText);
         }
 
         private void ClearTimer(bool suppressTick = false)

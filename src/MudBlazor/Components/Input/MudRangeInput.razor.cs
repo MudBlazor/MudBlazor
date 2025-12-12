@@ -31,7 +31,7 @@ namespace MudBlazor
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text)
+            () => !string.IsNullOrEmpty(ReadText)
                   || Adornment == Adornment.Start
                   || !string.IsNullOrWhiteSpace(PlaceholderStart)
                   || !string.IsNullOrWhiteSpace(PlaceholderEnd)
@@ -183,14 +183,14 @@ namespace MudBlazor
         {
             await base.UpdateTextPropertyAsync(updateValue);
 
-            RangeUtility.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
 
-            RangeUtility.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
