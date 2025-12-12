@@ -36,6 +36,16 @@ namespace MudBlazor
         public string Separator { get; set; } = "/";
 
         /// <summary>
+        /// The aria-label for the enclosing nav element
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>Breadcrumb</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Breadcrumbs.Behavior)]
+        public string AriaLabel { get; set; } = "Breadcrumb";
+
+        /// <summary>
         /// The content shown between items.
         /// </summary>
         [Parameter]
