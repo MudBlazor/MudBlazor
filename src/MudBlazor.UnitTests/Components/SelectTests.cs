@@ -826,16 +826,16 @@ namespace MudBlazor.UnitTests.Components
             // No button when initialized
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
-            input.MouseDown();
+            await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             // Button shows after selecting item
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-            items[1].Click();
+            var items = comp.FindAll("div.mud-list-item");
+            await items[1].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().Be("2"));
             comp.Find(".mud-input-clear-button").Should().NotBeNull();
             // Selection cleared and button removed after clicking clear button
-            comp.Find(".mud-input-clear-button").Click();
+            await comp.Find(".mud-input-clear-button").ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().BeNullOrEmpty());
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
             // Clear button click handler should have been invoked
