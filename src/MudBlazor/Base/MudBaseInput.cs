@@ -785,13 +785,6 @@ namespace MudBlazor
             // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
             // This maintains backward compatibility with the old SetParametersAsync logic
             await UpdateValuePropertyAsync(updateText: false);
-
-            // For backward compatibility, fire TextChanged when Text parameter changes from parent
-            // This maintains the behavior that tests expect
-            if (!arg.IsChildOriginatedChange)
-            {
-                await TextChanged.InvokeAsync(arg.Value);
-            }
         }
 
         private async Task UpdateInputIdStateAsync()
