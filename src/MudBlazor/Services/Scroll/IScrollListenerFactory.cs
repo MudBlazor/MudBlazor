@@ -10,6 +10,12 @@ namespace MudBlazor;
 /// </summary>
 public interface IScrollListenerFactory
 {
+    /// <inheritdoc cref="Create(string?, int, bool)"/>
+    IScrollListener Create(string? selector);
+    
+    /// <inheritdoc cref="Create(string?, int, bool)"/>
+    IScrollListener Create(string? selector, int reportRateMs);
+    
     /// <summary>
     /// Creates a new instance of <see cref="IScrollListener"/> for the specified selector.
     /// </summary>
@@ -20,5 +26,5 @@ public interface IScrollListenerFactory
     /// If you are creating this <see cref="IScrollListener"/> instance yourself using this factory, then you need to manually call <see cref="ScrollListener.Dispose"/>; otherwise, you will get a memory leak.
     /// </remarks>
     /// <returns>A new instance of <see cref="IScrollListener"/>.</returns>
-    IScrollListener Create(string? selector, int reportRateMs = 100, bool fireOnStart = false);
+    IScrollListener Create(string? selector, int reportRateMs, bool fireOnStart);
 }

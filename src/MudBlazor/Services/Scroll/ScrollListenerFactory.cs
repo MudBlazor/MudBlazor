@@ -25,7 +25,19 @@ internal sealed class ScrollListenerFactory : IScrollListenerFactory
     }
 
     /// <inheritdoc />
-    public IScrollListener Create(string? selector, int reportRateMs = 100, bool fireOnStart = false)
+    public IScrollListener Create(string? selector)
+    {
+        return Create(selector, 100);
+    }
+    
+    /// <inheritdoc />
+    public IScrollListener Create(string? selector, int reportRateMs)
+    {
+        return Create(selector, reportRateMs, false);
+    }
+    
+    /// <inheritdoc />
+    public IScrollListener Create(string? selector, int reportRateMs, bool fireOnStart)
     {
         var jsRuntime = _provider.GetRequiredService<IJSRuntime>();
 

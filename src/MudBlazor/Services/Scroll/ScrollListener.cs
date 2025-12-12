@@ -65,9 +65,10 @@ namespace MudBlazor
                 await Start();
             }
 
-            if (_initialScrollEvent != null)
+            var initialScrollEvent = _initialScrollEvent;
+            if (initialScrollEvent != null)
             {
-                value.Invoke(this, _initialScrollEvent);
+                value.Invoke(this, initialScrollEvent);
             }
         }
 
