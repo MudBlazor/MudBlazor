@@ -583,9 +583,7 @@ namespace MudBlazor
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
             {
-                //Should be await SetTextAsync(text ,false) but makes more tests to fail
                 await SetTextAsyncRaw(text);
-                //await TextChanged.InvokeAsync(text);
             }
         }
 
