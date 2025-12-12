@@ -273,7 +273,7 @@ namespace MudBlazor
                 if (Clearable)
                     UpdateClearable();
                 var v = ConvertGet(cleanText);
-                Value = v;
+                await WriteValueAsync(v);
                 await ValueChanged.InvokeAsync(v);
                 await SetCaretPositionAsync(caret, selection);
             }
@@ -296,7 +296,7 @@ namespace MudBlazor
             // allow this only via changes from the outside
             if (_updating)
                 return;
-            var text = ConvertSet(Value);
+            var text = ConvertSet(ReadValue());
             var cleanText = Mask.GetCleanText();
             if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;

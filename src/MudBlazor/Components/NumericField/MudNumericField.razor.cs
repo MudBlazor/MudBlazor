@@ -223,11 +223,11 @@ namespace MudBlazor
                 var nextValue = GetNextValue(factor) ?? Num.To<T>(0);
 
                 // validate that the data type is a value type before we compare them
-                if (typeof(T).IsValueType && Value is not null)
+                if (typeof(T).IsValueType && ReadValue() is not null)
                 {
-                    if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
+                    if (factor > 0 && _comparer.Compare(nextValue, ReadValue()) < 0)
                         nextValue = Max;
-                    else if (factor < 0 && _comparer.Compare(nextValue, Value) > 0)
+                    else if (factor < 0 && _comparer.Compare(nextValue, ReadValue()) > 0)
                         nextValue = Min;
                 }
 
@@ -244,12 +244,12 @@ namespace MudBlazor
         private T? GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
+                return (T)(object)Convert.ToDecimal(FromDecimal(ReadValue()) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
+                return (T)(object)Convert.ToInt64(FromInt64(ReadValue()) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
-            return Num.To<T>(Num.From(Value) + (Num.From(Step) * factor));
+                return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue()) + (FromUInt64(Step) * factor));
+            return Num.To<T>(Num.From(ReadValue()) + (Num.From(Step) * factor));
         }
 
         /// <summary>

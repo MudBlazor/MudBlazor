@@ -263,7 +263,7 @@ namespace MudBlazor.UnitTests.Components
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
-            //await comp.InvokeAsync(() => textField.Value = "");
+            //await comp.InvokeAsync(() => textField.ReadValue() = "");
             //form.IsValid.Should().Be(true);
             //form.Errors.Length.Should().Be(0);
             //textField.Error.Should().BeFalse();
@@ -303,7 +303,7 @@ namespace MudBlazor.UnitTests.Components
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
-            //await comp.InvokeAsync(() => textField.Value = "");
+            //await comp.InvokeAsync(() => textField.ReadValue() = "");
             //form.IsValid.Should().Be(true);
 
             // clearly a star
@@ -329,7 +329,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().Be(true);
             // calling Reset() should reset the textField's value
             await comp.InvokeAsync(() => form.ResetAsync());
-            textField.Value.Should().Be(null);
+            textField.ReadValue().Should().Be(null);
             textField.ReadText.Should().Be(null);
             form.IsValid.Should().Be(false); // because we did reset validation state as a side-effect.
         }
@@ -393,7 +393,7 @@ namespace MudBlazor.UnitTests.Components
             }
             // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
-            textField.Value.Should().Be(currentText);
+            textField.ReadValue().Should().Be(currentText);
             textField.ReadText.Should().Be(currentText);
         }
 
@@ -515,7 +515,7 @@ namespace MudBlazor.UnitTests.Components
             var buttons = comp.FindComponents<MudButton>();
             // click validate button
             var validateButton = buttons[1];
-            validateButton.Find("button").Click();
+            await validateButton.Find("button").ClickAsync();
             var textfields = comp.FindComponents<MudTextField<string>>();
             await comp.WaitForAssertionAsync(() => textfields[0].Instance.HasErrors.Should().BeTrue());
             textfields[0].Instance.GetState(x => x.ErrorText).Should().Be("User name is required!");
@@ -528,8 +528,8 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must agree");
             // click reset validation
             var resetValidationButton = buttons[3];
-            resetValidationButton.Find("button").Click();
-            comp.WaitForState(() => form.Errors.Length == 0);
+            await resetValidationButton.Find("button").ClickAsync();
+            await comp.WaitForStateAsync(() => form.Errors.Length == 0);
             await comp.WaitForAssertionAsync(() => textfields[0].Instance.HasErrors.Should().BeFalse());
             textfields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             await comp.WaitForAssertionAsync(() => textfields[1].Instance.HasErrors.Should().BeFalse());
@@ -545,11 +545,11 @@ namespace MudBlazor.UnitTests.Components
             textfields[3].Find("input").Change("Wabalabadubdub1234!");
             checkbox.Find("input").Change(true);
             await comp.WaitForAssertionAsync(() => form.IsValid.Should().BeTrue());
-            comp.WaitForState(() => form.Errors.Length == 0);
+            await comp.WaitForStateAsync(() => form.Errors.Length == 0);
             // click reset
             var resetButton = buttons[2];
-            resetButton.Find("button").Click();
-            comp.WaitForState(() => form.Errors.Length == 0);
+            await resetButton.Find("button").ClickAsync();
+            await comp.WaitForStateAsync(() => form.Errors.Length == 0);
             await comp.WaitForAssertionAsync(() => textfields[0].Instance.HasErrors.Should().BeFalse());
             textfields[0].Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfields[0].Instance.ReadText.Should().BeNullOrEmpty();
@@ -561,7 +561,7 @@ namespace MudBlazor.UnitTests.Components
             textfields[2].Instance.ReadText.Should().BeNullOrEmpty();
             await comp.WaitForAssertionAsync(() => checkbox.Instance.HasErrors.Should().BeFalse());
             checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
-            await comp.WaitForAssertionAsync(() => checkbox.Instance.Value.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => checkbox.Instance.ReadValue().Should().BeFalse());
             // TODO: fill out the form with errors, field after field, check how fields get validation errors after blur
         }
 
@@ -1361,19 +1361,19 @@ namespace MudBlazor.UnitTests.Components
 
             // input some text
             textFieldComp.Find("input").Input("asdf");
-            textField.Value.Should().Be("asdf");
+            textField.ReadValue().Should().Be("asdf");
             textField.ReadText.Should().Be("asdf");
             // call reset directly
             await comp.InvokeAsync(() => form.Instance.ResetAsync());
-            textField.Value.Should().BeNullOrEmpty();
+            textField.ReadValue().Should().BeNullOrEmpty();
             textField.ReadText.Should().BeNullOrEmpty();
             // input some text
             textFieldComp.Find("input").Input("asdf");
-            textField.Value.Should().Be("asdf");
+            textField.ReadValue().Should().Be("asdf");
             textField.ReadText.Should().Be("asdf");
             // hit reset button
             comp.Find("button.reset").Click();
-            textField.Value.Should().BeNullOrEmpty();
+            textField.ReadValue().Should().BeNullOrEmpty();
             textField.ReadText.Should().BeNullOrEmpty();
         }
 
