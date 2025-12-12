@@ -1510,6 +1510,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Autocomplete_Should_HaveValueWithTextChangedEvent()
+        {
+            // Arrange
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            const string TestText = "testText";
+            var currentText = string.Empty;
+
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TextChanged, text => currentText = text));
+  
+            // Act
+            // Simulate user typing text (which should fire TextChanged)
+            var input = comp.Find("input");
+            input.Input(TestText);
+
+            // Assert
+            await autocompleteComponent.WaitForAssertionAsync(() => currentText.Should().Be(TestText));
+        }
+
+        [Test]
         [TestCase(0)] //test toStringFunc
         [TestCase(1)] //test toString
         public async Task AutocompleteStrictFalseTest(int index)
