@@ -579,7 +579,7 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
             {

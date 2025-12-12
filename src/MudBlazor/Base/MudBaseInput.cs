@@ -29,7 +29,20 @@ namespace MudBlazor
         /// <summary>
         /// The resolved input element ID.
         /// </summary>
-        protected string? InputElementId => _inputIdState.Value ?? _userAttributesId ?? _componentId;
+        protected string? InputElementId
+        {
+            get
+            {
+                if (_inputIdState.Value is not null)
+                {
+                    return _inputIdState.Value;
+                }
+                
+                // Fallback for synchronous access before UpdateInputIdStateAsync completes
+                var userAttrId = UserAttributes.FirstOrDefault(attr => attr.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+                return userAttrId ?? _componentId;
+            }
+        }
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
         private readonly ParameterState<string?> _textState;

@@ -1066,7 +1066,8 @@ namespace MudBlazor
             Func<List<string?>?, string>? multiSelectionTextFunc = null)
         {
             // The Text property of the control is updated
-            await SetTextAsync(multiSelectionTextFunc?.Invoke(selectedConvertedValues), false);
+            var customText = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
+            await SetTextAsyncRaw(customText);
 
             // The comparison is made on the multiSelectionText variable
             if (_multiSelectionText != text)
@@ -1076,8 +1077,6 @@ namespace MudBlazor
                     Touched = true;
                 if (updateValue)
                     await UpdateValuePropertyAsync(false);
-                //it should be await SetTextAsyncRaw(_multiSelectionText); but makes more tests to fail, why?
-                await TextChanged.InvokeAsync(_multiSelectionText);
             }
         }
 
