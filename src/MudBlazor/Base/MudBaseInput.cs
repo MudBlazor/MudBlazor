@@ -29,20 +29,7 @@ namespace MudBlazor
         /// <summary>
         /// The resolved input element ID.
         /// </summary>
-        protected string? InputElementId
-        {
-            get
-            {
-                if (_inputIdState.Value is not null)
-                {
-                    return _inputIdState.Value;
-                }
-                
-                // Fallback for synchronous access before UpdateInputIdStateAsync completes
-                var userAttrId = UserAttributes.FirstOrDefault(attr => attr.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
-                return userAttrId ?? _componentId;
-            }
-        }
+        protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
         private readonly ParameterState<string?> _textState;
@@ -798,7 +785,7 @@ namespace MudBlazor
             // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
             // This maintains backward compatibility with the old SetParametersAsync logic
             await UpdateValuePropertyAsync(updateText: false);
-            
+
             // For backward compatibility, fire TextChanged when Text parameter changes from parent
             // This maintains the behavior that tests expect
             if (!arg.IsChildOriginatedChange)
