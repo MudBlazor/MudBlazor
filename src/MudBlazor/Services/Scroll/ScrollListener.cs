@@ -38,8 +38,8 @@ namespace MudBlazor
         /// </summary>
         /// <param name="selector">The CSS selector for the element to listen for scroll events.</param>
         /// <param name="js">The JavaScript runtime.</param>
-        /// <param name="reportRateMs"></param>
-        /// <param name="fireOnStart"></param>
+        /// <param name="reportRateMs">The rate at which the <see cref="IScrollListener"/> will report scroll position changes (in milliseconds).</param>
+        /// <param name="fireOnStart">Whether to fire the <see cref="OnScroll"/> event immediately after creation.</param>
         public ScrollListener(string? selector, IJSRuntime js, int reportRateMs = 100, bool fireOnStart = false)
         {
             _js = js;
