@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @ref="@_stringSelect" @bind-Value="@_value" @bind-SelectedValues="@_values" Label="String Binding" MultiSelection="true" Required="true" Clearable="true">
+<MudSelect @ref="@_stringSelect" T="string?" @bind-Value="@_value" @bind-SelectedValues="@_values" Label="String Binding" MultiSelection="true" Required="true" Clearable="true">
     <MudSelectItem Value="@("1")">1</MudSelectItem>
     <MudSelectItem Value="@("2")">2</MudSelectItem>
     <MudSelectItem Value="@("3")">3</MudSelectItem>
