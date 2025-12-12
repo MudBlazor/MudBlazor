@@ -1519,7 +1519,7 @@ namespace MudBlazor.UnitTests.Components
             var currentText = string.Empty;
 
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TextChanged, text => currentText = text));
-  
+
             // Act
             // Simulate user typing text (which should fire TextChanged)
             var input = comp.Find("input");
