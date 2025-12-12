@@ -29,7 +29,7 @@ namespace MudBlazor
         /// <summary>
         /// The resolved input element ID.
         /// </summary>
-        protected string? InputElementId => _inputIdState.Value;
+        protected string? InputElementId => _inputIdState.Value ?? _userAttributesId ?? _componentId;
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
         private readonly ParameterState<string?> _textState;
