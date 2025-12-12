@@ -12,10 +12,10 @@ public interface IScrollListenerFactory
 {
     /// <inheritdoc cref="Create(string?, int, bool)"/>
     IScrollListener Create(string? selector);
-    
+
     /// <inheritdoc cref="Create(string?, int, bool)"/>
     IScrollListener Create(string? selector, int reportRateMs);
-    
+
     /// <summary>
     /// Creates a new instance of <see cref="IScrollListener"/> for the specified selector.
     /// </summary>

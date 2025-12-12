@@ -2,7 +2,17 @@
 {
     public class MockScrollListenerFactory : IScrollListenerFactory
     {
-        public IScrollListener Create(string? selector, int reportRateMs = 100, bool fireOnStart = false)
+        public IScrollListener Create(string? selector)
+        {
+            return Create(selector, 100);
+        }
+
+        public IScrollListener Create(string? selector, int reportRateMs)
+        {
+            return Create(selector, reportRateMs, false);
+        }
+
+        public IScrollListener Create(string? selector, int reportRateMs, bool fireOnStart)
         {
             return new MockScrollListener { Selector = selector, ReportRateMs = reportRateMs, FireOnStart = fireOnStart };
         }
