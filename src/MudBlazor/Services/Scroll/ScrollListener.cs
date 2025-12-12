@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    #nullable enable
+#nullable enable
     /// <summary>
     /// Listens to scroll events on a specified element.
     /// </summary>
