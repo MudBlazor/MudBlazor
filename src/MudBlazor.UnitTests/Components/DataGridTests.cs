@@ -5367,7 +5367,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridRowDetailInitiallyExpandedServerMultipleTest()
         {
-            // ServerReload different pages
             var comp = Context.Render<DataGridHierarchyInitiallyExpandedServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedServerDataTest.Model>>();
 
@@ -5378,21 +5377,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
             comp.Markup.Should().NotContain("uid = John|32|Warning|");
 
-            // Collapse Ira to ensure it remains collapsed when we return to the row
-            // Use LINQ to find the index of the row containing "uid = Ira"
-            var iraIndex = comp.FindAll("tr")
-                .Select((row, index) => new { row, index })
-                .First(r => r.row.InnerHtml.Contains("uid = Ira")).index;
+            // Collapse Ira
+            await comp.InvokeAsync(async () =>
+            {
+                var iraIndex = comp.FindAll("tr")
+                    .Select((row, index) => new { row, index })
+                    .First(r => r.row.InnerHtml.Contains("uid = Ira")).index;
 
-            iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
+                iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
 
-            // Now access the row above and find the toggle button and click it
-            await comp.InvokeAsync(() => comp.FindAll("tr")[iraIndex - 2].QuerySelector("button").Click());
+                var toggleButton = comp.FindAll("tr")[iraIndex - 2].QuerySelector("button");
+                toggleButton.Should().NotBeNull("Expected a toggle button above the Ira detail row");
+                await toggleButton.ClickAsync();
+            });
 
-            // Find button with aria-label = "Next Page"
-            var nextButton = comp.Find("button[aria-label='Next page']");
-            nextButton.Should().NotBeNull();
-            nextButton.Click();
+            // Go to next page
+            await comp.InvokeAsync(async () =>
+            {
+                var nextButton = comp.Find("button[aria-label='Next page']");
+                nextButton.Should().NotBeNull("Expected a Next Page Button.");
+                await nextButton.ClickAsync();
+            });
 
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
 
@@ -5401,10 +5406,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("uid = Garderoben|32|Warning|");
             comp.Markup.Should().NotContain("uid = Henon|54|Info|");
 
-            // go back and make sure Ira isn't re-expanded
-            var prevButton = comp.Find("button[aria-label='Previous page']");
-            prevButton.Should().NotBeNull();
-            prevButton.Click();
+            // Go back to previous page
+            await comp.InvokeAsync(async () =>
+            {
+                var prevButton = comp.Find("button[aria-label='Previous page']");
+                prevButton.Should().NotBeNull("Expected a Previous Page Button.");
+                await prevButton.ClickAsync();
+            });
 
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
 

@@ -53,6 +53,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     [MemberNotNullWhen(true, nameof(_value), nameof(_initialValue))]
     public override bool IsInitialized => _isInitialized;
 
+    [MemberNotNullWhen(true, nameof(_value))]
+    private bool TreatAsInitialized { get; set; }
+
     /// <inheritdoc />
     public override T InitialValue
     {
@@ -96,7 +99,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     {
         get
         {
-            if (!IsInitialized)
+            if (!TreatAsInitialized && !IsInitialized)
             {
                 return _getParameterValueFunc();
             }
@@ -130,6 +133,13 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         if (!_comparer.Equals(_value, value))
         {
             _value = value;
+            if (!TreatAsInitialized)
+            {
+                // https://github.com/MudBlazor/MudBlazor/pull/12241
+                // Workaround for components that read parameter values before OnInitialized is called aka Select and Autocomplete.
+                // Can be removed in future major versions when such components are fixed.
+                TreatAsInitialized = true;
+            }
             var eventCallback = _eventCallbackFunc();
             if (eventCallback.HasDelegate)
             {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Comparer;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
@@ -25,7 +26,6 @@ namespace MudBlazor
         private string? _multiSelectionText;
         private int _longestItemLength;
         private MudSelectItem<T>? _longestItem;
-        private IEqualityComparer<T?>? _comparer;
         private TaskCompletionSource? _renderComplete;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = new HashSet<T?>();
@@ -34,15 +34,26 @@ namespace MudBlazor
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTime _lastSearchTime = DateTime.MinValue;
+        private readonly ParameterState<IEnumerable<T?>?> _selectedValuesState;
 
         public MudSelect()
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+            // Set default value to ensure ParameterState never holds null
+            SelectedValues = new HashSet<T?>();
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
                 .WithChangeHandler(() => UpdateTextPropertyAsync(false));
+            registerScope.RegisterParameter<IEqualityComparer<T?>?>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChangedAsync);
+            _selectedValuesState = registerScope.RegisterParameter<IEnumerable<T?>?>(nameof(SelectedValues))
+                .WithParameter(() => SelectedValues)
+                .WithEventCallback(() => SelectedValuesChanged)
+                .WithChangeHandler(OnSelectedValuesChangedAsync)
+                .WithComparer(() => new SequenceComparer<T?>(Comparer));
         }
 
         protected string OuterClassname =>
@@ -193,6 +204,8 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAsync(item.Value, updateText: true);
+                // Update ParameterState to keep SelectedValues in sync
+                await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             }
 
             HighlightItem(item);
@@ -428,62 +441,60 @@ namespace MudBlazor
         /// <remarks>
         /// When <see cref="MultiSelection"/> is <c>false</c>, only one value will be returned.  When this value changes, <see cref="SelectedValuesChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public IEnumerable<T?>? SelectedValues
+        public IEnumerable<T?>? SelectedValues { get; set; }
+
+        private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IEnumerable<T?>?> arg)
         {
-            get
+            var value = arg.Value;
+            var set = value ?? new HashSet<T?>(Comparer);
+
+            // Update internal HashSet with new values - make a defensive copy to avoid shared references
+            _selectedValues = new HashSet<T?>(set, Comparer);
+
+            SelectionChangedFromOutside?.Invoke(_selectedValues);
+
+            if (!MultiSelection)
             {
-                return _selectedValues;
+                await SetValueAsync(_selectedValues.FirstOrDefault());
             }
-            set
+            else
             {
-                var set = value ?? new HashSet<T?>(_comparer);
-                var selectedValues = SelectedValues ?? new HashSet<T>(_comparer);
-                if (selectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
-                    return;
-                _selectedValues = new HashSet<T?>(set, _comparer);
-                SelectionChangedFromOutside?.Invoke(_selectedValues);
-                if (!MultiSelection)
-                    SetValueAsync(_selectedValues.FirstOrDefault()).CatchAndLog();
+                //Warning. Here the Converter was not set yet
+                if (MultiSelectionTextFunc != null)
+                {
+                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                }
                 else
                 {
-                    //Warning. Here the Converter was not set yet
-                    if (MultiSelectionTextFunc != null)
-                    {
-                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                            selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                            multiSelectionTextFunc: MultiSelectionTextFunc).CatchAndLog();
-                    }
-                    else
-                    {
-                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false).CatchAndLog();
-                    }
+                    await SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
                 }
-
-                var newValues = new HashSet<T?>(_selectedValues, _comparer);
-                SelectedValuesChanged.InvokeAsync(newValues);
-                FieldChanged(newValues);
-                if (MultiSelection && typeof(T) == typeof(string))
-                    SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
             }
+
+            // Only fire FieldChanged after the first render to avoid triggering during initialization
+            if (HasRendered)
+            {
+                FieldChanged(_selectedValues);
+            }
+            if (MultiSelection && typeof(T) == typeof(string))
+                await SetValueAsync((T?)(object?)Text, updateText: false);
         }
 
         /// <summary>
         /// The comparer for testing equality of selected values.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IEqualityComparer<T?>? Comparer
+        public IEqualityComparer<T?>? Comparer { get; set; }
+
+        private async Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
         {
-            get => _comparer;
-            set
-            {
-                _comparer = value;
-                // Apply comparer and refresh selected values
-                _selectedValues = new HashSet<T?>(_selectedValues, _comparer);
-                SelectedValues = _selectedValues;
-            }
+            // Apply comparer and refresh selected values
+            _selectedValues = new HashSet<T?>(_selectedValues, arg.Value);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, arg.Value));
         }
 
         /// <summary>
@@ -575,14 +586,14 @@ namespace MudBlazor
             if (MultiSelectionTextFunc != null)
             {
                 return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(ConvertSet)),
-                        selectedConvertedValues: SelectedValues!.Select(ConvertSet).ToList(),
+                    ? SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc)
                     : base.UpdateTextPropertyAsync(updateValue);
             }
 
             return MultiSelection
-                ? SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(ConvertSet)))
+                ? SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)))
                 : base.UpdateTextPropertyAsync(updateValue);
         }
 
@@ -755,13 +766,13 @@ namespace MudBlazor
 
                 if (MultiSelectionTextFunc != null)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(ConvertSet!)),
-                        selectedConvertedValues: SelectedValues!.Select(ConvertSet!).ToList(),
+                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)),
+                        selectedConvertedValues: _selectedValues.Select(ConvertSet!).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc);
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(ConvertSet!)), updateValue: false);
+                    await SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)), updateValue: false);
                 }
 
                 UpdateSelectAllChecked();
@@ -773,21 +784,29 @@ namespace MudBlazor
                 // CloseMenu(true) doesn't close popover in BSS
                 await CloseMenu(false);
 
-                if (EqualityComparer<T>.Default.Equals(Value, value))
+                // Update internal selected values and ParameterState
+                _selectedValues.Clear();
+                _selectedValues.Add(value);
+
+                // Early return if value hasn't changed (but after updating SelectedValues)
+                // Use Comparer if available, otherwise use default
+                var comparer = Comparer ?? EqualityComparer<T?>.Default;
+                if (comparer.Equals(Value, value))
                 {
+                    // Still need to publish SelectedValues to ParameterState in case it wasn't initialized
+                    await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
                     StateHasChanged();
                     return;
                 }
 
                 await SetValueAsync(value);
                 _elementReference.SetText(Text).CatchAndLog();
-                _selectedValues.Clear();
-                _selectedValues.Add(value);
             }
 
             HighlightItemForValueAsync(value);
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            FieldChanged(SelectedValues);
+            // Create a new HashSet to ensure ParameterState detects the change
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+            FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T?)(object?)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
@@ -974,6 +993,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Internal method for MudSelectItem to access the converted string value.
+        /// </summary>
+        internal string? ConvertValueToString(T? value) => ConvertSet(value);
+
+        /// <summary>
         /// Throws an exception if the specified item is not compatible with this component.
         /// </summary>
         /// <param name="selectItem">The item to compare.  Should be of type <c>T</c> for this component.</param>
@@ -1032,7 +1056,7 @@ namespace MudBlazor
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
@@ -1234,7 +1258,7 @@ namespace MudBlazor
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
         }
 
@@ -1258,23 +1282,23 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T?>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
-            _selectedValues = new HashSet<T?>(selectedValues, _comparer);
+            var selectedValues = new HashSet<T?>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), Comparer);
+            _selectedValues = new HashSet<T?>(selectedValues, Comparer);
             if (MultiSelectionTextFunc != null)
             {
-                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(ConvertSet)),
-                    selectedConvertedValues: SelectedValues!.Select(ConvertSet).ToList(),
+                await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                    selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
             {
-                await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(ConvertSet)), updateValue: false);
+                await SetTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
             }
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            FieldChanged(SelectedValues);
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+            FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
         }
@@ -1350,7 +1374,7 @@ namespace MudBlazor
             // Fixes issue #4328
 
             if (MultiSelection)
-                return SelectedValues?.Any() ?? false;
+                return _selectedValues?.Any() ?? false;
             return base.HasValue(value);
         }
 
@@ -1362,12 +1386,12 @@ namespace MudBlazor
             await base.ForceUpdate();
             if (MultiSelection == false)
             {
-                SelectedValues = new HashSet<T?>(_comparer) { Value };
+                await _selectedValuesState.SetValueAsync(new HashSet<T?>(Comparer) { Value });
             }
             else
             {
-                var newValues = new HashSet<T?>(SelectedValues!, _comparer);
-                await SelectedValuesChanged.InvokeAsync(newValues);
+                var newValues = new HashSet<T?>(_selectedValues, Comparer);
+                await _selectedValuesState.SetValueAsync(newValues);
                 FieldChanged(newValues);
             }
         }
