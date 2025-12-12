@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.Components
                 new("Link 3", "link3", disabled: true)
             }));
 
-            
+
             comp.Find("nav").GetAttribute("aria-label").Should().Be("Breadcrumb");
         }
 
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.AriaLabel, "AlternativeBreadcrumbs")
             );
 
-            
+
             comp.Find("nav").GetAttribute("aria-label").Should().Be("AlternativeBreadcrumbs");
         }
 
