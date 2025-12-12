@@ -29,7 +29,7 @@
 <MudText>Value: @_selectedRole?.Name</MudText>
 <MudText>Selected values: @(_selectedRoles is null ? null : string.Join(", ", _selectedRoles.Select(x => x.Name)))</MudText>
 
-@code {
+    @code {
     public static string __description__ = "Multi-Select Required Should Recognize Values";
 
     private MudSelect<string?> _stringSelect = null!;
@@ -38,17 +38,13 @@
     private string? _value;
     private IEnumerable<string?>? _values;
 
-    private readonly List<TestClass> _roles = [];
     private TestClass? _selectedRole;
     private IEnumerable<TestClass>? _selectedRoles = new List<TestClass>();
-    
-    protected override void OnInitialized()
-    {
-        _roles.Add(new TestClass { Name = "Admin", NameTranslated = "Administrator" });
-        _roles.Add(new TestClass { Name = "Customer", NameTranslated = "Kunde" });
-
-        base.OnInitialized();
-    }
+    private readonly List<TestClass> _roles =
+    [
+        new TestClass { Name = "Admin", NameTranslated = "Administrator" },
+        new TestClass { Name = "Customer", NameTranslated = "Kunde" }
+    ];
 
     public class TestClass
     {
