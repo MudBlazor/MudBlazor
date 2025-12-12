@@ -22,6 +22,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudBreadcrumbs_ShouldRenderWithDefaultAria()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link 1", "link1"),
+                new("Link 2", "link2"),
+                new("Link 3", "link3", disabled: true)
+            }));
+
+            
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Breadcrumb");
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldRenderWithCustomAria()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2"),
+                    new("Link 3", "link3", disabled: true)
+                })
+                .Add(x => x.AriaLabel, "AlternativeBreadcrumbs")
+            );
+
+            
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("AlternativeBreadcrumbs");
+        }
+
+        [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithIcons()
         {
             var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
