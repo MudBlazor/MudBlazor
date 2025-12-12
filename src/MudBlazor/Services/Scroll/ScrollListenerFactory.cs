@@ -29,13 +29,13 @@ internal sealed class ScrollListenerFactory : IScrollListenerFactory
     {
         return Create(selector, 100);
     }
-    
+
     /// <inheritdoc />
     public IScrollListener Create(string? selector, int reportRateMs)
     {
         return Create(selector, reportRateMs, false);
     }
-    
+
     /// <inheritdoc />
     public IScrollListener Create(string? selector, int reportRateMs, bool fireOnStart)
     {
