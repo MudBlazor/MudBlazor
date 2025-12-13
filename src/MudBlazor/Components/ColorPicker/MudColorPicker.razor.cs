@@ -431,7 +431,7 @@ namespace MudBlazor
             {
                 await StringValueChangedAsync(value);
             }
-            await WriteTextAsync(value);
+            await base.WriteTextAsync(value);
         }
 
         protected internal override string? ReadText => GetColorTextValue(_valueState.Value);

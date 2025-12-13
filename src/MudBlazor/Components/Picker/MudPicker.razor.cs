@@ -30,7 +30,14 @@ namespace MudBlazor
             using var registerScope = CreateRegisterScope();
             _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
-                .WithEventCallback(() => TextChanged);
+                .WithEventCallback(() => TextChanged)
+                .WithChangeHandler(OnTextParameterChangedAsync);
+        }
+
+        private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
+        {
+            // When Text changes from parent, call StringValueChangedAsync
+            return StringValueChangedAsync(arg.Value);
         }
 
         [Inject]
@@ -497,7 +504,9 @@ namespace MudBlazor
             {
                 await _textState.SetValueAsync(value);
                 if (callback)
+                {
                     await StringValueChangedAsync(_textState.Value);
+                }
             }
         }
 
