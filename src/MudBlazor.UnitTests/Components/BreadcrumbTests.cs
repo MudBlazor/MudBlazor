@@ -36,6 +36,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudBreadcrumbs_ShouldRenderWithCurrentPageAria()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link", "link", disabled: true, ariaCurrent: true)
+            }));
+
+            comp.Find("a").GetAttribute("aria-current").Should().Be("page");
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldRenderWithoutCurrentPageAria()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link", "link", disabled: true)
+            }));
+
+            comp.Find("a").GetAttribute("aria-current").Should().BeNull();
+        }
+
+        [Test]
         public void MudBreadcrumbs_ShouldRenderWithCustomAria()
         {
             var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
