@@ -631,6 +631,12 @@ namespace MudBlazor
             {
                 await SetColorAsync(result);
             }
+            else
+            {
+                // If parsing fails, reset the Text state to match the current valid color
+                // This forces the TextField to display the valid color instead of the invalid input
+                await _textState.SetValueAsync(GetColorTextValue(_valueState.Value));
+            }
         }
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
