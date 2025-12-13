@@ -32,4 +32,19 @@ public partial class BreadcrumbLink
     private string Classname => new CssBuilder("mud-breadcrumb-item")
         .AddClass("mud-disabled", Item?.Disabled)
         .Build();
+
+    private Dictionary<string, object> Attributes()
+    {
+        Dictionary<string, object> attributeValues = new()
+        {
+            {"href", Item?.Href ?? "#"}
+        };
+
+        if(Item?.AriaCurrent ?? false)
+        {
+            attributeValues.Add("aria-current", "page");
+        }
+
+        return attributeValues;
+    }
 }

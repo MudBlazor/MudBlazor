@@ -4,7 +4,8 @@
 <li class="@Classname">
     @if (Parent?.ItemTemplate is null)
     {
-        <a href="@(Item?.Href ?? "#")">
+        <a @attributes="Attributes()">
+        
             @if (Item?.Icon != null)
             {
                 <MudIcon Icon="@Item?.Icon" Size="Size.Small" />
