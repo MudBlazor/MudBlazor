@@ -23,6 +23,7 @@ namespace MudBlazor
         private bool _validated;
         protected bool _isFocused;
         protected bool _forceTextUpdate;
+        private bool _textParameterChanged;
 
         /// <summary>
         /// The resolved input element ID.
@@ -538,7 +539,9 @@ namespace MudBlazor
 
         protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
-            if (EqualityComparer<T?>.Default.Equals(ReadValue(), value) && !force)
+            var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue(), value);
+            
+            if (!valueChanged && !force)
             {
                 return;
             }
@@ -549,6 +552,13 @@ namespace MudBlazor
             // Use ParameterState to set Value instead of direct assignment
             // This ensures proper parameter lifecycle management
             await _valueState.SetValueAsync(value);
+
+            // If force is true but value hasn't changed, ParameterState won't fire the callback
+            // so we need to manually invoke it to maintain backward compatibility
+            if (force && !valueChanged)
+            {
+                await ValueChanged.InvokeAsync(value);
+            }
 
             if (updateText)
             {
@@ -564,8 +574,28 @@ namespace MudBlazor
             _isDirty = true;
             _validated = false;
 
-            // When Value changes from parent, update Text from Value
-            await UpdateTextPropertyAsync(false);
+            // When Value changes from parent, update Text from Value (with TextUpdateSuppression logic)
+            // BUT: If Text was also changed in the same parameter update, skip this to let Text win
+            // This maintains backward compatibility with the old `if (hasValue && !hasText)` logic
+            if (!_textParameterChanged)
+            {
+                var updateText = true;
+                if (_isFocused && !_forceTextUpdate)
+                {
+                    // Text update suppression, only in BSS (not in WASM).
+                    // This is a fix for #1012
+                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                    {
+                        updateText = false;
+                    }
+                }
+                
+                if (updateText)
+                {
+                    _forceTextUpdate = false;
+                    await UpdateTextPropertyAsync(false);
+                }
+            }
         }
 
         /// <summary>
@@ -667,27 +697,16 @@ namespace MudBlazor
             var hasText = parameters.Contains<string>(nameof(Text));
             var hasValue = parameters.Contains<T>(nameof(Value));
 
+            // Reset the flag before processing parameters
+            _textParameterChanged = false;
+
             await base.SetParametersAsync(parameters);
 
-            // Refresh Text from Value
-            if (hasValue && !hasText)
-            {
-                var updateText = true;
-                if (_isFocused && !_forceTextUpdate)
-                {
-                    // Text update suppression, only in BSS (not in WASM).
-                    // This is a fix for #1012
-                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-                    {
-                        updateText = false;
-                    }
-                }
-                if (updateText)
-                {
-                    _forceTextUpdate = false;
-                    await UpdateTextPropertyAsync(false);
-                }
-            }
+            // Refresh Text from Value - moved to OnValueParameterChangedAsync to work with ParameterState
+            // The logic is now in the ParameterState change handler which is called when Value parameter changes
+            
+            // Reset the flag after parameters are processed
+            _textParameterChanged = false;
         }
 
         /// <inheritdoc />
@@ -795,6 +814,7 @@ namespace MudBlazor
         private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
             _validated = false;
+            _textParameterChanged = true;
 
             if (!string.IsNullOrEmpty(arg.Value))
             {
