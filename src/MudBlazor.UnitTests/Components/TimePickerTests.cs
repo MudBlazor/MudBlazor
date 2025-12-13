@@ -45,17 +45,17 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Time.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Clearable, true)
                 .Add(p => p.Time, new TimeSpan(637940935730000000)));
             picker.Time.Should().Be(new TimeSpan(637940935730000000));
-            picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
+            picker.ReadText.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
 
             comp.Find(".mud-input-clear-button").Click(); //clear the input
 
-            picker.Text.Should().Be(""); //ensure the text and time are reset. Note this is an empty string rather than null due to how the reset works internally
+            picker.ReadText.Should().Be(""); //ensure the text and time are reset. Note this is an empty string rather than null due to how the reset works internally
             picker.Time.Should().Be(null);
         }
 

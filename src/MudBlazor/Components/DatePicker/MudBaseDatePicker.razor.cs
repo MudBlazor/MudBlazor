@@ -288,9 +288,9 @@ namespace MudBlazor
         protected override async Task OnPickerOpenedAsync()
         {
             await base.OnPickerOpenedAsync();
-            if (Editable && Text != null)
+            if (Editable && ReadText != null)
             {
-                var a = ConvertGet(Text);
+                var a = ConvertGet(ReadText);
                 if (a.HasValue)
                 {
                     a = new DateTime(GetCulture().Calendar.GetYear(a.Value), GetCulture().Calendar.GetMonth(a.Value), 1, GetCulture().Calendar);
