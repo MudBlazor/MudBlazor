@@ -721,10 +721,22 @@ namespace MudBlazor
         // In future when all Pickers will use ParameterState, we can remove this.
         protected internal virtual string? ReadText => _textState.Value;
 
+        /// <summary>
+        /// Updates the text state without triggering string value changed callback.
+        /// Used internally when the value is already synchronized.
+        /// </summary>
+        protected Task SetTextStateAsync(string? value) => _textState.SetValueAsync(value);
+
         // A proxy for components that will utilize ParameterState
         // Since for ParameterState we don't want to write directly from the Text property, but we have other components that inherit from MudPicker
         // In future when all Pickers will use ParameterState, we can remove this.
-        protected virtual Task WriteTextAsync(string? value) => _textState.SetValueAsync(value);
+        protected virtual async Task WriteTextAsync(string? value)
+        {
+            await _textState.SetValueAsync(value);
+            // Call StringValueChangedAsync to allow derived classes to react to text changes
+            // (e.g., TimePicker/DatePicker parse the text and update their Time/Date values)
+            await StringValueChangedAsync(value);
+        }
 
         protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {

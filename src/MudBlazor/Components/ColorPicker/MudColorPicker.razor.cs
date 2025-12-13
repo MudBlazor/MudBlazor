@@ -100,19 +100,16 @@ namespace MudBlazor
             {
                 return;
             }
-            // TODO: To be refactored, for now we replicate old behavior that was without ParameterState
-            if (!args.Value)
+            
+            // When ShowAlpha changes, update the text representation to match
+            // GetColorTextValue automatically handles whether to include alpha based on _alphaState.Value
+            // Use SetTextStateAsync to avoid triggering StringValueChangedAsync (which would parse and update the color)
+            await SetTextStateAsync(GetColorTextValue(_valueState.Value));
+            
+            // If there's no two-way binding (no ValueChanged callback), reset alpha to full opacity when hiding alpha
+            if (!args.Value && !ValueChanged.HasDelegate)
             {
-                var colorWithoutAlpha = _valueState.Value?.SetAlpha(1.0);
-                await WriteTextAsync(GetColorTextValue(colorWithoutAlpha));
-                if (!ValueChanged.HasDelegate)
-                {
-                    await SetColorAsync(colorWithoutAlpha);
-                }
-            }
-            else
-            {
-                await WriteTextAsync(GetColorTextValue(_valueState.Value));
+                await SetColorAsync(_valueState.Value?.SetAlpha(1.0));
             }
         }
 
@@ -431,7 +428,9 @@ namespace MudBlazor
             {
                 await StringValueChangedAsync(value);
             }
-            await base.WriteTextAsync(value);
+            // Use SetTextStateAsync to update text without triggering StringValueChangedAsync
+            // (which would cause a loop since SetColorAsync already updates the value)
+            await SetTextStateAsync(value);
         }
 
         protected internal override string? ReadText => GetColorTextValue(_valueState.Value);
