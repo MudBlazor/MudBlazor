@@ -40,7 +40,7 @@ public partial class BreadcrumbLink
             {"href", Item?.Href ?? "#"}
         };
 
-        if(Item?.AriaCurrent ?? false)
+        if (Item?.AriaCurrent ?? false)
         {
             attributeValues.Add("aria-current", "page");
         }
