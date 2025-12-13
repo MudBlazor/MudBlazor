@@ -11,7 +11,7 @@ public class ParameterChangedEventArgs<T> : EventArgs
 {
     /// <summary>
     /// Gets a snapshot of the component's <see cref="ParameterView"/> at the time the parameter change was detected.
-    /// Use this <see cref="ParameterView"/> to read other parameters that were supplied together with the changed parameter
+    /// Use this <see cref="ParameterView"/> to read other parameters that were supplied together with the changed parameter.
     /// This snapshot reflects the raw parameter set Blazor provided during
     /// parameter assignment and should be preferred by handlers that need access to related parameter values instead of
     /// relying on the component's current property values which may not yet be updated.
