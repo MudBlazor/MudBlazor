@@ -23,7 +23,6 @@ namespace MudBlazor
         private bool _validated;
         protected bool _isFocused;
         protected bool _forceTextUpdate;
-        private bool _textParameterChanged;
 
         /// <summary>
         /// The resolved input element ID.
@@ -575,10 +574,10 @@ namespace MudBlazor
             _validated = false;
 
             // When Value changes from parent, update Text from Value (with TextUpdateSuppression logic)
-            // BUT: If Text was also changed in the same parameter update, skip this to let Text win
-            // This maintains backward compatibility with the old `if (hasValue && !hasText)` logic
+            // But only if Text is not also being set in the same parameter update
+            // Check ParameterView to see if Text is also present (eliminates need for _textParameterChanged flag)
             // Note: This only fires when Value actually CHANGES. For unchanged Value, SetParametersAsync handles it.
-            if (!_textParameterChanged)
+            if (!arg.ParameterView.TryGetValue<string?>(nameof(Text), out _))
             {
                 var updateText = true;
                 if (_isFocused && !_forceTextUpdate)
@@ -698,16 +697,13 @@ namespace MudBlazor
             var hasText = parameters.Contains<string>(nameof(Text));
             var hasValue = parameters.Contains<T>(nameof(Value));
 
-            // Reset the flag before processing parameters
-            _textParameterChanged = false;
-
             await base.SetParametersAsync(parameters);
 
             // Refresh Text from Value if Value is present but Text is not
             // This maintains backward compatibility with the old `if (hasValue && !hasText)` logic
             // ParameterState only fires OnValueParameterChangedAsync when value CHANGES,
             // but we need to update Text even when Value is passed unchanged (for formatting)
-            if (hasValue && !hasText && !_textParameterChanged)
+            if (hasValue && !hasText)
             {
                 var updateText = true;
                 if (_isFocused && !_forceTextUpdate)
@@ -833,7 +829,6 @@ namespace MudBlazor
         private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
             _validated = false;
-            _textParameterChanged = true;
 
             if (!string.IsNullOrEmpty(arg.Value))
             {
@@ -841,8 +836,12 @@ namespace MudBlazor
             }
 
             // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
-            // This maintains backward compatibility with the old SetParametersAsync logic
-            await UpdateValuePropertyAsync(updateText: false);
+            // But only if Value is not also being set in the same parameter update
+            // Check ParameterView to see if Value is also present (eliminates need for _textParameterChanged flag)
+            if (!arg.ParameterView.TryGetValue<T?>(nameof(Value), out _))
+            {
+                await UpdateValuePropertyAsync(updateText: false);
+            }
         }
 
         private async Task UpdateInputIdStateAsync()
