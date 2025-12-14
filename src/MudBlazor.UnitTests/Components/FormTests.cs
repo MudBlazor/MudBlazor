@@ -86,13 +86,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should be invalid due to having a required field that is not filled
             form.IsValid.Should().Be(false);
             form.IsTouched.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue().Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue().Should().Be(false);
             // filling in the required field
             textFields[1].Find("input").Change("Fill in the required field to make this form valid");
             form.IsValid.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue().Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue().Should().Be(true);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
             await comp.WaitForAssertionAsync(() => form.IsValid.Should().Be(true));
-            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudSwitch<bool>>().Instance.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudSwitch<bool>>().Instance.ReadValue().Should().Be(true));
         }
 
         /// <summary>
@@ -449,15 +449,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input")[2].Blur();
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
-            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+            comp.FindComponent<MudTextField<int>>().Instance.ReadValue().Should().Be(17);
             // then click the checkbox
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(true);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue().Should().Be(true);
             comp.FindAll("input")[3].Change(false); // it was on before
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(false);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue().Should().Be(false);
             // the text fields should be unchanged
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
-            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+            comp.FindComponent<MudTextField<int>>().Instance.ReadValue().Should().Be(17);
         }
 
         /// <summary>
@@ -1816,7 +1816,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FormWithChildFormTest()
         {
-            var comp = Context.Render<FormWithChildForm>();
+            var comp = Context.Render<FormWithChildFormTest>();
             var childFormSwitch = comp.Find(".mud-switch-input");
             var parentForm = comp.FindComponent<MudForm>().Instance;
             var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
@@ -1967,33 +1967,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChildForm_TouchChangedPropogate()
+        public async Task ChildForm_TouchChangedPropagate()
         {
-            var comp = Context.Render<FormWithChildForm>();
-            var childFormSwitch = comp.Find(".mud-switch-input");
+            var comp = Context.Render<FormWithChildFormTest>();
+            var childFormSwitch = () => comp.Find(".mud-switch-input");
             var parentForm = comp.FindComponent<MudForm>().Instance;
-            var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
-            var parentTextField = parentTextFieldCmp.Instance;
             // display the child form
-            childFormSwitch.Change(true);
+            childFormSwitch().Change(true);
             var forms = comp.FindComponents<MudForm>();
             forms.Count.Should().Be(2);
             var childForm = forms[1];
+            var childTextFieldCmp = childForm.FindComponent<MudTextField<string>>();
             childForm.Instance.IsValid.Should().BeFalse();
             parentForm.IsValid.Should().Be(false);
 
-            // verify they start as false
-            await comp.InvokeAsync(async () => await parentForm.ResetAsync());
-            comp.Instance.IsParentTouchChanged.Should().BeFalse();
-            comp.Instance.IsChildTouchChanged.Should().BeFalse();
-
             // triggering childform touch should trigger parent form touched
-            var childTextFieldCmp = childForm.FindComponent<MudTextField<string>>();
             childTextFieldCmp.Find("input").Change("Marilyn Manson");
 
             // verify child and parent touch events happened
             comp.Instance.IsParentTouchChanged.Should().BeTrue();
             comp.Instance.IsChildTouchChanged.Should().BeTrue();
+
+            // verify they start as false
+            await comp.InvokeAsync(async () => await parentForm.ResetAsync());
+            comp.Instance.IsParentTouchChanged.Should().BeFalse();
+            comp.Instance.IsChildTouchChanged.Should().BeFalse();
         }
     }
 }

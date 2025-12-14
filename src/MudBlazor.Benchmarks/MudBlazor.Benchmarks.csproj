@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.15.6" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.11" />
   </ItemGroup>
 
