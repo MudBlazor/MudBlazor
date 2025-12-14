@@ -575,8 +575,7 @@ namespace MudBlazor
 
             // When Value changes from parent, update Text from Value (with TextUpdateSuppression logic)
             // But only if Text is not also being set in the same parameter update
-            // Check ParameterView to see if Text is also present (eliminates need for _textParameterChanged flag)
-            // Note: This only fires when Value actually CHANGES. For unchanged Value, SetParametersAsync handles it.
+            // Check ParameterView to see if Text is also present
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
             {
                 var updateText = true;
@@ -837,7 +836,7 @@ namespace MudBlazor
 
             // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
             // But only if Value is not also being set in the same parameter update
-            // Check ParameterView to see if Value is also present (eliminates need for _textParameterChanged flag)
+            // Check ParameterView to see if Value is also present
             if (!arg.ParameterView.Contains<T?>(nameof(Value)))
             {
                 await UpdateValuePropertyAsync(updateText: false);
