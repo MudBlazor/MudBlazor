@@ -1,20 +1,23 @@
-﻿namespace MudBlazor.State;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace MudBlazor.State;
 
 #nullable enable
 /// <summary>
-/// Represents a wrapper class for implementing the <see cref="IParameterChangedHandler{T}"/> interface 
-/// using an Action lambda expression instead of directly implementing the interface.
+/// Represents a wrapper class for implementing the <see cref="IParameterChangedHandler{T}"/> interface
 /// </summary>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal class ParameterChangedLambdaArgsHandler<T> : IParameterChangedHandler<T>
+internal class ParameterChangedLambdaHandler<T> : IParameterChangedHandler<T>
 {
-    private readonly Action<ParameterChangedEventArgs<T>> _lambda;
+    private readonly Action _lambda;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterChangedLambdaHandler{T}"/> class with the specified lambda expression.
     /// </summary>
     /// <param name="lambda">The Action lambda expression to be executed when handling parameter change.</param>
-    public ParameterChangedLambdaArgsHandler(Action<ParameterChangedEventArgs<T>> lambda)
+    public ParameterChangedLambdaHandler(Action lambda)
     {
         _lambda = lambda;
     }
@@ -26,7 +29,7 @@ internal class ParameterChangedLambdaArgsHandler<T> : IParameterChangedHandler<T
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs)
     {
-        _lambda(parameterChangedEventArgs);
+        _lambda();
 
         return Task.CompletedTask;
     }

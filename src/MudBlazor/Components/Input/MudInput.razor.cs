@@ -256,12 +256,12 @@ namespace MudBlazor
                 return false;
             }
 
-            if (Value is string stringValue)
+            if (ReadValue() is string stringValue)
             {
                 return !string.IsNullOrWhiteSpace(stringValue);
             }
 
-            return Value is not string and not null;
+            return ReadValue() is not string and not null;
         }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)

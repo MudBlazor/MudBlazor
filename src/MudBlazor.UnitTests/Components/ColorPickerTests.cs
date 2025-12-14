@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ColorPickerMode.Should().Be(ColorPickerMode.RGB);
             comp.Instance.ColorPickerView.Should().Be(ColorPickerView.Spectrum);
             comp.Instance.UpdateBindingIfOnlyHSLChanged.Should().BeFalse();
-            comp.Instance.Value.Should().Be(_defaultColor);
+            comp.Instance.ReadValue().Should().Be(_defaultColor);
             comp.Instance.Palette.Should().BeEquivalentTo(_mudGridPaletteDefaultColors);
             comp.Instance.DragEffect.Should().BeTrue();
         }
@@ -1062,7 +1062,7 @@ namespace MudBlazor.UnitTests.Components
             var expectedColor = _defaultColor;
 
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);
-            comp.FindComponent<MudColorPicker>().Instance.Value.Should().Be(_defaultColor);
+            comp.FindComponent<MudColorPicker>().Instance.ReadValue().Should().Be(_defaultColor);
         }
 
         [Test]
@@ -1162,7 +1162,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y });
 
-                    comp.Instance.Value.H.Should().Be(expectedHue);
+                    comp.Instance.ReadValue().H.Should().Be(expectedHue);
                 }
             }
         }

@@ -104,9 +104,33 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <returns>The current instance of the builder.</returns>
+    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<ParameterView, Task> parameterChangedHandler)
+    {
+        _parameterChangedHandler = new ParameterChangedLambdaTaskParameterViewHandler<T>(parameterChangedHandler);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the parameter changed handler for the parameter.
+    /// </summary>
+    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithParameterChangedHandler(Action parameterChangedHandler)
     {
         _parameterChangedHandler = new ParameterChangedLambdaHandler<T>(parameterChangedHandler);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the parameter changed handler for the parameter.
+    /// </summary>
+    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <returns>The current instance of the builder.</returns>
+    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action<ParameterView> parameterChangedHandler)
+    {
+        _parameterChangedHandler = new ParameterChangedLambdaParameterViewHandler<T>(parameterChangedHandler);
 
         return this;
     }

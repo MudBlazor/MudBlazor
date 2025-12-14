@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {

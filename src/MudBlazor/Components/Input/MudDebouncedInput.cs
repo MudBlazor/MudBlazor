@@ -57,7 +57,7 @@ namespace MudBlazor
             var suppressTextUpdate = !updateValue
                                      && _debounceIntervalState.Value > 0
                                      && _timer is { Enabled: true }
-                                     && (!Value?.Equals(ConvertGet(ReadText)) ?? false);
+                                     && (!ReadValue()?.Equals(ConvertGet(ReadText)) ?? false);
 
             return suppressTextUpdate
                 ? Task.CompletedTask

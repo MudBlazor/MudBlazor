@@ -550,7 +550,7 @@ namespace MudBlazor
             {
                 if (MultiSelection)
                     return false;
-                if (!_shadowLookup.TryGetValue(Value, out var item))
+                if (!_shadowLookup.TryGetValue(ReadValue(), out var item))
                     return false;
                 return item.ChildContent != null;
             }
@@ -560,13 +560,13 @@ namespace MudBlazor
         {
             get
             {
-                return _shadowLookup.TryGetValue(Value, out _);
+                return _shadowLookup.TryGetValue(ReadValue(), out _);
             }
         }
 
         protected RenderFragment? GetSelectedValuePresenter()
         {
-            if (!_shadowLookup.TryGetValue(Value, out var item))
+            if (!_shadowLookup.TryGetValue(ReadValue(), out var item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return item.ChildContent;
         }
@@ -630,13 +630,13 @@ namespace MudBlazor
                 _items.Add(item);
 
                 _valueLookup[item.Value] = item;
-                if (EqualityComparer<T?>.Default.Equals(item.Value, Value) && !MultiSelection)
+                if (EqualityComparer<T?>.Default.Equals(item.Value, ReadValue()) && !MultiSelection)
                     result = true;
             }
             UpdateSelectAllChecked();
             if (result.HasValue == false)
             {
-                result = item.Value?.Equals(Value);
+                result = item.Value?.Equals(ReadValue());
             }
             return result == true;
         }
@@ -791,7 +791,7 @@ namespace MudBlazor
                 // Early return if value hasn't changed (but after updating SelectedValues)
                 // Use Comparer if available, otherwise use default
                 var comparer = Comparer ?? EqualityComparer<T?>.Default;
-                if (comparer.Equals(Value, value))
+                if (comparer.Equals(ReadValue(), value))
                 {
                     // Still need to publish SelectedValues to ParameterState in case it wasn't initialized
                     await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
@@ -837,7 +837,7 @@ namespace MudBlazor
             if (MultiSelection)
                 HighlightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                HighlightItemForValueAsync(Value);
+                HighlightItemForValueAsync(ReadValue());
         }
 
         private void UpdateSelectAllChecked()
@@ -1386,7 +1386,7 @@ namespace MudBlazor
             await base.ForceUpdate();
             if (MultiSelection == false)
             {
-                await _selectedValuesState.SetValueAsync(new HashSet<T?>(Comparer) { Value });
+                await _selectedValuesState.SetValueAsync(new HashSet<T?>(Comparer) { ReadValue() });
             }
             else
             {

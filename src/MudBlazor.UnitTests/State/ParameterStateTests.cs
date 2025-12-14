@@ -140,8 +140,45 @@ public class ParameterStateTests
         parameterState.HasHandler.Should().BeTrue();
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<int>(ParameterName, InitialValue, NewValue)
+            new ParameterChangedEventArgs<int>(parameters, ParameterName, InitialValue, NewValue)
         });
+    }
+
+    [Test]
+    public async Task ParameterChangeHandleAsync_PassesParameterViewWithMultipleParameters()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        const int NewValue = 10;
+        const string ParameterName = nameof(InitialValue);
+        const string OtherParameterName = "OtherParam";
+        var changes = 0;
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(args =>
+            {
+                changes++;
+                args.ParameterView.Contains<string>(OtherParameterName).Should().BeTrue();
+            })
+            .Attach();
+
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, NewValue },
+            { OtherParameterName, "abc" }
+        };
+        var parameters = ParameterView.FromDictionary(parametersDictionary);
+
+        // Act
+        var changed = parameterState.HasParameterChanged(parameters);
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+
+        // Assert
+        changed.Should().BeTrue();
+        parameterState.HasHandler.Should().BeTrue();
+        changes.Should().Be(1);
     }
 
     [Test]
