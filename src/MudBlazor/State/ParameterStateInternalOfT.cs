@@ -210,7 +210,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: comparer))
         {
             changed = true;
-            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newValue);
+            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(parameters, Metadata.ParameterName, currentParameterValue, newValue);
         }
 
         return changed;

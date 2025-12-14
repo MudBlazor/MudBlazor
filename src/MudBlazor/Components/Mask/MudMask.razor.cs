@@ -37,7 +37,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
+                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(ReadText) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
@@ -142,8 +142,8 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            if (Text != Mask.Text)
-                await SetTextAsync(Mask.Text, updateValue: false);
+            if (ReadText != Mask.Text)
+                await SetTextAndUpdateValueAsync(Mask.Text, updateValue: false);
             await base.OnInitializedAsync();
         }
 
@@ -251,7 +251,7 @@ namespace MudBlazor
 
         private void UpdateClearable()
         {
-            var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
+            var showClearable = Clearable && !string.IsNullOrWhiteSpace(ReadText);
 
             if (_showClearable != showClearable)
             {
@@ -269,11 +269,11 @@ namespace MudBlazor
             _updating = true;
             try
             {
-                await base.SetTextAsync(text, updateValue: false);
+                await base.SetTextAndUpdateValueAsync(text, updateValue: false);
                 if (Clearable)
                     UpdateClearable();
                 var v = ConvertGet(cleanText);
-                Value = v;
+                await WriteValueAsync(v);
                 await ValueChanged.InvokeAsync(v);
                 await SetCaretPositionAsync(caret, selection);
             }
@@ -296,7 +296,7 @@ namespace MudBlazor
             // allow this only via changes from the outside
             if (_updating)
                 return;
-            var text = ConvertSet(Value);
+            var text = ConvertSet(ReadValue());
             var cleanText = Mask.GetCleanText();
             if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
@@ -309,7 +309,7 @@ namespace MudBlazor
                     return;
             }
 
-            if (Text != Mask.Text)
+            if (ReadText != Mask.Text)
                 await UpdateAsync();
         }
 
@@ -318,7 +318,7 @@ namespace MudBlazor
             // allow this only via changes from the outside
             if (_updating)
                 return;
-            var text = Text;
+            var text = ReadText;
             if (Mask.Text == text)
                 return;
             var maskText = Mask.Text;
@@ -333,8 +333,8 @@ namespace MudBlazor
         private string GetCounterText() => Counter switch
         {
             null => string.Empty,
-            0 => string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}",
-            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+            0 => string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}",
+            _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
         private bool ShowClearButton()
@@ -466,7 +466,7 @@ namespace MudBlazor
 
             // swap masks while retaining text
             // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
-            other.SetText(Text);
+            other.SetText(ReadText);
             _mask = other;
         }
 
@@ -504,7 +504,7 @@ namespace MudBlazor
         /// </summary>
         private void CopySelectionToClipboard()
         {
-            var text = Text;
+            var text = ReadText;
             if (Mask.Selection != null)
             {
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
