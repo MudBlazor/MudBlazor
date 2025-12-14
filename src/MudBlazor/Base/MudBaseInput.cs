@@ -540,7 +540,7 @@ namespace MudBlazor
         protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
             var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue(), value);
-            
+
             if (!valueChanged && !force)
             {
                 return;
@@ -589,7 +589,7 @@ namespace MudBlazor
                         updateText = false;
                     }
                 }
-                
+
                 if (updateText)
                 {
                     _forceTextUpdate = false;
@@ -704,7 +704,7 @@ namespace MudBlazor
 
             // Refresh Text from Value - moved to OnValueParameterChangedAsync to work with ParameterState
             // The logic is now in the ParameterState change handler which is called when Value parameter changes
-            
+
             // Reset the flag after parameters are processed
             _textParameterChanged = false;
         }
