@@ -538,7 +538,9 @@ namespace MudBlazor
 
         protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
-            if (EqualityComparer<T?>.Default.Equals(ReadValue(), value) && !force)
+            var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue(), value);
+
+            if (!valueChanged && !force)
             {
                 return;
             }
@@ -549,6 +551,13 @@ namespace MudBlazor
             // Use ParameterState to set Value instead of direct assignment
             // This ensures proper parameter lifecycle management
             await _valueState.SetValueAsync(value);
+
+            // If force is true but value hasn't changed, ParameterState won't fire the callback
+            // so we need to manually invoke it to maintain backward compatibility
+            if (force && !valueChanged)
+            {
+                await ValueChanged.InvokeAsync(value);
+            }
 
             if (updateText)
             {
@@ -564,8 +573,28 @@ namespace MudBlazor
             _isDirty = true;
             _validated = false;
 
-            // When Value changes from parent, update Text from Value
-            await UpdateTextPropertyAsync(false);
+            // When Value changes from parent, update Text from Value (with TextUpdateSuppression logic)
+            // But only if Text is not also being set in the same parameter update
+            // Check ParameterView to see if Text is also present
+            if (!arg.ParameterView.Contains<string?>(nameof(Text)))
+            {
+                var updateText = true;
+                if (_isFocused && !_forceTextUpdate)
+                {
+                    // Text update suppression, only in BSS (not in WASM).
+                    // This is a fix for #1012
+                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                    {
+                        updateText = false;
+                    }
+                }
+
+                if (updateText)
+                {
+                    _forceTextUpdate = false;
+                    await UpdateTextPropertyAsync(false);
+                }
+            }
         }
 
         /// <summary>
@@ -669,7 +698,10 @@ namespace MudBlazor
 
             await base.SetParametersAsync(parameters);
 
-            // Refresh Text from Value
+            // Refresh Text from Value if Value is present but Text is not
+            // This maintains backward compatibility with the old `if (hasValue && !hasText)` logic
+            // ParameterState only fires OnValueParameterChangedAsync when value CHANGES,
+            // but we need to update Text even when Value is passed unchanged (for formatting)
             if (hasValue && !hasText)
             {
                 var updateText = true;
@@ -682,6 +714,7 @@ namespace MudBlazor
                         updateText = false;
                     }
                 }
+
                 if (updateText)
                 {
                     _forceTextUpdate = false;
@@ -802,8 +835,12 @@ namespace MudBlazor
             }
 
             // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
-            // This maintains backward compatibility with the old SetParametersAsync logic
-            await UpdateValuePropertyAsync(updateText: false);
+            // But only if Value is not also being set in the same parameter update
+            // Check ParameterView to see if Value is also present
+            if (!arg.ParameterView.Contains<T?>(nameof(Value)))
+            {
+                await UpdateValuePropertyAsync(updateText: false);
+            }
         }
 
         private async Task UpdateInputIdStateAsync()

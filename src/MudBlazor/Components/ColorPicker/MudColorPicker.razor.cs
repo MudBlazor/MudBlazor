@@ -35,6 +35,7 @@ namespace MudBlazor
         private readonly ParameterState<MudColor?> _valueState;
         private readonly ParameterState<int> _throttleIntervalState;
         private readonly ParameterState<ColorPickerView> _colorPickerViewState;
+        private int _inputResetKey = 0; // Used to force TextField re-render on invalid input
 
         private readonly IReadOnlyList<MudColor> _gridList = new MudColor[]
         {
@@ -630,6 +631,14 @@ namespace MudBlazor
             if (MudColor.TryParse(input, out var result))
             {
                 await SetColorAsync(result);
+            }
+            else
+            {
+                // If parsing fails, we need to force the TextField to reset its display
+                // Increment the key to force Blazor to recreate the TextField component
+                // This ensures it resets to show the valid color value
+                _inputResetKey++;
+                await _textState.SetValueAsync(GetColorTextValue(_valueState.Value));
             }
         }
 
