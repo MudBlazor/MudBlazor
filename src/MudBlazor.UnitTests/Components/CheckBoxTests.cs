@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            await comp.WaitForAssertionAsync(() => checkbox.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => checkbox.ReadValue().Should().Be(true));
         }
         /// <summary>
         /// Test if the keyboard-disabling switch works

@@ -1816,7 +1816,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FormWithChildFormTest()
         {
-            var comp = Context.Render<FormWithChildForm>();
+            var comp = Context.Render<FormWithChildFormTest>();
             var childFormSwitch = comp.Find(".mud-switch-input");
             var parentForm = comp.FindComponent<MudForm>().Instance;
             var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
@@ -1967,33 +1967,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChildForm_TouchChangedPropogate()
+        public async Task ChildForm_TouchChangedPropagate()
         {
-            var comp = Context.Render<FormWithChildForm>();
-            var childFormSwitch = comp.Find(".mud-switch-input");
+            var comp = Context.Render<FormWithChildFormTest>();
+            var childFormSwitch = () => comp.Find(".mud-switch-input");
             var parentForm = comp.FindComponent<MudForm>().Instance;
-            var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
-            var parentTextField = parentTextFieldCmp.Instance;
             // display the child form
-            childFormSwitch.Change(true);
+            childFormSwitch().Change(true);
             var forms = comp.FindComponents<MudForm>();
             forms.Count.Should().Be(2);
             var childForm = forms[1];
+            var childTextFieldCmp = childForm.FindComponent<MudTextField<string>>();
             childForm.Instance.IsValid.Should().BeFalse();
             parentForm.IsValid.Should().Be(false);
 
-            // verify they start as false
-            await comp.InvokeAsync(async () => await parentForm.ResetAsync());
-            comp.Instance.IsParentTouchChanged.Should().BeFalse();
-            comp.Instance.IsChildTouchChanged.Should().BeFalse();
-
             // triggering childform touch should trigger parent form touched
-            var childTextFieldCmp = childForm.FindComponent<MudTextField<string>>();
             childTextFieldCmp.Find("input").Change("Marilyn Manson");
 
             // verify child and parent touch events happened
             comp.Instance.IsParentTouchChanged.Should().BeTrue();
             comp.Instance.IsChildTouchChanged.Should().BeTrue();
+
+            // verify they start as false
+            await comp.InvokeAsync(async () => await parentForm.ResetAsync());
+            comp.Instance.IsParentTouchChanged.Should().BeFalse();
+            comp.Instance.IsChildTouchChanged.Should().BeFalse();
         }
     }
 }
