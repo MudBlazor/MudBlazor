@@ -577,6 +577,7 @@ namespace MudBlazor
             // When Value changes from parent, update Text from Value (with TextUpdateSuppression logic)
             // BUT: If Text was also changed in the same parameter update, skip this to let Text win
             // This maintains backward compatibility with the old `if (hasValue && !hasText)` logic
+            // Note: This only fires when Value actually CHANGES. For unchanged Value, SetParametersAsync handles it.
             if (!_textParameterChanged)
             {
                 var updateText = true;
@@ -594,8 +595,6 @@ namespace MudBlazor
                 {
                     _forceTextUpdate = false;
                     await UpdateTextPropertyAsync(false);
-                    // Force a re-render to ensure child components (like MudInput) receive the updated Text parameter
-                    StateHasChanged();
                 }
             }
         }
@@ -704,8 +703,29 @@ namespace MudBlazor
 
             await base.SetParametersAsync(parameters);
 
-            // Refresh Text from Value - moved to OnValueParameterChangedAsync to work with ParameterState
-            // The logic is now in the ParameterState change handler which is called when Value parameter changes
+            // Refresh Text from Value if Value is present but Text is not
+            // This maintains backward compatibility with the old `if (hasValue && !hasText)` logic
+            // ParameterState only fires OnValueParameterChangedAsync when value CHANGES,
+            // but we need to update Text even when Value is passed unchanged (for formatting)
+            if (hasValue && !hasText && !_textParameterChanged)
+            {
+                var updateText = true;
+                if (_isFocused && !_forceTextUpdate)
+                {
+                    // Text update suppression, only in BSS (not in WASM).
+                    // This is a fix for #1012
+                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                    {
+                        updateText = false;
+                    }
+                }
+                
+                if (updateText)
+                {
+                    _forceTextUpdate = false;
+                    await UpdateTextPropertyAsync(false);
+                }
+            }
         }
 
         /// <inheritdoc />
