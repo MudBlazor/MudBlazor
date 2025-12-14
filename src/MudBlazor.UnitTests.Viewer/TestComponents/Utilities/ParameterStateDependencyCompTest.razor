@@ -1,0 +1,55 @@
+﻿@using MudBlazor.Utilities
+@namespace MudBlazor.UnitTests
+
+<ParameterStateDependencyComp1 @bind-Value="_value1" @bind-Text="_text1" />
+<ParameterStateDependencyComp2 @bind-Value="_value2" @bind-Text="_text2" />
+<MudButton id="btnValue" OnClick="OnValueSetOnly">Set only Value #fcefe5</MudButton>
+<MudButton id="btnText" OnClick="OnTextSetOnly">Set only Text #5fa9e2</MudButton>
+<MudButton id="btnAllSame" OnClick="OnValueAndColorSetSame">Set same Value and Text #9b3f33</MudButton>
+<MudButton id="btnAllDiff" OnClick="OnValueAndColorSetDifferent">Set different Value and Text #30102a / #662f18</MudButton>
+<p>Current:</p>
+<div class="current-values">
+    <p class="current-value1">@($"Value1: {(_value1 is null ? "null" : _value1.ToString(MudColorOutputFormats.Hex))}")</p>
+    <p class="current-text1">@($"Text1: {_text1 ?? "null"}")</p>
+    <p class="current-value2">@($"Value2: {(_value2 is null ? "null" : _value2.ToString(MudColorOutputFormats.Hex))}")</p>
+    <p class="current-text2">@($"Text2: {_text2 ?? "null"}")</p>
+</div>
+
+@code {
+    private string? _text1;
+    private MudColor? _value1;
+    private string? _text2;
+    private MudColor? _value2;
+
+    private void OnValueAndColorSetDifferent()
+    {
+        _value1 = "#30102a";
+        _value2 = "#30102a";
+        _text1 = "#662f18";
+        _text2 = "#662f18";
+    }
+
+    private void OnValueAndColorSetSame()
+    {
+        _value1 = "#9b3f33";
+        _value2 = "#9b3f33";
+        _text1 = "#9b3f33";
+        _text2 = "#9b3f33";
+    }
+
+    private void OnValueSetOnly()
+    {
+        _text1 = null;
+        _text2 = null;
+        _value1 = "#fcefe5";
+        _value2 = "#fcefe5";
+    }
+
+    private void OnTextSetOnly()
+    {
+        _text1 = "#5fa9e2";
+        _text2 = "#5fa9e2";
+        _value1 = null;
+        _value2 = null;
+    }
+}
