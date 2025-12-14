@@ -20,9 +20,7 @@
 
     @if (AutoGrow || Lines > 1)
     {
-        if (Immediate)
-        {
-            <textarea class="@InputClassname"
+        <textarea class="@InputClassname"
                   @ref="ElementReference"
                   rows="@Lines"
                   @attributes="UserAttributes"
@@ -33,9 +31,9 @@
                   readonly="@GetReadOnlyState()"
                   inputmode="@InputMode.ToDescriptionString()"
                   @onblur="@OnBlurredAsync"
-                  @bind:event="oninput"
+                  @bind:event="@(Immediate ? "oninput" : "onchange")"
                   @bind:get="@_internalText"
-                  @bind:set="@OnInput"
+                  @bind:set="@OnInputOrOnChangeAsync"
                   @onkeydown="@InvokeKeyDownAsync"
                   @onkeyup="@InvokeKeyUpAsync"
                   @onpaste="@OnPaste"
@@ -49,95 +47,34 @@
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @ReadText
             </textarea>
-        }
-        else
-        {
-            <textarea class="@InputClassname"
-                  @ref="ElementReference"
-                  rows="@Lines"
-                  @attributes="UserAttributes"
-                  id="@InputElementId"
-                  type="@InputTypeString"
-                  placeholder="@Placeholder"
-                  disabled=@GetDisabledState()
-                  readonly="@GetReadOnlyState()"
-                  inputmode="@InputMode.ToDescriptionString()"
-                  @onblur="@OnBlurredAsync"
-                  @bind:event="onchange"
-                  @bind:get="@_internalText"
-                  @bind:set="@OnChange"
-                  @onkeydown="@InvokeKeyDownAsync"
-                  @onkeyup="@InvokeKeyUpAsync"
-                  @onpaste="@OnPaste"
-                  maxlength="@MaxLength"
-                  @onkeydown:preventDefault="@KeyDownPreventDefault"
-                  @onkeyup:preventDefault="@KeyUpPreventDefault"
-                  @onwheel="@OnMouseWheel"
-                  aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
-                  required="@Required"
-                  aria-required="@Required.ToString().ToLowerInvariant()">
-            @ReadText
-            </textarea>
-        }
         @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
     }
     else
     {
-        if (Immediate)
-        {
-            <input class="@InputClassname"
-                   @ref="ElementReference"
-                   @attributes="UserAttributes"
-                   id="@InputElementId"
-                   type="@InputTypeString"
-                   @bind:event="oninput"
-                   @bind:get="@_internalText"
-                   @bind:set="@OnInput"
-                   @onblur="@OnBlurredAsync"
-                   placeholder="@Placeholder"
-                   disabled=@GetDisabledState()
-                   readonly="@GetReadOnlyState()"
-                   inputmode="@(InputType == InputType.Number ? null : InputMode.ToDescriptionString())"
-                   pattern="@Pattern"
-                   @onkeydown="@InvokeKeyDownAsync"
-                   @onkeyup="@InvokeKeyUpAsync"
-                   maxlength="@MaxLength"
-                   @onkeydown:preventDefault="KeyDownPreventDefault"
-                   @onkeyup:preventDefault="@KeyUpPreventDefault"
-                   @onwheel="@OnMouseWheel"
-                   aria-describedby="@GetAriaDescribedByString()"
-                   aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
-                   required="@Required"
-                   aria-required="@Required.ToString().ToLowerInvariant()">
-        }
-        else
-        {
-            <input class="@InputClassname"
-                   @ref="ElementReference"
-                   @attributes="UserAttributes"
-                   id="@InputElementId"
-                   type="@InputTypeString"
-                   @bind:event="onchange"
-                   @bind:get="@_internalText"
-                   @bind:set="@OnChange"
-                   @onblur="@OnBlurredAsync"
-                   placeholder="@Placeholder"
-                   disabled=@GetDisabledState()
-                   readonly="@GetReadOnlyState()"
-                   inputmode="@(InputType == InputType.Number ? null : InputMode.ToDescriptionString())"
-                   pattern="@Pattern"
-                   @onkeydown="@InvokeKeyDownAsync"
-                   @onkeyup="@InvokeKeyUpAsync"
-                   maxlength="@MaxLength"
-                   @onkeydown:preventDefault="KeyDownPreventDefault"
-                   @onkeyup:preventDefault="@KeyUpPreventDefault"
-                   @onwheel="@OnMouseWheel"
-                   aria-describedby="@GetAriaDescribedByString()"
-                   aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
-                   required="@Required"
-                   aria-required="@Required.ToString().ToLowerInvariant()">
-        }
+        <input class="@InputClassname"
+               @ref="ElementReference"
+               @attributes="UserAttributes"
+               id="@InputElementId"
+               type="@InputTypeString"
+               @bind:event="@(Immediate ? "oninput" : "onchange")"
+               @bind:get="@_internalText"
+               @bind:set="@OnInputOrOnChangeAsync"
+               @onblur="@OnBlurredAsync"
+               placeholder="@Placeholder"
+               disabled=@GetDisabledState()
+               readonly="@GetReadOnlyState()"
+               inputmode="@(InputType == InputType.Number ? null : InputMode.ToDescriptionString())"
+               pattern="@Pattern"
+               @onkeydown="@InvokeKeyDownAsync"
+               @onkeyup="@InvokeKeyUpAsync"
+               maxlength="@MaxLength"
+               @onkeydown:preventDefault="KeyDownPreventDefault"
+               @onkeyup:preventDefault="@KeyUpPreventDefault"
+               @onwheel="@OnMouseWheel"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
+               required="@Required"
+               aria-required="@Required.ToString().ToLowerInvariant()">
 
         @if (GetDisabledState())
         {
