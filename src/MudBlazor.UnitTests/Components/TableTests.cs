@@ -943,7 +943,7 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(1);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }"); // only "1" should be present
             checkboxes.Sum(x => x.ReadValue() ? 1 : 0).Should().Be(1);
-            inputs[0].Change(false);
+            inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
             searchInput().Change(""); // reset to default
