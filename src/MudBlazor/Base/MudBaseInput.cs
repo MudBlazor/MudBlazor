@@ -715,7 +715,7 @@ namespace MudBlazor
                         updateText = false;
                     }
                 }
-                
+
                 if (updateText)
                 {
                     _forceTextUpdate = false;
