@@ -923,19 +923,19 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableMultiSelectionTest7>();
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
-            var tr = comp.FindAll("tr").ToArray();
-            tr.Length.Should().Be(4); // <-- one header, three rows
-            var th = comp.FindAll("th").ToArray();
-            th.Length.Should().Be(2); //  one for the checkbox, one for the header
-            var td = comp.FindAll("td").ToArray();
-            td.Length.Should().Be(6); // two td per row for multi selection
-            var inputs = comp.FindAll("input").ToArray();
-            inputs.Length.Should().Be(5); // one checkbox per row + one for the header
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
+            var tr = comp.FindAll("tr");
+            tr.Count.Should().Be(4); // <-- one header, three rows
+            var th = comp.FindAll("th");
+            th.Count.Should().Be(2); //  one for the checkbox, one for the header
+            var td = comp.FindAll("td");
+            td.Count.Should().Be(6); // two td per row for multi selection
+            var inputs = comp.FindAll("input");
+            inputs.Count.Should().Be(5); // one checkbox per row + one for the header
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
 
             inputs[4].Change("1"); // search for 1
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
 
             // click header checkbox and verify selection text
             inputs[0].Change(true);
@@ -947,7 +947,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
 
             inputs[4].Change(""); // reset to default
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
 
             // click header checkbox and verify selection text
             inputs[0].Change(true);
