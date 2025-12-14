@@ -86,13 +86,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should be invalid due to having a required field that is not filled
             form.IsValid.Should().Be(false);
             form.IsTouched.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue().Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue().Should().Be(false);
             // filling in the required field
             textFields[1].Find("input").Change("Fill in the required field to make this form valid");
             form.IsValid.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue().Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue().Should().Be(true);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
             await comp.WaitForAssertionAsync(() => form.IsValid.Should().Be(true));
-            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudSwitch<bool>>().Instance.Value.Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudSwitch<bool>>().Instance.ReadValue().Should().Be(true));
         }
 
         /// <summary>
@@ -449,15 +449,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input")[2].Blur();
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
-            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+            comp.FindComponent<MudTextField<int>>().Instance.ReadValue().Should().Be(17);
             // then click the checkbox
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(true);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue().Should().Be(true);
             comp.FindAll("input")[3].Change(false); // it was on before
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(false);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue().Should().Be(false);
             // the text fields should be unchanged
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
-            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+            comp.FindComponent<MudTextField<int>>().Instance.ReadValue().Should().Be(17);
         }
 
         /// <summary>
