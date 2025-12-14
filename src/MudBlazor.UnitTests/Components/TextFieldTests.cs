@@ -641,31 +641,28 @@ namespace MudBlazor.UnitTests.Components
             textfield.ReadValue().Should().Be("Vat of acid");
             textfield.ReadText.Should().Be("Vat of acid");
 
-            // let's try to set the text directly on the input, TextUpdateSuppression should prevent it because we are focused
+            // TextUpdateSuppression has been removed - text now always updates
+            // Setting value directly will always update the text
             await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, ""));
             input.Instance.ReadValue().Should().Be("");
-            input.Instance.ReadText.Should().Be("Vat of acid");
+            input.Instance.ReadText.Should().Be("");
 
-            // turn it off
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TextUpdateSuppression, false));
-
-            // now the input text should get overwritten
+            // Set a new value
             await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "In case of ladle"));
             input.Instance.ReadValue().Should().Be("In case of ladle");
             input.Instance.ReadText.Should().Be("In case of ladle");
 
-            // turn it on again
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TextUpdateSuppression, true));
-
+            // Set empty again
             await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, ""));
             input.Instance.ReadValue().Should().Be("");
-            input.Instance.ReadText.Should().Be("In case of ladle");
+            input.Instance.ReadText.Should().Be("");
 
-            // force text update
+            // force text update (should still work)
+            await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "Test"));
             await comp.InvokeAsync(() => input.Instance.ForceRender(forceTextUpdate: true));
 
-            input.Instance.ReadValue().Should().Be("");
-            input.Instance.ReadText.Should().Be("");
+            input.Instance.ReadValue().Should().Be("Test");
+            input.Instance.ReadText.Should().Be("Test");
         }
 
         [Test]
