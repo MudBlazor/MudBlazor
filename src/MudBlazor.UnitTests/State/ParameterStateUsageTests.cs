@@ -4,6 +4,7 @@ using Bunit.Rendering;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
@@ -569,5 +570,77 @@ public class ParameterStateUsageTests : BunitTest
 
         ParamChanges2().Children.Length.Should().Be(8);
         ParamChanges2().Children[7].TextContent.Trimmed().Should().Be("Counter: 7=>8 by Child");
+    }
+
+    [Test]
+    public async Task ParameterStateDependencyParameter()
+    {
+        var comp = Context.Render<ParameterStateDependencyCompTest>();
+        var child2 = comp.FindComponent<ParameterStateDependencyComp2>();
+        IElement ButtonOnlyValue() => comp.Find("#btnValue");
+        IElement ButtonOnlyText() => comp.Find("#btnText");
+        IElement ButtonAllSame() => comp.Find("#btnAllSame");
+        IElement ButtonAllDiff() => comp.Find("#btnAllDiff");
+
+        IElement CurrentValue1() => comp.Find(".current-value1");
+        IElement CurrentText1() => comp.Find(".current-text1");
+        IElement CurrentValue2() => comp.Find(".current-value2");
+        IElement CurrentText2() => comp.Find(".current-text2");
+
+        // Initial
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: null");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: null");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: null");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: null");
+        child2.Instance.TextChanges.Count.Should().Be(0);
+        child2.Instance.ValueChanges.Count.Should().Be(0);
+
+        // Change only Value
+        await ButtonOnlyValue().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #fcefe5");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #fcefe5");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #fcefe5");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #fcefe5");
+        child2.Instance.TextChanges.Count.Should().Be(1);
+        child2.Instance.ValueChanges.Count.Should().Be(1);
+        child2.Instance.TextChanges[0].Value!.Should().Be("#fcefe5");
+        child2.Instance.ValueChanges[0].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#fcefe5");
+
+        // Change only Text
+        await ButtonOnlyText().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #5fa9e2");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #5fa9e2");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #5fa9e2");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #5fa9e2");
+        child2.Instance.TextChanges.Count.Should().Be(4);
+        child2.Instance.ValueChanges.Count.Should().Be(3);
+        child2.Instance.TextChanges[1].Value!.Should().Be("#5fa9e2");
+        child2.Instance.TextChanges[2].Value.Should().BeNull();
+        child2.Instance.TextChanges[3].Value!.Should().Be("#5fa9e2");
+        child2.Instance.ValueChanges[1].Value.Should().BeNull();
+        child2.Instance.ValueChanges[2].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#5fa9e2");
+
+        // Change all same
+        await ButtonAllSame().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #9b3f33");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #9b3f33");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #9b3f33");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #9b3f33");
+        child2.Instance.TextChanges.Count.Should().Be(5);
+        child2.Instance.ValueChanges.Count.Should().Be(4);
+        child2.Instance.TextChanges[4].Value!.Should().Be("#9b3f33");
+        child2.Instance.ValueChanges[3].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#9b3f33");
+
+        // Change all different
+        await ButtonAllDiff().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #30102a");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #30102a");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #30102a");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #30102a");
+        child2.Instance.TextChanges.Count.Should().Be(7);
+        child2.Instance.ValueChanges.Count.Should().Be(5);
+        child2.Instance.TextChanges[5].Value!.Should().Be("#662f18");
+        child2.Instance.TextChanges[6].Value!.Should().Be("#30102a");
+        child2.Instance.ValueChanges[4].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#30102a");
     }
 }
