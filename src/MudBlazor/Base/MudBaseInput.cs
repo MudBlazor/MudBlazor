@@ -373,7 +373,7 @@ namespace MudBlazor
         /// Occurs when the internal text value has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
+        public EventCallback<string?> OnInternalInputChanged { get; set; }
 
         /// <summary>
         /// Occurs when a key has been pressed down.

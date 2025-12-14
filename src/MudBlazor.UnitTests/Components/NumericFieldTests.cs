@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
@@ -501,35 +502,37 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldTestCultureFormat()
         {
             var comp = Context.Render<NumericFieldCultureTest>();
-            var inputs = comp.FindAll("input");
-            var immediate = inputs.First();
-            var notImmediate = inputs.Last();
+            IElement Immediate() => comp.Find("#immediate");
+            IElement NotImmediate() => comp.Find("#notImmediate");
+
             //german
-            notImmediate.Change("1234");
-            notImmediate.Blur();
+            NotImmediate().Change("1234");
+            await NotImmediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadText.Should().Be("1.234,00"));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadValue().Should().Be(1234.0));
-            comp.Markup.Should().Contain("type=\"text\" value=\"1.234,00\""); //ensure the numeric field continues to displays the value after blur
-            notImmediate.Change("0");
-            notImmediate.Blur();
+            NotImmediate().GetAttribute("type").Should().Be("text");
+            NotImmediate().GetAttribute("value").Should().Be("1.234,00");
+            NotImmediate().Change("0");
+            await NotImmediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadText.Should().Be("0,00"));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadValue().Should().Be(0.0));
-            notImmediate.Change("");
-            notImmediate.Blur();
+            NotImmediate().Change("");
+            await NotImmediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadText.Should().Be(null));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadValue().Should().Be(null));
             // English
-            immediate.Input("1234");
-            immediate.Blur();
+            Immediate().Input("1234");
+            await Immediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadText.Should().Be("1,234.00"));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadValue().Should().Be(1234.0));
-            comp.Markup.Should().Contain("type=\"text\" value=\"1,234.00\""); //ensure the numeric field continues to displays the value after blur
-            immediate.Input("0");
-            immediate.Blur();
+            Immediate().GetAttribute("type").Should().Be("text");
+            Immediate().GetAttribute("value").Should().Be("1,234.00");
+            Immediate().Input("0");
+            await Immediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadText.Should().Be("0.00"));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadValue().Should().Be(0.0));
-            immediate.Input("");
-            immediate.Blur();
+            Immediate().Input("");
+            await Immediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadText.Should().Be(null));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadValue().Should().Be(null));
         }
@@ -1072,20 +1075,19 @@ namespace MudBlazor.UnitTests.Components
         public async Task Should_apply_defined_culture()
         {
             var comp = Context.Render<NumericFieldCultureTest>();
-            var inputs = comp.FindAll("input");
-            var immediate = inputs.First();
-            var notImmediate = inputs.Last();
+            IElement Immediate() => comp.Find("#immediate");
+            IElement NotImmediate() => comp.Find("#notImmediate");
 
             //german
-            notImmediate.Change("1.234,56");
-            notImmediate.Blur();
+            NotImmediate().Change("1.234,56");
+            await NotImmediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadText.Should().Be("1.234,56"));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadValue().Should().Be(1234.56));
             comp.Instance.FieldNotImmediate.Culture.Name.Should().Be("de-DE");
 
             // English
-            immediate.Input("1234.56");
-            immediate.Blur();
+            Immediate().Input("1234.56");
+            await Immediate().BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadText.Should().Be("1,234.56"));
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldImmediate.ReadValue().Should().Be(1234.56));
             comp.Instance.FieldImmediate.Culture.Name.Should().Be("en-US");

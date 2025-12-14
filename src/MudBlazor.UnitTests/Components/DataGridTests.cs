@@ -3177,16 +3177,16 @@ namespace MudBlazor.UnitTests.Components
                 var switchButton = dataGrid.Find("button.switch-button");
                 switchButton.Click();
 
-                var filterHeaders = dataGrid.FindAll("input");
-                var ageFilter = filterHeaders[0];
-                var nameFilter = filterHeaders[1];
+                var filterHeaders = () => dataGrid.FindAll("input");
+                var ageFilter = () => filterHeaders()[0];
+                var nameFilter = () => filterHeaders()[1];
 
-                ageFilter.Input(27);
+                ageFilter().Input(27);
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
 
                 dataGrid.Instance.ClearFiltersAsync();
-                nameFilter.Input("a");
+                nameFilter().Input("a");
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
             });
@@ -3215,17 +3215,17 @@ namespace MudBlazor.UnitTests.Components
                 await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
 
                 var switchButton = dataGrid.Find("button.switch-button");
-                switchButton.Click();
+                await switchButton.ClickAsync();
 
-                var filterHeaders = dataGrid.FindAll("input");
-                var ageFilter = filterHeaders[0];
-                var nameFilter = filterHeaders[1];
+                var filterHeaders = () => dataGrid.FindAll("input");
+                var ageFilter = () => filterHeaders()[0];
+                var nameFilter = () => filterHeaders()[1];
 
-                ageFilter.Input(27);
+                ageFilter().Input(27);
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
 
-                nameFilter.Input("a");
+                nameFilter().Input("a");
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
             });
