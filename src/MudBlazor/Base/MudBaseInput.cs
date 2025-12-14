@@ -594,6 +594,8 @@ namespace MudBlazor
                 {
                     _forceTextUpdate = false;
                     await UpdateTextPropertyAsync(false);
+                    // Force a re-render to ensure child components (like MudInput) receive the updated Text parameter
+                    StateHasChanged();
                 }
             }
         }
@@ -704,9 +706,6 @@ namespace MudBlazor
 
             // Refresh Text from Value - moved to OnValueParameterChangedAsync to work with ParameterState
             // The logic is now in the ParameterState change handler which is called when Value parameter changes
-
-            // Reset the flag after parameters are processed
-            _textParameterChanged = false;
         }
 
         /// <inheritdoc />
