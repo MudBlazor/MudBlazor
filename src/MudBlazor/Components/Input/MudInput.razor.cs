@@ -29,7 +29,7 @@ namespace MudBlazor
             new CssBuilder(
                     MudInputCssHelper.GetClassname(this,
                         () => HasNativeHtmlPlaceholder() ||
-                              !string.IsNullOrEmpty(Text) ||
+                              !string.IsNullOrEmpty(ReadText) ||
                               Adornment == Adornment.Start ||
                               !string.IsNullOrWhiteSpace(Placeholder) ||
                               ShrinkLabel))
@@ -177,7 +177,7 @@ namespace MudBlazor
             if (!Immediate)
                 return Task.CompletedTask;
             _isFocused = true;
-            return SetTextAsync(args?.Value as string);
+            return SetTextAndUpdateValueAsync(args?.Value as string);
         }
 
         protected async Task OnChange(ChangeEventArgs? args)
@@ -186,7 +186,7 @@ namespace MudBlazor
             await OnInternalInputChanged.InvokeAsync(args);
             if (!Immediate)
             {
-                await SetTextAsync(args?.Value as string);
+                await SetTextAndUpdateValueAsync(args?.Value as string);
             }
         }
 
@@ -256,17 +256,17 @@ namespace MudBlazor
                 return false;
             }
 
-            if (Value is string stringValue)
+            if (ReadValue() is string stringValue)
             {
                 return !string.IsNullOrWhiteSpace(stringValue);
             }
 
-            return Value is not string and not null;
+            return ReadValue() is not string and not null;
         }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
@@ -287,12 +287,12 @@ namespace MudBlazor
                 // Text update suppression, only in BSS (not in WASM).
                 // This is a fix for #1012
                 if (!_isFocused || _forceTextUpdate)
-                    _internalText = Text;
+                    _internalText = ReadText;
             }
             else
             {
                 // in WASM (or in BSS with TextUpdateSuppression==false) we always update
-                _internalText = Text;
+                _internalText = ReadText;
             }
 
             // Flag AutoGrow to be initialized on the next render.
@@ -356,7 +356,7 @@ namespace MudBlazor
         public Task SetText(string? text)
         {
             _internalText = text;
-            return SetTextAsync(text);
+            return SetTextAndUpdateValueAsync(text);
         }
 
         // Certain HTML5 inputs (dates and color) have a native placeholder
