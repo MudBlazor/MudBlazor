@@ -83,10 +83,11 @@ namespace MudBlazor.UnitTests.Components
             await items[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue().Should().Be("1"));
             //Check user on blur implementation works
-            var @switch = comp.FindComponent<MudSwitch<bool>>();
-            await @switch.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Value, true));
+            IElement Switch() => comp.Find("#switch");
+            Switch().Change(true);
+            Switch().HasAttribute("checked").Should().BeTrue();
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
-            await comp.WaitForAssertionAsync(() => @switch.Instance.ReadValue().Should().Be(false));
+            Switch().HasAttribute("checked").Should().BeFalse();
         }
 
         [Test]
