@@ -279,20 +279,8 @@ namespace MudBlazor
 
             await base.SetParametersAsync(parameters);
 
-            //if (!_isFocused || _forceTextUpdate)
-            //    _internalText = Text;
-            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-            {
-                // Text update suppression, only in BSS (not in WASM).
-                // This is a fix for #1012
-                if (!_isFocused || _forceTextUpdate)
-                    _internalText = ReadText;
-            }
-            else
-            {
-                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
-                _internalText = ReadText;
-            }
+            // Always update internal text (TextUpdateSuppression removed)
+            _internalText = ReadText;
 
             // Flag AutoGrow to be initialized on the next render.
             if (!oldAutoGrow && AutoGrow)
