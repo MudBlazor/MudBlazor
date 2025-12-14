@@ -172,7 +172,7 @@ namespace MudBlazor
         [Parameter]
         public int MaxLines { get; set; }
 
-        private Task OnInputOrOnChangeAsync(string input) => Immediate ? OnInput(input) : OnChange(input);
+        private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
 
         protected Task OnInput(string? args)
         {
