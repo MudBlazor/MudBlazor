@@ -2,7 +2,6 @@
 using Bunit;
 using Bunit.Rendering;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -212,7 +211,7 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.ParameterChangedEvents.Should().BeEmpty();
 
         // Show
-        await Button().ClickAsync(new MouseEventArgs());
+        await Button().ClickAsync();
         alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
         expanded.Should().BeTrue("Two way binding must change when inner modification happen.");
         comp.Instance.Expanded.Should().BeFalse("We do not write to parameter directly.");
@@ -220,7 +219,7 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.ParameterChangedEvents.Should().BeEmpty();
 
         // Hide
-        await Button().ClickAsync(new MouseEventArgs());
+        await Button().ClickAsync();
         alertTextFunc.Should().Throw<ComponentNotFoundException>();
         expanded.Should().BeFalse("Two way binding must change when inner modification happen.");
         comp.Instance.Expanded.Should().BeFalse("We do not write to parameter directly.");
@@ -271,13 +270,13 @@ public class ParameterStateUsageTests : BunitTest
         callBackEvents.Should().BeEmpty();
 
         // Show
-        await Button().ClickAsync(new MouseEventArgs());
+        await Button().ClickAsync();
         alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
         comp.Instance.ParameterChangedEvents.Should().BeEmpty();
         callBackEvents.Should().BeEquivalentTo(new[] { true });
 
         // Hide
-        await Button().ClickAsync(new MouseEventArgs());
+        await Button().ClickAsync();
         alertTextFunc.Should().Throw<ComponentNotFoundException>();
         comp.Instance.ParameterChangedEvents.Should().BeEmpty();
         callBackEvents.Should().BeEquivalentTo(new[] { true, false });
@@ -360,10 +359,10 @@ public class ParameterStateUsageTests : BunitTest
 
         // Show
         // Trigger button on a child component
-        await ButtonChild1().ClickAsync(new MouseEventArgs());
-        await ButtonChild2().ClickAsync(new MouseEventArgs());
-        await ButtonChild3().ClickAsync(new MouseEventArgs());
-        await ButtonChild4().ClickAsync(new MouseEventArgs());
+        await ButtonChild1().ClickAsync();
+        await ButtonChild2().ClickAsync();
+        await ButtonChild3().ClickAsync();
+        await ButtonChild4().ClickAsync();
 
         alertChild1TextFunc().InnerHtml.Should().Be("Oh my! We got secret content1!");
         alertChild2TextFunc().InnerHtml.Should().Be("Oh my! We got secret content2!");
@@ -401,10 +400,10 @@ public class ParameterStateUsageTests : BunitTest
 
         // Hide
         // Trigger button on a child component
-        await ButtonChild1().ClickAsync(new MouseEventArgs());
-        await ButtonChild2().ClickAsync(new MouseEventArgs());
-        await ButtonChild3().ClickAsync(new MouseEventArgs());
-        await ButtonChild4().ClickAsync(new MouseEventArgs());
+        await ButtonChild1().ClickAsync();
+        await ButtonChild2().ClickAsync();
+        await ButtonChild3().ClickAsync();
+        await ButtonChild4().ClickAsync();
 
         alertChild1TextFunc.Should().Throw<ElementNotFoundException>();
         alertChild2TextFunc.Should().Throw<ElementNotFoundException>();
@@ -439,9 +438,9 @@ public class ParameterStateUsageTests : BunitTest
 
         // Show
         // Trigger button on a parent component
-        await ButtonParent1().ClickAsync(new MouseEventArgs());
-        await ButtonParent2().ClickAsync(new MouseEventArgs());
-        await ButtonParent4().ClickAsync(new MouseEventArgs());
+        await ButtonParent1().ClickAsync();
+        await ButtonParent2().ClickAsync();
+        await ButtonParent4().ClickAsync();
 
         alertChild1TextFunc().InnerHtml.Should().Be("Oh my! We got secret content1!");
         alertChild2TextFunc().InnerHtml.Should().Be("Oh my! We got secret content2!");
@@ -474,9 +473,9 @@ public class ParameterStateUsageTests : BunitTest
 
         // Hide
         // Trigger button on a parent component
-        await ButtonParent1().ClickAsync(new MouseEventArgs());
-        await ButtonParent2().ClickAsync(new MouseEventArgs());
-        await ButtonParent4().ClickAsync(new MouseEventArgs());
+        await ButtonParent1().ClickAsync();
+        await ButtonParent2().ClickAsync();
+        await ButtonParent4().ClickAsync();
 
         alertChild1TextFunc.Should().Throw<ElementNotFoundException>();
         alertChild2TextFunc.Should().Throw<ElementNotFoundException>();
@@ -532,10 +531,10 @@ public class ParameterStateUsageTests : BunitTest
         ParamChanges2().Children[0].TextContent.Trimmed().Should().Be("Counter: 0=>1 by Parent");
 
         // Click twice on parent button
-        await ButtonParent().ClickAsync(new MouseEventArgs());
-        await ButtonParent().ClickAsync(new MouseEventArgs());
+        await ButtonParent().ClickAsync();
+        await ButtonParent().ClickAsync();
         // Click once on child1 button
-        await ButtonChild1().ClickAsync(new MouseEventArgs());
+        await ButtonChild1().ClickAsync();
 
         ParamChanges1().Children.Length.Should().Be(4);
         ParamChanges1().Children[1].TextContent.Trimmed().Should().Be("Counter: 1=>2 by Parent");
@@ -548,10 +547,10 @@ public class ParameterStateUsageTests : BunitTest
         ParamChanges2().Children[3].TextContent.Trimmed().Should().Be("Counter: 3=>4 by Parent", because: "For Child2 the Child1 is his parent.");
 
         // Click once on parent button
-        await ButtonParent().ClickAsync(new MouseEventArgs());
+        await ButtonParent().ClickAsync();
         // Click twice on child1 button
-        await ButtonChild1().ClickAsync(new MouseEventArgs());
-        await ButtonChild1().ClickAsync(new MouseEventArgs());
+        await ButtonChild1().ClickAsync();
+        await ButtonChild1().ClickAsync();
 
         ParamChanges1().Children.Length.Should().Be(7);
         ParamChanges1().Children[4].TextContent.Trimmed().Should().Be("Counter: 4=>5 by Parent");
@@ -563,7 +562,7 @@ public class ParameterStateUsageTests : BunitTest
         ParamChanges2().Children[5].TextContent.Trimmed().Should().Be("Counter: 5=>6 by Parent", because: "For Child2 the Child1 is his parent.");
         ParamChanges2().Children[6].TextContent.Trimmed().Should().Be("Counter: 6=>7 by Parent", because: "For Child2 the Child1 is his parent.");
 
-        await ButtonChild2().ClickAsync(new MouseEventArgs());
+        await ButtonChild2().ClickAsync();
 
         ParamChanges1().Children.Length.Should().Be(8);
         ParamChanges1().Children[7].TextContent.Trimmed().Should().Be("Counter: 7=>8 by Child");
