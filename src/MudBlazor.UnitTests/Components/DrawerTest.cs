@@ -636,9 +636,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for issue #3378: MudDrawer inside MudTab should not show closing animation when switching tabs
-        /// This test verifies that the drawer maintains its closed state correctly when tabs are switched,
-        /// ensuring the CSS transitions (not animations) are used so no animation replays on re-render.
+        /// Test for issue #3378: MudDrawer inside MudTab with KeepPanelsAlive should maintain correct state
+        /// This test validates that the drawer component correctly maintains its state (open/closed) and
+        /// class structure when rendered inside tabs. The fix changed from CSS animations to transitions,
+        /// which prevents unwanted animation replays when the drawer re-renders but the state hasn't changed.
+        /// This test verifies the basic drawer state management which ensures the CSS changes work correctly.
         /// </summary>
         [Test]
         public void DrawerInTabs_SwitchTabs_NoAnimationOnClosedDrawer()
@@ -660,12 +662,14 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
 
-            // Verify the drawer does not have the initial class (animation should be enabled)
+            // Verify the drawer loses the initial class after first interaction
+            // This ensures the CSS transition will be applied (not skipped)
             comp.FindAll("aside.mud-drawer--initial").Count.Should().Be(0);
 
-            // The fix ensures that even if tabs switch and components re-render,
-            // the transition property only triggers on actual CSS property changes,
-            // not on every render like animations would.
+            // The actual visual fix (preventing animation replay on re-render) is in the CSS
+            // where we changed from 'animation' to 'transition' properties. This test validates
+            // that the drawer state management and class structure remain correct, which is
+            // necessary for the CSS fix to work properly.
         }
     }
 }
