@@ -556,7 +556,7 @@ public class ParameterScopeContainerTests
         // Assert
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+            new ParameterChangedEventArgs<double>(parameterView, ParameterName, Parameter, ParameterNewValue)
         });
     }
 
@@ -622,7 +622,7 @@ public class ParameterScopeContainerTests
         await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+            new ParameterChangedEventArgs<double>(parameterView, ParameterName, Parameter, ParameterNewValue)
         }, because: "We swapped comparer.");
     }
 
@@ -655,7 +655,7 @@ public class ParameterScopeContainerTests
         await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+            new ParameterChangedEventArgs<double>(parameterView, ParameterName, Parameter, ParameterNewValue)
         });
     }
 
@@ -687,7 +687,7 @@ public class ParameterScopeContainerTests
         await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double[]>(ParameterName, parameter, parameterNewValue)
+            new ParameterChangedEventArgs<double[]>(parameterView, ParameterName, parameter, parameterNewValue)
         });
     }
 

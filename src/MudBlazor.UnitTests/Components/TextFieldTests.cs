@@ -54,8 +54,8 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var textfield = comp.Instance;
-            textfield.Value.Should().Be(0.0);
-            textfield.Text.Should().Be("0");
+            textfield.ReadValue().Should().Be(0.0);
+            textfield.ReadText.Should().Be("0");
             //
             0.0.ToString("F1", CultureInfo.InvariantCulture).Should().Be("0.0");
             //
@@ -63,8 +63,8 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Format, "F1")
                 .Add(x => x.Culture, CultureInfo.InvariantCulture));
 
-            textfield.Value.Should().Be(0.0);
-            textfield.Text.Should().Be("0.0");
+            textfield.ReadValue().Should().Be(0.0);
+            textfield.ReadText.Should().Be("0.0");
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
 
@@ -78,8 +78,8 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var textfield = comp.Instance;
-            textfield.Value.Should().Be(null);
-            textfield.Text.Should().BeNullOrEmpty();
+            textfield.ReadValue().Should().Be(null);
+            textfield.ReadText.Should().BeNullOrEmpty();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
 
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
             input.Input(new ChangeEventArgs() { Value = "Some Value" });
             //Assert
             //input value has changed, DebounceInterval is 0, so Value should change in TextField immediately
-            textField.Value.Should().Be("Some Value");
+            textField.ReadValue().Should().Be("Some Value");
         }
 
         /// <summary>
@@ -146,13 +146,13 @@ namespace MudBlazor.UnitTests.Components
             //if DebounceInterval is set, Immediate should be true by default
             textField.Immediate.Should().BeTrue();
             //input value has changed, but elapsed time is 0, so Value should not change in TextField
-            textField.Value.Should().BeNull();
+            textField.ReadValue().Should().BeNull();
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in TextField
             await Task.Delay(100);
-            textField.Value.Should().BeNull();
+            textField.ReadValue().Should().BeNull();
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
-            await comp.WaitForAssertionAsync(() => textField.Value.Should().Be("Some Value"));
+            await comp.WaitForAssertionAsync(() => textField.ReadValue().Should().Be("Some Value"));
         }
 
         /// <summary>
@@ -242,11 +242,11 @@ namespace MudBlazor.UnitTests.Components
             // test against an infinite update loop that textfields and other inputs are now protected against.
             var textfield = comp.Instance;
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
-            textfield.Value.Should().Be("A");
-            textfield.Text.Should().Be("Ax");
+            textfield.ReadValue().Should().Be("A");
+            textfield.ReadText.Should().Be("Ax");
             comp.Find("input").Change("B");
-            textfield.Value.Should().Be("By");
-            textfield.Text.Should().Be("B");
+            textfield.ReadValue().Should().Be("By");
+            textfield.ReadText.Should().Be("B");
         }
 
         [Test]
@@ -294,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
-            textfield.Text.Should().Be("A");
+            textfield.ReadText.Should().Be("A");
             textfield.HasErrors.Should().Be(true);
             textfield.GetState(x => x.ErrorText).Should().Be("Not a valid number");
         }
@@ -359,13 +359,13 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
-            textfield.Text.Should().Be("A");
-            textfield.Value.Should().Be("A");
+            textfield.ReadText.Should().Be("A");
+            textfield.ReadValue().Should().Be("A");
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Lines, 2));
             comp.Find("textarea").Change("B\nC");
             comp.Find("textarea").Blur();
-            textfield.Text.Should().Be("B\nC");
-            textfield.Value.Should().Be("B\nC");
+            textfield.ReadText.Should().Be("B\nC");
+            textfield.ReadValue().Should().Be("B\nC");
         }
 
         /// <summary>
@@ -381,18 +381,18 @@ namespace MudBlazor.UnitTests.Components
             var tf2 = comp.FindComponents<MudTextField<string>>()[1].Instance;
             comp.Find("input").Input("Bossmang");
             comp.Find("input").Blur(); // <-- note: Blur is important here because input does not allow render updates while focused!
-            tf1.Text.Should().Be("Bossmang");
-            tf2.Text.Should().Be("Bossmang");
+            tf1.ReadText.Should().Be("Bossmang");
+            tf2.ReadText.Should().Be("Bossmang");
             comp.Find("textarea").TrimmedText().Should().Be("Bossmang");
             comp.Find("textarea").Input("Beltalowda");
             comp.Find("textarea").Blur(); // Blur is important
-            tf1.Text.Should().Be("Beltalowda");
-            tf2.Text.Should().Be("Beltalowda");
+            tf1.ReadText.Should().Be("Beltalowda");
+            tf2.ReadText.Should().Be("Beltalowda");
             comp.Find("textarea").TrimmedText().Should().Be("Beltalowda");
             comp.Find("input").Input("Beratna");
             comp.Find("input").Blur(); // Blur is important
-            tf1.Text.Should().Be("Beratna");
-            tf2.Text.Should().Be("Beratna");
+            tf1.ReadText.Should().Be("Beratna");
+            tf2.ReadText.Should().Be("Beratna");
             comp.Find("textarea").TrimmedText().Should().Be("Beratna");
         }
 
@@ -469,8 +469,8 @@ namespace MudBlazor.UnitTests.Components
             // Set invalid text
             comp.Find("input").Change("Quux");
             // check initial state
-            textfield.Value.Should().Be("Quux");
-            textfield.Text.Should().Be("Quux");
+            textfield.ReadValue().Should().Be("Quux");
+            textfield.ReadText.Should().Be("Quux");
             // check validity
             await comp.InvokeAsync(() => textfield.ValidateAsync());
             textfield.ValidationErrors.Should().NotBeEmpty();
@@ -488,8 +488,8 @@ namespace MudBlazor.UnitTests.Components
             // Set valid text
             comp.Find("input").Change("Qux");
             // check initial state
-            textfield.Value.Should().Be("Qux");
-            textfield.Text.Should().Be("Qux");
+            textfield.ReadValue().Should().Be("Qux");
+            textfield.ReadText.Should().Be("Qux");
             // check validity
             await comp.InvokeAsync(() => textfield.ValidateAsync());
             textfield.ValidationErrors.Should().BeEmpty();
@@ -578,11 +578,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudTextField<int>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Text, "17"));
             var textfield = comp.Instance;
-            textfield.Value.Should().Be(17);
-            textfield.Text.Should().Be("17");
+            textfield.ReadValue().Should().Be(17);
+            textfield.ReadText.Should().Be("17");
             await comp.InvokeAsync(async () => await textfield.Clear());
-            textfield.Value.Should().Be(0);
-            textfield.Text.Should().Be(null);
+            textfield.ReadValue().Should().Be(0);
+            textfield.ReadText.Should().Be(null);
         }
 
         [Test]
@@ -591,11 +591,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudTextField<string>>();
             comp.Find("input").Change("Viva la ignorancia");
             var textfield = comp.Instance;
-            textfield.Value.Should().Be("Viva la ignorancia");
-            textfield.Text.Should().Be("Viva la ignorancia");
+            textfield.ReadValue().Should().Be("Viva la ignorancia");
+            textfield.ReadText.Should().Be("Viva la ignorancia");
             await comp.InvokeAsync(async () => await textfield.Clear());
-            textfield.Value.Should().Be(null);
-            textfield.Text.Should().Be(null);
+            textfield.ReadValue().Should().Be(null);
+            textfield.ReadText.Should().Be(null);
         }
 
         [Test]
@@ -638,34 +638,34 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("Vat of acid");
             // this will make the input focused!
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            textfield.Value.Should().Be("Vat of acid");
-            textfield.Text.Should().Be("Vat of acid");
+            textfield.ReadValue().Should().Be("Vat of acid");
+            textfield.ReadText.Should().Be("Vat of acid");
 
             // let's try to set the text directly on the input, TextUpdateSuppression should prevent it because we are focused
             await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, ""));
-            input.Instance.Value.Should().Be("");
-            input.Instance.Text.Should().Be("Vat of acid");
+            input.Instance.ReadValue().Should().Be("");
+            input.Instance.ReadText.Should().Be("Vat of acid");
 
             // turn it off
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TextUpdateSuppression, false));
 
             // now the input text should get overwritten
             await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "In case of ladle"));
-            input.Instance.Value.Should().Be("In case of ladle");
-            input.Instance.Text.Should().Be("In case of ladle");
+            input.Instance.ReadValue().Should().Be("In case of ladle");
+            input.Instance.ReadText.Should().Be("In case of ladle");
 
             // turn it on again
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TextUpdateSuppression, true));
 
             await input.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, ""));
-            input.Instance.Value.Should().Be("");
-            input.Instance.Text.Should().Be("In case of ladle");
+            input.Instance.ReadValue().Should().Be("");
+            input.Instance.ReadText.Should().Be("In case of ladle");
 
             // force text update
             await comp.InvokeAsync(() => input.Instance.ForceRender(forceTextUpdate: true));
 
-            input.Instance.Value.Should().Be("");
-            input.Instance.Text.Should().Be("");
+            input.Instance.ReadValue().Should().Be("");
+            input.Instance.ReadText.Should().Be("");
         }
 
         [Test]
@@ -674,18 +674,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TextFieldUpdateViaBindingTest>();
             var input = comp.FindComponent<MudInput<string>>();
             // this will make the input focused!
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
             // now simulate user input:
             comp.Find("input").Input("The Stormlight Archive");
             // check binding update
             comp.Find("span").TrimmedText().Should().Be("value: The Stormlight Archive");
-            input.Instance.Value.Should().Be("The Stormlight Archive");
-            input.Instance.Text.Should().Be("The Stormlight Archive");
+            input.Instance.ReadValue().Should().Be("The Stormlight Archive");
+            input.Instance.ReadText.Should().Be("The Stormlight Archive");
             // now hit Enter to cause the clearing of the focused text field
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => comp.Find("span").TrimmedText().Should().Be("value:"));
-            await comp.WaitForAssertionAsync(() => input.Instance.Value.Should().Be(""));
-            await comp.WaitForAssertionAsync(() => input.Instance.Text.Should().Be(""));
+            await comp.WaitForAssertionAsync(() => input.Instance.ReadValue().Should().Be(""));
+            await comp.WaitForAssertionAsync(() => input.Instance.ReadText.Should().Be(""));
         }
 
         [Test]
@@ -1053,8 +1053,8 @@ namespace MudBlazor.UnitTests.Components
             }
             // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
-            textField.Value.Should().Be(currentText);
-            textField.Text.Should().Be(currentText);
+            textField.ReadValue().Should().Be(currentText);
+            textField.ReadText.Should().Be(currentText);
         }
 
         [Test]
@@ -1064,7 +1064,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DebouncedTextFieldRerenderTest>(parameters => parameters
                 .Add(p => p.Value, defaultValue));
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
-            textfield.Text.Should().Be(defaultValue);
+            textfield.ReadText.Should().Be(defaultValue);
         }
 
         /// <summary>
@@ -1077,7 +1077,7 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
             DateTime expectedFinalDateTime = default;
             // ensure text is updated on initialize
-            textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+            textField.ReadText.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
             // trigger the format change
             comp.Find("#format-change-button").Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
@@ -1092,12 +1092,12 @@ namespace MudBlazor.UnitTests.Components
                 elapsedTime += delay;
             }
             // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
-            textField.Text.Should().Be(currentText);
+            textField.ReadText.Should().Be(currentText);
             // once debounce occurs, both value and text are reset because they define an invalid DateTime,
             // now with the new Format
             await Task.Delay(comp.Instance.DebounceInterval);
-            textField.Value.Should().Be(expectedFinalDateTime);
-            textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+            textField.ReadValue().Should().Be(expectedFinalDateTime);
+            textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
         }
 
         /// <summary>

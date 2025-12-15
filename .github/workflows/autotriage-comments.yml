@@ -1,12 +1,14 @@
 name: AutoTriage (Comments)
 
+# Disabled due to Gemini API rate limits being lowered
 on:
   issue_comment:
     types: [created]
 
 jobs:
   triage_comment:
-    if: ${{ github.event.sender.type != 'Bot' && github.repository_owner == 'MudBlazor' }}
+    if: false  # Disabled due to Gemini API rate limits
+    # Original condition: ${{ github.event.sender.type != 'Bot' && github.repository_owner == 'MudBlazor' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate app token
