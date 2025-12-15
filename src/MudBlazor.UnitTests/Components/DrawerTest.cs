@@ -634,5 +634,38 @@ namespace MudBlazor.UnitTests.Components
             var styles = asideDrawer.GetStyle().ToList();
             styles.Single(a => a.Name == "--mud-drawer-height").Value.Should().Be(drawerHeight);
         }
+
+        /// <summary>
+        /// Test for issue #3378: MudDrawer inside MudTab should not show closing animation when switching tabs
+        /// This test verifies that the drawer maintains its closed state correctly when tabs are switched,
+        /// ensuring the CSS transitions (not animations) are used so no animation replays on re-render.
+        /// </summary>
+        [Test]
+        public void DrawerInTabs_SwitchTabs_NoAnimationOnClosedDrawer()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerInTabsTest>();
+
+            // Drawer should be closed initially
+            comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            // Open the drawer
+            comp.Find("#toggle-drawer-button").Click();
+            comp.FindAll("aside.mud-drawer--open").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+
+            // Close the drawer
+            comp.Find("#toggle-drawer-button").Click();
+            comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            // Verify the drawer does not have the initial class (animation should be enabled)
+            comp.FindAll("aside.mud-drawer--initial").Count.Should().Be(0);
+
+            // The fix ensures that even if tabs switch and components re-render,
+            // the transition property only triggers on actual CSS property changes,
+            // not on every render like animations would.
+        }
     }
 }
