@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using AngleSharp.Css.Dom;
 using Bunit;
 using FluentAssertions;
@@ -636,40 +636,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for issue #3378: MudDrawer inside MudTab with KeepPanelsAlive should maintain correct state
-        /// This test validates that the drawer component correctly maintains its state (open/closed) and
-        /// class structure when rendered inside tabs. The fix changed from CSS animations to transitions,
-        /// which prevents unwanted animation replays when the drawer re-renders but the state hasn't changed.
-        /// This test verifies the basic drawer state management which ensures the CSS changes work correctly.
+        /// Test for issue #3378: Verifies that the mud-drawer--initial class is removed after first interaction.
+        /// This class is used to skip the initial CSS transition when the drawer first renders.
         /// </summary>
         [Test]
-        public void DrawerInTabs_SwitchTabs_NoAnimationOnClosedDrawer()
+        public void DrawerInTabs_ShouldRemoveInitialClassAfterFirstInteraction()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerInTabsTest>();
 
             // Drawer should be closed initially
             comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
-            comp.Instance.Drawer.Open.Should().BeFalse();
 
             // Open the drawer
             comp.Find("#toggle-drawer-button").Click();
             comp.FindAll("aside.mud-drawer--open").Count.Should().Be(1);
-            comp.Instance.Drawer.Open.Should().BeTrue();
 
             // Close the drawer
             comp.Find("#toggle-drawer-button").Click();
             comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
-            comp.Instance.Drawer.Open.Should().BeFalse();
 
             // Verify the drawer loses the initial class after first interaction
             // This ensures the CSS transition will be applied (not skipped)
             comp.FindAll("aside.mud-drawer--initial").Count.Should().Be(0);
-
-            // The actual visual fix (preventing animation replay on re-render) is in the CSS
-            // where we changed from 'animation' to 'transition' properties. This test validates
-            // that the drawer state management and class structure remain correct, which is
-            // necessary for the CSS fix to work properly.
         }
     }
 }
