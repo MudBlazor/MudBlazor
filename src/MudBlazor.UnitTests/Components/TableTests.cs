@@ -923,7 +923,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableMultiSelectionTest7>();
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
             var tr = comp.FindAll("tr");
             tr.Count.Should().Be(4); // <-- one header, three rows
             var th = comp.FindAll("th");
@@ -936,7 +935,7 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
 
             searchInput().Change("1"); // search for 1
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
 
             // click header checkbox and verify selection text
             inputs()[0].Change(true);

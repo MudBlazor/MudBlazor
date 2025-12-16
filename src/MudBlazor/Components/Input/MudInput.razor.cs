@@ -178,6 +178,7 @@ namespace MudBlazor
         {
             _isFocused = true;
             _internalText = args;
+            await OnInternalInputChanged.InvokeAsync(args);
             return SetTextAndUpdateValueAsync(args);
         }
 
