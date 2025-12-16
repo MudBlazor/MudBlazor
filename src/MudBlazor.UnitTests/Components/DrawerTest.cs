@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using AngleSharp.Css.Dom;
 using Bunit;
 using FluentAssertions;
