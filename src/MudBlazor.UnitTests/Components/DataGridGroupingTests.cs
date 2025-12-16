@@ -281,7 +281,7 @@ namespace MudBlazor.UnitTests.Components
             Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
 
             var ageGrouping = comp.Find(".GroupByAge");
-            ageGrouping.Click();
+            await ageGrouping.ClickAsync();
             comp.Instance.IsAgeGrouped.Should().Be(true);
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(false);
@@ -293,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
             Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
             var genderGrouping = comp.Find(".GroupByGender");
-            genderGrouping.Click();
+            await genderGrouping.ClickAsync();
             comp.Instance.IsGenderGrouped.Should().Be(true);
             comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(false);
@@ -304,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
             Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
 
             var professionGrouping = comp.Find(".GroupByProfession");
-            professionGrouping.Click();
+            await professionGrouping.ClickAsync();
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(true);
@@ -315,14 +315,14 @@ namespace MudBlazor.UnitTests.Components
             Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
 
             var ungroup = comp.Find(".UnGroupAll");
-            ungroup.Click();
+            await ungroup.ClickAsync();
             comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(false);
             comp.Instance.IsNameGrouped.Should().Be(false);
 
             var headerOption = comp.Find("th.age .mud-menu button");
-            headerOption.Click();
+            await headerOption.ClickAsync();
 
             await comp.WaitForAssertionAsync(() =>
             {
@@ -342,12 +342,12 @@ namespace MudBlazor.UnitTests.Components
             }
 
             var clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
+            await clickablePopover.ClickAsync();
             comp.Instance.IsAgeGrouped.Should().Be(true);
             var rowCount = Rows().Count;
             rowCount.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
-            ungroup.Click();
+            await ungroup.ClickAsync();
             comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(false);
@@ -355,15 +355,15 @@ namespace MudBlazor.UnitTests.Components
 
             //click gender grouping in grid
             headerOption = comp.Find("th.gender .mud-menu button");
-            headerOption.Click();
+            await headerOption.ClickAsync();
             listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
+            await clickablePopover.ClickAsync();
             comp.Instance.IsGenderGrouped.Should().Be(true);
             Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
 
-            ungroup.Click();
+            await ungroup.ClickAsync();
             comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(false);
@@ -371,15 +371,15 @@ namespace MudBlazor.UnitTests.Components
 
             //click Name grouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
-            headerOption.Click();
+            await headerOption.ClickAsync();
             listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
+            await clickablePopover.ClickAsync();
             comp.Instance.IsNameGrouped.Should().Be(true);
             Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
 
-            ungroup.Click();
+            await ungroup.ClickAsync();
             comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(false);
@@ -387,11 +387,11 @@ namespace MudBlazor.UnitTests.Components
 
             //click profession grouping in grid
             headerOption = comp.Find("th.profession .mud-menu button");
-            headerOption.Click();
+            await headerOption.ClickAsync();
             listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
+            await clickablePopover.ClickAsync();
             comp.Instance.IsProfessionGrouped.Should().Be(true);
             Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
         }
@@ -642,17 +642,16 @@ namespace MudBlazor.UnitTests.Components
             // and ensures the correct UI is rendered for column options
             var provider = Context.Render<MudPopoverProvider>();
             var comp = Context.Render<DataGridGroupExpandedTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
             provider.Should().NotBeNull();
             await comp.WaitForAssertionAsync(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             var menus = comp.FindAll("span.column-options button[aria-label='Column options']");
             menus.Count.Should().Be(3); // one for each column
             var countMenu = menus[1]; // 2nd column options (Count)
-            countMenu.Click();
+            await countMenu.ClickAsync();
             // Default is DataGrid Groupable = true and no Groupable override on column so should be groupable
             provider.Markup.Should().Contain("Group");
             var overlay = provider.Find(".mud-overlay");
-            overlay.Click(); // close the menu
+            await overlay.ClickAsync(); // close the menu
 
             await comp.SetParametersAndRenderAsync(x => x.Add(x => x.Groupable, false));
             // no change in grid rows since Grouping did not change
@@ -661,11 +660,11 @@ namespace MudBlazor.UnitTests.Components
             menus = comp.FindAll("span.column-options button[aria-label='Column options']");
             menus.Count.Should().Be(3); // one for each column
             countMenu = menus[1]; // 2nd column options (Count)
-            countMenu.Click();
+            await countMenu.ClickAsync();
             // DataGrid Groupable now = false and no Groupable override on column so should not be groupable
             provider.Markup.Should().NotContain("Group");
             overlay = provider.Find(".mud-overlay");
-            overlay.Click(); // close the menu
+            await overlay.ClickAsync(); // close the menu
         }
 
         // https://github.com/MudBlazor/MudBlazor/pull/10213 
@@ -686,7 +685,7 @@ namespace MudBlazor.UnitTests.Components
             // ensure toggling single expansion doesn't close all
             var expanderButtons = comp.FindAll("button.mud-table-row-expander");
             // nulled expander
-            var expander = expanderButtons[expanderButtons.Count - 1];
+            var expander = expanderButtons[^1];
             // clicking should close 2 rows, footer and group row. header should still exist
             expander.Click();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
@@ -708,7 +707,7 @@ namespace MudBlazor.UnitTests.Components
 
             //current grouping should use the defined template
             var groupRow = component.FindComponent<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>().Find(".mud-datagrid-group");
-            var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+            var text = new string(groupRow.TextContent.Where(c => !char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Manufacturing1states");
 
             //clear grouping
@@ -717,11 +716,11 @@ namespace MudBlazor.UnitTests.Components
                 await component.InvokeAsync(() => col.RemoveGrouping());
             }
             //group by column with no grouptemplate
-            await component.InvokeAsync(() => dataGrid.Instance.RenderedColumns.Where(x => x.Title == nameof(DataGridGroupingMultiLevelTest.USState.Counties)).Single().SetGroupingAsync(true));
+            await component.InvokeAsync(() => dataGrid.Instance.RenderedColumns.Single(x => x.Title == nameof(DataGridGroupingMultiLevelTest.USState.Counties)).SetGroupingAsync(true));
             dataGrid.Render();
             //grouping should be the template defined at grid level
             groupRow = component.FindComponent<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>().Find(".mud-datagrid-group");
-            text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+            text = new string(groupRow.TextContent.Where(c => !char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Counties:67Count:2Percentage:20.0%");
         }
 
@@ -733,7 +732,7 @@ namespace MudBlazor.UnitTests.Components
 
             //grouping should be the built in default
             var groupRow = component.FindComponent<DataGridGroupRow<DataGridColumnGroupingTest.Model>>().Find(".mud-datagrid-group");
-            var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+            var text = new string(groupRow.TextContent.Where(c => !char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Name:John");
         }
 

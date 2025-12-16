@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudButton whithout specifying HtmlTag, renders a button
+        /// MudButton without specifying HtmlTag, renders a button
         /// </summary>
         [Test]
         public void MudIconButtonShouldRenderAButtonByDefault()
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudButton whithout specifying HtmlTag, renders a button
+        /// MudButton without specifying HtmlTag, renders a button
         /// </summary>
         [Test]
         public void MudFabShouldRenderAButtonByDefault()

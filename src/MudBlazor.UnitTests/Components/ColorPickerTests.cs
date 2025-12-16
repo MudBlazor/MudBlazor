@@ -285,8 +285,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
 
-            var inputs = comp.FindAll(".mud-picker-color-inputs input");
-
             var lColor = GetColorInput(comp, 0, 1);
 
             var expectedColor = colorHexString;
@@ -300,8 +298,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task SetColorInput_InvalidNoChange(string colorHexString)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
-
-            var inputs = comp.FindAll(".mud-picker-color-inputs input");
 
             var hexInput = GetColorInput(comp, 0, 1);
 
@@ -1001,8 +997,6 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Instance.OpenPicker();
 
-            var expectedColors = view == ColorPickerView.Grid ? _mudGridDefaultColors : _mudGridPaletteDefaultColors;
-
             IElement item;
             if (view == ColorPickerView.Grid)
             {
@@ -1058,7 +1052,6 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ColorValue, null));
 
-            var lColor = GetColorInput(comp, 2);
             var expectedColor = _defaultColor;
 
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);

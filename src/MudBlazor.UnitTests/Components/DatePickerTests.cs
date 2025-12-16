@@ -346,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // clicking a day button to select a date and close
-            comp.SelectDate("23");
+            await comp.SelectDateAsync("23");
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
         }
@@ -359,7 +359,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker(parameters => parameters
                 .Add(x => x.DateChanged, (DateTime? date) => { eventCount++; returnDate = date; }));
             // clicking a day button to select a date and close
-            comp.SelectDate("23");
+            await comp.SelectDateAsync("23");
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
             eventCount.Should().Be(1);
@@ -485,7 +485,7 @@ namespace MudBlazor.UnitTests.Components
             var expectedDate = new DateTime(date.Year, date.Month, 23);
 
             // Select the date
-            comp.SelectDate("23");
+            await comp.SelectDateAsync("23");
 
             // Wait for the date picker to update its state after selection
             await comp.WaitForAssertionAsync(() => picker.Instance.Date.Should().Be(expectedDate));
@@ -711,12 +711,11 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
             timeProvider.SetUtcNow(new DateTime(2025, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
-            var comp = Context.Render<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
+            var comp = Context.Render<PersianDatePickerTest>(parameter => parameter.Add(p => p.Date, null));
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
             await comp.InvokeAsync(() => datePicker.OpenAsync());
 
             datePicker.Text.Should().BeNull();
-            comp.Find("button.mud-button-year").TrimmedText().Equals("1403");
             comp.Find("button.mud-button-month").TrimmedText().Should().Contain("1403");
             comp.Find("button.mud-button-date").TrimmedText().Should().BeNullOrEmpty();
         }
@@ -1013,11 +1012,11 @@ namespace MudBlazor.UnitTests.Components
             // So the test is working when the day is 20
             if (now.Day != 20)
             {
-                comp.SelectDate("20");
+                await comp.SelectDateAsync("20");
             }
             else
             {
-                comp.SelectDate("19");
+                await comp.SelectDateAsync("19");
             }
 
             // Check that the date should remain the same because autoclose is false
@@ -1044,11 +1043,11 @@ namespace MudBlazor.UnitTests.Components
             // Clicking a day button to select a date
             if (now.Day != 20)
             {
-                comp.SelectDate("20");
+                await comp.SelectDateAsync("20");
             }
             else
             {
-                comp.SelectDate("19");
+                await comp.SelectDateAsync("19");
             }
 
             // Check that the date should be equal to the new date 19 or 20
@@ -1086,11 +1085,11 @@ namespace MudBlazor.UnitTests.Components
             // So the test is working when the day is 20
             if (now.Day != 20)
             {
-                comp.SelectDate("20");
+                await comp.SelectDateAsync("20");
             }
             else
             {
-                comp.SelectDate("19");
+                await comp.SelectDateAsync("19");
             }
 
             // Close the datepicker
@@ -1121,11 +1120,11 @@ namespace MudBlazor.UnitTests.Components
             // Clicking a day button to select a date
             if (now.Day != 21)
             {
-                comp.SelectDate("22");
+                await comp.SelectDateAsync("22");
             }
             else
             {
-                comp.SelectDate("21");
+                await comp.SelectDateAsync("21");
             }
 
             // Close the datepicker
@@ -1147,7 +1146,7 @@ namespace MudBlazor.UnitTests.Components
 
             // An error should be raised if the datepicker could not be not opened and the days could not generated
             // It means that there would be an exception!
-            comp.SelectDate("1");
+            await comp.SelectDateAsync("1");
         }
 
         /// <summary>
@@ -1471,10 +1470,10 @@ namespace MudBlazor.UnitTests.Components
             // Open the datepicker
             await comp.InvokeAsync(datePicker.OpenAsync);
 
-            comp.Find("button.mud-button-month").Click();
+            await comp.Find("button.mud-button-month").ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("button.mud-picker-month").Any(x => x.IsDisabled()).Should().Be(true));
 
-            comp.FindAll("button.mud-picker-month").First(x => x.IsDisabled()).Click();
+            await comp.FindAll("button.mud-picker-month").First(x => x.IsDisabled()).ClickAsync();
 
             var months = comp.FindAll("button.mud-picker-month");
             months.Should().NotBeNull();
@@ -1516,7 +1515,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.ImmediateText, true));
 
             // This will make the input focused!
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown" });
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "9", Type = "keydown" });
 
             // Simulate user input
             comp.Find("input").Input("22");
