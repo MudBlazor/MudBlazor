@@ -174,12 +174,11 @@ namespace MudBlazor
 
         private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
 
-        protected async Task OnInput(string? args)
+        protected Task OnInput(string? args)
         {
             _isFocused = true;
             _internalText = args;
-            await OnInternalInputChanged.InvokeAsync(args);
-            await SetTextAndUpdateValueAsync(args);
+            return SetTextAndUpdateValueAsync(args);
         }
 
         protected async Task OnChange(string? args)
