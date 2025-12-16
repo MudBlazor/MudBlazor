@@ -29,7 +29,7 @@ jobs:
           app-id: ${{ vars.MUDBOT_APP_ID }}
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Cache triage DB
         id: cache-db
