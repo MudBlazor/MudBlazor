@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwitch Label="Disabled" @bind-Value="_isDisabled" Color="Color.Error"/>
+<MudNavigationConfirm Disabled="_isDisabled"/>
+
+@code {
+    private bool _isDisabled;
+}

@@ -579,5 +579,10 @@ namespace MudBlazor
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
+
+        public static class NavigationConfirm
+        {
+            public const string Behavior = "Behavior";
+        }
     }
 }
