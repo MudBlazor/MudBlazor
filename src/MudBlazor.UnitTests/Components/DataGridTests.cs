@@ -3574,36 +3574,36 @@ namespace MudBlazor.UnitTests.Components
             var switches = comp.FindComponents<MudSwitch<bool>>();
             switches.Count.Should().Be(6);
 
-            switches[0].Instance.Value.Should().BeFalse();
-            switches[1].Instance.Value.Should().BeTrue();
-            switches[2].Instance.Value.Should().BeFalse();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[0].Instance.Value.Should().BeFalse();
+            switches[0].Instance.ReadValue().Should().BeFalse();
+            switches[1].Instance.ReadValue().Should().BeTrue();
+            switches[2].Instance.ReadValue().Should().BeFalse();
+            switches[3].Instance.ReadValue().Should().BeFalse();
+            switches[4].Instance.ReadValue().Should().BeFalse();
+            switches[0].Instance.ReadValue().Should().BeFalse();
 
             var buttons = comp.FindComponents<MudButton>();
 
             // this is the hide all button
             buttons[0].Find("button").Click();
             //all hideable columns should be hidden;
-            switches[0].Instance.Value.Should().BeTrue();
-            switches[1].Instance.Value.Should().BeTrue();
-            switches[2].Instance.Value.Should().BeTrue();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[5].Instance.Value.Should().BeFalse();
+            switches[0].Instance.ReadValue().Should().BeTrue();
+            switches[1].Instance.ReadValue().Should().BeTrue();
+            switches[2].Instance.ReadValue().Should().BeTrue();
+            switches[3].Instance.ReadValue().Should().BeFalse();
+            switches[4].Instance.ReadValue().Should().BeFalse();
+            switches[5].Instance.ReadValue().Should().BeFalse();
 
             // 6 columns, 3 hidden (+ already collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(4);
 
             // this is the show all button
             buttons[1].Find("button").Click();
-            switches[0].Instance.Value.Should().BeFalse();
-            switches[1].Instance.Value.Should().BeFalse();
-            switches[2].Instance.Value.Should().BeFalse();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[5].Instance.Value.Should().BeFalse();
+            switches[0].Instance.ReadValue().Should().BeFalse();
+            switches[1].Instance.ReadValue().Should().BeFalse();
+            switches[2].Instance.ReadValue().Should().BeFalse();
+            switches[3].Instance.ReadValue().Should().BeFalse();
+            switches[4].Instance.ReadValue().Should().BeFalse();
+            switches[5].Instance.ReadValue().Should().BeFalse();
 
             // 6 columns, 0 hidden (1 permanently collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
@@ -4791,28 +4791,28 @@ namespace MudBlazor.UnitTests.Components
             var rowCheckbox = dataGrid.FindAll("td input");
             var selectAllCheckboxes = dataGrid.FindComponents<MudCheckBox<bool?>>();
 
-            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
-            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[0].Instance.ReadValue().Should().BeFalse();
+            selectAllCheckboxes[1].Instance.ReadValue().Should().BeFalse();
 
             rowCheckbox[0].Change(true);
 
-            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
-            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[0].Instance.ReadValue().Should().BeNull();
+            selectAllCheckboxes[1].Instance.ReadValue().Should().BeNull();
 
             rowCheckbox[1].Change(true);
 
-            selectAllCheckboxes[0].Instance.Value.Should().BeTrue();
-            selectAllCheckboxes[1].Instance.Value.Should().BeTrue();
+            selectAllCheckboxes[0].Instance.ReadValue().Should().BeTrue();
+            selectAllCheckboxes[1].Instance.ReadValue().Should().BeTrue();
 
             rowCheckbox[1].Change(false);
 
-            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
-            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[0].Instance.ReadValue().Should().BeNull();
+            selectAllCheckboxes[1].Instance.ReadValue().Should().BeNull();
 
             rowCheckbox[0].Change(false);
 
-            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
-            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[0].Instance.ReadValue().Should().BeFalse();
+            selectAllCheckboxes[1].Instance.ReadValue().Should().BeFalse();
         }
 
         [Test]
@@ -5367,7 +5367,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridRowDetailInitiallyExpandedServerMultipleTest()
         {
-            // ServerReload different pages
             var comp = Context.Render<DataGridHierarchyInitiallyExpandedServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedServerDataTest.Model>>();
 
@@ -5378,21 +5377,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
             comp.Markup.Should().NotContain("uid = John|32|Warning|");
 
-            // Collapse Ira to ensure it remains collapsed when we return to the row
-            // Use LINQ to find the index of the row containing "uid = Ira"
-            var iraIndex = comp.FindAll("tr")
-                .Select((row, index) => new { row, index })
-                .First(r => r.row.InnerHtml.Contains("uid = Ira")).index;
+            // Collapse Ira
+            await comp.InvokeAsync(async () =>
+            {
+                var iraIndex = comp.FindAll("tr")
+                    .Select((row, index) => new { row, index })
+                    .First(r => r.row.InnerHtml.Contains("uid = Ira")).index;
 
-            iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
+                iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
 
-            // Now access the row above and find the toggle button and click it
-            await comp.InvokeAsync(() => comp.FindAll("tr")[iraIndex - 2].QuerySelector("button").Click());
+                var toggleButton = comp.FindAll("tr")[iraIndex - 2].QuerySelector("button");
+                toggleButton.Should().NotBeNull("Expected a toggle button above the Ira detail row");
+                await toggleButton.ClickAsync();
+            });
 
-            // Find button with aria-label = "Next Page"
-            var nextButton = comp.Find("button[aria-label='Next page']");
-            nextButton.Should().NotBeNull();
-            nextButton.Click();
+            // Go to next page
+            await comp.InvokeAsync(async () =>
+            {
+                var nextButton = comp.Find("button[aria-label='Next page']");
+                nextButton.Should().NotBeNull("Expected a Next Page Button.");
+                await nextButton.ClickAsync();
+            });
 
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
 
@@ -5401,10 +5406,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("uid = Garderoben|32|Warning|");
             comp.Markup.Should().NotContain("uid = Henon|54|Info|");
 
-            // go back and make sure Ira isn't re-expanded
-            var prevButton = comp.Find("button[aria-label='Previous page']");
-            prevButton.Should().NotBeNull();
-            prevButton.Click();
+            // Go back to previous page
+            await comp.InvokeAsync(async () =>
+            {
+                var prevButton = comp.Find("button[aria-label='Previous page']");
+                prevButton.Should().NotBeNull("Expected a Previous Page Button.");
+                await prevButton.ClickAsync();
+            });
 
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
 

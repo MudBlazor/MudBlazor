@@ -8,7 +8,10 @@
                 <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" />
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
                               Validation="@(new EmailAddressAttribute() {ErrorMessage = @"The email address is invalid"})" />
-                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="_pwField1"
+                <MudTextField T="string"
+                              @bind-Value="_passwordValue"
+                              Label="Password"
+                              HelperText="Choose a strong password"
                               InputType="InputType.Password"
                               Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
                               RequiredError="Password is required!" />
@@ -48,7 +51,7 @@
     private bool _success;
     private string[] _errors = [];
     private MudForm _form = null!;
-    private MudTextField<string> _pwField1 = null!;
+    private string? _passwordValue;
 
     private static IEnumerable<string> PasswordStrength(string pw)
     {
@@ -69,6 +72,6 @@
 
     private string? PasswordMatch(string arg)
     {
-        return _pwField1.Value != arg ? "Passwords don't match" : null;
+        return _passwordValue != arg ? "Passwords don't match" : null;
     }
 }

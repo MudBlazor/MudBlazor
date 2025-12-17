@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Converter;
 using MudBlazor.Utilities.Exceptions;
@@ -128,7 +129,7 @@ namespace MudBlazor
 
                 if (updateRadio)
                 {
-                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.Value, _value));
+                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.ReadValue(), _value));
                     await SetSelectedRadioAsync(radio, false);
                 }
 
@@ -184,7 +185,7 @@ namespace MudBlazor
 
             if (_selectedRadio is null)
             {
-                if (OptionEquals(radio.Value, _value))
+                if (OptionEquals(radio.ReadValue(), _value))
                 {
                     return SetSelectedRadioAsync(radio, false);
                 }
@@ -215,7 +216,7 @@ namespace MudBlazor
 
         private static T? GetValueOrDefault(MudRadio<T>? radio)
         {
-            return radio is not null ? radio.Value : default;
+            return radio is not null ? radio.ReadValue() : default;
         }
 
         private static bool OptionEquals(T? option1, T? option2)

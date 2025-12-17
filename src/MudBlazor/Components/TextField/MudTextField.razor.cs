@@ -204,7 +204,7 @@ namespace MudBlazor
             return base.SetValueAsync(value, updateText, force);
         }
 
-        protected override Task SetTextAsync(string? text, bool updateValue = true)
+        protected override Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {
             if (HasMask)
             {
@@ -212,7 +212,7 @@ namespace MudBlazor
                 text = _mask.Text;
             }
 
-            return base.SetTextAsync(text, updateValue);
+            return base.SetTextAndUpdateValueAsync(text, updateValue);
         }
 
         internal override InputType GetInputType() => InputType;
@@ -224,13 +224,13 @@ namespace MudBlazor
             return Clearable && !GetDisabledState();
         }
 
-        private Task OnMaskedValueChanged(string s) => SetTextAsync(s);
+        private Task OnMaskedValueChanged(string s) => SetTextAndUpdateValueAsync(s);
 
         private string GetCounterText() => Counter switch
         {
             null => string.Empty,
-            0 => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}"),
-            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+            0 => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}"),
+            _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
         protected async Task HandleContainerClick()

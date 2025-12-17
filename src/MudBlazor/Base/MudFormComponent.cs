@@ -924,7 +924,7 @@ namespace MudBlazor
             _setConversionResult = null;
         }
 
-        protected virtual T? ReadValue() => _value;
+        protected internal virtual T? ReadValue() => _value;
 
         protected virtual Task WriteValueAsync(T? value)
         {
