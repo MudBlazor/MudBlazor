@@ -1256,7 +1256,7 @@ namespace MudBlazor.UnitTests.Components
             // Since we can't easily test private methods, we verify that the defaults are used correctly
             // by checking that the component doesn't throw when rendering without explicit values
             menu.Instance.Should().NotBeNull();
-            
+
             // Verify that the component is using the global defaults
             // OverflowBehavior and Modal should be null (using PopoverOptions defaults)
             menu.Instance.OverflowBehavior.Should().BeNull();
