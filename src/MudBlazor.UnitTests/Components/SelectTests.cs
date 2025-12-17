@@ -877,7 +877,6 @@ public class SelectTests : BunitTest
         comp.Instance.ClearButtonClicked.Should().BeTrue();
     }
 
-
     /// <summary>
     /// Reselect an already selected value should not call SelectedValuesChanged event.
     /// </summary>
