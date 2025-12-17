@@ -436,7 +436,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Modal { get; set; }
+        public bool Modal { get; set; } = false;
 
         /// <summary>
         /// The location the popover opens, relative to its container.

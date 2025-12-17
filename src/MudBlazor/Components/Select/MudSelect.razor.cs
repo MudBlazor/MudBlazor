@@ -319,7 +319,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; }
+        public bool Modal { get; set; } = false;
 
         /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
