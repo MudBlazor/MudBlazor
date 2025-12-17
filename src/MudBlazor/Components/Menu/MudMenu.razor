@@ -108,7 +108,7 @@
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@RelativeWidth"
                 Fixed="@PopoverFixed"
-                OverflowBehavior="@OverflowBehavior"
+                OverflowBehavior="@GetOverflowBehavior()"
                 DropShadow="@DropShadow"
                 Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
         <CascadingValue Value="@this">
@@ -132,6 +132,6 @@
                     AutoClose
                     OnClosed="CloseMenuAsync"
                     LockScroll="LockScroll"
-                    Modal="@Modal" />
+                    Modal="@GetModal()" />
     }
 </div>

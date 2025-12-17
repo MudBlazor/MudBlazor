@@ -76,7 +76,7 @@
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
                             Fixed="@PopoverFixed"
-                            OverflowBehavior="@OverflowBehavior">
+                            OverflowBehavior="@GetOverflowBehavior()">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
@@ -147,4 +147,4 @@
             Visible="Open"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
-            Modal="@Modal" />
+            Modal="@GetModal()" />

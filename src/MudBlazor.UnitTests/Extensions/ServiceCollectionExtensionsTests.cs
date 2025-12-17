@@ -309,6 +309,48 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
+    public void AddMudPopoverService_ShouldConfigureOverflowBehaviorAndModalOverlay()
+    {
+        // Arrange
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddSingleton<IJSRuntime, MockJsRuntime>();
+
+        // Act
+        services.AddMudPopoverService(options =>
+        {
+            options.OverflowBehavior = OverflowBehavior.FlipNever;
+            options.ModalOverlay = true;
+        });
+        var serviceProvider = services.BuildServiceProvider();
+        var popoverService = serviceProvider.GetService<IPopoverService>();
+
+        // Assert
+        popoverService.Should().NotBeNull();
+        popoverService!.PopoverOptions.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+        popoverService.PopoverOptions.ModalOverlay.Should().BeTrue();
+    }
+
+    [Test]
+    public void AddMudPopoverService_ShouldHaveDefaultOverflowBehaviorAndModalOverlay()
+    {
+        // Arrange
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddSingleton<IJSRuntime, MockJsRuntime>();
+
+        // Act
+        services.AddMudPopoverService();
+        var serviceProvider = services.BuildServiceProvider();
+        var popoverService = serviceProvider.GetService<IPopoverService>();
+
+        // Assert
+        popoverService.Should().NotBeNull();
+        popoverService!.PopoverOptions.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
+        popoverService.PopoverOptions.ModalOverlay.Should().BeFalse();
+    }
+
+    [Test]
     public void AddMudBlazorScrollListener_ShouldRegisterServices()
     {
         // Arrange

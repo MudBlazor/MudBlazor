@@ -41,6 +41,9 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
+        [Inject]
+        private IPopoverService PopoverService { get; set; } = null!;
+
         public MudMenu()
         {
             using var registerScope = CreateRegisterScope();
@@ -292,11 +295,16 @@ namespace MudBlazor
         /// The behavior applied when there is not enough space for the dropdown popover to be visible.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen" />.
+        /// Defaults to <see cref="PopoverOptions.OverflowBehavior" />.
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+        public OverflowBehavior? OverflowBehavior { get; set; }
+
+        /// <summary>
+        /// Gets the resolved overflow behavior, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// </summary>
+        protected OverflowBehavior GetOverflowBehavior() => OverflowBehavior ?? PopoverService.PopoverOptions.OverflowBehavior;
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
@@ -354,11 +362,16 @@ namespace MudBlazor
         /// Prevents interaction with background elements while this menu is open.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <see cref="PopoverOptions.ModalOverlay" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
-        public bool Modal { get; set; } = false;
+        public bool? Modal { get; set; }
+
+        /// <summary>
+        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// </summary>
+        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>
         /// The <see cref="MudMenuItem" /> components within this menu.

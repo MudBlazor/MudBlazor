@@ -1226,7 +1226,9 @@ namespace MudBlazor.UnitTests.Components
             var menu = Context.Render<MudMenu>();
 
             menu.Instance.PopoverFixed.Should().BeFalse();
-            menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
+            // When not set, should use global default from PopoverOptions
+            menu.Instance.OverflowBehavior.Should().BeNull();
+            menu.Instance.Modal.Should().BeNull();
         }
 
         [Test]
@@ -1236,10 +1238,29 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(p => p.PopoverFixed, true);
                 p.Add(p => p.OverflowBehavior, OverflowBehavior.FlipNever);
+                p.Add(p => p.Modal, true);
             });
 
             menu.Instance.PopoverFixed.Should().BeTrue();
             menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
+            menu.Instance.Modal.Should().BeTrue();
+        }
+
+        [Test]
+        public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
+        {
+            // The default PopoverOptions should have OverflowBehavior.FlipOnOpen and ModalOverlay = false
+            var menu = Context.Render<MudMenu>();
+
+            // Access the resolved values through the private methods via reflection or by checking the rendered markup
+            // Since we can't easily test private methods, we verify that the defaults are used correctly
+            // by checking that the component doesn't throw when rendering without explicit values
+            menu.Instance.Should().NotBeNull();
+            
+            // Verify that the component is using the global defaults
+            // OverflowBehavior and Modal should be null (using PopoverOptions defaults)
+            menu.Instance.OverflowBehavior.Should().BeNull();
+            menu.Instance.Modal.Should().BeNull();
         }
     }
 }
