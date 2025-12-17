@@ -557,7 +557,7 @@ namespace MudBlazor
                 var optionText = GetItemString(value);
 
                 if (!_isCleared)
-                    await SetTextAsync(optionText, false);
+                    await SetTextAndUpdateValueAsync(optionText, false);
 
                 _debounceTimer?.Dispose();
 
@@ -577,12 +577,14 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
-            var text = GetItemString(Value);
+            await base.OnInitializedAsync();
+            var text = GetItemString(ReadValue());
             if (!string.IsNullOrWhiteSpace(text))
-                Text = text;
+            {
+                await SetTextAsync(text);
+            }
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -617,7 +619,7 @@ namespace MudBlazor
         {
             _debounceTimer?.Dispose();
 
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(ReadText))
                 await SetValueAsync(default(T), updateText);
             else if (Immediate)
                 await CoerceValueToTextAsync();
@@ -683,7 +685,7 @@ namespace MudBlazor
         /// </summary>
         public async Task OpenMenuAsync()
         {
-            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
             {
                 Open = false;
                 StateHasChanged();
@@ -706,9 +708,9 @@ namespace MudBlazor
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
-                searchingWhileSelected = !_isValueCoerced && !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
+                searchingWhileSelected = !_isValueCoerced && !Strict && ReadValue() != null && (ReadValue()!.ToString() == ReadText || (ToStringFunc != null && ToStringFunc(ReadValue()!) == ReadText));
                 _cancellationTokenSrc ??= new CancellationTokenSource();
-                var searchText = searchingWhileSelected ? string.Empty : Text;
+                var searchText = searchingWhileSelected ? string.Empty : ReadText;
                 var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
 
                 _currentSearchTask = searchTask;
@@ -736,10 +738,10 @@ namespace MudBlazor
             if (MaxItems.HasValue)
             {
                 // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
-                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(Value, default(T)))
+                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(ReadValue(), default(T)))
                 {
                     int maxItems = MaxItems.Value;
-                    int valueIndex = Array.IndexOf(searchedItems, Value);
+                    int valueIndex = Array.IndexOf(searchedItems, ReadValue());
 
                     // Center the selected item in the list if possible
                     int half = maxItems / 2;
@@ -772,7 +774,7 @@ namespace MudBlazor
             _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
-                _selectedListItemIndex = Array.IndexOf(_items, Value);
+                _selectedListItemIndex = Array.IndexOf(_items, ReadValue());
             }
             else
             {
@@ -812,7 +814,7 @@ namespace MudBlazor
                 _isCleared = true;
                 Open = false;
 
-                await SetTextAsync(string.Empty, updateValue: false);
+                await SetTextAndUpdateValueAsync(string.Empty, updateValue: false);
                 await SetValueAsync(default, updateText: false);
 
                 await _elementReference.ResetAsync();
@@ -1072,8 +1074,8 @@ namespace MudBlazor
                 _items = [];
             _open = true;
             await SetValueAsync(default, false);
-            await SetTextAsync(default, false);
-            _selectedListItemIndex = default;
+            await SetTextAndUpdateValueAsync(null, false);
+            _selectedListItemIndex = 0;
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
@@ -1126,16 +1128,16 @@ namespace MudBlazor
             if (!CoerceText)
                 return Task.CompletedTask;
 
-            if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
+            if (ResetValueOnEmptyText && string.IsNullOrEmpty(ReadText))
                 return Task.CompletedTask;
 
             _debounceTimer?.Dispose();
 
-            var text = Value == null ? null : GetItemString(Value);
+            var text = ReadValue() == null ? null : GetItemString(ReadValue());
 
             // Don't update the value to prevent the popover from opening again after coercion
-            if (text != Text)
-                return SetTextAsync(text, updateValue: false);
+            if (text != ReadText)
+                return SetTextAndUpdateValueAsync(text, updateValue: false);
 
             return Task.CompletedTask;
         }
@@ -1147,7 +1149,7 @@ namespace MudBlazor
 
             _debounceTimer?.Dispose();
 
-            var value = ConvertGet(Text);
+            var value = ConvertGet(ReadText);
             await SetValueAsync(value, updateText: false);
 
             // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
@@ -1224,12 +1226,10 @@ namespace MudBlazor
 
         private async Task OnTextChangedAsync(string? text)
         {
-            await base.TextChanged.InvokeAsync(text);
-
             if (text == null)
                 return;
 
-            await SetTextAsync(text, true);
+            await SetTextAndUpdateValueAsync(text, true);
         }
 
         private async Task ListItemOnClickAsync(T item)

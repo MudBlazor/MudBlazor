@@ -24,7 +24,7 @@
                   @attributes="UserAttributes"
                   id="@InputElementId"
                   type="@InputType.ToDescriptionString()"
-                  value="@Text"
+                  value="@ReadText"
                   placeholder="@Placeholder"
                   disabled=@GetDisabledState()
                   readonly="@GetReadOnlyState()"
@@ -38,7 +38,7 @@
                   aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
-            @Text
+            @ReadText
         </textarea>
     }
     else
@@ -48,7 +48,7 @@
                @attributes="UserAttributes"
                id="@InputElementId"
                type="@InputType.ToDescriptionString()"
-               value="@Text"
+               value="@ReadText"
                placeholder="@Placeholder"
                disabled=@GetDisabledState()
                readonly="@GetReadOnlyState()"

@@ -140,7 +140,7 @@ namespace MudBlazor
             if (TriState && typeof(T) == typeof(bool?))
             {
                 // The cycle is forced with the following steps: true, false, indeterminate, true, false, indeterminate...
-                var boolValue = (bool?)(object?)_value;
+                var boolValue = (bool?)(object?)ReadValue();
                 if (!boolValue.HasValue)
                 {
                     return SetBoolValueAsync(true, true);

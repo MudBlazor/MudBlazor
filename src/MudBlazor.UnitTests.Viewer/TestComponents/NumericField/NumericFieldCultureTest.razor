@@ -1,7 +1,7 @@
 ﻿@using System.Globalization
 
-<MudText>@FieldImmediate.Text</MudText>
-<MudText>@FieldNotImmediate.Text</MudText>
+<MudText>@FieldImmediate.ReadText</MudText>
+<MudText>@FieldNotImmediate.ReadText</MudText>
 
 <MudNumericField @ref="FieldImmediate" T="double?" @bind-Value="_value" Immediate Label="English Immediate" Format="N2" Culture="_english"/>
 <MudNumericField @ref="FieldNotImmediate" T="double?" @bind-Value="_value2" Label="German" Format="N2" Culture="_german"/>

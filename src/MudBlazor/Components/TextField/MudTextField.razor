@@ -36,8 +36,8 @@
                               Variant="@Variant"
                               Typo="@Typo"
                               TextUpdateSuppression="@TextUpdateSuppression"
-                              Value="@Text"
-                              ValueChanged="(s) => SetTextAsync(s)"
+                              Value="@ReadText"
+                              ValueChanged="(s) => SetTextAndUpdateValueAsync(s)"
                               Placeholder="@Placeholder"
                               Disabled=@GetDisabledState()
                               Underline="@Underline"
@@ -84,7 +84,7 @@
                              Variant="@Variant"
                              Typo="Typo"
                              TextUpdateSuppression="@TextUpdateSuppression"
-                             Value="@Text"
+                             Value="@ReadText"
                              ValueChanged="OnMaskedValueChanged"
                              Placeholder="@Placeholder"
                              Disabled=@GetDisabledState()
