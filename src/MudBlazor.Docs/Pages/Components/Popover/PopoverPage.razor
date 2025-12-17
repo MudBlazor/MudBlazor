@@ -86,11 +86,11 @@
                     Some components combine <MudLink Href="/components/popover">MudPopover</MudLink> with <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage item lists. These can be customized using dropdown settings, which sets default appearance and behavior options:
                     <ul class="ml-2">
                         <li><CodeInline>PopoverFixed = false</CodeInline> -- Popover does not remain fixed during scrolling.</li>
-                        <li><CodeInline>OverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior</CodeInline> -- Adjusts popover behavior when space is limited.</li>
+                        <li><CodeInline>OverflowBehavior = OverflowBehavior.FlipOnOpen</CodeInline> -- Adjusts popover behavior when space is limited.</li>
                         <ul class="ml-4">
                             <li>
                                 <MudText Typo="Typo.caption">
-                                    * Defaults apply from <CodeInline>MudGlobal.PopoverDefaults.OverflowBehavior</CodeInline>, which is FlipOnOpen unless modified.
+                                    * The default value is <CodeInline>OverflowBehavior.FlipOnOpen</CodeInline>. This can be configured via <CodeInline>PopoverOptions.OverflowBehavior</CodeInline> in service configuration.
                                 </MudText>
                             </li>
                         </ul>

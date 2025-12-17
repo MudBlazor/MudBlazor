@@ -249,11 +249,11 @@ namespace MudBlazor
         /// The behavior applied when there is not enough space for the dropdown popover to be visible.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.PopoverDefaults.OverflowBehavior" />.
+        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen" />.
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public OverflowBehavior OverflowBehavior { get; set; } = MudGlobal.PopoverDefaults.OverflowBehavior;
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
@@ -315,11 +315,11 @@ namespace MudBlazor
         /// Prevents interaction with background elements while this list is open.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
+        public bool Modal { get; set; }
 
         /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
