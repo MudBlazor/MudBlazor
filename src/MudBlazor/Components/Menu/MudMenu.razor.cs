@@ -304,6 +304,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets the resolved overflow behavior, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
         /// </summary>
+        /// <remarks>
+        /// TODO: Once .NET 8 support is dropped, consider using constructor injection (available in .NET 9+) to set defaults directly.
+        /// </remarks>
         protected OverflowBehavior GetOverflowBehavior() => OverflowBehavior ?? PopoverService.PopoverOptions.OverflowBehavior;
 
         /// <summary>
@@ -371,6 +374,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
         /// </summary>
+        /// <remarks>
+        /// TODO: Once .NET 8 support is dropped, consider using constructor injection (available in .NET 9+) to set defaults directly.
+        /// </remarks>
         protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>

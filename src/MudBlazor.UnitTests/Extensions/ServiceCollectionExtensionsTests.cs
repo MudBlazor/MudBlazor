@@ -295,6 +295,8 @@ public class ServiceCollectionExtensionsTests
             options.OverflowPadding = 0;
             options.ThrowOnDuplicateProvider = false;
             options.Mode = PopoverMode.Default;
+            options.ModalOverlay = true;
+            options.OverflowBehavior = OverflowBehavior.FlipNever;
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -306,48 +308,6 @@ public class ServiceCollectionExtensionsTests
         popoverService.Should().NotBeNull();
         expectedOptions.Should().NotBeNull();
         actualOptions.Should().BeSameAs(expectedOptions);
-    }
-
-    [Test]
-    public void AddMudPopoverService_ShouldConfigureOverflowBehaviorAndModalOverlay()
-    {
-        // Arrange
-        var services = new ServiceCollection()
-            .AddLogging()
-            .AddSingleton<IJSRuntime, MockJsRuntime>();
-
-        // Act
-        services.AddMudPopoverService(options =>
-        {
-            options.OverflowBehavior = OverflowBehavior.FlipNever;
-            options.ModalOverlay = true;
-        });
-        var serviceProvider = services.BuildServiceProvider();
-        var popoverService = serviceProvider.GetService<IPopoverService>();
-
-        // Assert
-        popoverService.Should().NotBeNull();
-        popoverService!.PopoverOptions.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
-        popoverService.PopoverOptions.ModalOverlay.Should().BeTrue();
-    }
-
-    [Test]
-    public void AddMudPopoverService_ShouldHaveDefaultOverflowBehaviorAndModalOverlay()
-    {
-        // Arrange
-        var services = new ServiceCollection()
-            .AddLogging()
-            .AddSingleton<IJSRuntime, MockJsRuntime>();
-
-        // Act
-        services.AddMudPopoverService();
-        var serviceProvider = services.BuildServiceProvider();
-        var popoverService = serviceProvider.GetService<IPopoverService>();
-
-        // Assert
-        popoverService.Should().NotBeNull();
-        popoverService!.PopoverOptions.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
-        popoverService.PopoverOptions.ModalOverlay.Should().BeFalse();
     }
 
     [Test]
@@ -567,6 +527,8 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.OverflowPadding = 12;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
             options.PopoverOptions.Mode = PopoverMode.Default;
+            options.PopoverOptions.ModalOverlay = true;
+            options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
 
             expectedOptions = options;
         });
@@ -631,6 +593,8 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.OverflowPadding.Should().Be(expectedOptions.PopoverOptions.OverflowPadding);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
+        actualPopoverOptions.ModalOverlay.Should().Be(expectedOptions.PopoverOptions.ModalOverlay);
+        actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);
