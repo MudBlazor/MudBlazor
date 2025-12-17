@@ -41,21 +41,17 @@
       right: auto;
       width: var(--mud-drawer-width, var(--mud-drawer-width-left));
 
+      &:not(.mud-drawer--initial) {
+        transition: left 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         left: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-left 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
 
       &.mud-drawer--closed {
         box-shadow: none;
         left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-left 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
     }
 
@@ -64,21 +60,17 @@
       left: auto;
       width: var(--mud-drawer-width, var(--mud-drawer-width-right));
 
+      &:not(.mud-drawer--initial) {
+        transition: right 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         right: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-right 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
 
       &.mud-drawer--closed {
         box-shadow: none;
         right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-right 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
     }
 
@@ -87,21 +79,17 @@
       top: auto;
       height: var(--mud-drawer-height, var(--mud-drawer-height-bottom));
 
+      &:not(.mud-drawer--initial) {
+        transition: bottom 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         bottom: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-bottom 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
 
       &.mud-drawer--closed {
         box-shadow: none;
         bottom: calc(-1 * var(--mud-drawer-height, var(--mud-drawer-height-bottom)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-bottom 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
     }
 
@@ -110,21 +98,17 @@
       bottom: auto;
       height: var(--mud-drawer-height, var(--mud-drawer-height-top));
 
+      &:not(.mud-drawer--initial) {
+        transition: top 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         top: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-top 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
 
       &.mud-drawer--closed {
         box-shadow: none;
         top: calc(-1 * var(--mud-drawer-height, var(--mud-drawer-height-top)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-top 225ms cubic-bezier(0, 0, 0.2, 1);
-        }
       }
     }
   }
@@ -171,20 +155,16 @@
       height: 100%;
       width: var(--mud-drawer-width, var(--mud-drawer-width-left));
 
+      &:not(.mud-drawer--initial) {
+        transition: left 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         left: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-left 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
-        }
       }
 
       &.mud-drawer--closed {
         left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-left 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
-        }
       }
     }
 
@@ -194,20 +174,16 @@
       height: 100%;
       width: var(--mud-drawer-width, var(--mud-drawer-width-right));
 
+      &:not(.mud-drawer--initial) {
+        transition: right 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         right: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-right 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
-        }
       }
 
       &.mud-drawer--closed {
         right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-right 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
-        }
       }
     }
 
@@ -216,20 +192,16 @@
       top: auto;
       width: 100%;
 
+      &:not(.mud-drawer--initial) {
+        transition: bottom 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         bottom: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-bottom 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
-        }
       }
 
       &.mud-drawer--closed {
         bottom: calc(-1 * var(--mud-drawer-height, var(--mud-drawer-height-bottom)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-bottom 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
-        }
       }
     }
 
@@ -238,20 +210,16 @@
       bottom: auto;
       width: 100%;
 
+      &:not(.mud-drawer--initial) {
+        transition: top 225ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
       &.mud-drawer--open {
         top: 0;
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-in-top 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
-        }
       }
 
       &.mud-drawer--closed {
         top: calc(-1 * var(--mud-drawer-height, var(--mud-drawer-height-top)));
-
-        &:not(.mud-drawer--initial) {
-          animation: mud-drawer-slide-out-top 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
-        }
       }
     }
   }
@@ -392,52 +360,4 @@
   }
 }
 
-/*#region keyframes*/
-@keyframes mud-drawer-slide-in-left {
-  from {
-    left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
-  }
-}
 
-@keyframes mud-drawer-slide-out-left {
-  from {
-    left: 0;
-  }
-}
-
-@keyframes mud-drawer-slide-in-right {
-  from {
-    right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
-  }
-}
-
-@keyframes mud-drawer-slide-out-right {
-  from {
-    right: 0;
-  }
-}
-
-@keyframes mud-drawer-slide-in-bottom {
-  from {
-    bottom: calc(-1 * var(--mud-drawer-height, var(--mud-drawer-height-bottom)));
-  }
-}
-
-@keyframes mud-drawer-slide-out-bottom {
-  from {
-    bottom: 0;
-  }
-}
-
-@keyframes mud-drawer-slide-in-top {
-  from {
-    top: calc(-1 * var(--mud-drawer-height, var(--mud-drawer-height-top)));
-  }
-}
-
-@keyframes mud-drawer-slide-out-top {
-  from {
-    top: 0;
-  }
-}
-/*#endregion*/
