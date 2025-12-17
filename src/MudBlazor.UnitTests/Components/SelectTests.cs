@@ -824,8 +824,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
 
             // Initial state – no clear button
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
             // Open select
             await comp.InvokeAsync(async () =>
@@ -851,12 +850,10 @@ namespace MudBlazor.UnitTests.Components
                     .ClassList.Should().NotContain("mud-popover-open"));
 
             // Value is set
-            await comp.WaitForAssertionAsync(() =>
-                select.Instance.ReadValue().Should().Be("2"));
+            select.Instance.ReadValue().Should().Be("2");
 
             // Clear button appears
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll(".mud-input-clear-button").Should().ContainSingle());
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
 
             // Click clear button
             await comp.InvokeAsync(async () =>
@@ -870,8 +867,7 @@ namespace MudBlazor.UnitTests.Components
                 select.Instance.ReadValue().Should().BeNullOrEmpty());
 
             // Clear button removed
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
             // Clear handler invoked
             comp.Instance.ClearButtonClicked.Should().BeTrue();
