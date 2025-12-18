@@ -170,7 +170,7 @@ internal sealed class DebounceDispatcher : IDisposable
         }
         catch (TaskCanceledException)
         {
-            // Suppress cancellation if it was due to a new debounce call
+            // Re-throw cancellation from internal debounce logic (new call cancelled this one)
             throw;
         }
     }
@@ -221,6 +221,7 @@ internal sealed class DebounceDispatcher : IDisposable
     /// </summary>
     /// <remarks>
     /// This method cancels any pending debounced action and prevents further use of the dispatcher.
+    /// Cancellation is performed synchronously as this is a synchronous Dispose method.
     /// </remarks>
     public void Dispose()
     {
@@ -233,6 +234,7 @@ internal sealed class DebounceDispatcher : IDisposable
             }
 
             _disposed = true;
+            // Use synchronous Cancel() in Dispose since this is a synchronous method
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
