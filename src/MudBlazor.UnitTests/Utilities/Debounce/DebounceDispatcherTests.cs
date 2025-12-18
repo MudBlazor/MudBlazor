@@ -229,7 +229,7 @@ public class DebounceDispatcherTests
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100);
         var executionOrder = new List<int>();
-        
+
         Func<Task> CreateAction(int id) => () =>
         {
             executionOrder.Add(id);
@@ -279,7 +279,7 @@ public class DebounceDispatcherTests
             .ToArray();
 
         await Task.WhenAll(tasks);
-        
+
         // Give time for last debounce to complete
         await Task.Delay(100);
 
@@ -326,7 +326,7 @@ public class DebounceDispatcherTests
         // Act
         var firstTask = debounceDispatcher.DebounceAsync(LongRunningAction);
         await firstStarted.Task; // Wait for first action to start
-        
+
         // Allow first to complete
         firstCanComplete.SetResult(true);
         await firstTask;
@@ -346,7 +346,7 @@ public class DebounceDispatcherTests
         using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
         var executionCount = 0;
         var executionTimes = new List<DateTime>();
-        
+
         Task TrackingAction()
         {
             executionTimes.Add(DateTime.UtcNow);
@@ -357,7 +357,7 @@ public class DebounceDispatcherTests
         // Act
         var startTime = DateTime.UtcNow;
         await debounceDispatcher.DebounceAsync(TrackingAction);
-        
+
         // Assert - First call should execute immediately
         executionCount.Should().Be(1);
         (executionTimes[0] - startTime).TotalMilliseconds.Should().BeLessThan(50);
@@ -369,7 +369,7 @@ public class DebounceDispatcherTests
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
         var executionCount = 0;
-        
+
         Task TrackingAction()
         {
             Interlocked.Increment(ref executionCount);
@@ -388,10 +388,10 @@ public class DebounceDispatcherTests
         // First two should be cancelled
         Assert.ThrowsAsync<TaskCanceledException>(() => task2);
         Assert.ThrowsAsync<TaskCanceledException>(() => task3);
-        
+
         // Last one should execute after interval
         await task4;
-        
+
         // Assert - Should have executed twice (first immediate, last after debounce)
         executionCount.Should().Be(2);
     }
@@ -402,7 +402,7 @@ public class DebounceDispatcherTests
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
         var executionCount = 0;
-        
+
         Task TrackingAction()
         {
             Interlocked.Increment(ref executionCount);
@@ -418,7 +418,7 @@ public class DebounceDispatcherTests
 
         // Next call should execute immediately again
         await debounceDispatcher.DebounceAsync(TrackingAction);
-        
+
         // Assert
         executionCount.Should().Be(2);
     }

@@ -113,7 +113,7 @@ internal sealed class ThrottleDispatcher : IDisposable
             // Note: action() is called synchronously; it returns a Task immediately
             // The actual async work happens when the task is awaited
             _currentTask = action();
-            
+
             return _currentTask;
         }
     }

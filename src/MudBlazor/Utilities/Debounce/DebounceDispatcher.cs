@@ -106,7 +106,7 @@ internal sealed class DebounceDispatcher : IDisposable
             {
                 var now = DateTime.UtcNow;
                 var timeSinceLastExecution = now - _lastExecutionTime;
-                
+
                 // Execute immediately if enough time has passed since last execution
                 if (timeSinceLastExecution >= _interval)
                 {

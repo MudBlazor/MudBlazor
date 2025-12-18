@@ -105,7 +105,7 @@ public class ThrottleDispatcherTests
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);
         var counter = 0;
-        
+
         Task ThrowingAction()
         {
             Interlocked.Increment(ref counter);
@@ -265,9 +265,9 @@ public class ThrottleDispatcherTests
         // Act
         var task = dispatcher.ThrottleAsync(LongRunningAction);
         actionStarted.Task.Wait(); // Wait for action to start
-        
+
         dispatcher.Dispose(); // Dispose while action is running
-        
+
         actionCanComplete.SetResult(true); // Allow action to complete
         task.Wait();
 
