@@ -475,9 +475,21 @@ namespace MudBlazor
             _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
-        private Task OnInputValueChanged(string text)
+        private async Task OnInputValueChanged(string text)
         {
-            return SetTextAndUpdateValueAsync(text);
+            var previousValue = ReadValue();
+            await SetTextAndUpdateValueAsync(text);
+            
+            // If the value changed (meaning the text was successfully converted) and we're not using custom formatting,
+            // update the text to show the normalized value.
+            // This removes leading zeros and applies proper formatting while typing.
+            // Don't do this if:
+            // - The value hasn't changed (e.g., during debouncing when value update is delayed)
+            // - Custom formatting is in use (currency, patterns, etc.) - those are handled on blur
+            if (!IsFormatted && !EqualityComparer<T?>.Default.Equals(previousValue, ReadValue()))
+            {
+                await UpdateTextPropertyAsync(false);
+            }
         }
 
         //avoids the format to use scientific notation for large or small number in floating points types, while covering all options
