@@ -634,5 +634,31 @@ namespace MudBlazor.UnitTests.Components
             var styles = asideDrawer.GetStyle().ToList();
             styles.Single(a => a.Name == "--mud-drawer-height").Value.Should().Be(drawerHeight);
         }
+
+        /// <summary>
+        /// Test for issue #3378: Verifies that the mud-drawer--initial class is removed after first interaction.
+        /// This class is used to skip the initial CSS transition when the drawer first renders.
+        /// </summary>
+        [Test]
+        public void DrawerInTabs_ShouldRemoveInitialClassAfterFirstInteraction()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerInTabsTest>();
+
+            // Drawer should be closed initially
+            comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
+
+            // Open the drawer
+            comp.Find("#toggle-drawer-button").Click();
+            comp.FindAll("aside.mud-drawer--open").Count.Should().Be(1);
+
+            // Close the drawer
+            comp.Find("#toggle-drawer-button").Click();
+            comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
+
+            // Verify the drawer loses the initial class after first interaction
+            // This ensures the CSS transition will be applied (not skipped)
+            comp.FindAll("aside.mud-drawer--initial").Count.Should().Be(0);
+        }
     }
 }
