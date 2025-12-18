@@ -1,12 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+#nullable enable
 namespace MudBlazor
 {
     [ExcludeFromCodeCoverage]
     internal static class Num
     {
-        public static T To<T>(double d)
+        public static T? To<T>(double? d)
         {
+            if (d == null)
+                return default;
             if (typeof(T) == typeof(sbyte) && d >= sbyte.MinValue && sbyte.MaxValue >= d)
                 return (T)(object)Convert.ToSByte(d);
             if (typeof(T) == typeof(byte) && d >= byte.MinValue && byte.MaxValue >= d)
@@ -53,8 +56,10 @@ namespace MudBlazor
                 return (T)(object)Convert.ToDecimal(d);
             return default;
         }
-        public static double From<T>(T v)
+        public static double? From<T>(T? v)
         {
+            if (v == null)
+                return default;
             if (typeof(T) == typeof(sbyte))
                 return Convert.ToDouble((sbyte)(object)v);
             if (typeof(T) == typeof(byte))

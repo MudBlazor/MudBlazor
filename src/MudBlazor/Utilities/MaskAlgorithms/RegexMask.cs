@@ -2,10 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// An input mask consisting of a regular expression.
 /// </summary>
@@ -29,14 +31,14 @@ public class RegexMask : BaseMask
     /// The regular expression must be able to match partial inputs, must begin with <c>^</c>, and must end with <c>$</c> to work properly (e.g. <c>^[0-9]+$</c>).<br />
     /// Consider using <see cref="BlockMask"/> to generate the regular expression automatically.
     /// </remarks>
-    public RegexMask(string regex, string mask = null)
+    public RegexMask(string regex, string? mask = null)
     {
         _regexPattern = regex;
         Mask = mask ?? regex;
     }
 
     protected string _regexPattern;
-    protected Regex _regex;
+    protected Regex? _regex;
 
     /// <summary>
     /// The characters which are jumped over when adding an input character.
@@ -44,7 +46,7 @@ public class RegexMask : BaseMask
     /// <remarks>
     /// Defaults to <c>null</c>.  For example: for a delimiter of <c>.</c>, a mask of <c>^[0-9].[0-9].[0-9]$</c>, and characters typed of <c>012</c>, the resulting text would be <c>0.1.2</c>
     /// </remarks>
-    public string Delimiters { get; protected set; }
+    public string? Delimiters { get; protected set; }
 
     /// <inheritdoc />
     protected override void InitInternals()
@@ -64,7 +66,7 @@ public class RegexMask : BaseMask
     }
 
     /// <inheritdoc />
-    public override void Insert(string input)
+    public override void Insert(string? input)
     {
         Init();
         DeleteSelection(align: false);
@@ -146,6 +148,9 @@ public class RegexMask : BaseMask
     /// <returns>The text input with any delimiters and placeholders applied.</returns>
     protected virtual string AlignAgainstMask(string text)
     {
+        Debug.Assert(_regex is not null);
+        Debug.Assert(Delimiters is not null);
+        
         text ??= "";
         var alignedText = "";
         var textIndex = 0; // index in text

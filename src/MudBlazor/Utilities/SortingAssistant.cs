@@ -5,6 +5,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
+#nullable enable
 namespace MudBlazor.Utilities
 {
     public static class SortingAssistant
@@ -22,9 +23,9 @@ namespace MudBlazor.Utilities
             var item = dropInfo.Item;
 
             var index = 0;
-            foreach (var _item in items.OrderBy(x => (int)property.GetValue(x)))
+            foreach (var _item in items.OrderBy(x => (int)property.GetValue(x)!))
             {
-                if (_item.Equals(item))
+                if (_item!.Equals(item))
                 {
                     property.SetValue(item, newIndex);
                 }

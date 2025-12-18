@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -12,17 +13,17 @@ namespace MudBlazor
         /// <summary>
         /// The characters which define the accepted input.
         /// </summary>
-        string Mask { get; }
+        string? Mask { get; }
 
         /// <summary>
         /// The current text displayed in the input, including delimiter and placeholder characters.
         /// </summary>
-        string Text { get; }
+        string? Text { get; }
 
         /// <summary>
         /// The current text in the input, excluding delimiter or placeholder characters.
         /// </summary>
-        string GetCleanText() => Text;
+        string? GetCleanText() => Text;
 
         /// <summary>
         /// The current cursor position.
@@ -65,7 +66,7 @@ namespace MudBlazor
         /// Overwrites the text without losing the cursor position.
         /// </summary>
         /// <param name="text">The text to set.</param>
-        void SetText(string text);
+        void SetText(string? text);
 
         /// <summary>
         /// Copies the mask and mask characters from the specified mask.

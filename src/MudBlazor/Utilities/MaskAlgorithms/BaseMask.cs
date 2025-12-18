@@ -4,22 +4,23 @@
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// A base class for designing input masks for the <see cref="MudMask"/>, <see cref="MudTextField{T}"/>, and <see cref="MudPicker{T}"/> components.
 /// </summary>
 public abstract class BaseMask : IMask
 {
     protected bool _initialized;
-    protected Dictionary<char, MaskChar> _maskDict;
+    protected Dictionary<char, MaskChar> _maskDict = [];
 
-    protected MaskChar[] _maskChars = new MaskChar[]
-    {
-        MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
-    };
+    protected MaskChar[] _maskChars =
+    [
+        MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*')
+    ];
 
     // per definition (unless defined otherwise in subclasses) delimiters are chars
     // in the mask which do not match any MaskChar
-    protected HashSet<char> _delimiters;
+    protected HashSet<char> _delimiters = [];
 
     /// <summary>
     /// Initialize all internal data structures. Can be called multiple times,
@@ -47,13 +48,13 @@ public abstract class BaseMask : IMask
     }
 
     /// <inheritdoc />
-    public string Mask { get; protected set; }
+    public string? Mask { get; protected set; }
 
     /// <inheritdoc />
-    public string Text { get; protected set; }
+    public string? Text { get; protected set; }
 
     /// <inheritdoc />
-    public virtual string GetCleanText() => Text;
+    public virtual string? GetCleanText() => Text;
 
     /// <inheritdoc />
     public int CaretPos { get; set; }
@@ -84,7 +85,7 @@ public abstract class BaseMask : IMask
     }
 
     /// <inheritdoc />
-    public abstract void Insert(string input);
+    public abstract void Insert(string? input);
 
     /// <inheritdoc />
     public abstract void Delete();
@@ -102,7 +103,7 @@ public abstract class BaseMask : IMask
     }
 
     /// <inheritdoc />
-    public void SetText(string text)
+    public void SetText(string? text)
     {
         Clear();
         Insert(text);
@@ -182,8 +183,9 @@ public abstract class BaseMask : IMask
     /// <param name="text">The text to split.</param>
     /// <param name="pos">The index of the string to split.</param>
     /// <returns>Two strings split at the specified position.</returns>
-    internal static (string, string) SplitAt(string text, int pos)
+    internal static (string, string) SplitAt(string? text, int pos)
     {
+        text ??= "";
         if (pos <= 0)
             return ("", text);
         if (pos >= text.Length)
@@ -197,7 +199,7 @@ public abstract class BaseMask : IMask
     /// <remarks>
     /// If <see cref="Text"/> is empty, the position becomes <c>0</c>.  If the position was beyond the length of <see cref="Text"/>, the position is adjusted to the end.  Otherwise, no change is made.
     /// </remarks>
-    protected static int ConsolidateCaret(string text, int caretPos)
+    protected static int ConsolidateCaret(string? text, int caretPos)
     {
         if (string.IsNullOrEmpty(text) || caretPos < 0)
             return 0;
@@ -225,11 +227,11 @@ public abstract class BaseMask : IMask
         }
         if (sel.Item1 < 0)
             sel.Item1 = 0;
-        if (sel.Item2 >= Text.Length)
+        if (Text is not null && sel.Item2 >= Text.Length)
             sel.Item2 = Text.Length;
     }
 
-    internal static (string, string, string) SplitSelection(string text, (int, int) selection)
+    internal static (string, string, string) SplitSelection(string? text, (int, int) selection)
     {
         var start = ConsolidateCaret(text, selection.Item1);
         var end = ConsolidateCaret(text, selection.Item2);

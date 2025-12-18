@@ -2,10 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// A simple input mask consisting of characters.
 /// </summary>
@@ -44,10 +46,10 @@ public class PatternMask : BaseMask
     /// <remarks>
     /// Defaults to <c>null</c>.  For example: a transformation of <c>Char.ToUpper(c)</c> would convert all characters to upper-case.
     /// </remarks>
-    public Func<char, char> Transformation { get; set; }
+    public Func<char, char>? Transformation { get; set; }
 
     /// <inheritdoc />
-    public override void Insert(string input)
+    public override void Insert(string? input)
     {
         Init();
         DeleteSelection(align: false);
@@ -166,7 +168,7 @@ public class PatternMask : BaseMask
     /// <param name="text">The text to apply to the mask.</param>
     /// <param name="maskOffset">Defaults to <c>0</c>.  The index of the mask to begin applying characters.</param>
     /// <returns>The text input with any delimiters and placeholders applied.</returns>
-    protected virtual string AlignAgainstMask(string text, int maskOffset = 0)
+    protected virtual string AlignAgainstMask(string? text, int maskOffset = 0)
     {
         text ??= "";
         var mask = Mask ?? "";
@@ -239,9 +241,10 @@ public class PatternMask : BaseMask
     /// When <see cref="CleanDelimiters"/> is <c>true</c>, any undefined characters will be removed.  
     /// For example: for a mask of <c>0000 0000 0000 0000</c>, the spaces would be removed if they were an undefined character.
     /// </remarks>
-    public override string GetCleanText()
+    public override string? GetCleanText()
     {
         Init();
+        Debug.Assert(Mask is not null);
         var cleanText = Text;
         if (string.IsNullOrEmpty(cleanText))
             return cleanText;

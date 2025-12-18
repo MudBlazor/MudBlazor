@@ -4,13 +4,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 
+#nullable enable
 namespace MudBlazor.Utilities
 {
     public class NaturalComparer : IComparer<object>
     {
-        public int Compare(object x, object y)
+        public int Compare(object? x, object? y)
         {
             // Check if the objects are null
             if (x == null && y == null)
@@ -37,7 +39,7 @@ namespace MudBlazor.Utilities
             }
             else
             {
-                return x.ToString().CompareTo(y.ToString());
+                return x.ToString()!.CompareTo(y.ToString());
             }
 
         }

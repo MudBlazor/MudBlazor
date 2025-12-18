@@ -4,11 +4,12 @@
 
 using System;
 
+#nullable enable
 namespace MudBlazor.Utilities
 {
     public class ValueBuilder
     {
-        private string stringBuffer;
+        private string? stringBuffer;
 
         public bool HasValue => !string.IsNullOrWhiteSpace(stringBuffer);
         /// <summary>

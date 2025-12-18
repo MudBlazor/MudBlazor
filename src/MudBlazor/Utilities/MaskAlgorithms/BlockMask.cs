@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// A set of contiguous characters used to build a <see cref="BlockMask"/>.
 /// </summary>
@@ -39,7 +40,7 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(params Block[] blocks) : base(null)
+    public BlockMask(params Block[] blocks) : base(null!)
     {
         if (blocks.Length == 0)
             throw new ArgumentException("supply at least one block", nameof(blocks));

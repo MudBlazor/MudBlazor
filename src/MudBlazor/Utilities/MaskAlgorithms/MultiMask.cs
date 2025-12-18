@@ -4,6 +4,7 @@
 
 using System.Text.RegularExpressions;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -15,7 +16,7 @@ namespace MudBlazor
     /// <remarks>
     /// Example: to use this mask when an input starts with <c>4</c>, use an expression of <c>^4</c>.
     /// </remarks>
-    public record struct MaskOption(string Id, string Mask, string Regex);
+    public record struct MaskOption(string Id, string Mask, string? Regex);
 
     /// <summary>
     /// A mask which can change its pattern based on partial input.
@@ -39,19 +40,19 @@ namespace MudBlazor
         /// A multi-mask consists of multiple <see cref="MaskOption"/> values which define when a particular mask is used.<br />
         /// For example: a credit card number can be from any card provider, yet each provider has their own numbering rules.  A multi-mask would allow each provider's rules to be used together in a single mask.
         /// </remarks>
-        public MultiMask(string defaultMask, params MaskOption[] options) : base(defaultMask)
+        public MultiMask(string defaultMask, params MaskOption[]? options) : base(defaultMask)
         {
             _defaultMask = defaultMask;
-            _options = options ?? new MaskOption[0];
+            _options = options ?? [];
         }
 
         private string _defaultMask;
-        private MaskOption[] _options;
+        private MaskOption[]? _options;
 
         /// <summary>
         /// Occurs when <see cref="DetectedOption" /> has changed.
         /// </summary>
-        public Action<MaskOption?, string> OptionDetected { get; set; }
+        public Action<MaskOption?, string?>? OptionDetected { get; set; }
 
         /// <summary>
         /// The currently used mask.
@@ -62,7 +63,7 @@ namespace MudBlazor
         public MaskOption? DetectedOption { get; private set; } = null;
 
         /// <inheritdoc />
-        public override void Insert(string input)
+        public override void Insert(string? input)
         {
             DoCheckAndRedo(() => base.Insert(input));
         }
@@ -115,11 +116,17 @@ namespace MudBlazor
         protected virtual MaskOption? CheckOption()
         {
             var text = Text ?? "";
+            if (_options == null)
+            {
+                return null;
+            }
+
             foreach (var option in _options)
             {
                 if (option.Regex != null && Regex.IsMatch(text, option.Regex))
                     return option;
             }
+
             return null;
         }
 
@@ -131,7 +138,7 @@ namespace MudBlazor
                 return;
             // no need to re-initialize, just update the options
             _defaultMask = o._defaultMask;
-            _options = o._options ?? new MaskOption[0];
+            _options = o._options ?? [];
             OptionDetected = o.OptionDetected;
             Refresh();
         }

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// An input pattern mask which accepts date values.
 /// </summary>
@@ -147,6 +148,11 @@ public partial class DateMask : PatternMask
     /// </remarks>
     protected override string ModifyFinalText(string text)
     {
+        if (Mask is null)
+        {
+            return text;
+        }
+        
         try
         {
             var yyyy = new string(_y, 4);
@@ -220,7 +226,7 @@ public partial class DateMask : PatternMask
         return DateTime.DaysInMonth(year, Math.Min(12, Math.Max(1, month)));
     }
 
-    private (string, int) Extract(string maskPart, string mask, int maskOffset, string alignedText)
+    private (string?, int) Extract(string maskPart, string mask, int maskOffset, string alignedText)
     {
         var maskIndex = mask.IndexOf(maskPart);
         var index = maskIndex - maskOffset;
