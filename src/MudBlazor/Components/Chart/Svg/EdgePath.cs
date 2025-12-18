@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 namespace MudBlazor;
+#nullable enable
 
 /// <summary>
 /// Represents the path of a link (edge) between two nodes in a Sankey chart.
@@ -20,7 +21,7 @@ public sealed class EdgePath : SvgPath
     /// The name of the edge, typically corresponding to the 
     /// label or key identifying the link between the source and target nodes.
     /// </summary>
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// The source node of this edge.
@@ -29,7 +30,7 @@ public sealed class EdgePath : SvgPath
     /// Represents the originating <see cref="NodeRect"/> (visual node rectangle)
     /// from which the flow begins in the Sankey diagram.
     /// </remarks>
-    public NodeRect Source { get; set; }
+    public required NodeRect Source { get; set; }
 
     /// <summary>
     /// The target node of this edge.
@@ -38,7 +39,7 @@ public sealed class EdgePath : SvgPath
     /// Represents the destination <see cref="NodeRect"/> (visual node rectangle)
     /// to which the flow connects in the Sankey diagram.
     /// </remarks>
-    public NodeRect Target { get; set; }
+    public required NodeRect Target { get; set; }
 }
 
 
