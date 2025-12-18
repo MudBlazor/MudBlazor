@@ -20,7 +20,7 @@ namespace MudBlazor
                 .AddClass($"mud-popover-open", Open)
                 .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
                 .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
-                .AddClass($"mud-popover-overflow-{GetOverflowBehavior().ToDescriptionString()}")
+                .AddClass($"mud-popover-overflow-{GetOverflowBehavior()?.ToDescriptionString()}", GetOverflowBehavior() != null)
                 .AddClass($"mud-popover-{RelativeWidth.ToDescriptionString()}-width", RelativeWidth != DropdownWidth.Ignore)
                 .AddClass($"mud-paper", Paper)
                 .AddClass($"mud-paper-square", Paper && Square)
@@ -167,7 +167,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets the resolved overflow behavior, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
         /// </summary>
-        protected OverflowBehavior GetOverflowBehavior() => OverflowBehavior ?? PopoverService.PopoverOptions.OverflowBehavior;
+        protected OverflowBehavior? GetOverflowBehavior() => OverflowBehavior ?? PopoverService.PopoverOptions.OverflowBehavior;
 
         /// <summary>
         /// Determines the width of this popover in relation the parent container.
