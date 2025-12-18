@@ -1444,15 +1444,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDialogProvider>(parameters => parameters
                 .Add(p => p.DefaultFocus, DefaultFocus.None));
             var service = Context.Services.GetRequiredService<IDialogService>();
-            
+
             // Act - Show a dialog without explicitly setting DefaultFocus
             IDialogReference dialogReference = null;
             await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithDefaultFocusTest>());
-            
+
             // Assert - Verify the dialog is shown
             dialogReference.Should().NotBeNull();
             comp.Find("div.mud-dialog-container").Should().NotBeNull();
-            
+
             // Close the dialog
             await comp.InvokeAsync(() => service.Close(dialogReference));
         }
@@ -1467,7 +1467,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDialogProvider>(parameters => parameters
                 .Add(p => p.DefaultFocus, DefaultFocus.None));
             var service = Context.Services.GetRequiredService<IDialogService>();
-            
+
             // Act - Show a dialog WITH explicitly setting DefaultFocus to FirstChild
             var dialogParameters = new DialogParameters
             {
@@ -1475,11 +1475,11 @@ namespace MudBlazor.UnitTests.Components
             };
             IDialogReference dialogReference = null;
             await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithDefaultFocusTest>(title: "Test", parameters: dialogParameters));
-            
+
             // Assert - Verify the dialog is shown
             dialogReference.Should().NotBeNull();
             comp.Find("div.mud-dialog-container").Should().NotBeNull();
-            
+
             // Close the dialog
             await comp.InvokeAsync(() => service.Close(dialogReference));
         }
