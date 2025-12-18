@@ -30,7 +30,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="converter">The converter used to convert to a <c>string</c>.</param>
         /// <returns>The formatted string.</returns>
-        public string ToString(IConverter<DateTime?, string> converter)
+        public string ToString(IConverter<DateTime?, string?> converter)
         {
             if (Start is null || End is null)
             {
@@ -61,7 +61,7 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string value, IConverter<DateTime?, string> converter, out DateRange? date)
+        public static bool TryParse(string? value, IConverter<DateTime?, string?> converter, out DateRange? date)
         {
             if (!RangeUtility.Split(value, out var start, out var end))
             {
@@ -80,7 +80,7 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string start, string end, IConverter<DateTime?, string> converter, out DateRange? date)
+        public static bool TryParse(string? start, string? end, IConverter<DateTime?, string?> converter, out DateRange? date)
         {
             var endDate = converter.TryConvertBack(end);
             if (!endDate.Success)
@@ -119,6 +119,6 @@ namespace MudBlazor
             return dateRange1.Equals(dateRange2);
         }
 
-        public static bool operator !=(DateRange dateRange1, DateRange dateRange2) => !(dateRange1 == dateRange2);
+        public static bool operator !=(DateRange? dateRange1, DateRange? dateRange2) => !(dateRange1 == dateRange2);
     }
 }
