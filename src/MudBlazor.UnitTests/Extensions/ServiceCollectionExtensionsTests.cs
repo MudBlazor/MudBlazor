@@ -529,6 +529,8 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.Mode = PopoverMode.Default;
             options.PopoverOptions.ModalOverlay = true;
             options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
+            options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
+            options.PopoverOptions.Duration = TimeSpan.FromSeconds(2);
 
             expectedOptions = options;
         });
@@ -595,6 +597,8 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
         actualPopoverOptions.ModalOverlay.Should().Be(expectedOptions.PopoverOptions.ModalOverlay);
         actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
+        actualPopoverOptions.Delay.Should().Be(expectedOptions.PopoverOptions.Delay);
+        actualPopoverOptions.Duration.Should().Be(expectedOptions.PopoverOptions.Duration);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);

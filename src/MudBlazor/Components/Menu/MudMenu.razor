@@ -109,7 +109,7 @@
                 RelativeWidth="@RelativeWidth"
                 Fixed="@PopoverFixed"
                 DropShadow="@DropShadow"
-                Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
+                Duration="@GetTransitionDuration()">
         <CascadingValue Value="@this">
             <div id="@_elementId"
                  data-testid="menu-wrapper"

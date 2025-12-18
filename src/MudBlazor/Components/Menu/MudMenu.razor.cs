@@ -364,6 +364,11 @@ namespace MudBlazor
         protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>
+        /// Gets the transition duration for the popover, using dense menus to disable animations.
+        /// </summary>
+        protected double GetTransitionDuration() => GetDense() ? 0 : PopoverService.PopoverOptions.Duration.TotalMilliseconds;
+
+        /// <summary>
         /// The <see cref="MudMenuItem" /> components within this menu.
         /// </summary>
         [Parameter]

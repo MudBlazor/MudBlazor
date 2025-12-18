@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using System;
+using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents.Popover;
@@ -18,6 +19,8 @@ namespace MudBlazor.UnitTests.Components
             options.ContainerClass.Should().Be("mud-popover-provider");
             options.FlipMargin.Should().Be(0);
             options.ThrowOnDuplicateProvider.Should().Be(true);
+            options.Delay.Should().Be(TimeSpan.Zero);
+            options.Duration.Should().Be(TimeSpan.FromMilliseconds(251));
         }
 
         //[Test]
@@ -113,7 +116,19 @@ namespace MudBlazor.UnitTests.Components
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
             popover.RelativeWidth.Should().Be(DropdownWidth.Ignore);
             popover.OverflowBehavior.Should().BeNull();
-            popover.Duration.Should().Be(251);
+            popover.Duration.Should().BeNull();
+        }
+
+        [Test]
+        public void MudPopover_DefaultStyles_UsePopoverOptions()
+        {
+            var comp = Context.Render<PopoverPropertyTest>();
+
+            var popoverElement = comp.Find(".test-popover-content").ParentElement;
+            var style = popoverElement.GetAttribute("style");
+
+            style.Should().Contain("transition-duration:251ms");
+            style.Should().Contain("transition-delay:0ms");
         }
 
         [Test]

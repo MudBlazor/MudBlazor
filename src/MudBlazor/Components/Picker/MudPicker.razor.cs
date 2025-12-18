@@ -53,8 +53,8 @@ namespace MudBlazor
 
         protected string PickerPaperStylename =>
             new StyleBuilder()
-                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)}ms")
-                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDefaults.Delay.TotalMilliseconds)}ms")
+                .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
                 .AddStyle(Style)
                 .Build();
 

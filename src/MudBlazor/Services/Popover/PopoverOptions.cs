@@ -11,6 +11,18 @@ namespace MudBlazor;
 public class PopoverOptions
 {
     /// <summary>
+    /// Gets or sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition.
+    /// The default value is <c>0</c>.
+    /// </summary>
+    public TimeSpan Delay { get; set; } = TimeSpan.Zero;
+
+    /// <summary>
+    /// Gets or sets the length of time that the opening transition takes to complete.
+    /// The default value is <c>251 milliseconds</c>.
+    /// </summary>
+    public TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
+
+    /// <summary>
     /// Gets or sets a value indicating whether to check for the presence of a popover provider <see cref="MudPopoverProvider"/>.
     /// The default value is <c>true</c>.
     /// </summary>
