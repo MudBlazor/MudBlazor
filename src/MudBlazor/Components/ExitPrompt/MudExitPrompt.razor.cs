@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
+using MudBlazor.Resources;
 
 namespace MudBlazor;
 
@@ -8,7 +9,7 @@ namespace MudBlazor;
 /// <summary>
 /// Shows a confirmation dialog when the user tries to navigate away.
 /// </summary>
-public partial class MudNavigationConfirm : MudComponentBase, IAsyncDisposable
+public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 {
     private bool _navigatedAway;
 
@@ -18,16 +19,19 @@ public partial class MudNavigationConfirm : MudComponentBase, IAsyncDisposable
     [Inject]
     private NavigationManager NavigationManager { get; set; } = null!;
 
+    [Inject]
+    private InternalMudLocalizer Localizer { get; set; } = null!;
+
     /// <summary>
     /// Disables the navigation check.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.NavigationConfirm.Behavior)]
+    [Parameter, Category(CategoryTypes.ExitPrompt.Behavior)]
     public bool Disabled { get; set; }
 
-    public MudNavigationConfirm()
+    public MudExitPrompt()
     {
         using var registerScope = CreateRegisterScope();
         registerScope.RegisterParameter<bool>(nameof(Disabled))
@@ -53,7 +57,7 @@ public partial class MudNavigationConfirm : MudComponentBase, IAsyncDisposable
             return;
         }
 
-        var allow = await JsRuntime.InvokeAsync<bool>("mudNavigationConfirm.handleBeforeNavigation");
+        var allow = await JsRuntime.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation");
         if (!allow)
         {
             context.PreventNavigation();
@@ -71,7 +75,7 @@ public partial class MudNavigationConfirm : MudComponentBase, IAsyncDisposable
             return;
         }
 
-        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudNavigationConfirm.enable");
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudExitPrompt.enable", Localizer[LanguageResource.MudExitPrompt_Text]);
     }
 
     private async Task DisableAsync()
@@ -81,7 +85,7 @@ public partial class MudNavigationConfirm : MudComponentBase, IAsyncDisposable
             return;
         }
 
-        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudNavigationConfirm.disable");
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudExitPrompt.disable");
     }
 
     /// <inheritdoc />

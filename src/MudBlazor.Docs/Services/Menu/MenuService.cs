@@ -82,7 +82,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
             .AddItem("Split Panel", typeof(MudSplitPanel))
             .AddItem("Hotkey", typeof(MudHotkey))
-            .AddItem("Navigation Confirm", typeof(MudNavigationConfirm))
+            .AddItem("Navigation Confirm", typeof(MudExitPrompt))
 
             //GROUPS
 

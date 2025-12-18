@@ -471,4 +471,7 @@
   <data name="MudFileUpload_FileSizeError" xml:space="preserve">
     <value>File '{0}' exceeds the maximum allowed size of {1} bytes.</value>
   </data>
+  <data name="MudExitPrompt_Text" xml:space="preserve">
+    <value>Leave site? Changes you made may not be saved.</value>
+  </data>
 </root>
