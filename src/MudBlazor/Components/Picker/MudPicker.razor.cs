@@ -466,20 +466,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
-        /// <summary>
-        /// The behavior of the popover when it overflows its container.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="PopoverOptions.OverflowBehavior"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Popover.Appearance)]
-        public OverflowBehavior? OverflowBehavior { get; set; }
 
-        /// <summary>
-        /// Gets the resolved overflow behavior, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
-        /// </summary>
-        protected OverflowBehavior GetOverflowBehavior() => OverflowBehavior ?? PopoverService.PopoverOptions.OverflowBehavior;
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.

@@ -413,20 +413,7 @@ namespace MudBlazor
         [Parameter]
         public bool PopoverFixed { get; set; }
 
-        /// <summary>
-        /// The behavior applied when there is not enough space for the dropdown popover to be visible.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="PopoverOptions.OverflowBehavior" />.
-        /// </remarks>
-        [Category(CategoryTypes.Popover.Behavior)]
-        [Parameter]
-        public OverflowBehavior? OverflowBehavior { get; set; }
 
-        /// <summary>
-        /// Gets the resolved overflow behavior, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
-        /// </summary>
-        protected OverflowBehavior GetOverflowBehavior() => OverflowBehavior ?? PopoverService.PopoverOptions.OverflowBehavior;
 
         /// <summary>
         /// The function used to determine if an item should be disabled.

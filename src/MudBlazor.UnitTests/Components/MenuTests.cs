@@ -1227,7 +1227,6 @@ namespace MudBlazor.UnitTests.Components
 
             menu.Instance.PopoverFixed.Should().BeFalse();
             // When not set, should use global default from PopoverOptions
-            menu.Instance.OverflowBehavior.Should().BeNull();
             menu.Instance.Modal.Should().BeNull();
         }
 
@@ -1237,12 +1236,10 @@ namespace MudBlazor.UnitTests.Components
             var menu = Context.Render<MudMenu>(p =>
             {
                 p.Add(p => p.PopoverFixed, true);
-                p.Add(p => p.OverflowBehavior, OverflowBehavior.FlipNever);
                 p.Add(p => p.Modal, true);
             });
 
             menu.Instance.PopoverFixed.Should().BeTrue();
-            menu.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
             menu.Instance.Modal.Should().BeTrue();
         }
 
@@ -1258,8 +1255,7 @@ namespace MudBlazor.UnitTests.Components
             menu.Instance.Should().NotBeNull();
 
             // Verify that the component is using the global defaults
-            // OverflowBehavior and Modal should be null (using PopoverOptions defaults)
-            menu.Instance.OverflowBehavior.Should().BeNull();
+            // Modal should be null (using PopoverOptions defaults)
             menu.Instance.Modal.Should().BeNull();
         }
     }

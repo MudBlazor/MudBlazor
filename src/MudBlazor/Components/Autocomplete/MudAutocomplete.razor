@@ -76,7 +76,7 @@
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
                             Fixed="@PopoverFixed"
-                            OverflowBehavior="@GetOverflowBehavior()">
+                            OverflowBehavior="@PopoverService.PopoverOptions.OverflowBehavior">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate

@@ -2329,7 +2329,6 @@ namespace MudBlazor.UnitTests.Components
 
             auto.Instance.PopoverFixed.Should().BeFalse();
             // When not set, should use global default from PopoverOptions
-            auto.Instance.OverflowBehavior.Should().BeNull();
             auto.Instance.Modal.Should().BeNull();
         }
 
@@ -2339,12 +2338,10 @@ namespace MudBlazor.UnitTests.Components
             var auto = Context.Render<MudAutocomplete<string>>(p =>
             {
                 p.Add(p => p.PopoverFixed, true);
-                p.Add(p => p.OverflowBehavior, OverflowBehavior.FlipNever);
                 p.Add(p => p.Modal, true);
             });
 
             auto.Instance.PopoverFixed.Should().BeTrue();
-            auto.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
             auto.Instance.Modal.Should().BeTrue();
         }
 
@@ -2355,8 +2352,7 @@ namespace MudBlazor.UnitTests.Components
             var auto = Context.Render<MudAutocomplete<string>>();
 
             // Verify that the component is using the global defaults
-            // OverflowBehavior and Modal should be null (using PopoverOptions defaults)
-            auto.Instance.OverflowBehavior.Should().BeNull();
+            // Modal should be null (using PopoverOptions defaults)
             auto.Instance.Modal.Should().BeNull();
         }
     }

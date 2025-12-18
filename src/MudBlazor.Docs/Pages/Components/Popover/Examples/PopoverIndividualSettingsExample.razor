@@ -4,7 +4,6 @@
     <MudItem md="4">
         <MudSelect T="string"
                    Label="MudSelect"
-                   OverflowBehavior="@_overflowBehavior"
                    PopoverFixed="@_fixed"
                    AnchorOrigin="@_anchor"
                    TransformOrigin="@_transform"
@@ -23,7 +22,6 @@
         <MudMenu Label="MudMenu"
                  Variant="Variant.Filled"
                  Color="Color.Primary"
-                 OverflowBehavior="@_overflowBehavior"
                  PopoverFixed="@_fixed"
                  AnchorOrigin="@_anchor"
                  TransformOrigin="@_transform"
@@ -39,7 +37,6 @@
         <MudAutocomplete SearchFunc="Search"
                          Variant="Variant.Outlined"
                          Label="MudAutocomplete"
-                         OverflowBehavior="@_overflowBehavior"
                          PopoverFixed="@_fixed"
                          AnchorOrigin="@_anchor"
                          TransformOrigin="@_transform"
@@ -59,7 +56,6 @@
         <MudSelect T="Origin"
                    Label="Anchor Origin"
                    @bind-Value="@_anchor"
-                   OverflowBehavior="@_overflowBehavior"
                    PopoverFixed="@_fixed">
             <MudSelectItem Value="@Origin.TopLeft">Top Left</MudSelectItem>
             <MudSelectItem Value="@Origin.TopCenter">Top Center</MudSelectItem>
@@ -90,16 +86,6 @@
     </MudItem>
 
     <MudItem md="2">
-        <MudSelect T="OverflowBehavior"
-                   Label="Overflow Behavior"
-                   @bind-Value="@_overflowBehavior">
-            <MudSelectItem Value="@OverflowBehavior.FlipNever">Flip Never</MudSelectItem>
-            <MudSelectItem Value="@OverflowBehavior.FlipOnOpen">Flip On Open</MudSelectItem>
-            <MudSelectItem Value="@OverflowBehavior.FlipAlways">Flip Always</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-
-    <MudItem md="2">
         <MudSelect T="DropdownWidth"
                    Label="Dropdown Width"
                    @bind-Value="@_dropdownWidth">
@@ -117,7 +103,6 @@
     private Origin _anchor = Origin.BottomLeft;
     private Origin _transform = Origin.TopLeft;
     private bool _fixed = false;
-    private OverflowBehavior _overflowBehavior = OverflowBehavior.FlipOnOpen;
     private DropdownWidth _dropdownWidth = DropdownWidth.Relative;
 
     private string[] _states =
