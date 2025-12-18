@@ -40,7 +40,7 @@ namespace MudBlazor
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
         protected Task OnChange()
-        {   
+        {
             // When debouncing is active (timer is running), do nothing here.
             // The debounce timer will handle updating the value when it elapses.
             // This method is called on blur when debouncing is not active.
