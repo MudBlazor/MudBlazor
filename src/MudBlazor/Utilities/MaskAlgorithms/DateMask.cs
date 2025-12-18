@@ -152,7 +152,7 @@ public partial class DateMask : PatternMask
         {
             return text;
         }
-        
+
         try
         {
             var yyyy = new string(_y, 4);

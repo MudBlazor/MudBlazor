@@ -150,7 +150,7 @@ public class RegexMask : BaseMask
     {
         Debug.Assert(_regex is not null);
         Debug.Assert(Delimiters is not null);
-        
+
         text ??= "";
         var alignedText = "";
         var textIndex = 0; // index in text
