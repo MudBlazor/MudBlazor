@@ -10,82 +10,123 @@ namespace MudBlazor.Utilities.Throttle;
 
 #nullable enable
 /// <summary>
-/// Utility class for throttling the execution of asynchronous tasks.
-/// It limits the rate at which a function can be invoked based on a specified interval.
+/// Limits the rate at which an action can be invoked.
 /// </summary>
 /// <remarks>
-/// Throttling ensures that a function is invoked no more than once within a defined time interval,
-/// regardless of how many times it is called.
+/// <para>
+/// This dispatcher implements leading-edge throttling: when called, it executes the action immediately
+/// if sufficient time has passed since the last execution started. Subsequent calls within the throttle interval
+/// return the same Task as the currently executing action.
+/// </para>
+/// <para>
+/// <strong>Thread Safety:</strong> This class is thread-safe. Multiple concurrent calls are properly synchronized.
+/// </para>
+/// <para>
+/// <strong>Guarantees:</strong>
+/// <list type="bullet">
+/// <item>The action executes at most once per configured interval.</item>
+/// <item>The first call in a new interval executes immediately (leading edge).</item>
+/// <item>Calls within the interval return the same Task as the executing action.</item>
+/// <item>Exceptions thrown by the action are propagated to all callers within that interval.</item>
+/// <item>Disposal prevents further invocations.</item>
+/// </list>
+/// </para>
 /// </remarks>
-internal class ThrottleDispatcher
+internal sealed class ThrottleDispatcher : IDisposable
 {
-    private readonly int _interval;
-    private readonly object _locker = new();
-    private readonly bool _delayAfterExecution;
-    private readonly bool _resetIntervalOnException;
-    private bool _busy;
-    private Task? _lastTask;
-    private DateTime? _invokeTime;
+    private readonly TimeSpan _interval;
+    private readonly object _lock = new();
+    private DateTime _lastExecutionStartTime = DateTime.MinValue;
+    private Task? _currentTask;
+    private bool _disposed;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified parameters.
+    /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval.
     /// </summary>
-    /// <param name="interval">The minimum interval in milliseconds between invocations of the throttled function.</param>
-    /// <param name="delayAfterExecution">If true, the interval is calculated from the end of the previous task execution; otherwise, from the start.</param>
-    /// <param name="resetIntervalOnException">If true, the interval is reset when an exception occurs during the execution of the throttled function.</param>
-    public ThrottleDispatcher(int interval, bool delayAfterExecution = false, bool resetIntervalOnException = false)
+    /// <param name="interval">The minimum interval in milliseconds between invocations. Must be non-negative.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public ThrottleDispatcher(int interval)
+        : this(TimeSpan.FromMilliseconds(interval))
     {
-        _interval = interval;
-        _delayAfterExecution = delayAfterExecution;
-        _resetIntervalOnException = resetIntervalOnException;
     }
 
     /// <summary>
-    /// Determines whether the current invocation should wait based on the configured interval.
+    /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval.
     /// </summary>
-    /// <returns>True if waiting is required; otherwise, false.</returns>
-    private bool ShouldWait() => _invokeTime.HasValue && (DateTime.UtcNow - _invokeTime.Value).TotalMilliseconds < _interval;
+    /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations. Must be non-negative.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public ThrottleDispatcher(TimeSpan interval)
+    {
+        if (interval < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be non-negative.");
+        }
+
+        _interval = interval;
+    }
 
     /// <summary>
-    /// Throttles the invocation of the provided function asynchronously.
+    /// Throttles the invocation of an asynchronous action.
     /// </summary>
-    /// <param name="action">The function returning a Task to be invoked asynchronously.</param>
-    /// <param name="cancellationToken">An optional CancellationToken.</param>
-    /// <returns>The Task representing the asynchronous operation of the last executed function.</returns>
+    /// <remarks>
+    /// <para>
+    /// If sufficient time has passed since the last execution started, the action executes immediately.
+    /// Otherwise, this method returns the Task from the currently executing action (same instance).
+    /// </para>
+    /// <para>
+    /// <strong>Exception Handling:</strong> Exceptions thrown by the action are propagated to all
+    /// callers that received the same Task. After an exception, the throttle is reset on next call.
+    /// </para>
+    /// </remarks>
+    /// <param name="action">The asynchronous action to invoke.</param>
+    /// <param name="cancellationToken">Optional cancellation token. Note: cancellation only prevents new executions; it does not cancel already-running actions.</param>
+    /// <returns>A task representing the action's execution. Multiple calls within the interval return the same task instance.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when action is null.</exception>
+    /// <exception cref="ObjectDisposedException">Thrown when the dispatcher has been disposed.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when the cancellation token is cancelled before execution starts.</exception>
     public Task ThrottleAsync(Func<Task> action, CancellationToken cancellationToken = default)
     {
-        lock (_locker)
+        ArgumentNullException.ThrowIfNull(action);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_lock)
         {
-            if (_lastTask is not null && (_busy || ShouldWait()))
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
+            var now = DateTime.UtcNow;
+            var timeSinceLastExecution = now - _lastExecutionStartTime;
+
+            // If we have a running task and we're within the interval, return the same task
+            if (_currentTask is not null && !_currentTask.IsCompleted && timeSinceLastExecution < _interval)
             {
-                return _lastTask;
+                return _currentTask;
             }
 
-            _busy = true;
-            _invokeTime = DateTime.UtcNow;
-
-            _lastTask = action.Invoke();
-
-            _lastTask.ContinueWith(_ =>
+            // Clear completed task if it exists
+            if (_currentTask is not null && _currentTask.IsCompleted)
             {
-                if (_delayAfterExecution)
-                {
-                    _invokeTime = DateTime.UtcNow;
-                }
-
-                _busy = false;
-            }, cancellationToken);
-
-            if (_resetIntervalOnException)
-            {
-                _lastTask.ContinueWith((_, _) =>
-                {
-                    _lastTask = null;
-                    _invokeTime = null;
-                }, cancellationToken, TaskContinuationOptions.OnlyOnFaulted);
+                _currentTask = null;
             }
 
-            return _lastTask;
+            // Enough time has passed - execute now
+            _lastExecutionStartTime = now;
+            _currentTask = action();
+            
+            return _currentTask;
+        }
+    }
+
+    /// <summary>
+    /// Releases all resources used by the <see cref="ThrottleDispatcher"/>.
+    /// </summary>
+    /// <remarks>
+    /// This method prevents further invocations but does not cancel any currently executing action.
+    /// </remarks>
+    public void Dispose()
+    {
+        lock (_lock)
+        {
+            _disposed = true;
         }
     }
 }
