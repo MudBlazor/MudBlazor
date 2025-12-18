@@ -45,7 +45,7 @@
     public bool RelativeWidth { get; set; }
 
     [Parameter]
-    public OverflowBehavior? OverflowBehavior { get; set; }
+    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipNever;
 
     [Parameter]
     public double Duration { get; set; } = 251;

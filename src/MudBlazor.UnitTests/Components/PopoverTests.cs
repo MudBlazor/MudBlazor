@@ -283,16 +283,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudPopover_Property_OverflowBehavior_Null_NoClass()
-        {
-            var comp = Context.Render<PopoverPropertyTest>();
-
-            var popoverElement = comp.Find(".test-popover-content").ParentElement;
-
-            popoverElement.ClassList.Should().NotContainMatch("mud-popover-overflow-*");
-        }
-
-        [Test]
         public void MudPopover_Property_DropShadow_False_NoElevation()
         {
             var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
