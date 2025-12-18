@@ -30,9 +30,9 @@ public class DebounceDispatcherTests
         var task2 = debounceDispatcher.DebounceAsync(Invoke);
         var task3 = debounceDispatcher.DebounceAsync(Invoke);
 
-        // Wait for all tasks - first two should be cancelled
-        Assert.ThrowsAsync<TaskCanceledException>(() => task1);
-        Assert.ThrowsAsync<TaskCanceledException>(() => task2);
+        // Wait for all tasks - first two should complete silently (cancelled internally)
+        await task1;
+        await task2;
         await task3; // Last one should succeed
 
         // Assert
@@ -140,8 +140,8 @@ public class DebounceDispatcherTests
         var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
         cts.Cancel();
 
-        // Assert
-        Assert.ThrowsAsync<TaskCanceledException>(() => task);
+        // Assert - should complete silently without throwing
+        await task;
         executed.Should().BeFalse();
     }
 
@@ -161,8 +161,8 @@ public class DebounceDispatcherTests
         var task = debounceDispatcher.DebounceAsync(Invoke);
         debounceDispatcher.Cancel();
 
-        // Assert
-        Assert.ThrowsAsync<TaskCanceledException>(() => task);
+        // Assert - should complete silently without throwing
+        await task;
         executed.Should().BeFalse();
     }
 
@@ -182,8 +182,8 @@ public class DebounceDispatcherTests
         var task = debounceDispatcher.DebounceAsync(Invoke);
         await debounceDispatcher.CancelAsync();
 
-        // Assert
-        Assert.ThrowsAsync<TaskCanceledException>(() => task);
+        // Assert - should complete silently without throwing
+        await task;
         executed.Should().BeFalse();
     }
 
@@ -197,9 +197,9 @@ public class DebounceDispatcherTests
         // Act
         debounceDispatcher.Dispose();
 
-        // Assert
-        Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await debounceDispatcher.DebounceAsync(Invoke));
+        // Assert - should complete silently without throwing
+        var task = debounceDispatcher.DebounceAsync(Invoke);
+        task.IsCompleted.Should().BeTrue();
     }
 
     [Test]
@@ -218,8 +218,8 @@ public class DebounceDispatcherTests
         var task = debounceDispatcher.DebounceAsync(Invoke);
         debounceDispatcher.Dispose();
 
-        // Assert
-        Assert.ThrowsAsync<TaskCanceledException>(() => task);
+        // Assert - should complete silently without throwing
+        await task;
         executed.Should().BeFalse();
     }
 
@@ -267,14 +267,7 @@ public class DebounceDispatcherTests
         var tasks = Enumerable.Range(0, 100)
             .Select(_ => Task.Run(async () =>
             {
-                try
-                {
-                    await debounceDispatcher.DebounceAsync(Invoke);
-                }
-                catch (TaskCanceledException)
-                {
-                    // Expected for cancelled calls
-                }
+                await debounceDispatcher.DebounceAsync(Invoke);
             }))
             .ToArray();
 
@@ -385,11 +378,9 @@ public class DebounceDispatcherTests
         var task3 = debounceDispatcher.DebounceAsync(TrackingAction);
         var task4 = debounceDispatcher.DebounceAsync(TrackingAction);
 
-        // First two should be cancelled
-        Assert.ThrowsAsync<TaskCanceledException>(() => task2);
-        Assert.ThrowsAsync<TaskCanceledException>(() => task3);
-
-        // Last one should execute after interval
+        // Wait for them to complete
+        await task2;
+        await task3;
         await task4;
 
         // Assert - Should have executed twice (first immediate, last after debounce)

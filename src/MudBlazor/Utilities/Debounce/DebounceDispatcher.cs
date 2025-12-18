@@ -81,25 +81,39 @@ internal sealed class DebounceDispatcher : IDisposable
     /// </para>
     /// <para>
     /// <strong>Exception Handling:</strong> Exceptions thrown by the action are propagated to the caller.
-    /// TaskCanceledException is thrown if the debounce is cancelled before the action executes.
+    /// Cancellation (either from the token or disposal) is handled silently without throwing exceptions.
     /// </para>
     /// </remarks>
     /// <param name="action">The asynchronous action to invoke after the debounce interval.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the debounced action.</param>
-    /// <returns>A task that completes when the action executes or is cancelled.</returns>
+    /// <returns>A task that completes when the action executes or is cancelled/disposed.</returns>
     /// <exception cref="ArgumentNullException">Thrown when action is null.</exception>
-    /// <exception cref="ObjectDisposedException">Thrown when the dispatcher has been disposed.</exception>
-    /// <exception cref="TaskCanceledException">Thrown when the operation is cancelled.</exception>
     public async Task DebounceAsync(Func<Task> action, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(action);
 
         bool executeImmediately = false;
 
+        // Check if disposed before attempting to acquire lock
+        if (_disposed)
+        {
+            return;
+        }
+
+        // Check if cancellation was requested before starting
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+
         await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            // Check again after acquiring lock
+            if (_disposed)
+            {
+                return;
+            }
 
             // In leading mode, check if we should execute immediately
             if (_leading)
@@ -128,6 +142,11 @@ internal sealed class DebounceDispatcher : IDisposable
                 _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             }
         }
+        catch (OperationCanceledException)
+        {
+            // Silently return if operation was cancelled during lock acquisition
+            return;
+        }
         finally
         {
             _lock.Release();
@@ -136,7 +155,15 @@ internal sealed class DebounceDispatcher : IDisposable
         if (executeImmediately)
         {
             // Execute immediately without delay
-            await action().ConfigureAwait(false);
+            try
+            {
+                await action().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                // Allow exceptions from user code to propagate
+                throw;
+            }
             return;
         }
 
@@ -163,15 +190,15 @@ internal sealed class DebounceDispatcher : IDisposable
             // Execute the action
             await action().ConfigureAwait(false);
         }
-        catch (TaskCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            // Rethrow if external cancellation was requested
-            throw;
-        }
         catch (TaskCanceledException)
         {
-            // Re-throw cancellation from internal debounce logic (new call cancelled this one)
-            throw;
+            // Silently ignore cancellation (either from new call or external cancellation)
+            return;
+        }
+        catch (OperationCanceledException)
+        {
+            // Silently ignore cancellation
+            return;
         }
     }
 

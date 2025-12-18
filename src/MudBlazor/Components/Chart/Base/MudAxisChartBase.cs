@@ -425,7 +425,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         if (disposing)
         {
-            _debouncer.Cancel();
+            _debouncer.Dispose();
         }
 
         _dotNetObjectReference.Dispose();

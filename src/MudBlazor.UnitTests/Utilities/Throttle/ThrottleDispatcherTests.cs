@@ -209,7 +209,7 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public async Task ThrottleAsync_CancellationToken_PreventsNewExecution()
+    public void ThrottleAsync_CancellationToken_PreventsNewExecution()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(1000);
@@ -225,9 +225,9 @@ public class ThrottleDispatcherTests
         // Act
         cts.Cancel();
 
-        // Assert
-        Assert.ThrowsAsync<OperationCanceledException>(
-            () => dispatcher.ThrottleAsync(Invoke, cts.Token));
+        // Assert - should return completed task silently
+        var task = dispatcher.ThrottleAsync(Invoke, cts.Token);
+        task.IsCompleted.Should().BeTrue();
         executed.Should().BeFalse();
     }
 
@@ -241,9 +241,9 @@ public class ThrottleDispatcherTests
         // Act
         dispatcher.Dispose();
 
-        // Assert
-        Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await dispatcher.ThrottleAsync(Invoke));
+        // Assert - should return completed task silently
+        var task = dispatcher.ThrottleAsync(Invoke);
+        task.IsCompleted.Should().BeTrue();
     }
 
     [Test]

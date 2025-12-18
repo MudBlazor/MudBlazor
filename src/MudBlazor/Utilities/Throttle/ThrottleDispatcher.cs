@@ -75,23 +75,30 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// </para>
     /// <para>
     /// <strong>Exception Handling:</strong> Exceptions thrown by the action are propagated to all
-    /// callers that received the same Task. After an exception, the throttle is reset on next call.
+    /// callers that received the same Task. Cancellation and disposal are handled silently without throwing exceptions.
     /// </para>
     /// </remarks>
     /// <param name="action">The asynchronous action to invoke.</param>
     /// <param name="cancellationToken">Optional cancellation token. Note: cancellation only prevents new executions; it does not cancel already-running actions.</param>
-    /// <returns>A task representing the action's execution. Multiple calls within the interval return the same task instance.</returns>
+    /// <returns>A task representing the action's execution. Multiple calls within the interval return the same task instance, or Task.CompletedTask if cancelled/disposed.</returns>
     /// <exception cref="ArgumentNullException">Thrown when action is null.</exception>
-    /// <exception cref="ObjectDisposedException">Thrown when the dispatcher has been disposed.</exception>
-    /// <exception cref="OperationCanceledException">Thrown when the cancellation token is cancelled before execution starts.</exception>
     public Task ThrottleAsync(Func<Task> action, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(action);
-        cancellationToken.ThrowIfCancellationRequested();
+
+        // Silently return if cancelled or disposed
+        if (cancellationToken.IsCancellationRequested || _disposed)
+        {
+            return Task.CompletedTask;
+        }
 
         lock (_lock)
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            // Check again after acquiring lock
+            if (_disposed)
+            {
+                return Task.CompletedTask;
+            }
 
             var now = DateTime.UtcNow;
             var timeSinceLastExecution = now - _lastExecutionStartTime;

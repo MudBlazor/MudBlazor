@@ -356,6 +356,7 @@ namespace MudBlazor
 
         private void SetThrottle(int interval)
         {
+            _throttleDispatcher?.Dispose();
             _throttleDispatcher = interval > 0
                 ? new ThrottleDispatcher(interval)
                 : null;
