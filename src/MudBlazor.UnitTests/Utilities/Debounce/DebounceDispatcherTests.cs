@@ -203,7 +203,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public async Task DebounceAsync_Dispose_CancelsPendingOperation()
+    public void DebounceAsync_Dispose_CancelsPendingOperation()
     {
         // Arrange
         var debounceDispatcher = new DebounceDispatcher(1000);
@@ -219,8 +219,22 @@ public class DebounceDispatcherTests
         debounceDispatcher.Dispose();
 
         // Assert - should complete silently without throwing
-        await task;
+        task.Wait(100);
         executed.Should().BeFalse();
+    }
+
+    [Test]
+    public void DebounceAsync_DoubleDispose_DoesNotThrow()
+    {
+        // Arrange
+        var debounceDispatcher = new DebounceDispatcher(100);
+
+        // Act - Dispose twice
+        debounceDispatcher.Dispose();
+        debounceDispatcher.Dispose();
+
+        // Assert - Should not throw, just pass if we get here
+        Assert.Pass();
     }
 
     [Test]

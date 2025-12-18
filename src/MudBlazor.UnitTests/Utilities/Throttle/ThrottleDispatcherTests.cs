@@ -276,6 +276,50 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
+    public void ThrottleAsync_DoubleDispose_DoesNotThrow()
+    {
+        // Arrange
+        var dispatcher = new ThrottleDispatcher(100);
+
+        // Act - Dispose twice
+        dispatcher.Dispose();
+        dispatcher.Dispose();
+
+        // Assert - Should not throw, just pass if we get here
+        Assert.Pass();
+    }
+
+    [Test]
+    public void ThrottleAsync_DisposeDuringLock_HandlesGracefully()
+    {
+        // Arrange
+        using var dispatcher = new ThrottleDispatcher(100);
+        var firstStarted = new TaskCompletionSource<bool>();
+        var firstCanComplete = new TaskCompletionSource<bool>();
+
+        async Task SlowAction()
+        {
+            firstStarted.SetResult(true);
+            await firstCanComplete.Task;
+        }
+
+        // Act - Start a slow action to hold the task
+        var task1 = dispatcher.ThrottleAsync(SlowAction);
+        firstStarted.Task.Wait();
+
+        // Now dispose and try to call again
+        dispatcher.Dispose();
+        var task2 = dispatcher.ThrottleAsync(() => Task.CompletedTask);
+
+        // Complete the first action
+        firstCanComplete.SetResult(true);
+        task1.Wait();
+
+        // Assert - second task should complete immediately (disposed)
+        task2.IsCompleted.Should().BeTrue();
+    }
+
+    [Test]
     public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Act & Assert

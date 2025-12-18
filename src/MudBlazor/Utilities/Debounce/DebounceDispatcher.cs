@@ -252,6 +252,12 @@ internal sealed class DebounceDispatcher : IDisposable
     /// </remarks>
     public void Dispose()
     {
+        // Check if already disposed before attempting to acquire lock
+        if (_disposed)
+        {
+            return;
+        }
+
         _lock.Wait();
         try
         {
