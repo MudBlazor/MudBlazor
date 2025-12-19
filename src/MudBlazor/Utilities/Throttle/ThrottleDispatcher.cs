@@ -32,6 +32,7 @@ internal sealed class ThrottleDispatcher : IDisposable
 {
     private readonly TimeSpan _interval;
     // TODO: Replace with System.Threading.Lock when targeting .NET 9+
+    // ReSharper disable once ChangeFieldTypeToSystemThreadingLock
     private readonly object _lock = new();
     private DateTime _lastExecutionStartTime = DateTime.MinValue;
     private Task? _currentTask;
