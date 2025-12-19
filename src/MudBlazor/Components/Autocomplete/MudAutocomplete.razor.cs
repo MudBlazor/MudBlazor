@@ -37,6 +37,9 @@ namespace MudBlazor
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
 
+        [Inject]
+        private IPopoverService PopoverService { get; set; } = null!;
+
         protected string Classname =>
             new CssBuilder("mud-select")
                 .AddClass(Class)
@@ -357,11 +360,16 @@ namespace MudBlazor
         /// Prevents interaction with background elements while this list is open.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <see cref="PopoverOptions.ModalOverlay" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
+        public bool? Modal { get; set; }
+
+        /// <summary>
+        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// </summary>
+        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
@@ -405,15 +413,7 @@ namespace MudBlazor
         [Parameter]
         public bool PopoverFixed { get; set; }
 
-        /// <summary>
-        /// The behavior applied when there is not enough space for the dropdown popover to be visible.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="MudGlobal.PopoverDefaults.OverflowBehavior" />.
-        /// </remarks>
-        [Category(CategoryTypes.Popover.Behavior)]
-        [Parameter]
-        public OverflowBehavior OverflowBehavior { get; set; } = MudGlobal.PopoverDefaults.OverflowBehavior;
+
 
         /// <summary>
         /// The function used to determine if an item should be disabled.

@@ -317,16 +317,6 @@ namespace MudBlazor
         public string? Text { get; set; }
 
         /// <summary>
-        /// Prevents the text from being updated via a bound value.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.  Applies only to Blazor Server (BSS) applications.  When <c>false</c>, the input's text can be updated programmatically while the input has focus.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool TextUpdateSuppression { get; set; } = true; // Solves issue #1012: Textfield swallowing chars when typing rapidly
-
-        /// <summary>
         /// The type of input expected.
         /// </summary>
         /// <remarks>
@@ -373,7 +363,7 @@ namespace MudBlazor
         /// Occurs when the internal text value has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
+        public EventCallback<string?> OnInternalInputChanged { get; set; }
 
         /// <summary>
         /// Occurs when a key has been pressed down.
@@ -573,27 +563,14 @@ namespace MudBlazor
             _isDirty = true;
             _validated = false;
 
-            // When Value changes from parent, update Text from Value (with TextUpdateSuppression logic)
+            // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
             // Check ParameterView to see if Text is also present
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
             {
-                var updateText = true;
-                if (_isFocused && !_forceTextUpdate)
-                {
-                    // Text update suppression, only in BSS (not in WASM).
-                    // This is a fix for #1012
-                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-                    {
-                        updateText = false;
-                    }
-                }
-
-                if (updateText)
-                {
-                    _forceTextUpdate = false;
-                    await UpdateTextPropertyAsync(false);
-                }
+                // Always update text when Value changes (TextUpdateSuppression removed)
+                _forceTextUpdate = false;
+                await UpdateTextPropertyAsync(false);
             }
         }
 
@@ -704,22 +681,9 @@ namespace MudBlazor
             // but we need to update Text even when Value is passed unchanged (for formatting)
             if (hasValue && !hasText)
             {
-                var updateText = true;
-                if (_isFocused && !_forceTextUpdate)
-                {
-                    // Text update suppression, only in BSS (not in WASM).
-                    // This is a fix for #1012
-                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-                    {
-                        updateText = false;
-                    }
-                }
-
-                if (updateText)
-                {
-                    _forceTextUpdate = false;
-                    await UpdateTextPropertyAsync(false);
-                }
+                // Always update text when Value changes (TextUpdateSuppression removed)
+                _forceTextUpdate = false;
+                await UpdateTextPropertyAsync(false);
             }
         }
 

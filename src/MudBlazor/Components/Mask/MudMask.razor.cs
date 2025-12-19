@@ -137,7 +137,6 @@ namespace MudBlazor
 
         public MudMask()
         {
-            TextUpdateSuppression = false;
         }
 
         protected override async Task OnInitializedAsync()

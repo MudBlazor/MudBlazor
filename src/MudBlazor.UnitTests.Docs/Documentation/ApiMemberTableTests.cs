@@ -182,15 +182,15 @@ public sealed class ApiMemberTableTests : BunitTest
     /// Ensures that a mode of <see cref="ApiMemberTableMode.Globals"/> renders properly for a type with globals.
     /// </summary>
     /// <remarks>
-    /// At the time of writing this test, there are globals for <see cref="MudDialog"/>.
+    /// At the time of writing this test, there are globals for <see cref="MudMenu"/>.
     /// </remarks>
     [Test]
     public void ApiMemberTable_RenderGlobals_WhenExisting()
     {
         // Get a type with globals
-        var mudDialog = ApiDocumentation.GetType("MudBlazor.MudDialog");
+        var mudMenu = ApiDocumentation.GetType("MudBlazor.MudMenu");
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
-            .Add(x => x.Type, mudDialog)
+            .Add(x => x.Type, mudMenu)
             .Add(x => x.Mode, ApiMemberTableMode.Globals));
         // There should NOT be a message saying no members are found  
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");

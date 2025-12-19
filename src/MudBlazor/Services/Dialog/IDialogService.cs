@@ -131,7 +131,7 @@ namespace MudBlazor
         /// <param name="cancelText">The text of the "Cancel" button.  Defaults to <c>null</c>.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(string? title, string message, string yesText = "OK",
+        Task<bool?> ShowMessageBoxAsync(string? title, string message, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null);
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace MudBlazor
         /// <param name="cancelText">The text of the "Cancel" button.  Defaults to <c>null</c>.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(string? title, MarkupString markupMessage, string yesText = "OK",
+        Task<bool?> ShowMessageBoxAsync(string? title, MarkupString markupMessage, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null);
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace MudBlazor
         /// <param name="messageBoxOptions">The options for the message box.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null);
+        Task<bool?> ShowMessageBoxAsync(MessageBoxOptions messageBoxOptions, DialogOptions? options = null);
 
         /// <summary>
         /// Hides an existing dialog.

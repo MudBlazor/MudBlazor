@@ -1137,9 +1137,7 @@ namespace MudBlazor.UnitTests.Components
                 var autocomplete = autocompleteComponent.Instance;
                 await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 0));
                 await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.CoerceText, true));
-                // this needs to be false because in the unit test the autocomplete's input does not lose focus state on click of another button.
-                // TextUpdateSuppression is used to avoid binding to change the input text while typing.
-                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.TextUpdateSuppression, false));
+                // TextUpdateSuppression has been removed - text now always updates
                 // check initial state
                 await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Florida"));
                 autocomplete.ReadValue().Should().Be("Florida");
@@ -2328,28 +2326,32 @@ namespace MudBlazor.UnitTests.Components
             var auto = Context.Render<MudAutocomplete<string>>();
 
             auto.Instance.PopoverFixed.Should().BeFalse();
-            auto.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+            // When not set, should use global default from PopoverOptions
+            auto.Instance.Modal.Should().BeNull();
         }
 
         [Test]
         public void PopoverSettings_OverridesDefaultValues()
         {
-            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
-            try
+            var auto = Context.Render<MudAutocomplete<string>>(p =>
             {
-                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
-                var auto = Context.Render<MudAutocomplete<string>>(p =>
-                {
-                    p.Add(p => p.PopoverFixed, true);
-                });
+                p.Add(p => p.PopoverFixed, true);
+                p.Add(p => p.Modal, true);
+            });
 
-                auto.Instance.PopoverFixed.Should().BeTrue();
-                auto.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
-            }
-            finally
-            {
-                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
-            }
+            auto.Instance.PopoverFixed.Should().BeTrue();
+            auto.Instance.Modal.Should().BeTrue();
+        }
+
+        [Test]
+        public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
+        {
+            // The default PopoverOptions should have OverflowBehavior.FlipOnOpen and ModalOverlay = false
+            var auto = Context.Render<MudAutocomplete<string>>();
+
+            // Verify that the component is using the global defaults
+            // Modal should be null (using PopoverOptions defaults)
+            auto.Instance.Modal.Should().BeNull();
         }
     }
 }

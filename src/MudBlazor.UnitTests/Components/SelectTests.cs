@@ -822,24 +822,54 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<SelectClearableTest>();
             var select = comp.FindComponent<MudSelect<string>>();
-            var input = comp.Find("div.mud-input-control");
 
-            // No button when initialized
+            // Initial state – no clear button
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
-            await input.MouseDownAsync();
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            // Button shows after selecting item
-            var items = comp.FindAll("div.mud-list-item");
-            await items[1].ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue().Should().Be("2"));
-            comp.Find(".mud-input-clear-button").Should().NotBeNull();
-            // Selection cleared and button removed after clicking clear button
-            await comp.Find(".mud-input-clear-button").ClickAsync();
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue().Should().BeNullOrEmpty());
+            // Open select
+            await comp.InvokeAsync(async () =>
+            {
+                var input = comp.Find("div.mud-input-control");
+                await input.MouseDownAsync();
+            });
+
+            // Wait for items to render
+            await comp.WaitForAssertionAsync(() =>
+                comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+
+            // Select second item
+            await comp.InvokeAsync(async () =>
+            {
+                var items = comp.FindAll("div.mud-list-item");
+                await items[1].ClickAsync();
+            });
+
+            // Popover closes
+            await comp.WaitForAssertionAsync(() =>
+                comp.Find("div.mud-popover")
+                    .ClassList.Should().NotContain("mud-popover-open"));
+
+            // Value is set
+            select.Instance.ReadValue().Should().Be("2");
+
+            // Clear button appears
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
+
+            // Click clear button
+            await comp.InvokeAsync(async () =>
+            {
+                var clearButton = comp.Find(".mud-input-clear-button");
+                await clearButton.ClickAsync();
+            });
+
+            // Value cleared
+            await comp.WaitForAssertionAsync(() =>
+                select.Instance.ReadValue().Should().BeNullOrEmpty());
+
+            // Clear button removed
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
-            // Clear button click handler should have been invoked
+
+            // Clear handler invoked
             comp.Instance.ClearButtonClicked.Should().BeTrue();
         }
 
@@ -1746,28 +1776,32 @@ namespace MudBlazor.UnitTests.Components
             var select = Context.Render<MudSelect<string>>();
 
             select.Instance.PopoverFixed.Should().BeFalse();
-            select.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+            // When not set, should use global default from PopoverOptions
+            select.Instance.Modal.Should().BeNull();
         }
 
         [Test]
         public void PopoverSettings_OverridesDefaultValues()
         {
-            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
-            try
+            var select = Context.Render<MudSelect<string>>(p =>
             {
-                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
-                var select = Context.Render<MudSelect<string>>(p =>
-                {
-                    p.Add(p => p.PopoverFixed, true);
-                });
+                p.Add(p => p.PopoverFixed, true);
+                p.Add(p => p.Modal, true);
+            });
 
-                select.Instance.PopoverFixed.Should().BeTrue();
-                select.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
-            }
-            finally
-            {
-                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
-            }
+            select.Instance.PopoverFixed.Should().BeTrue();
+            select.Instance.Modal.Should().BeTrue();
+        }
+
+        [Test]
+        public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
+        {
+            // The default PopoverOptions should have OverflowBehavior.FlipOnOpen and ModalOverlay = false
+            var select = Context.Render<MudSelect<string>>();
+
+            // Verify that the component is using the global defaults
+            // Modal should be null (using PopoverOptions defaults)
+            select.Instance.Modal.Should().BeNull();
         }
 #nullable disable
     }
