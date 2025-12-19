@@ -1433,6 +1433,56 @@ namespace MudBlazor.UnitTests.Components
                     args[1] is bool)),
                 Times.AtMost(2)); // Focus should be called once when dialog opens and once for refocus after backdrop click
         }
+
+        /// <summary>
+        /// Test that DefaultFocus property on MudDialogProvider is properly cascaded to dialogs
+        /// </summary>
+        [Test]
+        public async Task DialogProvider_DefaultFocus_ShouldCascadeToDialogs()
+        {
+            // Arrange - Create a DialogProvider with DefaultFocus set to None
+            var comp = Context.Render<MudDialogProvider>(parameters => parameters
+                .Add(p => p.DefaultFocus, DefaultFocus.None));
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            // Act - Show a dialog without explicitly setting DefaultFocus
+            IDialogReference dialogReference = null;
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithDefaultFocusTest>());
+
+            // Assert - Verify the dialog is shown
+            dialogReference.Should().NotBeNull();
+            comp.Find("div.mud-dialog-container").Should().NotBeNull();
+
+            // Close the dialog
+            await comp.InvokeAsync(() => service.Close(dialogReference));
+        }
+
+        /// <summary>
+        /// Test that MudDialog respects explicit DefaultFocus parameter over global setting
+        /// </summary>
+        [Test]
+        public async Task Dialog_ExplicitDefaultFocus_ShouldOverrideGlobalSetting()
+        {
+            // Arrange - Create a DialogProvider with DefaultFocus set to None
+            var comp = Context.Render<MudDialogProvider>(parameters => parameters
+                .Add(p => p.DefaultFocus, DefaultFocus.None));
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            // Act - Show a dialog WITH explicitly setting DefaultFocus to FirstChild
+            var dialogParameters = new DialogParameters
+            {
+                [nameof(MudDialog.DefaultFocus)] = DefaultFocus.FirstChild
+            };
+            IDialogReference dialogReference = null;
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithDefaultFocusTest>(title: "Test", parameters: dialogParameters));
+
+            // Assert - Verify the dialog is shown
+            dialogReference.Should().NotBeNull();
+            comp.Find("div.mud-dialog-container").Should().NotBeNull();
+
+            // Close the dialog
+            await comp.InvokeAsync(() => service.Close(dialogReference));
+        }
     }
     internal class CustomDialogService : DialogService
     {

@@ -162,7 +162,7 @@ namespace MudBlazor
             await SetBoolValueAsync(ConvertSet(_valueState.Value));
         }
 
-        protected internal override T? ReadValue() => _valueState.Value;
+        protected internal override T? ReadValue => _valueState.Value;
 
         protected override Task WriteValueAsync(T? value) => _valueState.SetValueAsync(value);
 
