@@ -14,10 +14,13 @@ namespace MudBlazor
     public partial class MudAutocomplete<T> : MudBaseInput<T>
     {
         /// <summary>
-        /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
+        /// Used for list item indices
         /// </summary>
         private readonly string _componentId = Identifier.Create();
-        private string _elementId = Identifier.Create("autocomplete");
+        /// <summary>
+        /// Used for the autocomplete input element.
+        /// </summary>
+        private readonly string _elementId = Identifier.Create("autocomplete");
 
         private bool _isCleared;
         private bool _isClearing;
