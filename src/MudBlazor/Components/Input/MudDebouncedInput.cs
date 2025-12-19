@@ -105,15 +105,19 @@ namespace MudBlazor
                 return;
             }
             
-            // Create debouncer if we don't have one, otherwise just update the interval
+            // Create debouncer if we don't have one
             if (_debouncer is null)
             {
                 _debouncer = new DebounceDispatcher((int)args.Value);
             }
             else
             {
-                // Update the interval without recreating the dispatcher
-                _debouncer.UpdateInterval((int)args.Value);
+                // Only update interval if it has meaningfully changed
+                // Use DoubleEpsilonEqualityComparer to avoid unnecessary updates due to floating-point precision
+                if (!DoubleEpsilonEqualityComparer.Default.Equals(args.LastValue, args.Value))
+                {
+                    _debouncer.UpdateInterval((int)args.Value);
+                }
             }
         }
 
