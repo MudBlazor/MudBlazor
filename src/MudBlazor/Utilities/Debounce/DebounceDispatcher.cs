@@ -168,7 +168,7 @@ internal sealed class DebounceDispatcher : IDisposable
             // Update last execution time for leading mode
             if (_leading)
             {
-                await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await _lock.WaitAsync(localCts.Token).ConfigureAwait(false);
                 try
                 {
                     _lastExecutionTime = DateTime.UtcNow;

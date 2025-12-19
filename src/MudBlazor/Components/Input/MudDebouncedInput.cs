@@ -40,15 +40,9 @@ namespace MudBlazor
 
         protected Task OnChange()
         {
-            // When debouncing is active (debouncer exists and has pending work), do nothing here.
-            // The debounce dispatcher will handle updating the value when it elapses.
-            // This method is called on blur when debouncing is not active.
-            if (DebounceInterval > 0 && _debouncer is not null)
-            {
-                // Debouncer is active, let it handle the update
-                return Task.CompletedTask;
-            }
-
+            // This method is called on blur.
+            // When debouncing is active, the debounce dispatcher handles the update.
+            // Nothing to do here since UpdateValuePropertyAsync already handles debouncing.
             return Task.CompletedTask;
         }
 

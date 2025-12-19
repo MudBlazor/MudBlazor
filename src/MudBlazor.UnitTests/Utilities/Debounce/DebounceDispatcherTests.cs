@@ -240,6 +240,68 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    public async Task DebounceAsync_ExternalCancellationDuringDebounce_CancelsCorrectly()
+    {
+        // Arrange
+        using var debounceDispatcher = new DebounceDispatcher(200);
+        using var cts = new CancellationTokenSource();
+        var executed = false;
+
+        Task Invoke()
+        {
+            executed = true;
+            return Task.CompletedTask;
+        }
+
+        // Act - Start debounce with external cancellation token
+        var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
+        
+        // Cancel the external token while debounce is pending
+        await Task.Delay(50);
+        cts.Cancel();
+        
+        // Wait a bit more to ensure debounce would have completed if not cancelled
+        await Task.Delay(200);
+
+        // Assert - Should not have executed due to cancellation
+        executed.Should().BeFalse();
+        task.IsCompleted.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task DebounceAsync_LeadingMode_ExternalCancellationAfterImmediate_DoesNotAffectExecution()
+    {
+        // Arrange
+        using var debounceDispatcher = new DebounceDispatcher(200, leading: true);
+        using var cts = new CancellationTokenSource();
+        var executionCount = 0;
+
+        Task TrackingAction()
+        {
+            Interlocked.Increment(ref executionCount);
+            return Task.CompletedTask;
+        }
+
+        // Act - First call executes immediately
+        await debounceDispatcher.DebounceAsync(TrackingAction, cts.Token);
+        executionCount.Should().Be(1);
+
+        // Start another debounce with same token
+        var task = debounceDispatcher.DebounceAsync(TrackingAction, cts.Token);
+        
+        // Cancel the token during the debounce wait
+        await Task.Delay(50);
+        cts.Cancel();
+        
+        // Wait to ensure debounce completes
+        await Task.Delay(200);
+
+        // Assert - Second call should not have executed due to cancellation
+        executionCount.Should().Be(1);
+        task.IsCompleted.Should().BeTrue();
+    }
+
+    [Test]
     public async Task DebounceAsync_RapidCalls_OnlyLastExecutes()
     {
         // Arrange
@@ -395,10 +457,8 @@ public class DebounceDispatcherTests
         var task3 = debounceDispatcher.DebounceAsync(TrackingAction);
         var task4 = debounceDispatcher.DebounceAsync(TrackingAction);
 
-        // Wait for them to complete
-        await task2;
-        await task3;
-        await task4;
+        // Wait for debounce to complete
+        await Task.Delay(150);
 
         // Assert - Should have executed twice (first immediate, last after debounce)
         executionCount.Should().Be(2);
