@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
 /// A mask consisting of contiguous sets of characters.
 /// </summary>
@@ -28,12 +27,12 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(params Block[] blocks) : base(null!)
+    public BlockMask(params Block[] blocks) : base()
     {
         if (blocks.Length == 0)
-            throw new ArgumentException(@"Supply at least one block", nameof(blocks));
+            throw new ArgumentException("supply at least one block", nameof(blocks));
         Blocks = blocks;
-        DelimiterCharacters = string.Empty;
+        Delimiters = "";
     }
 
     /// <summary>
@@ -46,7 +45,7 @@ public class BlockMask : RegexMask
     /// </remarks>
     public BlockMask(string? delimiters, params Block[] blocks) : this(blocks)
     {
-        DelimiterCharacters = delimiters ?? string.Empty;
+        Delimiters = delimiters ?? "";
     }
 
     /// <summary>
@@ -87,7 +86,7 @@ public class BlockMask : RegexMask
             var block = blocks[i];
             AddRequiredCharacters(regexBuilder, block, ref openParenthesisCount);
             AddOptionalCharacters(regexBuilder, block, ref openParenthesisCount);
-            AddDelimiterToRegex(regexBuilder, i, blocks, ref openParenthesisCount);
+            AddDelimiter(regexBuilder, i, blocks, ref openParenthesisCount);
         }
 
         CloseOpenParentheses(regexBuilder, openParenthesisCount);
@@ -103,7 +102,7 @@ public class BlockMask : RegexMask
             regexBuilder.Append('(');
             openParenthesisCount++;
 
-            if (MaskDictionary.TryGetValue(block.MaskChar, out var maskDef))
+            if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
                 regexBuilder.Append(maskDef.Regex);
             else
                 regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
@@ -120,7 +119,7 @@ public class BlockMask : RegexMask
                 regexBuilder.Append('(');
                 openParenthesisCount++;
 
-                if (MaskDictionary.TryGetValue(block.MaskChar, out var maskDef))
+                if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
                     regexBuilder.Append(maskDef.Regex);
                 else
                     regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
@@ -135,14 +134,14 @@ public class BlockMask : RegexMask
     }
 
     // Helper method to add delimiter if there are more blocks to process
-    private void AddDelimiterToRegex(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
+    private void AddDelimiter(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
     {
-        if (Delimiters.Count > 0 && index < blocks.Length - 1)
+        if (_delimiters.Count > 0 && index < blocks.Length - 1)
         {
             regexBuilder.Append("([");
             openParenthesisCount++;
 
-            foreach (var delimiter in Delimiters)
+            foreach (var delimiter in _delimiters)
                 regexBuilder.Append(Regex.Escape(delimiter.ToString()));
 
             regexBuilder.Append(']');
@@ -153,20 +152,18 @@ public class BlockMask : RegexMask
     private static void CloseOpenParentheses(StringBuilder regexBuilder, int openParenthesisCount)
     {
         for (var i = 0; i < openParenthesisCount; i++)
-        {
             regexBuilder.Append(")?");
-        }
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask? mask)
+    public override void UpdateFrom(IMask other)
     {
-        base.UpdateFrom(mask);
-        if (mask is BlockMask blockMask)
+        base.UpdateFrom(other);
+        if (other is BlockMask o)
         {
-            Blocks = blockMask.Blocks ?? [];
-            DelimiterCharacters = blockMask.DelimiterCharacters;
-            ForceReinitialize();
+            Blocks = o.Blocks ?? [];
+            Delimiters = o.Delimiters;
+            _initialized = false;
             Refresh();
         }
     }

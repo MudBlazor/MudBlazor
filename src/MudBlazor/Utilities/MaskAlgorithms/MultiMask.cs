@@ -20,9 +20,6 @@ namespace MudBlazor
     /// <seealso cref="RegexMask" />
     public class MultiMask : PatternMask
     {
-        private string _defaultMask;
-        private MaskOption[]? _options;
-
         /// <summary>
         /// Creates a new multi mask from the specified mask options.
         /// </summary>
@@ -38,6 +35,9 @@ namespace MudBlazor
             _options = options ?? [];
         }
 
+        private string _defaultMask;
+        private MaskOption[]? _options;
+
         /// <summary>
         /// Occurs when <see cref="DetectedOption" /> has changed.
         /// </summary>
@@ -49,7 +49,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Changes automatically as the input changes.
         /// </remarks>
-        public MaskOption? DetectedOption { get; private set; }
+        public MaskOption? DetectedOption { get; private set; } = null;
 
         /// <inheritdoc />
         public override void Insert(string? input)
@@ -92,7 +92,7 @@ namespace MudBlazor
             Selection = sel;
             Mask = newOption != null ? newOption.Value.Mask : _defaultMask;
             // when mask changes we need to re-initialize!
-            ForceReinitialize();
+            _initialized = false;
             // do it again!
             action();
             OptionDetected?.Invoke(newOption, Text);
@@ -112,27 +112,24 @@ namespace MudBlazor
 
             foreach (var option in _options)
             {
-                if (option.Regex is not null && Regex.IsMatch(text, option.Regex))
-                {
+                if (option.Regex != null && Regex.IsMatch(text, option.Regex))
                     return option;
-                }
             }
 
             return null;
         }
 
         /// <inheritdoc />
-        public override void UpdateFrom(IMask? mask)
+        public override void UpdateFrom(IMask other)
         {
-            base.UpdateFrom(mask);
-            if (mask is MultiMask multiMask)
-            {
-                // no need to re-initialize, just update the options
-                _defaultMask = multiMask._defaultMask;
-                _options = multiMask._options ?? [];
-                OptionDetected = multiMask.OptionDetected;
-                Refresh();
-            }
+            base.UpdateFrom(other);
+            if (other is not MultiMask o)
+                return;
+            // no need to re-initialize, just update the options
+            _defaultMask = o._defaultMask;
+            _options = o._options ?? [];
+            OptionDetected = o.OptionDetected;
+            Refresh();
         }
     }
 }
