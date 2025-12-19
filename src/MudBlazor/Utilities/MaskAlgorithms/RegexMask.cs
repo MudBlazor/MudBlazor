@@ -115,7 +115,7 @@ public class RegexMask : BaseMask
         var pos = ConsolidateCaret(text, CaretPos);
         if (pos >= text.Length)
             return;
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         // delete as many delimiters as there are plus one char
         var restText = new string(afterText.SkipWhile(IsDelimiter).Skip(1).ToArray());
         UpdateText(AlignAgainstMask(beforeText + restText));
@@ -174,13 +174,10 @@ public class RegexMask : BaseMask
             // try to skip over a delimiter (input of values only i.e. 31122021 => 31.12.2021)
             else if (!string.IsNullOrEmpty(DelimiterCharacters))
             {
-                foreach (var delimiter in DelimiterCharacters)
+                foreach (var delimiter in DelimiterCharacters.Where(delimiter => _regex.IsMatch(current + delimiter + textChar)))
                 {
-                    if (_regex.IsMatch(current + delimiter + textChar))
-                    {
-                        sb.Append(delimiter).Append(textChar);
-                        break;
-                    }
+                    sb.Append(delimiter).Append(textChar);
+                    break;
                 }
             }
         }

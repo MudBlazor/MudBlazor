@@ -69,7 +69,7 @@ public abstract class BaseMask : IMask
         get => _maskChars;
         set
         {
-            _maskChars = value ?? throw new ArgumentNullException(nameof(value));
+            _maskChars = value;
             // force re-initialization
             _initialized = false;
         }

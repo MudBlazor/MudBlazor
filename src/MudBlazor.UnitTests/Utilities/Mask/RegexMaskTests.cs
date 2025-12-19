@@ -244,7 +244,7 @@ public class RegexMaskTests
     {
         // Arrange
         var mask = new RegexMask("^[0-9]+$");
-        var otherMask = new RegexMask("^[0-9.]+$", null);
+        var otherMask = new RegexMask("^[0-9.]+$");
 
         // Act
         mask.UpdateFrom(otherMask);

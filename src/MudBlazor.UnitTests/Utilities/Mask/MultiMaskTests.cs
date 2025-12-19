@@ -226,4 +226,3 @@ namespace MudBlazor.UnitTests.Utilities.Mask
         }
     }
 }
-

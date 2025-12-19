@@ -30,7 +30,7 @@ public class BlockMask : RegexMask
     public BlockMask(params Block[] blocks)
     {
         if (blocks.Length == 0)
-            throw new ArgumentException(@"Supply at least one block", nameof(blocks));
+            throw new ArgumentException(@"supply at least one block", nameof(blocks));
         Blocks = blocks;
         DelimiterCharacters = string.Empty;
     }

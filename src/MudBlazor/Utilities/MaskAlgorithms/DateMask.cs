@@ -20,9 +20,9 @@ namespace MudBlazor;
 /// <seealso cref="RegexMask" />
 public partial class DateMask : PatternMask
 {
-    private char _y;
-    private char _m;
-    private char _d;
+    private char _yearChar;
+    private char _monthChar;
+    private char _dayChar;
 
     private int _year;
     private int _month;
@@ -43,9 +43,9 @@ public partial class DateMask : PatternMask
     /// </remarks>
     public DateMask(string mask, char year = 'y', char month = 'M', char day = 'd') : base(mask)
     {
-        _y = year;
-        _m = month;
-        _d = day;
+        _yearChar = year;
+        _monthChar = month;
+        _dayChar = day;
         MaskChars = MaskChars.Concat(new[] { MaskChar.Digit(year), MaskChar.Digit(month), MaskChar.Digit(day), })
             .ToArray();
     }
@@ -62,19 +62,19 @@ public partial class DateMask : PatternMask
 
     private int ExtractYear(string mask, string alignedText, int maskOffset)
     {
-        var yyyy = new string(_y, 4);
-        var yy = new string(_y, 2);
-        if (mask.Contains(yyyy))
+        var longYearPattern = new string(_yearChar, 4);
+        var shortYearPattern = new string(_yearChar, 2);
+        if (mask.Contains(longYearPattern))
         {
-            var (yearString, _) = Extract(yyyy, mask, maskOffset, alignedText);
+            var (yearString, _) = Extract(longYearPattern, mask, maskOffset, alignedText);
             if (yearString == null || yearString.Length < 4)
                 return 0;
             if (int.TryParse(yearString, out var year))
                 return year;
         }
-        else if (mask.Contains(yy))
+        else if (mask.Contains(shortYearPattern))
         {
-            var (yearString, _) = Extract(yy, mask, maskOffset, alignedText);
+            var (yearString, _) = Extract(shortYearPattern, mask, maskOffset, alignedText);
             if (yearString == null || yearString.Length < 2)
                 return 0;
             if (int.TryParse(yearString, out var y))
@@ -85,8 +85,8 @@ public partial class DateMask : PatternMask
 
     private void MonthLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
     {
-        var mm = new string(_m, 2);
-        var (monthString, index) = Extract(mm, mask, maskOffset, alignedText);
+        var monthPattern = new string(_monthChar, 2);
+        var (monthString, index) = Extract(monthPattern, mask, maskOffset, alignedText);
         if (monthString == null)
             return;
         if (!int.TryParse(monthString, out var month))
@@ -111,8 +111,8 @@ public partial class DateMask : PatternMask
 
     private void DayLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
     {
-        var dd = new string(_d, 2);
-        var (dayString, index) = Extract(dd, mask, maskOffset, alignedText);
+        var dayPattern = new string(_dayChar, 2);
+        var (dayString, index) = Extract(dayPattern, mask, maskOffset, alignedText);
         if (dayString == null)
             return;
         if (!int.TryParse(dayString, out var day))
@@ -120,7 +120,7 @@ public partial class DateMask : PatternMask
         if (dayString.Length == 1)
         {
             // we are at the first digit of dd, only 0..3 are allowed except if month is February. 
-            if (day > 3 || day == 3 && _month == 2)
+            if (day > 3 || (day == 3 && _month == 2))
             {
                 // by inserting a 0 we make 09 out of 9
                 alignedText = alignedText.Insert(index, "0");
@@ -152,10 +152,10 @@ public partial class DateMask : PatternMask
 
         try
         {
-            var yyyy = new string(_y, 4);
-            var yy = new string(_y, 2);
-            var dd = new string(_d, 2);
-            var mm = new string(_m, 2);
+            var yyyy = new string(_yearChar, 4);
+            var yy = new string(_yearChar, 2);
+            var dd = new string(_dayChar, 2);
+            var mm = new string(_monthChar, 2);
             var maskHasDay = Mask.Contains(dd);
             var maskHasMonth = Mask.Contains(mm);
             var maskHasYear = Mask.Contains(yy) || Mask.Contains(yyyy);
@@ -215,7 +215,7 @@ public partial class DateMask : PatternMask
         };
     }
 
-    private int GetDaysInMonth(int year, int month)
+    private static int GetDaysInMonth(int year, int month)
     {
         if (month <= 0 || month > 12) // we don't know yet which month the user means, so assume 31
             return 31;
@@ -242,9 +242,9 @@ public partial class DateMask : PatternMask
         base.UpdateFrom(mask);
         if (mask is DateMask dateMask)
         {
-            _y = dateMask._y;
-            _m = dateMask._m;
-            _d = dateMask._d;
+            _yearChar = dateMask._yearChar;
+            _monthChar = dateMask._monthChar;
+            _dayChar = dateMask._dayChar;
         }
     }
 

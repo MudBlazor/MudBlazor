@@ -429,5 +429,4 @@ public class DateMaskTests
         // Assert
         mask.Text.Should().Be("2023/12");
     }
-
 }

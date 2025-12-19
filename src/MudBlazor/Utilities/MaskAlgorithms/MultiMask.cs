@@ -127,12 +127,12 @@ namespace MudBlazor
             base.UpdateFrom(mask);
             if (mask is MultiMask multiMask)
             {
+                // No need to re-initialize, just update the options
                 _defaultMask = multiMask._defaultMask;
                 _options = multiMask._options ?? [];
                 OptionDetected = multiMask.OptionDetected;
                 Refresh();
             }
-            // no need to re-initialize, just update the options
         }
     }
 }
