@@ -165,8 +165,9 @@ public class RegexMask : BaseMask
 
         foreach (var textChar in text)
         {
-            // Build test string once per character
-            var testWithChar = sb.ToString() + textChar;
+            // Build current accumulated text once per character to avoid repeated StringBuilder.ToString() calls
+            var current = sb.ToString();
+            var testWithChar = current + textChar;
 
             if (_regex.IsMatch(testWithChar))
             {
@@ -177,7 +178,7 @@ public class RegexMask : BaseMask
             {
                 // Find first delimiter that makes the pattern match
                 var matchingDelimiter = DelimiterCharacters.FirstOrDefault(delimiter => 
-                    _regex.IsMatch(sb.ToString() + delimiter + textChar));
+                    _regex.IsMatch(current + delimiter + textChar));
                 
                 if (matchingDelimiter != default(char))
                 {
