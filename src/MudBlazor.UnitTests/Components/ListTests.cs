@@ -99,8 +99,8 @@ namespace MudBlazor.UnitTests.Components
             var list = comp.FindComponent<MudList<string>>().Instance;
             comp.Find("p.selected-values").TrimmedText().Should().Be("Cafe Latte, Milk");
             var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
-            GetCheckBox("Milk").ReadValue().Should().Be(true);
-            GetCheckBox("Cafe Latte").ReadValue().Should().Be(true);
+            GetCheckBox("Milk").ReadValue.Should().Be(true);
+            GetCheckBox("Cafe Latte").ReadValue.Should().Be(true);
         }
 
         [Test]
@@ -117,48 +117,48 @@ namespace MudBlazor.UnitTests.Components
             // click water on list1
             Select(list1, "Sparkling Water");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O");
-            GetCheckBox(list1, "Milk").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Sparkling Water").ReadValue().Should().Be(true);
-            GetCheckBox(list1, "English Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Chinese Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Irish Coffee").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Double Espresso").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Milk").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Sparkling Water").ReadValue().Should().Be(true);
-            GetCheckBox(list2, "English Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Chinese Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Irish Coffee").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Double Espresso").ReadValue().Should().Be(false);
+            GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(true);
+            GetCheckBox(list1, "English Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Irish Coffee").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Double Espresso").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Milk").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Sparkling Water").ReadValue.Should().Be(true);
+            GetCheckBox(list2, "English Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
             // click Irish on list2
             Select(list2, "Irish Coffee");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O, Irish Coffee");
-            GetCheckBox(list1, "Milk").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Sparkling Water").ReadValue().Should().Be(true);
-            GetCheckBox(list1, "English Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Chinese Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Irish Coffee").ReadValue().Should().Be(true);
-            GetCheckBox(list1, "Double Espresso").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Milk").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Sparkling Water").ReadValue().Should().Be(true);
-            GetCheckBox(list2, "English Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Chinese Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Irish Coffee").ReadValue().Should().Be(true);
-            GetCheckBox(list2, "Double Espresso").ReadValue().Should().Be(false);
+            GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(true);
+            GetCheckBox(list1, "English Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Irish Coffee").ReadValue.Should().Be(true);
+            GetCheckBox(list1, "Double Espresso").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Milk").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Sparkling Water").ReadValue.Should().Be(true);
+            GetCheckBox(list2, "English Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(true);
+            GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
             // click off water on list2
             Select(list2, "Sparkling Water");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Irish Coffee");
-            GetCheckBox(list1, "Milk").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Sparkling Water").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "English Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Chinese Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list1, "Irish Coffee").ReadValue().Should().Be(true);
-            GetCheckBox(list1, "Double Espresso").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Milk").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Sparkling Water").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "English Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Chinese Tea").ReadValue().Should().Be(false);
-            GetCheckBox(list2, "Irish Coffee").ReadValue().Should().Be(true);
-            GetCheckBox(list2, "Double Espresso").ReadValue().Should().Be(false);
+            GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "English Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Irish Coffee").ReadValue.Should().Be(true);
+            GetCheckBox(list1, "Double Espresso").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Milk").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Sparkling Water").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "English Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(true);
+            GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
         }
 
         /// <summary>

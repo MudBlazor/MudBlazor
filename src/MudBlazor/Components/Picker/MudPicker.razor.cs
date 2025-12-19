@@ -727,7 +727,7 @@ namespace MudBlazor
                     if (args.CtrlKey && args.ShiftKey)
                     {
                         await ClearAsync();
-                        await WriteValueAsync(default);
+                        await SetValueAsync(default);
                         await ResetAsync();
                     }
 

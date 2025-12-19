@@ -286,4 +286,147 @@ public class DateMaskTests
         mask.Clear();
     }
 
+    [Test]
+    public void DateMask_LeapYear_2000()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("02/29/2000");
+
+        // Assert
+        mask.Text.Should().Be("02/29/2000");
+    }
+
+    [Test]
+    public void DateMask_LeapYear_2024()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("02/29/2024");
+
+        // Assert
+        mask.Text.Should().Be("02/29/2024");
+    }
+
+    [Test]
+    public void DateMask_NonLeapYear_2023()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("02/29/2023");
+
+        // Assert - should correct to 28
+        mask.Text.Should().Be("02/28/2023");
+    }
+
+    [Test]
+    public void DateMask_GetCleanText()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+        mask.Insert("12/31/2023");
+
+        // Act
+        var cleanText = mask.GetCleanText();
+
+        // Assert
+        cleanText.Should().Be("12/31/2023");
+    }
+
+    [Test]
+    public void DateMask_AprilWith31Days()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("04/31/2023");
+
+        // Assert - April has 30 days
+        mask.Text.Should().Be("04/30/2023");
+    }
+
+    [Test]
+    public void DateMask_PartialInput_MonthOnly()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("12");
+
+        // Assert
+        mask.Text.Should().Be("12/");
+    }
+
+    [Test]
+    public void DateMask_PartialInput_MonthAndDay()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("1231");
+
+        // Assert
+        mask.Text.Should().Be("12/31/");
+    }
+
+    [Test]
+    public void DateMask_ZeroMonth_ConvertsToOne()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("00/15/2023");
+
+        // Assert
+        mask.Text.Should().Be("01/15/2023");
+    }
+
+    [Test]
+    public void DateMask_ZeroDay_ConvertsToOne()
+    {
+        // Arrange
+        var mask = new DateMask("MM/dd/yyyy");
+
+        // Act
+        mask.Insert("12/00/2023");
+
+        // Assert
+        mask.Text.Should().Be("12/01/2023");
+    }
+
+    [Test]
+    public void DateMask_MonthYear_Format()
+    {
+        // Arrange
+        var mask = new DateMask("MM/yyyy");
+
+        // Act
+        mask.Insert("12/2023");
+
+        // Assert
+        mask.Text.Should().Be("12/2023");
+    }
+
+    [Test]
+    public void DateMask_YearMonth_Format()
+    {
+        // Arrange
+        var mask = new DateMask("yyyy/MM");
+
+        // Act
+        mask.Insert("2023/12");
+
+        // Assert
+        mask.Text.Should().Be("2023/12");
+    }
 }

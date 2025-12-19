@@ -3,21 +3,19 @@
 ## What is MudBlazor?
 
 MudBlazor is a comprehensive, production-ready Material Design component library for Blazor applications. This is a large-scale .NET project with:
-- **Primary Language:** C# (.NET 8 and .NET 9)
 - **UI Framework:** Blazor (both Server and WebAssembly)
 - **Styling:** SCSS (compiled to CSS)
 - **JavaScript:** Minimal JS interop files in TScripts/
 - **Testing:** bUnit for component testing
 - **Size:** ~450 components, ~3,700+ unit tests, extensive documentation
-- **Target Frameworks:** .NET 8.0 and .NET 9.0
 
 The project follows Material Design guidelines and provides a complete set of UI components for building modern web applications with Blazor.
 
 ## Prerequisites
 
-- **.NET 9.0 SDK** (version 9.0.305 or later) - Required for building
+- **.NET 10.0 SDK** (version 10.0.100 or later) - Required for building
 - Check your version: `dotnet --version`
-- The solution targets both .NET 8.0 and .NET 9.0
+- The solution targets .NET 8.0, .NET 9.0, and .NET 10.0
 
 ## Dev Environment Tips
 
@@ -27,7 +25,7 @@ The project follows Material Design guidelines and provides a complete set of UI
 
 1. **Clean (when needed):**
 ```bash
-dotnet clean src/MudBlazor.sln
+dotnet clean src/MudBlazor.slnx
 ```
 - Runs in ~2-3 seconds
 - Use when: Build failures occur, switching branches, or unexplained issues
@@ -35,7 +33,7 @@ dotnet clean src/MudBlazor.sln
 
 2. **Build:**
 ```bash
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 ```
 - **Duration: ~2-2.5 minutes** (this is NORMAL - do NOT timeout before 150 seconds)
 - Builds 15+ projects including:
@@ -70,8 +68,8 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ### Build Troubleshooting
 
 **If build fails:**
-1. Run `dotnet clean src/MudBlazor.sln` first
-2. Check that .NET 9.0 SDK is installed: `dotnet --version`
+1. Run `dotnet clean src/MudBlazor.slnx` first
+2. Check that .NET 10.0 SDK is installed: `dotnet --version`
 3. Ensure you're in the repository root directory
 4. Check for file permission issues
 
@@ -82,7 +80,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 4. Review test output for specific failure reasons
 
 **If CI formatting check fails:**
-1. Run `dotnet format src/MudBlazor.sln` to auto-fix formatting issues
+1. Run `dotnet format src/MudBlazor.slnx` to auto-fix formatting issues
 2. Commit the formatting changes
 3. Common issues: blank lines after attributes, missing UTF-8 BOM, incorrect indentation
 
@@ -100,7 +98,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ├── CONTRIBUTING.md           # Detailed contribution guidelines
 ├── README.md                 # Project overview and quick start
 ├── AGENTS.md                 # This file - AI agent guide
-└── src/MudBlazor.sln         # Main solution file
+└── src/MudBlazor.slnx        # Main solution file
 ```
 
 ### Source Directory Structure
@@ -148,7 +146,7 @@ src/
 ### Running Tests
 ```bash
 # Build first (required)
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 
 # Run all unit tests (ALWAYS use --no-build to save time)
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
@@ -356,11 +354,19 @@ Example: `DateRangePicker: Fix initializing DateRange with null values (#1997)`
 
 3. Build and test iteratively:
 ```bash
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 ```
 
-4. Run docs locally to verify (optional):
+4. Before committing:
+```bash
+# Format code (REQUIRED)
+dotnet format src/MudBlazor.slnx
+```
+
+5. Trigger copilot code review and address all issues (REQUIRED for code changes)
+
+6. Run docs locally to verify (optional):
 ```bash
 dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ```
@@ -369,7 +375,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 1. Edit in `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`
 2. Build to generate files (runs MudBlazor.Docs.Compiler):
 ```bash
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 ```
 3. Preview locally with docs server
 
@@ -385,21 +391,27 @@ dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.c
 ### Before Making Changes
 ```bash
 # Always check initial state
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 ```
 
 ### After Making Changes
 ```bash
 # Clean if needed (switching branches or unexplained issues)
-dotnet clean src/MudBlazor.sln
+dotnet clean src/MudBlazor.slnx
+
+# Format code (REQUIRED - MUST run before committing)
+dotnet format src/MudBlazor.slnx
 
 # Build
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 
 # Run tests
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 ```
+
+**If you made code changes (not just documentation):**
+- MUST trigger a copilot code review and address all issues before finalizing the PR
 
 ## Code Style Highlights
 
@@ -450,6 +462,8 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Rel
 7. **Multiple topics in one PR** - Keep PRs focused on single issue
 8. **Build timeouts** - Set timeout to at least 180 seconds for builds, 120 seconds for tests
 9. **Missing `--no-build` flag** - Always use when running tests after a successful build
+10. **Forgetting to run `dotnet format`** - MUST run `dotnet format src/MudBlazor.slnx` before committing
+11. **Skipping code review** - MUST trigger copilot code review for any code changes and address all issues
 
 ## Continuous Integration
 
@@ -474,11 +488,11 @@ The GitHub Actions workflow (`.github/workflows/build-test-mudblazor.yml`) runs:
 
 ```bash
 # Check .NET version
-dotnet --version  # Should be 9.0.305 or later
+dotnet --version  # Should be 10.0.100 or later
 
 # Full build and test cycle
-dotnet clean src/MudBlazor.sln
-dotnet build src/MudBlazor.sln -c Release --nologo  # ~2 minutes
+dotnet clean src/MudBlazor.slnx
+dotnet build src/MudBlazor.slnx -c Release --nologo  # ~2 minutes
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo  # ~1.5 minutes
 
 # Test specific component
@@ -500,16 +514,15 @@ dotnet pack src/MudBlazor/MudBlazor.csproj -c Release -o ./LocalNuGet -p:Version
 
 ```bash
 # 1. Clean (if switching branches or weird issues)
-dotnet clean src/MudBlazor.sln
+dotnet clean src/MudBlazor.slnx
 
-# 2. Format code (REQUIRED - CI will fail if not formatted)
-dotnet format src/MudBlazor.sln --verify-no-changes
-# Expected: Exit code 0 with no formatting errors
-# If formatting errors are found, run without --verify-no-changes to auto-fix:
-# dotnet format src/MudBlazor.sln
+# 2. Format code (REQUIRED - MUST run before committing ANY changes)
+dotnet format src/MudBlazor.slnx
+# This MUST be run to ensure code formatting is correct
+# CI will fail if code is not properly formatted
 
 # 3. Build
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 # Expected: "Build succeeded" with 0 warnings, 0 errors in ~2 minutes
 
 # 4. Test
@@ -519,6 +532,15 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Rel
 # 5. (Optional) Test docs locally
 dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ```
+
+### Code Review Requirement
+
+**CRITICAL: If you made ANY code changes (not just documentation), you MUST:**
+1. Trigger a copilot code review before finalizing the PR
+2. Address all issues identified in the code review
+3. Re-run the code review if significant changes were made after the initial review
+
+**Documentation-only changes do not require a code review.**
 
 ---
 
