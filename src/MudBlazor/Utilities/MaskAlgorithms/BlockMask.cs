@@ -56,7 +56,7 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(string delimiters, params Block[] blocks) : this(blocks)
+    public BlockMask(string? delimiters, params Block[] blocks) : this(blocks)
     {
         Delimiters = delimiters ?? "";
     }
@@ -64,13 +64,13 @@ public class BlockMask : RegexMask
     /// <summary>
     /// The sets of characters used to build this mask.
     /// </summary>
-    public Block[] Blocks { get; protected set; }
+    public Block[]? Blocks { get; protected set; }
 
     /// <inheritdoc />
     protected override void InitInternals()
     {
         base.InitInternals();
-        Blocks ??= Array.Empty<Block>();
+        Blocks ??= [];
         Mask = BuildRegex(Blocks);
         _regex = new Regex(Mask);
     }
@@ -174,7 +174,7 @@ public class BlockMask : RegexMask
         base.UpdateFrom(other);
         if (other is BlockMask o)
         {
-            Blocks = o.Blocks ?? Array.Empty<Block>();
+            Blocks = o.Blocks ?? [];
             Delimiters = o.Delimiters;
             _initialized = false;
             Refresh();
