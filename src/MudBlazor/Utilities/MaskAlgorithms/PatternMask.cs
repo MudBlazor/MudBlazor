@@ -293,7 +293,7 @@ public class PatternMask : BaseMask
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask? other)
     {
         base.UpdateFrom(other);
         if (other is not PatternMask o)

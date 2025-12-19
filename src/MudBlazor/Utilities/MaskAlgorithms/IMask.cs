@@ -71,7 +71,7 @@ namespace MudBlazor
         /// <summary>
         /// Copies the mask and mask characters from the specified mask.
         /// </summary>
-        /// <param name="other">The mask to copy from.</param>
-        void UpdateFrom(IMask other);
+        /// <param name="mask">The mask to copy from.</param>
+        void UpdateFrom(IMask? mask);
     }
 }

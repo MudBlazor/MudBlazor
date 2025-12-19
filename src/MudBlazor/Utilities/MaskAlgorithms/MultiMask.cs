@@ -122,10 +122,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public override void UpdateFrom(IMask other)
+        public override void UpdateFrom(IMask? mask)
         {
-            base.UpdateFrom(other);
-            if (other is MultiMask multiMask)
+            base.UpdateFrom(mask);
+            if (mask is MultiMask multiMask)
             {
                 // no need to re-initialize, just update the options
                 _defaultMask = multiMask._defaultMask;

@@ -230,14 +230,15 @@ public partial class DateMask : PatternMask
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask? mask)
     {
-        base.UpdateFrom(other);
-        if (other is not DateMask o)
-            return;
-        _y = o._y;
-        _m = o._m;
-        _d = o._d;
+        base.UpdateFrom(mask);
+        if (mask is DateMask dateMask)
+        {
+            _y = dateMask._y;
+            _m = dateMask._m;
+            _d = dateMask._d;
+        }
     }
 
     [GeneratedRegex(@"^\d+$")]

@@ -153,17 +153,19 @@ public class BlockMask : RegexMask
     private static void CloseOpenParentheses(StringBuilder regexBuilder, int openParenthesisCount)
     {
         for (var i = 0; i < openParenthesisCount; i++)
+        {
             regexBuilder.Append(")?");
+        }
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask? other)
+    public override void UpdateFrom(IMask? mask)
     {
-        base.UpdateFrom(other);
-        if (other is BlockMask o)
+        base.UpdateFrom(mask);
+        if (mask is BlockMask blockMask)
         {
-            Blocks = o.Blocks ?? [];
-            DelimiterCharacters = o.DelimiterCharacters;
+            Blocks = blockMask.Blocks ?? [];
+            DelimiterCharacters = blockMask.DelimiterCharacters;
             ForceReinitialize();
             Refresh();
         }
