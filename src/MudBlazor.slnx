@@ -1,0 +1,24 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="MudBlazor.Analyzers.TestComponents/MudBlazor.Analyzers.TestComponents.csproj" />
+    <Project Path="MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj" />
+    <Project Path="MudBlazor.UnitTests.Shared/MudBlazor.UnitTests.Shared.csproj" />
+    <Project Path="MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj" />
+    <Project Path="MudBlazor.UnitTests/MudBlazor.UnitTests.csproj" />
+  </Folder>
+  <Project Path="MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj" />
+  <Project Path="MudBlazor.Analyzers/MudBlazor.Analyzers.csproj" />
+  <Project Path="MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" />
+  <Project Path="MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj" />
+  <Project Path="MudBlazor.Docs.Wasm/MudBlazor.Docs.Wasm.csproj" />
+  <Project Path="MudBlazor.Docs.WasmHost/MudBlazor.Docs.WasmHost.csproj" />
+  <Project Path="MudBlazor.Docs/MudBlazor.Docs.csproj" />
+  <Project Path="MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
+  <Project Path="MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" />
+  <Project Path="MudBlazor/MudBlazor.csproj" />
+</Solution>
