@@ -1,4 +1,5 @@
-﻿using MudBlazor.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -61,7 +62,7 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string? value, IConverter<DateTime?, string?> converter, out DateRange? date)
+        public static bool TryParse(string? value, IConverter<DateTime?, string?> converter, [NotNullWhen(true)] out DateRange? date)
         {
             if (!RangeUtility.Split(value, out var start, out var end))
             {
@@ -80,7 +81,7 @@ namespace MudBlazor
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
         /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-        public static bool TryParse(string? start, string? end, IConverter<DateTime?, string?> converter, out DateRange? date)
+        public static bool TryParse(string? start, string? end, IConverter<DateTime?, string?> converter, [NotNullWhen(true)] out DateRange? date)
         {
             var endDate = converter.TryConvertBack(end);
             if (!endDate.Success)
