@@ -316,8 +316,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
 
-
-
         /// <summary>
         /// The type of input expected.
         /// </summary>
