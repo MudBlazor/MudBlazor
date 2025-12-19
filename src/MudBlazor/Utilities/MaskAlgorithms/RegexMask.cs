@@ -23,6 +23,17 @@ public class RegexMask : BaseMask
     /// </summary>
     private const string WhiteSpaceFilter = "(?!\\s)";
 
+    protected string _regexPattern = string.Empty;
+    protected Regex? _regex;
+
+    /// <summary>
+    /// The characters which are jumped over when adding an input character.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  For example: for a delimiter of <c>.</c>, a mask of <c>^[0-9].[0-9].[0-9]$</c>, and characters typed of <c>012</c>, the resulting text would be <c>0.1.2</c>
+    /// </remarks>
+    public string? Delimiters { get; protected set; }
+
     /// <summary>
     /// Creates a mask using a regular expression.
     /// </summary>
@@ -44,17 +55,6 @@ public class RegexMask : BaseMask
     protected RegexMask()
     {
     }
-
-    protected string _regexPattern = string.Empty;
-    protected Regex? _regex;
-
-    /// <summary>
-    /// The characters which are jumped over when adding an input character.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  For example: for a delimiter of <c>.</c>, a mask of <c>^[0-9].[0-9].[0-9]$</c>, and characters typed of <c>012</c>, the resulting text would be <c>0.1.2</c>
-    /// </remarks>
-    public string? Delimiters { get; protected set; }
 
     /// <inheritdoc />
     protected override void InitInternals()
@@ -78,9 +78,9 @@ public class RegexMask : BaseMask
     {
         Init();
         DeleteSelection(align: false);
-        var text = Text ?? "";
+        var text = Text ?? string.Empty;
         var pos = ConsolidateCaret(text, CaretPos);
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         var alignedInput = AlignAgainstMask(beforeText + input);
         CaretPos = alignedInput.Length;
         UpdateText(AlignAgainstMask(alignedInput + afterText));
@@ -93,7 +93,7 @@ public class RegexMask : BaseMask
         if (Selection == null)
             return;
         var sel = Selection.Value;
-        (var s1, _, var s3) = SplitSelection(Text, sel);
+        var (s1, _, s3) = SplitSelection(Text, sel);
         Selection = null;
         CaretPos = sel.Item1;
         if (!align)
@@ -111,7 +111,7 @@ public class RegexMask : BaseMask
             DeleteSelection(align: true);
             return;
         }
-        var text = Text ?? "";
+        var text = Text ?? string.Empty;
         var pos = ConsolidateCaret(text, CaretPos);
         if (pos >= text.Length)
             return;
@@ -163,12 +163,12 @@ public class RegexMask : BaseMask
             return string.Empty;
 
         var sb = new StringBuilder();
-        
+
         for (var i = 0; i < text.Length; i++)
         {
             var textChar = text[i];
             var current = sb.ToString();
-            
+
             if (_regex.IsMatch(current + textChar))
             {
                 sb.Append(textChar);
@@ -186,7 +186,7 @@ public class RegexMask : BaseMask
                 }
             }
         }
-        
+
         return sb.ToString();
     }
 
