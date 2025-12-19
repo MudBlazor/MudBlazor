@@ -177,9 +177,9 @@ public class RegexMask : BaseMask
             else if (!string.IsNullOrEmpty(DelimiterCharacters))
             {
                 // Find first delimiter that makes the pattern match
-                var matchingDelimiter = DelimiterCharacters.FirstOrDefault(delimiter => 
+                var matchingDelimiter = DelimiterCharacters.FirstOrDefault(delimiter =>
                     _regex.IsMatch(current + delimiter + textChar));
-                
+
                 if (matchingDelimiter != default(char))
                 {
                     sb.Append(matchingDelimiter).Append(textChar);
