@@ -491,7 +491,7 @@ namespace MudBlazor
             }
         }
 
-        private async void OnPaste (string e) => await OnPasteAsync(e);
+        private async void OnPaste(string e) => await OnPasteAsync(e);
 
         /// <summary>
         /// Copies the currently selected text (or the entire text if nothing is selected) to the clipboard.
