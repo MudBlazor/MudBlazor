@@ -9,6 +9,7 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents the validation logic for a <see cref="MudDataGrid{T}"/> row.
     /// </summary>

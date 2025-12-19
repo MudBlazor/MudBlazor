@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// Indicates the type of aggregation to perform.
 /// </summary>

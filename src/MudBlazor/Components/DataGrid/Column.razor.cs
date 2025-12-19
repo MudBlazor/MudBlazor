@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -12,6 +13,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents a vertical set of values.
     /// </summary>
@@ -29,14 +31,14 @@ namespace MudBlazor
         /// The data grid which owns this column.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T> DataGrid { get; set; }
+        public MudDataGrid<T>? DataGrid { get; set; }
 
         //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
 
         /// <summary>
         /// The value stored in this column.
         /// </summary>
-        [Parameter] public T Value { get; set; }
+        [Parameter] public T? Value { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Value"/> has changed.
@@ -54,7 +56,7 @@ namespace MudBlazor
         /// The display text for this column.
         /// </summary>
         [Parameter]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Hides this column.
@@ -85,37 +87,37 @@ namespace MudBlazor
         /// The template used to display this column's header.
         /// </summary>
         [Parameter]
-        public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
+        public RenderFragment<HeaderContext<T>>? HeaderTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's value cells.
         /// </summary>
         [Parameter]
-        public RenderFragment<CellContext<T>> CellTemplate { get; set; }
+        public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's footer.
         /// </summary>
         [Parameter]
-        public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
+        public RenderFragment<FooterContext<T>>? FooterTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's grouping.
         /// </summary>
         [Parameter]
-        public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
+        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's aggregate.
         /// </summary>
         [Parameter]
-        public RenderFragment<IEnumerable<T>> AggregateTemplate { get; set; }
+        public RenderFragment<IEnumerable<T>>? AggregateTemplate { get; set; }
 
         /// <summary>
         /// The function which groups values in this column.
         /// </summary>
         [Parameter]
-        public Func<T, object> GroupBy { get; set; }
+        public Func<T, object>? GroupBy { get; set; }
 
         /// <summary>
         /// The order in which values are grouped when there are more than one group
@@ -171,7 +173,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
         /// </remarks>
         [Parameter]
-        public string HeaderClass { get; set; }
+        public string? HeaderClass { get; set; }
 
         /// <summary>
         /// The function which calculates CSS classes for the header.
@@ -180,19 +182,19 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
         /// </remarks>
         [Parameter]
-        public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
+        public Func<IEnumerable<T>, string>? HeaderClassFunc { get; set; }
 
         /// <summary>
         /// The CSS style applied to this column's header.
         /// </summary>
         [Parameter]
-        public string HeaderStyle { get; set; }
+        public string? HeaderStyle { get; set; }
 
         /// <summary>
         /// The function which calculates CSS styles for the header.
         /// </summary>
         [Parameter]
-        public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
+        public Func<IEnumerable<T>, string>? HeaderStyleFunc { get; set; }
 
         /// <summary>
         /// Sorts values in this column.
@@ -272,7 +274,7 @@ namespace MudBlazor
         /// The comparison used for values in this column.
         /// </summary>
         [Parameter]
-        public IComparer<object> Comparer { get; set; } = null;
+        public IComparer<object>? Comparer { get; set; } = null;
 
         /// <summary>
         /// The function used to sort values in this column.
@@ -348,7 +350,7 @@ namespace MudBlazor
         /// The template used to display this column's filter.
         /// </summary>
         [Parameter]
-        public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
+        public RenderFragment<FilterContext<T>>? FilterTemplate { get; set; }
 
         /// <summary>
         /// The operators to use for this column's filter.
@@ -359,10 +361,10 @@ namespace MudBlazor
         /// <summary>
         /// The unique identifier for this column.
         /// </summary>
-        public string Identifier { get; set; }
+        public string? Identifier { get; set; }
 
 
-        private CultureInfo _culture;
+        private CultureInfo? _culture;
 
         /// <summary>
         /// The culture used to parse, filter, and display values in this column.
@@ -372,7 +374,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-        public CultureInfo Culture
+        public CultureInfo? Culture
         {
             get => _culture ?? DataGrid?.Culture;
             set
@@ -392,7 +394,7 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
-        public string CellClass { get; set; }
+        public string? CellClass { get; set; }
 
         /// <summary>
         /// The function used to determine CSS classes for this cell.
@@ -401,19 +403,19 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
-        public Func<T, string> CellClassFunc { get; set; }
+        public Func<T, string>? CellClassFunc { get; set; }
 
         /// <summary>
         /// The CSS styles to apply to this cell.
         /// </summary>
         [Parameter]
-        public string CellStyle { get; set; }
+        public string? CellStyle { get; set; }
 
         /// <summary>
         /// The function which calculates CSS styles for this cell.
         /// </summary>
         [Parameter]
-        public Func<T, string> CellStyleFunc { get; set; }
+        public Func<T, string>? CellStyleFunc { get; set; }
 
         /// <summary>
         /// Allows editing for this cell.
@@ -428,7 +430,7 @@ namespace MudBlazor
         /// The template for editing values in this cell.
         /// </summary>
         [Parameter]
-        public RenderFragment<CellContext<T>> EditTemplate { get; set; }
+        public RenderFragment<CellContext<T>>? EditTemplate { get; set; }
 
         #endregion
 
@@ -441,7 +443,7 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
-        public string FooterClass { get; set; }
+        public string? FooterClass { get; set; }
 
         /// <summary>
         /// The function which calculates CSS classes for this column's footer.
@@ -450,19 +452,19 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
-        public Func<IEnumerable<T>, string> FooterClassFunc { get; set; }
+        public Func<IEnumerable<T>, string>? FooterClassFunc { get; set; }
 
         /// <summary>
         /// The CSS styles to apply to this column's footer.
         /// </summary>
         [Parameter]
-        public string FooterStyle { get; set; }
+        public string? FooterStyle { get; set; }
 
         /// <summary>
         /// The function which calculates CSS styles for this column's footer.
         /// </summary>
         [Parameter]
-        public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }
+        public Func<IEnumerable<T>, string>? FooterStyleFunc { get; set; }
 
         /// <summary>
         /// Allows the footer to be selected.
@@ -474,7 +476,7 @@ namespace MudBlazor
         /// The function which calculates aggregates for this column.
         /// </summary>
         [Parameter]
-        public AggregateDefinition<T> AggregateDefinition { get; set; }
+        public AggregateDefinition<T>? AggregateDefinition { get; set; }
 
         #endregion
 
@@ -545,13 +547,15 @@ namespace MudBlazor
         #endregion
 
         internal int SortIndex { get; set; } = -1;
-        internal HeaderCell<T> HeaderCell { get; set; }
+        internal HeaderCell<T>? HeaderCell { get; set; }
 
-        private Func<T, object> _sortBy;
-        internal Func<T, object> groupBy;
-        internal HeaderContext<T> headerContext;
-        private FilterContext<T> filterContext;
-        internal FooterContext<T> footerContext;
+        private Func<T, object>? _sortBy;
+        internal Func<T, object?>? groupBy;
+
+        // These are set in OnInitialized() so they can't be null
+        internal HeaderContext<T> headerContext = null!;
+        private FilterContext<T> filterContext = null!;
+        internal FooterContext<T> footerContext = null!;
 
         /// <summary>
         /// The context used for filtering values in this column.
@@ -563,6 +567,7 @@ namespace MudBlazor
                 // Make sure that when we access filterContext properties, they have been defined...
                 if (filterContext.FilterDefinition == null)
                 {
+                    Debug.Assert(DataGrid is not null);
                     var operators = GetFilterOperators(FieldType.Identify(PropertyType));
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
@@ -601,6 +606,8 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            Debug.Assert(DataGrid is not null);
+
             if (FilterOperators.Count > 0)
             {
                 var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
@@ -616,7 +623,7 @@ namespace MudBlazor
 
             groupBy = GroupBy;
 
-            DataGrid?.AddColumn(this);
+            DataGrid.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
@@ -725,6 +732,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ToggleAsync()
         {
+            Debug.Assert(DataGrid is not null);
             await HiddenState.SetValueAsync(!HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }

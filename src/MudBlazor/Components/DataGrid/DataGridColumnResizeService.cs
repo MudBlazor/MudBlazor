@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -55,6 +56,7 @@ namespace MudBlazor
                     if (nextResizableColumn == null)
                         return false;
 
+                    Debug.Assert(nextResizableColumn.HeaderCell is not null);
                     _nextStartWidth = await nextResizableColumn.HeaderCell.GetCurrentCellWidth();
                     _nextColumn = nextResizableColumn;
                 }
@@ -130,6 +132,7 @@ namespace MudBlazor
                 {
                     if (_startColumn is not null)
                     {
+                        Debug.Assert(_startColumn.HeaderCell is not null);
                         await _startColumn.HeaderCell.UpdateColumnWidth(targetWidth, gridHeight, finish);
                     }
 
@@ -164,6 +167,8 @@ namespace MudBlazor
         private static async Task ResizeColumns(Column<T> columnToShrink, Column<T> columnToEnlarge,
             double shrinkedWidth, double enlargedWidth, double gridHeight, bool finish)
         {
+            Debug.Assert(columnToShrink.HeaderCell is not null);
+            Debug.Assert(columnToEnlarge.HeaderCell is not null);
             var actualWidth = await columnToShrink.HeaderCell.UpdateColumnWidth(shrinkedWidth, gridHeight, finish);
             // Use actualWidth to see if the column could be made smaller or if it reached its min size.
             if (actualWidth >= shrinkedWidth)

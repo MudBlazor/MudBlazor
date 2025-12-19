@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
+#nullable enable
 
 /// <summary>
 /// Represents a checkbox column used to select rows in a <see cref="MudDataGrid{T}"/>.
