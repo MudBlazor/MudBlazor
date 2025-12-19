@@ -19,7 +19,7 @@ namespace MudBlazor
             registerScope.RegisterParameter<double>(nameof(DebounceInterval))
                 .WithParameter(() => DebounceInterval)
                 .WithComparer(DoubleEpsilonEqualityComparer.Default)
-                .WithChangeHandler(OnDebounceIntervalChanged);
+                .WithChangeHandler(OnDebounceIntervalChangedAsync);
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace MudBlazor
             if (DebounceInterval <= 0 || _debouncer is null)
                 return base.UpdateValuePropertyAsync(updateText);
             
-            // Debounce the update - fire and forget since the old implementation used Timer with fire-and-forget
-            _debouncer.DebounceAsync(OnDebouncedUpdate).CatchAndLog();
+            // Debounce the update - use fire-and-forget pattern to match the old Timer implementation.
+            _ = _debouncer.DebounceAsync(OnDebouncedUpdate);
             return Task.CompletedTask;
         }
 
@@ -95,7 +95,7 @@ namespace MudBlazor
             }
         }
 
-        private void OnDebounceIntervalChanged(ParameterChangedEventArgs<double> args)
+        private async Task OnDebounceIntervalChangedAsync(ParameterChangedEventArgs<double> args)
         {
             if (args.Value <= 0)
             {
@@ -116,7 +116,7 @@ namespace MudBlazor
                 // Use DoubleEpsilonEqualityComparer to avoid unnecessary updates due to floating-point precision
                 if (!DoubleEpsilonEqualityComparer.Default.Equals(args.LastValue, args.Value))
                 {
-                    _debouncer.UpdateInterval((int)args.Value);
+                    await _debouncer.UpdateIntervalAsync((int)args.Value);
                 }
             }
         }

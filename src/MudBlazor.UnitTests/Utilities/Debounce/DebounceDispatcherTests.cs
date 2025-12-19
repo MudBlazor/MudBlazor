@@ -415,7 +415,7 @@ public class DebounceDispatcherTests
         }
 
         // Act - Update interval before any debounce
-        debounceDispatcher.UpdateInterval(100);
+        await debounceDispatcher.UpdateIntervalAsync(100);
         
         // Start debounce with new interval
         var task = debounceDispatcher.DebounceAsync(TrackingAction);
@@ -445,7 +445,7 @@ public class DebounceDispatcherTests
         
         // Update interval while debounce is pending (doesn't cancel the pending debounce)
         await Task.Delay(50);
-        debounceDispatcher.UpdateInterval(300);
+        await debounceDispatcher.UpdateIntervalAsync(300);
         
         // Wait for original interval to complete
         await Task.Delay(200);
@@ -461,8 +461,8 @@ public class DebounceDispatcherTests
         using var debounceDispatcher = new DebounceDispatcher(100);
 
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => debounceDispatcher.UpdateInterval(-100));
-        Assert.Throws<ArgumentOutOfRangeException>(() => debounceDispatcher.UpdateInterval(TimeSpan.FromMilliseconds(-100)));
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await debounceDispatcher.UpdateIntervalAsync(-100));
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await debounceDispatcher.UpdateIntervalAsync(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]
@@ -479,7 +479,7 @@ public class DebounceDispatcherTests
         }
 
         // Act - Update to zero interval
-        debounceDispatcher.UpdateInterval(0);
+        await debounceDispatcher.UpdateIntervalAsync(0);
         
         // Debounce should execute immediately with zero interval
         await debounceDispatcher.DebounceAsync(TrackingAction);
@@ -502,9 +502,9 @@ public class DebounceDispatcherTests
         }
 
         // Act - Update interval multiple times
-        debounceDispatcher.UpdateInterval(500);
-        debounceDispatcher.UpdateInterval(200);
-        debounceDispatcher.UpdateInterval(100);
+        await debounceDispatcher.UpdateIntervalAsync(500);
+        await debounceDispatcher.UpdateIntervalAsync(200);
+        await debounceDispatcher.UpdateIntervalAsync(100);
         
         // Start debounce
         var task = debounceDispatcher.DebounceAsync(TrackingAction);
@@ -538,9 +538,9 @@ public class DebounceDispatcherTests
                 await debounceDispatcher.DebounceAsync(TrackingAction);
             }));
             
-            tasks.Add(Task.Run(() =>
+            tasks.Add(Task.Run(async () =>
             {
-                debounceDispatcher.UpdateInterval(100 + i * 10);
+                await debounceDispatcher.UpdateIntervalAsync(100 + i * 10);
             }));
         }
 
@@ -569,7 +569,7 @@ public class DebounceDispatcherTests
         executionCount.Should().Be(1);
 
         // Update to shorter interval
-        debounceDispatcher.UpdateInterval(100);
+        await debounceDispatcher.UpdateIntervalAsync(100);
 
         // Wait for new interval to pass
         await Task.Delay(150);
@@ -595,7 +595,7 @@ public class DebounceDispatcherTests
         }
 
         // Act - Update using TimeSpan
-        debounceDispatcher.UpdateInterval(TimeSpan.FromMilliseconds(100));
+        await debounceDispatcher.UpdateIntervalAsync(TimeSpan.FromMilliseconds(100));
         
         var task = debounceDispatcher.DebounceAsync(TrackingAction);
         await Task.Delay(150);
