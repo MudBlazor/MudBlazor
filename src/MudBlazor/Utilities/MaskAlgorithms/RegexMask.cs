@@ -17,6 +17,9 @@ namespace MudBlazor;
 /// <seealso cref="PatternMask" />
 public class RegexMask : BaseMask
 {
+    protected Regex? _regex;
+    protected string _regexPattern;
+
     /// <summary>
     /// Add this filter to the end of a mask to block any space, tab or newline character.
     /// </summary>
@@ -37,28 +40,19 @@ public class RegexMask : BaseMask
         Mask = mask ?? regex;
     }
 
-    protected string _regexPattern;
-    protected Regex? _regex;
-
-    private string _delimiterString = string.Empty;
-
     /// <summary>
     /// The characters which are jumped over when adding an input character.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  For example: for a delimiter of <c>.</c>, a mask of <c>^[0-9].[0-9].[0-9]$</c>, and characters typed of <c>012</c>, the resulting text would be <c>0.1.2</c>
     /// </remarks>
-    public string DelimiterCharacters
-    {
-        get => _delimiterString;
-        protected set => _delimiterString = value ?? string.Empty;
-    }
+    public string DelimiterCharacters { get; protected set; } = string.Empty;
 
     /// <inheritdoc />
     protected override void InitInternals()
     {
         base.InitInternals();
-        foreach (var delimiter in _delimiterString)
+        foreach (var delimiter in DelimiterCharacters)
         {
             AddDelimiter(delimiter);
         }
@@ -80,7 +74,7 @@ public class RegexMask : BaseMask
         DeleteSelection(align: false);
         var text = Text;
         var pos = ConsolidateCaret(text, CaretPos);
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         var alignedInput = AlignAgainstMask(beforeText + input);
         CaretPos = alignedInput.Length;
         UpdateText(AlignAgainstMask(alignedInput + afterText));
@@ -93,7 +87,7 @@ public class RegexMask : BaseMask
         if (Selection == null)
             return;
         var sel = Selection.Value;
-        (var s1, _, var s3) = SplitSelection(Text, sel);
+        var (s1, _, s3) = SplitSelection(Text, sel);
         Selection = null;
         CaretPos = sel.Item1;
         if (!align)
@@ -115,7 +109,7 @@ public class RegexMask : BaseMask
         var pos = ConsolidateCaret(text, CaretPos);
         if (pos >= text.Length)
             return;
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         // delete as many delimiters as there are plus one char
         var restText = new string(afterText.SkipWhile(IsDelimiter).Skip(1).ToArray());
         UpdateText(AlignAgainstMask(beforeText + restText));
@@ -141,7 +135,7 @@ public class RegexMask : BaseMask
         var pos = ConsolidateCaret(text, CaretPos);
         if (pos == 0)
             return;
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         // backspace as many delimiters as there are plus one char
         var restText = new string(beforeText.Reverse().SkipWhile(IsDelimiter).Skip(1).Reverse().ToArray());
         var numDeleted = beforeText.Length - restText.Length;
@@ -167,9 +161,9 @@ public class RegexMask : BaseMask
             if (_regex.IsMatch(alignedText + textChar))
                 alignedText += textChar;
             // try to skip over a delimiter (input of values only i.e. 31122021 => 31.12.2021)
-            else if (_delimiterString.Length > 0)
+            else if (DelimiterCharacters.Length > 0)
             {
-                foreach (var d in _delimiterString)
+                foreach (var d in DelimiterCharacters)
                 {
                     if (_regex.IsMatch(alignedText + d + textChar))
                     {
@@ -184,7 +178,7 @@ public class RegexMask : BaseMask
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask? other)
     {
         base.UpdateFrom(other);
         if (other is not RegexMask o)

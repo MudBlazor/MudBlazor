@@ -8,17 +8,6 @@ using System.Text.RegularExpressions;
 namespace MudBlazor
 {
     /// <summary>
-    /// A filter which determines when to use a mask for a <see cref="MultiMask"/>.
-    /// </summary>
-    /// <param name="Id">The unique name for this mask.</param>
-    /// <param name="Mask">The mask characters defining this mask.</param>
-    /// <param name="Regex">The regular expression which, when matched, causes this mask to be used.</param>
-    /// <remarks>
-    /// Example: to use this mask when an input starts with <c>4</c>, use an expression of <c>^4</c>.
-    /// </remarks>
-    public record struct MaskOption(string Id, string Mask, string? Regex);
-
-    /// <summary>
     /// A mask which can change its pattern based on partial input.
     /// </summary>
     /// <remarks>
@@ -31,6 +20,9 @@ namespace MudBlazor
     /// <seealso cref="RegexMask" />
     public class MultiMask : PatternMask
     {
+        private string _defaultMask;
+        private MaskOption[]? _options;
+
         /// <summary>
         /// Creates a new multi mask from the specified mask options.
         /// </summary>
@@ -46,9 +38,6 @@ namespace MudBlazor
             _options = options ?? [];
         }
 
-        private string _defaultMask;
-        private MaskOption[]? _options;
-
         /// <summary>
         /// Occurs when <see cref="DetectedOption" /> has changed.
         /// </summary>
@@ -60,7 +49,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Changes automatically as the input changes.
         /// </remarks>
-        public MaskOption? DetectedOption { get; private set; } = null;
+        public MaskOption? DetectedOption { get; private set; }
 
         /// <inheritdoc />
         public override void Insert(string? input)
@@ -123,8 +112,10 @@ namespace MudBlazor
 
             foreach (var option in _options)
             {
-                if (option.Regex != null && Regex.IsMatch(text, option.Regex))
+                if (option.Regex is not null && Regex.IsMatch(text, option.Regex))
+                {
                     return option;
+                }
             }
 
             return null;
@@ -134,13 +125,14 @@ namespace MudBlazor
         public override void UpdateFrom(IMask other)
         {
             base.UpdateFrom(other);
-            if (other is not MultiMask o)
-                return;
-            // no need to re-initialize, just update the options
-            _defaultMask = o._defaultMask;
-            _options = o._options ?? [];
-            OptionDetected = o.OptionDetected;
-            Refresh();
+            if (other is MultiMask multiMask)
+            {
+                // no need to re-initialize, just update the options
+                _defaultMask = multiMask._defaultMask;
+                _options = multiMask._options ?? [];
+                OptionDetected = multiMask.OptionDetected;
+                Refresh();
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ namespace MudBlazor
         void Insert(string? input);
 
         /// <summary>
-        /// Triggers a delete at the current cursor position.
+        /// Triggers delete at the current cursor position.
         /// </summary>
         /// <remarks>
         /// Has the same effect as pressing the <c>Delete</c> key.

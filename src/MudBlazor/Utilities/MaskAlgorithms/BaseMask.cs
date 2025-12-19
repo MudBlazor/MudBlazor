@@ -11,11 +11,9 @@ namespace MudBlazor;
 public abstract class BaseMask : IMask
 {
     private bool _initialized;
+    private HashSet<char> _delimiters = [];
     private Dictionary<char, MaskChar> _maskDict = [];
     private MaskChar[] _maskChars = [MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*')];
-    private HashSet<char> _delimiters = [];
-    private string _mask = string.Empty;
-    private string _text = string.Empty;
 
     /// <summary>
     /// Initialize all internal data structures. Can be called multiple times,
@@ -35,24 +33,16 @@ public abstract class BaseMask : IMask
     protected virtual void InitInternals()
     {
         _maskDict = _maskChars.ToDictionary(x => x.Char);
-        _delimiters = string.IsNullOrEmpty(_mask)
+        _delimiters = string.IsNullOrEmpty(Mask)
             ? []
-            : new HashSet<char>(_mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
+            : new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
     }
 
     /// <inheritdoc />
-    public string Mask
-    {
-        get => _mask;
-        protected set => _mask = value ?? string.Empty;
-    }
+    public string Mask { get; protected set; } = string.Empty;
 
     /// <inheritdoc />
-    public string Text
-    {
-        get => _text;
-        protected set => _text = value ?? string.Empty;
-    }
+    public string Text { get; protected set; } = string.Empty;
 
     /// <inheritdoc />
     public virtual string GetCleanText() => Text;
@@ -186,26 +176,26 @@ public abstract class BaseMask : IMask
     }
 
     /// <inheritdoc />
-    public virtual void UpdateFrom(IMask o)
+    public virtual void UpdateFrom(IMask? mask)
     {
-        if (o is not BaseMask other)
-            return;
-            
-        if (other.Mask != Mask)
+        if (mask is BaseMask baseMask)
         {
-            Mask = other.Mask;
-            _initialized = false;
+            if (baseMask.Mask != Mask)
+            {
+                Mask = baseMask.Mask;
+                _initialized = false;
+            }
+
+            var otherMaskChars = baseMask.MaskChars;
+            if (otherMaskChars.Length != MaskChars.Length ||
+                !otherMaskChars.SequenceEqual(MaskChars))
+            {
+                _maskChars = otherMaskChars;
+                _initialized = false;
+            }
+
+            Refresh();
         }
-        
-        var otherMaskChars = other.MaskChars;
-        if (otherMaskChars.Length != MaskChars.Length || 
-            !otherMaskChars.SequenceEqual(MaskChars))
-        {
-            _maskChars = otherMaskChars;
-            _initialized = false;
-        }
-        
-        Refresh();
     }
 
     /// <summary>
