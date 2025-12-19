@@ -32,7 +32,7 @@ public class RegexMask : BaseMask
     /// <remarks>
     /// Defaults to <c>null</c>.  For example: for a delimiter of <c>.</c>, a mask of <c>^[0-9].[0-9].[0-9]$</c>, and characters typed of <c>012</c>, the resulting text would be <c>0.1.2</c>
     /// </remarks>
-    public string? Delimiters { get; protected set; }
+    public string? DelimiterCharacters { get; protected set; }
 
     /// <summary>
     /// Creates a mask using a regular expression.
@@ -60,8 +60,8 @@ public class RegexMask : BaseMask
     protected override void InitInternals()
     {
         base.InitInternals();
-        Delimiters ??= "";
-        _delimiters = new HashSet<char>(Delimiters);
+        DelimiterCharacters ??= "";
+        SetDelimiters(DelimiterCharacters);
         InitRegex();
     }
 
@@ -157,7 +157,6 @@ public class RegexMask : BaseMask
     protected virtual string AlignAgainstMask(string text)
     {
         Debug.Assert(_regex is not null);
-        Debug.Assert(Delimiters is not null);
 
         if (string.IsNullOrEmpty(text))
             return string.Empty;
@@ -173,9 +172,9 @@ public class RegexMask : BaseMask
                 sb.Append(textChar);
             }
             // try to skip over a delimiter (input of values only i.e. 31122021 => 31.12.2021)
-            else if (Delimiters.Length > 0)
+            else if (!string.IsNullOrEmpty(DelimiterCharacters))
             {
-                foreach (var delimiter in Delimiters)
+                foreach (var delimiter in DelimiterCharacters)
                 {
                     if (_regex.IsMatch(current + delimiter + textChar))
                     {
@@ -195,10 +194,10 @@ public class RegexMask : BaseMask
         base.UpdateFrom(other);
         if (other is RegexMask regexMask)
         {
-            if (Delimiters != regexMask.Delimiters)
+            if (DelimiterCharacters != regexMask.DelimiterCharacters)
             {
-                Delimiters = regexMask.Delimiters;
-                _initialized = false;
+                DelimiterCharacters = regexMask.DelimiterCharacters;
+                ForceReinitialize();
             }
 
             Refresh();
@@ -228,7 +227,7 @@ public class RegexMask : BaseMask
         }
 
         var regex = $"^{ipv4}{WhiteSpaceFilter}$";
-        var regexMask = new RegexMask(regex, mask) { Delimiters = delimiters };
+        var regexMask = new RegexMask(regex, mask) { DelimiterCharacters = delimiters };
         return regexMask;
     }
 
@@ -256,7 +255,7 @@ public class RegexMask : BaseMask
         }
 
         var regex = $"^{IPv6Filter}{ipv6}{WhiteSpaceFilter}$";
-        var regexMask = new RegexMask(regex, mask) { Delimiters = delimiters, AllowOnlyDelimiters = true };
+        var regexMask = new RegexMask(regex, mask) { DelimiterCharacters = delimiters, AllowOnlyDelimiters = true };
         return regexMask;
     }
 
@@ -268,7 +267,7 @@ public class RegexMask : BaseMask
     {
         const string Regex = $"^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+[\\.-])*([a-zA-Z0-9]+)?{WhiteSpaceFilter}$";
         const string Delimiters = "@.";
-        var regexMask = new RegexMask(Regex, mask) { Delimiters = Delimiters };
+        var regexMask = new RegexMask(Regex, mask) { DelimiterCharacters = Delimiters };
         return regexMask;
     }
 }

@@ -27,12 +27,12 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(params Block[] blocks)
+    public BlockMask(params Block[] blocks) : base()
     {
         if (blocks.Length == 0)
             throw new ArgumentException(@"Supply at least one block", nameof(blocks));
         Blocks = blocks;
-        Delimiters = "";
+        DelimiterCharacters = "";
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public class BlockMask : RegexMask
     /// </remarks>
     public BlockMask(string? delimiters, params Block[] blocks) : this(blocks)
     {
-        Delimiters = delimiters ?? "";
+        DelimiterCharacters = delimiters ?? "";
     }
 
     /// <summary>
@@ -86,7 +86,7 @@ public class BlockMask : RegexMask
             var block = blocks[i];
             AddRequiredCharacters(regexBuilder, block, ref openParenthesisCount);
             AddOptionalCharacters(regexBuilder, block, ref openParenthesisCount);
-            AddDelimiter(regexBuilder, i, blocks, ref openParenthesisCount);
+            AddDelimiterToRegex(regexBuilder, i, blocks, ref openParenthesisCount);
         }
 
         CloseOpenParentheses(regexBuilder, openParenthesisCount);
@@ -102,7 +102,7 @@ public class BlockMask : RegexMask
             regexBuilder.Append('(');
             openParenthesisCount++;
 
-            if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
+            if (MaskDictionary.TryGetValue(block.MaskChar, out var maskDef))
                 regexBuilder.Append(maskDef.Regex);
             else
                 regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
@@ -119,7 +119,7 @@ public class BlockMask : RegexMask
                 regexBuilder.Append('(');
                 openParenthesisCount++;
 
-                if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
+                if (MaskDictionary.TryGetValue(block.MaskChar, out var maskDef))
                     regexBuilder.Append(maskDef.Regex);
                 else
                     regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
@@ -134,14 +134,14 @@ public class BlockMask : RegexMask
     }
 
     // Helper method to add delimiter if there are more blocks to process
-    private void AddDelimiter(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
+    private void AddDelimiterToRegex(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
     {
-        if (_delimiters.Count > 0 && index < blocks.Length - 1)
+        if (Delimiters.Count > 0 && index < blocks.Length - 1)
         {
             regexBuilder.Append("([");
             openParenthesisCount++;
 
-            foreach (var delimiter in _delimiters)
+            foreach (var delimiter in Delimiters)
                 regexBuilder.Append(Regex.Escape(delimiter.ToString()));
 
             regexBuilder.Append(']');
@@ -164,8 +164,8 @@ public class BlockMask : RegexMask
         if (mask is BlockMask blockMask)
         {
             Blocks = blockMask.Blocks ?? [];
-            Delimiters = blockMask.Delimiters;
-            _initialized = false;
+            DelimiterCharacters = blockMask.DelimiterCharacters;
+            ForceReinitialize();
             Refresh();
         }
     }

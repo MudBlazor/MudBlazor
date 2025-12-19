@@ -10,17 +10,12 @@ namespace MudBlazor;
 /// </summary>
 public abstract class BaseMask : IMask
 {
-    protected bool _initialized;
-    protected Dictionary<char, MaskChar> _maskDict = [];
-
-    protected MaskChar[] _maskChars =
-    [
-        MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*')
-    ];
-
-    // per definition (unless defined otherwise in subclasses) delimiters are chars
-    // in the mask which do not match any MaskChar
-    protected HashSet<char> _delimiters = [];
+    private bool _initialized;
+    private Dictionary<char, MaskChar> _maskDict = [];
+    private MaskChar[] _maskChars = [MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*')];
+    private HashSet<char> _delimiters = [];
+    private string _mask = string.Empty;
+    private string _text = string.Empty;
 
     /// <summary>
     /// Initialize all internal data structures. Can be called multiple times,
@@ -40,17 +35,27 @@ public abstract class BaseMask : IMask
     protected virtual void InitInternals()
     {
         _maskDict = _maskChars.ToDictionary(x => x.Char);
-        _delimiters = Mask is null ? [] : new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
+        _delimiters = string.IsNullOrEmpty(_mask)
+            ? []
+            : new HashSet<char>(_mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
     }
 
     /// <inheritdoc />
-    public string? Mask { get; protected set; }
+    public string Mask
+    {
+        get => _mask;
+        protected set => _mask = value;
+    }
 
     /// <inheritdoc />
-    public string? Text { get; protected set; }
+    public string Text
+    {
+        get => _text;
+        protected set => _text = value;
+    }
 
     /// <inheritdoc />
-    public virtual string? GetCleanText() => Text;
+    public virtual string GetCleanText() => Text;
 
     /// <inheritdoc />
     public int CaretPos { get; set; }
@@ -74,10 +79,50 @@ public abstract class BaseMask : IMask
         get => _maskChars;
         set
         {
-            _maskChars = value;
+            _maskChars = value ?? throw new ArgumentNullException(nameof(value));
             // force re-initialization
             _initialized = false;
         }
+    }
+
+    /// <summary>
+    /// Gets the mask dictionary for internal use.
+    /// </summary>
+    protected IReadOnlyDictionary<char, MaskChar> MaskDictionary => _maskDict;
+
+    /// <summary>
+    /// Gets the set of delimiter characters.
+    /// </summary>
+    protected IReadOnlySet<char> Delimiters => _delimiters;
+    
+    /// <summary>
+    /// Adds a delimiter character to the set of delimiters.
+    /// </summary>
+    /// <param name="delimiter">The delimiter character to add.</param>
+    protected void AddDelimiter(char delimiter)
+    {
+        _delimiters.Add(delimiter);
+    }
+    
+    /// <summary>
+    /// Clears all delimiters and sets new ones.
+    /// </summary>
+    /// <param name="delimiters">The string of delimiter characters.</param>
+    protected void SetDelimiters(string delimiters)
+    {
+        _delimiters.Clear();
+        foreach (var d in delimiters)
+        {
+            _delimiters.Add(d);
+        }
+    }
+    
+    /// <summary>
+    /// Forces reinitialization on next access.
+    /// </summary>
+    protected void ForceReinitialize()
+    {
+        _initialized = false;
     }
 
     /// <inheritdoc />
@@ -111,12 +156,15 @@ public abstract class BaseMask : IMask
     /// <param name="text">The text to set.</param>
     protected virtual void UpdateText(string text)
     {
+        text ??= string.Empty;
+        
         // don't show a text consisting only of delimiters and placeholders (no actual input)
-        if (!AllowOnlyDelimiters && text.All(c => _delimiters.Contains(c)))
+        if (!AllowOnlyDelimiters && text.All(c => Delimiters.Contains(c)))
         {
             Text = string.Empty;
             return;
         }
+        
         Text = text;
         CaretPos = ConsolidateCaret(Text, CaretPos);
     }
@@ -134,7 +182,7 @@ public abstract class BaseMask : IMask
     /// <returns>When <c>true</c>, the character is a delimiter.</returns>
     protected virtual bool IsDelimiter(char maskChar)
     {
-        return _delimiters.Contains(maskChar);
+        return Delimiters.Contains(maskChar);
     }
 
     /// <inheritdoc />
