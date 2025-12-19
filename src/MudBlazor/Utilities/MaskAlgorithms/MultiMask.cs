@@ -20,21 +20,6 @@ namespace MudBlazor
     /// <seealso cref="RegexMask" />
     public class MultiMask : PatternMask
     {
-        /// <summary>
-        /// Creates a new multi mask from the specified mask options.
-        /// </summary>
-        /// <param name="defaultMask">The starting mask to use for input values.</param>
-        /// <param name="options">The list of masks to use depending on the input so far.</param>
-        /// <remarks>
-        /// A multi-mask consists of multiple <see cref="MaskOption"/> values which define when a particular mask is used.<br />
-        /// For example: a credit card number can be from any card provider, yet each provider has their own numbering rules.  A multi-mask would allow each provider's rules to be used together in a single mask.
-        /// </remarks>
-        public MultiMask(string defaultMask, params MaskOption[]? options) : base(defaultMask)
-        {
-            _defaultMask = defaultMask;
-            _options = options ?? [];
-        }
-
         private string _defaultMask;
         private MaskOption[]? _options;
 
@@ -49,7 +34,22 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Changes automatically as the input changes.
         /// </remarks>
-        public MaskOption? DetectedOption { get; private set; } = null;
+        public MaskOption? DetectedOption { get; private set; }
+
+        /// <summary>
+        /// Creates a new multi mask from the specified mask options.
+        /// </summary>
+        /// <param name="defaultMask">The starting mask to use for input values.</param>
+        /// <param name="options">The list of masks to use depending on the input so far.</param>
+        /// <remarks>
+        /// A multi-mask consists of multiple <see cref="MaskOption"/> values which define when a particular mask is used.<br />
+        /// For example: a credit card number can be from any card provider, yet each provider has their own numbering rules.  A multi-mask would allow each provider's rules to be used together in a single mask.
+        /// </remarks>
+        public MultiMask(string defaultMask, params MaskOption[]? options) : base(defaultMask)
+        {
+            _defaultMask = defaultMask;
+            _options = options ?? [];
+        }
 
         /// <inheritdoc />
         public override void Insert(string? input)
@@ -105,7 +105,7 @@ namespace MudBlazor
         protected virtual MaskOption? CheckOption()
         {
             var text = Text ?? "";
-            if (_options == null)
+            if (_options is null)
             {
                 return null;
             }
@@ -113,7 +113,9 @@ namespace MudBlazor
             foreach (var option in _options)
             {
                 if (option.Regex != null && Regex.IsMatch(text, option.Regex))
+                {
                     return option;
+                }
             }
 
             return null;

@@ -42,7 +42,7 @@ namespace MudBlazor
         void Insert(string input);
 
         /// <summary>
-        /// Triggers a delete at the current cursor position.
+        /// Triggers delete at the current cursor position.
         /// </summary>
         /// <remarks>
         /// Has the same effect as pressing the <c>Delete</c> key.
@@ -71,7 +71,7 @@ namespace MudBlazor
         /// <summary>
         /// Copies the mask and mask characters from the specified mask.
         /// </summary>
-        /// <param name="other">The mask to copy from.</param>
-        void UpdateFrom(IMask other);
+        /// <param name="mask">The mask to copy from.</param>
+        void UpdateFrom(IMask? mask);
     }
 }

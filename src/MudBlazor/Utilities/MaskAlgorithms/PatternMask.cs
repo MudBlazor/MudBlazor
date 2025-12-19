@@ -21,18 +21,6 @@ namespace MudBlazor;
 public class PatternMask : BaseMask
 {
     /// <summary>
-    /// Creates a new mask.
-    /// </summary>
-    /// <param name="mask">The characters which define the accepted input.</param>
-    /// <remarks>
-    /// By default, the mask characters are: <c>a</c> (letter), <c>0</c> (digit), and <c>*</c> (letter or digit)
-    /// </remarks>
-    public PatternMask(string mask)
-    {
-        Mask = mask;
-    }
-
-    /// <summary>
     /// The character used for characters which haven't yet been typed.
     /// </summary>
     /// <remarks>
@@ -48,6 +36,18 @@ public class PatternMask : BaseMask
     /// </remarks>
     public Func<char, char>? Transformation { get; set; }
 
+    /// <summary>
+    /// Creates a new mask.
+    /// </summary>
+    /// <param name="mask">The characters which define the accepted input.</param>
+    /// <remarks>
+    /// By default, the mask characters are: <c>a</c> (letter), <c>0</c> (digit), and <c>*</c> (letter or digit)
+    /// </remarks>
+    public PatternMask(string mask)
+    {
+        Mask = mask;
+    }
+
     /// <inheritdoc />
     public override void Insert(string? input)
     {
@@ -55,7 +55,7 @@ public class PatternMask : BaseMask
         DeleteSelection(align: false);
         var text = Text ?? "";
         var pos = ConsolidateCaret(text, CaretPos);
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         var alignedBefore = AlignAgainstMask(beforeText, 0);
         CaretPos = pos = alignedBefore.Length;
         var alignedInput = AlignAgainstMask(input, pos);
@@ -77,7 +77,7 @@ public class PatternMask : BaseMask
         if (Selection == null)
             return;
         var sel = Selection.Value;
-        (var s1, _, var s3) = SplitSelection(Text, sel);
+        var (s1, _, s3) = SplitSelection(Text, sel);
         Selection = null;
         CaretPos = sel.Item1;
         if (!align)
@@ -95,11 +95,11 @@ public class PatternMask : BaseMask
             DeleteSelection(align: true);
             return;
         }
-        var text = Text ?? "";
+        var text = Text ?? string.Empty;
         var pos = CaretPos = ConsolidateCaret(text, CaretPos);
         if (pos >= text.Length)
             return;
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         // delete as many delimiters as there are plus one char
         var restText = new string(afterText.SkipWhile(IsDelimiter).Skip(1).ToArray());
         var alignedAfter = AlignAgainstMask(restText, pos);
@@ -117,16 +117,16 @@ public class PatternMask : BaseMask
     public override void Backspace()
     {
         Init();
-        if (Selection != null)
+        if (Selection is not null)
         {
             DeleteSelection(align: true);
             return;
         }
-        var text = Text ?? "";
+        var text = Text ?? string.Empty;
         var pos = CaretPos = ConsolidateCaret(text, CaretPos);
         if (pos == 0)
             return;
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         // backspace as many delimiters as there are plus one char
         var restText = new string(beforeText.Reverse().SkipWhile(IsDelimiter).Skip(1).Reverse().ToArray());
         var numDeleted = beforeText.Length - restText.Length;
@@ -142,13 +142,13 @@ public class PatternMask : BaseMask
     /// <returns>The text with appended placeholder characters.</returns>
     protected virtual string FillWithPlaceholder(string text)
     {
-        if (Placeholder == null)
+        if (Placeholder is null)
             return text;
         // fill the rest with placeholder
         // don't fill if text is still empty
         var filledText = text;
         var len = text.Length;
-        var mask = Mask ?? "";
+        var mask = Mask ?? string.Empty;
         if (len == 0 || len >= mask.Length)
             return text;
         for (var maskIndex = len; maskIndex < mask.Length; maskIndex++)
@@ -170,9 +170,9 @@ public class PatternMask : BaseMask
     /// <returns>The text input with any delimiters and placeholders applied.</returns>
     protected virtual string AlignAgainstMask(string? text, int maskOffset = 0)
     {
-        text ??= "";
-        var mask = Mask ?? "";
-        var alignedText = "";
+        text ??= string.Empty;
+        var mask = Mask ?? string.Empty;
+        var alignedText = string.Empty;
         var maskIndex = maskOffset; // index in mask
         var textIndex = 0; // index in text
         while (textIndex < text.Length)
@@ -188,10 +188,10 @@ public class PatternMask : BaseMask
                 ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
                 continue;
             }
-            var isPlaceholder = Placeholder != null && textChar == Placeholder.Value;
+            var isPlaceholder = textChar == Placeholder;
             if (IsMatch(maskChar, textChar) || isPlaceholder)
             {
-                var c = Transformation == null ? textChar : Transformation(textChar);
+                var c = Transformation?.Invoke(textChar) ?? textChar;
                 alignedText += c;
                 maskIndex++;
             }
@@ -259,8 +259,10 @@ public class PatternMask : BaseMask
     protected override void InitInternals()
     {
         base.InitInternals();
-        if (Placeholder != null)
+        if (Placeholder is not null)
+        {
             _delimiters.Add(Placeholder.Value);
+        }
     }
 
     /// <inheritdoc />
@@ -269,7 +271,7 @@ public class PatternMask : BaseMask
         // don't show a text consisting only of delimiters and placeholders (no actual input)
         if (text.All(c => _delimiters.Contains(c) || (Placeholder != null && c == Placeholder.Value)))
         {
-            Text = "";
+            Text = string.Empty;
             CaretPos = 0;
             return;
         }
@@ -289,15 +291,16 @@ public class PatternMask : BaseMask
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask? mask)
     {
-        base.UpdateFrom(other);
-        if (other is not PatternMask o)
-            return;
-        Placeholder = o.Placeholder;
-        CleanDelimiters = o.CleanDelimiters;
-        Transformation = o.Transformation;
-        _initialized = false;
-        Refresh();
+        base.UpdateFrom(mask);
+        if (mask is PatternMask patternMask)
+        {
+            Placeholder = patternMask.Placeholder;
+            CleanDelimiters = patternMask.CleanDelimiters;
+            Transformation = patternMask.Transformation;
+            _initialized = false;
+            Refresh();
+        }
     }
 }

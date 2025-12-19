@@ -27,10 +27,10 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(params Block[] blocks) : base()
+    public BlockMask(params Block[] blocks)
     {
         if (blocks.Length == 0)
-            throw new ArgumentException("supply at least one block", nameof(blocks));
+            throw new ArgumentException(@"Supply at least one block", nameof(blocks));
         Blocks = blocks;
         Delimiters = "";
     }
@@ -152,17 +152,19 @@ public class BlockMask : RegexMask
     private static void CloseOpenParentheses(StringBuilder regexBuilder, int openParenthesisCount)
     {
         for (var i = 0; i < openParenthesisCount; i++)
+        {
             regexBuilder.Append(")?");
+        }
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask? mask)
     {
-        base.UpdateFrom(other);
-        if (other is BlockMask o)
+        base.UpdateFrom(mask);
+        if (mask is BlockMask blockMask)
         {
-            Blocks = o.Blocks ?? [];
-            Delimiters = o.Delimiters;
+            Blocks = blockMask.Blocks ?? [];
+            Delimiters = blockMask.Delimiters;
             _initialized = false;
             Refresh();
         }

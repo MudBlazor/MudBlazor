@@ -137,11 +137,11 @@ public class RegexMask : BaseMask
             DeleteSelection(align: true);
             return;
         }
-        var text = Text ?? "";
+        var text = Text ?? string.Empty;
         var pos = ConsolidateCaret(text, CaretPos);
         if (pos == 0)
             return;
-        (var beforeText, var afterText) = SplitAt(text, pos);
+        var (beforeText, afterText) = SplitAt(text, pos);
         // backspace as many delimiters as there are plus one char
         var restText = new string(beforeText.Reverse().SkipWhile(IsDelimiter).Skip(1).Reverse().ToArray());
         var numDeleted = beforeText.Length - restText.Length;
@@ -164,9 +164,8 @@ public class RegexMask : BaseMask
 
         var sb = new StringBuilder();
 
-        for (var i = 0; i < text.Length; i++)
+        foreach (var textChar in text)
         {
-            var textChar = text[i];
             var current = sb.ToString();
 
             if (_regex.IsMatch(current + textChar))
@@ -176,11 +175,11 @@ public class RegexMask : BaseMask
             // try to skip over a delimiter (input of values only i.e. 31122021 => 31.12.2021)
             else if (Delimiters.Length > 0)
             {
-                foreach (var d in Delimiters)
+                foreach (var delimiter in Delimiters)
                 {
-                    if (_regex.IsMatch(current + d + textChar))
+                    if (_regex.IsMatch(current + delimiter + textChar))
                     {
-                        sb.Append(d).Append(textChar);
+                        sb.Append(delimiter).Append(textChar);
                         break;
                     }
                 }
@@ -191,17 +190,19 @@ public class RegexMask : BaseMask
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask? other)
     {
         base.UpdateFrom(other);
-        if (other is not RegexMask o)
-            return;
-        if (Delimiters != o.Delimiters)
+        if (other is RegexMask regexMask)
         {
-            Delimiters = o.Delimiters;
-            _initialized = false;
+            if (Delimiters != regexMask.Delimiters)
+            {
+                Delimiters = regexMask.Delimiters;
+                _initialized = false;
+            }
+
+            Refresh();
         }
-        Refresh();
     }
 
     /// <summary>

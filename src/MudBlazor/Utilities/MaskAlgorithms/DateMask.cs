@@ -20,6 +20,13 @@ namespace MudBlazor;
 /// <seealso cref="RegexMask" />
 public partial class DateMask : PatternMask
 {
+    private char _y;
+    private char _m;
+    private char _d;
+
+    private int _year;
+    private int _month;
+
     /// <summary>
     /// Creates a new date mask.
     /// </summary>
@@ -37,19 +44,11 @@ public partial class DateMask : PatternMask
     public DateMask(string mask, char year = 'y', char month = 'M', char day = 'd') : base(mask)
     {
         _y = year;
-        _M = month;
+        _m = month;
         _d = day;
         _maskChars = _maskChars.Concat(new[] { MaskChar.Digit(year), MaskChar.Digit(month), MaskChar.Digit(day), })
             .ToArray();
     }
-
-    private char _y;
-    private char _M;
-    private char _d;
-
-    private int _year = 0;
-    private int _month = 0;
-    private int _day = 0;
 
     /// <inheritdoc />
     protected override void ModifyPartiallyAlignedMask(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
@@ -86,8 +85,8 @@ public partial class DateMask : PatternMask
 
     private void MonthLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
     {
-        var MM = new string(_M, 2);
-        var (monthString, index) = Extract(MM, mask, maskOffset, alignedText);
+        var mm = new string(_m, 2);
+        var (monthString, index) = Extract(mm, mask, maskOffset, alignedText);
         if (monthString == null)
             return;
         if (!int.TryParse(monthString, out var month))
@@ -126,7 +125,6 @@ public partial class DateMask : PatternMask
                 // by inserting a 0 we make 09 out of 9
                 alignedText = alignedText.Insert(index, "0");
                 maskIndex++;
-                _day = day;
             }
         }
         else if (dayString.Length == 2)
@@ -134,7 +132,6 @@ public partial class DateMask : PatternMask
             var fixedDay = FixDay(_year, _month, day);
             if (fixedDay != day)
                 alignedText = alignedText.Remove(index, 2).Insert(index, $"{fixedDay:D2}");
-            _day = fixedDay;
         }
     }
 
@@ -158,12 +155,12 @@ public partial class DateMask : PatternMask
             var yyyy = new string(_y, 4);
             var yy = new string(_y, 2);
             var dd = new string(_d, 2);
-            var MM = new string(_M, 2);
+            var mm = new string(_m, 2);
             var maskHasDay = Mask.Contains(dd);
-            var maskHasMonth = Mask.Contains(MM);
+            var maskHasMonth = Mask.Contains(mm);
             var maskHasYear = Mask.Contains(yy) || Mask.Contains(yyyy);
             var (dayString, dayIndex) = Extract(dd, Mask, 0, text);
-            var (monthString, monthIndex) = Extract(MM, Mask, 0, text);
+            var (monthString, monthIndex) = Extract(mm, Mask, 0, text);
             var dayFound = dayIndex >= 0;
             var dayComplete = dayString?.Length == 2;
             var monthFound = monthIndex >= 0;
@@ -208,13 +205,14 @@ public partial class DateMask : PatternMask
         return day;
     }
 
-    private int FixMonth(int month)
+    private static int FixMonth(int month)
     {
-        if (month == 0)
-            return 1;
-        if (month > 12)
-            return 12;
-        return month;
+        return month switch
+        {
+            0 => 1,
+            > 12 => 12,
+            _ => month
+        };
     }
 
     private int GetDaysInMonth(int year, int month)
@@ -226,9 +224,9 @@ public partial class DateMask : PatternMask
         return DateTime.DaysInMonth(year, Math.Min(12, Math.Max(1, month)));
     }
 
-    private (string?, int) Extract(string maskPart, string mask, int maskOffset, string alignedText)
+    private static (string?, int) Extract(string maskPart, string mask, int maskOffset, string alignedText)
     {
-        var maskIndex = mask.IndexOf(maskPart);
+        var maskIndex = mask.IndexOf(maskPart, StringComparison.Ordinal);
         var index = maskIndex - maskOffset;
         if (index < 0 || index >= alignedText.Length)
             return (null, -1);
@@ -239,14 +237,15 @@ public partial class DateMask : PatternMask
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask mask)
     {
-        base.UpdateFrom(other);
-        if (other is not DateMask o)
-            return;
-        _y = o._y;
-        _M = o._M;
-        _d = o._d;
+        base.UpdateFrom(mask);
+        if (mask is DateMask dateMask)
+        {
+            _y = dateMask._y;
+            _m = dateMask._m;
+            _d = dateMask._d;
+        }
     }
 
     [GeneratedRegex(@"^\d+$")]
