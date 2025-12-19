@@ -28,7 +28,7 @@ namespace MudBlazor
                 return (T)(object)Convert.ToSingle(d);
             if (typeof(T) == typeof(double) && d >= double.MinValue && double.MaxValue >= d)
                 return (T)(object)Convert.ToDouble(d);
-            if (typeof(T) == typeof(decimal) && (decimal?)d >= decimal.MinValue && decimal.MaxValue >= (decimal)d)
+            if (typeof(T) == typeof(decimal) && (decimal?)d >= decimal.MinValue && decimal.MaxValue >= (decimal?)d)
                 return (T)(object)Convert.ToDecimal(d);
             if (typeof(T) == typeof(sbyte?) && d >= sbyte.MinValue && sbyte.MaxValue >= d)
                 return (T)(object)Convert.ToSByte(d);
@@ -50,7 +50,7 @@ namespace MudBlazor
                 return (T)(object)Convert.ToSingle(d);
             if (typeof(T) == typeof(double?) && d >= double.MinValue && double.MaxValue >= d)
                 return (T)(object)Convert.ToDouble(d);
-            if (typeof(T) == typeof(decimal?) && (decimal?)d >= decimal.MinValue && decimal.MaxValue >= (decimal)d)
+            if (typeof(T) == typeof(decimal?) && (decimal?)d >= decimal.MinValue && decimal.MaxValue >= (decimal?)d)
                 return (T)(object)Convert.ToDecimal(d);
             return default;
         }
