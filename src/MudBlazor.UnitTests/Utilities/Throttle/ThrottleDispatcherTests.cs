@@ -84,7 +84,7 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public async Task ThrottleAsync_ExceptionInAction_PropagatesException()
+    public void ThrottleAsync_ExceptionInAction_PropagatesException()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);
@@ -308,6 +308,7 @@ public class ThrottleDispatcherTests
         firstStarted.Task.Wait();
 
         // Now dispose and try to call again
+        // ReSharper disable once DisposeOnUsingVariable
         dispatcher.Dispose();
         var task2 = dispatcher.ThrottleAsync(() => Task.CompletedTask);
 
@@ -323,8 +324,8 @@ public class ThrottleDispatcherTests
     public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => new ThrottleDispatcher(-100));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new ThrottleDispatcher(TimeSpan.FromMilliseconds(-100)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(-100));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]

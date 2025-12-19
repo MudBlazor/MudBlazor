@@ -77,8 +77,10 @@ namespace MudBlazor
             }
             // if debounce interval is 0 or no debouncer, we update immediately
             if (DebounceInterval <= 0 || _debouncer is null)
+            {
                 return base.UpdateValuePropertyAsync(updateText);
-            
+            }
+
             // Debounce the update - use fire-and-forget pattern to match the old Timer implementation.
             _ = _debouncer.DebounceAsync(OnDebouncedUpdate);
             return Task.CompletedTask;
@@ -104,7 +106,7 @@ namespace MudBlazor
                 _debouncer = null;
                 return;
             }
-            
+
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {

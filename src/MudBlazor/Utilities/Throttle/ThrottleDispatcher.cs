@@ -2,10 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace MudBlazor.Utilities.Throttle;
 
 #nullable enable
@@ -60,7 +56,7 @@ internal sealed class ThrottleDispatcher : IDisposable
     {
         if (interval < TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be non-negative.");
+            throw new ArgumentOutOfRangeException(nameof(interval), @"Interval must be non-negative.");
         }
 
         _interval = interval;
@@ -104,7 +100,7 @@ internal sealed class ThrottleDispatcher : IDisposable
             var now = DateTime.UtcNow;
             var timeSinceLastExecution = now - _lastExecutionStartTime;
 
-            // If we have a running task and we're within the interval, return the same task
+            // If we have a running task, and we're within the interval, return the same task
             if (_currentTask is not null && !_currentTask.IsCompleted && timeSinceLastExecution < _interval)
             {
                 return _currentTask;

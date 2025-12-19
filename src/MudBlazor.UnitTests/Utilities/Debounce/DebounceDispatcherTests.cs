@@ -108,7 +108,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public async Task DebounceAsync_ExceptionInAction_PropagatesException()
+    public void DebounceAsync_ExceptionInAction_PropagatesException()
     {
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(50);
@@ -138,6 +138,7 @@ public class DebounceDispatcherTests
 
         // Act
         var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
+        // ReSharper disable once MethodHasAsyncOverload
         cts.Cancel();
 
         // Assert - should complete silently without throwing
@@ -159,6 +160,7 @@ public class DebounceDispatcherTests
 
         // Act
         var task = debounceDispatcher.DebounceAsync(Invoke);
+        // ReSharper disable once MethodHasAsyncOverload
         debounceDispatcher.Cancel();
 
         // Assert - should complete silently without throwing
@@ -281,6 +283,7 @@ public class DebounceDispatcherTests
         var tasks = Enumerable.Range(0, 100)
             .Select(_ => Task.Run(async () =>
             {
+                // ReSharper disable once AccessToDisposedClosure
                 await debounceDispatcher.DebounceAsync(Invoke);
             }))
             .ToArray();
@@ -299,8 +302,8 @@ public class DebounceDispatcherTests
     public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => new DebounceDispatcher(-100));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(-100));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]
@@ -416,13 +419,13 @@ public class DebounceDispatcherTests
 
         // Act - Update interval before any debounce
         await debounceDispatcher.UpdateIntervalAsync(100);
-        
+
         // Start debounce with new interval
-        var task = debounceDispatcher.DebounceAsync(TrackingAction);
-        
+        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+
         // Wait for the new shorter interval
         await Task.Delay(150);
-        
+
         // Assert - Should have executed with the new interval
         executionCount.Should().Be(1);
     }
@@ -441,15 +444,15 @@ public class DebounceDispatcherTests
         }
 
         // Act - Start debounce
-        var task = debounceDispatcher.DebounceAsync(TrackingAction);
-        
+        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+
         // Update interval while debounce is pending (doesn't cancel the pending debounce)
         await Task.Delay(50);
         await debounceDispatcher.UpdateIntervalAsync(300);
-        
+
         // Wait for original interval to complete
         await Task.Delay(200);
-        
+
         // Assert - Should have executed with original interval since update doesn't cancel pending
         executionCount.Should().Be(1);
     }
@@ -480,10 +483,10 @@ public class DebounceDispatcherTests
 
         // Act - Update to zero interval
         await debounceDispatcher.UpdateIntervalAsync(0);
-        
+
         // Debounce should execute immediately with zero interval
         await debounceDispatcher.DebounceAsync(TrackingAction);
-        
+
         // Assert
         executionCount.Should().Be(1);
     }
@@ -505,13 +508,13 @@ public class DebounceDispatcherTests
         await debounceDispatcher.UpdateIntervalAsync(500);
         await debounceDispatcher.UpdateIntervalAsync(200);
         await debounceDispatcher.UpdateIntervalAsync(100);
-        
+
         // Start debounce
-        var task = debounceDispatcher.DebounceAsync(TrackingAction);
-        
+        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+
         // Wait for the final interval
         await Task.Delay(150);
-        
+
         // Assert - Should use latest interval (100ms)
         executionCount.Should().Be(1);
     }
@@ -531,16 +534,19 @@ public class DebounceDispatcherTests
 
         // Act - Update interval concurrently with debounce calls
         var tasks = new List<Task>();
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++)
         {
             tasks.Add(Task.Run(async () =>
             {
+                // ReSharper disable AccessToDisposedClosure
                 await debounceDispatcher.DebounceAsync(TrackingAction);
             }));
-            
+
+            var i1 = i;
             tasks.Add(Task.Run(async () =>
             {
-                await debounceDispatcher.UpdateIntervalAsync(100 + i * 10);
+                await debounceDispatcher.UpdateIntervalAsync(100 + i1 * 10);
+                // ReSharper restore AccessToDisposedClosure
             }));
         }
 
@@ -596,8 +602,8 @@ public class DebounceDispatcherTests
 
         // Act - Update using TimeSpan
         await debounceDispatcher.UpdateIntervalAsync(TimeSpan.FromMilliseconds(100));
-        
-        var task = debounceDispatcher.DebounceAsync(TrackingAction);
+
+        _ = debounceDispatcher.DebounceAsync(TrackingAction);
         await Task.Delay(150);
 
         // Assert

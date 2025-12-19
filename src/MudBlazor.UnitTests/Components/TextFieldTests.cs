@@ -168,13 +168,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Act - Input a value
             input.Input(new ChangeEventArgs() { Value = "Test Value" });
-            
+
             // Change DebounceInterval to an epsilon-equivalent value (should not reset debouncer)
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 200.0000001));
-            
+
             // Assert - Value should still be null (debounce still pending)
             textField.ReadValue().Should().BeNull();
-            
+
             // Wait for the debounce to complete
             await Task.Delay(250);
             await comp.WaitForAssertionAsync(() => textField.ReadValue().Should().Be("Test Value"));

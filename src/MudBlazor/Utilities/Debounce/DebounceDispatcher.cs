@@ -60,7 +60,7 @@ internal sealed class DebounceDispatcher : IDisposable
     {
         if (interval < TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be non-negative.");
+            throw new ArgumentOutOfRangeException(nameof(interval), @"Interval must be non-negative.");
         }
 
         _interval = interval;
@@ -92,7 +92,7 @@ internal sealed class DebounceDispatcher : IDisposable
     {
         ArgumentNullException.ThrowIfNull(action);
 
-        bool executeImmediately = false;
+        var executeImmediately = false;
 
         // Check if disposed before attempting to acquire lock
         if (_disposed)
@@ -155,15 +155,7 @@ internal sealed class DebounceDispatcher : IDisposable
         if (executeImmediately)
         {
             // Execute immediately without delay
-            try
-            {
-                await action().ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                // Allow exceptions from user code to propagate
-                throw;
-            }
+            await action().ConfigureAwait(false);
             return;
         }
 
@@ -193,12 +185,10 @@ internal sealed class DebounceDispatcher : IDisposable
         catch (TaskCanceledException)
         {
             // Silently ignore cancellation (either from new call or external cancellation)
-            return;
         }
         catch (OperationCanceledException)
         {
             // Silently ignore cancellation
-            return;
         }
     }
 
@@ -235,10 +225,7 @@ internal sealed class DebounceDispatcher : IDisposable
     /// </remarks>
     /// <param name="interval">The new debounce interval in milliseconds. Must be non-negative.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
-    public Task UpdateIntervalAsync(int interval)
-    {
-        return UpdateIntervalAsync(TimeSpan.FromMilliseconds(interval));
-    }
+    public Task UpdateIntervalAsync(int interval) => UpdateIntervalAsync(TimeSpan.FromMilliseconds(interval));
 
     /// <summary>
     /// Updates the debounce interval asynchronously.
@@ -258,7 +245,7 @@ internal sealed class DebounceDispatcher : IDisposable
     {
         if (interval < TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be non-negative.");
+            throw new ArgumentOutOfRangeException(nameof(interval), @"Interval must be non-negative.");
         }
 
         await _lock.WaitAsync().ConfigureAwait(false);
