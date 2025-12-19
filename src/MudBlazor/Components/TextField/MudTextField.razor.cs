@@ -191,7 +191,7 @@ namespace MudBlazor
             await _maskReference.OnPasteAsync(text);
         }
 
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             if (HasMask)
             {
@@ -201,7 +201,7 @@ namespace MudBlazor
                 value = ConvertGet(textValue);
             }
 
-            return base.SetValueAsync(value, updateText, force);
+            return base.SetValueAndUpdateTextAsync(value, updateText, force);
         }
 
         protected override Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)

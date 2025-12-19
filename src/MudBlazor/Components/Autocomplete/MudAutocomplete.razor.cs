@@ -542,11 +542,11 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
-                // #1 needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
+                // #1 needs to close before SetValueAndUpdateTextAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
                 // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
                 _open = false;
 
-                await SetValueAsync(value);
+                await SetValueAndUpdateTextAsync(value);
 
                 // needs to be open to run the rest of the code
                 _open = true;
@@ -620,7 +620,7 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(ReadText))
-                await SetValueAsync(default(T), updateText);
+                await SetValueAndUpdateTextAsync(default(T), updateText);
             else if (Immediate)
                 await CoerceValueToTextAsync();
 
@@ -797,10 +797,10 @@ namespace MudBlazor
             }
         }
 
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             _isValueCoerced = false;
-            return base.SetValueAsync(value, updateText, force);
+            return base.SetValueAndUpdateTextAsync(value, updateText, force);
         }
 
         /// <summary>
@@ -815,7 +815,7 @@ namespace MudBlazor
                 Open = false;
 
                 await SetTextAndUpdateValueAsync(string.Empty, updateValue: false);
-                await SetValueAsync(default, updateText: false);
+                await SetValueAndUpdateTextAsync(default, updateText: false);
 
                 await _elementReference.ResetAsync();
 
@@ -1073,7 +1073,7 @@ namespace MudBlazor
             if (_items?.Length > 0)
                 _items = [];
             _open = true;
-            await SetValueAsync(default, false);
+            await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedListItemIndex = 0;
             StateHasChanged();
@@ -1150,9 +1150,9 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
 
             var value = ConvertGet(ReadText);
-            await SetValueAsync(value, updateText: false);
+            await SetValueAndUpdateTextAsync(value, updateText: false);
 
-            // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
+            // We must set _isValueCoerced to true after calling SetValueAndUpdateTextAsync, as it sets it to false
             // CoerceValue is always true at this point, so we can set the value to true rather than checking the property again
             _isValueCoerced = true;
         }
