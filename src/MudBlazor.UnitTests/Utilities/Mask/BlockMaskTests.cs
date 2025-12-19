@@ -132,4 +132,113 @@ public class BlockMaskTests
         // state should be preserved (Text, Caret/Selection)
         mask.ToString().Should().Be("1|:2");
     }
+
+    [Test]
+    public void BlockMask_MaxBlockLimit()
+    {
+        // Arrange
+        var mask = new BlockMask("", new Block('0', 1, 3));
+
+        // Act
+        mask.Insert("12345678");
+
+        // Assert - should not exceed max
+        mask.Text.Should().Be("123");
+    }
+
+    [Test]
+    public void BlockMask_GetCleanText()
+    {
+        // Arrange
+        var mask = new BlockMask("-", new Block('0', 2, 2), new Block('a', 2, 2));
+        mask.Insert("12AB");
+
+        // Act
+        var cleanText = mask.GetCleanText();
+
+        // Assert
+        cleanText.Should().Be("12-AB");
+    }
+
+    [Test]
+    public void BlockMask_MultipleDelimiters()
+    {
+        // Arrange
+        var mask = new BlockMask(".-", new Block('0', 1, 2), new Block('a', 1, 2));
+
+        // Act
+        mask.Insert("1x");
+
+        // Assert
+        mask.Text.Should().MatchRegex(@"1[.\-]x");
+    }
+
+    [Test]
+    public void BlockMask_SelectionDelete()
+    {
+        // Arrange
+        var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2));
+        mask.Insert("12.34");
+        mask.Selection = (1, 4);
+
+        // Act
+        mask.Delete();
+
+        // Assert
+        mask.ToString().Should().Be("1|4");
+    }
+
+    [Test]
+    public void BlockMask_SelectionBackspace()
+    {
+        // Arrange
+        var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2));
+        mask.Insert("12.34");
+        mask.Selection = (1, 4);
+
+        // Act
+        mask.Backspace();
+
+        // Assert
+        mask.ToString().Should().Be("1|4");
+    }
+
+    [Test]
+    public void BlockMask_LetterBlock()
+    {
+        // Arrange
+        var mask = new BlockMask("", new Block('a', 2, 4));
+
+        // Act
+        mask.Insert("ABCD123");
+
+        // Assert
+        mask.Text.Should().Be("ABCD");
+    }
+
+    [Test]
+    public void BlockMask_MixedBlocks()
+    {
+        // Arrange
+        var mask = new BlockMask("-", new Block('a', 2, 2), new Block('0', 3, 3));
+
+        // Act
+        mask.Insert("AB123");
+
+        // Assert
+        mask.Text.Should().Be("AB-123");
+    }
+
+    [Test]
+    public void BlockMask_LiteralCharacterBlock()
+    {
+        // Arrange
+        var mask = new BlockMask("", new Block('('), new Block('0', 3, 3), new Block(')'));
+
+        // Act
+        mask.Insert("(123)");
+
+        // Assert - Literal blocks are treated as delimiters
+        mask.Text.Should().Be("(123)");
+    }
 }

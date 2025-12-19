@@ -83,5 +83,147 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             option.Value.Id.Should().Be("O1");
             eventCount.Should().Be(5);
         }
+
+        [Test]
+    public void MultiMask_NoOptions()
+    {
+        // Arrange
+        var mask = new MultiMask("0000 0000");
+
+        // Act
+        mask.Insert("1234");
+
+        // Assert
+        mask.DetectedOption.Should().BeNull();
+        mask.Text.Should().Be("1234 ");
+    }
+
+    [Test]
+    public void MultiMask_NullOptions()
+    {
+        // Arrange
+        var mask = new MultiMask("0000 0000", null);
+
+        // Act
+        mask.Insert("1234");
+
+        // Assert
+        mask.DetectedOption.Should().BeNull();
+        mask.Text.Should().Be("1234 ");
+    }
+
+    [Test]
+    public void MultiMask_OptionWithNullRegex()
+    {
+        // Arrange
+        var mask = new MultiMask("0000",
+            new MaskOption("Test", "00-00", null));
+
+        // Act
+        mask.Insert("1234");
+
+        // Assert
+        mask.DetectedOption.Should().BeNull();
+    }
+
+    [Test]
+    public void MultiMask_GetCleanText()
+    {
+        // Arrange
+        var mask = new MultiMask("0000 0000 0000 0000",
+            new MaskOption("VISA", "0000 0000 0000 0000", @"^4"));
+        mask.Insert("4123456789012345");
+
+        // Act
+        var cleanText = mask.GetCleanText();
+
+        // Assert
+        cleanText.Should().Be("4123 4567 8901 2345");
+    }
+
+    [Test]
+    public void MultiMask_SwitchOption_MidInput()
+    {
+        // Arrange
+        var mask = new MultiMask("0000",
+            new MaskOption("Option1", "00-00", @"^1"),
+            new MaskOption("Option2", "000-0", @"^2"));
+
+        // Act
+        mask.Insert("12");
+        var firstOption = mask.DetectedOption;
+        mask.Clear();
+        mask.Insert("23");
+        var secondOption = mask.DetectedOption;
+
+        // Assert
+        firstOption.Should().NotBeNull();
+        firstOption.Value.Id.Should().Be("Option1");
+        secondOption.Should().NotBeNull();
+        secondOption.Value.Id.Should().Be("Option2");
+    }
+
+    [Test]
+    public void MultiMask_OptionDetected_EventFires()
+    {
+        // Arrange
+        var mask = new MultiMask("0000",
+            new MaskOption("Test", "00-00", @"^1"));
+        var eventFired = false;
+        MaskOption? option = null;
+        string text = null;
+        mask.OptionDetected = (opt, txt) =>
+        {
+            eventFired = true;
+            option = opt;
+            text = txt;
+        };
+
+        // Act
+        mask.Insert("12");
+
+        // Assert
+        eventFired.Should().BeTrue();
+        option.Should().NotBeNull();
+        option.Value.Id.Should().Be("Test");
+        text.Should().Be("12-");
+    }
+
+    [Test]
+    public void MultiMask_DeleteChangesOption()
+    {
+        // Arrange
+        var mask = new MultiMask("0000",
+            new MaskOption("Option1", "00-00", @"^1"));
+        mask.Insert("12");
+        var initialOption = mask.DetectedOption;
+
+        // Act
+        mask.CaretPos = 0;
+        mask.Delete();
+
+        // Assert
+        initialOption.Should().NotBeNull();
+        mask.DetectedOption.Should().BeNull();
+    }
+
+    [Test]
+    public void MultiMask_BackspaceChangesOption()
+    {
+        // Arrange
+        var mask = new MultiMask("0000",
+            new MaskOption("Option1", "00-00", @"^1"));
+        mask.Insert("12");
+        var initialOption = mask.DetectedOption;
+
+        // Act
+        mask.CaretPos = 1;
+        mask.Backspace();
+
+        // Assert
+        initialOption.Should().NotBeNull();
+        mask.DetectedOption.Should().BeNull();
     }
 }
+}
+

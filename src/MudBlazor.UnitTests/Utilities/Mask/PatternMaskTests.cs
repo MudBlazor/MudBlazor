@@ -293,4 +293,189 @@ public class PatternMaskTests
         mask.ToString().Should().Be("1[2]#");
     }
 
+    [Test]
+    public void PatternMask_AlignAgainstMask_SimpleCase()
+    {
+        // Arrange
+        var mask = new PatternMask("00-00");
+
+        // Act
+        mask.Insert("1234");
+
+        // Assert
+        mask.Text.Should().Be("12-34");
+    }
+
+    [Test]
+    public void PatternMask_AlignAgainstMask_SkipDelimiters()
+    {
+        // Arrange
+        var mask = new PatternMask("00-00");
+
+        // Act
+        mask.Insert("12-34");
+
+        // Assert
+        mask.Text.Should().Be("12-34");
+    }
+
+    [Test]
+    public void PatternMask_AlignAgainstMask_ExtraCharacters()
+    {
+        // Arrange
+        var mask = new PatternMask("000");
+
+        // Act
+        mask.Insert("12345");
+
+        // Assert
+        mask.Text.Should().Be("123");
+    }
+
+    [Test]
+    public void PatternMask_IsMatch_ValidDigit()
+    {
+        // Arrange
+        var mask = new PatternMask("000");
+
+        // Act
+        mask.Insert("1");
+
+        // Assert
+        mask.Text.Should().Be("1");
+    }
+
+    [Test]
+    public void PatternMask_IsMatch_InvalidCharacter()
+    {
+        // Arrange
+        var mask = new PatternMask("000");
+
+        // Act
+        mask.Insert("a");
+
+        // Assert
+        mask.Text.Should().BeEmpty();
+    }
+
+    [Test]
+    public void PatternMask_FillWithPlaceholder_FullMask()
+    {
+        // Arrange
+        var mask = new PatternMask("000-000") { Placeholder = '_' };
+
+        // Act
+        mask.Insert("123");
+
+        // Assert
+        mask.Text.Should().Be("123-___");
+    }
+
+    [Test]
+    public void PatternMask_FillWithPlaceholder_EmptyText()
+    {
+        // Arrange
+        var mask = new PatternMask("000") { Placeholder = '_' };
+
+        // Act - no insert
+
+        // Assert
+        mask.Text.Should().BeNullOrEmpty();
+    }
+
+    [Test]
+    public void PatternMask_FillWithPlaceholder_CompleteMask()
+    {
+        // Arrange
+        var mask = new PatternMask("000") { Placeholder = '_' };
+
+        // Act
+        mask.Insert("123");
+
+        // Assert
+        mask.Text.Should().Be("123");
+    }
+
+    [Test]
+    public void PatternMask_Placeholder_InMiddleOfMask()
+    {
+        // Arrange
+        var mask = new PatternMask("00-00") { Placeholder = '_' };
+        mask.Insert("12");
+        mask.CaretPos = 3;
+
+        // Act
+        mask.Insert("3");
+
+        // Assert
+        mask.Text.Should().Be("12-3_");
+    }
+
+    [Test]
+    public void PatternMask_CleanDelimiters_True()
+    {
+        // Arrange
+        var mask = new PatternMask("00-00") { CleanDelimiters = true };
+        mask.Insert("1234");
+
+        // Act
+        var cleanText = mask.GetCleanText();
+
+        // Assert
+        cleanText.Should().Be("1234");
+    }
+
+    [Test]
+    public void PatternMask_CleanDelimiters_False()
+    {
+        // Arrange
+        var mask = new PatternMask("00-00") { CleanDelimiters = false };
+        mask.Insert("1234");
+
+        // Act
+        var cleanText = mask.GetCleanText();
+
+        // Assert
+        cleanText.Should().Be("12-34");
+    }
+
+    [Test]
+    public void PatternMask_EmptyMask()
+    {
+        // Arrange
+        var mask = new PatternMask("");
+
+        // Act
+        mask.Insert("123");
+
+        // Assert
+        mask.Text.Should().BeEmpty();
+    }
+
+    [Test]
+    public void PatternMask_OnlyDelimiters()
+    {
+        // Arrange
+        var mask = new PatternMask("---");
+
+        // Act
+        mask.Insert("123");
+
+        // Assert
+        mask.Text.Should().BeEmpty();
+    }
+
+    [Test]
+    public void PatternMask_MultipleConsecutiveDelimiters()
+    {
+        // Arrange
+        var mask = new PatternMask("0---0");
+
+        // Act
+        mask.Insert("12");
+
+        // Assert
+        mask.Text.Should().Be("1---2");
+    }
+
 }
