@@ -117,7 +117,7 @@ namespace MudBlazor
                 {
                     _selectedValues.Clear();
                     _selectedValues.Add(item.Value);
-                    await SetValueAsync(item.Value, updateText: true);
+                    await SetValueAndUpdateTextAsync(item.Value, updateText: true);
                     HighlightItem(item);
                     break;
                 }
@@ -206,7 +206,7 @@ namespace MudBlazor
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
-                await SetValueAsync(item.Value, updateText: true);
+                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
                 // Update ParameterState to keep SelectedValues in sync
                 await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             }
@@ -227,7 +227,7 @@ namespace MudBlazor
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
-                await SetValueAsync(item.Value, updateText: true);
+                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
                 HighlightItem(item);
             }
             else
@@ -457,7 +457,7 @@ namespace MudBlazor
 
             if (!MultiSelection)
             {
-                await SetValueAsync(_selectedValues.FirstOrDefault());
+                await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
             }
             else
             {
@@ -480,7 +480,7 @@ namespace MudBlazor
                 FieldChanged(_selectedValues);
             }
             if (MultiSelection && typeof(T) == typeof(string))
-                await SetValueAsync((T?)(object?)ReadText, updateText: false);
+                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
         }
 
         /// <summary>
@@ -799,7 +799,7 @@ namespace MudBlazor
                     return;
                 }
 
-                await SetValueAsync(value);
+                await SetValueAndUpdateTextAsync(value);
                 _elementReference.SetText(ReadText).CatchAndLog();
             }
 
@@ -808,7 +808,7 @@ namespace MudBlazor
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                await SetValueAsync((T?)(object?)ReadText, updateText: false);
+                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
@@ -1051,7 +1051,7 @@ namespace MudBlazor
         /// </remarks>
         protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SetValueAsync(default, false);
+            await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(default, false);
             _selectedValues.Clear();
             await BeginValidateAsync();
@@ -1253,7 +1253,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task ClearAsync()
         {
-            await SetValueAsync(default, false);
+            await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(default, false);
             _selectedValues.Clear();
             await BeginValidateAsync();
@@ -1300,7 +1300,7 @@ namespace MudBlazor
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                SetValueAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
+                SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
         }
 
         /// <summary>

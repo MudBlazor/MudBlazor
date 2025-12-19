@@ -526,7 +526,7 @@ namespace MudBlazor
             return OnKeyUp.InvokeAsync(obj);
         }
 
-        protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected virtual async Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, value);
 
@@ -582,7 +582,7 @@ namespace MudBlazor
         /// <summary>
         /// Override to write Value to ParameterState instead of backing field.
         /// </summary>
-        protected override Task WriteValueAsync(T? value) => _valueState.SetValueAsync(value);
+        protected override Task SetValueAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// Sets the value, values, and text, and calls validation.
@@ -595,7 +595,7 @@ namespace MudBlazor
         /// </returns>
         public virtual Task ForceUpdate()
         {
-            return SetValueAsync(ReadValue, force: true);
+            return SetValueAndUpdateTextAsync(ReadValue, force: true);
         }
 
         /// <summary>
@@ -606,7 +606,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            return SetValueAsync(ConvertGet(ReadText), updateText);
+            return SetValueAndUpdateTextAsync(ConvertGet(ReadText), updateText);
         }
 
         protected override string? GetFormat() => _formatState.Value;

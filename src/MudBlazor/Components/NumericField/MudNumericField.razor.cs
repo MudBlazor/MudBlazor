@@ -173,10 +173,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
-            return base.SetValueAsync(value, valueChanged || updateText, force);
+            return base.SetValueAndUpdateTextAsync(value, valueChanged || updateText, force);
         }
 
         /// <inheritdoc />
@@ -191,7 +191,7 @@ namespace MudBlazor
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
-                await SetValueAsync(value, true);
+                await SetValueAndUpdateTextAsync(value, true);
             return true; //Don't show errors
         }
 
@@ -231,13 +231,13 @@ namespace MudBlazor
                         nextValue = Min;
                 }
 
-                await SetValueAsync(ConstrainBoundaries(nextValue).value);
+                await SetValueAndUpdateTextAsync(ConstrainBoundaries(nextValue).value);
                 await _elementReference.SetText(ReadText);
             }
             catch (OverflowException)
             {
                 // if next value overflows the primitive type, lets set it to Min or Max depending on if factor is positive or negative
-                await SetValueAsync(factor > 0 ? Max : Min, true);
+                await SetValueAndUpdateTextAsync(factor > 0 ? Max : Min, true);
             }
         }
 
