@@ -22,14 +22,13 @@ namespace MudBlazor
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
         private bool _keyInterceptorObserving = false;
-        private string _elementId = Identifier.Create("picker");
-
-        public MudPicker() : base(new Converter<T, string>()) { }
-
-        protected MudPicker(Converter<T, string> converter) : base(converter) { }
+        private readonly string _elementId = Identifier.Create("picker");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        [Inject]
+        private IPopoverService PopoverService { get; set; } = null!;
 
         protected string PickerClassname =>
             new CssBuilder("mud-picker")
@@ -54,8 +53,8 @@ namespace MudBlazor
 
         protected string PickerPaperStylename =>
             new StyleBuilder()
-                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)}ms")
-                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDefaults.Delay.TotalMilliseconds)}ms")
+                .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
                 .AddStyle(Style)
                 .Build();
 
@@ -354,7 +353,7 @@ namespace MudBlazor
         /// Occurs when <see cref="Text"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<string> TextChanged { get; set; }
+        public EventCallback<string?> TextChanged { get; set; }
 
         /// <summary>
         /// Updates <see cref="Text"/> immediately upon typing when <see cref="Editable"/> is <c>true</c>.
@@ -378,7 +377,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string? Text
+        public virtual string? Text
         {
             get => _text;
             set => SetTextAsync(value, true).CatchAndLog();
@@ -435,12 +434,17 @@ namespace MudBlazor
         /// Prevents interaction with background elements while the picker is open.
         /// </summary>
         /// <remarks>
-        /// <para>Defaults to <c>true</c>.</para>
+        /// <para>Defaults to <see cref="PopoverOptions.ModalOverlay" />.</para>
         /// <para>Only possible to set to <c>false</c> when <see cref="PickerVariant"/> is <see cref="PickerVariant.Inline"/>.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
+        public bool? Modal { get; set; }
+
+        /// <summary>
+        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// </summary>
+        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>
         /// The location the popover opens, relative to its container.
@@ -462,15 +466,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
-        /// <summary>
-        /// The behavior of the popover when it overflows its container.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Popover.Appearance)]
-        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
@@ -490,7 +486,7 @@ namespace MudBlazor
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
-        protected async Task SetTextAsync(string? value, bool callback)
+        protected virtual async Task SetTextAsync(string? value, bool callback)
         {
             if (_text != value)
             {
@@ -707,6 +703,20 @@ namespace MudBlazor
 
         protected virtual Task OnPickerClosedAsync() => PickerClosed.InvokeAsync(this);
 
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to read directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        protected virtual string? ReadText => Text;
+
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to write directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        protected virtual Task WriteTextAsync(string? value)
+        {
+            Text = value;
+            return Task.CompletedTask;
+        }
+
         protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
@@ -717,7 +727,7 @@ namespace MudBlazor
                     if (args.CtrlKey && args.ShiftKey)
                     {
                         await ClearAsync();
-                        _value = default;
+                        await SetValueAsync(default);
                         await ResetAsync();
                     }
 

@@ -10,7 +10,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class RegexMaskTests
 {
-
     [Test]
     public void RegexMask_Insert()
     {
@@ -62,4 +61,221 @@ public class RegexMaskTests
         mask.ToString().Should().Be("1|234");
     }
 
+    [Test]
+    public void RegexMask_AlignAgainstMask_SimpleDigits()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]+$");
+
+        // Act
+        mask.Insert("123");
+
+        // Assert
+        mask.Text.Should().Be("123");
+    }
+
+    [Test]
+    public void RegexMask_AlignAgainstMask_FilterInvalidChars()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]+$");
+
+        // Act
+        mask.Insert("1a2b3c");
+
+        // Assert
+        mask.Text.Should().Be("123");
+    }
+
+    [Test]
+    public void RegexMask_Delimiters_AutoInsert()
+    {
+        // Arrange - Use IPv4 which has delimiters built-in
+        var mask = RegexMask.IPv4();
+
+        // Act
+        mask.Insert("192168001001");
+
+        // Assert
+        mask.Text.Should().Contain(".");
+    }
+
+    [Test]
+    public void RegexMask_GetCleanText()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]+$");
+        mask.Insert("12345");
+
+        // Act
+        var cleanText = mask.GetCleanText();
+
+        // Assert
+        cleanText.Should().Be("12345");
+    }
+
+    [Test]
+    public void RegexMask_SelectionDelete()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]+$");
+        mask.Insert("12345");
+        mask.Selection = (1, 4);
+
+        // Act
+        mask.Delete();
+
+        // Assert
+        mask.Text.Should().Be("15");
+    }
+
+    [Test]
+    public void RegexMask_SelectionBackspace()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]+$");
+        mask.Insert("12345");
+        mask.Selection = (1, 4);
+
+        // Act
+        mask.Backspace();
+
+        // Assert
+        mask.Text.Should().Be("15");
+    }
+
+    [Test]
+    public void RegexMask_IPv4_Basic()
+    {
+        // Arrange
+        var mask = RegexMask.IPv4();
+
+        // Act
+        mask.Insert("192.168.1.1");
+
+        // Assert
+        mask.Text.Should().Be("192.168.1.1");
+    }
+
+    [Test]
+    public void RegexMask_IPv4_WithPort()
+    {
+        // Arrange
+        var mask = RegexMask.IPv4(includePort: true);
+
+        // Act
+        mask.Insert("192168001001:8080");
+
+        // Assert
+        mask.Text.Should().Contain(":");
+        mask.Text.Should().Contain("8080");
+    }
+
+    [Test]
+    public void RegexMask_IPv6_Basic()
+    {
+        // Arrange
+        var mask = RegexMask.IPv6();
+
+        // Act
+        mask.Insert("2001:0db8:85a3:0000:0000:8a2e:0370:7334");
+
+        // Assert
+        mask.Text.Should().Contain(":");
+    }
+
+    [Test]
+    public void RegexMask_IPv6_WithPort()
+    {
+        // Arrange
+        var mask = RegexMask.IPv6(includePort: true);
+
+        // Act
+        mask.Insert("[::1]:8080");
+
+        // Assert
+        mask.Text.Should().Contain("[");
+        mask.Text.Should().Contain("]");
+    }
+
+    [Test]
+    public void RegexMask_Email_Basic()
+    {
+        // Arrange
+        var mask = RegexMask.Email();
+
+        // Act
+        mask.Insert("test@example.com");
+
+        // Assert
+        mask.Text.Should().Be("test@example.com");
+    }
+
+    [Test]
+    public void RegexMask_Email_WithSubdomain()
+    {
+        // Arrange
+        var mask = RegexMask.Email();
+
+        // Act
+        mask.Insert("user@mail.sub.domain.com");
+
+        // Assert
+        mask.Text.Should().Contain("@");
+        mask.Text.Should().Contain(".");
+    }
+
+    [Test]
+    public void RegexMask_HexPattern()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9A-Fa-f]+$");
+
+        // Act
+        mask.Insert("1A2B3C");
+
+        // Assert
+        mask.Text.Should().Be("1A2B3C");
+    }
+
+    [Test]
+    public void RegexMask_UpdateFrom_WithDelimiters()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]+$");
+        var otherMask = new RegexMask("^[0-9.]+$");
+
+        // Act
+        mask.UpdateFrom(otherMask);
+        mask.Insert("123.456");
+
+        // Assert - After UpdateFrom, behavior should be updated
+        mask.Text.Should().NotBeNullOrEmpty();
+    }
+
+    [Test]
+    public void RegexMask_EmptyInput()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]*$");
+
+        // Act
+        mask.Insert("");
+
+        // Assert
+        mask.Text.Should().BeEmpty();
+    }
+
+    [Test]
+    public void RegexMask_NullInput()
+    {
+        // Arrange
+        var mask = new RegexMask("^[0-9]*$");
+
+        // Act
+        mask.Insert(null);
+
+        // Assert
+        mask.Text.Should().BeNullOrEmpty();
+    }
 }

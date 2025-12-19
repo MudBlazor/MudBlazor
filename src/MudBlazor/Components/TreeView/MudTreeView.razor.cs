@@ -50,7 +50,7 @@ namespace MudBlazor
         private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
 
         private HashSet<T> _selection;
-        private HashSet<MudTreeViewItem<T>> _childItems = new();
+        private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
         private bool _isFirstRender = true;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
@@ -225,7 +225,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public Func<TreeItemData<T>, Task<bool>>? FilterFunc { get; set; }
+        public Func<ITreeItemData<T>, Task<bool>>? FilterFunc { get; set; }
 
         /// <summary>
         /// Shows a ripple effect when an item is clicked.
@@ -242,7 +242,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<TreeItemData<T>>? Items { get; set; } = Array.Empty<TreeItemData<T>>();
+        public IReadOnlyCollection<ITreeItemData<T>>? Items { get; set; } = Array.Empty<ITreeItemData<T>>();
 
         /// <summary>
         /// The currently selected value.
@@ -250,7 +250,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public T? SelectedValue { get; set; }
 
@@ -266,7 +266,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
@@ -291,7 +291,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public RenderFragment<TreeItemData<T>>? ItemTemplate { get; set; }
+        public RenderFragment<ITreeItemData<T>>? ItemTemplate { get; set; }
 
         /// <summary>
         /// The comparer used to check if two items are equal.
@@ -389,7 +389,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="items">The hierarchical tree structure to traverse</param>
         /// <returns>A task to represent the asynchronous operation.</returns>
-        private async Task TraverseFilterAsync(IEnumerable<TreeItemData<T>> items)
+        private async Task TraverseFilterAsync(IEnumerable<ITreeItemData<T>> items)
         {
             foreach (var item in items)
             {
@@ -412,7 +412,7 @@ namespace MudBlazor
         /// Resets the filter, so that all <see cref="MudTreeViewItem{T}.Visible"/> are set to true and the entire tree is visible.
         /// </summary>
         /// <param name="items">The items to reset</param>
-        private static void ResetFilter(IEnumerable<TreeItemData<T>> items)
+        private static void ResetFilter(IEnumerable<ITreeItemData<T>> items)
         {
             foreach (var item in items)
             {

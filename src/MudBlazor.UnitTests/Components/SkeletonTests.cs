@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SkeletonStyleIsAppliedAfterInitialRendering()
         {
-            var comp = Context.RenderComponent<MudSkeleton>();
+            var comp = Context.Render<MudSkeleton>();
 
             var skeleton = comp.Instance;
             var span = comp.Find("span");
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SkeletonHeightIsAppliedAfterInitialRendering()
         {
-            var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Height, "100px"));
+            var comp = Context.Render<MudSkeleton>(p => p.Add(x => x.Height, "100px"));
 
             var skeleton = comp.Instance;
             var span = comp.Find("span");
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SkeletonWidthIsAppliedAfterInitialRendering()
         {
-            var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Width, "300px"));
+            var comp = Context.Render<MudSkeleton>(p => p.Add(x => x.Width, "300px"));
 
             var skeleton = comp.Instance;
             var span = comp.Find("span");

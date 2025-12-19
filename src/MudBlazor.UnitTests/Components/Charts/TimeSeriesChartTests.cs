@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -199,7 +199,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void TimeSeriesChartEmptyData()
         {
-            var comp = Context.RenderComponent<TimeSeries<double>>();
+            var comp = Context.Render<TimeSeries<double>>();
             comp.Markup.Should().Contain("mud-chart-line mud-ltr");
         }
 
@@ -209,7 +209,7 @@ namespace MudBlazor.UnitTests.Charts
             var time = new DateTime(2000, 1, 1);
             var format = "dd/MM HH:mm";
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, new() {
                     new ChartSeries<double>()
@@ -286,7 +286,7 @@ namespace MudBlazor.UnitTests.Charts
                 }
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")

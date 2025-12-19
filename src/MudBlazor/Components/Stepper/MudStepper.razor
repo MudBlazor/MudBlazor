@@ -52,8 +52,8 @@
             @CompletedContent
         </div>
     }
-    else if (!Vertical && ActiveStep is not null) {
-        @StepContent(ActiveStep)
+    else if (!Vertical && _activeStep is not null) {
+        @StepContent(_activeStep)
     }
 
     <CascadingValue Value="this" IsFixed="true">
@@ -114,7 +114,7 @@
 </div>
 
 @code {
-    RenderFragment RenderStepLabel(MudStep step, bool isActive) =>
+    private RenderFragment RenderStepLabel(MudStep step, bool isActive) =>
         @<div class="@step.LabelClassname">
             @if (LabelTemplate is not null)
             {
@@ -161,7 +161,7 @@
             }
         </div>;
 
-    RenderFragment StepContent(MudStep step) =>
+    private RenderFragment StepContent(MudStep step) =>
         @<CascadingValue Value="@CreateStepContext(step)">
             <div @attributes="@step.UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
                 @if (step.ChildContent is not null)

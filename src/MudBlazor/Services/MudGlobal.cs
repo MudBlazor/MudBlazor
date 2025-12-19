@@ -17,19 +17,6 @@ namespace MudBlazor;
 public static class MudGlobal
 {
     /// <summary>
-    /// Default settings for <see cref="MudDialog"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class DialogDefaults
-    {
-        /// <summary>
-        /// The element which will receive focus when this <see cref="MudDialog"/> is shown.
-        /// </summary>
-        public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
-    }
-
-    /// <summary>
     /// Default settings for <see cref="MudMenu"/>.
     /// <br/>
     /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
@@ -43,23 +30,6 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Default settings for <see cref="MudPopover"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class PopoverDefaults
-    {
-        /// <summary>
-        /// Prevents interaction with background elements.
-        /// </summary>
-        /// <remarks>
-        /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
-        /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
-        /// </remarks>
-        public static bool ModalOverlay { get; set; }
-    }
-
-    /// <summary>
     /// Default settings for <see cref="MudTooltip"/>.
     /// <br/>
     /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
@@ -69,28 +39,10 @@ public static class MudGlobal
         /// <summary>
         /// The amount of time in milliseconds to wait from opening the <see cref="MudTooltip"/> before beginning to perform the transition.
         /// </summary>
-        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
-
-        /// <summary>
-        /// The length of time that the opening transition for <see cref="MudTooltip"/> takes to complete.
-        /// </summary>
-        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
-    }
-
-    /// <summary>
-    /// Default settings for transitions in MudBlazor components.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
-    /// </summary>
-    public static class TransitionDefaults
-    {
-        /// <summary>
-        /// The length of time that the opening transition takes to complete.
-        /// </summary>
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition.
+        /// The length of time that the opening transition for <see cref="MudTooltip"/> takes to complete.
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }

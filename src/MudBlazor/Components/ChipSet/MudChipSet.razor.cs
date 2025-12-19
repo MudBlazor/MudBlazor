@@ -211,7 +211,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// <remarks>
     /// This property is used when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection" /> or <see cref="SelectionMode.ToggleSelection"/>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public T? SelectedValue { get; set; }
 
@@ -230,7 +230,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// <remarks>
     /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public IReadOnlyCollection<T>? SelectedValues { get; set; }
 

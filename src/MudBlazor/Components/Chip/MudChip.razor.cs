@@ -382,7 +382,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// When <c>true</c>, the chip is displayed in a selected state.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.Chip.Behavior)]
     public bool Selected { get; set; }
 

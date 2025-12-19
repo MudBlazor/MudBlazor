@@ -411,6 +411,10 @@ namespace MudBlazor.Services
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                     popoverOptions.Mode = options.PopoverOptions.Mode;
                     popoverOptions.OverflowPadding = options.PopoverOptions.OverflowPadding;
+                    popoverOptions.ModalOverlay = options.PopoverOptions.ModalOverlay;
+                    popoverOptions.OverflowBehavior = options.PopoverOptions.OverflowBehavior;
+                    popoverOptions.Delay = options.PopoverOptions.Delay;
+                    popoverOptions.Duration = options.PopoverOptions.Duration;
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
