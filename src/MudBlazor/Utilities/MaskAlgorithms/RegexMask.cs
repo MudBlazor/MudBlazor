@@ -165,19 +165,23 @@ public class RegexMask : BaseMask
 
         foreach (var textChar in text)
         {
-            var current = sb.ToString();
+            // Build test string once per character
+            var testWithChar = sb.ToString() + textChar;
 
-            if (_regex.IsMatch(current + textChar))
+            if (_regex.IsMatch(testWithChar))
             {
                 sb.Append(textChar);
             }
             // try to skip over a delimiter (input of values only i.e. 31122021 => 31.12.2021)
             else if (!string.IsNullOrEmpty(DelimiterCharacters))
             {
-                foreach (var delimiter in DelimiterCharacters.Where(delimiter => _regex.IsMatch(current + delimiter + textChar)))
+                // Find first delimiter that makes the pattern match
+                var matchingDelimiter = DelimiterCharacters.FirstOrDefault(delimiter => 
+                    _regex.IsMatch(sb.ToString() + delimiter + textChar));
+                
+                if (matchingDelimiter != default(char))
                 {
-                    sb.Append(delimiter).Append(textChar);
-                    break;
+                    sb.Append(matchingDelimiter).Append(textChar);
                 }
             }
         }
