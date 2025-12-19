@@ -151,6 +151,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Localization", Href = "features/localization"},
                 new DocsLink {Title = "Analyzers", Href = "features/analyzers"},
                 new DocsLink {Title = "Services", Href = "features/services"},
+                new DocsLink {Title = "Chat (deprecated)", Href = "components/chat"}, // TODO: there is no component to reference so it's added under features instead so the page is still searchable. remove this in v10.
             }.OrderBy(x => x.Title);
 
         /// <summary>
