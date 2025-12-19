@@ -32,7 +32,7 @@ namespace MudBlazor.Utilities.Debounce;
 /// </remarks>
 internal sealed class DebounceDispatcher : IDisposable
 {
-    private readonly TimeSpan _interval;
+    private TimeSpan _interval;
     private readonly bool _leading;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private CancellationTokenSource? _cancellationTokenSource;
@@ -214,6 +214,57 @@ internal sealed class DebounceDispatcher : IDisposable
         try
         {
             _cancellationTokenSource?.Cancel();
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    /// <summary>
+    /// Updates the debounce interval.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method updates the interval without affecting any currently pending debounced action.
+    /// The new interval will be used for the next debounce operation.
+    /// </para>
+    /// <para>
+    /// This method is thread-safe and can be called concurrently with <see cref="DebounceAsync"/>.
+    /// </para>
+    /// </remarks>
+    /// <param name="interval">The new debounce interval in milliseconds. Must be non-negative.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public void UpdateInterval(int interval)
+    {
+        UpdateInterval(TimeSpan.FromMilliseconds(interval));
+    }
+
+    /// <summary>
+    /// Updates the debounce interval.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method updates the interval without affecting any currently pending debounced action.
+    /// The new interval will be used for the next debounce operation.
+    /// </para>
+    /// <para>
+    /// This method is thread-safe and can be called concurrently with <see cref="DebounceAsync"/>.
+    /// </para>
+    /// </remarks>
+    /// <param name="interval">The new debounce interval as a <see cref="TimeSpan"/>. Must be non-negative.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public void UpdateInterval(TimeSpan interval)
+    {
+        if (interval < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be non-negative.");
+        }
+
+        _lock.Wait();
+        try
+        {
+            _interval = interval;
         }
         finally
         {
