@@ -173,10 +173,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
-            return base.SetValueAsync(value, valueChanged || updateText, force);
+            return base.SetValueAndUpdateTextAsync(value, valueChanged || updateText, force);
         }
 
         /// <inheritdoc />
@@ -191,7 +191,7 @@ namespace MudBlazor
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
-                await SetValueAsync(value, true);
+                await SetValueAndUpdateTextAsync(value, true);
             return true; //Don't show errors
         }
 
@@ -223,33 +223,33 @@ namespace MudBlazor
                 var nextValue = GetNextValue(factor) ?? Num.To<T>(0);
 
                 // validate that the data type is a value type before we compare them
-                if (typeof(T).IsValueType && ReadValue() is not null)
+                if (typeof(T).IsValueType && ReadValue is not null)
                 {
-                    if (factor > 0 && _comparer.Compare(nextValue, ReadValue()) < 0)
+                    if (factor > 0 && _comparer.Compare(nextValue, ReadValue) < 0)
                         nextValue = Max;
-                    else if (factor < 0 && _comparer.Compare(nextValue, ReadValue()) > 0)
+                    else if (factor < 0 && _comparer.Compare(nextValue, ReadValue) > 0)
                         nextValue = Min;
                 }
 
-                await SetValueAsync(ConstrainBoundaries(nextValue).value);
+                await SetValueAndUpdateTextAsync(ConstrainBoundaries(nextValue).value);
                 await _elementReference.SetText(ReadText);
             }
             catch (OverflowException)
             {
                 // if next value overflows the primitive type, lets set it to Min or Max depending on if factor is positive or negative
-                await SetValueAsync(factor > 0 ? Max : Min, true);
+                await SetValueAndUpdateTextAsync(factor > 0 ? Max : Min, true);
             }
         }
 
         private T? GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(ReadValue()) + (FromDecimal(Step) * (decimal)factor));
+                return (T)(object)Convert.ToDecimal(FromDecimal(ReadValue) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(ReadValue()) + (FromInt64(Step) * factor));
+                return (T)(object)Convert.ToInt64(FromInt64(ReadValue) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue()) + (FromUInt64(Step) * factor));
-            return Num.To<T>(Num.From(ReadValue()) + (Num.From(Step) * factor));
+                return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
+            return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
         }
 
         /// <summary>
