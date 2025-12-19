@@ -222,7 +222,8 @@ public class PatternMask : BaseMask
     /// <returns>When <c>true</c>, the character is a match for the mask character.</returns>
     protected virtual bool IsMatch(char maskChar, char textChar)
     {
-        var maskDef = _maskDict[maskChar];
+        if (!MaskDictionary.TryGetValue(maskChar, out var maskDef))
+            return false;
         return Regex.IsMatch(textChar.ToString(), maskDef.Regex);
     }
 
@@ -241,17 +242,16 @@ public class PatternMask : BaseMask
     /// When <see cref="CleanDelimiters"/> is <c>true</c>, any undefined characters will be removed.  
     /// For example: for a mask of <c>0000 0000 0000 0000</c>, the spaces would be removed if they were an undefined character.
     /// </remarks>
-    public override string? GetCleanText()
+    public override string GetCleanText()
     {
         Init();
-        Debug.Assert(Mask is not null);
         var cleanText = Text;
         if (string.IsNullOrEmpty(cleanText))
             return cleanText;
         if (CleanDelimiters)
-            cleanText = new string(cleanText.Where((c, i) => _maskDict.ContainsKey(Mask[i])).ToArray());
+            cleanText = new string(cleanText.Where((c, i) => i < Mask.Length && MaskDictionary.ContainsKey(Mask[i])).ToArray());
         if (Placeholder != null)
-            cleanText = cleanText.Replace(Placeholder.Value.ToString(), "");
+            cleanText = cleanText.Replace(Placeholder.Value.ToString(), string.Empty);
         return cleanText;
     }
 
@@ -260,16 +260,18 @@ public class PatternMask : BaseMask
     {
         base.InitInternals();
         if (Placeholder != null)
-            _delimiters.Add(Placeholder.Value);
+            AddDelimiter(Placeholder.Value);
     }
 
     /// <inheritdoc />
     protected override void UpdateText(string text)
     {
+        text ??= string.Empty;
+        
         // don't show a text consisting only of delimiters and placeholders (no actual input)
-        if (text.All(c => _delimiters.Contains(c) || (Placeholder != null && c == Placeholder.Value)))
+        if (text.All(c => Delimiters.Contains(c) || (Placeholder != null && c == Placeholder.Value)))
         {
-            Text = "";
+            Text = string.Empty;
             CaretPos = 0;
             return;
         }
@@ -297,7 +299,6 @@ public class PatternMask : BaseMask
         Placeholder = o.Placeholder;
         CleanDelimiters = o.CleanDelimiters;
         Transformation = o.Transformation;
-        _initialized = false;
         Refresh();
     }
 }

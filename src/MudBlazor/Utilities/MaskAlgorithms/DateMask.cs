@@ -39,7 +39,7 @@ public partial class DateMask : PatternMask
         _y = year;
         _M = month;
         _d = day;
-        _maskChars = _maskChars.Concat(new[] { MaskChar.Digit(year), MaskChar.Digit(month), MaskChar.Digit(day), })
+        MaskChars = MaskChars.Concat(new[] { MaskChar.Digit(year), MaskChar.Digit(month), MaskChar.Digit(day), })
             .ToArray();
     }
 

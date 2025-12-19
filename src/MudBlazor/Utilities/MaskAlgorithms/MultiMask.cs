@@ -103,7 +103,7 @@ namespace MudBlazor
             Selection = sel;
             Mask = newOption != null ? newOption.Value.Mask : _defaultMask;
             // when mask changes we need to re-initialize!
-            _initialized = false;
+            ForceReinitialize();
             // do it again!
             action();
             OptionDetected?.Invoke(newOption, Text);

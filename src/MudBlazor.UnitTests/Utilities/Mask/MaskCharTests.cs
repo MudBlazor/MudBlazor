@@ -99,12 +99,12 @@ public class MaskCharTests
     }
 
     [Test]
-    public void MaskChar_PropertySetter()
+    public void MaskChar_Constructor_CreatesImmutableStruct()
     {
-        // Arrange
-        var maskChar = new MaskChar { Char = 'z', Regex = @"[a-z]" };
+        // Arrange & Act
+        var maskChar = new MaskChar('z', @"[a-z]");
 
-        // Act & Assert
+        // Assert
         maskChar.Char.Should().Be('z');
         maskChar.Regex.Should().Be(@"[a-z]");
     }

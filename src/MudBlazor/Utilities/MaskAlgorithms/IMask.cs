@@ -13,17 +13,17 @@ namespace MudBlazor
         /// <summary>
         /// The characters which define the accepted input.
         /// </summary>
-        string? Mask { get; }
+        string Mask { get; }
 
         /// <summary>
         /// The current text displayed in the input, including delimiter and placeholder characters.
         /// </summary>
-        string? Text { get; }
+        string Text { get; }
 
         /// <summary>
         /// The current text in the input, excluding delimiter or placeholder characters.
         /// </summary>
-        string? GetCleanText() => Text;
+        string GetCleanText() => Text;
 
         /// <summary>
         /// The current cursor position.
@@ -39,7 +39,7 @@ namespace MudBlazor
         /// Inserts text at the current cursor position.
         /// </summary>
         /// <param name="input">The characters to insert.</param>
-        void Insert(string input);
+        void Insert(string? input);
 
         /// <summary>
         /// Triggers a delete at the current cursor position.
