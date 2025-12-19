@@ -28,7 +28,7 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IMask _mask = new PatternMask("** **-** **");
-        private string _elementId = Identifier.Create("mask");
+        private readonly string _elementId = Identifier.Create("mask");
 
         protected string Classname =>
             new CssBuilder("mud-input")
@@ -135,10 +135,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
-        public MudMask()
-        {
-        }
-
         protected override async Task OnInitializedAsync()
         {
             if (ReadText != Mask.Text)
@@ -194,10 +190,8 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected internal async Task OnInputAsync(ChangeEventArgs e)
+        protected internal async Task OnInputAsync(string? inputValue)
         {
-            var inputValue = e.Value?.ToString();
-
             if (inputValue == null)
                 return;
 
@@ -378,10 +372,9 @@ namespace MudBlazor
             return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
-        internal void OnCopy()
-            => CopySelectionToClipboard();
+        internal Task OnCopyAsync() => CopySelectionToClipboard();
 
-        internal async void OnPaste(string? text)
+        internal async Task OnPasteAsync(string? text)
         {
             if (text == null || GetReadOnlyState())
                 return;
@@ -469,12 +462,12 @@ namespace MudBlazor
             _mask = other;
         }
 
-        private async void OnCut(ClipboardEventArgs obj)
+        private async Task OnCutAsync(ClipboardEventArgs obj)
         {
             if (GetReadOnlyState())
                 return;
 
-            CopySelectionToClipboard();
+            await CopySelectionToClipboard();
             if (_selection != null)
                 Mask.Delete();
             await UpdateAsync();
@@ -498,10 +491,12 @@ namespace MudBlazor
             }
         }
 
+        private async void OnPaste(string e) => await OnPasteAsync(e);
+
         /// <summary>
         /// Copies the currently selected text (or the entire text if nothing is selected) to the clipboard.
         /// </summary>
-        private void CopySelectionToClipboard()
+        private async Task CopySelectionToClipboard()
         {
             var text = ReadText;
             if (Mask.Selection != null)
@@ -509,7 +504,7 @@ namespace MudBlazor
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
 
-            JsApiService.CopyToClipboardAsync(text ?? string.Empty);
+            await JsApiService.CopyToClipboardAsync(text ?? string.Empty);
         }
 
         [GeneratedRegex(@"^.$")]
