@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -353,17 +354,19 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
             var textFieldComp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldComp.Instance;
+
+            IElement TextFieldInput() => textFieldComp.Find("input");
             // validate initial field state
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
-            textFieldComp.Find("input").Change("def");
+            await comp.InvokeAsync(() => TextFieldInput().Change("def"));
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().ContainSingle("invalid"), TimeSpan.FromSeconds(5));
             // make sure success can be detected
-            textFieldComp.Find("input").Change("abc");
+            await comp.InvokeAsync(() => TextFieldInput().Change("abc"));
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
             // send invalid value, then valid value
-            textFieldComp.Find("input").Change("def");
-            textFieldComp.Find("input").Change("abc");
+            await comp.InvokeAsync(() => TextFieldInput().Change("def"));
+            await comp.InvokeAsync(() => TextFieldInput().Change("abc"));
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
@@ -376,8 +379,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FormAsyncValidationWithFieldChangedSubscriberTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            var input = comp.Find("input");
-            input.Input(new ChangeEventArgs { Value = "test" });
+            var input = () => comp.Find("input");
+            await input().InputAsync(new ChangeEventArgs { Value = "test" });
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
@@ -387,7 +390,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                await input().InputAsync(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }

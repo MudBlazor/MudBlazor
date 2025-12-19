@@ -923,38 +923,37 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableMultiSelectionTest7>();
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
-            var tr = comp.FindAll("tr").ToArray();
-            tr.Length.Should().Be(4); // <-- one header, three rows
-            var th = comp.FindAll("th").ToArray();
-            th.Length.Should().Be(2); //  one for the checkbox, one for the header
-            var td = comp.FindAll("td").ToArray();
-            td.Length.Should().Be(6); // two td per row for multi selection
-            var inputs = comp.FindAll("input").ToArray();
-            inputs.Length.Should().Be(5); // one checkbox per row + one for the header
+            var tr = comp.FindAll("tr");
+            tr.Count.Should().Be(4); // <-- one header, three rows
+            var th = comp.FindAll("th");
+            th.Count.Should().Be(2); //  one for the checkbox, one for the header
+            var td = comp.FindAll("td");
+            td.Count.Should().Be(6); // two td per row for multi selection
+            var inputs = () => comp.FindAll("input");
+            var searchInput = () => comp.Find("#searchInput");
+            inputs().Count.Should().Be(5); // one checkbox per row + one for the header
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
 
-            inputs[4].Change("1"); // search for 1
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            searchInput().Change("1"); // search for 1
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
 
             // click header checkbox and verify selection text
-            inputs[0].Change(true);
+            inputs()[0].Change(true);
             table.SelectedItems.Count.Should().Be(1);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }"); // only "1" should be present
             checkboxes.Sum(x => x.ReadValue() ? 1 : 0).Should().Be(1);
-            inputs[0].Change(false);
+            inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-
-            inputs[4].Change(""); // reset to default
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            searchInput().Change(""); // reset to default
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance);
 
             // click header checkbox and verify selection text
-            inputs[0].Change(true);
+            inputs()[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }"); // we reset search, so all three numbers should be searched
             checkboxes.Sum(x => x.ReadValue() ? 1 : 0).Should().Be(3);
-            inputs[0].Change(false);
+            inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
             checkboxes.Sum(x => x.ReadValue() ? 1 : 0).Should().Be(0);

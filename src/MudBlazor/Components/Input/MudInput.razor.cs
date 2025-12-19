@@ -172,22 +172,21 @@ namespace MudBlazor
         [Parameter]
         public int MaxLines { get; set; }
 
-        protected Task OnInput(ChangeEventArgs? args)
+        private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
+
+        protected async Task OnInput(string? args)
         {
-            if (!Immediate)
-                return Task.CompletedTask;
             _isFocused = true;
-            return SetTextAndUpdateValueAsync(args?.Value as string);
+            _internalText = args;
+            await OnInternalInputChanged.InvokeAsync(args);
+            await SetTextAndUpdateValueAsync(args);
         }
 
-        protected async Task OnChange(ChangeEventArgs? args)
+        protected async Task OnChange(string? args)
         {
-            _internalText = args?.Value as string;
+            _internalText = args;
             await OnInternalInputChanged.InvokeAsync(args);
-            if (!Immediate)
-            {
-                await SetTextAndUpdateValueAsync(args?.Value as string);
-            }
+            await SetTextAndUpdateValueAsync(args);
         }
 
         /// <summary>
@@ -280,20 +279,8 @@ namespace MudBlazor
 
             await base.SetParametersAsync(parameters);
 
-            //if (!_isFocused || _forceTextUpdate)
-            //    _internalText = Text;
-            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-            {
-                // Text update suppression, only in BSS (not in WASM).
-                // This is a fix for #1012
-                if (!_isFocused || _forceTextUpdate)
-                    _internalText = ReadText;
-            }
-            else
-            {
-                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
-                _internalText = ReadText;
-            }
+            // Always update internal text (TextUpdateSuppression removed)
+            _internalText = ReadText;
 
             // Flag AutoGrow to be initialized on the next render.
             if (!oldAutoGrow && AutoGrow)

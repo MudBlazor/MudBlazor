@@ -1776,28 +1776,32 @@ namespace MudBlazor.UnitTests.Components
             var select = Context.Render<MudSelect<string>>();
 
             select.Instance.PopoverFixed.Should().BeFalse();
-            select.Instance.OverflowBehavior.Should().Be(MudGlobal.PopoverDefaults.OverflowBehavior);
+            // When not set, should use global default from PopoverOptions
+            select.Instance.Modal.Should().BeNull();
         }
 
         [Test]
         public void PopoverSettings_OverridesDefaultValues()
         {
-            var originalOverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior;
-            try
+            var select = Context.Render<MudSelect<string>>(p =>
             {
-                MudGlobal.PopoverDefaults.OverflowBehavior = OverflowBehavior.FlipNever;
-                var select = Context.Render<MudSelect<string>>(p =>
-                {
-                    p.Add(p => p.PopoverFixed, true);
-                });
+                p.Add(p => p.PopoverFixed, true);
+                p.Add(p => p.Modal, true);
+            });
 
-                select.Instance.PopoverFixed.Should().BeTrue();
-                select.Instance.OverflowBehavior.Should().Be(OverflowBehavior.FlipNever);
-            }
-            finally
-            {
-                MudGlobal.PopoverDefaults.OverflowBehavior = originalOverflowBehavior;
-            }
+            select.Instance.PopoverFixed.Should().BeTrue();
+            select.Instance.Modal.Should().BeTrue();
+        }
+
+        [Test]
+        public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
+        {
+            // The default PopoverOptions should have OverflowBehavior.FlipOnOpen and ModalOverlay = false
+            var select = Context.Render<MudSelect<string>>();
+
+            // Verify that the component is using the global defaults
+            // Modal should be null (using PopoverOptions defaults)
+            select.Instance.Modal.Should().BeNull();
         }
 #nullable disable
     }

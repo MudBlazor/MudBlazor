@@ -1,7 +1,6 @@
 ﻿using System.Timers;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
-using MudBlazor.Utilities.Converter.Base;
 using Timer = System.Timers.Timer;
 
 namespace MudBlazor
@@ -14,12 +13,11 @@ namespace MudBlazor
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
         private Timer? _timer;
-        private readonly ParameterState<double> _debounceIntervalState;
 
         protected MudDebouncedInput()
         {
             using var registerScope = CreateRegisterScope();
-            _debounceIntervalState = registerScope.RegisterParameter<double>(nameof(DebounceInterval))
+            registerScope.RegisterParameter<double>(nameof(DebounceInterval))
                 .WithParameter(() => DebounceInterval)
                 .WithComparer(DoubleEpsilonEqualityComparer.Default)
                 .WithChangeHandler(OnDebounceIntervalChanged);
@@ -28,7 +26,7 @@ namespace MudBlazor
         /// <summary>
         /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
         /// </summary>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public double DebounceInterval { get; set; }
 
@@ -43,7 +41,17 @@ namespace MudBlazor
 
         protected Task OnChange()
         {
-            if (_debounceIntervalState.Value > 0 && _timer != null)
+            // When debouncing is active (timer is running), do nothing here.
+            // The debounce timer will handle updating the value when it elapses.
+            // This method is called on blur when debouncing is not active.
+            if (DebounceInterval > 0 && _timer is { Enabled: true })
+            {
+                // Timer is running, let debouncing handle it
+                return Task.CompletedTask;
+            }
+
+            // No debounce active, update value immediately
+            if (DebounceInterval > 0 && _timer is not null)
             {
                 _timer.Stop();
                 return base.UpdateValuePropertyAsync(false);
@@ -55,7 +63,7 @@ namespace MudBlazor
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             var suppressTextUpdate = !updateValue
-                                     && _debounceIntervalState.Value > 0
+                                     && DebounceInterval > 0
                                      && _timer is { Enabled: true }
                                      && (!ReadValue()?.Equals(ConvertGet(ReadText)) ?? false);
 
@@ -75,7 +83,7 @@ namespace MudBlazor
                 return base.UpdateValuePropertyAsync(updateText);
             }
             // if debounce interval is 0 we update immediately
-            if (_debounceIntervalState.Value <= 0 || _timer == null)
+            if (DebounceInterval <= 0 || _timer is null)
                 return base.UpdateValuePropertyAsync(updateText);
             // If a debounce interval is defined, we want to delay the update of Value property.
             _timer.Stop();
@@ -89,8 +97,10 @@ namespace MudBlazor
             base.OnParametersSet();
             // if input is to be debounced, makes sense to bind the change of the text to oninput
             // so we set Immediate to true
-            if (_debounceIntervalState.Value > 0)
+            if (DebounceInterval > 0)
+            {
                 Immediate = true;
+            }
         }
 
         private void OnDebounceIntervalChanged(ParameterChangedEventArgs<double> args)
@@ -106,13 +116,13 @@ namespace MudBlazor
 
         private void SetTimer()
         {
-            if (_timer == null)
+            if (_timer is null)
             {
                 _timer = new Timer();
                 _timer.Elapsed += OnTimerTick;
                 _timer.AutoReset = false;
             }
-            _timer.Interval = _debounceIntervalState.Value;
+            _timer.Interval = DebounceInterval;
         }
 
         private void OnTimerTick(object? sender, ElapsedEventArgs e)
@@ -128,7 +138,7 @@ namespace MudBlazor
 
         private void ClearTimer(bool suppressTick = false)
         {
-            if (_timer == null)
+            if (_timer is null)
                 return;
             var wasEnabled = _timer.Enabled;
             _timer.Stop();
