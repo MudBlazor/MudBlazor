@@ -38,6 +38,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
+        /// <inheritdoc />
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             // Don't update text if we're debouncing and the value hasn't actually changed
@@ -51,6 +52,7 @@ namespace MudBlazor
                 : base.UpdateTextPropertyAsync(updateValue);
         }
 
+        /// <inheritdoc />
         protected override Task UpdateValuePropertyAsync(bool updateText)
         {
             // This method is called when Value property needs to be refreshed from the current Text property, so typically because Text property has changed.
@@ -72,6 +74,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -110,9 +113,9 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnDebouncedUpdate()
+        private Task OnDebouncedUpdate()
         {
-            await InvokeAsync(async () =>
+            return InvokeAsync(async () =>
             {
                 await base.UpdateValuePropertyAsync(false);
                 await OnDebounceIntervalElapsed.InvokeAsync(ReadText);
