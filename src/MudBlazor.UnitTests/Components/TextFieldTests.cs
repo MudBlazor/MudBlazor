@@ -156,6 +156,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// DebounceInterval updates with epsilon-equivalent values should not break debouncing
+        /// </summary>
+        [Test]
+        public async Task DebounceInterval_EpsilonEquivalentValues_PreservesDebounce()
+        {
+            // Arrange
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200.0));
+            var textField = comp.Instance;
+            var input = comp.Find("input");
+
+            // Act - Input a value
+            input.Input(new ChangeEventArgs() { Value = "Test Value" });
+
+            // Change DebounceInterval to an epsilon-equivalent value (should not reset debouncer)
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 200.0000001));
+
+            // Assert - Value should still be null (debounce still pending)
+            textField.ReadValue().Should().BeNull();
+
+            // Wait for the debounce to complete
+            await Task.Delay(250);
+            await comp.WaitForAssertionAsync(() => textField.ReadValue().Should().Be("Test Value"));
+        }
+
+        /// <summary>
         /// Label and placeholder should not overlap.
         /// When placeholder is set, label should shrink
         /// </summary>
