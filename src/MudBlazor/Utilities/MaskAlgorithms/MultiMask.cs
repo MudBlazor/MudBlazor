@@ -104,7 +104,7 @@ namespace MudBlazor
         /// <returns></returns>
         protected virtual MaskOption? CheckOption()
         {
-            var text = Text ?? "";
+            var text = Text ?? string.Empty;
             if (_options is null)
             {
                 return null;
@@ -122,16 +122,17 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public override void UpdateFrom(IMask other)
+        public override void UpdateFrom(IMask? mask)
         {
-            base.UpdateFrom(other);
-            if (other is not MultiMask o)
-                return;
+            base.UpdateFrom(mask);
+            if (mask is MultiMask multiMask)
+            {
+                _defaultMask = multiMask._defaultMask;
+                _options = multiMask._options ?? [];
+                OptionDetected = multiMask.OptionDetected;
+                Refresh();
+            }
             // no need to re-initialize, just update the options
-            _defaultMask = o._defaultMask;
-            _options = o._options ?? [];
-            OptionDetected = o.OptionDetected;
-            Refresh();
         }
     }
 }

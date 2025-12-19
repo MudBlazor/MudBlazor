@@ -237,7 +237,7 @@ public partial class DateMask : PatternMask
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask mask)
+    public override void UpdateFrom(IMask? mask)
     {
         base.UpdateFrom(mask);
         if (mask is DateMask dateMask)
