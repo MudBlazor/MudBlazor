@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask
 {
+#nullable enable
     [TestFixture]
     public class MultiMaskTests
     {
@@ -23,7 +24,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             );
             MaskOption? option = null;
             var eventCount = 0;
-            mask.OptionDetected = (o, text) =>
+            mask.OptionDetected = (o, _) =>
             {
                 eventCount++;
                 option = o;
@@ -38,7 +39,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             mask.Insert("3");
             mask.DetectedOption.Should().NotBeNull();
             mask.DetectedOption.Value.Id.Should().Be("American Express");
-            option.Value.Id.Should().Be("American Express");
+            option.GetValueOrDefault().Id.Should().Be("American Express");
             eventCount.Should().Be(1);
 
             mask.Insert("45678901234567890");
@@ -47,7 +48,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             mask.SetText("30312345678901234567890");
             mask.DetectedOption.Value.Id.Should().Be("Diners Club");
             mask.Text.Should().Be("3031 234567 8901");
-            option.Value.Id.Should().Be("Diners Club");
+            option.GetValueOrDefault().Id.Should().Be("Diners Club");
             eventCount.Should().Be(2);
 
             mask.CaretPos = 1;
@@ -67,7 +68,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
                 new MaskOption("O1", "0-000.000.000", @"^4"),
                 new MaskOption("O2", "00-00.00.00", @"^5"))
             {
-                OptionDetected = (o, text) =>
+                OptionDetected = (o, _) =>
                 {
                     eventCount++;
                     option = o;
@@ -171,7 +172,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
                 new MaskOption("Test", "00-00", @"^1"));
             var eventFired = false;
             MaskOption? option = null;
-            string text = null;
+            string? text = null;
             mask.OptionDetected = (opt, txt) =>
             {
                 eventFired = true;

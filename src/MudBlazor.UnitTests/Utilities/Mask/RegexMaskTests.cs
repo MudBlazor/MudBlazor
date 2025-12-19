@@ -10,7 +10,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class RegexMaskTests
 {
-
     [Test]
     public void RegexMask_Insert()
     {
@@ -279,5 +278,4 @@ public class RegexMaskTests
         // Assert
         mask.Text.Should().BeNullOrEmpty();
     }
-
 }
