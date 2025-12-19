@@ -25,7 +25,7 @@ The project follows Material Design guidelines and provides a complete set of UI
 
 1. **Clean (when needed):**
 ```bash
-dotnet clean src/MudBlazor.sln
+dotnet clean src/MudBlazor.slnx
 ```
 - Runs in ~2-3 seconds
 - Use when: Build failures occur, switching branches, or unexplained issues
@@ -33,7 +33,7 @@ dotnet clean src/MudBlazor.sln
 
 2. **Build:**
 ```bash
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 ```
 - **Duration: ~2-2.5 minutes** (this is NORMAL - do NOT timeout before 150 seconds)
 - Builds 15+ projects including:
@@ -68,7 +68,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ### Build Troubleshooting
 
 **If build fails:**
-1. Run `dotnet clean src/MudBlazor.sln` first
+1. Run `dotnet clean src/MudBlazor.slnx` first
 2. Check that .NET 10.0 SDK is installed: `dotnet --version`
 3. Ensure you're in the repository root directory
 4. Check for file permission issues
@@ -80,7 +80,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 4. Review test output for specific failure reasons
 
 **If CI formatting check fails:**
-1. Run `dotnet format src/MudBlazor.sln` to auto-fix formatting issues
+1. Run `dotnet format src/MudBlazor.slnx` to auto-fix formatting issues
 2. Commit the formatting changes
 3. Common issues: blank lines after attributes, missing UTF-8 BOM, incorrect indentation
 
@@ -98,7 +98,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ├── CONTRIBUTING.md           # Detailed contribution guidelines
 ├── README.md                 # Project overview and quick start
 ├── AGENTS.md                 # This file - AI agent guide
-└── src/MudBlazor.sln         # Main solution file
+└── src/MudBlazor.slnx        # Main solution file
 ```
 
 ### Source Directory Structure
@@ -146,7 +146,7 @@ src/
 ### Running Tests
 ```bash
 # Build first (required)
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 
 # Run all unit tests (ALWAYS use --no-build to save time)
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
@@ -354,14 +354,14 @@ Example: `DateRangePicker: Fix initializing DateRange with null values (#1997)`
 
 3. Build and test iteratively:
 ```bash
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 ```
 
 4. Before committing:
 ```bash
 # Format code (REQUIRED)
-dotnet format src/MudBlazor.sln
+dotnet format src/MudBlazor.slnx
 ```
 
 5. Trigger copilot code review and address all issues (REQUIRED for code changes)
@@ -375,7 +375,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 1. Edit in `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`
 2. Build to generate files (runs MudBlazor.Docs.Compiler):
 ```bash
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 ```
 3. Preview locally with docs server
 
@@ -391,20 +391,20 @@ dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.c
 ### Before Making Changes
 ```bash
 # Always check initial state
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 ```
 
 ### After Making Changes
 ```bash
 # Clean if needed (switching branches or unexplained issues)
-dotnet clean src/MudBlazor.sln
+dotnet clean src/MudBlazor.slnx
 
 # Format code (REQUIRED - MUST run before committing)
-dotnet format src/MudBlazor.sln
+dotnet format src/MudBlazor.slnx
 
 # Build
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 
 # Run tests
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
@@ -462,7 +462,7 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Rel
 7. **Multiple topics in one PR** - Keep PRs focused on single issue
 8. **Build timeouts** - Set timeout to at least 180 seconds for builds, 120 seconds for tests
 9. **Missing `--no-build` flag** - Always use when running tests after a successful build
-10. **Forgetting to run `dotnet format`** - MUST run `dotnet format src/MudBlazor.sln` before committing
+10. **Forgetting to run `dotnet format`** - MUST run `dotnet format src/MudBlazor.slnx` before committing
 11. **Skipping code review** - MUST trigger copilot code review for any code changes and address all issues
 
 ## Continuous Integration
@@ -491,8 +491,8 @@ The GitHub Actions workflow (`.github/workflows/build-test-mudblazor.yml`) runs:
 dotnet --version  # Should be 10.0.100 or later
 
 # Full build and test cycle
-dotnet clean src/MudBlazor.sln
-dotnet build src/MudBlazor.sln -c Release --nologo  # ~2 minutes
+dotnet clean src/MudBlazor.slnx
+dotnet build src/MudBlazor.slnx -c Release --nologo  # ~2 minutes
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo  # ~1.5 minutes
 
 # Test specific component
@@ -514,15 +514,15 @@ dotnet pack src/MudBlazor/MudBlazor.csproj -c Release -o ./LocalNuGet -p:Version
 
 ```bash
 # 1. Clean (if switching branches or weird issues)
-dotnet clean src/MudBlazor.sln
+dotnet clean src/MudBlazor.slnx
 
 # 2. Format code (REQUIRED - MUST run before committing ANY changes)
-dotnet format src/MudBlazor.sln
+dotnet format src/MudBlazor.slnx
 # This MUST be run to ensure code formatting is correct
 # CI will fail if code is not properly formatted
 
 # 3. Build
-dotnet build src/MudBlazor.sln -c Release --nologo
+dotnet build src/MudBlazor.slnx -c Release --nologo
 # Expected: "Build succeeded" with 0 warnings, 0 errors in ~2 minutes
 
 # 4. Test
