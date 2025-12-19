@@ -14,6 +14,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
 
+#nullable enable
 [TestFixture]
 public class MudHotkeyTests : BunitTest
 {
@@ -66,7 +67,7 @@ public class MudHotkeyTests : BunitTest
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
     }
 
-    [Test, Ignore("Currently doesn't work due to the requirement for an EnumerableEqualityComparer in MudHotkey.razor.cs")]
+    [Test]
     public async Task Hotkey_JsTestParameters()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>();
