@@ -452,7 +452,7 @@ namespace MudBlazor
 
         protected override Task WriteTextAsync(string? value) => SetInputStringAsync(value);
 
-        protected internal override MudColor? ReadValue() => _valueState.Value;
+        protected internal override MudColor? ReadValue => _valueState.Value;
 
         protected override Task WriteValueAsync(MudColor? value) => SetColorAsync(value);
 

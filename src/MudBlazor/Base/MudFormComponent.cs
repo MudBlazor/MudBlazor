@@ -287,13 +287,13 @@ namespace MudBlazor
         {
             Func<Task> execute = async () =>
             {
-                var value = ReadValue();
+                var value = ReadValue;
 
                 await task;
 
                 // we validate only if the value hasn't changed while we waited for task.
                 // if it has in fact changed, another validate call will follow anyway
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
+                if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
                     await BeginValidateAsync();
                 }
@@ -306,11 +306,11 @@ namespace MudBlazor
         {
             Func<Task> execute = async () =>
             {
-                var value = ReadValue();
+                var value = ReadValue;
 
                 await ValidateValue();
 
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
+                if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
                     EditFormValidate();
                 }
@@ -354,19 +354,19 @@ namespace MudBlazor
                 // validation errors
                 if (Validation is ValidationAttribute validationAttribute)
                 {
-                    ValidateWithAttribute(validationAttribute, ReadValue(), errors);
+                    ValidateWithAttribute(validationAttribute, ReadValue, errors);
                 }
                 else if (Validation is Func<T?, bool> funcBooleanValidation)
                 {
-                    ValidateWithFunc(funcBooleanValidation, ReadValue(), errors);
+                    ValidateWithFunc(funcBooleanValidation, ReadValue, errors);
                 }
                 else if (Validation is Func<T?, string?> funcStringValidation)
                 {
-                    ValidateWithFunc(funcStringValidation, ReadValue(), errors);
+                    ValidateWithFunc(funcStringValidation, ReadValue, errors);
                 }
                 else if (Validation is Func<T?, IEnumerable<string?>> funcEnumerableValidation)
                 {
-                    ValidateWithFunc(funcEnumerableValidation, ReadValue(), errors);
+                    ValidateWithFunc(funcEnumerableValidation, ReadValue, errors);
                 }
                 else if (Validation is Func<object, string, IEnumerable<string?>> funcModelWithFullPathOfMember)
                 {
@@ -374,26 +374,26 @@ namespace MudBlazor
                 }
                 else
                 {
-                    var value = ReadValue();
+                    var value = ReadValue;
 
                     if (Validation is Func<T?, Task<bool>> funcTaskBooleanValidation)
                     {
-                        await ValidateWithFunc(funcTaskBooleanValidation, ReadValue(), errors);
+                        await ValidateWithFunc(funcTaskBooleanValidation, ReadValue, errors);
                     }
                     else if (Validation is Func<T?, Task<string?>> funcTaskStringValidation)
                     {
-                        await ValidateWithFunc(funcTaskStringValidation, ReadValue(), errors);
+                        await ValidateWithFunc(funcTaskStringValidation, ReadValue, errors);
                     }
                     else if (Validation is Func<T?, Task<IEnumerable<string?>>> funcTaskEnumerableValidation)
                     {
-                        await ValidateWithFunc(funcTaskEnumerableValidation, ReadValue(), errors);
+                        await ValidateWithFunc(funcTaskEnumerableValidation, ReadValue, errors);
                     }
                     else if (Validation is Func<object, string, Task<IEnumerable<string?>>> funcTaskModelWithFullPathOfMember)
                     {
                         await ValidateModelWithFullPathOfMember(funcTaskModelWithFullPathOfMember, errors);
                     }
 
-                    changed = !EqualityComparer<T>.Default.Equals(value, ReadValue());
+                    changed = !EqualityComparer<T>.Default.Equals(value, ReadValue);
                 }
 
                 // Run each validation attributes of the property targeted with `For`
@@ -401,14 +401,14 @@ namespace MudBlazor
                 {
                     foreach (var attr in _validationAttrsFor)
                     {
-                        ValidateWithAttribute(attr, ReadValue(), errors);
+                        ValidateWithAttribute(attr, ReadValue, errors);
                     }
                 }
 
                 // required error (must be last, because it is least important!)
                 if (Required)
                 {
-                    if (Touched && !HasValue(ReadValue()))
+                    if (Touched && !HasValue(ReadValue))
                     {
                         errors.Add(RequiredError);
                     }
@@ -924,7 +924,7 @@ namespace MudBlazor
             _setConversionResult = null;
         }
 
-        protected internal virtual T? ReadValue() => _value;
+        protected internal virtual T? ReadValue => _value;
 
         protected virtual Task WriteValueAsync(T? value)
         {
