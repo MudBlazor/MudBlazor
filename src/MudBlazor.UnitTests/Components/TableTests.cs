@@ -1137,8 +1137,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Change filter
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.StartDate, DateTime.Parse("2024-04-07 00:00:00"))
-                .Add(x => x.EndDate, DateTime.Parse("2024-04-13 00:00:00")));
+                .Add(x => x.DateRange, new DateRange(DateTime.Parse("2024-04-07 00:00:00"), DateTime.Parse("2024-04-13 00:00:00"))));
 
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
@@ -1151,8 +1150,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Clear filters
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.StartDate, null)
-                .Add(x => x.EndDate, null));
+                .Add(x => x.DateRange, new DateRange(null, null)));
 
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
