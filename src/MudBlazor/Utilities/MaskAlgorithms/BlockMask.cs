@@ -102,10 +102,9 @@ public class BlockMask : RegexMask
             regexBuilder.Append('(');
             openParenthesisCount++;
 
-            if (MaskDictionary.TryGetValue(block.MaskChar, out var maskDef))
-                regexBuilder.Append(maskDef.Regex);
-            else
-                regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
+            regexBuilder.Append(MaskDictionary.TryGetValue(block.MaskChar, out var maskDef)
+                ? maskDef.Regex
+                : Regex.Escape(block.MaskChar.ToString()));
         }
     }
 
@@ -119,10 +118,9 @@ public class BlockMask : RegexMask
                 regexBuilder.Append('(');
                 openParenthesisCount++;
 
-                if (MaskDictionary.TryGetValue(block.MaskChar, out var maskDef))
-                    regexBuilder.Append(maskDef.Regex);
-                else
-                    regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
+                regexBuilder.Append(MaskDictionary.TryGetValue(block.MaskChar, out var maskDef)
+                    ? maskDef.Regex
+                    : Regex.Escape(block.MaskChar.ToString()));
             }
 
             for (var i = block.Min; i < block.Max; i++)
@@ -142,7 +140,9 @@ public class BlockMask : RegexMask
             openParenthesisCount++;
 
             foreach (var delimiter in Delimiters)
+            {
                 regexBuilder.Append(Regex.Escape(delimiter.ToString()));
+            }
 
             regexBuilder.Append(']');
         }

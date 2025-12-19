@@ -39,10 +39,10 @@ public abstract class BaseMask : IMask
     }
 
     /// <inheritdoc />
-    public string? Mask { get; protected set; } = string.Empty;
+    public string? Mask { get; protected set; }
 
     /// <inheritdoc />
-    public string? Text { get; protected set; } = string.Empty;
+    public string? Text { get; protected set; }
 
     /// <inheritdoc />
     public virtual string? GetCleanText() => Text;
@@ -184,14 +184,11 @@ public abstract class BaseMask : IMask
                 _initialized = false;
             }
 
-            if (baseMask.MaskChars != null)
+            var maskChars = new HashSet<MaskChar>(_maskChars);
+            if (baseMask.MaskChars.Length != MaskChars.Length || baseMask.MaskChars.Any(maskChar => !maskChars.Contains(maskChar)))
             {
-                var maskChars = new HashSet<MaskChar>(_maskChars ?? []);
-                if (baseMask.MaskChars.Length != MaskChars.Length || baseMask.MaskChars.Any(x => !maskChars.Contains(x)))
-                {
-                    _maskChars = baseMask.MaskChars;
-                    _initialized = false;
-                }
+                _maskChars = baseMask.MaskChars;
+                _initialized = false;
             }
 
             Refresh();
@@ -208,8 +205,10 @@ public abstract class BaseMask : IMask
         SetText(Text);
         CaretPos = ConsolidateCaret(Text, caret);
         Selection = sel;
-        if (sel != null)
+        if (sel is not null)
+        {
             ConsolidateSelection();
+        }
     }
 
     /// <summary>
@@ -251,7 +250,7 @@ public abstract class BaseMask : IMask
     /// </remarks>
     protected void ConsolidateSelection()
     {
-        if (Selection == null)
+        if (Selection is null)
             return;
         var sel = Selection.Value;
         if (sel.Item1 == sel.Item2)
@@ -285,7 +284,7 @@ public abstract class BaseMask : IMask
     {
         var text = Text ?? string.Empty;
         ConsolidateSelection();
-        if (Selection == null)
+        if (Selection is null)
         {
             var pos = ConsolidateCaret(text, CaretPos);
             if (pos < text.Length)

@@ -20,12 +20,11 @@ namespace MudBlazor;
 /// <seealso cref="RegexMask" />
 public partial class DateMask : PatternMask
 {
+    private int _year;
+    private int _month;
     private char _yearChar;
     private char _monthChar;
     private char _dayChar;
-
-    private int _year;
-    private int _month;
 
     /// <summary>
     /// Creates a new date mask.
@@ -54,7 +53,10 @@ public partial class DateMask : PatternMask
     protected override void ModifyPartiallyAlignedMask(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
     {
         if (alignedText.IsEmpty())
+        {
             return;
+        }
+
         _year = ExtractYear(mask, alignedText, maskOffset);
         MonthLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
         DayLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);

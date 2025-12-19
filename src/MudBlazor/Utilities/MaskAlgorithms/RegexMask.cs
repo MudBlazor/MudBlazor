@@ -132,7 +132,7 @@ public class RegexMask : BaseMask
     public override void Backspace()
     {
         Init();
-        if (Selection != null)
+        if (Selection is not null)
         {
             DeleteSelection(align: true);
             return;
