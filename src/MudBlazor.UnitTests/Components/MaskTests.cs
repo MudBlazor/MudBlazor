@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
             var maskField = comp;
 
             await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
-            await comp.InvokeAsync(() => maskField.Instance.OnPaste("abc120ac"));
+            await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("abc120ac"));
 
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.Instance.Mask.ToString().Should().Be("(|abc) 120-ac"));
@@ -211,7 +211,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => maskField.Instance.Mask.CaretPos.Should().Be(1));
 
             await comp.InvokeAsync(() => maskField.Instance.Clear());
-            await comp.InvokeAsync(() => maskField.Instance.OnPaste("abc120ac"));
+            await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("abc120ac"));
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(6));
             await comp.InvokeAsync(() => maskField.Instance.Mask.ToString().Should().Be("(abc) |120-ac"));
             await comp.InvokeAsync(
@@ -423,25 +423,25 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp;
 
-            await comp.InvokeAsync(() => maskField.Instance.OnPaste("abc"));
+            await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("abc"));
 
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(10));
-            await comp.InvokeAsync(() => maskField.Instance.OnPaste("zxc"));
+            await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("zxc"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("(abc) ___-zx"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue().Should().Be("abczx"));
 
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(2));
-            await comp.InvokeAsync(() => maskField.Instance.OnPaste("defgh"));
+            await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("defgh"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("(ade) ___-zx"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue().Should().Be("adezx"));
 
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(7));
-            await comp.InvokeAsync(() => maskField.Instance.OnPaste("120"));
+            await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("120"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("(ade) _12-zx"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue().Should().Be("ade12zx"));
             //Symbols should not be paste but remove the related index
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(1));
-            await comp.InvokeAsync(() => maskField.Instance.OnPaste("+-"));
+            await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("+-"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("(ade) _12-zx"));
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue().Should().Be("ade12zx"));
         }
@@ -453,7 +453,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("0000 0000 000") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp.Instance;
 
-            await comp.InvokeAsync(() => maskField.OnPaste("1234567899"));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync("1234567899"));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("1234 5678 99|_"));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "9" }));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("1234 5678 999|"));
@@ -474,7 +474,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.OnSelect(7, 11));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("1234 89[__ _]__"));
-            await comp.InvokeAsync(() => maskField.OnPaste("567"));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync("567"));
             await comp.WaitForAssertionAsync(() => maskField.ReadText.Should().Be("1234 8956 7__"));
             await comp.WaitForAssertionAsync(() => maskField.ReadValue().Should().Be("123489567"));
 
@@ -488,12 +488,12 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.OnSelect(6, 11));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("2348 9[567 _]__"));
-            await comp.InvokeAsync(() => maskField.OnPaste("1Mud9"));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync("1Mud9"));
             await comp.WaitForAssertionAsync(() => maskField.ReadText.Should().Be("2348 919_ ___"));
             await comp.WaitForAssertionAsync(() => maskField.ReadValue().Should().Be("2348919"));
 
             await comp.InvokeAsync(() => maskField.Clear());
-            await comp.InvokeAsync(() => maskField.OnPaste("1234 81__ _9_"));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync("1234 81__ _9_"));
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.OnSelect(1, 3));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("1[23]4 81__ _9_"));
@@ -503,7 +503,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(3));
             await comp.InvokeAsync(() => maskField.OnSelect(3, 7));
-            await comp.InvokeAsync(() => maskField.OnPaste("a1a"));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync("a1a"));
             await comp.WaitForAssertionAsync(() => maskField.ReadText.Should().Be("1481 _9__ ___"));
             await comp.WaitForAssertionAsync(() => maskField.ReadValue().Should().Be("14819"));
         }
@@ -568,7 +568,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => maskField2.Instance.ReadText.Should().Be("(abC) "));
             await comp.WaitForAssertionAsync(() => maskField2.Instance.ReadValue().Should().Be("abC"));
 
-            await comp.InvokeAsync(() => maskField1.Instance.OnPaste("123"));
+            await comp.InvokeAsync(() => maskField1.Instance.OnPasteAsync("123"));
             await comp.WaitForAssertionAsync(() => maskField1.Instance.ReadText.Should().Be("(abC) 123-"));
             await comp.WaitForAssertionAsync(() => maskField1.Instance.ReadValue().Should().Be("abC123"));
             await comp.WaitForAssertionAsync(() => maskField2.Instance.ReadText.Should().Be("(abC) 123-"));
@@ -623,7 +623,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true }));
 
-            await comp.InvokeAsync(() => maskField.OnCopy());
+            await comp.InvokeAsync(() => maskField.OnCopyAsync());
             await comp.InvokeAsync(async () => await maskField.FocusAsync());
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
             await comp.WaitForAssertionAsync(() => maskField.ReadText.Should().Be("1__ ___"));
@@ -669,9 +669,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => maskField.Mask.Selection.Should().BeNull());
 
             // pasting null doesn't do anything
-            await comp.InvokeAsync(() => maskField.OnPaste("123"));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync("123"));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("123 |"));
-            await comp.InvokeAsync(() => maskField.OnPaste(null));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync(null));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("123 |"));
             // ctrl or alt doesn't do anything
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", CtrlKey = true }));
@@ -681,7 +681,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.HandleClearButtonAsync(new MouseEventArgs()));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("|"));
             // ctrl + backspace clears input
-            await comp.InvokeAsync(() => maskField.OnPaste("123"));
+            await comp.InvokeAsync(() => maskField.OnPasteAsync("123"));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("123 |"));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true }));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("|"));
@@ -693,7 +693,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MaskedTextFieldTwoWayBindingTest>();
             var tfs = comp.FindComponents<MudTextField<string>>().Select(x => x.Instance).ToArray();
             var masks = comp.FindComponents<MudMask>().Select(x => x.Instance).ToArray();
-            await comp.InvokeAsync(() => masks[0].OnPaste("123456"));
+            await comp.InvokeAsync(() => masks[0].OnPasteAsync("123456"));
             masks[0].Mask.ToString().Should().Be("123-456|");
             await comp.WaitForAssertionAsync(() => masks[1].Mask.ToString().Should().Be("12/34/56|"));
             tfs[0].ReadText.Should().Be("123-456");
@@ -715,7 +715,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var mask = comp.FindComponent<MudMask>().Instance;
-            await comp.InvokeAsync(() => mask.OnPaste("1234567890"));
+            await comp.InvokeAsync(() => mask.OnPasteAsync("1234567890"));
             await comp.WaitForAssertionAsync(() => mask.Mask.ToString().Should().Be("(123) 456-7890|"));
             await comp.WaitForAssertionAsync(() => textField.ReadText.Should().Be("(123) 456-7890"));
             await comp.WaitForAssertionAsync(() => textField.ReadValue().Should().Be("(123) 456-7890"));
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
 
             //ctrl+backspace
             await comp.InvokeAsync(() => form.ResetAsync());
-            await comp.InvokeAsync(() => mask.OnPaste("1234567890"));
+            await comp.InvokeAsync(() => mask.OnPasteAsync("1234567890"));
             await comp.WaitForAssertionAsync(() => mask.Mask.ToString().Should().Be("(123) 456-7890|"));
             await comp.WaitForAssertionAsync(() => textField.ReadText.Should().Be("(123) 456-7890"));
             await comp.WaitForAssertionAsync(() => textField.ReadValue().Should().Be("(123) 456-7890"));
@@ -762,7 +762,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, mask.ReadText.Length);
-                mask.OnPaste("1234567890");
+                return mask.OnPasteAsync("1234567890");
             });
             await comp.WaitForAssertionAsync(() => textField.ReadValue().Should().Be(originalValue));
             // backspace
@@ -781,7 +781,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, mask.ReadText.Length);
-                mask.OnPaste("2222 2222 2222 2222");
+                return mask.OnPasteAsync("2222 2222 2222 2222");
             });
             await comp.WaitForAssertionAsync(() => textField.ReadValue().Should().Be("2222 2222 2222 2222"));
             // backspace

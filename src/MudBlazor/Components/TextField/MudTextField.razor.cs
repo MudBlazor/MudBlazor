@@ -188,7 +188,7 @@ namespace MudBlazor
             }
 
             await _maskReference.Clear();
-            _maskReference.OnPaste(text);
+            await _maskReference.OnPasteAsync(text);
         }
 
         protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
