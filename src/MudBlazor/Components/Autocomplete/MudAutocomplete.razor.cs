@@ -580,7 +580,7 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            var text = GetItemString(ReadValue());
+            var text = GetItemString(ReadValue);
             if (!string.IsNullOrWhiteSpace(text))
             {
                 await SetTextAsync(text);
@@ -708,7 +708,7 @@ namespace MudBlazor
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
-                searchingWhileSelected = !_isValueCoerced && !Strict && ReadValue() != null && (ReadValue()!.ToString() == ReadText || (ToStringFunc != null && ToStringFunc(ReadValue()!) == ReadText));
+                searchingWhileSelected = !_isValueCoerced && !Strict && ReadValue != null && (ReadValue!.ToString() == ReadText || (ToStringFunc != null && ToStringFunc(ReadValue!) == ReadText));
                 _cancellationTokenSrc ??= new CancellationTokenSource();
                 var searchText = searchingWhileSelected ? string.Empty : ReadText;
                 var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
@@ -738,10 +738,10 @@ namespace MudBlazor
             if (MaxItems.HasValue)
             {
                 // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
-                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(ReadValue(), default(T)))
+                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(ReadValue, default(T)))
                 {
                     int maxItems = MaxItems.Value;
-                    int valueIndex = Array.IndexOf(searchedItems, ReadValue());
+                    int valueIndex = Array.IndexOf(searchedItems, ReadValue);
 
                     // Center the selected item in the list if possible
                     int half = maxItems / 2;
@@ -774,7 +774,7 @@ namespace MudBlazor
             _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
-                _selectedListItemIndex = Array.IndexOf(_items, ReadValue());
+                _selectedListItemIndex = Array.IndexOf(_items, ReadValue);
             }
             else
             {
@@ -1133,7 +1133,7 @@ namespace MudBlazor
 
             _debounceTimer?.Dispose();
 
-            var text = ReadValue() == null ? null : GetItemString(ReadValue());
+            var text = ReadValue == null ? null : GetItemString(ReadValue);
 
             // Don't update the value to prevent the popover from opening again after coercion
             if (text != ReadText)

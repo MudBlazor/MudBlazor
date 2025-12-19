@@ -445,7 +445,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            return SetTextAndUpdateValueAsync(ConvertSet(ReadValue()), updateValue);
+            return SetTextAndUpdateValueAsync(ConvertSet(ReadValue), updateValue);
         }
 
         /// <summary>
@@ -528,7 +528,7 @@ namespace MudBlazor
 
         protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
-            var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue(), value);
+            var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, value);
 
             if (!valueChanged && !force)
             {
@@ -577,7 +577,7 @@ namespace MudBlazor
         /// <summary>
         /// Override to read Value from ParameterState instead of backing field.
         /// </summary>
-        protected internal override T? ReadValue() => _valueState.Value;
+        protected internal override T? ReadValue => _valueState.Value;
 
         /// <summary>
         /// Override to write Value to ParameterState instead of backing field.
@@ -595,7 +595,7 @@ namespace MudBlazor
         /// </returns>
         public virtual Task ForceUpdate()
         {
-            return SetValueAsync(ReadValue(), force: true);
+            return SetValueAsync(ReadValue, force: true);
         }
 
         /// <summary>
