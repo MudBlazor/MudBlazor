@@ -358,7 +358,15 @@ dotnet build src/MudBlazor.sln -c Release --nologo
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 ```
 
-4. Run docs locally to verify (optional):
+4. Before committing:
+```bash
+# Format code (REQUIRED)
+dotnet format src/MudBlazor.sln
+```
+
+5. Trigger copilot code review and address all issues (REQUIRED for code changes)
+
+6. Run docs locally to verify (optional):
 ```bash
 dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ```
@@ -392,12 +400,18 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Rel
 # Clean if needed (switching branches or unexplained issues)
 dotnet clean src/MudBlazor.sln
 
+# Format code (REQUIRED - MUST run before committing)
+dotnet format src/MudBlazor.sln
+
 # Build
 dotnet build src/MudBlazor.sln -c Release --nologo
 
 # Run tests
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
 ```
+
+**If you made code changes (not just documentation):**
+- MUST trigger a copilot code review and address all issues before finalizing the PR
 
 ## Code Style Highlights
 
@@ -448,6 +462,8 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Rel
 7. **Multiple topics in one PR** - Keep PRs focused on single issue
 8. **Build timeouts** - Set timeout to at least 180 seconds for builds, 120 seconds for tests
 9. **Missing `--no-build` flag** - Always use when running tests after a successful build
+10. **Forgetting to run `dotnet format`** - MUST run `dotnet format src/MudBlazor.sln` before committing
+11. **Skipping code review** - MUST trigger copilot code review for any code changes and address all issues
 
 ## Continuous Integration
 
@@ -500,11 +516,10 @@ dotnet pack src/MudBlazor/MudBlazor.csproj -c Release -o ./LocalNuGet -p:Version
 # 1. Clean (if switching branches or weird issues)
 dotnet clean src/MudBlazor.sln
 
-# 2. Format code (REQUIRED - CI will fail if not formatted)
-dotnet format src/MudBlazor.sln --verify-no-changes
-# Expected: Exit code 0 with no formatting errors
-# If formatting errors are found, run without --verify-no-changes to auto-fix:
-# dotnet format src/MudBlazor.sln
+# 2. Format code (REQUIRED - MUST run before committing ANY changes)
+dotnet format src/MudBlazor.sln
+# This MUST be run to ensure code formatting is correct
+# CI will fail if code is not properly formatted
 
 # 3. Build
 dotnet build src/MudBlazor.sln -c Release --nologo
@@ -517,6 +532,15 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Rel
 # 5. (Optional) Test docs locally
 dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 ```
+
+### Code Review Requirement
+
+**CRITICAL: If you made ANY code changes (not just documentation), you MUST:**
+1. Trigger a copilot code review before finalizing the PR
+2. Address all issues identified in the code review
+3. Re-run the code review if significant changes were made after the initial review
+
+**Documentation-only changes do not require a code review.**
 
 ---
 
