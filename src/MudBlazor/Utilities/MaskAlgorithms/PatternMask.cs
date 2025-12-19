@@ -53,7 +53,7 @@ public class PatternMask : BaseMask
     {
         Init();
         DeleteSelection(align: false);
-        var text = Text ?? "";
+        var text = Text ?? string.Empty;
         var pos = ConsolidateCaret(text, CaretPos);
         var (beforeText, afterText) = SplitAt(text, pos);
         var alignedBefore = AlignAgainstMask(beforeText, 0);
@@ -249,7 +249,7 @@ public class PatternMask : BaseMask
         if (string.IsNullOrEmpty(cleanText))
             return string.Empty;
         if (CleanDelimiters)
-            cleanText = new string(cleanText.Where((c, i) => MaskDictionary.ContainsKey(Mask[i])).ToArray());
+            cleanText = new string(cleanText.Where((_, i) => MaskDictionary.ContainsKey(Mask[i])).ToArray());
         if (Placeholder != null)
             cleanText = cleanText.Replace(Placeholder.Value.ToString(), "");
         return cleanText;
@@ -269,7 +269,7 @@ public class PatternMask : BaseMask
     protected override void UpdateText(string text)
     {
         // don't show a text consisting only of delimiters and placeholders (no actual input)
-        if (text.All(c => Delimiters.Contains(c) || (Placeholder != null && c == Placeholder.Value)))
+        if (text.All(character => Delimiters.Contains(character) || (character == Placeholder)))
         {
             Text = string.Empty;
             CaretPos = 0;

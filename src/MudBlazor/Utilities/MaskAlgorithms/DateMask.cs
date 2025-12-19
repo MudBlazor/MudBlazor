@@ -219,7 +219,7 @@ public partial class DateMask : PatternMask
     {
         if (month <= 0 || month > 12) // we don't know yet which month the user means, so assume 31
             return 31;
-        if (year == 0) // DateTime.DaysInMonth does not support year 0 but we just use 4 instead because it was a leap year too
+        if (year == 0) // DateTime.DaysInMonth does not support year 0, but we just use 4 instead because it was a leap year too
             year = 4;
         return DateTime.DaysInMonth(year, Math.Min(12, Math.Max(1, month)));
     }

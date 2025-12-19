@@ -27,12 +27,12 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(params Block[] blocks) : base()
+    public BlockMask(params Block[] blocks)
     {
         if (blocks.Length == 0)
             throw new ArgumentException(@"Supply at least one block", nameof(blocks));
         Blocks = blocks;
-        DelimiterCharacters = "";
+        DelimiterCharacters = string.Empty;
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public class BlockMask : RegexMask
     /// </remarks>
     public BlockMask(string? delimiters, params Block[] blocks) : this(blocks)
     {
-        DelimiterCharacters = delimiters ?? "";
+        DelimiterCharacters = delimiters ?? string.Empty;
     }
 
     /// <summary>

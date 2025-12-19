@@ -14,8 +14,6 @@ public abstract class BaseMask : IMask
     private Dictionary<char, MaskChar> _maskDict = [];
     private MaskChar[] _maskChars = [MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*')];
     private HashSet<char> _delimiters = [];
-    private string _mask = string.Empty;
-    private string _text = string.Empty;
 
     /// <summary>
     /// Initialize all internal data structures. Can be called multiple times,
@@ -35,27 +33,19 @@ public abstract class BaseMask : IMask
     protected virtual void InitInternals()
     {
         _maskDict = _maskChars.ToDictionary(x => x.Char);
-        _delimiters = string.IsNullOrEmpty(_mask)
+        _delimiters = string.IsNullOrEmpty(Mask)
             ? []
-            : new HashSet<char>(_mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
+            : new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
     }
 
     /// <inheritdoc />
-    public string Mask
-    {
-        get => _mask;
-        protected set => _mask = value;
-    }
+    public string? Mask { get; protected set; } = string.Empty;
 
     /// <inheritdoc />
-    public string Text
-    {
-        get => _text;
-        protected set => _text = value;
-    }
+    public string? Text { get; protected set; } = string.Empty;
 
     /// <inheritdoc />
-    public virtual string GetCleanText() => Text;
+    public virtual string? GetCleanText() => Text;
 
     /// <inheritdoc />
     public int CaretPos { get; set; }
@@ -94,7 +84,7 @@ public abstract class BaseMask : IMask
     /// Gets the set of delimiter characters.
     /// </summary>
     protected IReadOnlySet<char> Delimiters => _delimiters;
-    
+
     /// <summary>
     /// Adds a delimiter character to the set of delimiters.
     /// </summary>
@@ -103,7 +93,7 @@ public abstract class BaseMask : IMask
     {
         _delimiters.Add(delimiter);
     }
-    
+
     /// <summary>
     /// Clears all delimiters and sets new ones.
     /// </summary>
@@ -116,7 +106,7 @@ public abstract class BaseMask : IMask
             _delimiters.Add(d);
         }
     }
-    
+
     /// <summary>
     /// Forces reinitialization on next access.
     /// </summary>
@@ -156,15 +146,13 @@ public abstract class BaseMask : IMask
     /// <param name="text">The text to set.</param>
     protected virtual void UpdateText(string text)
     {
-        text ??= string.Empty;
-        
         // don't show a text consisting only of delimiters and placeholders (no actual input)
         if (!AllowOnlyDelimiters && text.All(c => Delimiters.Contains(c)))
         {
             Text = string.Empty;
             return;
         }
-        
+
         Text = text;
         CaretPos = ConsolidateCaret(Text, CaretPos);
     }

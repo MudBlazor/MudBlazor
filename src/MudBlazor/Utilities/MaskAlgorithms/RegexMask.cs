@@ -60,7 +60,7 @@ public class RegexMask : BaseMask
     protected override void InitInternals()
     {
         base.InitInternals();
-        DelimiterCharacters ??= "";
+        DelimiterCharacters ??= string.Empty;
         SetDelimiters(DelimiterCharacters);
         InitRegex();
     }
