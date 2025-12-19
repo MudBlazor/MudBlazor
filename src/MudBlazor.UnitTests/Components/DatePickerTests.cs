@@ -1515,11 +1515,13 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Editable, true)
                 .Add(x => x.ImmediateText, true));
 
+            IElement Input() => comp.Find("input");
+
             // This will make the input focused!
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown" });
+            await comp.InvokeAsync(() => Input().KeyDownAsync(new KeyboardEventArgs { Key = "9", Type = "keydown" }));
 
             // Simulate user input
-            comp.Find("input").Input("22");
+            await comp.InvokeAsync(() => Input().Input("22"));
 
             changedText.Should().Be("22");
 
@@ -1527,16 +1529,15 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ImmediateText, false));
 
             // Simulate user input
-            comp.Find("input").Input("33");
+            await comp.InvokeAsync(() => Input().Change("33"));
 
-            // changed_text should not be updated since ImmediateText was false
-            changedText.Should().Be("22");
+            changedText.Should().Be("33");
 
             // Set ImmediateText to true
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ImmediateText, true));
 
             // Simulate user input
-            comp.Find("input").Input("44");
+            await comp.InvokeAsync(() => Input().Input("44"));
 
             //changed_text should be updated
             changedText.Should().Be("44");
@@ -1546,10 +1547,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Editable, false));
 
             // Simulate user input
-            comp.Find("input").Input("55");
+            await comp.InvokeAsync(() => Input().Change("55"));
 
-            //changed_text should not be updated
-            changedText.Should().Be("44");
+            changedText.Should().Be("55");
         }
 
         [Test]

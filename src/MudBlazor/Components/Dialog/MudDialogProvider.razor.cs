@@ -109,6 +109,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Appearance)]
         public string? BackgroundClass { get; set; }
 
+        /// <summary>
+        /// The element which will receive focus when a dialog is shown by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public DefaultFocus? DefaultFocus { get; set; }
+
         protected override void OnInitialized()
         {
             DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
@@ -124,7 +134,8 @@ namespace MudBlazor
                 Position = Position,
                 FullWidth = FullWidth,
                 MaxWidth = MaxWidth,
-                BackgroundClass = BackgroundClass
+                BackgroundClass = BackgroundClass,
+                DefaultFocus = DefaultFocus
             };
 
             _globalDialogOptions = newOptions;

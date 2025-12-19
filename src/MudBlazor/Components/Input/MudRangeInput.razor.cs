@@ -177,7 +177,7 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
-        protected bool IsClearable() => Clearable && ReadValue() is not null;
+        protected bool IsClearable() => Clearable && ReadValue is not null;
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {

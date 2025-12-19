@@ -86,11 +86,19 @@
                     Some components combine <MudLink Href="/components/popover">MudPopover</MudLink> with <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage item lists. These can be customized using dropdown settings, which sets default appearance and behavior options:
                     <ul class="ml-2">
                         <li><CodeInline>PopoverFixed = false</CodeInline> -- Popover does not remain fixed during scrolling.</li>
-                        <li><CodeInline>OverflowBehavior = MudGlobal.PopoverDefaults.OverflowBehavior</CodeInline> -- Adjusts popover behavior when space is limited.</li>
+                        <li><CodeInline>OverflowBehavior</CodeInline> -- Adjusts popover behavior when space is limited.</li>
                         <ul class="ml-4">
                             <li>
                                 <MudText Typo="Typo.caption">
-                                    * Defaults apply from <CodeInline>MudGlobal.PopoverDefaults.OverflowBehavior</CodeInline>, which is FlipOnOpen unless modified.
+                                    * Defaults to <CodeInline>PopoverOptions.OverflowBehavior</CodeInline> which is <CodeInline>FlipOnOpen</CodeInline> by default. Can be configured globally via <CodeInline>AddMudServices(options => options.PopoverOptions.OverflowBehavior = ...)</CodeInline>.
+                                </MudText>
+                            </li>
+                        </ul>
+                        <li><CodeInline>Modal</CodeInline> -- Prevents interaction with background elements.</li>
+                        <ul class="ml-4">
+                            <li>
+                                <MudText Typo="Typo.caption">
+                                    * Defaults to <CodeInline>PopoverOptions.ModalOverlay</CodeInline> which is <CodeInline>false</CodeInline> by default. Can be configured globally via <CodeInline>AddMudServices(options => options.PopoverOptions.ModalOverlay = ...)</CodeInline>.
                                 </MudText>
                             </li>
                         </ul>

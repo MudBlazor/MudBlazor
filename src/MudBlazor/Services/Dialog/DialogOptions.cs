@@ -91,5 +91,13 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         public string? BackgroundClass { get; init; }
+
+        /// <summary>
+        /// The element which will receive focus when a dialog is shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        public DefaultFocus? DefaultFocus { get; init; }
     }
 }
