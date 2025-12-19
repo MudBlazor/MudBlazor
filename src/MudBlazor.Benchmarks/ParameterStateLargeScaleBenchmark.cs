@@ -9,14 +9,12 @@ using MudBlazor.State;
 
 namespace MudBlazor.Benchmarks;
 
-#nullable enable
-
 /// <summary>
 /// Benchmarks for large-scale ParameterState scenarios with many parameters.
 /// Tests performance with 100, 1000, and 10000 parameters.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net90)]
+[SimpleJob(RuntimeMoniker.Net10_0)]
 public class ParameterStateLargeScaleBenchmark
 {
     private SyntheticParameterStateContainer? _container;

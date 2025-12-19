@@ -14,6 +14,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
 
+#nullable enable
 [TestFixture]
 public class MudHotkeyTests : BunitTest
 {
@@ -66,7 +67,7 @@ public class MudHotkeyTests : BunitTest
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
     }
 
-    [Test, Ignore("Currently doesn't work due to the requirement for an EnumerableEqualityComparer in MudHotkey.razor.cs")]
+    [Test]
     public async Task Hotkey_JsTestParameters()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>();
@@ -75,20 +76,34 @@ public class MudHotkeyTests : BunitTest
         Context.Services.AddSingleton(jsRuntimeMock.Object);
 
         var comp = Context.Render<MudHotkeyTest>();
-        await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Key, JsKey.KeyB));
-        await comp.SetParametersAndRenderAsync(p => p.Add(x => x.KeyModifiers, [JsKeyModifier.ShiftLeft]));
+
+        // Enabled by default
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Never);
+
+        await comp.SetParametersAndRenderAsync(p => p
+            .Add(x => x.Key, JsKey.KeyB)
+            .Add(x => x.KeyModifiers, [JsKeyModifier.ShiftLeft])
+            .Add(x => x.PreventEventPropagation, false));
+
+        // Shared handler, so only one update called
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Never);
+
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, true));
-        await comp.SetParametersAndRenderAsync(p => p.Add(x => x.PreventEventPropagation, false));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(4));
+
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
 
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, false));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(5));
+
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(3));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
 
+        // Changing ChildContent / HideChildContentOnRepress should not unregister/register hotkey
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ChildContent, builder => builder.AddContent(0, "New Child Content")));
         await comp.SetParametersAndRenderAsync(p => p.Add(x => x.HideChildContentOnRepress, true));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(5));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(3));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
     }
 }

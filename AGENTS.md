@@ -3,21 +3,19 @@
 ## What is MudBlazor?
 
 MudBlazor is a comprehensive, production-ready Material Design component library for Blazor applications. This is a large-scale .NET project with:
-- **Primary Language:** C# (.NET 8 and .NET 9)
 - **UI Framework:** Blazor (both Server and WebAssembly)
 - **Styling:** SCSS (compiled to CSS)
 - **JavaScript:** Minimal JS interop files in TScripts/
 - **Testing:** bUnit for component testing
 - **Size:** ~450 components, ~3,700+ unit tests, extensive documentation
-- **Target Frameworks:** .NET 8.0 and .NET 9.0
 
 The project follows Material Design guidelines and provides a complete set of UI components for building modern web applications with Blazor.
 
 ## Prerequisites
 
-- **.NET 9.0 SDK** (version 9.0.305 or later) - Required for building
+- **.NET 10.0 SDK** (version 10.0.100 or later) - Required for building
 - Check your version: `dotnet --version`
-- The solution targets both .NET 8.0 and .NET 9.0
+- The solution targets .NET 8.0, .NET 9.0, and .NET 10.0
 
 ## Dev Environment Tips
 
@@ -71,7 +69,7 @@ dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
 
 **If build fails:**
 1. Run `dotnet clean src/MudBlazor.sln` first
-2. Check that .NET 9.0 SDK is installed: `dotnet --version`
+2. Check that .NET 10.0 SDK is installed: `dotnet --version`
 3. Ensure you're in the repository root directory
 4. Check for file permission issues
 
@@ -474,7 +472,7 @@ The GitHub Actions workflow (`.github/workflows/build-test-mudblazor.yml`) runs:
 
 ```bash
 # Check .NET version
-dotnet --version  # Should be 9.0.305 or later
+dotnet --version  # Should be 10.0.100 or later
 
 # Full build and test cycle
 dotnet clean src/MudBlazor.sln

@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Interfaces
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes"
@@ -7,9 +6,9 @@
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
-     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)"
-     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick)"
+     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick && ActivatorContent is null ? ToggleMenuAsync : null)!)"
+     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
+     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
      @onkeydown="TrackKeyboardInteraction">
     @if (GetActivatorHidden())
     {
@@ -17,37 +16,32 @@
     }
     else if (ActivatorContent is not null)
     {
-        <CascadingValue 
-            Value="@((IActivatable)this)" 
-            IsFixed="true">
-            @if (ParentMenu is null)
-            {
-                <div @onclick="ToggleMenuAsync"
-                     @onkeydown="HandleActivatorKeydown"
-                     disabled="@Disabled"
-                     class="@ActivatorClassname"
-                     tabindex="0"
-                     role="button"
-                     aria-haspopup="true"
-                     aria-expanded="@_openState.Value">
-                    @ActivatorContent
-                </div>
-            }
-            else
-            {
-                <MudMenuItem @ref="_menuItemActivator"
-                             Class="mud-menu-sub-menu-activator"
-                             Disabled="@Disabled"
-                             OnClick="OpenSubMenuAsync"
-                             AutoClose="false"
-                             HideSubMenuArrow="true"
-                             aria-haspopup="true"
-                             aria-expanded="@_openState.Value"
-                             aria-label="@AriaLabel">
-                    @ActivatorContent
-                </MudMenuItem>
-            }
-        </CascadingValue>
+        @if (ParentMenu is null)
+        {
+            <div @onkeydown="HandleActivatorKeydown"
+                 disabled="@Disabled"
+                 class="@ActivatorClassname"
+                 tabindex="0"
+                 role="button"
+                 aria-haspopup="true"
+                 aria-expanded="@_openState.Value">
+                @ActivatorContent(_menuContext)
+            </div>
+        }
+        else
+        {
+            <MudMenuItem @ref="_menuItemActivator"
+                         Class="mud-menu-sub-menu-activator"
+                         Disabled="@Disabled"
+                         OnClick="OpenSubMenuAsync"
+                         AutoClose="false"
+                         HideSubMenuArrow="true"
+                         aria-haspopup="true"
+                         aria-expanded="@_openState.Value"
+                         aria-label="@AriaLabel">
+                @ActivatorContent(_menuContext)
+            </MudMenuItem>
+        }
     }
     else if (string.IsNullOrEmpty(Icon))
     {

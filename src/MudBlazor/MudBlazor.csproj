@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -80,6 +80,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.1" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.1" />
+  </ItemGroup>
 
   <PropertyGroup>
     <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
@@ -110,7 +115,7 @@
   <!--Add analyzer to build output so it works transitively -->
   <Target Name="_AddAnalyzersToOutput">
     <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
       <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
       <!-- Add compiler visible properties to nuget for analyzers -->
