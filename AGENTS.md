@@ -3,13 +3,11 @@
 ## What is MudBlazor?
 
 MudBlazor is a comprehensive, production-ready Material Design component library for Blazor applications. This is a large-scale .NET project with:
-- **Primary Language:** C# (.NET 8, .NET 9, and .NET 10)
 - **UI Framework:** Blazor (both Server and WebAssembly)
 - **Styling:** SCSS (compiled to CSS)
 - **JavaScript:** Minimal JS interop files in TScripts/
 - **Testing:** bUnit for component testing
 - **Size:** ~450 components, ~3,700+ unit tests, extensive documentation
-- **Target Frameworks:** .NET 8.0, .NET 9.0, and .NET 10.0
 
 The project follows Material Design guidelines and provides a complete set of UI components for building modern web applications with Blazor.
 
