@@ -255,13 +255,14 @@ public class DebounceDispatcherTests
 
         // Act - Start debounce with external cancellation token
         var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
-        
+
         // Cancel the external token while debounce is pending
-        await Task.Delay(50);
+        await Task.Delay(50, CancellationToken.None);
+        // ReSharper disable once MethodHasAsyncOverload
         cts.Cancel();
-        
+
         // Wait a bit more to ensure debounce would have completed if not cancelled
-        await Task.Delay(200);
+        await Task.Delay(200, CancellationToken.None);
 
         // Assert - Should not have executed due to cancellation
         executed.Should().BeFalse();
@@ -288,13 +289,14 @@ public class DebounceDispatcherTests
 
         // Start another debounce with same token
         var task = debounceDispatcher.DebounceAsync(TrackingAction, cts.Token);
-        
+
         // Cancel the token during the debounce wait
-        await Task.Delay(50);
+        await Task.Delay(50, CancellationToken.None);
+        // ReSharper disable once MethodHasAsyncOverload
         cts.Cancel();
-        
+
         // Wait to ensure debounce completes
-        await Task.Delay(200);
+        await Task.Delay(200, CancellationToken.None);
 
         // Assert - Second call should not have executed due to cancellation
         executionCount.Should().Be(1);
@@ -316,7 +318,7 @@ public class DebounceDispatcherTests
 
         // Act - Fire 10 rapid calls
         var tasks = new List<Task>();
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++)
         {
             tasks.Add(debounceDispatcher.DebounceAsync(CreateAction(i)));
         }
@@ -453,9 +455,9 @@ public class DebounceDispatcherTests
         executionCount.Should().Be(1);
 
         // Rapid subsequent calls within interval should be debounced
-        var task2 = debounceDispatcher.DebounceAsync(TrackingAction);
-        var task3 = debounceDispatcher.DebounceAsync(TrackingAction);
-        var task4 = debounceDispatcher.DebounceAsync(TrackingAction);
+        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        _ = debounceDispatcher.DebounceAsync(TrackingAction);
 
         // Wait for debounce to complete
         await Task.Delay(150);

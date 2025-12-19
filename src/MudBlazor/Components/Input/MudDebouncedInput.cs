@@ -38,14 +38,6 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
-        protected Task OnChange()
-        {
-            // This method is called on blur.
-            // When debouncing is active, the debounce dispatcher handles the update.
-            // Nothing to do here since UpdateValuePropertyAsync already handles debouncing.
-            return Task.CompletedTask;
-        }
-
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             // Don't update text if we're debouncing and the value hasn't actually changed
@@ -87,6 +79,7 @@ namespace MudBlazor
             // so we set Immediate to true
             if (DebounceInterval > 0)
             {
+                // TODO: Don't write to parameter directly
                 Immediate = true;
             }
         }
