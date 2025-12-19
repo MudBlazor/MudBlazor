@@ -108,7 +108,7 @@ namespace MudBlazor
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {
-                _debouncer = new DebounceDispatcher((int)args.Value);
+                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value));
             }
             else
             {
@@ -116,7 +116,7 @@ namespace MudBlazor
                 // Use DoubleEpsilonEqualityComparer to avoid unnecessary updates due to floating-point precision
                 if (!DoubleEpsilonEqualityComparer.Default.Equals(args.LastValue, args.Value))
                 {
-                    await _debouncer.UpdateIntervalAsync((int)args.Value);
+                    await _debouncer.UpdateIntervalAsync(TimeSpan.FromMilliseconds(args.Value));
                 }
             }
         }
