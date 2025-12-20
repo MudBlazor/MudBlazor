@@ -6,33 +6,33 @@
 
 <!--suppress CssUnresolvedCustomProperty -->
 <style>
-    #wrapper {
+    .scroll_wrapper {
         width: 50%;
         height: 100%;
-    }    
+    }
 
-    #scroll {
+    #scroll_advanced {
         padding: 16px;
         overflow-y: scroll;
         scrollbar-width: none;
+        height: 20rem;
+        width: 100%;
     }
-
 </style>
 
-<MudStack id="wrapper" Row="true" AlignItems="AlignItems.Center" Spacing="0">
-    <MudPaper id="scroll" Height="20rem" Width="100%" Class="d-flex flex-column gap-4">
+<MudStack Class="scroll_wrapper" Row="true" AlignItems="AlignItems.Center" Spacing="0">
+    <MudPaper id="scroll_advanced" Class="d-flex flex-column gap-4">
         @for (var i = 0; i < 100; i++)
         {
             <MudPaper Class="pa-8" Style="@($"background-color: {ColorPalette[i % ColorPalette.Length]};")" Outlined="true"/>
         }
     </MudPaper>
     <MudStack Class="mud-width-full">
-        <MudSlider @bind-Value="_scrollBarValue" @bind-Value:after="OnScrollBarValueChanged" Step="0.1" Vertical="true" />
+        <MudSlider @bind-Value="_scrollBarValue" @bind-Value:after="OnScrollBarValueChanged" Step="0.1" Vertical="true"/>
     </MudStack>
 </MudStack>
 
-@code {    
-    private const string ScrollId = "#scroll";
+@code {
 
     private static readonly string[] ColorPalette =
     [
@@ -42,7 +42,7 @@
         Colors.Amber.Darken2, Colors.Orange.Darken2, Colors.Red.Darken2, Colors.DeepPurple.Darken2, Colors.Gray.Darken2
     ];
 
-    private IScrollListener _scrollListenerRect;
+    private IScrollListener _scrollListener;
     private double _scrollBarValue = 100;
     private double _scrollHeight;
 
@@ -51,19 +51,24 @@
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-            _scrollListenerRect = ScrollListenerFactory.Create(ScrollId, 0, true);
-            _scrollListenerRect.OnScroll += ScrollListenerRectOnScroll;
+            _scrollListener = ScrollListenerFactory.Create("#scroll_advanced", 0);
+            _scrollListener.OnScroll += ScrollListenerOnScroll;
+
+            var scrollData = await _scrollListener.GetCurrentScrollDataAsync();
+            ScrollListenerOnScroll(null, scrollData);
         }
     }
 
     public void Dispose()
     {
-        _scrollListenerRect?.Dispose();
+        _scrollListener?.Dispose();
     }
 
-    private void ScrollListenerRectOnScroll(object sender, ScrollEventArgs e)
+    private void ScrollListenerOnScroll(object sender, ScrollEventArgs e)
     {
-        _scrollBarValue = 100 - e.ScrollTop / e.ScrollHeight * 100;
+        var maxScroll = e.ScrollHeight - e.ClientHeight;
+        var scrollPercentage = maxScroll > 0 ? e.ScrollTop / maxScroll * 100 : 0;
+        _scrollBarValue = 100 - scrollPercentage;
         _scrollHeight = e.ScrollHeight;
         StateHasChanged();
     }
@@ -71,6 +76,6 @@
     private void OnScrollBarValueChanged()
     {
         var scrollTo = (100 - _scrollBarValue) / 100 * _scrollHeight;
-        ScrollManager.ScrollToAsync(ScrollId, 0, Convert.ToInt32(scrollTo), ScrollBehavior.Auto);
+        ScrollManager.ScrollToAsync("scroll_advanced", 0, Convert.ToInt32(scrollTo), ScrollBehavior.Auto);
     }
 }

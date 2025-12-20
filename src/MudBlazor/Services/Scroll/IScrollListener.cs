@@ -24,15 +24,13 @@ public interface IScrollListener : IDisposable
     public int ReportRateMs { get; set; }
 
     /// <summary>
-    /// Whether to fire the <see cref="OnScroll"/> event immediately after creation.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
-    public bool FireOnStart { get; set; }
-
-    /// <summary>
     /// Occurs when a scroll event is detected on the specified element.
     /// </summary>
     event EventHandler<ScrollEventArgs> OnScroll;
+
+    /// <summary>
+    /// Returns the same data as an <see cref="OnScroll"/> event would return without requiring user input.
+    /// </summary>
+    /// <returns><see cref="ScrollEventArgs"/></returns>
+    public Task<ScrollEventArgs> GetCurrentScrollDataAsync();
 }

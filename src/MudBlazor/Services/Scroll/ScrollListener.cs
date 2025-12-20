@@ -9,21 +9,17 @@ namespace MudBlazor
     /// </summary>
     internal sealed class ScrollListener : IScrollListener
     {
+        private readonly string _listenerId = Identifier.Create("scrollListener");
         private bool _disposed;
         private readonly IJSRuntime _js;
         private EventHandler<ScrollEventArgs>? _onScroll;
         private DotNetObjectReference<ScrollListener>? _dotNetRef;
-        private ScrollEventArgs? _initialScrollEvent;
-        private bool _started;
 
         /// <inheritdoc />
         public string? Selector { get; set; }
 
         /// <inheritdoc />
         public int ReportRateMs { get; set; }
-
-        /// <inheritdoc />
-        public bool FireOnStart { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScrollListener"/> class with the specified JavaScript runtime.
@@ -39,13 +35,13 @@ namespace MudBlazor
         /// <param name="selector">The CSS selector for the element to listen for scroll events.</param>
         /// <param name="js">The JavaScript runtime.</param>
         /// <param name="reportRateMs">The rate at which the <see cref="IScrollListener"/> will report scroll position changes (in milliseconds).</param>
-        /// <param name="fireOnStart">Whether to fire the <see cref="OnScroll"/> event immediately after creation.</param>
-        public ScrollListener(string? selector, IJSRuntime js, int reportRateMs = 100, bool fireOnStart = false)
+        public ScrollListener(string? selector, IJSRuntime js, int reportRateMs = 10)
         {
+            ArgumentOutOfRangeException.ThrowIfLessThan(reportRateMs, 0);
+            
             _js = js;
             Selector = selector;
             ReportRateMs = reportRateMs;
-            FireOnStart = fireOnStart;
         }
 
         /// <inheritdoc />
@@ -57,19 +53,11 @@ namespace MudBlazor
 
         private async void Subscribe(EventHandler<ScrollEventArgs> value)
         {
-            var isFirstSubscriber = _onScroll == null;
-            _onScroll += value;
-
-            if (isFirstSubscriber)
+            if (_onScroll == null)
             {
                 await Start();
             }
-
-            var initialScrollEvent = _initialScrollEvent;
-            if (initialScrollEvent != null)
-            {
-                value.Invoke(this, initialScrollEvent);
-            }
+            _onScroll += value;
         }
 
         private void Unsubscribe(EventHandler<ScrollEventArgs> value)
@@ -82,29 +70,22 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Invoked in JavaScript, in scroll-listener.js.
-        /// </summary>
-        /// <param name="e">The scroll event arguments.</param>
-        [JSInvokable]
-        public void RaiseOnScroll(ScrollEventArgs e)
-        {
-            // Store the first event if FireOnStart is enabled and we haven't started yet
-            if (FireOnStart && !_started)
-            {
-                _initialScrollEvent = e;
-                _started = true;
-            }
-
-            _onScroll?.Invoke(this, e);
-        }
-
-        /// <summary>
         /// Subscribes to the scroll event in JavaScript.
         /// </summary>
         private ValueTask<bool> Start()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            return _js.InvokeVoidAsyncWithErrorHandling("mudScrollListener.listenForScroll", _dotNetRef, Selector, ReportRateMs, FireOnStart);
+            return _js.InvokeVoidAsyncWithErrorHandling("mudScrollListener.listenForScroll", _dotNetRef, _listenerId, Selector, ReportRateMs);
+        }
+        
+        /// <summary>
+        /// Invoked in JavaScript in scroll-listener.js.
+        /// </summary>
+        /// <param name="e">The scroll event arguments.</param>
+        [JSInvokable]
+        public void RaiseOnScroll(ScrollEventArgs e)
+        {
+            _onScroll?.Invoke(this, e);
         }
 
         /// <summary>
@@ -112,9 +93,13 @@ namespace MudBlazor
         /// </summary>
         private async ValueTask Cancel()
         {
-            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollListener.cancelListener", Selector);
-            _started = false;
-            _initialScrollEvent = null;
+            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollListener.cancelListener", _listenerId);
+        }
+
+        /// <inheritdoc />
+        public async Task<ScrollEventArgs> GetCurrentScrollDataAsync()
+        {
+            return await _js.InvokeAsync<ScrollEventArgs>("mudScrollListener.getCurrentScrollPosition", Selector);
         }
 
         /// <inheritdoc />
@@ -124,9 +109,7 @@ namespace MudBlazor
             {
                 _disposed = true;
                 _dotNetRef?.Dispose();
-
                 _onScroll = null;
-                _initialScrollEvent = null;
             }
         }
     }
