@@ -23,7 +23,7 @@
         public bool FireOnStart { get; set; }
 
         public event EventHandler<ScrollEventArgs>? OnScroll;
-        
+
         public Task<ScrollEventArgs> GetCurrentScrollDataAsync()
         {
             return Task.FromResult(new ScrollEventArgs());
