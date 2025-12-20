@@ -38,7 +38,7 @@ namespace MudBlazor
         public ScrollListener(string? selector, IJSRuntime js, int reportRateMs = 10)
         {
             ArgumentOutOfRangeException.ThrowIfLessThan(reportRateMs, 0);
-            
+
             _js = js;
             Selector = selector;
             ReportRateMs = reportRateMs;
@@ -57,6 +57,7 @@ namespace MudBlazor
             {
                 await Start();
             }
+
             _onScroll += value;
         }
 
@@ -77,7 +78,7 @@ namespace MudBlazor
             _dotNetRef = DotNetObjectReference.Create(this);
             return _js.InvokeVoidAsyncWithErrorHandling("mudScrollListener.listenForScroll", _dotNetRef, _listenerId, Selector, ReportRateMs);
         }
-        
+
         /// <summary>
         /// Invoked in JavaScript in scroll-listener.js.
         /// </summary>

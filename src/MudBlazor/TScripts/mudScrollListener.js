@@ -17,7 +17,7 @@ class MudScrollListener {
 
         this.targetElements[listenerId] = this._getElementBySelector(selector);
         this.scrollHandlerRefs[listenerId] = this.throttleScrollHandler.bind(this, dotnetReference, listenerId, reportRateMs);
-        this.targetElements[listenerId].addEventListener(this.EVENT_TYPE, this.scrollHandlerRefs[listenerId], { passive: true });
+        this.targetElements[listenerId].addEventListener(this.EVENT_TYPE, this.scrollHandlerRefs[listenerId], {passive: true});
     }
 
     _getElementBySelector(selector) {
@@ -64,7 +64,7 @@ class MudScrollListener {
             : element;
 
         return {
-            firstChildBoundingClientRect: element.firstElementChild?.getBoundingClientRect() || null,
+            firstChildBoundingClientRect: element.firstElementChild ? element.firstElementChild.getBoundingClientRect() : null,
             scrollLeft: scrollSource.scrollLeft || 0,
             scrollTop: scrollSource.scrollTop || 0,
             scrollHeight: scrollSource.scrollHeight || 0,

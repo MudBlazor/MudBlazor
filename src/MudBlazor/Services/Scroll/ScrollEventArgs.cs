@@ -29,12 +29,12 @@ public class ScrollEventArgs : EventArgs
     /// The ScrollWidth property is a measurement of the width of an element's content, including content not visible on the screen due to overflow.
     /// </summary>
     public double ScrollWidth { get; set; }
-    
+
     /// <summary>
     /// Inner height of the element in px including padding, margin, etc.
     /// </summary>
     public double ClientHeight { get; set; }
-    
+
     /// <summary>
     /// Inner width of the element in px including padding, margin, etc.
     /// </summary>
