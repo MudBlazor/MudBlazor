@@ -116,8 +116,8 @@
   <Target Name="_AddAnalyzersToOutput">
     <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
     <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
-      <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="..\MudBlazor.Analyzers\bin\$(Configuration)\netstandard2.0\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="..\MudBlazor.Analyzers.CodeFixes\bin\$(Configuration)\netstandard2.0\$(AssemblyName).Analyzers.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
       <!-- Add compiler visible properties to nuget for analyzers -->
       <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
     </ItemGroup>
