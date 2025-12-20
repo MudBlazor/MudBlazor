@@ -9,12 +9,7 @@
 
         public IScrollListener Create(string? selector, int reportRateMs)
         {
-            return Create(selector, reportRateMs, false);
-        }
-
-        public IScrollListener Create(string? selector, int reportRateMs, bool fireOnStart)
-        {
-            return new MockScrollListener { Selector = selector, ReportRateMs = reportRateMs, FireOnStart = fireOnStart };
+            return new MockScrollListener { Selector = selector, ReportRateMs = reportRateMs };
         }
     }
 
@@ -28,6 +23,11 @@
         public bool FireOnStart { get; set; }
 
         public event EventHandler<ScrollEventArgs>? OnScroll;
+        
+        public Task<ScrollEventArgs> GetCurrentScrollDataAsync()
+        {
+            return Task.FromResult(new ScrollEventArgs());
+        }
 
         public MockScrollListener()
         {
