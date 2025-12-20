@@ -25,7 +25,6 @@ internal static class MudInputCssHelper
             .AddClass("mud-shrink", shrinkWhen)
             .AddClass("mud-disabled", baseInput.Disabled)
             .AddClass("mud-input-error", baseInput.HasErrors)
-            .AddClass("mud-ltr", baseInput.GetInputType() == InputType.Email || baseInput.GetInputType() == InputType.Telephone)
             .AddClass($"mud-typography-{baseInput.Typo.ToDescriptionString()}")
             .AddClass(baseInput.Class)
             .Build();
@@ -42,6 +41,7 @@ internal static class MudInputCssHelper
             .AddClass($"mud-input-root-{baseInput.Variant.ToDescriptionString()}")
             .AddClass($"mud-input-root-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
             .AddClass($"mud-input-root-margin-{baseInput.Margin.ToDescriptionString()}", () => baseInput.Margin != Margin.None)
+            .AddClass("mud-ltr", baseInput.GetInputType() == InputType.Email || baseInput.GetInputType() == InputType.Telephone)
             .AddClass(baseInput.Class)
             .Build();
 
