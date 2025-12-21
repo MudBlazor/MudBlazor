@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
 using Bunit.Rendering;
-using FluentAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 using NUnit.Framework;

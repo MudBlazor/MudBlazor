@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;

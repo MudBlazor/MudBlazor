@@ -1,8 +1,8 @@
 ﻿
 
 using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Mocks;

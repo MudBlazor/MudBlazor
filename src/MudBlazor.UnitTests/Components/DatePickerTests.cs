@@ -2,8 +2,8 @@
 using System.Globalization;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;

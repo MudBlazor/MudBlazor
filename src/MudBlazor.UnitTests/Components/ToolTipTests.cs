@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Tooltip;

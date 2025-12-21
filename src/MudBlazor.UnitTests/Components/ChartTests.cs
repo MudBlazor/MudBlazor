@@ -4,8 +4,8 @@
 
 using System.Globalization;
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;

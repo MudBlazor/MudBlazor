@@ -9,14 +9,12 @@ using MudBlazor.State;
 
 namespace MudBlazor.Benchmarks;
 
-#nullable enable
-
 /// <summary>
 /// Benchmarks for ParameterState with different comparer strategies.
 /// Tests performance impact of custom comparers, static vs dynamic comparers, and equality checks.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net90)]
+[SimpleJob(RuntimeMoniker.Net10_0)]
 public class ParameterStateComparerBenchmark
 {
     private SyntheticParameterStateContainer? _container;

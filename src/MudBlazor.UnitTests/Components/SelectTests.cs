@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
@@ -1295,7 +1295,7 @@ namespace MudBlazor.UnitTests.Components
             input.MouseDown();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
-            sut.Instance.Items.Should().HaveCountGreaterOrEqualTo(4);
+            sut.Instance.Items.Should().HaveCountGreaterThanOrEqualTo(4);
         }
 
         [Test]

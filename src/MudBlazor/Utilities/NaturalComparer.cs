@@ -2,26 +2,26 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 
+#nullable enable
 namespace MudBlazor.Utilities
 {
     public class NaturalComparer : IComparer<object>
     {
-        public int Compare(object x, object y)
+        public int Compare(object? x, object? y)
         {
-            // Check if the objects are null
-            if (x == null && y == null)
+            if (ReferenceEquals(x, y))
             {
                 return 0;
             }
-            else if (x == null)
+
+            if (x is null)
             {
                 return -1;
             }
-            else if (y == null)
+
+            if (y is null)
             {
                 return 1;
             }
@@ -31,15 +31,14 @@ namespace MudBlazor.Utilities
             {
                 return CompareNatural(xString, yString);
             }
-            else if (x is IComparable && y is IComparable)
+
+            if (x is IComparable xComparable && y is IComparable)
             {
-                return ((IComparable)x).CompareTo(y);
-            }
-            else
-            {
-                return x.ToString().CompareTo(y.ToString());
+                return xComparable.CompareTo(y);
             }
 
+
+            return string.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -164,6 +163,4 @@ namespace MudBlazor.Utilities
         }
 
     }
-
-
 }

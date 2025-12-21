@@ -191,7 +191,7 @@ When to edit:
 When NOT to edit:
 - Thread was created or updated in the last 10 minutes <!-- Let the backlog workflow catch it instead as they might still be editing it -->
 - Thread is a draft pull request
-- Not enough information in the body to create an accurate title
+- Has any `needs:` label
 - The author or a maintainer has previously criticized a title change you made
 
 ### Format Guidelines
@@ -199,9 +199,9 @@ When NOT to edit:
   - Sentence case, descriptive
   - No version numbers or redundant labels
 - Pull Requests Only:
-  - Prefix with component name + colon for single-component changes (e.g., "MudDataGrid: Fix row selection flicker")
-    - Always use the literal name for the component ("MudAutocomplete" instead of "MudAutoComplete", "MudDatePicker" instead of "DatePicker", "SankeyChart" instead of "Sankey chart") if applicable
-  - Prefix with "Docs: " if labeled with `docs`
+  - Always add the most relevant prefix + a colon (e.g. "MudDataGrid: Fix row selection flicker", "MudStack: Add new component")
+  - Prefer to prefix with "Docs: " if labeled with `docs`, Tests: " if labeled with `tests`, "Build: " if labeled with `build` (e.g. "MudSelect: Fix flaky test" -> "Tests: Fix flaky MudSelect test")
+  - Always use the literal name (e.g. "MudAutoComplete" -> "MudAutocomplete", "DatePicker" -> "MudDatePicker", "Sankey chart" -> "SankeyChart")
 - Prioritize clarity and searchability over brevity
 
 ## Inactivity Rules

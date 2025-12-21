@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Snackbar;

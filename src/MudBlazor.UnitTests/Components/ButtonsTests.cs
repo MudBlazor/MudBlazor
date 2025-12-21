@@ -1,8 +1,8 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
 using Bunit.Rendering;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.Button;
