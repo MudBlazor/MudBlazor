@@ -1280,7 +1280,7 @@ namespace MudBlazor
 
             _keyInterceptorObserving = true;
             var options = new KeyInterceptorOptions(
-                "mud-input-slot",
+                "mud-input-control",
                 [
                     new("ArrowUp", preventDown: "key+none"),
                     new("ArrowDown", preventDown: "key+none"),
