@@ -1282,22 +1282,11 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            switch (args.Key)
-            {
-                case "Backspace":
-                    if (args.CtrlKey && args.ShiftKey)
-                    {
-                        await ClearAsync();
-                        _value = default;
-                        await ResetAsync();
-                    }
 
-                    break;
-                case "Escape":
-                case "Tab":
-                    await CloseMenuAsync();
-                    break;
-            }
+            // Key-specific behavior (Backspace, Escape, Tab, etc.) is handled
+            // by the existing input event handlers (OnInputKeyDownAsync / OnInputKeyUpAsync).
+            // This interceptor is primarily used to control browser-level behavior
+            // (e.g., preventing Enter from submitting the form) via HandleKeyInterception.
         }
 
         private async Task HandleKeyInterception()
