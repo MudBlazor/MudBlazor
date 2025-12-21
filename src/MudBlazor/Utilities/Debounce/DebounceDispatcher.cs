@@ -93,6 +93,7 @@ internal sealed class DebounceDispatcher : IDisposable
         ArgumentNullException.ThrowIfNull(action);
 
         var executeImmediately = false;
+        CancellationTokenSource? localCts = null;
 
         // Check if disposed before attempting to acquire lock
         if (_disposed)
@@ -140,6 +141,8 @@ internal sealed class DebounceDispatcher : IDisposable
 
                 // Create new cancellation token source linked with provided token
                 _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                // Capture the CTS while still holding the lock to prevent race conditions
+                localCts = _cancellationTokenSource;
             }
         }
         catch (OperationCanceledException)
@@ -158,8 +161,6 @@ internal sealed class DebounceDispatcher : IDisposable
             await action().ConfigureAwait(false);
             return;
         }
-
-        var localCts = _cancellationTokenSource;
         try
         {
             // Wait for the debounce interval

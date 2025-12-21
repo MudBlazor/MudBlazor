@@ -455,12 +455,14 @@ public class DebounceDispatcherTests
         executionCount.Should().Be(1);
 
         // Rapid subsequent calls within interval should be debounced
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task1 = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task2 = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task3 = debounceDispatcher.DebounceAsync(TrackingAction);
 
-        // Wait for debounce to complete
-        await Task.Delay(150);
+        // Wait for all debounced tasks to complete
+        await task1;
+        await task2;
+        await task3;
 
         // Assert - Should have executed twice (first immediate, last after debounce)
         executionCount.Should().Be(2);
