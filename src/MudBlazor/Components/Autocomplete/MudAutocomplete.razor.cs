@@ -45,7 +45,7 @@ namespace MudBlazor
 
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
-        
+
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
@@ -1210,6 +1210,11 @@ namespace MudBlazor
                     _cancellationTokenSrc.Dispose();
                 }
                 catch { /*ignored*/ }
+            }
+
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
 
             await base.DisposeAsyncCore();
