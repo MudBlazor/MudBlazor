@@ -1,8 +1,7 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using MudBlazor.UnitTests.TestComponents.ButtonGroup;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -14,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtons>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, false)
@@ -33,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtons>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, true)
@@ -51,11 +50,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void WithFullWidth_WhenButtonWithFullWidthIsRemoved_ThenOtherButtonsAreStreched()
+        public async Task WithFullWidth_WhenButtonWithFullWidthIsRemoved_ThenOtherButtonsAreStreched()
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtons>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, true)
@@ -65,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            comp.SetParam(c => c.Button1Displayed, false);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(c => c.Button1Displayed, false));
 
             // Assert
 

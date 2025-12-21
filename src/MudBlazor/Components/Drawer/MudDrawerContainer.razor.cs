@@ -14,7 +14,7 @@ namespace MudBlazor
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
-        private List<MudDrawer> _drawers = new();
+        private readonly List<MudDrawer> _drawers = new();
 
         protected virtual string Classname =>
             new CssBuilder()
@@ -27,6 +27,8 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("--mud-drawer-width-left", GetDrawerWidth(FindLeftDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindLeftDrawer())))
                 .AddStyle("--mud-drawer-width-right", GetDrawerWidth(FindRightDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindRightDrawer())))
+                .AddStyle("--mud-drawer-height-top", GetDrawerHeight(FindTopDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindTopDrawer())))
+                .AddStyle("--mud-drawer-height-bottom", GetDrawerHeight(FindBottomDrawer()), !string.IsNullOrEmpty(GetDrawerHeight(FindBottomDrawer())))
                 .AddStyle("--mud-drawer-width-mini-left", GetMiniDrawerWidth(FindLeftMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindLeftMiniDrawer())))
                 .AddStyle("--mud-drawer-width-mini-right", GetMiniDrawerWidth(FindRightMiniDrawer()), !string.IsNullOrEmpty(GetMiniDrawerWidth(FindRightMiniDrawer())))
                 .AddStyle(Style)
@@ -57,7 +59,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private string GetDrawerClass(MudDrawer? drawer)
+        private static string GetDrawerClass(MudDrawer? drawer)
         {
             if (drawer is null)
             {
@@ -67,7 +69,7 @@ namespace MudBlazor
             var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
             if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
-                className += $"-{drawer.GetState<Breakpoint>(nameof(MudDrawer.Breakpoint)).ToDescriptionString()}";
+                className += $"-{drawer.Breakpoint.ToDescriptionString()}";
             }
             className += $"-{drawer.GetPosition()}";
 
@@ -76,7 +78,7 @@ namespace MudBlazor
             return className;
         }
 
-        private string? GetDrawerWidth(MudDrawer? drawer)
+        private static string? GetDrawerWidth(MudDrawer? drawer)
         {
             if (drawer is null)
             {
@@ -86,7 +88,17 @@ namespace MudBlazor
             return drawer.Width;
         }
 
-        private string? GetMiniDrawerWidth(MudDrawer? drawer)
+        private static string? GetDrawerHeight(MudDrawer? drawer)
+        {
+            if (drawer is null)
+            {
+                return string.Empty;
+            }
+
+            return drawer.Height;
+        }
+
+        private static string? GetMiniDrawerWidth(MudDrawer? drawer)
         {
             if (drawer is null)
             {
@@ -108,6 +120,16 @@ namespace MudBlazor
             var anchor = RightToLeft ? Anchor.Start : Anchor.End;
 
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Right);
+        }
+
+        private MudDrawer? FindTopDrawer()
+        {
+            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Top);
+        }
+
+        private MudDrawer? FindBottomDrawer()
+        {
+            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Bottom);
         }
 
         private MudDrawer? FindLeftMiniDrawer()

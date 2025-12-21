@@ -2,11 +2,11 @@ name: AutoTriage (PRs)
 
 on:
   pull_request_target:
-    types: [opened]
+    types: [opened, ready_for_review]
 
 jobs:
   triage_pr:
-    if: ${{ github.event.sender.type != 'Bot' && github.repository_owner == 'MudBlazor' }}
+    if: ${{ github.repository_owner == 'MudBlazor' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate app token
@@ -16,20 +16,23 @@ jobs:
           app-id: ${{ vars.MUDBOT_APP_ID }}
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: AutoTriage - triage pull request
         uses: danielchalmers/AutoTriage@main
         with:
           issue-number: ${{ github.event.pull_request.number }}
           prompt-path: .github/AutoTriage.prompt
+          model-fast: '' # skip fast pass
+          model-pro: gemini-3-pro-preview
+          model-pro-temperature: 1.0
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: triage-artifacts-pr-${{ github.event.pull_request.number }}
           path: |

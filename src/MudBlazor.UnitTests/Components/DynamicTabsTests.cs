@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultValues()
         {
-            var comp = Context.RenderComponent<MudDynamicTabs>();
+            var comp = Context.Render<MudDynamicTabs>();
             var tabs = comp.Instance;
 
             tabs.Header.Should().NotBeNull();
@@ -35,11 +35,15 @@ namespace MudBlazor.UnitTests.Components
             tabs.CloseTabIcon.Should().Be(Icons.Material.Filled.Close);
 
             tabs.AddIconClass.Should().BeNullOrEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
             tabs.AddIconStyle.Should().BeNullOrEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
             tabs.AddIconToolTip.Should().BeNullOrEmpty();
 
             tabs.CloseIconClass.Should().BeNullOrEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
             tabs.CloseIconStyle.Should().BeNullOrEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
             tabs.CloseIconToolTip.Should().BeNullOrEmpty();
 
             comp.Nodes.Should().ContainSingle();
@@ -51,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BasicParameters()
         {
-            var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
+            var comp = Context.Render<SimpleDynamicTabsTest>();
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -85,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters_WithToolTips()
         {
-            var comp = Context.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
+            var comp = Context.Render<SimpleDynamicTabsTestWithToolTips>();
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -147,7 +151,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_AddTab()
         {
-            var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
+            var comp = Context.Render<SimpleDynamicTabsInteractionTest>();
 
             var addButton = comp.Find(".my-add-icon-class");
             addButton.Click();
@@ -159,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_RemoveTab()
         {
-            var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
+            var comp = Context.Render<SimpleDynamicTabsInteractionTest>();
 
             for (var i = 0; i < 3; i++)
             {

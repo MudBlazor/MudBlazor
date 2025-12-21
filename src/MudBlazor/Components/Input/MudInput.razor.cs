@@ -29,7 +29,7 @@ namespace MudBlazor
             new CssBuilder(
                     MudInputCssHelper.GetClassname(this,
                         () => HasNativeHtmlPlaceholder() ||
-                              !string.IsNullOrEmpty(Text) ||
+                              !string.IsNullOrEmpty(ReadText) ||
                               Adornment == Adornment.Start ||
                               !string.IsNullOrWhiteSpace(Placeholder) ||
                               ShrinkLabel))
@@ -172,22 +172,21 @@ namespace MudBlazor
         [Parameter]
         public int MaxLines { get; set; }
 
-        protected Task OnInput(ChangeEventArgs? args)
+        private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
+
+        protected async Task OnInput(string? args)
         {
-            if (!Immediate)
-                return Task.CompletedTask;
             _isFocused = true;
-            return SetTextAsync(args?.Value as string);
+            _internalText = args;
+            await OnInternalInputChanged.InvokeAsync(args);
+            await SetTextAndUpdateValueAsync(args);
         }
 
-        protected async Task OnChange(ChangeEventArgs? args)
+        protected async Task OnChange(string? args)
         {
-            _internalText = args?.Value as string;
+            _internalText = args;
             await OnInternalInputChanged.InvokeAsync(args);
-            if (!Immediate)
-            {
-                await SetTextAsync(args?.Value as string);
-            }
+            await SetTextAndUpdateValueAsync(args);
         }
 
         /// <summary>
@@ -256,17 +255,17 @@ namespace MudBlazor
                 return false;
             }
 
-            if (Value is string stringValue)
+            if (ReadValue is string stringValue)
             {
                 return !string.IsNullOrWhiteSpace(stringValue);
             }
 
-            return Value is not string and not null;
+            return ReadValue is not string and not null;
         }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
@@ -280,20 +279,8 @@ namespace MudBlazor
 
             await base.SetParametersAsync(parameters);
 
-            //if (!_isFocused || _forceTextUpdate)
-            //    _internalText = Text;
-            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-            {
-                // Text update suppression, only in BSS (not in WASM).
-                // This is a fix for #1012
-                if (!_isFocused || _forceTextUpdate)
-                    _internalText = Text;
-            }
-            else
-            {
-                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
-                _internalText = Text;
-            }
+            // Always update internal text (TextUpdateSuppression removed)
+            _internalText = ReadText;
 
             // Flag AutoGrow to be initialized on the next render.
             if (!oldAutoGrow && AutoGrow)
@@ -356,7 +343,7 @@ namespace MudBlazor
         public Task SetText(string? text)
         {
             _internalText = text;
-            return SetTextAsync(text);
+            return SetTextAndUpdateValueAsync(text);
         }
 
         // Certain HTML5 inputs (dates and color) have a native placeholder

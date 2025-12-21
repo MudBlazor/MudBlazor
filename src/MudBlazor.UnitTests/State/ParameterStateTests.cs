@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
@@ -35,8 +35,12 @@ public class ParameterStateTests
         await parameterState.SetValueAsync(NewValue);
 
         // Assert
-        parameterState.Value.Should().Be(NewValue);
         eventFired.Should().BeTrue();
+        parameterState.HasCallback.Should().BeTrue();
+        parameterState.IsInitialized.Should().BeTrue();
+        parameterState.InitialValue.Should().Be(InitialValue);
+        parameterState.Value.Should().Be(NewValue);
+        parameterState.RenderValue.Should().Be(InitialValue);
     }
 
     [Test]
@@ -58,6 +62,9 @@ public class ParameterStateTests
         await parameterState.SetValueAsync(InitialValue);
 
         // Assert
+        parameterState.HasCallback.Should().BeTrue();
+        parameterState.IsInitialized.Should().BeTrue();
+        parameterState.InitialValue.Should().Be(InitialValue);
         parameterState.Value.Should().Be(InitialValue);
         eventFired.Should().BeFalse();
     }
@@ -77,33 +84,31 @@ public class ParameterStateTests
         parameterState.OnInitialized();
 
         // Assert
-        parameterState.Value.Should().Be(InitialValue);
+        parameterState.HasCallback.Should().BeFalse();
+        parameterState.InitialValue.Should().Be(InitialValue);
         parameterState.IsInitialized.Should().BeTrue();
+        parameterState.Value.Should().Be(InitialValue);
     }
 
     [Test]
     public void OnParametersSet_UpdatesValueIfChanged()
     {
         // Arrange
-        var initialValue = 5;
-        const int NewValue = 10;
+        const int InitialValue = 5;
         // ReSharper disable once AccessToModifiedClosure
         var parameterState = ParameterAttachBuilder
             .Create<int>()
-            .WithMetadata(new ParameterMetadata(nameof(initialValue)))
-            .WithGetParameterValueFunc(() => initialValue)
+            .WithMetadata(new ParameterMetadata(nameof(InitialValue)))
+            .WithGetParameterValueFunc(() => InitialValue)
             .Attach();
 
         // Act
         parameterState.OnParametersSet();
 
         // Assert
-        parameterState.Value.Should().Be(initialValue);
-
-        // Act & Assert
-        initialValue = NewValue;
         parameterState.OnParametersSet();
-        parameterState.Value.Should().Be(NewValue);
+        parameterState.Value.Should().Be(InitialValue);
+        parameterState.InitialValue.Should().Be(InitialValue);
     }
 
     [Test]
@@ -128,15 +133,52 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
 
         // Assert
         changed.Should().BeTrue();
         parameterState.HasHandler.Should().BeTrue();
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<int>(ParameterName, InitialValue, NewValue)
+            new ParameterChangedEventArgs<int>(parameters, ParameterName, InitialValue, NewValue)
         });
+    }
+
+    [Test]
+    public async Task ParameterChangeHandleAsync_PassesParameterViewWithMultipleParameters()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        const int NewValue = 10;
+        const string ParameterName = nameof(InitialValue);
+        const string OtherParameterName = "OtherParam";
+        var changes = 0;
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(args =>
+            {
+                changes++;
+                args.ParameterView.Contains<string>(OtherParameterName).Should().BeTrue();
+            })
+            .Attach();
+
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, NewValue },
+            { OtherParameterName, "abc" }
+        };
+        var parameters = ParameterView.FromDictionary(parametersDictionary);
+
+        // Act
+        var changed = parameterState.HasParameterChanged(parameters);
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+
+        // Assert
+        changed.Should().BeTrue();
+        parameterState.HasHandler.Should().BeTrue();
+        changes.Should().Be(1);
     }
 
     [Test]
@@ -160,7 +202,7 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
 
         // Assert
         changed.Should().BeFalse();
@@ -183,7 +225,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act
-        await parameterState.ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
 
         // Assert
         parameterState.HasHandler.Should().BeTrue();
@@ -202,7 +244,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act & Assert
-        await parameterState.ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
         parameterState.HasHandler.Should().BeFalse();
     }
 

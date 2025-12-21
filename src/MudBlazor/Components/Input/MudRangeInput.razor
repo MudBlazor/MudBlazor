@@ -27,6 +27,7 @@
 
     <input @ref="_elementReferenceStart"
            @attributes="UserAttributes"
+           id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-start")"
            type="@InputTypeString"
            class="@InputClassname"
            @bind-value="@TextStart"
@@ -44,6 +45,7 @@
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
     <input @ref="_elementReferenceEnd"
            @attributes="UserAttributes"
+           id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-end")"
            type="@InputTypeString"
            class="@InputClassname"
            @bind-value="@TextEnd"

@@ -1,509 +1,357 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using MudBlazor.Interop;
+using MudBlazor.Interpolation;
 
 #nullable enable
-#pragma warning disable CS0618
 
-namespace MudBlazor.Charts
+namespace MudBlazor.Charts;
+
+/// <summary>
+/// A chart which displays values over time.
+/// </summary>
+partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
-    /// <summary>
-    /// A chart which displays values over time.
-    /// </summary>
-    partial class TimeSeries : MudTimeSeriesChartBase, IDisposable
+    public override RenderFragment? OverlayContent { get; set; }
+
+    private DateTime _minDateTime;
+    private DateTime _maxDateTime;
+    private TimeSpan _minDateLabelOffset;
+    private TimeValue<T>[][]? _cachedDataPoints;
+
+    private bool _generateChartLines;
+    private double _timeToPixelRatio;
+
+    protected override bool ShouldInterpolate => false;
+
+    protected override void OnInitialized()
     {
-        private const double Epsilon = 1e-6;
-        private const double BoundWidthDefault = 800;
-        private const double BoundHeightDefault = 350;
-        private const double HorizontalStartSpaceBuffer = 10.0;
-        protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + (_yAxisLabelSize?.Width ?? 0), 30);
-        private const double HorizontalEndSpace = 30.0;
-        private const double VerticalStartSpaceBuffer = 10.0;
-        protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
-        private const double VerticalEndSpace = 25.0;
-        protected double XAxisLabelOffset => Math.Ceiling(_xAxisLabelSize?.Height ?? 20) / 2;
+        ChartType = ChartType.Timeseries;
+        ChartOptions ??= new TimeSeriesChartOptions();
 
-        private double _boundWidth = BoundWidthDefault;
-        private double _boundHeight = BoundHeightDefault;
-        private ElementSize? _elementSize = null;
-        private ElementSize? _yAxisLabelSize;
-        private ElementSize? _xAxisLabelSize;
-
-        [Inject]
-        private IJSRuntime JsRuntime { get; set; } = null!;
-
-        [CascadingParameter]
-        public MudTimeSeriesChartBase? MudChartParent { get; set; }
-
-        private readonly List<SvgPath> _horizontalLines = [];
-        private readonly List<SvgText> _horizontalValues = [];
-
-        private readonly List<SvgPath> _verticalLines = [];
-        private readonly List<SvgText> _verticalValues = [];
-
-        private readonly List<SvgLegend> _legends = [];
-        private List<TimeSeriesChartSeries> _series = [];
-
-        private readonly List<SvgPath> _chartLines = [];
-        private readonly Dictionary<int, SvgPath> _chartAreas = [];
-        private readonly Dictionary<int, List<SvgCircle>> _chartDataPoints = [];
-        private SvgCircle? _hoveredDataPoint;
-        private SvgPath? _hoverDataPointChartLine;
-
-        private DateTime _minDateTime;
-        private DateTime _maxDateTime;
-        private TimeSpan _minDateLabelOffset;
-        private readonly DotNetObjectReference<TimeSeries> _dotNetObjectReference;
-        private ElementReference _elementReference;
-        protected ElementReference? _xAxisGroupElementReference;
-        protected ElementReference? _yAxisGroupElementReference;
-
-        public TimeSeries()
+        if (ChartReference is IMudAxisChart<T> axisChart)
         {
-            _dotNetObjectReference = DotNetObjectReference.Create(this);
+            _generateChartLines = true;
+            axisChart.OverlayChart = this;
+            axisChart.OverlayContent = this.Chart;
         }
 
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
+        base.OnInitialized();
+    }
 
-            RebuildChart();
+    public override void RebuildChart()
+    {
+        if (IsOverlayChart && SharedData is null) return;
+
+        Series = (ChartContainer != null && ChartReference is MudChart<T>)
+            ? ChartContainer.ChartSeries
+            : ChartSeries;
+
+        _cachedDataPoints = null;
+
+        GeneratePlotArea(out var gridYUnits, out var lowestHorizontalLine, out var numHorizontalLines, out var horizontalSpace, out var verticalSpace);
+
+        if (Series.Count == 0) return;
+        if (!_generateChartLines) return;
+
+        if (!IsOverlayChart)
+        {
+            // If this is not an overlay chart, we generate the shared plot points if an overlay exists
+            SharedData = OverlayChart is IMudAxisChart<T> ? new AxisGridData<T>(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
+        }
+        else
+        {
+            // If this is an overlay chart, we use the shared plot points from the main chart
+            var area = SharedData!.Value;
+
+            lowestHorizontalLine = SharedData.Value.LowestHorizontalLine;
+            gridYUnits = SharedData.Value.YAxisTicks;
+
+            _boundWidth = area.BoundWidth;
+            _boundHeight = area.BoundHeight;
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+        GenerateLegends();
+        RenderOverlay();
+    }
+
+    private void GeneratePlotArea(out T gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
+    {
+        SetBounds();
+        ComputeMinAndMaxDateTimes();
+        ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
+
+        var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+
+        horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / ChartOptions!.TimeLabelSpacing);
+        verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
+        var startOffset = 0.0;
+
+        if (_minDateLabelOffset != TimeSpan.Zero)
         {
-            await base.OnAfterRenderAsync(firstRender);
-
-            if (firstRender)
-            {
-                var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
-
-                OnElementSizeChanged(elementSize);
-            }
-
-            var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
-            var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
-
-            var axisChanged = false;
-            if (yAxisLabelSize != null && (_yAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(yAxisLabelSize.Height, _yAxisLabelSize.Height)))
-            {
-                _yAxisLabelSize = yAxisLabelSize;
-                axisChanged = true;
-            }
-
-            if (xAxisLabelSize != null && (_xAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(xAxisLabelSize.Width, _xAxisLabelSize.Width)))
-            {
-                _xAxisLabelSize = xAxisLabelSize;
-                axisChanged = true;
-            }
-
-            // maybe there should be some kind of cancellation token here to prevent multiple rebuilds when the invokeasync takes time in server mode and subsequent renders have started to take place
-            if (axisChanged)
-            {
-                RebuildChart();
-                StateHasChanged();
-            }
+            startOffset = (_minDateLabelOffset.TotalMilliseconds / (_maxDateTime - _minDateTime).TotalMilliseconds) * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace);
         }
 
-        private void RebuildChart()
+        var fullDateTimeDiff = _maxDateTime - _minDateTime;
+        if (fullDateTimeDiff.TotalMilliseconds > 0)
         {
-            if (MudChartParent != null)
-            {
-                _series = MudChartParent.ChartSeries;
-                ChartOptions = MudChartParent.ChartOptions;
-            }
-
-            SetBounds();
-            ComputeMinAndMaxDateTimes();
-            ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
-
-            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / TimeLabelSpacing);
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
-
-            GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
-            GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
-            GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+            _timeToPixelRatio = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / fullDateTimeDiff.TotalMilliseconds;
         }
 
-        private void SetBounds()
-        {
-            _boundWidth = BoundWidthDefault;
-            _boundHeight = BoundHeightDefault;
+        GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
+        GenerateVerticalGridLines(numVerticalLines, startOffset, horizontalSpace);
+    }
 
-            if (MudChartParent != null && (MudChartParent.AxisChartOptions.MatchBoundsToSize || MudChartParent.MatchBoundsToSize)) // backwards compatibilitly to the mudchartparent approach
+    private void ComputeMinAndMaxDateTimes()
+    {
+        _minDateLabelOffset = TimeSpan.Zero;
+
+        var (minDate, maxDate) = GetVisibleDateRange();
+
+        var labelSpacing = ChartOptions!.TimeLabelSpacing;
+
+        if (minDate == null || maxDate == null)
+        {
+            SetDefaultDateRange(labelSpacing);
+            return;
+        }
+
+        _minDateTime = minDate.Value;
+        _maxDateTime = maxDate.Value;
+
+        if (!ChartOptions.TimeLabelSpacingRounding)
+            return;
+
+        ApplyLabelRounding(labelSpacing);
+    }
+
+    private (DateTime? Min, DateTime? Max) GetVisibleDateRange()
+    {
+        DateTime? min = null, max = null;
+
+        foreach (var series in Series.Where(s => s.Visible && s.Data.Points != null))
+        {
+            foreach (var dt in series.Data.Points.Select(p => p.X).OfType<DateTime>())
             {
-                if (_elementSize != null)
-                {
-                    _boundWidth = _elementSize.Width;
-                    _boundHeight = _elementSize.Height;
-                }
-                else if (MudChartParent.Width.EndsWith("px")
-                    && MudChartParent.Height.EndsWith("px")
-                    && double.TryParse(MudChartParent.Width.AsSpan(0, MudChartParent.Width.Length - 2), out var width)
-                    && double.TryParse(MudChartParent.Height.AsSpan(0, MudChartParent.Height.Length - 2), out var height))
-                {
-                    _boundWidth = width;
-                    _boundHeight = height;
-                }
+                if (min == null || dt < min) min = dt;
+                if (max == null || dt > max) max = dt;
             }
         }
 
-        [JSInvokable]
-        public void OnElementSizeChanged(ElementSize? elementSize)
+        return (min, max);
+    }
+
+    private void SetDefaultDateRange(TimeSpan spacing)
+    {
+        var now = DateTime.Now;
+        _minDateTime = now;
+        _maxDateTime =
+            spacing.Days > 0 ? now.AddDays(1) :
+            spacing.Minutes > 0 ? now.AddHours(1) :
+            now.AddMinutes(1);
+    }
+
+    private void ApplyLabelRounding(TimeSpan spacing)
+    {
+        if (_minDateTime.Ticks % spacing.Ticks != 0)
         {
-            if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp)
-                return;
+            var offset = new TimeSpan(_minDateTime.Ticks % spacing.Ticks);
 
-            _elementSize = elementSize;
-
-
-            if (!AxisChartOptions.MatchBoundsToSize)
-                return;
-
-            if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
-                Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)
-            {
-                return;
-            }
-
-            RebuildChart();
-
-            StateHasChanged();
-        }
-
-        private void ComputeMinAndMaxDateTimes()
-        {
-            _minDateLabelOffset = TimeSpan.Zero;
-
-            if (_series.SelectMany(series => series.Data).Any())
-            {
-                _minDateTime = _series.SelectMany(series => series.Data).Min(x => x.DateTime);
-                _maxDateTime = _series.SelectMany(series => series.Data).Max(x => x.DateTime);
-                var labelSpacing = TimeLabelSpacing;
-
-                if (!TimeLabelSpacingRounding) return;
-
-                if (_minDateTime.Ticks % labelSpacing.Ticks != 0)
-                {
-                    // subtract the remainder of the ticks from the minDateTime to get the first tick before or equal to the minDateTime, if the first label is over half the labelSpacing away from the first timestamp, offset the label instead.
-                    var offset = new TimeSpan(_minDateTime.Ticks % labelSpacing.Ticks);
-
-                    if (TimeLabelSpacingRoundingPadSeries)
-                    {
-                        _minDateTime = _minDateTime.Subtract(offset);
-                    }
-                    else
-                        _minDateLabelOffset = labelSpacing - offset;
-                }
-
-                if (TimeLabelSpacingRoundingPadSeries && _maxDateTime.Ticks % labelSpacing.Ticks != 0)
-                {
-                    // add the remainder of the ticks to the maxDateTime to get the first tick after or equal to the maxDateTime
-                    var offset = labelSpacing - new TimeSpan(_maxDateTime.Ticks % labelSpacing.Ticks);
-
-                    _maxDateTime = _maxDateTime.Add(offset);
-                }
-            }
-        }
-
-        private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
-        {
-            gridXUnits = 30;
-
-            gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
-            if (gridYUnits <= 0)
-                gridYUnits = 20;
-
-            if (_series.SelectMany(series => series.Data).Any())
-            {
-                var minY = _series.SelectMany(series => series.Data).Min(x => x.Value);
-                var maxY = _series.SelectMany(series => series.Data).Max(x => x.Value);
-
-                var includeYAxisZeroPoint = MudChartParent?.ChartOptions.YAxisRequireZeroPoint ?? _series.Any(x => x.LineDisplayType == LineDisplayType.Area);
-                if (includeYAxisZeroPoint)
-                {
-                    minY = Math.Min(minY, 0); // we want to include the 0 in the grid
-                    maxY = Math.Max(maxY, 0); // we want to include the 0 in the grid
-                }
-
-                lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
-                var highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
-                numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
-
-                // this is a safeguard against millions of gridlines which might arise with very high values
-                int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
-                while (numHorizontalLines > maxYTicks)
-                {
-                    gridYUnits *= 2;
-                    lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
-                    highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
-                    numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
-                }
-
-                var labelSpacing = TimeLabelSpacing;
-
-                numVerticalLines = (int)((_maxDateTime - _minDateTime) / labelSpacing) + 1;
-            }
+            if (ChartOptions!.TimeLabelSpacingRoundingPadSeries)
+                _minDateTime = _minDateTime.Subtract(offset);
             else
-            {
-                numHorizontalLines = 1;
-                lowestHorizontalLine = 0;
-                numVerticalLines = 1;
-            }
+                _minDateLabelOffset = spacing - offset;
         }
 
-        private void GenerateHorizontalGridLines(int numHorizontalLines, int lowestHorizontalLine, double gridYUnits, double verticalSpace)
+        if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && _maxDateTime.Ticks % spacing.Ticks != 0)
         {
-            _horizontalLines.Clear();
-            _horizontalValues.Clear();
-
-            for (var i = 0; i < numHorizontalLines; i++)
-            {
-                var y = VerticalStartSpace + i * verticalSpace;
-                var line = new SvgPath()
-                {
-                    Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
-                };
-                _horizontalLines.Add(line);
-
-                var startGridY = (lowestHorizontalLine + i) * gridYUnits;
-                var lineValue = new SvgText()
-                {
-                    X = HorizontalStartSpace - 10,
-                    Y = _boundHeight - y + 5,
-                    Value = BuildYAxisValueString(startGridY)
-                };
-                _horizontalValues.Add(lineValue);
-            }
-        }
-
-        private void GenerateVerticalGridLines(int numVerticalLines, double gridXUnits, double horizontalSpace)
-        {
-            _verticalLines.Clear();
-            _verticalValues.Clear();
-
-            if (numVerticalLines == 0 || !_series.Any(x => x.Data.Any()))
-                return;
-
-            double startOffset = 0;
-
-            var minDateTimeWithOffset = _minDateTime.Add(_minDateLabelOffset);
-
-            if (_minDateLabelOffset != TimeSpan.Zero)
-            {
-                // offset the first label to be _minDateLabelOffset away from the minDateTime
-
-                startOffset = (_minDateLabelOffset.TotalMilliseconds / (_maxDateTime - _minDateTime).TotalMilliseconds) * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace);
-            }
-
-            for (var i = 0; i < numVerticalLines; i++)
-            {
-                var x = startOffset + HorizontalStartSpace + i * horizontalSpace;
-
-                if (x > _boundWidth - HorizontalEndSpace)
-                    break; // we are out of bounds
-
-                var line = new SvgPath()
-                {
-                    Index = i,
-                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
-                };
-                _verticalLines.Add(line);
-
-                var xLabels = minDateTimeWithOffset.Add(TimeLabelSpacing * i);
-
-                var lineValue = new SvgText()
-                {
-                    X = x,
-                    Y = _boundHeight - XAxisLabelOffset,
-                    Value = xLabels.ToString(TimeLabelFormat),
-                };
-                _verticalValues.Add(lineValue);
-            }
-        }
-
-        private void GenerateChartLines(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
-        {
-            _legends.Clear();
-            _chartLines.Clear();
-            _chartAreas.Clear();
-            _chartDataPoints.Clear();
-
-            if (_series.Count == 0)
-                return;
-
-            var fullDateTimeDiff = _maxDateTime - _minDateTime;
-
-            for (var i = 0; i < _series.Count; i++)
-            {
-                var series = _series[i];
-
-                if (series.IsVisible)
-                {
-                    var chartLine = new StringBuilder();
-                    var data = series.Data;
-                    var chartDataCirlces = _chartDataPoints[i] = [];
-
-                    if (data.Count <= 0)
-                        continue;
-
-                    (double x, double y) GetXYForDataPoint(int index)
-                    {
-                        var dateTime = data[index].DateTime;
-
-                        var diffFromMin = dateTime - _minDateTime;
-
-                        var gridValue = (data[index].Value / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                        var y = _boundHeight - VerticalStartSpace - gridValue;
-
-                        if (fullDateTimeDiff.TotalMilliseconds == 0)
-                            return (HorizontalStartSpace, y);
-
-                        var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds / fullDateTimeDiff.TotalMilliseconds * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace));
-
-                        return (x, y);
-                    }
-                    double GetYForZeroPoint()
-                    {
-                        var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                        var y = _boundHeight - VerticalStartSpace - gridValue;
-
-                        return y;
-                    }
-
-                    bool interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
-                    if (interpolationEnabled)
-                    {
-                        // TODO this is not simple to implement, as the x values are not linearly spaced
-                        // and the interpolation should be done based on the datetime
-                        // so we need to find a way to interpolate the x values based on the datetime
-                        // and then interpolate the y values based on the x values
-                        // this is not trivial and needs to be done in a separate PR
-
-                        throw new NotImplementedException("Interpolation not implemented yet for timeseries charts");
-                    }
-                    else
-                    {
-                        for (var j = 0; j < data.Count; j++)
-                        {
-                            var (x, y) = GetXYForDataPoint(j);
-
-                            if (j == 0)
-                            {
-                                chartLine.Append("M ");
-                            }
-                            else
-                                chartLine.Append(" L ");
-
-                            chartLine.Append(ToS(x));
-                            chartLine.Append(' ');
-                            chartLine.Append(ToS(y));
-
-                            var dataValue = data[j];
-
-                            if (MudChartParent?.ChartOptions.ShowToolTips != true)
-                                continue;
-
-                            chartDataCirlces.Add(new()
-                            {
-                                Index = j,
-                                CX = x,
-                                CY = y,
-                                LabelX = x,
-                                LabelXValue = dataValue.DateTime.ToString(MudChartParent?.DataMarkerTooltipTimeLabelFormat ?? "{0}"),
-                                LabelY = y,
-                                LabelYValue = dataValue.Value.ToString(series.DataMarkerTooltipYValueFormat),
-                            });
-                        }
-                    }
-                    var line = new SvgPath()
-                    {
-                        Index = i,
-                        Data = chartLine.ToString()
-                    };
-                    _chartLines.Add(line);
-
-                    if (series.LineDisplayType == LineDisplayType.Area)
-                    {
-                        var chartArea = new StringBuilder();
-
-                        var zeroPointY = GetYForZeroPoint();
-                        var (firstPointX, firstPointY) = GetXYForDataPoint(0);
-                        var (lastPointX, _) = GetXYForDataPoint(data.Count - 1);
-
-                        chartArea.Append(chartLine.ToString()); // the line up to this point is the same as the area, so we can reuse it
-
-                        // add an extra point based on the x of the last point and 0 to add the area to the bottom
-
-                        chartArea.Append(" L ");
-                        chartArea.Append(ToS(lastPointX));
-                        chartArea.Append(' ');
-                        chartArea.Append(ToS(zeroPointY));
-
-                        // add an extra point based on the x of the first point and 0 to close the area
-
-                        chartArea.Append(" L ");
-                        chartArea.Append(ToS(firstPointX));
-                        chartArea.Append(' ');
-                        chartArea.Append(ToS(zeroPointY));
-
-                        // add an the first point again to close the area
-                        chartArea.Append(" L ");
-                        chartArea.Append(ToS(firstPointX));
-                        chartArea.Append(' ');
-                        chartArea.Append(ToS(firstPointY));
-
-                        var area = new SvgPath()
-                        {
-                            Index = i,
-                            Data = chartArea.ToString()
-                        };
-                        _chartAreas.Add(i, area);
-                    }
-                }
-
-                var legend = new SvgLegend()
-                {
-                    Index = i,
-                    Labels = series.Name,
-                    Visible = series.IsVisible,
-                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
-                };
-                _legends.Add(legend);
-            }
-        }
-
-        private void HandleLegendVisibilityChanged(SvgLegend legend)
-        {
-            var series = _series[legend.Index];
-            series.IsVisible = legend.Visible;
-            RebuildChart();
-        }
-
-        private void OnDataPointMouseOver(MouseEventArgs _, SvgCircle dataPoint, SvgPath seriesPath)
-        {
-            _hoveredDataPoint = dataPoint;
-            _hoverDataPointChartLine = seriesPath;
-        }
-
-        private void OnDataPointMouseOut(MouseEventArgs _)
-        {
-            _hoveredDataPoint = null;
-            _hoverDataPointChartLine = null;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            _dotNetObjectReference.Dispose();
+            var offset = spacing - new TimeSpan(_maxDateTime.Ticks % spacing.Ticks);
+            _maxDateTime = _maxDateTime.Add(offset);
         }
     }
+
+    private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
+    {
+        gridYUnits = GetInitialGridUnit();
+
+        if (!HasSeriesData())
+        {
+            numHorizontalLines = 1;
+            lowestHorizontalLine = 0;
+            numVerticalLines = 1;
+            return;
+        }
+
+        var (minY, maxY) = GetYRangeWithPadding();
+
+        AdjustSuggestedMax(ref maxY);
+
+        lowestHorizontalLine = GetLowestLine(minY, gridYUnits);
+        var highestHorizontalLine = GetHighestLine(maxY, gridYUnits);
+        numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+
+        ClampHorizontalLines(ref gridYUnits, minY, maxY, ref numHorizontalLines, ref lowestHorizontalLine);
+
+        numVerticalLines = CalculateVerticalLines();
+    }
+
+    private T GetInitialGridUnit()
+    {
+        var yAxisTicks = ChartOptions?.YAxisTicks;
+        return yAxisTicks is > 0
+            ? T.CreateSaturating(yAxisTicks.Value)
+            : T.CreateSaturating(20);
+    }
+
+    private bool HasSeriesData() =>
+        Series.Any(series => series.Data.Points is { Count: > 0 });
+
+    private (T minY, T maxY) GetYRangeWithPadding()
+    {
+        var minY = T.MaxValue;
+        var maxY = T.MinValue;
+
+        foreach (var point in Series.Where(s => s.Visible).SelectMany(s => s.Data.Points))
+        {
+            minY = T.Min(minY, point.Y);
+            maxY = T.Max(maxY, point.Y);
+        }
+
+        if (minY.Equals(T.MaxValue))
+            return (T.Zero, T.Zero);
+
+        var requireZero = ChartOptions?.YAxisRequireZeroPoint == true || HasAreaSeries();
+        if (requireZero)
+        {
+            minY = T.Min(minY, T.Zero);
+            maxY = T.Max(maxY, T.Zero);
+        }
+
+        return (minY, maxY);
+    }
+
+    private bool HasAreaSeries() =>
+        ChartOptions?.LineDisplayType == LineDisplayType.Area ||
+        Series.Any(s => GetSeriesDisplayOverride(s)?.LineDisplayType == LineDisplayType.Area);
+
+    private void AdjustSuggestedMax(ref T maxY)
+    {
+        if (ChartOptions?.YAxisSuggestedMax is { } suggested)
+            maxY = T.Max(T.CreateSaturating(suggested), maxY);
+    }
+
+    private static int GetLowestLine(T minY, T unit) =>
+        (int)Math.Floor(double.CreateSaturating(minY / unit));
+
+    private static int GetHighestLine(T maxY, T unit) =>
+        (int)Math.Ceiling(double.CreateSaturating(maxY / unit));
+
+    private void ClampHorizontalLines(ref T unit, T minY, T maxY, ref int numLines, ref int lowestLine)
+    {
+        var maxTicks = ChartOptions?.MaxNumYAxisTicks ?? 100;
+
+        while (numLines > maxTicks)
+        {
+            unit *= T.CreateSaturating(2);
+            lowestLine = GetLowestLine(minY, unit);
+
+            var highestLine = GetHighestLine(maxY, unit);
+
+            numLines = highestLine - lowestLine + 1;
+        }
+    }
+
+    private int CalculateVerticalLines()
+    {
+        var spacing = ChartOptions!.TimeLabelSpacing;
+        return (int)Math.Ceiling((_maxDateTime - _minDateTime) / spacing) + 1;
+    }
+
+    protected override string GetVerticalGridLineLabel(int index)
+    {
+        var minDateTimeWithOffset = _minDateTime.Add(_minDateLabelOffset);
+        return minDateTimeWithOffset.Add(ChartOptions!.TimeLabelSpacing * index).ToString(ChartOptions!.TimeLabelFormat);
+    }
+
+    private TimeValue<T>[][] GetCachedDataPoints()
+    {
+        if (_cachedDataPoints != null)
+            return _cachedDataPoints;
+
+        _cachedDataPoints = new TimeValue<T>[Series.Count][];
+
+        for (var i = 0; i < Series.Count; i++)
+        {
+            var series = Series[i];
+            var points = series.Data.Points;
+            var data = new TimeValue<T>[points.Count];
+
+            for (var j = 0; j < points.Count; j++)
+            {
+                var point = points[j];
+                var date = point.X switch
+                {
+                    DateTime dt => dt,
+                    null => DateTime.MinValue,
+                    string s when DateTime.TryParse(s, out var parsed) => parsed,
+                    _ => throw new InvalidOperationException($"Unable to parse '{point.X}' as DateTime for time series chart")
+                };
+
+                data[j] = new TimeValue<T>(date, point.Y);
+            }
+
+            _cachedDataPoints[i] = data;
+        }
+
+        return _cachedDataPoints;
+    }
+
+    private void OnAxisChanged()
+    {
+        _generateChartLines = true;
+
+        base.AxisChanged();
+    }
+
+    protected override TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex)
+    {
+        var data = GetCachedDataPoints()[seriesIndex];
+        return (TReturn)(object)data[dataPointIndex];
+    }
+
+    protected override string GetDataValueAsString(int seriesIndex, int dataPointIndex)
+    {
+        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
+        return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat);
+    }
+
+    protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
+    {
+        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
+        return dataValue.DateTime.ToString(ChartOptions?.TooltipTimeLabelFormat ?? "G");
+    }
+
+    protected override (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
+    {
+        var dataPoint = GetCachedDataPoints()[seriesIndex][dataPointIndex];
+
+        var gridValue = (dataPoint.Value / T.CreateSaturating(gridYUnits) - T.CreateSaturating(lowestHorizontalLine)) * T.CreateSaturating(verticalSpace);
+        var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
+
+        var diffFromMin = dataPoint.DateTime - _minDateTime;
+        var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds * _timeToPixelRatio);
+
+        return (x, y);
+    }
+
+    internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
+    {
+        throw new NotImplementedException("Interpolation not implemented yet for timeseries charts");
+    }
 }
+
+/// <summary>
+/// Represents a data point in a time series chart, containing a DateTime and a value.
+/// </summary>
+public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>;

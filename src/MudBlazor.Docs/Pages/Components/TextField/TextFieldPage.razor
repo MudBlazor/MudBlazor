@@ -177,7 +177,7 @@
                 <Description>
                     Bind text fields to properties of objects (POCOs). Changes in the fields automatically update the model, and model changes reflect in the fields.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with text fields.</MudAlert>
-                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: The <CodeInline>TextUpdateSuppression</CodeInline> parameter prevents text updates via bound values while the input is focused. Defaults to <CodeInline>true</CodeInline>.</MudAlert>
+
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextFieldBindingExample)" ShowCode="false">
@@ -242,7 +242,7 @@
     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
         If you use Blazor Server for your app, note that there is a default limit on the maximum message size SignalR can handle. If you want to support large texts in the input element (around 15k characters and more)
         you need to increase the message size limit by setting <CodeInline>MaximumReceiveMessageSize</CodeInline> accordingly in the HubOptions in your Program.cs file.
-        For more details see <MudLink Typo="Typo.body2" Href="https://github.com/MudBlazor/MudBlazor/issues/7263">this issue</MudLink> on github.
+        For more details see <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/7263">this issue</MudLink> on github.
     </MudAlert>
     <SectionSubGroups>
         <DocsPageSection>

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
+using MudBlazor.State.Invocation;
 using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
@@ -25,6 +26,8 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 {
     private T? _value;
     private T? _lastValue;
+    private T? _initialValue;
+    private bool _isInitialized;
     private bool _isChildOriginatedChange;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
@@ -43,17 +46,70 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     [MemberNotNullWhen(true, nameof(_parameterChangedHandler))]
     public bool HasHandler => _parameterChangedHandler is not null;
 
-    /// <summary>
-    /// Gets a value indicating whether the object is initialized.
-    /// </summary>
-    /// <remarks>
-    /// This property is <c>true</c> once the <see cref="OnInitialized"/> method is called; otherwise, <c>false</c>.
-    /// </remarks>
-    [MemberNotNullWhen(true, nameof(_lastValue), nameof(_value), nameof(Value))]
-    public bool IsInitialized { get; private set; }
+    /// <inheritdoc />
+    public override bool HasCallback => _eventCallbackFunc().HasDelegate;
+
+    /// <inheritdoc />
+    [MemberNotNullWhen(true, nameof(_value), nameof(_initialValue))]
+    public override bool IsInitialized => _isInitialized;
+
+    [MemberNotNullWhen(true, nameof(_value))]
+    private bool TreatAsInitialized { get; set; }
+
+    /// <inheritdoc />
+    public override T InitialValue
+    {
+        get
+        {
+            if (!IsInitialized)
+            {
+                return _getParameterValueFunc();
+            }
+
+            return _initialValue;
+        }
+    }
 
     /// <inheritdoc/>
-    public override T? Value => _value;
+    /// <remarks>
+    /// <para>
+    /// Some (bad) components may attempt to read parameter values before OnInitialized is called
+    /// (e.g., during SetParametersAsync). In that case, the state is not yet fully initialized,
+    /// and accessing the Value will return null even when the parameter has a default value, such as:
+    /// <code>[Parameter] string MyParameter { get; set; } = "some value";</code>
+    /// <br/>
+    /// To avoid this, if initialization has not yet occurred, fall back to the delegate
+    /// that retrieves the current parameter value.
+    /// <br/>
+    /// Important: Some incorrect tests bypass the normal Blazor lifecycle, which can lead to
+    /// incorrect state being read. For example:
+    /// </para>
+    /// <code>
+    ///      var panels = Context.RenderComponent&lt;MudExpansionPanels&gt;();
+    ///      var panel = new MudExpansionPanel();
+    ///      panels.Instance.AddPanelAsync(panel);
+    /// </code>
+    /// <para>
+    /// In this scenario, MudExpansionPanel is created outside Blazor's lifecycle, so
+    /// AddPanelAsync receives an invalid _expandedState.Value.
+    /// Such test patterns should be avoided—rewrite the tests to follow normal Blazor usage.
+    /// </para>
+    /// </remarks>
+    public override T Value
+    {
+        get
+        {
+            if (!TreatAsInitialized && !IsInitialized)
+            {
+                return _getParameterValueFunc();
+            }
+
+            return _value;
+        }
+    }
+
+    /// <inheritdoc/>
+    public override T RenderValue => _getParameterValueFunc();
 
     /// <summary>
     /// Gets the function to provide the comparer for the parameter.
@@ -67,16 +123,23 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
         _comparer = comparer ?? new ParameterEqualityComparerSwappable<T>(() => EqualityComparer<T>.Default);
-        _lastValue = default;
-        _value = default;
     }
 
     /// <inheritdoc/>
     public override Task SetValueAsync(T value)
     {
-        if (!_comparer.Equals(Value, value))
+        // Avoid using the Value property here because its getter includes an
+        // IsInitialized branch which may cause the SetValueAsync to be skipped.
+        if (!_comparer.Equals(_value, value))
         {
             _value = value;
+            if (!TreatAsInitialized)
+            {
+                // https://github.com/MudBlazor/MudBlazor/pull/12241
+                // Workaround for components that read parameter values before OnInitialized is called aka Select and Autocomplete.
+                // Can be removed in future major versions when such components are fixed.
+                TreatAsInitialized = true;
+            }
             var eventCallback = _eventCallbackFunc();
             if (eventCallback.HasDelegate)
             {
@@ -90,8 +153,9 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// <inheritdoc />
     public void OnInitialized()
     {
-        IsInitialized = true;
+        _isInitialized = true;
         var currentParameterValue = _getParameterValueFunc();
+        _initialValue = currentParameterValue;
         _value = currentParameterValue;
         _lastValue = currentParameterValue;
     }
@@ -108,21 +172,17 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         }
     }
 
-    /// <inheritdoc />
-    public Task ParameterChangeHandleAsync()
+    /// <inheritdoc/>
+    public IParameterStateInvocationSnapshot CreateInvocationSnapshot()
     {
-        if (HasHandler)
-        {
-            if (HasParameterChangedEventArgs)
-            {
-                // Since the ParameterSet lifecycles control all operations, it is acceptable to trigger the handler only when
-                // HasParameterChanged has been invoked and stored the ParameterChangedEventArgs.
-                // Direct invocation of this method by external callers is discouraged, so we shouldn't worry about it.
-                return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs.ChildOriginated(_isChildOriginatedChange));
-            }
-        }
-
-        return Task.CompletedTask;
+        return new ParameterStateInvocationSnapshot<T>(
+            Metadata,
+            HasParameterChangedEventArgs ? _parameterChangedEventArgs.Clone() : null,
+            _parameterChangedHandler,
+            // We should not cache this value because it may be modified by OnParametersSet.
+            // In theory, this could also lead to race conditions if multiple OnParametersSet calls occur with different _lastValue, currentParameterValue values.
+            // For now, we'll leave it as-is since properly fixing this would be complex, it should be fixed only if it happens in practise.
+            () => _isChildOriginatedChange);
     }
 
     /// <inheritdoc />
@@ -150,7 +210,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: comparer))
         {
             changed = true;
-            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newValue);
+            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(parameters, Metadata.ParameterName, currentParameterValue, newValue);
         }
 
         return changed;

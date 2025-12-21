@@ -3,6 +3,7 @@ using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -13,8 +14,8 @@ namespace MudBlazor
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
         private DateTime? _firstDate = null, _secondDate, _minValidDate, _maxValidDate;
-        private DateRange _dateRange;
-        private Range<string> _rangeText;
+        private DateRange? _dateRange;
+        private Range<string>? _rangeText;
 
         protected override bool IsRange => true;
 
@@ -58,7 +59,7 @@ namespace MudBlazor
         /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
         /// This parameter will take effect when <see cref="MinDays"/> or <see cref="MaxDays"/> is set.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInCount { get; set; } = true;
 
@@ -70,7 +71,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string PlaceholderStart { get; set; }
+        public string? PlaceholderStart { get; set; }
 
         /// <summary>
         /// The text displayed in the end input if no date is specified.
@@ -80,7 +81,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string PlaceholderEnd { get; set; }
+        public string? PlaceholderEnd { get; set; }
 
         /// <summary>
         /// The icon displayed between start and end dates.
@@ -96,14 +97,14 @@ namespace MudBlazor
         /// Occurs when <see cref="DateRange"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<DateRange> DateRangeChanged { get; set; }
+        public EventCallback<DateRange?> DateRangeChanged { get; set; }
 
         /// <summary>
         /// The currently selected date range.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public DateRange DateRange
+        public DateRange? DateRange
         {
             get => _dateRange;
             set => SetDateRangeAsync(value, true).CatchAndLog();
@@ -119,7 +120,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
-        protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
+        protected async Task SetDateRangeAsync(DateRange? range, bool updateValue)
         {
             if (_dateRange != range)
             {
@@ -138,8 +139,8 @@ namespace MudBlazor
 
                 Touched = true;
 
-                if (range?.Start is not null)
-                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+                if (range?.Start is not null && StartMonth == null)
+                    PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
 
                 _dateRange = range;
                 _value = range?.End;
@@ -147,7 +148,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    Converter.GetError = false;
+                    ResetConverterErrors();
                     if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
@@ -156,9 +157,9 @@ namespace MudBlazor
                     else
                     {
                         _rangeText = new Range<string>(
-                            Converter.Set(_dateRange.Start),
-                            Converter.Set(_dateRange.End));
-                        await SetTextAsync(_dateRange.ToString(Converter), false);
+                            ConvertSet(_dateRange.Start),
+                            ConvertSet(_dateRange.End));
+                        await SetTextAsync(_dateRange.ToString(GetConverter()), false);
                     }
                 }
 
@@ -168,7 +169,7 @@ namespace MudBlazor
             }
         }
 
-        private Range<string> RangeText
+        private Range<string>? RangeText
         {
             get => _rangeText;
             set
@@ -182,7 +183,7 @@ namespace MudBlazor
             }
         }
 
-        private MudRangeInput<string> _rangeInput;
+        private MudRangeInput<string> _rangeInput = null!;
 
         /// <summary>
         /// Focuses the start input.
@@ -220,21 +221,21 @@ namespace MudBlazor
         /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
 
-        protected override Task DateFormatChangedAsync(string newFormat)
+        protected override Task DateFormatChangedAsync(string? newFormat)
         {
             Touched = true;
             _rangeText = null;
             if (_dateRange?.Start != null || _dateRange?.End != null)
             {
                 _rangeText = new Range<string>(
-                    Converter.Set(_dateRange.Start),
-                    Converter.Set(_dateRange.End));
+                    ConvertSet(_dateRange.Start),
+                    ConvertSet(_dateRange.End));
             }
 
-            return SetTextAsync(_dateRange?.ToString(Converter), false);
+            return SetTextAsync(_dateRange?.ToString(GetConverter()), false);
         }
 
-        protected override Task StringValueChangedAsync(string value)
+        protected override Task StringValueChangedAsync(string? value)
         {
             Touched = true;
             // Update the date range property (without updating back the Value property)
@@ -328,14 +329,14 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private DateRange ParseDateRangeValue(string value)
+        private DateRange? ParseDateRangeValue(string? value)
         {
-            return DateRange.TryParse(value, Converter, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
         }
 
-        private DateRange ParseDateRangeValue(string start, string end)
+        private DateRange? ParseDateRangeValue(string? start, string? end)
         {
-            return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(start, end, GetConverter(), out var dateRange) ? dateRange : null;
         }
 
         protected override Task OnPickerClosedAsync()
@@ -498,14 +499,14 @@ namespace MudBlazor
         protected override DateTime GetCalendarStartOfMonth()
         {
             var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;
-            return date.StartOfMonth(Culture);
+            return date.StartOfMonth(GetCulture());
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = DateRange?.Start ?? DateTime.Today;
-            var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
-            var calenderYear = Culture.Calendar.GetYear(date);
+            var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
+            var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;
         }
     }

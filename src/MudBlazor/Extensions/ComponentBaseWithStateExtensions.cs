@@ -27,7 +27,7 @@ public static class ComponentBaseWithStateExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyExpression"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="propertyExpression"/> is invalid.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the parameter state with <paramref name="propertyExpression"/> is not found.</exception>
-    public static T? GetState<TComponent, T>(this TComponent component, Func<TComponent, T> propertyExpression, [CallerArgumentExpression(nameof(propertyExpression))] string? propertyNameCallerArgumentExpression = null) where TComponent : ComponentBaseWithState
+    public static T GetState<TComponent, T>(this TComponent component, Func<TComponent, T> propertyExpression, [CallerArgumentExpression(nameof(propertyExpression))] string? propertyNameCallerArgumentExpression = null) where TComponent : ComponentBaseWithState
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
         var propertyName = GetPropertyFromFuncLambda(propertyNameCallerArgumentExpression);
@@ -43,7 +43,7 @@ public static class ComponentBaseWithStateExtensions
     /// <param name="propertyName">The name of the property whose parameter state needs to be accessed. Use nameof(...) to get the property name.</param>
     /// <returns>The <see cref="ParameterState{T}.Value"/> of the specified property.</returns>
     /// <exception cref="KeyNotFoundException">Thrown when the parameter state with <paramref name="propertyName"/> is not found.</exception>
-    public static T? GetState<T>(this ComponentBaseWithState component, string propertyName)
+    public static T GetState<T>(this ComponentBaseWithState component, string propertyName)
     {
         if (component.ParameterContainer.TryGetValue(propertyName, out var lifeCycle))
         {

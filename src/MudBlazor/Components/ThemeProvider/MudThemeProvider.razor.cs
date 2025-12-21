@@ -14,7 +14,7 @@ namespace MudBlazor;
 /// Provides a standard set of colors, shapes, sizes and shadows to a layout.
 /// </summary>
 /// <seealso cref="MudTheme"/>
-partial class MudThemeProvider : ComponentBaseWithState, IDisposable
+partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
@@ -28,7 +28,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
     private MudTheme? _theme;
     private readonly ParameterState<bool> _isDarkModeState;
-    private readonly ParameterState<bool> _observeSystemThemeChangeState;
+    private readonly ParameterState<Palette?> _currentPaletteState;
+    private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
     private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
     private event Func<bool, Task>? _darkLightModeChanged;
@@ -58,8 +59,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// Defaults to <c>true</c>.
     /// When <c>true</c>, the theme will automatically change to Light Mode or Dark Mode as the system theme changes.
     /// </remarks>
-    [Parameter]
-    public bool ObserveSystemThemeChange { get; set; } = true;
+    [Parameter, ParameterState]
+    public bool ObserveSystemDarkModeChange { get; set; } = true;
 
     /// <summary>
     /// Uses darker colors for all MudBlazor components.
@@ -68,7 +69,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// Defaults to <c>false</c>.
     /// When this value changes, <see cref="IsDarkModeChanged"/> occurs.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     public bool IsDarkMode { get; set; }
 
     /// <summary>
@@ -77,6 +78,22 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
+    /// <summary>
+    /// Gets the currently active palette based on the <see cref="IsDarkMode"/> setting.
+    /// </summary>
+    /// <remarks>
+    /// Returns <see cref="MudTheme.PaletteDark"/> when <see cref="IsDarkMode"/> is <c>true</c>; otherwise, returns <see cref="MudTheme.PaletteLight"/>.
+    /// When this value changes, <see cref="CurrentPaletteChanged"/> occurs.
+    /// </remarks>
+    [Parameter, ParameterState]
+    public Palette? CurrentPalette { get; set; }
+
+    /// <summary>
+    /// Occurs when <see cref="CurrentPalette"/> has changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<Palette?> CurrentPaletteChanged { get; set; }
+
     [DynamicDependency(nameof(SystemDarkModeChangedAsync))]
     public MudThemeProvider()
     {
@@ -84,10 +101,12 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
             .WithEventCallback(() => IsDarkModeChanged);
-        _observeSystemThemeChangeState = registerScope
-            .RegisterParameter<bool>(nameof(ObserveSystemThemeChange))
-            .WithParameter(() => ObserveSystemThemeChange)
-            .WithChangeHandler(OnObserveSystemThemeChangeChanged);
+        _observeSystemDarkModeChangeState = registerScope.RegisterParameter<bool>(nameof(ObserveSystemDarkModeChange))
+            .WithParameter(() => ObserveSystemDarkModeChange)
+            .WithChangeHandler(OnObserveSystemDarkModeChangeChanged);
+        _currentPaletteState = registerScope.RegisterParameter<Palette?>(nameof(CurrentPalette))
+            .WithParameter(() => CurrentPalette)
+            .WithEventCallback(() => CurrentPaletteChanged);
         _lazyDotNetRef = new Lazy<DotNetObjectReference<MudThemeProvider>>(CreateDotNetObjectReference);
     }
 
@@ -104,10 +123,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return value;
     }
 
-    [ExcludeFromCodeCoverage]
-    [Obsolete("Use GetSystemDarkModeAsync instead")]
-    public Task<bool> GetSystemPreference() => GetSystemDarkModeAsync();
-
     /// <summary>
     /// Calls a function when the system's color has changed.
     /// </summary>
@@ -121,10 +136,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
         return Task.CompletedTask;
     }
-
-    [ExcludeFromCodeCoverage]
-    [Obsolete("Use WatchSystemDarkModeAsync instead")]
-    public Task WatchSystemPreference(Func<bool, Task> functionOnChange) => WatchSystemDarkModeAsync(functionOnChange);
 
     /// <summary>
     /// Occurs when the system's dark mode has changed.
@@ -141,17 +152,12 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
-    [ExcludeFromCodeCoverage]
-    [Obsolete("Use SystemDarkModeChangedAsync instead")]
-    [JSInvokable]
-    public Task SystemPreferenceChanged(bool isDarkMode) => SystemDarkModeChangedAsync(isDarkMode);
-
     // <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (_observeSystemThemeChangeState.Value && !_observing)
+            if (_observeSystemDarkModeChangeState.Value && !_observing)
             {
                 _observing = true;
                 await WatchDarkThemeMedia();
@@ -169,7 +175,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     // <inheritdoc />
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (Theme is not null)
         {
@@ -179,7 +185,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             }
         }
 
-        base.OnParametersSet();
+        await _currentPaletteState.SetValueAsync(GetCurrentPalette());
+
+        await base.OnParametersSetAsync();
     }
 
     /// <summary>
@@ -546,32 +554,52 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Zindex}-tooltip: {_theme.ZIndex.Tooltip};");
 
         // Native HTML control light/dark mode
-        theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
+        theme.AppendLine($"--mud-native-html-color-scheme: {(_isDarkModeState.Value ? "dark" : "light")};");
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
-    /// Releases resources used by this component.
+    /// Releases managed resources associated with this object asynchronously.
     /// </summary>
-    public void Dispose()
+    /// <returns>The task representing asynchronous execution of this method.</returns>
+    protected virtual async ValueTask DisposeAsyncCore()
     {
-        if (!_disposed)
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        _darkLightModeChanged = null;
+
+        if (_lazyDotNetRef.IsValueCreated)
         {
-            _disposed = true;
-            _darkLightModeChanged = null;
-            if (_lazyDotNetRef.IsValueCreated)
-            {
-                _lazyDotNetRef.Value.Dispose();
-                // When .NET7 is dropped we can use async Dispose, but for now MAUI has bug https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968.
-                _ = StopWatchingDarkThemeMedia();
-            }
+            _lazyDotNetRef.Value.Dispose();
         }
+
+        await StopWatchingDarkThemeMedia();
     }
 
-    private async Task OnObserveSystemThemeChangeChanged(ParameterChangedEventArgs<bool> arg)
+    private Palette? GetCurrentPalette()
+    {
+        if (_theme is null)
+        {
+            return null;
+        }
+
+        return _isDarkModeState.Value ? _theme.PaletteDark : _theme.PaletteLight;
+    }
+
+    private async Task OnObserveSystemDarkModeChangeChanged(ParameterChangedEventArgs<bool> arg)
     {
         // The _observing flag prevents attempting to stop observation when it hasn't been started.
-        // For example, ObserveSystemThemeChange is true by default, and if it's set to false in the initial component setup 
-        // like <MudThemeProvider ObserveSystemThemeChange="false" />, the ChangeHandler of ParameterState will be invoked.
+        // For example, ObserveSystemDarkModeChange is true by default, and if it's set to false in the initial component setup 
+        // like <MudThemeProvider ObserveSystemDarkModeChange="false" />, the ChangeHandler of ParameterState will be invoked.
         // Therefore, it's not desirable to stop an observation that hasn't been started.
         if (arg.Value)
         {

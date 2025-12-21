@@ -6,6 +6,7 @@ using System;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// Provides methods to create unique identifiers with optional prefixes.
 /// </summary>

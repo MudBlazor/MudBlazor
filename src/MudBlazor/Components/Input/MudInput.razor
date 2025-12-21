@@ -31,21 +31,21 @@
                   readonly="@GetReadOnlyState()"
                   inputmode="@InputMode.ToDescriptionString()"
                   @onblur="@OnBlurredAsync"
-                  @oninput="OnInput"
-                  @onchange="OnChange"
+                  @bind:event="@(Immediate ? "oninput" : "onchange")"
+                  @bind:get="@_internalText"
+                  @bind:set="@OnInputOrOnChangeAsync"
                   @onkeydown="@InvokeKeyDownAsync"
                   @onkeyup="@InvokeKeyUpAsync"
                   @onpaste="@OnPaste"
-                  value="@_internalText"
                   maxlength="@MaxLength"
                   @onkeydown:preventDefault="@KeyDownPreventDefault"
                   @onkeyup:preventDefault="@KeyUpPreventDefault"
                   @onwheel="@OnMouseWheel"
                   aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@Error.ToString().ToLowerInvariant()"
+                  aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
-            @Text
+            @ReadText
             </textarea>
         @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
     }
@@ -56,9 +56,9 @@
                @attributes="UserAttributes"
                id="@InputElementId"
                type="@InputTypeString"
-               value="@_internalText"
-               @oninput="OnInput"
-               @onchange="OnChange"
+               @bind:event="@(Immediate ? "oninput" : "onchange")"
+               @bind:get="@_internalText"
+               @bind:set="@OnInputOrOnChangeAsync"
                @onblur="@OnBlurredAsync"
                placeholder="@Placeholder"
                disabled=@GetDisabledState()
@@ -72,7 +72,7 @@
                @onkeyup:preventDefault="@KeyUpPreventDefault"
                @onwheel="@OnMouseWheel"
                aria-describedby="@GetAriaDescribedByString()"
-               aria-invalid="@Error.ToString().ToLowerInvariant()"
+               aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
 

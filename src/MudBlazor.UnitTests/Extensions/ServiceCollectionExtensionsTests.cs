@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -292,8 +292,11 @@ public class ServiceCollectionExtensionsTests
             options.QueueDelay = TimeSpan.FromSeconds(5);
             options.ContainerClass = "container_class";
             options.FlipMargin = 100;
+            options.OverflowPadding = 0;
             options.ThrowOnDuplicateProvider = false;
             options.Mode = PopoverMode.Default;
+            options.ModalOverlay = true;
+            options.OverflowBehavior = OverflowBehavior.FlipNever;
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -521,8 +524,13 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.QueueDelay = TimeSpan.FromSeconds(5);
             options.PopoverOptions.ContainerClass = "container_class";
             options.PopoverOptions.FlipMargin = 100;
+            options.PopoverOptions.OverflowPadding = 12;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
             options.PopoverOptions.Mode = PopoverMode.Default;
+            options.PopoverOptions.ModalOverlay = true;
+            options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
+            options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
+            options.PopoverOptions.Duration = TimeSpan.FromSeconds(2);
 
             expectedOptions = options;
         });
@@ -584,8 +592,13 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
         actualPopoverOptions.ContainerClass.Should().Be(expectedOptions.PopoverOptions.ContainerClass);
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
+        actualPopoverOptions.OverflowPadding.Should().Be(expectedOptions.PopoverOptions.OverflowPadding);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
+        actualPopoverOptions.ModalOverlay.Should().Be(expectedOptions.PopoverOptions.ModalOverlay);
+        actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
+        actualPopoverOptions.Delay.Should().Be(expectedOptions.PopoverOptions.Delay);
+        actualPopoverOptions.Duration.Should().Be(expectedOptions.PopoverOptions.Duration);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);

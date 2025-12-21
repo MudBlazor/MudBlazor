@@ -3,7 +3,7 @@
 
 <MudMenu FullWidth="true" ActivationEvent="@MouseEvent.LeftClick">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left Click</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary" OnClick="@(() => context.ToggleAsync())">Left Click</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -15,7 +15,9 @@
 
 <MudMenu ActivationEvent="@MouseEvent.RightClick">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right Click</MudChip>
+        <div @oncontextmenu="@context.ToggleAsync" @oncontextmenu:preventDefault>
+            <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right Click</MudChip>
+        </div>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -27,7 +29,9 @@
 
 <MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse Over</MudChip>
+        <div @onpointerenter="@context.OpenAsync" @onpointerleave="@context.CloseAsync">
+            <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse Over</MudChip>
+        </div>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
