@@ -2,7 +2,7 @@
 
 @inject IScrollListenerFactory ScrollListenerFactory
 @inject IScrollManager ScrollManager
-@implements IDisposable
+@implements IAsyncDisposable
 
 <!--suppress CssUnresolvedCustomProperty -->
 <style>
@@ -59,9 +59,12 @@
         }
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _scrollListener?.Dispose();
+        if (_scrollListener != null)
+        {
+            await _scrollListener.DisposeAsync();
+        }
     }
 
     private void ScrollListenerOnScroll(object sender, ScrollEventArgs e)
@@ -76,6 +79,6 @@
     private void OnScrollBarValueChanged()
     {
         var scrollTo = (100 - _scrollBarValue) / 100 * _scrollHeight;
-        ScrollManager.ScrollToAsync("scroll_advanced", 0, Convert.ToInt32(scrollTo), ScrollBehavior.Auto);
+        ScrollManager.ScrollToAsync("#scroll_advanced", 0, Convert.ToInt32(scrollTo), ScrollBehavior.Auto);
     }
 }

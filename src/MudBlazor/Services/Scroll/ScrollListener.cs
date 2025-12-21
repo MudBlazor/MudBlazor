@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
@@ -53,20 +54,34 @@ namespace MudBlazor
 
         private async void Subscribe(EventHandler<ScrollEventArgs> value)
         {
-            if (_onScroll == null)
+            try
             {
-                await Start();
-            }
+                if (_onScroll == null)
+                {
+                    await Start();
+                }
 
-            _onScroll += value;
+                _onScroll += value;
+            }
+            catch
+            {
+                Debug.WriteLine("Failed to subscribe to scroll event.");
+            }
         }
 
-        private void Unsubscribe(EventHandler<ScrollEventArgs> value)
+        private async void Unsubscribe(EventHandler<ScrollEventArgs> value)
         {
-            _onScroll -= value;
-            if (_onScroll == null)
+            try
             {
-                Cancel().ConfigureAwait(false);
+                _onScroll -= value;
+                if (_onScroll == null)
+                {
+                    await CancelAsync();
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Failed to unsubscribe from scroll event.");
             }
         }
 
@@ -92,25 +107,33 @@ namespace MudBlazor
         /// <summary>
         /// Unsubscribes from the scroll event in JavaScript.
         /// </summary>
-        private async ValueTask Cancel()
+        private async ValueTask CancelAsync()
         {
             await _js.InvokeVoidAsyncWithErrorHandling("mudScrollListener.cancelListener", _listenerId);
         }
 
         /// <inheritdoc />
-        public async Task<ScrollEventArgs> GetCurrentScrollDataAsync()
+        public ValueTask<ScrollEventArgs> GetCurrentScrollDataAsync()
         {
-            return await _js.InvokeAsync<ScrollEventArgs>("mudScrollListener.getCurrentScrollPosition", Selector);
+            return _js.InvokeAsync<ScrollEventArgs>("mudScrollListener.getCurrentScrollPosition", Selector);
         }
 
         /// <inheritdoc />
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             if (!_disposed)
             {
                 _disposed = true;
-                _dotNetRef?.Dispose();
-                _onScroll = null;
+
+                try
+                {
+                    await CancelAsync();
+                }
+                finally
+                {
+                    _dotNetRef?.Dispose();
+                    _onScroll = null;
+                }
             }
         }
     }

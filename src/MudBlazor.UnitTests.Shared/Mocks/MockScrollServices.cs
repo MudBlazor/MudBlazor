@@ -20,21 +20,24 @@
     {
         public string? Selector { get; set; }
         public int ReportRateMs { get; set; }
-        public bool FireOnStart { get; set; }
 
         public event EventHandler<ScrollEventArgs>? OnScroll;
-
-        public Task<ScrollEventArgs> GetCurrentScrollDataAsync()
-        {
-            return Task.FromResult(new ScrollEventArgs());
-        }
 
         public MockScrollListener()
         {
             OnScroll?.Invoke(this, new ScrollEventArgs());
         }
 
-        public void Dispose() { }
+        public ValueTask<ScrollEventArgs> GetCurrentScrollDataAsync()
+        {
+            return ValueTask.FromResult(new ScrollEventArgs());
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            return ValueTask.CompletedTask;
+        }
     }
 
     /// <summary>

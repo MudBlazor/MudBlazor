@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 @inject IScrollListenerFactory ScrollListenerFactory
-@implements IDisposable
+@implements IAsyncDisposable
 
 <!--suppress CssUnresolvedCustomProperty -->
 <style>
@@ -50,9 +50,12 @@
         }
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _scrollListener?.Dispose();
+        if (_scrollListener != null)
+        {
+            await _scrollListener.DisposeAsync();
+        }
     }
 
     private void ScrollListenerOnScroll(object sender, ScrollEventArgs e)
