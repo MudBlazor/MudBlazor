@@ -177,7 +177,7 @@ public partial class TestsForApiPages
 
             cb.AddHeader();
             cb.AddLine("using Bunit;");
-            cb.AddLine("using FluentAssertions;");
+            cb.AddLine("using AwesomeAssertions;");
             cb.AddLine("using Microsoft.AspNetCore.Components;");
             cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
             cb.AddLine("using MudBlazor.Docs.Pages.Api;");

@@ -2,8 +2,8 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Extensions;
