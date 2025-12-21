@@ -32,7 +32,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: triage-artifacts-issue-${{ github.event.issue.number }}
           path: |
