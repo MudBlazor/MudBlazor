@@ -38,7 +38,7 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private bool _handleNextFocus;
-        private bool _keyInterceptorObserving = false;
+        internal bool _keyInterceptorObserving;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
