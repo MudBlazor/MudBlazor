@@ -186,7 +186,7 @@ namespace MudBlazor
         /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
         {
-            if (TimeIntermediate != time)
+            if (_timeState.Value != time)
             {
                 Touched = true;
                 TimeIntermediate = time;
@@ -196,7 +196,7 @@ namespace MudBlazor
                 }
 
                 UpdateTimeSetFromTime();
-                await TimeChanged.InvokeAsync(time);
+                await SetValueAsync(time);
                 await BeginValidateAsync();
                 FieldChanged(time);
             }
@@ -233,7 +233,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            return SetTimeAsync(TimeIntermediate, false);
+            return SetValueAsync(TimeIntermediate);
         }
 
         /// <inheritdoc />
@@ -623,7 +623,16 @@ namespace MudBlazor
             return value;
         }
 
-        private Task OnTimeChangeHandlerAsync(ParameterChangedEventArgs<TimeSpan?> args) => SetTimeAsync(args.Value, true);
+        private async Task OnTimeChangeHandlerAsync(ParameterChangedEventArgs<TimeSpan?> args)
+        {
+            Touched = true;
+            TimeIntermediate = args.Value;
+            if (args.Value != null)
+            {
+                await SetTextAsync(ConvertSet(args.Value), false);
+            }
+            UpdateTimeSetFromTime();
+        }
 
         private DotNetObjectReference<MudTimePicker> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
 
