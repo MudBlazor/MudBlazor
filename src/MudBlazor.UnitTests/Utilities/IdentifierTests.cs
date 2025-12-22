@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities;
 
+#nullable enable
 [TestFixture]
 public class IdentifierTests
 {
@@ -33,7 +34,7 @@ public class IdentifierTests
         // Assert
         result.Length.Should().Be(9);
         // First character should be a letter (a-z)
-        char firstChar = result[0];
+        var firstChar = result[0];
         (firstChar is >= 'a' and <= 'z').Should().BeTrue("first character should be a lowercase letter");
     }
 
@@ -49,7 +50,9 @@ public class IdentifierTests
         for (var i = 0; i < Count; i++)
         {
             if (!results.Add(Identifier.Create()))
+            {
                 duplicates++;
+            }
         }
 
         // Assert - allow tiny chance of collision
