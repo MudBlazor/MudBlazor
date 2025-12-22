@@ -25,13 +25,44 @@ public class IdentifierTests
     }
 
     [Test]
-    public void Create_WithoutPrefix_ShouldReturnIdentifierWithDefaultPrefix()
+    public void Create_WithoutPrefix_ShouldReturnIdentifierWithRandomPrefix()
     {
         // Act
         var result = Identifier.Create();
 
         // Assert
-        result.Should().StartWith("a");
         result.Length.Should().Be(9);
+        // First character should be a letter (a-z)
+        char firstChar = result[0];
+        (firstChar >= 'a' && firstChar <= 'z').Should().BeTrue("first character should be a lowercase letter");
+    }
+
+    [Test]
+    public void Create_WithoutPrefix_ShouldGenerateUniqueIdentifiers()
+    {
+        // Act
+        var results = new HashSet<string>();
+        for (int i = 0; i < 1000; i++)
+        {
+            results.Add(Identifier.Create());
+        }
+
+        // Assert - all 1000 should be unique
+        results.Count.Should().Be(1000);
+    }
+
+    [Test]
+    public void Create_WithoutPrefix_FirstCharacterShouldVary()
+    {
+        // Act - generate multiple identifiers and collect first characters
+        var firstChars = new HashSet<char>();
+        for (int i = 0; i < 100; i++)
+        {
+            var id = Identifier.Create();
+            firstChars.Add(id[0]);
+        }
+
+        // Assert - should have multiple different first characters (high probability)
+        firstChars.Count.Should().BeGreaterThan(5, "first character should vary randomly");
     }
 }
