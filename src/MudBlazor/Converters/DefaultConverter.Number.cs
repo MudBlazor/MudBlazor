@@ -26,10 +26,16 @@ internal partial class DefaultConverter
             }
 
             var currentCulture = culture.Invoke();
+            var isPercentage = format.Invoke()?.StartsWith("P") ?? false;
+
+            if (isPercentage)
+            {
+                input = input.Replace("%", string.Empty);
+            }
 
             if (TNumber.TryParse(input, NumberStyles.Any, currentCulture, out var result))
             {
-                return result;
+                return isPercentage ? result / (TNumber)(object)100.0 : result;
             }
 
             throw new ConversionException(LanguageResource.Converter_InvalidNumber);
