@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -25,6 +26,7 @@ namespace MudBlazor
         private string? _clockElementReferenceId;
         private readonly SetTime _timeSet = new();
         private string _timeFormat = string.Empty;
+        private readonly ParameterState<TimeSpan?> _timeState;
         private readonly Lazy<DotNetObjectReference<MudTimePicker>> _dotNetReferenceLazy;
 
         [Inject]
@@ -41,6 +43,11 @@ namespace MudBlazor
             };
             AdornmentIcon = Icons.Material.Filled.AccessTime;
             _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
+            using var registerScope = CreateRegisterScope();
+            _timeState = registerScope.RegisterParameter<TimeSpan?>(nameof(Time))
+                .WithParameter(() => Time)
+                .WithEventCallback(() => TimeChanged)
+                .WithChangeHandler(OnTimeChangeHandlerAsync);
         }
 
         internal TimeSpan? TimeIntermediate { get; private set; }
@@ -121,7 +128,7 @@ namespace MudBlazor
                 _amPm = value;
 
                 Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
+                SetTextAsync(ConvertSet(_timeState.Value), false).CatchAndLog();
             }
         }
 
@@ -152,7 +159,7 @@ namespace MudBlazor
                 _timeFormat = value;
 
                 Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
+                SetTextAsync(ConvertSet(_timeState.Value), false).CatchAndLog();
             }
         }
 
@@ -162,13 +169,9 @@ namespace MudBlazor
         /// <remarks>
         /// When this value changes, <see cref="TimeChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public TimeSpan? Time
-        {
-            get => _value;
-            set => SetTimeAsync(value, true).CatchAndLog();
-        }
+        public TimeSpan? Time { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="Time"/> has changed.
@@ -183,20 +186,19 @@ namespace MudBlazor
         /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
         {
-            if (_value != time)
+            if (_timeState.Value != time)
             {
                 Touched = true;
                 TimeIntermediate = time;
-                _value = time;
                 if (updateValue)
                 {
-                    await SetTextAsync(ConvertSet(_value), false);
+                    await SetTextAsync(ConvertSet(time), false);
                 }
 
                 UpdateTimeSetFromTime();
-                await TimeChanged.InvokeAsync(_value);
+                await SetValueAsync(_timeState.Value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                FieldChanged(_timeState.Value);
             }
         }
 
@@ -231,9 +233,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            Time = TimeIntermediate;
-
-            return Task.CompletedTask;
+            return SetValueAsync(TimeIntermediate);
         }
 
         /// <inheritdoc />
@@ -624,7 +624,13 @@ namespace MudBlazor
             return value;
         }
 
+        private Task OnTimeChangeHandlerAsync(ParameterChangedEventArgs<TimeSpan?> args) => SetTimeAsync(args.Value, true);
+
         private DotNetObjectReference<MudTimePicker> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
+
+        protected internal override TimeSpan? ReadValue => _timeState.Value;
+
+        protected override Task SetValueAsync(TimeSpan? value) => _timeState.SetValueAsync(value);
 
         protected async Task SubmitAndCloseAsync()
         {
@@ -807,14 +813,14 @@ namespace MudBlazor
 
         protected async Task ReturnTimeBackUpAsync()
         {
-            if (Time == null)
+            if (_timeState.Value == null)
             {
                 TimeIntermediate = null;
             }
             else
             {
-                _timeSet.Hour = Time.Value.Hours;
-                _timeSet.Minute = Time.Value.Minutes;
+                _timeSet.Hour = _timeState.Value.Value.Hours;
+                _timeSet.Minute = _timeState.Value.Value.Minutes;
 
                 await UpdateTimeAsync();
             }
