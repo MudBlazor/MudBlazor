@@ -11,8 +11,15 @@ namespace MudBlazor;
 /// Provides high-performance methods to create unique identifiers with optional prefixes.
 /// </summary>
 /// <remarks>
+/// <para>
 /// This class uses optimized algorithms to generate identifiers quickly while maintaining uniqueness.
 /// Identifiers consist of lowercase letters and digits from the set [a-z0-9].
+/// </para>
+/// <para>
+/// Performance is prioritized over perfect uniform distribution. The implementation uses modulo operations 
+/// which introduce a small bias (~0.39%) where the first 4 characters (a-d) appear slightly more frequently 
+/// than the remaining 32 characters. This bias is negligible for identifier generation purposes.
+/// </para>
 /// </remarks>
 public static class Identifier
 {
@@ -36,26 +43,27 @@ public static class Identifier
     /// </example>
     public static string Create(ReadOnlySpan<char> prefix)
     {
-        Span<char> identifierSpan = stackalloc char[prefix.Length + RandomStringLength];
-        prefix.CopyTo(identifierSpan);
-
-        // Generate random characters using bit shifting for performance
-        // Each 64-bit integer provides up to 8 characters (8 bits per character)
-        var charsGenerated = 0;
-        while (charsGenerated < RandomStringLength)
+        var prefixStr = prefix.ToString();
+        return string.Create(prefixStr.Length + RandomStringLength, prefixStr, static (span, pfx) =>
         {
-            var random = Random.Shared.NextInt64();
-            var charsInThisBatch = Math.Min(8, RandomStringLength - charsGenerated);
-
-            for (var i = 0; i < charsInThisBatch; i++)
+            pfx.AsSpan().CopyTo(span);
+            
+            // Generate random characters using bit shifting for performance
+            // Each 64-bit integer provides up to 8 characters (1 byte per character)
+            var charsGenerated = 0;
+            while (charsGenerated < RandomStringLength)
             {
-                identifierSpan[prefix.Length + charsGenerated + i] = GetCharFromRandomBits(random, i * 8);
+                var random = Random.Shared.NextInt64();
+                var charsInThisBatch = Math.Min(8, RandomStringLength - charsGenerated);
+
+                for (var i = 0; i < charsInThisBatch; i++)
+                {
+                    span[pfx.Length + charsGenerated + i] = GetCharFromRandomBits(random, i * 8);
+                }
+
+                charsGenerated += charsInThisBatch;
             }
-
-            charsGenerated += charsInThisBatch;
-        }
-
-        return identifierSpan.ToString();
+        });
     }
 
     /// <summary>
@@ -73,35 +81,26 @@ public static class Identifier
     /// </example>
     public static string Create()
     {
-        Span<char> identifierSpan = stackalloc char[RandomStringLength + 1];
-
-        // Generate random value once and reuse its bytes efficiently
-        var random = Random.Shared.NextInt64();
-        
-        // First character must be a letter for valid HTML IDs (use high byte)
-        identifierSpan[0] = Chars[(int)((random >> 56) % LettersCount)];
-
-        // Generate remaining characters using the lower 7 bytes before requesting new random
-        var charsGenerated = 0;
-        var nextByteIndex = 0; // Will extract bytes 0-6 (bits 0-55)
-        var randomBytesAvailable = 7; // Bytes 0-6 are still available (we used byte 7 for first char)
-
-        while (charsGenerated < RandomStringLength)
+        return string.Create(RandomStringLength + 1, 0, static (span, _) =>
         {
-            if (randomBytesAvailable == 0)
+            // Use two random values for optimal performance with RandomStringLength = 8
+            // First random: provides the letter prefix (byte 7) + next 7 characters (bytes 0-6)
+            // Second random: provides the final character (byte 0)
+            var random1 = Random.Shared.NextInt64();
+            var random2 = Random.Shared.NextInt64();
+
+            // First character must be a letter for valid HTML IDs (use high byte of first random)
+            span[0] = Chars[(int)((random1 >> 56) % LettersCount)];
+
+            // Next 7 characters from the remaining bytes (bits 0-55) of first random
+            for (var i = 0; i < 7; i++)
             {
-                random = Random.Shared.NextInt64();
-                randomBytesAvailable = 8;
-                nextByteIndex = 0;
+                span[i + 1] = GetCharFromRandomBits(random1, i * 8);
             }
 
-            identifierSpan[charsGenerated + 1] = GetCharFromRandomBits(random, nextByteIndex * 8);
-            charsGenerated++;
-            nextByteIndex++;
-            randomBytesAvailable--;
-        }
-
-        return identifierSpan.ToString();
+            // Final character from second random value
+            span[RandomStringLength] = GetCharFromRandomBits(random2, 0);
+        });
     }
 
     /// <summary>

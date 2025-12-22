@@ -235,4 +235,41 @@ public class IdentifierBenchmark
         
         return identifierSpan.ToString();
     }
+
+    /// <summary>
+    /// Benchmark: Using string.Create with prefix
+    /// </summary>
+    [Benchmark]
+    public string StringCreate_WithPrefix()
+    {
+        return string.Create(TestPrefix.Length + RandomStringLength, TestPrefix, static (span, prefix) =>
+        {
+            prefix.AsSpan().CopyTo(span);
+            var random = Random.Shared.NextInt64();
+            for (var i = 0; i < RandomStringLength; i++)
+            {
+                if (i == 8)
+                {
+                    random = Random.Shared.NextInt64();
+                }
+                span[prefix.Length + i] = Chars[(int)((random >> ((i % 8) * 8)) % CharsLength)];
+            }
+        });
+    }
+
+    /// <summary>
+    /// Benchmark: Using string.Create without prefix
+    /// </summary>
+    [Benchmark]
+    public string StringCreate_NoPrefix()
+    {
+        return string.Create(RandomStringLength, 0, static (span, _) =>
+        {
+            var random = Random.Shared.NextInt64();
+            for (var i = 0; i < RandomStringLength; i++)
+            {
+                span[i] = Chars[(int)((random >> (i * 8)) % CharsLength)];
+            }
+        });
+    }
 }
