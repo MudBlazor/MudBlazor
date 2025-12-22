@@ -904,6 +904,14 @@ public class DefaultConverterTests
     }
 
     [Test]
+    public void Number_ConvertBack_Double_ValidValue_ReturnsParsedDouble_WithPercentage()
+    {
+        var conv = CreateNumberConverter<double>(format: () => "P3");
+        const string Text = "3.140%";
+        conv.ConvertBack(Text).Should().BeApproximately(0.0314, 1e-10);
+    }
+
+    [Test]
     public void Number_ConvertBack_Int_ValidValue_ReturnsParsedInt()
     {
         var conv = CreateNumberConverter<int>(() => CultureInfo.InvariantCulture);
