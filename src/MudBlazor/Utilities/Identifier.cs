@@ -41,12 +41,11 @@ public static class Identifier
     /// // Returns something like: "buttonx7k2n9q4"
     /// </code>
     /// </example>
-    public static string Create(ReadOnlySpan<char> prefix)
+    public static string Create(string prefix)
     {
-        var prefixStr = prefix.ToString();
-        return string.Create(prefixStr.Length + RandomStringLength, prefixStr, static (span, pfx) =>
+        return string.Create(prefix.Length + RandomStringLength, prefix, static (span, pfx) =>
         {
-            pfx.AsSpan().CopyTo(span);
+            pfx.CopyTo(span);
             
             // Generate random characters using bit shifting for performance
             // Each 64-bit integer provides up to 8 characters (1 byte per character)
