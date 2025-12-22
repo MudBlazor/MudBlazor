@@ -627,10 +627,7 @@ namespace MudBlazor
         {
             Touched = true;
             TimeIntermediate = args.Value;
-            if (args.Value != null)
-            {
-                await SetTextAsync(ConvertSet(args.Value), false);
-            }
+            await SetTextAsync(ConvertSet(args.Value), false);
             UpdateTimeSetFromTime();
         }
 
