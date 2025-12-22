@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-input-clear-button").Click(); //clear the input
 
             picker.Text.Should().Be(""); //ensure the text and time are reset. Note this is an empty string rather than null due to how the reset works internally
-            picker.Time.Should().Be(null);
+            picker.ReadValue.Should().Be(null);
         }
 
         [Test]

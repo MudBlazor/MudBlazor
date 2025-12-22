@@ -186,7 +186,7 @@ namespace MudBlazor
         /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
         {
-            if (_timeState.Value != time)
+            if (TimeIntermediate != time)
             {
                 Touched = true;
                 TimeIntermediate = time;
@@ -196,9 +196,9 @@ namespace MudBlazor
                 }
 
                 UpdateTimeSetFromTime();
-                await SetValueAsync(_timeState.Value);
+                await SetValueAsync(time);
                 await BeginValidateAsync();
-                FieldChanged(_timeState.Value);
+                FieldChanged(time);
             }
         }
 
@@ -239,7 +239,6 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task ClearAsync(bool close = true)
         {
-            TimeIntermediate = null;
             await SetTimeAsync(null, true);
 
             if (AutoClose)
