@@ -196,7 +196,7 @@ namespace MudBlazor
                 }
 
                 UpdateTimeSetFromTime();
-                await SetValueAsync(time);
+                await TimeChanged.InvokeAsync(time);
                 await BeginValidateAsync();
                 FieldChanged(time);
             }
@@ -233,7 +233,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            return SetValueAsync(TimeIntermediate);
+            return SetTimeAsync(TimeIntermediate, false);
         }
 
         /// <inheritdoc />
