@@ -16,9 +16,9 @@ namespace MudBlazor;
 /// Identifiers consist of lowercase letters and digits from the set [a-z0-9].
 /// </para>
 /// <para>
-/// Performance is prioritized over perfect uniform distribution. The implementation uses modulo operations 
-/// which introduce a small bias (~0.39%) where the first 4 characters (a-d) appear slightly more frequently 
-/// than the remaining 32 characters. This bias is negligible for identifier generation purposes.
+/// Performance is prioritized over perfect uniform distribution. The implementation uses modulo operations, 
+/// which introduce a slight modulo bias so that some characters may appear marginally more frequently than others.
+/// For the purposes of identifier generation, this bias is negligible.
 /// </para>
 /// </remarks>
 public static class Identifier
@@ -50,6 +50,8 @@ public static class Identifier
             var written = pfx.Length;
             var bitShift = 0;
 
+            // Loop safely consumes 8 bytes of `random` at a time; the first char is from a separate high byte.
+            // `bitShift > 56` triggers a new random value, so no bits are reused even for longer lengths.
             while (written < span.Length)
             {
                 if (bitShift > 56)
@@ -88,7 +90,8 @@ public static class Identifier
             var written = 1;
             var bitShift = 0;
 
-            // Remaining characters
+            // Loop safely consumes 8 bytes of `random` at a time; the first char is from a separate high byte.
+            // `bitShift > 56` triggers a new random value, so no bits are reused even for longer lengths.
             while (written < span.Length)
             {
                 if (bitShift > 56)
