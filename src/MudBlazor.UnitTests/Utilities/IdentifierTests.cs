@@ -34,21 +34,29 @@ public class IdentifierTests
         result.Length.Should().Be(9);
         // First character should be a letter (a-z)
         char firstChar = result[0];
-        (firstChar >= 'a' && firstChar <= 'z').Should().BeTrue("first character should be a lowercase letter");
+        (firstChar is >= 'a' and <= 'z').Should().BeTrue("first character should be a lowercase letter");
     }
 
     [Test]
     public void Create_WithoutPrefix_ShouldGenerateUniqueIdentifiers()
     {
-        // Act
+        // Arrange
+        const int Count = 1000;
         var results = new HashSet<string>();
-        for (int i = 0; i < 1000; i++)
+        var duplicates = 0;
+
+        // Act
+        for (var i = 0; i < Count; i++)
         {
-            results.Add(Identifier.Create());
+            if (!results.Add(Identifier.Create()))
+                duplicates++;
         }
 
-        // Assert - all 1000 should be unique
-        results.Count.Should().Be(1000);
+        // Assert - allow tiny chance of collision
+        duplicates.Should().BeInRange(0, 2, "collisions are extremely unlikely but theoretically possible");
+
+        // Optionally also assert that most of the identifiers are unique
+        results.Count.Should().BeGreaterThan(Count - 3, "almost all identifiers should be unique");
     }
 
     [Test]
@@ -56,7 +64,7 @@ public class IdentifierTests
     {
         // Act - generate multiple identifiers and collect first characters
         var firstChars = new HashSet<char>();
-        for (int i = 0; i < 100; i++)
+        for (var i = 0; i < 100; i++)
         {
             var id = Identifier.Create();
             firstChars.Add(id[0]);

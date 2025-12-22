@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Runtime.CompilerServices;
+
 namespace MudBlazor;
 
 #nullable enable
@@ -25,9 +27,6 @@ public static class Identifier
     private const int LettersCount = 26; // Number of letters (a-z) in Chars
     private const int RandomStringLength = 8;
 
-    // Helper property to ensure CharsLength always matches the actual Chars string length
-    private const int CharsLength = 36;
-
     /// <summary>
     /// Creates a unique identifier with the specified prefix.
     /// </summary>
@@ -47,20 +46,20 @@ public static class Identifier
         {
             pfx.CopyTo(span);
 
-            // Generate random characters using bit shifting for performance
-            // Each 64-bit integer provides up to 8 characters (1 byte per character)
-            var charsGenerated = 0;
-            while (charsGenerated < RandomStringLength)
-            {
-                var random = Random.Shared.NextInt64();
-                var charsInThisBatch = Math.Min(8, RandomStringLength - charsGenerated);
+            var random = Random.Shared.NextInt64();
+            var written = pfx.Length;
+            var bitShift = 0;
 
-                for (var i = 0; i < charsInThisBatch; i++)
+            while (written < span.Length)
+            {
+                if (bitShift > 56)
                 {
-                    span[pfx.Length + charsGenerated + i] = GetCharFromRandomBits(random, i * 8);
+                    random = Random.Shared.NextInt64();
+                    bitShift = 0;
                 }
 
-                charsGenerated += charsInThisBatch;
+                span[written++] = GetCharFromRandomBits(random, bitShift);
+                bitShift += 8;
             }
         });
     }
@@ -82,26 +81,25 @@ public static class Identifier
     {
         return string.Create(RandomStringLength + 1, 0, static (span, _) =>
         {
-            // Use two random values for optimal performance with RandomStringLength = 8
-            // First random: provides the letter prefix (byte 7) + next 7 characters (bytes 0-6)
-            // Second random: provides the final character (byte 0)
-            var random1 = Random.Shared.NextInt64();
-            var random2 = Random.Shared.NextInt64();
+            // First character: must be a letter (a–z)
+            var random = Random.Shared.NextInt64();
+            span[0] = Chars[(int)(((ulong)random >> 56) % LettersCount)];
 
-            // First character must be a letter for valid HTML IDs (use high byte of first random)
-            span[0] = Chars[(int)((random1 >> 56) % LettersCount)];
+            var written = 1;
+            var bitShift = 0;
 
-            // Next characters from the remaining bytes (bits 0-55) of first random (up to 7 chars)
-            var charsFromFirst = Math.Min(RandomStringLength, 7);
-            for (var i = 0; i < charsFromFirst; i++)
+            // Remaining characters
+            while (written < span.Length)
             {
-                span[i + 1] = GetCharFromRandomBits(random1, i * 8);
-            }
+                if (bitShift > 56)
+                {
+                    random = Random.Shared.NextInt64();
+                    bitShift = 0;
+                }
 
-            // Remaining characters (if any) from second random value
-            for (var i = charsFromFirst; i < RandomStringLength; i++)
-            {
-                span[i + 1] = GetCharFromRandomBits(random2, (i - charsFromFirst) * 8);
+                span[written++] = GetCharFromRandomBits(random, bitShift);
+
+                bitShift += 8;
             }
         });
     }
@@ -112,5 +110,12 @@ public static class Identifier
     /// <param name="random">The random 64-bit integer.</param>
     /// <param name="bitShift">The number of bits to shift right (0, 8, 16, 24, etc.).</param>
     /// <returns>A character from the Chars set.</returns>
-    private static char GetCharFromRandomBits(long random, int bitShift) => Chars[(int)((random >> bitShift) % CharsLength)];
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static char GetCharFromRandomBits(long random, int bitShift)
+    {
+        unchecked
+        {
+            return Chars[(int)(((ulong)random >> bitShift) % (ulong)Chars.Length)];
+        }
+    }
 }
