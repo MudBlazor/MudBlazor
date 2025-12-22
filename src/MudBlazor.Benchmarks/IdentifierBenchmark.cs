@@ -276,4 +276,60 @@ public class IdentifierBenchmark
             }
         });
     }
+
+    /// <summary>
+    /// Benchmark: Current production implementation - unified version with prefix
+    /// </summary>
+    [Benchmark]
+    public string Current_Production_WithPrefix()
+    {
+        return string.Create(TestPrefix.Length + RandomStringLength, TestPrefix, static (span, pfx) =>
+        {
+            pfx.CopyTo(span);
+
+            var random = Random.Shared.NextInt64();
+            var written = pfx.Length;
+            var bitShift = 0;
+
+            while (written < span.Length)
+            {
+                if (bitShift > 56)
+                {
+                    random = Random.Shared.NextInt64();
+                    bitShift = 0;
+                }
+
+                span[written++] = Chars[(int)(((ulong)random >> bitShift) % (ulong)Chars.Length)];
+                bitShift += 8;
+            }
+        });
+    }
+
+    /// <summary>
+    /// Benchmark: Current production implementation - unified version without prefix
+    /// </summary>
+    [Benchmark]
+    public string Current_Production_NoPrefix()
+    {
+        return string.Create(RandomStringLength + 1, 0, static (span, _) =>
+        {
+            var random = Random.Shared.NextInt64();
+            span[0] = Chars[(int)(((ulong)random >> 56) % 26)]; // Letters only for first char
+
+            var written = 1;
+            var bitShift = 0;
+
+            while (written < span.Length)
+            {
+                if (bitShift > 56)
+                {
+                    random = Random.Shared.NextInt64();
+                    bitShift = 0;
+                }
+
+                span[written++] = Chars[(int)(((ulong)random >> bitShift) % (ulong)Chars.Length)];
+                bitShift += 8;
+            }
+        });
+    }
 }
