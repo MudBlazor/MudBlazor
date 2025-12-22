@@ -28,6 +28,7 @@ namespace MudBlazor
         private string _timeFormat = string.Empty;
         private readonly ParameterState<TimeSpan?> _timeState;
         private readonly Lazy<DotNetObjectReference<MudTimePicker>> _dotNetReferenceLazy;
+        private bool _isUpdatingFromParameter;
 
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
@@ -183,7 +184,7 @@ namespace MudBlazor
         /// Sets the selected time value.
         /// </summary>
         /// <param name="time">The new value to set.</param>
-        /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
+        /// <param name="updateValue">When <c>true</c>, the parameter value will be updated triggering TimeChanged callback.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
         {
             if (_timeState.Value != time)
@@ -193,18 +194,31 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     await SetTextAsync(ConvertSet(time), false);
+                    UpdateTimeSetFromTime();
+                    await SetValueAsync(time);
+                    await BeginValidateAsync();
+                    FieldChanged(time);
                 }
-
-                UpdateTimeSetFromTime();
-                await SetValueAsync(time);
-                await BeginValidateAsync();
-                FieldChanged(time);
+                else
+                {
+                    // When updateValue is false, we're being called from StringValueChangedAsync
+                    // Don't call SetValueAsync to avoid loop, just update internal state
+                    UpdateTimeSetFromTime();
+                    await BeginValidateAsync();
+                    FieldChanged(time);
+                }
             }
         }
 
         /// <inheritdoc />
         protected override Task StringValueChangedAsync(string? value)
         {
+            // Prevent loop when we're updating from parameter change
+            if (_isUpdatingFromParameter)
+            {
+                return Task.CompletedTask;
+            }
+
             Touched = true;
 
             // Update the time property (without updating back the Value property)
@@ -625,10 +639,25 @@ namespace MudBlazor
 
         private async Task OnTimeChangeHandlerAsync(ParameterChangedEventArgs<TimeSpan?> args)
         {
-            Touched = true;
-            TimeIntermediate = args.Value;
-            await SetTextAsync(ConvertSet(args.Value), false);
-            UpdateTimeSetFromTime();
+            // When parameter changes from parent, _timeState.Value is already updated
+            // We just need to sync internal state - do NOT call SetValueAsync
+            if (TimeIntermediate != args.Value)
+            {
+                _isUpdatingFromParameter = true;
+                try
+                {
+                    Touched = true;
+                    TimeIntermediate = args.Value;
+                    await SetTextAsync(ConvertSet(args.Value), false);
+                    UpdateTimeSetFromTime();
+                    await BeginValidateAsync();
+                    FieldChanged(args.Value);
+                }
+                finally
+                {
+                    _isUpdatingFromParameter = false;
+                }
+            }
         }
 
         private DotNetObjectReference<MudTimePicker> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
