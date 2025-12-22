@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-
 namespace MudBlazor;
 
 #nullable enable
@@ -28,7 +26,7 @@ public static class Identifier
     private const int RandomStringLength = 8;
 
     // Helper property to ensure CharsLength always matches the actual Chars string length
-    private static int CharsLength => Chars.Length;
+    private const int CharsLength = 36;
 
     /// <summary>
     /// Creates a unique identifier with the specified prefix.
@@ -43,10 +41,12 @@ public static class Identifier
     /// </example>
     public static string Create(string prefix)
     {
+        ArgumentNullException.ThrowIfNull(prefix);
+
         return string.Create(prefix.Length + RandomStringLength, prefix, static (span, pfx) =>
         {
             pfx.CopyTo(span);
-            
+
             // Generate random characters using bit shifting for performance
             // Each 64-bit integer provides up to 8 characters (1 byte per character)
             var charsGenerated = 0;
@@ -112,8 +112,5 @@ public static class Identifier
     /// <param name="random">The random 64-bit integer.</param>
     /// <param name="bitShift">The number of bits to shift right (0, 8, 16, 24, etc.).</param>
     /// <returns>A character from the Chars set.</returns>
-    private static char GetCharFromRandomBits(long random, int bitShift)
-    {
-        return Chars[(int)((random >> bitShift) % CharsLength)];
-    }
+    private static char GetCharFromRandomBits(long random, int bitShift) => Chars[(int)((random >> bitShift) % CharsLength)];
 }
