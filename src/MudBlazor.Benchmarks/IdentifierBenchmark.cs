@@ -165,7 +165,7 @@ public class IdentifierBenchmark
     }
 
     /// <summary>
-    /// Benchmark: Using NextInt64 to generate multiple chars at once
+    /// Benchmark: Using NextInt64 to generate multiple chars at once (original optimized)
     /// </summary>
     [Benchmark]
     public string Improved_Int64Based()
@@ -184,6 +184,54 @@ public class IdentifierBenchmark
         {
             identifierSpan[i] = Chars[(int)((random2 >> ((i - 4) * 8)) % CharsLength)];
         }
+        
+        return identifierSpan.ToString();
+    }
+
+    /// <summary>
+    /// Benchmark: Flexible implementation that works with any RandomStringLength (current production code)
+    /// </summary>
+    [Benchmark]
+    public string Current_Flexible()
+    {
+        const int length = RandomStringLength;
+        Span<char> identifierSpan = stackalloc char[length];
+
+        var charsGenerated = 0;
+        while (charsGenerated < length)
+        {
+            var random = Random.Shared.NextInt64();
+            var charsInThisBatch = Math.Min(8, length - charsGenerated);
+            
+            for (var i = 0; i < charsInThisBatch; i++)
+            {
+                identifierSpan[charsGenerated + i] = Chars[(int)((random >> (i * 8)) % CharsLength)];
+            }
+            
+            charsGenerated += charsInThisBatch;
+        }
+
+        return identifierSpan.ToString();
+    }
+
+    /// <summary>
+    /// Benchmark: Unrolled version specifically for length 8 (best performance)
+    /// </summary>
+    [Benchmark]
+    public string Optimized_Unrolled_Length8()
+    {
+        Span<char> identifierSpan = stackalloc char[RandomStringLength];
+        
+        var random = Random.Shared.NextInt64();
+        
+        identifierSpan[0] = Chars[(int)((random >> 0) % CharsLength)];
+        identifierSpan[1] = Chars[(int)((random >> 8) % CharsLength)];
+        identifierSpan[2] = Chars[(int)((random >> 16) % CharsLength)];
+        identifierSpan[3] = Chars[(int)((random >> 24) % CharsLength)];
+        identifierSpan[4] = Chars[(int)((random >> 32) % CharsLength)];
+        identifierSpan[5] = Chars[(int)((random >> 40) % CharsLength)];
+        identifierSpan[6] = Chars[(int)((random >> 48) % CharsLength)];
+        identifierSpan[7] = Chars[(int)((random >> 56) % CharsLength)];
         
         return identifierSpan.ToString();
     }

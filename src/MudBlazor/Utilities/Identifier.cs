@@ -36,18 +36,20 @@ public static class Identifier
         Span<char> identifierSpan = stackalloc char[prefix.Length + RandomStringLength];
         prefix.CopyTo(identifierSpan);
 
-        // Generate two random 64-bit integers for maximum performance
-        var random1 = Random.Shared.NextInt64();
-        var random2 = Random.Shared.NextInt64();
+        // Generate random characters using bit shifting for performance
+        // Each 64-bit integer provides up to 8 characters (8 bits per character)
+        var charsGenerated = 0;
+        while (charsGenerated < RandomStringLength)
+        {
+            var random = Random.Shared.NextInt64();
+            var charsInThisBatch = Math.Min(8, RandomStringLength - charsGenerated);
 
-        // Extract characters from the random bits
-        for (var i = 0; i < 4; i++)
-        {
-            identifierSpan[prefix.Length + i] = Chars[(int)((random1 >> (i * 8)) % CharsLength)];
-        }
-        for (var i = 4; i < 8; i++)
-        {
-            identifierSpan[prefix.Length + i] = Chars[(int)((random2 >> ((i - 4) * 8)) % CharsLength)];
+            for (var i = 0; i < charsInThisBatch; i++)
+            {
+                identifierSpan[prefix.Length + charsGenerated + i] = Chars[(int)((random >> (i * 8)) % CharsLength)];
+            }
+
+            charsGenerated += charsInThisBatch;
         }
 
         return identifierSpan.ToString();
@@ -70,21 +72,23 @@ public static class Identifier
     {
         Span<char> identifierSpan = stackalloc char[RandomStringLength + 1];
 
-        // Generate two random 64-bit integers for maximum performance
-        var random1 = Random.Shared.NextInt64();
-        var random2 = Random.Shared.NextInt64();
+        // First character must be a letter for valid HTML IDs
+        var random = Random.Shared.NextInt64();
+        identifierSpan[0] = Chars[(int)((random >> 56) % 26)];
 
-        // First character from first random bits (letters only for valid HTML IDs)
-        identifierSpan[0] = Chars[(int)((random1 >> 56) % 26)];
+        // Generate remaining characters using bit shifting for performance
+        var charsGenerated = 0;
+        while (charsGenerated < RandomStringLength)
+        {
+            random = Random.Shared.NextInt64();
+            var charsInThisBatch = Math.Min(8, RandomStringLength - charsGenerated);
 
-        // Remaining characters from random bits
-        for (var i = 0; i < 4; i++)
-        {
-            identifierSpan[i + 1] = Chars[(int)((random1 >> (i * 8)) % CharsLength)];
-        }
-        for (var i = 4; i < 8; i++)
-        {
-            identifierSpan[i + 1] = Chars[(int)((random2 >> ((i - 4) * 8)) % CharsLength)];
+            for (var i = 0; i < charsInThisBatch; i++)
+            {
+                identifierSpan[charsGenerated + i + 1] = Chars[(int)((random >> (i * 8)) % CharsLength)];
+            }
+
+            charsGenerated += charsInThisBatch;
         }
 
         return identifierSpan.ToString();

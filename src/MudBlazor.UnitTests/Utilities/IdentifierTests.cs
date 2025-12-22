@@ -65,4 +65,28 @@ public class IdentifierTests
         // Assert - should have multiple different first characters (high probability)
         firstChars.Count.Should().BeGreaterThan(5, "first character should vary randomly");
     }
+
+    [Test]
+    public void Create_WithPrefix_ShouldHandleEmptyPrefix()
+    {
+        // Act
+        var result = Identifier.Create("");
+
+        // Assert
+        result.Length.Should().Be(8);
+    }
+
+    [Test]
+    public void Create_WithPrefix_ShouldHandleLongPrefix()
+    {
+        // Arrange
+        const string LongPrefix = "verylongprefixwithmanychars";
+
+        // Act
+        var result = Identifier.Create(LongPrefix);
+
+        // Assert
+        result.Should().StartWith(LongPrefix);
+        result.Length.Should().Be(LongPrefix.Length + 8);
+    }
 }
