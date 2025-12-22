@@ -166,7 +166,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
             {
                 LabelX = x + 5,
                 LabelY = y - 1,
-                LabelYValue = value.ToString() ?? string.Empty,
+                LabelYValue = value.ToString(null, CultureInfo.InvariantCulture),
             });
         }
     }
