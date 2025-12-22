@@ -75,15 +75,16 @@ public static class Identifier
     {
         Span<char> identifierSpan = stackalloc char[RandomStringLength + 1];
 
-        // First character must be a letter for valid HTML IDs
+        // Generate random value once and reuse its bytes efficiently
         var random = Random.Shared.NextInt64();
+        
+        // First character must be a letter for valid HTML IDs (use high byte)
         identifierSpan[0] = Chars[(int)((random >> 56) % LettersCount)];
 
-        // Generate remaining characters using bit shifting for performance
-        // Reuse unused bytes from the initial random value before requesting a new one
+        // Generate remaining characters using the lower 7 bytes before requesting new random
         var charsGenerated = 0;
-        var nextByteIndex = 0; // Start consuming from the lowest byte (bits 0-7)
-        var randomBytesAvailable = 7; // We already used the high byte (bits 56-63) for the first character
+        var nextByteIndex = 0; // Will extract bytes 0-6 (bits 0-55)
+        var randomBytesAvailable = 7; // Bytes 0-6 are still available (we used byte 7 for first char)
 
         while (charsGenerated < RandomStringLength)
         {
