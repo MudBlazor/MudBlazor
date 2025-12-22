@@ -17,8 +17,11 @@ namespace MudBlazor;
 public static class Identifier
 {
     private const string Chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-    private const int CharsLength = 36;
+    private const int LettersCount = 26; // Number of letters (a-z) in Chars
     private const int RandomStringLength = 8;
+
+    // Helper property to ensure CharsLength always matches the actual Chars string length
+    private static int CharsLength => Chars.Length;
 
     /// <summary>
     /// Creates a unique identifier with the specified prefix.
@@ -46,7 +49,7 @@ public static class Identifier
 
             for (var i = 0; i < charsInThisBatch; i++)
             {
-                identifierSpan[prefix.Length + charsGenerated + i] = Chars[(int)((random >> (i * 8)) % CharsLength)];
+                identifierSpan[prefix.Length + charsGenerated + i] = GetCharFromRandomBits(random, i * 8);
             }
 
             charsGenerated += charsInThisBatch;
@@ -74,7 +77,7 @@ public static class Identifier
 
         // First character must be a letter for valid HTML IDs
         var random = Random.Shared.NextInt64();
-        identifierSpan[0] = Chars[(int)((random >> 56) % 26)];
+        identifierSpan[0] = Chars[(int)((random >> 56) % LettersCount)];
 
         // Generate remaining characters using bit shifting for performance
         var charsGenerated = 0;
@@ -85,12 +88,23 @@ public static class Identifier
 
             for (var i = 0; i < charsInThisBatch; i++)
             {
-                identifierSpan[charsGenerated + i + 1] = Chars[(int)((random >> (i * 8)) % CharsLength)];
+                identifierSpan[charsGenerated + i + 1] = GetCharFromRandomBits(random, i * 8);
             }
 
             charsGenerated += charsInThisBatch;
         }
 
         return identifierSpan.ToString();
+    }
+
+    /// <summary>
+    /// Extracts a character from random bits using bit-shifting.
+    /// </summary>
+    /// <param name="random">The random 64-bit integer.</param>
+    /// <param name="bitShift">The number of bits to shift right (0, 8, 16, 24, etc.).</param>
+    /// <returns>A character from the Chars set.</returns>
+    private static char GetCharFromRandomBits(long random, int bitShift)
+    {
+        return Chars[(int)((random >> bitShift) % CharsLength)];
     }
 }
