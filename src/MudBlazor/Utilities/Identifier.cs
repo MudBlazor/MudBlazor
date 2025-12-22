@@ -80,18 +80,24 @@ public static class Identifier
         identifierSpan[0] = Chars[(int)((random >> 56) % LettersCount)];
 
         // Generate remaining characters using bit shifting for performance
+        // Reuse unused bytes from the initial random value before requesting a new one
         var charsGenerated = 0;
+        var nextByteIndex = 0; // Start consuming from the lowest byte (bits 0-7)
+        var randomBytesAvailable = 7; // We already used the high byte (bits 56-63) for the first character
+
         while (charsGenerated < RandomStringLength)
         {
-            random = Random.Shared.NextInt64();
-            var charsInThisBatch = Math.Min(8, RandomStringLength - charsGenerated);
-
-            for (var i = 0; i < charsInThisBatch; i++)
+            if (randomBytesAvailable == 0)
             {
-                identifierSpan[charsGenerated + i + 1] = GetCharFromRandomBits(random, i * 8);
+                random = Random.Shared.NextInt64();
+                randomBytesAvailable = 8;
+                nextByteIndex = 0;
             }
 
-            charsGenerated += charsInThisBatch;
+            identifierSpan[charsGenerated + 1] = GetCharFromRandomBits(random, nextByteIndex * 8);
+            charsGenerated++;
+            nextByteIndex++;
+            randomBytesAvailable--;
         }
 
         return identifierSpan.ToString();
