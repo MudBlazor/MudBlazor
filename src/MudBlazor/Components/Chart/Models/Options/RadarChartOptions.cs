@@ -6,6 +6,7 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// Options specific to radar charts, extending <see cref="DefaultRadialChartOptions"/>.
 /// </summary>

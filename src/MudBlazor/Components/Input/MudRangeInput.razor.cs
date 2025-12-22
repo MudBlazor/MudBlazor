@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 
 #nullable enable
 namespace MudBlazor
@@ -177,7 +176,7 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
-        protected bool IsClearable() => Clearable && ReadValue() is not null;
+        protected bool IsClearable() => Clearable && ReadValue is not null;
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {

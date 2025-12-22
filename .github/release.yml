@@ -1,10 +1,4 @@
 changelog:
-  exclude:
-    labels:
-      - build
-      - docs
-      - tests
-      - dependency
   categories:
     - title: Breaking Changes
       labels:
@@ -13,9 +7,18 @@ changelog:
       labels:
         - new component
         - enhancement
+        - API change
     - title: Bug Fixes
       labels:
         - bug
     - title: Other Changes
       labels:
         - "*"
+      exclude:
+        labels:
+          - build
+          - docs
+          - tests
+          - dependency
+          - refactor
+          - performance

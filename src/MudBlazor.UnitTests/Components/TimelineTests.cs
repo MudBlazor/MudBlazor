@@ -4,8 +4,8 @@
 
 using AngleSharp.Css.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Timeline;
 using NUnit.Framework;
 

@@ -6,6 +6,7 @@ using MudBlazor.State.Builder;
 
 namespace MudBlazor.State;
 
+#nullable enable
 /// <summary>
 /// Represents a writer for parameter states.
 /// </summary>

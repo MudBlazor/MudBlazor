@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
@@ -10,6 +11,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts;
 
+#nullable enable
 public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     protected List<SvgPath> _gridLines = [];
@@ -74,6 +76,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
     private double CalculateRadius()
     {
+        Debug.Assert(ChartOptions is not null);
         if (!ChartOptions.ShowAxisLabels)
             return Radius;
 
@@ -86,6 +89,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     private void GenerateSvgPaths(List<ChartSeries<T>> seriesData, T[] normalizedData, int numAxes,
                                   double angleStep, double currentAngle, double radius, T axisMaxValue)
     {
+        Debug.Assert(ChartOptions is not null);
         for (var seriesIndex = 0; seriesIndex < seriesData.Count; seriesIndex++)
         {
             var series = seriesData[seriesIndex];
@@ -146,6 +150,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
     private void GenerateAxisValues(double currentAngle, T axisMaxValue, double radius)
     {
+        Debug.Assert(ChartOptions is not null);
         var axisAngle = currentAngle;
         var gridLevels = T.CreateSaturating(ChartOptions.GridLevels);
         var stepValue = axisMaxValue / gridLevels;
@@ -161,7 +166,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
             {
                 LabelX = x + 5,
                 LabelY = y - 1,
-                LabelYValue = value.ToString()
+                LabelYValue = value.ToString(null, CultureInfo.InvariantCulture),
             });
         }
     }
@@ -186,6 +191,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
     private void GenerateGridLines(int numAxes, double angleStep, double currentAngle, double radius)
     {
+        Debug.Assert(ChartOptions is not null);
         var gridLevels = ChartOptions.GridLevels;
         for (var i = 1; i <= gridLevels; i++)
         {
@@ -209,6 +215,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
     private T CalculateAxisMaxValue(T actualMaxValue)
     {
+        Debug.Assert(ChartOptions is not null);
         var gridLevels = ChartOptions.GridLevels;
         var minStep = actualMaxValue / T.CreateSaturating(gridLevels);
         var step = FindNextNiceStep(minStep);

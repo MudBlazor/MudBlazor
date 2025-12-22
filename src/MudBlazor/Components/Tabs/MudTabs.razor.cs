@@ -562,6 +562,7 @@ namespace MudBlazor
             if (_isDisposed)
                 return;
             _isDisposed = true;
+            _throttleDispatcher?.Dispose();
             if (_resizeObserver is not null)
             {
                 _resizeObserver.OnResized -= OnResized;

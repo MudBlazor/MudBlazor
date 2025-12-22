@@ -20,9 +20,10 @@ public class Program
             Console.WriteLine("  1. Basic Operations (--basic)");
             Console.WriteLine("  2. Large Scale (--largescale)");
             Console.WriteLine("  3. Comparer Strategies (--comparer)");
-            Console.WriteLine("  4. All benchmarks (--all or no arguments)");
+            Console.WriteLine("  4. Identifier Generation (--identifier)");
+            Console.WriteLine("  5. All benchmarks (--all or no arguments)");
             Console.WriteLine();
-            Console.WriteLine("Usage: dotnet run -c Release -- [--basic|--largescale|--comparer|--all]");
+            Console.WriteLine("Usage: dotnet run -c Release -- [--basic|--largescale|--comparer|--identifier|--all]");
             Console.WriteLine();
             Console.WriteLine("Running all benchmarks...");
             Console.WriteLine();
@@ -41,13 +42,17 @@ public class Program
         {
             BenchmarkRunner.Run<ParameterStateComparerBenchmark>();
         }
+        else if (args.Contains("--identifier"))
+        {
+            BenchmarkRunner.Run<IdentifierBenchmark>();
+        }
         else if (args.Contains("--all"))
         {
             BenchmarkRunner.Run(typeof(Program).Assembly);
         }
         else
         {
-            Console.WriteLine("Unknown argument. Use --basic, --largescale, --comparer, or --all");
+            Console.WriteLine("Unknown argument. Use --basic, --largescale, --comparer, --identifier, or --all");
         }
     }
 }

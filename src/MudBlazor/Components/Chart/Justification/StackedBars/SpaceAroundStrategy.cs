@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Justification.StackedBars;
 
+#nullable enable
 internal class SpaceAroundStrategy : IStackedBarPositionStrategy
 {
     public double[] CalculatePositions(StackedBarContext ctx)

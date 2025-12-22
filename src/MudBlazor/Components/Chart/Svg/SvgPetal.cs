@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// Represents a petal shape along an <see cref="SvgPath"/>.
 /// </summary>

@@ -1,8 +1,6 @@
-﻿
-<MudForm @bind-IsValid="_parentIsValid" IsTouchedChanged="@ParentTouchChanged" ValidationDelay="0" Class="parent-form">
+﻿<MudForm @bind-IsValid="_parentIsValid" IsTouchedChanged="@ParentTouchChanged" ValidationDelay="0" Class="parent-form">
     <MudText>Parent Valid: @(_parentIsValid.ToString())</MudText>
     <MudTextField Label="Text in Parent" Required="true" T="string" Class="parent-text-field" />
-    <MudText HtmlTag="span"><MudSwitch @bind-Value="@_showChildForm" Color="Color.Primary" /> Display child form</MudText>
     @if (_showChildForm)
     {
         <MudForm @bind-IsValid="_childIsValid" IsTouchedChanged="@ChildTouchChanged" ValidationDelay="0" Class="child-form">
@@ -11,9 +9,9 @@
         </MudForm>
     }
 </MudForm>
+<MudText HtmlTag="span"><MudSwitch @bind-Value="@_showChildForm" Color="Color.Primary" /> Display child form</MudText>
 
 @code {
-
     public static string __description__ = "Based on issue #7066. Removing the child form should no longer influence the parent form.";
 
     private bool _parentIsValid;

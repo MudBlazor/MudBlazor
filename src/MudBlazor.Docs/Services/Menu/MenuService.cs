@@ -49,7 +49,6 @@ namespace MudBlazor.Docs.Services
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
-            .AddItem("Chat", typeof(MudChat), typeof(MudChatHeader), typeof(MudChatBubble), typeof(MudChatFooter))
             .AddItem("Divider", typeof(MudDivider))
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Image", typeof(MudImage))
@@ -152,6 +151,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Localization", Href = "features/localization"},
                 new DocsLink {Title = "Analyzers", Href = "features/analyzers"},
                 new DocsLink {Title = "Services", Href = "features/services"},
+                new DocsLink {Title = "Chat (deprecated)", Href = "components/chat"}, // TODO: there is no component to reference so it's added under features instead so the page is still searchable. remove this in v10.
             }.OrderBy(x => x.Title);
 
         /// <summary>

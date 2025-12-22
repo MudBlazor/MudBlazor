@@ -344,6 +344,7 @@ namespace MudBlazor
 
         private void SetThrottle(int interval)
         {
+            _throttleDispatcher?.Dispose();
             _throttleDispatcher = interval > 0
                 ? new ThrottleDispatcher(interval)
                 : null;
@@ -439,9 +440,9 @@ namespace MudBlazor
 
         protected override Task WriteTextAsync(string? value) => SetInputStringAsync(value);
 
-        protected internal override MudColor? ReadValue() => _valueState.Value;
+        protected internal override MudColor? ReadValue => _valueState.Value;
 
-        protected override Task WriteValueAsync(MudColor? value) => SetColorAsync(value);
+        protected override Task SetValueAsync(MudColor? value) => SetColorAsync(value);
 
         protected override Task StringValueChangedAsync(string? value) => SetInputStringAsync(value);
 

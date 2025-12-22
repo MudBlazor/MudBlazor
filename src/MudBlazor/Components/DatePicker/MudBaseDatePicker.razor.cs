@@ -8,6 +8,7 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Converter;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -16,7 +17,7 @@ namespace MudBlazor
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
         private readonly string _mudPickerCalendarContentElementId;
-        private readonly ParameterState<string> _dateFormatState;
+        private readonly ParameterState<string?> _dateFormatState;
 
         protected MudBaseDatePicker()
         {
@@ -29,19 +30,19 @@ namespace MudBlazor
             };
 
             using var registerScope = CreateRegisterScope();
-            _dateFormatState = registerScope.RegisterParameter<string>(nameof(DateFormat))
+            _dateFormatState = registerScope.RegisterParameter<string?>(nameof(DateFormat))
                 .WithParameter(() => DateFormat)
                 .WithChangeHandler(DateFormatChangedAsync);
         }
 
         [Inject]
-        protected IScrollManager ScrollManager { get; set; }
+        protected IScrollManager ScrollManager { get; set; } = null!;
 
         [Inject]
-        private IJsApiService JsApiService { get; set; }
+        private IJsApiService JsApiService { get; set; } = null!;
 
         [Inject]
-        protected TimeProvider TimeProvider { get; set; }
+        protected TimeProvider TimeProvider { get; set; } = null!;
 
         /// <summary>
         /// The maximum selectable date.
@@ -72,17 +73,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string DateFormat { get; set; }
+        public string? DateFormat { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="DateFormat"/> has changed.
         /// </summary>
-        protected virtual Task DateFormatChangedAsync(string newFormat)
+        protected virtual Task DateFormatChangedAsync(string? newFormat)
         {
             return Task.CompletedTask;
         }
 
-        private Task DateFormatChangedAsync(ParameterChangedEventArgs<string> args) => DateFormatChangedAsync(args.Value);
+        private Task DateFormatChangedAsync(ParameterChangedEventArgs<string?> args) => DateFormatChangedAsync(args.Value);
 
         /// <summary>
         /// The day representing the first day of the week.
@@ -229,7 +230,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
+        public Func<DateTime, string>? AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
         /// The icon for the button that navigates to the previous month or year.
@@ -622,7 +623,7 @@ namespace MudBlazor
             return GetCulture().Calendar.GetYear(DateTime.Today) + 100;
         }
 
-        private string GetYearClasses(int year)
+        private string? GetYearClasses(int year)
         {
             var selectedYear = HighlightedDate ?? GetMonthStart(0);
 
@@ -676,7 +677,7 @@ namespace MudBlazor
             return GetCulture().DateTimeFormat.MonthNames[calendarMonth - 1];
         }
 
-        private string GetMonthClasses(DateTime month)
+        private string? GetMonthClasses(DateTime month)
         {
             var selectedMonth = HighlightedDate ?? GetMonthStart(0);
 

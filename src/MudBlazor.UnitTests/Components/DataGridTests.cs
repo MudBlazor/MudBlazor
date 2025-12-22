@@ -7,10 +7,10 @@ using System.Reflection;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Bunit;
 using Bunit.Rendering;
-using FluentAssertions;
-using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -3177,16 +3177,16 @@ namespace MudBlazor.UnitTests.Components
                 var switchButton = dataGrid.Find("button.switch-button");
                 switchButton.Click();
 
-                var filterHeaders = dataGrid.FindAll("input");
-                var ageFilter = filterHeaders[0];
-                var nameFilter = filterHeaders[1];
+                var filterHeaders = () => dataGrid.FindAll("input");
+                var ageFilter = () => filterHeaders()[0];
+                var nameFilter = () => filterHeaders()[1];
 
-                ageFilter.Input(27);
+                ageFilter().Input(27);
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
 
                 dataGrid.Instance.ClearFiltersAsync();
-                nameFilter.Input("a");
+                nameFilter().Input("a");
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
             });
@@ -3215,17 +3215,17 @@ namespace MudBlazor.UnitTests.Components
                 await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
 
                 var switchButton = dataGrid.Find("button.switch-button");
-                switchButton.Click();
+                await switchButton.ClickAsync();
 
-                var filterHeaders = dataGrid.FindAll("input");
-                var ageFilter = filterHeaders[0];
-                var nameFilter = filterHeaders[1];
+                var filterHeaders = () => dataGrid.FindAll("input");
+                var ageFilter = () => filterHeaders()[0];
+                var nameFilter = () => filterHeaders()[1];
 
-                ageFilter.Input(27);
+                ageFilter().Input(27);
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
 
-                nameFilter.Input("a");
+                nameFilter().Input("a");
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
             });
@@ -3574,36 +3574,36 @@ namespace MudBlazor.UnitTests.Components
             var switches = comp.FindComponents<MudSwitch<bool>>();
             switches.Count.Should().Be(6);
 
-            switches[0].Instance.Value.Should().BeFalse();
-            switches[1].Instance.Value.Should().BeTrue();
-            switches[2].Instance.Value.Should().BeFalse();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[0].Instance.Value.Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeFalse();
+            switches[1].Instance.ReadValue.Should().BeTrue();
+            switches[2].Instance.ReadValue.Should().BeFalse();
+            switches[3].Instance.ReadValue.Should().BeFalse();
+            switches[4].Instance.ReadValue.Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeFalse();
 
             var buttons = comp.FindComponents<MudButton>();
 
             // this is the hide all button
             buttons[0].Find("button").Click();
             //all hideable columns should be hidden;
-            switches[0].Instance.Value.Should().BeTrue();
-            switches[1].Instance.Value.Should().BeTrue();
-            switches[2].Instance.Value.Should().BeTrue();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[5].Instance.Value.Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeTrue();
+            switches[1].Instance.ReadValue.Should().BeTrue();
+            switches[2].Instance.ReadValue.Should().BeTrue();
+            switches[3].Instance.ReadValue.Should().BeFalse();
+            switches[4].Instance.ReadValue.Should().BeFalse();
+            switches[5].Instance.ReadValue.Should().BeFalse();
 
             // 6 columns, 3 hidden (+ already collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(4);
 
             // this is the show all button
             buttons[1].Find("button").Click();
-            switches[0].Instance.Value.Should().BeFalse();
-            switches[1].Instance.Value.Should().BeFalse();
-            switches[2].Instance.Value.Should().BeFalse();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[5].Instance.Value.Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeFalse();
+            switches[1].Instance.ReadValue.Should().BeFalse();
+            switches[2].Instance.ReadValue.Should().BeFalse();
+            switches[3].Instance.ReadValue.Should().BeFalse();
+            switches[4].Instance.ReadValue.Should().BeFalse();
+            switches[5].Instance.ReadValue.Should().BeFalse();
 
             // 6 columns, 0 hidden (1 permanently collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
@@ -4791,28 +4791,28 @@ namespace MudBlazor.UnitTests.Components
             var rowCheckbox = dataGrid.FindAll("td input");
             var selectAllCheckboxes = dataGrid.FindComponents<MudCheckBox<bool?>>();
 
-            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
-            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeFalse();
 
             rowCheckbox[0].Change(true);
 
-            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
-            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeNull();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeNull();
 
             rowCheckbox[1].Change(true);
 
-            selectAllCheckboxes[0].Instance.Value.Should().BeTrue();
-            selectAllCheckboxes[1].Instance.Value.Should().BeTrue();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeTrue();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeTrue();
 
             rowCheckbox[1].Change(false);
 
-            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
-            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeNull();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeNull();
 
             rowCheckbox[0].Change(false);
 
-            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
-            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeFalse();
         }
 
         [Test]
