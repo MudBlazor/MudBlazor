@@ -268,7 +268,11 @@ public class IdentifierBenchmark
             var random = Random.Shared.NextInt64();
             for (var i = 0; i < RandomStringLength; i++)
             {
-                span[i] = Chars[(int)((random >> (i * 8)) % CharsLength)];
+                if (i == 8)
+                {
+                    random = Random.Shared.NextInt64();
+                }
+                span[i] = Chars[(int)((random >> ((i % 8) * 8)) % CharsLength)];
             }
         });
     }

@@ -92,14 +92,18 @@ public static class Identifier
             // First character must be a letter for valid HTML IDs (use high byte of first random)
             span[0] = Chars[(int)((random1 >> 56) % LettersCount)];
 
-            // Next 7 characters from the remaining bytes (bits 0-55) of first random
-            for (var i = 0; i < 7; i++)
+            // Next characters from the remaining bytes (bits 0-55) of first random (up to 7 chars)
+            var charsFromFirst = Math.Min(RandomStringLength, 7);
+            for (var i = 0; i < charsFromFirst; i++)
             {
                 span[i + 1] = GetCharFromRandomBits(random1, i * 8);
             }
 
-            // Final character from second random value
-            span[RandomStringLength] = GetCharFromRandomBits(random2, 0);
+            // Remaining characters (if any) from second random value
+            for (var i = charsFromFirst; i < RandomStringLength; i++)
+            {
+                span[i + 1] = GetCharFromRandomBits(random2, (i - charsFromFirst) * 8);
+            }
         });
     }
 
