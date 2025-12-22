@@ -46,17 +46,17 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
             picker.Text.Should().Be(null);
-            picker.Time.Should().Be(null);
+            picker.ReadValue.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Clearable, true)
                 .Add(p => p.Time, new TimeSpan(637940935730000000)));
-            picker.Time.Should().Be(new TimeSpan(637940935730000000));
+            picker.ReadValue.Should().Be(new TimeSpan(637940935730000000));
             picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
 
             comp.Find(".mud-input-clear-button").Click(); //clear the input
 
             picker.Text.Should().Be(""); //ensure the text and time are reset. Note this is an empty string rather than null due to how the reset works internally
-            picker.Time.Should().Be(null);
+            picker.ReadValue.Should().Be(null);
         }
 
         [Test]
@@ -245,12 +245,12 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
             //Enter keys submit, so time should only change with enter
-            await comp.WaitForAssertionAsync(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(02, 00, 00)));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(01, 59, 00)));
             //If Open is false, arrowkeys should now change TimeIntermediate
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(01, 59, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
@@ -258,13 +258,13 @@ namespace MudBlazor.UnitTests.Components
             //Escape key should turn last submitted time
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
-            await comp.WaitForAssertionAsync(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(01, 59, 00)));
             //Space key should also submit
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
-            await comp.WaitForAssertionAsync(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(02, 00, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", CtrlKey = true, Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", CtrlKey = true, Type = "keydown", }));
@@ -294,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(null));
-            await comp.WaitForAssertionAsync(() => timePicker.Time.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(null));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             //When its disabled, keys should not work
