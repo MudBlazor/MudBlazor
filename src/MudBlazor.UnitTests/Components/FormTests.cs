@@ -1,8 +1,9 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Extensions;
@@ -86,13 +87,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should be invalid due to having a required field that is not filled
             form.IsValid.Should().Be(false);
             form.IsTouched.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue().Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue().Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue.Should().Be(false);
             // filling in the required field
             textFields[1].Find("input").Change("Fill in the required field to make this form valid");
             form.IsValid.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue().Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue().Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.ReadValue.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.ReadValue.Should().Be(true);
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
             await comp.WaitForAssertionAsync(() => form.IsValid.Should().Be(true));
-            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudSwitch<bool>>().Instance.ReadValue().Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudSwitch<bool>>().Instance.ReadValue.Should().Be(true));
         }
 
         /// <summary>
@@ -263,7 +264,7 @@ namespace MudBlazor.UnitTests.Components
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
-            //await comp.InvokeAsync(() => textField.ReadValue() = "");
+            //await comp.InvokeAsync(() => textField.ReadValue = "");
             //form.IsValid.Should().Be(true);
             //form.Errors.Length.Should().Be(0);
             //textField.Error.Should().BeFalse();
@@ -303,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
-            //await comp.InvokeAsync(() => textField.ReadValue() = "");
+            //await comp.InvokeAsync(() => textField.ReadValue = "");
             //form.IsValid.Should().Be(true);
 
             // clearly a star
@@ -329,7 +330,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().Be(true);
             // calling Reset() should reset the textField's value
             await comp.InvokeAsync(() => form.ResetAsync());
-            textField.ReadValue().Should().Be(null);
+            textField.ReadValue.Should().Be(null);
             textField.ReadText.Should().Be(null);
             form.IsValid.Should().Be(false); // because we did reset validation state as a side-effect.
         }
@@ -353,17 +354,19 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
             var textFieldComp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldComp.Instance;
+
+            IElement TextFieldInput() => textFieldComp.Find("input");
             // validate initial field state
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
-            textFieldComp.Find("input").Change("def");
+            await comp.InvokeAsync(() => TextFieldInput().Change("def"));
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().ContainSingle("invalid"), TimeSpan.FromSeconds(5));
             // make sure success can be detected
-            textFieldComp.Find("input").Change("abc");
+            await comp.InvokeAsync(() => TextFieldInput().Change("abc"));
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
             // send invalid value, then valid value
-            textFieldComp.Find("input").Change("def");
-            textFieldComp.Find("input").Change("abc");
+            await comp.InvokeAsync(() => TextFieldInput().Change("def"));
+            await comp.InvokeAsync(() => TextFieldInput().Change("abc"));
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
@@ -376,8 +379,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FormAsyncValidationWithFieldChangedSubscriberTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            var input = comp.Find("input");
-            input.Input(new ChangeEventArgs { Value = "test" });
+            var input = () => comp.Find("input");
+            await input().InputAsync("test");
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
@@ -387,13 +390,13 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                await input().InputAsync(currentText);
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
             // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
-            textField.ReadValue().Should().Be(currentText);
+            textField.ReadValue.Should().Be(currentText);
             textField.ReadText.Should().Be(currentText);
         }
 
@@ -449,15 +452,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input")[2].Blur();
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
-            comp.FindComponent<MudTextField<int>>().Instance.ReadValue().Should().Be(17);
+            comp.FindComponent<MudTextField<int>>().Instance.ReadValue.Should().Be(17);
             // then click the checkbox
-            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue().Should().Be(true);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue.Should().Be(true);
             comp.FindAll("input")[3].Change(false); // it was on before
-            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue().Should().Be(false);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue.Should().Be(false);
             // the text fields should be unchanged
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
-            comp.FindComponent<MudTextField<int>>().Instance.ReadValue().Should().Be(17);
+            comp.FindComponent<MudTextField<int>>().Instance.ReadValue.Should().Be(17);
         }
 
         /// <summary>
@@ -561,7 +564,7 @@ namespace MudBlazor.UnitTests.Components
             textfields[2].Instance.ReadText.Should().BeNullOrEmpty();
             await comp.WaitForAssertionAsync(() => checkbox.Instance.HasErrors.Should().BeFalse());
             checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
-            await comp.WaitForAssertionAsync(() => checkbox.Instance.ReadValue().Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => checkbox.Instance.ReadValue.Should().BeFalse());
             // TODO: fill out the form with errors, field after field, check how fields get validation errors after blur
         }
 
@@ -1361,19 +1364,19 @@ namespace MudBlazor.UnitTests.Components
 
             // input some text
             textFieldComp.Find("input").Input("asdf");
-            textField.ReadValue().Should().Be("asdf");
+            textField.ReadValue.Should().Be("asdf");
             textField.ReadText.Should().Be("asdf");
             // call reset directly
             await comp.InvokeAsync(() => form.Instance.ResetAsync());
-            textField.ReadValue().Should().BeNullOrEmpty();
+            textField.ReadValue.Should().BeNullOrEmpty();
             textField.ReadText.Should().BeNullOrEmpty();
             // input some text
             textFieldComp.Find("input").Input("asdf");
-            textField.ReadValue().Should().Be("asdf");
+            textField.ReadValue.Should().Be("asdf");
             textField.ReadText.Should().Be("asdf");
             // hit reset button
             comp.Find("button.reset").Click();
-            textField.ReadValue().Should().BeNullOrEmpty();
+            textField.ReadValue.Should().BeNullOrEmpty();
             textField.ReadText.Should().BeNullOrEmpty();
         }
 

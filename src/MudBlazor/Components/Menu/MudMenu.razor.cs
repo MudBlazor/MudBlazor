@@ -7,7 +7,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -19,7 +18,7 @@ namespace MudBlazor
     /// An interactive menu that displays a list of options.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
-    public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
+    public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;
         private readonly List<MudMenu> _subMenus = [];
@@ -37,6 +36,7 @@ namespace MudBlazor
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
         private DateTime _lastKeyboardActivation = DateTime.MinValue;
+        private readonly MenuContext _menuContext;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -46,6 +46,7 @@ namespace MudBlazor
 
         public MudMenu()
         {
+            _menuContext = new MenuContext(this);
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
@@ -242,14 +243,27 @@ namespace MudBlazor
         public bool PositionAtCursor { get; set; }
 
         /// <summary>
-        /// Overrides the default button with a custom component.
+        /// Overrides the default button with custom content that receives a <see cref="MenuContext"/>.
         /// </summary>
         /// <remarks>
-        /// Can be a <see cref="MudButton"/>, <see cref="MudIconButton"/>, or any other component.
+        /// <para>The context provides methods to control the menu: <see cref="MenuContext.OpenAsync"/>,
+        /// <see cref="MenuContext.CloseAsync"/>, <see cref="MenuContext.ToggleAsync"/>, and
+        /// <see cref="MenuContext.CloseAllAsync"/>.</para>
+        /// <para>Example usage:</para>
+        /// <code>
+        /// &lt;MudMenu&gt;
+        ///     &lt;ActivatorContent&gt;
+        ///         &lt;MudButton OnClick="@context.ToggleAsync"&gt;Open Menu&lt;/MudButton&gt;
+        ///     &lt;/ActivatorContent&gt;
+        ///     &lt;ChildContent&gt;
+        ///         &lt;MudMenuItem&gt;Item 1&lt;/MudMenuItem&gt;
+        ///     &lt;/ChildContent&gt;
+        /// &lt;/MudMenu&gt;
+        /// </code>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public RenderFragment? ActivatorContent { get; set; }
+        public RenderFragment<MenuContext>? ActivatorContent { get; set; }
 
         /// <summary>
         /// The action which opens the menu, when <see cref="ActivatorContent"/> is set.
@@ -767,25 +781,6 @@ namespace MudBlazor
             _hoverCts?.Cancel();
             // ReSharper restore MethodHasAsyncOverload
         }
-
-        /// <summary>
-        /// Implementation of IActivatable.Activate, toggles the menu.
-        /// </summary>
-        /// <remarks>
-        /// This method serves as the entry point for activating the menu via an external activator.
-        /// </remarks>
-        void IActivatable.Activate(object activator, MouseEventArgs args)
-        {
-            // Prevent activation if the activator button has a specific CSS class that marks it as non-activatable.
-            if (activator is MudBaseButton activatorButton &&
-                (activatorButton.Class?.Contains("mud-no-activator") ?? false))
-            {
-                return;
-            }
-
-            ToggleMenuAsync(args).CatchAndLog();
-        }
-
 
         /// <summary>
         /// Disposes managed and unmanaged resources.

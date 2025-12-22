@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

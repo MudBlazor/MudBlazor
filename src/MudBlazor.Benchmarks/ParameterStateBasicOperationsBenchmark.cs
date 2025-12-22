@@ -9,13 +9,11 @@ using MudBlazor.State;
 
 namespace MudBlazor.Benchmarks;
 
-#nullable enable
-
 /// <summary>
 /// Benchmarks for basic ParameterState operations: registration, initialization, and value updates.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net90)]
+[SimpleJob(RuntimeMoniker.Net10_0)]
 public class ParameterStateBasicOperationsBenchmark
 {
     private SyntheticParameterStateContainer? _container;

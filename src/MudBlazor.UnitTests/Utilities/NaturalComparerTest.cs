@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 

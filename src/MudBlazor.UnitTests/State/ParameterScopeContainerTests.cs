@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;

@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Virtualize;
 using NUnit.Framework;
 

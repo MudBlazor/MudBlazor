@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
+#nullable enable
 internal interface IParameterContainer : IEnumerable<IParameterComponentLifeCycle>
 {
     /// <summary>

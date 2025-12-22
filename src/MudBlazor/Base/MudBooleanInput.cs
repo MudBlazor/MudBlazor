@@ -162,9 +162,9 @@ namespace MudBlazor
             await SetBoolValueAsync(ConvertSet(_valueState.Value));
         }
 
-        protected internal override T? ReadValue() => _valueState.Value;
+        protected internal override T? ReadValue => _valueState.Value;
 
-        protected override Task WriteValueAsync(T? value) => _valueState.SetValueAsync(value);
+        protected override Task SetValueAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// A value is required, so if not checked we return ERROR.

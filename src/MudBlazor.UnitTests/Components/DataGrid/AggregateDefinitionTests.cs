@@ -4,7 +4,7 @@
 
 using System.Globalization;
 using System.Linq.Expressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

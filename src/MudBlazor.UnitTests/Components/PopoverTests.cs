@@ -1,6 +1,6 @@
 ﻿using System;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;

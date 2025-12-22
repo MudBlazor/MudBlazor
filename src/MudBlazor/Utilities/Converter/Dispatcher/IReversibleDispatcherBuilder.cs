@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
+#nullable enable
 /// <summary>
 /// Builder API used to register per-type reversible converters and produce a dispatcher that routes
 /// forward and backward conversions to the appropriate registered reversible converter.
@@ -40,7 +41,7 @@ public interface IReversibleDispatcherBuilder<TIn, TOut>
     /// Implementations will typically validate that <paramref name="converter"/> is compatible with the supplied <paramref name="specificType"/>.
     /// If the instance is incompatible a runtime exception may be thrown by the builder implementation.
     /// </remarks>
-    IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object converter);
+    IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object? converter);
 
     /// <summary>
     /// Builds the reversible dispatcher that routes forward and backward conversions to the registered per-type reversible converters.

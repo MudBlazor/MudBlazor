@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
