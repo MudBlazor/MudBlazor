@@ -263,7 +263,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "Al" });
+            await comp.Find("input").InputAsync("Al");
 
             // Assert : debounce disable, so menu is opened immediately
 
@@ -305,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "Al" });
+            await comp.Find("input").InputAsync("Al");
 
             // Assert : debounce enable, so menu is not opened immediately
 
@@ -1229,12 +1229,12 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
                 await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
-                await autocompleteComponent.Find("input").InputAsync(new ChangeEventArgs() { Value = "abc" });
+                await autocompleteComponent.Find("input").InputAsync("abc");
                 await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
                 await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
                 await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await autocompleteComponent.Find("input").InputAsync(new ChangeEventArgs() { Value = "" });
+                await autocompleteComponent.Find("input").InputAsync("");
                 await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
                 await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
@@ -1290,7 +1290,7 @@ namespace MudBlazor.UnitTests.Components
                 Times.AtMost(1));
 
             var input = comp.Find("input");
-            await input.InputAsync(new ChangeEventArgs { Value = "Wyo" });
+            await input.InputAsync("Wyo");
 
             await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
 

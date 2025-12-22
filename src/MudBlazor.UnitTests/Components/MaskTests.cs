@@ -1087,7 +1087,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
             // Simulate the 'oninput' event that occurs during browser autofill
-            await inputElement.InputAsync(new ChangeEventArgs() { Value = autofillValue });
+            await inputElement.InputAsync(autofillValue);
 
             // Assert
             textField.ReadText.Should().Be(autofillValue);

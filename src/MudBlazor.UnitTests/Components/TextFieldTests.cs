@@ -1109,7 +1109,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                await comp.Find("input").InputAsync(currentText);
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }

@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FormAsyncValidationWithFieldChangedSubscriberTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var input = () => comp.Find("input");
-            await input().InputAsync(new ChangeEventArgs { Value = "test" });
+            await input().InputAsync("test");
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
@@ -390,7 +390,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await input().InputAsync(new ChangeEventArgs { Value = currentText });
+                await input().InputAsync(currentText);
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
