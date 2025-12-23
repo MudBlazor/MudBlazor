@@ -233,15 +233,31 @@ public readonly struct ParameterChangedContext
             throw new ArgumentException($"Unknown dominant parameter '{dominantParameterName}'.");
         }
 
-        // If only one changed, pick the one that is non-null
-        if (hasParameter1Changed && parameter1Value is not null)
+        // Only one changed
+        if (hasParameter1Changed)
         {
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameterState1Internal.Metadata.ParameterName, parameter1Value);
+            // If changed to null and other is non-null & unchanged → pick the non-null unchanged
+            if (parameter1Value is null && parameter2Value is not null && !hasParameter2Changed)
+            {
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
+                    parameterState2Internal.Metadata.ParameterName, parameter2Value);
+            }
+
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
+                parameterState1Internal.Metadata.ParameterName, parameter1Value);
         }
 
-        if (hasParameter2Changed && parameter2Value is not null)
+        if (hasParameter2Changed)
         {
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameterState2Internal.Metadata.ParameterName, parameter2Value);
+            // If changed to null and other is non-null & unchanged → pick the non-null unchanged
+            if (parameter2Value is null && parameter1Value is not null && !hasParameter1Changed)
+            {
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
+                    parameterState1Internal.Metadata.ParameterName, parameter1Value);
+            }
+
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
+                parameterState2Internal.Metadata.ParameterName, parameter2Value);
         }
 
         // Fallback
