@@ -41,10 +41,12 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
     private async Task OnTextAndValueChangedHandlerAsync(ParameterChangedContext context)
     {
         var effectiveParameter = context.ResolveEffectiveParameter(_valueState, _textState, nameof(Value));
+        // Value
         if (effectiveParameter is { IsParameter1: true })
         {
             await _textState.SetValueAsync(effectiveParameter.Parameter1Value.ToString(MudColorOutputFormats.Hex));
         }
+        // Text
         if (effectiveParameter is { IsParameter2: true })
         {
             await _valueState.SetValueAsync(MudColor.Parse(effectiveParameter.Parameter2Value));
