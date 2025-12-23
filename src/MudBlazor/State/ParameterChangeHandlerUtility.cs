@@ -42,6 +42,14 @@ internal static class ParameterChangeHandlerUtility
         IParameterStateInvocationSnapshot targetSnapshot,
         List<ParameterStateValue> parameterStateValues)
     {
+        // Collect parameter state value if available (must happen before early return)
+        var parameterStateValue = targetSnapshot.GetParameterStateValue();
+        if (parameterStateValue.HasValue)
+        {
+            parameterStateValues.Add(parameterStateValue.Value);
+        }
+
+        // Check for duplicate handler and return early if found
         foreach (var snapshot in snapshots)
         {
             if (ParameterHandlerUniquenessComparer.Default.Equals(snapshot, targetSnapshot))
@@ -51,13 +59,6 @@ internal static class ParameterChangeHandlerUtility
         }
 
         snapshots.Add(targetSnapshot);
-        
-        // Collect parameter state value if available
-        var parameterStateValue = targetSnapshot.GetParameterStateValue();
-        if (parameterStateValue.HasValue)
-        {
-            parameterStateValues.Add(parameterStateValue.Value);
-        }
     }
 
     /// <summary>
