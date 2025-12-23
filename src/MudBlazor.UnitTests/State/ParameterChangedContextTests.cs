@@ -14,14 +14,19 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterChangedContextTests
 {
     [Test]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]        // Case 1
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#5fa9e2", "Text", "#5fa9e2")]   // Case 2
-    [TestCase("#fcefe5", null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]       // Case 3
-    [TestCase("#fcefe5", null, "#fcefe5", null, "Text", null)]                  // Case 4
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#fcefe5", "Text", "#5fa9e2")]   // Case 5
-    [TestCase("#fcefe5", null, "#fcefe5", "#fcefe5", "Value", "#fcefe5")]       // Case 6
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]  // Case 7
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#fcefe5", "None", "#fcefe5")]   // Case 8
+    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
+    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#5fa9e2", "Text", "#5fa9e2")]
+    [TestCase("#fcefe5", null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase("#fcefe5", null, "#fcefe5", null, "Text", null)]
+    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#fcefe5", "Text", "#5fa9e2")]
+    [TestCase("#fcefe5", null, "#fcefe5", "#fcefe5", "Value", "#fcefe5")]
+    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#fcefe5", "", null)]
+    [TestCase(null, "#5fa9e2", "#fcefe5", "#5fa9e2", "Text", "#5fa9e2")]
+    [TestCase(null, "#5fa9e2", null, "#5fa9e2", "Text", "#5fa9e2")]
+    [TestCase(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase(null, null, null, null, "", null)]
     public void ResolveEffectiveParameter_ShouldSelectCorrectParameter(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
     {
         var result = Resolve(textBefore, textAfter, valueBefore, valueAfter);
