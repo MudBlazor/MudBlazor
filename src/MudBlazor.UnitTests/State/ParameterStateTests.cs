@@ -157,10 +157,10 @@ public class ParameterStateTests
             .Create<int>()
             .WithMetadata(new ParameterMetadata(ParameterName))
             .WithGetParameterValueFunc(() => InitialValue)
-            .WithParameterChangedHandler((ParameterChangedContext context) =>
+            .WithParameterChangedHandler((ParameterChangedEventArgs<int> args) =>
             {
                 changes++;
-                context.ParameterView.Contains<string>(OtherParameterName).Should().BeTrue();
+                args.ParameterView.Contains<string>(OtherParameterName).Should().BeTrue();
             })
             .Attach();
 
