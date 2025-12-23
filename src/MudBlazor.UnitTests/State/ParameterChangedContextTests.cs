@@ -29,7 +29,7 @@ public class ParameterChangedContextTests
     [TestCase(null, null, null, null, "", null)]
     public void ResolveEffectiveParameter_ShouldSelectCorrectParameter(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
     {
-        var result = Resolve(textBefore, textAfter, valueBefore, valueAfter);
+        var result = Resolve(textBefore, textAfter, valueBefore, valueAfter, "Text");
 
         switch (expectedParameter)
         {
@@ -57,7 +57,23 @@ public class ParameterChangedContextTests
         }
     }
 
-    private static EffectiveParameterResult<string?, string?> Resolve(string textBefore, string? textAfter, string valueBefore, string? valueAfter)
+    [Test]
+    public void ResolveEffectiveParameter_ShouldThrow_WhenDominantParameterUnknown()
+    {
+        // Arrange: both Text and Value change
+        const string TextBefore = "#fcefe5";
+        const string TextAfter = "#5fa9e2";
+        const string ValueBefore = "#fcefe5";
+        const string ValueAfter = "#5fa9e2";
+
+        // Act & Assert
+        FluentActions
+            .Invoking(() => Resolve(TextBefore, TextAfter, ValueBefore, ValueAfter, "NonExistentDominant"))
+            .Should().Throw<ArgumentException>()
+            .WithMessage("Unknown dominant parameter 'NonExistentDominant'.");
+    }
+
+    private static EffectiveParameterResult<string?, string?> Resolve(string textBefore, string? textAfter, string valueBefore, string? valueAfter, string dominant)
     {
         var parameterStates = new ParameterStateCollection(new Dictionary<string, ParameterStateValue>
         {
@@ -76,6 +92,6 @@ public class ParameterChangedContextTests
         var psText = ParameterStateInternal<string?>.Attach(new ParameterMetadata("Text"), () => textAfter, () => default);
         var psValue = ParameterStateInternal<string?>.Attach(new ParameterMetadata("Value"), () => valueAfter, () => default);
 
-        return context.ResolveEffectiveParameter(psText, psValue, "Text");
+        return context.ResolveEffectiveParameter(psText, psValue, dominant);
     }
 }
