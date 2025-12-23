@@ -51,30 +51,30 @@ public readonly struct ParameterStateValue
 /// </summary>
 /// <remarks>
 /// This type is similar to <see cref="Microsoft.AspNetCore.Components.ParameterView"/> but for parameter state values.
-/// It provides O(1) lookup performance for accessing parameter last values by name.
+/// It provides O(1) lookup performance for accessing parameter last values by name using a frozen dictionary.
 /// </remarks>
 public readonly struct ParameterStateCollection
 {
-    private readonly ParameterStateValue[] _values;
+    private readonly IReadOnlyDictionary<string, ParameterStateValue>? _dictionary;
 
     /// <summary>
     /// Gets an empty <see cref="ParameterStateCollection"/>.
     /// </summary>
-    public static ParameterStateCollection Empty { get; } = new(Array.Empty<ParameterStateValue>());
+    public static ParameterStateCollection Empty { get; } = new(null);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterStateCollection"/> struct.
     /// </summary>
-    /// <param name="values">The array of parameter state values.</param>
-    internal ParameterStateCollection(ParameterStateValue[] values)
+    /// <param name="dictionary">The dictionary of parameter state values keyed by parameter name.</param>
+    internal ParameterStateCollection(IReadOnlyDictionary<string, ParameterStateValue>? dictionary)
     {
-        _values = values;
+        _dictionary = dictionary;
     }
 
     /// <summary>
     /// Gets the number of parameter state values in the collection.
     /// </summary>
-    public int Count => _values?.Length ?? 0;
+    public int Count => _dictionary?.Count ?? 0;
 
     /// <summary>
     /// Attempts to get a parameter state value by its name.
@@ -84,16 +84,9 @@ public readonly struct ParameterStateCollection
     /// <returns><c>true</c> if the parameter was found; otherwise, <c>false</c>.</returns>
     public bool TryGetValue(string parameterName, out ParameterStateValue value)
     {
-        if (_values is not null)
+        if (_dictionary is not null && _dictionary.TryGetValue(parameterName, out value))
         {
-            foreach (var item in _values)
-            {
-                if (string.Equals(item.Name, parameterName, StringComparison.Ordinal))
-                {
-                    value = item;
-                    return true;
-                }
-            }
+            return true;
         }
 
         value = default;
@@ -126,26 +119,24 @@ public readonly struct ParameterStateCollection
     /// Gets a <see cref="ParameterStateEnumerator"/> that can be used to iterate over the parameter state values.
     /// </summary>
     /// <returns>A <see cref="ParameterStateEnumerator"/> for this collection.</returns>
-    public ParameterStateEnumerator GetEnumerator() => new(_values);
+    public ParameterStateEnumerator GetEnumerator() => new(_dictionary);
 
     /// <summary>
     /// An enumerator that iterates through a <see cref="ParameterStateCollection"/>.
     /// </summary>
     public struct ParameterStateEnumerator
     {
-        private readonly ParameterStateValue[] _values;
-        private int _index;
+        private IEnumerator<KeyValuePair<string, ParameterStateValue>>? _enumerator;
 
-        internal ParameterStateEnumerator(ParameterStateValue[] values)
+        internal ParameterStateEnumerator(IReadOnlyDictionary<string, ParameterStateValue>? dictionary)
         {
-            _values = values;
-            _index = -1;
+            _enumerator = dictionary?.GetEnumerator();
         }
 
         /// <summary>
         /// Gets the current parameter state value.
         /// </summary>
-        public ParameterStateValue Current => _values[_index];
+        public ParameterStateValue Current => _enumerator?.Current.Value ?? default;
 
         /// <summary>
         /// Advances the enumerator to the next parameter state value.
@@ -153,8 +144,7 @@ public readonly struct ParameterStateCollection
         /// <returns><c>true</c> if the enumerator successfully advanced; otherwise, <c>false</c>.</returns>
         public bool MoveNext()
         {
-            _index++;
-            return _index < (_values?.Length ?? 0);
+            return _enumerator?.MoveNext() ?? false;
         }
     }
 }

@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Frozen;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Invocation;
 
@@ -76,9 +77,20 @@ internal static class ParameterChangeHandlerUtility
             return null;
         }
 
-        var parameterStates = parameterStateValues is not null && parameterStateValues.Count > 0
-            ? new ParameterStateCollection(parameterStateValues.ToArray())
-            : ParameterStateCollection.Empty;
+        ParameterStateCollection parameterStates;
+        if (parameterStateValues is not null && parameterStateValues.Count > 0)
+        {
+            // Create a frozen dictionary for O(1) lookup performance
+            var dictionary = parameterStateValues.ToFrozenDictionary(
+                p => p.Name,
+                p => p,
+                StringComparer.Ordinal);
+            parameterStates = new ParameterStateCollection(dictionary);
+        }
+        else
+        {
+            parameterStates = ParameterStateCollection.Empty;
+        }
 
         var context = new ParameterChangedContext(parameterView, parameterStates);
 
