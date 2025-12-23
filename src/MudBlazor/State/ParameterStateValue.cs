@@ -1,13 +1,14 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
 #nullable enable
-
 /// <summary>
 /// Represents a non-generic snapshot of a parameter's name, current value, and last value.
 /// </summary>
@@ -15,6 +16,7 @@ namespace MudBlazor.State;
 /// This struct is used to pass parameter state information to shared change handlers
 /// that need to coordinate changes across multiple parameters.
 /// </remarks>
+[DebuggerDisplay("{Name}: {LastValue} -> {Value}")]
 public readonly struct ParameterStateValue
 {
     /// <summary>
@@ -44,6 +46,12 @@ public readonly struct ParameterStateValue
         LastValue = lastValue;
         Value = value;
     }
+
+    /// <summary>
+    /// Returns a string representation of the parameter state value showing the transition from last value to current value.
+    /// </summary>
+    /// <returns>A string in the format "Name: LastValue -> Value".</returns>
+    public override string ToString() => $"{Name}: {LastValue} -> {Value}";
 }
 
 /// <summary>
@@ -53,9 +61,11 @@ public readonly struct ParameterStateValue
 /// This type is similar to <see cref="Microsoft.AspNetCore.Components.ParameterView"/> but for parameter state values.
 /// It provides O(1) lookup performance for accessing parameter last values by name using a frozen dictionary.
 /// </remarks>
+[DebuggerDisplay("Count = {Count}")]
+[DebuggerTypeProxy(typeof(ParameterStateCollectionDebugView))]
 public readonly struct ParameterStateCollection
 {
-    private readonly IReadOnlyDictionary<string, ParameterStateValue>? _dictionary;
+    internal readonly IReadOnlyDictionary<string, ParameterStateValue>? Dictionary;
 
     /// <summary>
     /// Gets an empty <see cref="ParameterStateCollection"/>.
@@ -68,13 +78,13 @@ public readonly struct ParameterStateCollection
     /// <param name="dictionary">The dictionary of parameter state values keyed by parameter name.</param>
     internal ParameterStateCollection(IReadOnlyDictionary<string, ParameterStateValue>? dictionary)
     {
-        _dictionary = dictionary;
+        Dictionary = dictionary;
     }
 
     /// <summary>
     /// Gets the number of parameter state values in the collection.
     /// </summary>
-    public int Count => _dictionary?.Count ?? 0;
+    public int Count => Dictionary?.Count ?? 0;
 
     /// <summary>
     /// Attempts to get a parameter state value by its name.
@@ -84,7 +94,7 @@ public readonly struct ParameterStateCollection
     /// <returns><c>true</c> if the parameter was found; otherwise, <c>false</c>.</returns>
     public bool TryGetValue(string parameterName, out ParameterStateValue value)
     {
-        if (_dictionary is not null && _dictionary.TryGetValue(parameterName, out value))
+        if (Dictionary is not null && Dictionary.TryGetValue(parameterName, out value))
         {
             return true;
         }
@@ -101,51 +111,18 @@ public readonly struct ParameterStateCollection
     /// <param name="value">When this method returns, contains the current value if found and successfully cast; otherwise, the default value.</param>
     /// <param name="lastValue">When this method returns, contains the last value if found and successfully cast; otherwise, the default value.</param>
     /// <returns><c>true</c> if the parameter was found; otherwise, <c>false</c>.</returns>
-    public bool TryGetValue<T>(string parameterName, out T? value, out T? lastValue)
+    public bool TryGetValue<T>(string parameterName, [NotNullWhen(true)] out T? value, [NotNullWhen(true)] out T? lastValue)
     {
         if (TryGetValue(parameterName, out var parameterState))
         {
-            value = (T?)parameterState.Value;
-            lastValue = (T?)parameterState.LastValue;
+            value = (T)parameterState.Value!;
+            lastValue = (T)parameterState.LastValue!;
             return true;
         }
 
         value = default;
         lastValue = default;
         return false;
-    }
-
-    /// <summary>
-    /// Gets a <see cref="ParameterStateEnumerator"/> that can be used to iterate over the parameter state values.
-    /// </summary>
-    /// <returns>A <see cref="ParameterStateEnumerator"/> for this collection.</returns>
-    public ParameterStateEnumerator GetEnumerator() => new(_dictionary);
-
-    /// <summary>
-    /// An enumerator that iterates through a <see cref="ParameterStateCollection"/>.
-    /// </summary>
-    public struct ParameterStateEnumerator
-    {
-        private IEnumerator<KeyValuePair<string, ParameterStateValue>>? _enumerator;
-
-        internal ParameterStateEnumerator(IReadOnlyDictionary<string, ParameterStateValue>? dictionary)
-        {
-            _enumerator = dictionary?.GetEnumerator();
-        }
-
-        /// <summary>
-        /// Gets the current parameter state value.
-        /// </summary>
-        public ParameterStateValue Current => _enumerator?.Current.Value ?? default;
-
-        /// <summary>
-        /// Advances the enumerator to the next parameter state value.
-        /// </summary>
-        /// <returns><c>true</c> if the enumerator successfully advanced; otherwise, <c>false</c>.</returns>
-        public bool MoveNext()
-        {
-            return _enumerator?.MoveNext() ?? false;
-        }
     }
 }
 
@@ -158,6 +135,7 @@ public readonly struct ParameterStateCollection
 /// It provides access to both the current parameter values via <see cref="ParameterView"/> and 
 /// the last values via <see cref="ParameterStateCollection"/>.
 /// </remarks>
+[DebuggerDisplay("ParameterStates.Count = {ParameterStates.Count}")]
 public readonly struct ParameterChangedContext
 {
     /// <summary>
@@ -189,8 +167,111 @@ public readonly struct ParameterChangedContext
         ParameterStates = parameterStates;
     }
 
+    public EffectiveParameterResult<TParameter1, TParameter2> ResolveEffectiveParameter<TParameter1, TParameter2>(ParameterState<TParameter1> parameterState1, ParameterState<TParameter2> parameterState2, string dominantParameterName)
+    {
+        var parameterState1Internal = (ParameterStateInternal<TParameter1>)parameterState1;
+        var parameterState2Internal = (ParameterStateInternal<TParameter2>)parameterState2;
+        var parameterState1Comparer = parameterState1Internal.ExtractComparer(ParameterView);
+        var parameterState2Comparer = parameterState2Internal.ExtractComparer(ParameterView);
+        var hasParameter1Changed = false;
+        var hasParameter2Changed = false;
+        TParameter1? parameter1Value = default;
+        TParameter2? parameter2Value = default;
+        if (ParameterStates.TryGetValue<TParameter1>(parameterState1Internal.Metadata.ParameterName, out _, out var parameterState1LastValue))
+        {
+            hasParameter1Changed = ParameterView.HasParameterChanged(parameterState1Internal.Metadata.ParameterName, parameterState1LastValue, out parameter1Value, parameterState1Comparer);
+        }
+
+        if (ParameterStates.TryGetValue<TParameter2>(parameterState2Internal.Metadata.ParameterName, out _, out var parameterState2LastValue))
+        {
+            hasParameter2Changed = ParameterView.HasParameterChanged(parameterState2Internal.Metadata.ParameterName, parameterState2LastValue, out parameter2Value, parameterState2Comparer);
+        }
+
+        if (!hasParameter1Changed && !hasParameter2Changed)
+        {
+            return EffectiveParameterResult<TParameter1, TParameter2>.None();
+        }
+
+        if (hasParameter1Changed && hasParameter2Changed)
+        {
+            if (dominantParameterName == parameterState1Internal.Metadata.ParameterName)
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
+                    parameterState1Internal.Metadata.ParameterName,
+                    parameter1Value);
+
+            if (dominantParameterName == parameterState2Internal.Metadata.ParameterName)
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
+                    parameterState2Internal.Metadata.ParameterName,
+                    parameter2Value);
+
+            throw new ArgumentException($"Unknown dominant parameter '{dominantParameterName}'.");
+        }
+
+        if (hasParameter1Changed)
+        {
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
+                parameterState1Internal.Metadata.ParameterName,
+                parameter1Value);
+        }
+
+        return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
+            parameterState2Internal.Metadata.ParameterName,
+            parameter2Value);
+    }
+
+    /// <summary>
+    /// Returns a string representation of the parameter changed context showing the count of parameter states.
+    /// </summary>
+    /// <returns>A string indicating the number of parameter states in the context.</returns>
+    public override string ToString() => $"ParameterChangedContext (ParameterStates.Count = {ParameterStates.Count})";
+
     /// <summary>
     /// Gets an empty <see cref="ParameterChangedContext"/>.
     /// </summary>
     public static ParameterChangedContext Empty { get; } = new(ParameterView.Empty, ParameterStateCollection.Empty);
+}
+
+/// <summary>
+/// Debugger type proxy for <see cref="ParameterStateCollection"/> that provides a better view of the collection in the debugger.
+/// </summary>
+internal sealed class ParameterStateCollectionDebugView
+{
+    private readonly ParameterStateCollection _collection;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterStateCollectionDebugView"/> class.
+    /// </summary>
+    /// <param name="collection">The collection to provide a debug view for.</param>
+    public ParameterStateCollectionDebugView(ParameterStateCollection collection)
+    {
+        _collection = collection;
+    }
+
+    /// <summary>
+    /// Gets an array of parameter state values for display in the debugger.
+    /// </summary>
+    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    public ParameterStateValue[] Items
+    {
+        get
+        {
+            if (_collection.Count == 0)
+            {
+                return [];
+            }
+
+            var items = new ParameterStateValue[_collection.Count];
+            var index = 0;
+            var dictionary = _collection.Dictionary;
+            if (dictionary is not null)
+            {
+                foreach (var kvp in dictionary)
+                {
+                    items[index++] = kvp.Value;
+                }
+            }
+
+            return items;
+        }
+    }
 }

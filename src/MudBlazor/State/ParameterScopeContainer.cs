@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.State.Comparer;
 using MudBlazor.State.Invocation;
 
 namespace MudBlazor.State;

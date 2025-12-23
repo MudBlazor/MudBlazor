@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Frozen;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Invocation;
 
@@ -14,21 +13,6 @@ namespace MudBlazor.State;
 /// </summary>
 internal static class ParameterChangeHandlerUtility
 {
-    /// <summary>
-    /// Represents a collection of handlers and their associated parameter changed context.
-    /// </summary>
-    internal readonly struct HandlerCollection
-    {
-        public List<IParameterStateInvocationSnapshot> Handlers { get; }
-        public ParameterChangedContext Context { get; }
-
-        public HandlerCollection(List<IParameterStateInvocationSnapshot> handlers, ParameterChangedContext context)
-        {
-            Handlers = handlers;
-            Context = context;
-        }
-    }
-
     /// <summary>
     /// Adds a snapshot to the list if it's not a duplicate.
     /// Uses <see cref="ParameterHandlerUniquenessComparer"/> to check for duplicates.
@@ -42,6 +26,13 @@ internal static class ParameterChangeHandlerUtility
         IParameterStateInvocationSnapshot targetSnapshot,
         List<ParameterStateValue> parameterStateValues)
     {
+        // Collect parameter state value if available
+        var parameterStateValue = targetSnapshot.GetParameterStateValue();
+        if (parameterStateValue.HasValue)
+        {
+            parameterStateValues.Add(parameterStateValue.Value);
+        }
+
         foreach (var snapshot in snapshots)
         {
             if (ParameterHandlerUniquenessComparer.Default.Equals(snapshot, targetSnapshot))
@@ -51,13 +42,6 @@ internal static class ParameterChangeHandlerUtility
         }
 
         snapshots.Add(targetSnapshot);
-        
-        // Collect parameter state value if available
-        var parameterStateValue = targetSnapshot.GetParameterStateValue();
-        if (parameterStateValue.HasValue)
-        {
-            parameterStateValues.Add(parameterStateValue.Value);
-        }
     }
 
     /// <summary>
@@ -68,8 +52,8 @@ internal static class ParameterChangeHandlerUtility
     /// <param name="parameterView">The parameter view snapshot.</param>
     /// <returns>A <see cref="HandlerCollection"/> or null if no handlers.</returns>
     public static HandlerCollection? CreateHandlerCollection(
-        List<IParameterStateInvocationSnapshot>? handlers,
-        List<ParameterStateValue>? parameterStateValues,
+        IReadOnlyList<IParameterStateInvocationSnapshot>? handlers,
+        IReadOnlyList<ParameterStateValue>? parameterStateValues,
         Microsoft.AspNetCore.Components.ParameterView parameterView)
     {
         if (handlers is null)
@@ -80,11 +64,11 @@ internal static class ParameterChangeHandlerUtility
         ParameterStateCollection parameterStates;
         if (parameterStateValues is not null && parameterStateValues.Count > 0)
         {
-            // Create a frozen dictionary for O(1) lookup performance
-            var dictionary = parameterStateValues.ToFrozenDictionary(
-                p => p.Name,
-                p => p,
-                StringComparer.Ordinal);
+            var dictionary = new Dictionary<string, ParameterStateValue>(parameterStateValues.Count, StringComparer.Ordinal);
+            foreach (var parameter in parameterStateValues)
+            {
+                dictionary[parameter.Name] = parameter;
+            }
             parameterStates = new ParameterStateCollection(dictionary);
         }
         else
@@ -101,16 +85,32 @@ internal static class ParameterChangeHandlerUtility
     /// Invokes all handlers in the provided collection asynchronously.
     /// </summary>
     /// <param name="handlerCollection">The handler collection to invoke, or null if no handlers.</param>
-    public static async Task InvokeHandlersAsync(HandlerCollection? handlerCollection)
+    public static Task InvokeHandlersAsync(HandlerCollection? handlerCollection)
     {
-        if (handlerCollection.HasValue)
+        if (handlerCollection is null)
         {
-            var collection = handlerCollection.Value;
-            foreach (var handler in collection.Handlers)
+            return Task.CompletedTask;
+        }
+
+        return InvokeCore(handlerCollection);
+
+        static async Task InvokeCore(HandlerCollection handlerCollection)
+        {
+            foreach (var handler in handlerCollection.Handlers)
             {
-                await handler.ParameterChangeHandleAsync(collection.Context);
+                await handler.ParameterChangeHandleAsync(handlerCollection.Context).ConfigureAwait(false);
             }
         }
+    }
+
+    /// <summary>
+    /// Represents a collection of handlers and their associated parameter changed context.
+    /// </summary>
+    internal sealed class HandlerCollection(IReadOnlyList<IParameterStateInvocationSnapshot> handlers, ParameterChangedContext context)
+    {
+        public ParameterChangedContext Context { get; } = context;
+
+        public IReadOnlyList<IParameterStateInvocationSnapshot> Handlers { get; } = handlers;
     }
 }
 
