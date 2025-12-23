@@ -264,12 +264,6 @@ public readonly struct ParameterChangedContext
         return EffectiveParameterResult<TParameter1, TParameter2>.None();
     }
 
-    ///// <summary>
-    ///// Returns a string representation of the parameter changed context showing the count of parameter states.
-    ///// </summary>
-    ///// <returns>A string indicating the number of parameter states in the context.</returns>
-    //public override string ToString() => $"ParameterChangedContext (ParameterStates.Count = {ParameterStates.Count})";
-
     /// <summary>
     /// Gets an empty <see cref="ParameterChangedContext"/>.
     /// </summary>

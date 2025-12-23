@@ -31,29 +31,29 @@ public class ParameterChangedContextTests
     {
         var result = Resolve(textBefore, textAfter, valueBefore, valueAfter);
 
-        if (expectedParameter == "Text")
+        switch (expectedParameter)
         {
-            result.HasEffectiveParameter.Should().BeTrue();
-            result.IsParameter1.Should().BeTrue();
-            result.IsParameter2.Should().BeFalse();
-            result.Parameter1Value.Should().Be(expectedColor);
-            result.Parameter2Value.Should().BeNull();
-        }
-        else if (expectedParameter == "Value")
-        {
-            result.HasEffectiveParameter.Should().BeTrue();
-            result.IsParameter2.Should().BeTrue();
-            result.IsParameter1.Should().BeFalse();
-            result.Parameter1Value.Should().BeNull();
-            result.Parameter2Value.Should().Be(expectedColor);
-        }
-        else
-        {
-            result.HasEffectiveParameter.Should().BeFalse();
-            result.IsParameter1.Should().BeFalse();
-            result.IsParameter2.Should().BeFalse();
-            result.Parameter1Value.Should().BeNull();
-            result.Parameter2Value.Should().BeNull();
+            case "Text":
+                result.HasEffectiveParameter.Should().BeTrue();
+                result.IsParameter1.Should().BeTrue();
+                result.IsParameter2.Should().BeFalse();
+                result.Parameter1Value.Should().Be(expectedColor);
+                result.Parameter2Value.Should().BeNull();
+                break;
+            case "Value":
+                result.HasEffectiveParameter.Should().BeTrue();
+                result.IsParameter2.Should().BeTrue();
+                result.IsParameter1.Should().BeFalse();
+                result.Parameter1Value.Should().BeNull();
+                result.Parameter2Value.Should().Be(expectedColor);
+                break;
+            default:
+                result.HasEffectiveParameter.Should().BeFalse();
+                result.IsParameter1.Should().BeFalse();
+                result.IsParameter2.Should().BeFalse();
+                result.Parameter1Value.Should().BeNull();
+                result.Parameter2Value.Should().BeNull();
+                break;
         }
     }
 
