@@ -26,8 +26,9 @@ internal class ParameterChangedLambdaTaskHandler<T> : IParameterChangedHandler<T
     /// Invokes the specified lambda expression when handling parameter changes.
     /// </summary>
     /// <param name="parameterChangedEventArgs">The <see cref="ParameterChangedEventArgs{T}"/> containing the information about the last and current values of a parameter.</param>
+    /// <param name="context">The parameter changed context.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs)
+    public Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs, ParameterChangedContext context)
     {
         return _lambda();
     }

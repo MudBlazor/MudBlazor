@@ -133,7 +133,7 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeTrue();
@@ -157,10 +157,10 @@ public class ParameterStateTests
             .Create<int>()
             .WithMetadata(new ParameterMetadata(ParameterName))
             .WithGetParameterValueFunc(() => InitialValue)
-            .WithParameterChangedHandler(args =>
+            .WithParameterChangedHandler((ParameterChangedContext context) =>
             {
                 changes++;
-                args.ParameterView.Contains<string>(OtherParameterName).Should().BeTrue();
+                context.ParameterView.Contains<string>(OtherParameterName).Should().BeTrue();
             })
             .Attach();
 
@@ -173,7 +173,7 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeTrue();
@@ -202,7 +202,7 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeFalse();
@@ -225,7 +225,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         parameterState.HasHandler.Should().BeTrue();
@@ -244,7 +244,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act & Assert
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty); //Does nothing, we are making coverage happy
         parameterState.HasHandler.Should().BeFalse();
     }
 

@@ -115,27 +115,29 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// <param name="parameters">The ParameterView coming from Blazor's <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
-        var parametersHandlerShouldFire = CollectChangedHandlers(parameters);
+        var handlerCollection = CollectChangedHandlers(parameters);
 
         await baseSetParametersAsync(parameters);
 
-        await ParameterChangeHandlerUtility.InvokeHandlersAsync(parametersHandlerShouldFire);
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection);
     }
 
-    private List<IParameterStateInvocationSnapshot>? CollectChangedHandlers(ParameterView parameters)
+    private ParameterChangeHandlerUtility.HandlerCollection? CollectChangedHandlers(ParameterView parameters)
     {
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
+        List<ParameterStateValue>? parameterStateValues = null;
 
         foreach (var parameter in _parameters.Value.Values)
         {
             if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
             {
                 parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
-                ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot());
+                parameterStateValues ??= new List<ParameterStateValue>();
+                ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot(), parameterStateValues);
             }
         }
 
-        return parametersHandlerShouldFire;
+        return ParameterChangeHandlerUtility.CreateHandlerCollection(parametersHandlerShouldFire, parameterStateValues, parameters);
     }
 
     /// <inheritdoc/>

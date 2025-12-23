@@ -102,16 +102,17 @@ internal class ParameterContainer : IParameterContainer
             return;
         }
 
-        var parametersHandlerShouldFire = CollectChangedHandlers(parameters);
+        var handlerCollection = CollectChangedHandlers(parameters);
 
         await baseSetParametersAsync(parameters);
 
-        await ParameterChangeHandlerUtility.InvokeHandlersAsync(parametersHandlerShouldFire);
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection);
     }
 
-    private List<IParameterStateInvocationSnapshot>? CollectChangedHandlers(ParameterView parameters)
+    private ParameterChangeHandlerUtility.HandlerCollection? CollectChangedHandlers(ParameterView parameters)
     {
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
+        List<ParameterStateValue>? parameterStateValues = null;
 
         foreach (var scopeContainer in _parameterScopeContainers)
         {
@@ -120,12 +121,13 @@ internal class ParameterContainer : IParameterContainer
                 if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
                 {
                     parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
-                    ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot());
+                    parameterStateValues ??= new List<ParameterStateValue>();
+                    ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot(), parameterStateValues);
                 }
             }
         }
 
-        return parametersHandlerShouldFire;
+        return ParameterChangeHandlerUtility.CreateHandlerCollection(parametersHandlerShouldFire, parameterStateValues, parameters);
     }
 
     /// <inheritdoc/>

@@ -99,7 +99,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithChangeHandler(Func<ParameterView, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    public RegisterParameterBuilder<T> WithChangeHandler(Func<ParameterChangedContext, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         return WithChangeHandler(new ParameterChangedLambdaTaskParameterViewHandler<T>(parameterChangedHandler), handlerName);
     }
@@ -121,7 +121,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithChangeHandler(Action<ParameterView> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    public RegisterParameterBuilder<T> WithChangeHandler(Action<ParameterChangedContext> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         return WithChangeHandler(new ParameterChangedLambdaParameterViewHandler<T>(parameterChangedHandler), handlerName);
     }

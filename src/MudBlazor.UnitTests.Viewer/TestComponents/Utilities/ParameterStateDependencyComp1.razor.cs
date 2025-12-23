@@ -38,8 +38,9 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
             .WithChangeHandler(OnTextAndValueChangedHandlerAsync);
     }
 
-    private async Task OnTextAndValueChangedHandlerAsync(ParameterView parameterView)
+    private async Task OnTextAndValueChangedHandlerAsync(ParameterChangedContext context)
     {
+        var parameterView = context.ParameterView;
         var hasText = parameterView.TryGetValue<string?>(nameof(Text), out var text);
         var hasValue = parameterView.TryGetValue<MudColor?>(nameof(Value), out var value);
         switch (hasText, hasValue, text, value)
