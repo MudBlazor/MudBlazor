@@ -237,7 +237,7 @@ public readonly struct ParameterChangedContext
         if (hasParameter1Changed)
         {
             // If changed to null and other is non-null & unchanged → pick the non-null unchanged
-            if (parameter1Value is null && parameter2Value is not null && !hasParameter2Changed)
+            if (parameter1Value is null && parameter2Value is not null)
             {
                 return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
                     parameterState2Internal.Metadata.ParameterName, parameter2Value);
@@ -250,7 +250,7 @@ public readonly struct ParameterChangedContext
         if (hasParameter2Changed)
         {
             // If changed to null and other is non-null & unchanged → pick the non-null unchanged
-            if (parameter2Value is null && parameter1Value is not null && !hasParameter1Changed)
+            if (parameter2Value is null && parameter1Value is not null)
             {
                 return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
                     parameterState1Internal.Metadata.ParameterName, parameter1Value);
