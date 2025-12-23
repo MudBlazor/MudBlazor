@@ -3,8 +3,10 @@
 
 <ParameterStateDependencyComp1 @bind-Value="_value1" @bind-Text="_text1" />
 <ParameterStateDependencyComp2 @bind-Value="_value2" @bind-Text="_text2" />
-<MudButton id="btnValue" OnClick="OnValueSetOnly">Set only Value #fcefe5</MudButton>
-<MudButton id="btnText" OnClick="OnTextSetOnly">Set only Text #5fa9e2</MudButton>
+<MudButton id="btnValue" OnClick="OnValueSetTextNull">Value #fcefe5 Text null</MudButton>
+<MudButton id="btnText" OnClick="OnTextSetValueNull">Text #5fa9e2 Value null</MudButton>
+<MudButton id="btnValueOnly" OnClick="OnValueSetOnly">Value #1abc65 only</MudButton>
+<MudButton id="btnTextOnly" OnClick="OnTextSetOnly">Text #d5dbe3 only</MudButton>
 <MudButton id="btnAllSame" OnClick="OnValueAndColorSetSame">Set same Value and Text #9b3f33</MudButton>
 <MudButton id="btnAllDiff" OnClick="OnValueAndColorSetDifferent">Set different Value and Text #30102a / #662f18</MudButton>
 <p>Current:</p>
@@ -39,6 +41,12 @@
 
     private void OnValueSetOnly()
     {
+        _value1 = "#1abc65";
+        _value2 = "#1abc65";
+    }
+
+    private void OnValueSetTextNull()
+    {
         _text1 = null;
         _text2 = null;
         _value1 = "#fcefe5";
@@ -46,6 +54,12 @@
     }
 
     private void OnTextSetOnly()
+    {
+        _text1 = "#d5dbe3";
+        _text2 = "#d5dbe3";
+    }
+
+    private void OnTextSetValueNull()
     {
         _text1 = "#5fa9e2";
         _text2 = "#5fa9e2";

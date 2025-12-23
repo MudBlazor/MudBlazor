@@ -167,63 +167,92 @@ public readonly struct ParameterChangedContext
         ParameterStates = parameterStates;
     }
 
-    public EffectiveParameterResult<TParameter1, TParameter2> ResolveEffectiveParameter<TParameter1, TParameter2>(ParameterState<TParameter1> parameterState1, ParameterState<TParameter2> parameterState2, string dominantParameterName)
+    public EffectiveParameterResult<TParameter1, TParameter2> ResolveEffectiveParameter<TParameter1, TParameter2>(
+        ParameterState<TParameter1> parameterState1,
+        ParameterState<TParameter2> parameterState2,
+        string dominantParameterName)
     {
         var parameterState1Internal = (ParameterStateInternal<TParameter1>)parameterState1;
         var parameterState2Internal = (ParameterStateInternal<TParameter2>)parameterState2;
+
         var parameterState1Comparer = parameterState1Internal.ExtractComparer(ParameterView);
         var parameterState2Comparer = parameterState2Internal.ExtractComparer(ParameterView);
+
         var hasParameter1Changed = false;
         var hasParameter2Changed = false;
+
         TParameter1? parameter1Value = default;
         TParameter2? parameter2Value = default;
+
+        // Get last/current values
         if (ParameterStates.TryGetValue<TParameter1>(parameterState1Internal.Metadata.ParameterName, out _, out var parameterState1LastValue))
         {
-            hasParameter1Changed = ParameterView.HasParameterChanged(parameterState1Internal.Metadata.ParameterName, parameterState1LastValue, out parameter1Value, parameterState1Comparer);
+            hasParameter1Changed = ParameterView.HasParameterChanged(
+                parameterState1Internal.Metadata.ParameterName, parameterState1LastValue, out parameter1Value, parameterState1Comparer);
         }
 
         if (ParameterStates.TryGetValue<TParameter2>(parameterState2Internal.Metadata.ParameterName, out _, out var parameterState2LastValue))
         {
-            hasParameter2Changed = ParameterView.HasParameterChanged(parameterState2Internal.Metadata.ParameterName, parameterState2LastValue, out parameter2Value, parameterState2Comparer);
+            hasParameter2Changed = ParameterView.HasParameterChanged(
+                parameterState2Internal.Metadata.ParameterName, parameterState2LastValue, out parameter2Value, parameterState2Comparer);
         }
 
+        // If neither changed
         if (!hasParameter1Changed && !hasParameter2Changed)
         {
             return EffectiveParameterResult<TParameter1, TParameter2>.None();
         }
 
+        // If both changed, prefer non-null value
         if (hasParameter1Changed && hasParameter2Changed)
         {
+            var parameter1IsNonNull = parameter1Value is not null;
+            var parameter2IsNonNull = parameter2Value is not null;
+
+            if (parameter1IsNonNull && !parameter2IsNonNull)
+            {
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameterState1Internal.Metadata.ParameterName, parameter1Value!);
+            }
+
+            if (!parameter1IsNonNull && parameter2IsNonNull)
+            {
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameterState2Internal.Metadata.ParameterName, parameter2Value!);
+            }
+
+            // If both non-null or both null, fallback to dominant parameter
             if (dominantParameterName == parameterState1Internal.Metadata.ParameterName)
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
-                    parameterState1Internal.Metadata.ParameterName,
-                    parameter1Value);
+            {
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameterState1Internal.Metadata.ParameterName, parameter1Value!);
+            }
 
             if (dominantParameterName == parameterState2Internal.Metadata.ParameterName)
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
-                    parameterState2Internal.Metadata.ParameterName,
-                    parameter2Value);
+            {
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameterState2Internal.Metadata.ParameterName, parameter2Value!);
+            }
 
             throw new ArgumentException($"Unknown dominant parameter '{dominantParameterName}'.");
         }
 
-        if (hasParameter1Changed)
+        // If only one changed, pick the one that is non-null
+        if (hasParameter1Changed && parameter1Value is not null)
         {
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
-                parameterState1Internal.Metadata.ParameterName,
-                parameter1Value);
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameterState1Internal.Metadata.ParameterName, parameter1Value);
         }
 
-        return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
-            parameterState2Internal.Metadata.ParameterName,
-            parameter2Value);
+        if (hasParameter2Changed && parameter2Value is not null)
+        {
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameterState2Internal.Metadata.ParameterName, parameter2Value);
+        }
+
+        // Fallback
+        return EffectiveParameterResult<TParameter1, TParameter2>.None();
     }
 
-    /// <summary>
-    /// Returns a string representation of the parameter changed context showing the count of parameter states.
-    /// </summary>
-    /// <returns>A string indicating the number of parameter states in the context.</returns>
-    public override string ToString() => $"ParameterChangedContext (ParameterStates.Count = {ParameterStates.Count})";
+    ///// <summary>
+    ///// Returns a string representation of the parameter changed context showing the count of parameter states.
+    ///// </summary>
+    ///// <returns>A string indicating the number of parameter states in the context.</returns>
+    //public override string ToString() => $"ParameterChangedContext (ParameterStates.Count = {ParameterStates.Count})";
 
     /// <summary>
     /// Gets an empty <see cref="ParameterChangedContext"/>.
