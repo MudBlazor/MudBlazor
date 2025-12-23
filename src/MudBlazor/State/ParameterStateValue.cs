@@ -234,7 +234,7 @@ public readonly struct ParameterChangedContext
         }
 
         // Only one changed
-        if (hasParameter1Changed)
+        if (hasParameter1Changed && !hasParameter2Changed)
         {
             // If changed to null and other is non-null & unchanged → pick the non-null unchanged
             if (parameter1Value is null && parameter2Value is not null)
@@ -247,7 +247,7 @@ public readonly struct ParameterChangedContext
                 parameterState1Internal.Metadata.ParameterName, parameter1Value);
         }
 
-        if (hasParameter2Changed)
+        if (!hasParameter1Changed && hasParameter2Changed)
         {
             // If changed to null and other is non-null & unchanged → pick the non-null unchanged
             if (parameter2Value is null && parameter1Value is not null)
