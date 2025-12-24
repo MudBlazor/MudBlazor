@@ -25,6 +25,36 @@
 
     private void OnValueAndColorSetDifferent()
     {
+        // Note for ParameterStateDependencyComp1:
+        //
+        // First click:
+        // ParameterChangedContext:
+        //   [Value: any_value -> "#30102a", Text: any_value -> "#662f18"]
+        // - ResolveEffectiveParameter prefers `_value1` (since "Value" is dominant),
+        //   so "#30102a" becomes the effective value.
+        //
+        // Second click:
+        // - `_value1` and `_text` are already "#30102a".
+        // - Setting `_text1` to "#662f18" creates a mismatch.
+        // - The change handler detects a change in `_text` (while `_value1` remains unchanged),
+        //   so a new parameter change is stored with:
+        //     ParameterChangedContext: [Text: "#30102a" -> "#662f18"]
+        // - This time "#662f18" becomes the effective value.
+        //
+        // Subsequent clicks:
+        // - The same sequence repeats, causing the effective value to toggle
+        //   between "#30102a" and "#662f18" on each click.
+        //
+        // In theory, ResolveEffectiveParameter could restore the current Value and always treat it as dominant (if it is selected as one).
+        // However, it is not clear what the correct or most intuitive strategy would be.
+        //
+        // In general, consumers should avoid binding both Text and Value at the same time. If one of them is
+        // used only for read-only display, this is usually fine, but writing to both simultaneously can lead
+        // to ambiguous behavior.
+        //
+        // ResolveEffectiveParameter is primarily intended to simplify the management of dependent parameters
+        // and keep them loosely in sync without introducing infinite update cycles. It is not designed to
+        // handle every possible edge case.
         _value1 = "#30102a";
         _value2 = "#30102a";
         _text1 = "#662f18";
@@ -47,6 +77,24 @@
 
     private void OnValueSetTextNull()
     {
+        // Note for ParameterStateDependencyComp1:
+        //
+        // On second click scenario:
+        // - When the same value ("#fcefe5") is selected again.
+        // - `_value1` does not change, so no Value change is recorded.
+        // - `_text1` is set to null, which triggers the change handler.
+        //
+        // ParameterChangedContext:
+        //   [Text: "#fcefe5" -> null]
+        //
+        // Result:
+        // - Only Text is stored as changed.
+        // - ResolveEffectiveParameter clears the effective parameter.
+        // - Both Text and Value end up null.
+        //
+        // To avoid this:
+        // - Do not set one parameter to null while the other remains unchanged.
+        // - Prefer the update pattern used in OnValueSetOnly / OnTextSetOnly.
         _text1 = null;
         _text2 = null;
         _value1 = "#fcefe5";
@@ -61,6 +109,24 @@
 
     private void OnTextSetValueNull()
     {
+        // Note for ParameterStateDependencyComp1:
+        //
+        // On second click scenario:
+        // - When the same value ("#5fa9e2") is selected again.
+        // - `_text1` does not change, so no Value change is recorded.
+        // - `_value1` is set to null, which triggers the change handler.
+        //
+        // ParameterChangedContext:
+        //   [Value: "#5fa9e2" -> null]
+        //
+        // Result:
+        // - Only Value is stored as changed.
+        // - ResolveEffectiveParameter clears the effective parameter.
+        // - Both Text and Value end up null.
+        //
+        // To avoid this:
+        // - Do not set one parameter to null while the other remains unchanged.
+        // - Prefer the update pattern used in OnValueSetOnly / OnTextSetOnly.
         _text1 = "#5fa9e2";
         _text2 = "#5fa9e2";
         _value1 = null;

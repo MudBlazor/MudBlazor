@@ -21,8 +21,10 @@ namespace MudBlazor.State;
 internal class ParameterScopeContainer : IParameterScopeContainer
 {
     private readonly IParameterStatesReader _parameterStatesReader;
-
     private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _parameters;
+
+    // Cache handler count for fast path optimization
+    private int _handlerCount = -1;  // -1 means not computed yet
 
     /// <inheritdoc/>
     public bool IsLocked { get; private set; }
@@ -112,13 +114,32 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
     /// <param name="parameters">The ParameterView coming from Blazor's <see cref="ComponentBase.SetParametersAsync"/>.</param>
-    public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    {
+        // Fast path: if no parameters have change handlers, skip handler detection entirely
+        if (GetHandlerCount() == 0)
+        {
+            return baseSetParametersAsync(parameters);
+        }
+
+        // IMPORTANT: Do not inline the async implementation here.
+        // Avoid async state machine allocation on the common path by returning the Task directly.
+        // The async state machine is only used when parameter change handlers must be invoked.
+        return SetParametersWithHandlersAsync(baseSetParametersAsync, parameters);
+    }
+
+    /// <inheritdoc/>
+    public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
+    {
+        return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
+    }
+
+    private async Task SetParametersWithHandlersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
         var handlerCollection = CollectChangedHandlers(parameters);
 
-        await baseSetParametersAsync(parameters);
-
-        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection);
+        await baseSetParametersAsync(parameters).ConfigureAwait(false);
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection).ConfigureAwait(false);
     }
 
     private ParameterChangeHandlerUtility.HandlerCollection? CollectChangedHandlers(ParameterView parameters)
@@ -139,10 +160,25 @@ internal class ParameterScopeContainer : IParameterScopeContainer
         return ParameterChangeHandlerUtility.CreateHandlerCollection(parametersHandlerShouldFire, parameterStateValues, parameters);
     }
 
-    /// <inheritdoc/>
-    public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
+    /// <summary>
+    /// Gets the total count of parameters with change handlers.
+    /// This is computed once and cached for the fast path optimization.
+    /// </summary>
+    private int GetHandlerCount()
     {
-        return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
+        if (_handlerCount == -1)
+        {
+            _handlerCount = 0;
+            foreach (var parameter in this)
+            {
+                if (parameter.HasHandler)
+                {
+                    _handlerCount++;
+                }
+            }
+        }
+
+        return _handlerCount;
     }
 
     /// <inheritdoc/>

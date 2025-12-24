@@ -85,12 +85,11 @@ internal class ParameterContainer : IParameterContainer
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
     /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
-    public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
         if (Count == 0)
         {
-            await baseSetParametersAsync(parameters);
-            return;
+            return baseSetParametersAsync(parameters);
         }
 
         VerifyOnAuto();
@@ -98,15 +97,22 @@ internal class ParameterContainer : IParameterContainer
         // Fast path: if no parameters have change handlers, skip handler detection entirely
         if (GetHandlerCount() == 0)
         {
-            await baseSetParametersAsync(parameters);
-            return;
+            return baseSetParametersAsync(parameters);
+
         }
 
+        // IMPORTANT: Do not inline the async implementation here.
+        // Avoid async state machine allocation on the common path by returning the Task directly.
+        // The async state machine is only used when parameter change handlers must be invoked.
+        return SetParametersWithHandlersAsync(baseSetParametersAsync, parameters);
+    }
+
+    private async Task SetParametersWithHandlersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    {
         var handlerCollection = CollectChangedHandlers(parameters);
 
-        await baseSetParametersAsync(parameters);
-
-        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection);
+        await baseSetParametersAsync(parameters).ConfigureAwait(false);
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection).ConfigureAwait(false);
     }
 
     private ParameterChangeHandlerUtility.HandlerCollection? CollectChangedHandlers(ParameterView parameters)
