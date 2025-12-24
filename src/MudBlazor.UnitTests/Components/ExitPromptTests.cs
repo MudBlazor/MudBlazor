@@ -1,4 +1,5 @@
 ﻿using Bunit.TestDoubles;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -14,10 +15,11 @@ public class ExitPromptsTests : BunitTest
     public async Task JsIsCalledCorrectly()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>();
-        jsRuntimeMock.Setup(x => x.InvokeAsync<bool>("mudExitPrompt.enable", It.IsAny<object[]>()));
+        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()));
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()));
-        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()));
+        jsRuntimeMock.Setup(x => x.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>())).Returns(new ValueTask<bool>(true));
         Context.Services.AddSingleton(jsRuntimeMock.Object);
+        Context.Services.AddSingleton<NavigationManager>(s => s.GetRequiredService<BunitNavigationManager>());
 
         var component = Context.Render<MudExitPrompt>();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()), Times.Exactly(1));
@@ -29,16 +31,16 @@ public class ExitPromptsTests : BunitTest
         
         var navigationManager = Context.Services.GetRequiredService<BunitNavigationManager>();
         navigationManager.NavigateTo("/test1");
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()), Times.Never);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()), Times.Never);
         
         await component.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Disabled, false));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Exactly(1));
         
         navigationManager.NavigateTo("/test2");
-        // jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()), Times.Exactly(1));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()), Times.Exactly(1));
         
         await Context.DisposeComponentsAsync();
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Exactly(1));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Exactly(2));
     }
 }
