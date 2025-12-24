@@ -188,27 +188,8 @@ public readonly struct ParameterChangedContext
         var parameterState1Internal = (ParameterStateInternal<TParameter1>)parameterState1;
         var parameterState2Internal = (ParameterStateInternal<TParameter2>)parameterState2;
 
-        var parameterState1Comparer = parameterState1Internal.ExtractComparer(ParameterView);
-        var parameterState2Comparer = parameterState2Internal.ExtractComparer(ParameterView);
-
-        var hasParameter1Changed = false;
-        var hasParameter2Changed = false;
-
-        TParameter1? parameter1Value = default;
-        TParameter2? parameter2Value = default;
-
-        // Get last/current values
-        if (ParameterStates.TryGetValue<TParameter1>(parameterState1Internal.Metadata.ParameterName, out _, out var parameterState1LastValue))
-        {
-            hasParameter1Changed = ParameterView.HasParameterChanged(
-                parameterState1Internal.Metadata.ParameterName, parameterState1LastValue, out parameter1Value, parameterState1Comparer);
-        }
-
-        if (ParameterStates.TryGetValue<TParameter2>(parameterState2Internal.Metadata.ParameterName, out _, out var parameterState2LastValue))
-        {
-            hasParameter2Changed = ParameterView.HasParameterChanged(
-                parameterState2Internal.Metadata.ParameterName, parameterState2LastValue, out parameter2Value, parameterState2Comparer);
-        }
+        var (hasParameter1Changed, parameter1Value) = CheckParameterChange(parameterState1Internal);
+        var (hasParameter2Changed, parameter2Value) = CheckParameterChange(parameterState2Internal);
 
         // If neither changed
         if (!hasParameter1Changed && !hasParameter2Changed)
@@ -216,65 +197,122 @@ public readonly struct ParameterChangedContext
             return EffectiveParameterResult<TParameter1, TParameter2>.None();
         }
 
-        // Only one changed
-        if (hasParameter1Changed && !hasParameter2Changed)
+        // If only one changed
+        if (hasParameter1Changed != hasParameter2Changed)
         {
-            // If changed to null and other is non-null & unchanged → pick the non-null unchanged
+            return ResolveWhenOneChanged(
+                hasParameter1Changed,
+                parameter1Value,
+                parameter2Value,
+                parameterState1Internal.Metadata.ParameterName,
+                parameterState2Internal.Metadata.ParameterName);
+        }
+
+        // Both changed
+        return ResolveWhenBothChanged(
+            parameter1Value,
+            parameter2Value,
+            dominantParameterName,
+            parameterState1Internal.Metadata.ParameterName,
+            parameterState2Internal.Metadata.ParameterName);
+    }
+
+    private (bool HasChanged, TParameter? Value) CheckParameterChange<TParameter>(ParameterStateInternal<TParameter> parameterStateInternal)
+    {
+        if (ParameterStates.TryGetValue<TParameter>(
+            parameterStateInternal.Metadata.ParameterName,
+            out _,
+            out var lastValue))
+        {
+            var comparer = parameterStateInternal.ExtractComparer(ParameterView);
+            var hasChanged = ParameterView.HasParameterChanged(
+                parameterStateInternal.Metadata.ParameterName,
+                lastValue,
+                out var currentValue,
+                comparer);
+
+            return (hasChanged, currentValue);
+        }
+
+        return (false, default);
+    }
+
+    private static EffectiveParameterResult<TParameter1, TParameter2> ResolveWhenOneChanged<TParameter1, TParameter2>(
+        bool hasParameter1Changed,
+        TParameter1? parameter1Value,
+        TParameter2? parameter2Value,
+        string parameter1Name,
+        string parameter2Name)
+    {
+        if (hasParameter1Changed)
+        {
+            // If parameter1 changed to null and parameter2 is non-null, prefer parameter2
             if (parameter1Value is null && parameter2Value is not null)
             {
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
-                    parameterState2Internal.Metadata.ParameterName, parameter2Value);
+                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value);
             }
 
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
-                parameterState1Internal.Metadata.ParameterName, parameter1Value);
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value);
         }
 
-        if (!hasParameter1Changed && hasParameter2Changed)
+        // parameter2 changed
+        // If parameter2 changed to null and parameter1 is non-null, prefer parameter1
+        if (parameter2Value is null && parameter1Value is not null)
         {
-            // If changed to null and other is non-null & unchanged → pick the non-null unchanged
-            if (parameter2Value is null && parameter1Value is not null)
-            {
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(
-                    parameterState1Internal.Metadata.ParameterName, parameter1Value);
-            }
-
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(
-                parameterState2Internal.Metadata.ParameterName, parameter2Value);
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value);
         }
 
-        // If both changed, prefer non-null value
-        if (hasParameter1Changed && hasParameter2Changed)
+        return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value);
+    }
+
+    private static EffectiveParameterResult<TParameter1, TParameter2> ResolveWhenBothChanged<TParameter1, TParameter2>(
+        TParameter1? parameter1Value,
+        TParameter2? parameter2Value,
+        string dominantParameterName,
+        string parameter1Name,
+        string parameter2Name)
+    {
+        var parameter1IsNonNull = parameter1Value is not null;
+        var parameter2IsNonNull = parameter2Value is not null;
+
+        // Prefer non-null value when only one is non-null
+        if (parameter1IsNonNull && !parameter2IsNonNull)
         {
-            var parameter1IsNonNull = parameter1Value is not null;
-            var parameter2IsNonNull = parameter2Value is not null;
-
-            if (parameter1IsNonNull && !parameter2IsNonNull)
-            {
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameterState1Internal.Metadata.ParameterName, parameter1Value!);
-            }
-
-            if (!parameter1IsNonNull && parameter2IsNonNull)
-            {
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameterState2Internal.Metadata.ParameterName, parameter2Value!);
-            }
-
-            // If both non-null or both null, fallback to dominant parameter
-            if (dominantParameterName == parameterState1Internal.Metadata.ParameterName)
-            {
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameterState1Internal.Metadata.ParameterName, parameter1Value!);
-            }
-
-            if (dominantParameterName == parameterState2Internal.Metadata.ParameterName)
-            {
-                return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameterState2Internal.Metadata.ParameterName, parameter2Value!);
-            }
-
-            throw new ArgumentException($"Unknown dominant parameter '{dominantParameterName}'.");
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value!);
         }
 
-        // Fallback
-        return EffectiveParameterResult<TParameter1, TParameter2>.None();
+        if (!parameter1IsNonNull && parameter2IsNonNull)
+        {
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value!);
+        }
+
+        // Both non-null or both null, use dominant parameter
+        return ResolveDominantParameter(
+            parameter1Value,
+            parameter2Value,
+            dominantParameterName,
+            parameter1Name,
+            parameter2Name);
+    }
+
+    private static EffectiveParameterResult<TParameter1, TParameter2> ResolveDominantParameter<TParameter1, TParameter2>(
+        TParameter1? parameter1Value,
+        TParameter2? parameter2Value,
+        string dominantParameterName,
+        string parameter1Name,
+        string parameter2Name)
+    {
+        if (dominantParameterName == parameter1Name)
+        {
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value!);
+        }
+
+        if (dominantParameterName == parameter2Name)
+        {
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value!);
+        }
+
+        throw new ArgumentException($"Unknown dominant parameter '{dominantParameterName}'.");
     }
 
     /// <summary>
