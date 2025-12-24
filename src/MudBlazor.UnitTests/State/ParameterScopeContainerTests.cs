@@ -106,6 +106,7 @@ public class ParameterScopeContainerTests
 
         // Act
         using var parameterScopeContainer = new ParameterScopeContainer(parameterState, parameterState);
+        // ReSharper disable once AccessToDisposedClosure
         var count = () => parameterScopeContainer.Count();
 
         // Assert
@@ -363,8 +364,33 @@ public class ParameterScopeContainerTests
             .WithParameterChangedHandler(OnParameterChange)
             .Attach();
         var parameterScopeContainer = new ParameterScopeContainer(parameterState1, parameterState2, parameterState3);
-        void OnParameterChange()
+        void OnParameterChange(ParameterChangedContext parameterChangedContext)
         {
+            parameterChangedContext.ParameterStates.Count.Should().Be(3);
+            var parameter1 = parameterChangedContext.ParameterStates[ParameterName1];
+            var parameter2 = parameterChangedContext.ParameterStates[ParameterName2];
+            var parameter3 = parameterChangedContext.ParameterStates[ParameterName3];
+
+            parameter1.Should().NotBeNull();
+            parameter2.Should().NotBeNull();
+            parameter3.Should().NotBeNull();
+            parameter1.Name.Should().Be(ParameterName1);
+            parameter1.LastValue.Should().Be(1);
+            parameter1.Value.Should().Be(2);
+
+            parameter2.Name.Should().Be(ParameterName2);
+            parameter2.LastValue.Should().Be(2);
+            parameter2.Value.Should().Be(3);
+
+            parameter3.Name.Should().Be(ParameterName3);
+            parameter3.LastValue.Should().Be(3);
+            parameter3.Value.Should().Be(4);
+
+            FluentActions
+                .Invoking(() => parameterChangedContext.ParameterStates["NonExistentParameter"])
+                .Should().Throw<KeyNotFoundException>()
+                .WithMessage("The parameter 'NonExistentParameter' was not found.");
+
             handlerFireCount++;
         }
 
