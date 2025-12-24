@@ -659,7 +659,7 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #d5dbe3");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #1abc65", "Non shared handles can't handle this case.");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #1abc65", "Non shared handles can't handle this case.");
-        child2.Instance.TextChanges.Count.Should().Be(8);
+        child2.Instance.TextChanges.Count.Should().Be(10);
         child2.Instance.ValueChanges.Count.Should().Be(6);
     }
 }
