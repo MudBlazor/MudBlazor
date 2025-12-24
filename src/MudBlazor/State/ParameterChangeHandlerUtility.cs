@@ -63,7 +63,7 @@ internal static class ParameterChangeHandlerUtility
         }
 
         ParameterStateCollection parameterStates;
-        if (parameterStateValues is not null && parameterStateValues.Count > 0)
+        if (parameterStateValues is { Count: > 0 })
         {
             var dictionary = new Dictionary<string, ParameterStateValue>(parameterStateValues.Count, StringComparer.Ordinal);
             foreach (var parameter in parameterStateValues)
