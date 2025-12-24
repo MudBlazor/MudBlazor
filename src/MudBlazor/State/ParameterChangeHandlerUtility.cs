@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Invocation;
 
@@ -54,7 +55,7 @@ internal static class ParameterChangeHandlerUtility
     public static HandlerCollection? CreateHandlerCollection(
         IReadOnlyList<IParameterStateInvocationSnapshot>? handlers,
         IReadOnlyList<ParameterStateValue>? parameterStateValues,
-        Microsoft.AspNetCore.Components.ParameterView parameterView)
+        ParameterView parameterView)
     {
         if (handlers is null)
         {
