@@ -575,6 +575,7 @@ public class ParameterStateUsageTests : BunitTest
     public async Task ParameterStateDependencyParameter()
     {
         var comp = Context.Render<ParameterStateDependencyCompTest>();
+        var child1 = comp.FindComponent<ParameterStateDependencyComp1>();
         var child2 = comp.FindComponent<ParameterStateDependencyComp2>();
         IElement ButtonSetValueNullText() => comp.Find("#btnValue");
         IElement ButtonSetTextValueNull() => comp.Find("#btnText");
@@ -602,6 +603,7 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #fcefe5");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #fcefe5");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #fcefe5");
+        child1.Instance.ParameterStateValues.Count.Should().Be(2);
         child2.Instance.TextChanges.Count.Should().Be(1);
         child2.Instance.ValueChanges.Count.Should().Be(1);
         child2.Instance.TextChanges[0].Value!.Should().Be("#fcefe5");
@@ -613,6 +615,7 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #5fa9e2");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #5fa9e2");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #5fa9e2");
+        child1.Instance.ParameterStateValues.Count.Should().Be(5);
         child2.Instance.TextChanges.Count.Should().Be(4);
         child2.Instance.ValueChanges.Count.Should().Be(3);
         child2.Instance.TextChanges[1].Value!.Should().Be("#5fa9e2");
@@ -627,6 +630,7 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #9b3f33");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #9b3f33");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #9b3f33");
+        child1.Instance.ParameterStateValues.Count.Should().Be(7);
         child2.Instance.TextChanges.Count.Should().Be(5);
         child2.Instance.ValueChanges.Count.Should().Be(4);
         child2.Instance.TextChanges[4].Value!.Should().Be("#9b3f33");
@@ -638,6 +642,7 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #30102a");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #30102a");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #30102a");
+        child1.Instance.ParameterStateValues.Count.Should().Be(10);
         child2.Instance.TextChanges.Count.Should().Be(7);
         child2.Instance.ValueChanges.Count.Should().Be(5);
         child2.Instance.TextChanges[5].Value!.Should().Be("#662f18");
@@ -650,6 +655,7 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #1abc65");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #1abc65");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #1abc65");
+        child1.Instance.ParameterStateValues.Count.Should().Be(12);
         child2.Instance.TextChanges.Count.Should().Be(8);
         child2.Instance.ValueChanges.Count.Should().Be(6);
 
@@ -659,6 +665,7 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #d5dbe3");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #1abc65", "Non shared handles can't handle this case.");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #1abc65", "Non shared handles can't handle this case.");
+        child1.Instance.ParameterStateValues.Count.Should().Be(14);
         child2.Instance.TextChanges.Count.Should().Be(10);
         child2.Instance.ValueChanges.Count.Should().Be(6);
     }

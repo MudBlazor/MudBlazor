@@ -21,9 +21,7 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
     [Parameter]
     public EventCallback<MudColor?> ValueChanged { get; set; }
 
-    public List<ParameterChangedEventArgs<string?>> TextChanges { get; } = [];
-
-    public List<ParameterChangedEventArgs<MudColor?>> ValueChanges { get; } = [];
+    public List<ParameterStateValue> ParameterStateValues { get; } = [];
 
     public ParameterStateDependencyComp1()
     {
@@ -40,6 +38,7 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
 
     private async Task OnTextAndValueChangedHandlerAsync(ParameterChangedContext context)
     {
+        ParameterStateValues.AddRange(context.ParameterStates.Dictionary?.Values ?? []);
         var effectiveParameter = context.ResolveEffectiveParameter(_valueState, _textState, nameof(Value));
         // Value
         if (effectiveParameter is { IsParameter1: true })
