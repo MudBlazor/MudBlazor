@@ -27,7 +27,14 @@ internal static class ParameterChangeHandlerUtility
         IParameterStateInvocationSnapshot targetSnapshot,
         List<ParameterStateValue> parameterStateValues)
     {
-        // Collect parameter state value if available
+        // IMPORTANT:
+        // The parameter state value must be collected *before* the duplicate snapshot check.
+        // Multiple parameters can share the same handler, which means the snapshot may be
+        // considered a duplicate and rejected below. However, the shared handler still needs
+        // to see *all* changed parameters via ParameterStateCollection.
+        // If we return early without collecting here, ParameterStateValues would be incomplete
+        // for shared handlers.
+
         var parameterStateValue = targetSnapshot.GetParameterStateValue();
         if (parameterStateValue.HasValue)
         {
@@ -38,6 +45,8 @@ internal static class ParameterChangeHandlerUtility
         {
             if (ParameterHandlerUniquenessComparer.Default.Equals(snapshot, targetSnapshot))
             {
+                // Handler is a duplicate, but parameter state value was already collected above
+                // to support shared handlers.
                 return;
             }
         }
