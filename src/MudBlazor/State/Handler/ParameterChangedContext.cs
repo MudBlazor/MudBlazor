@@ -212,5 +212,17 @@ public readonly struct ParameterChangedContext
     /// </summary>
     public static ParameterChangedContext Empty { get; } = new(ParameterView.Empty, ParameterStateCollection.Empty);
 
-    internal readonly record struct ParameterChange<T>(bool HasChanged, [AllowNull] T Value);
+    internal readonly struct ParameterChange<T>(bool hasChanged, T? value)
+    {
+        public bool HasChanged { get; } = hasChanged;
+
+        [AllowNull]
+        public T Value { get; } = value;
+
+        public void Deconstruct(out bool hasChanged, out T value)
+        {
+            hasChanged = HasChanged;
+            value = Value;
+        }
+    }
 }
