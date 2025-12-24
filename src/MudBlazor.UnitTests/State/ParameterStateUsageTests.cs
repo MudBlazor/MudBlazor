@@ -576,10 +576,12 @@ public class ParameterStateUsageTests : BunitTest
     {
         var comp = Context.Render<ParameterStateDependencyCompTest>();
         var child2 = comp.FindComponent<ParameterStateDependencyComp2>();
-        IElement ButtonOnlyValue() => comp.Find("#btnValue");
-        IElement ButtonOnlyText() => comp.Find("#btnText");
+        IElement ButtonSetValueNullText() => comp.Find("#btnValue");
+        IElement ButtonSetTextValueNull() => comp.Find("#btnText");
         IElement ButtonAllSame() => comp.Find("#btnAllSame");
         IElement ButtonAllDiff() => comp.Find("#btnAllDiff");
+        IElement ButtonValueOnly() => comp.Find("#btnValueOnly");
+        IElement ButtonTextOnly() => comp.Find("#btnTextOnly");
 
         IElement CurrentValue1() => comp.Find(".current-value1");
         IElement CurrentText1() => comp.Find(".current-text1");
@@ -594,8 +596,8 @@ public class ParameterStateUsageTests : BunitTest
         child2.Instance.TextChanges.Count.Should().Be(0);
         child2.Instance.ValueChanges.Count.Should().Be(0);
 
-        // Change only Value
-        await ButtonOnlyValue().ClickAsync();
+        // Change Value, Text null
+        await ButtonSetValueNullText().ClickAsync();
         CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #fcefe5");
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #fcefe5");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #fcefe5");
@@ -605,8 +607,8 @@ public class ParameterStateUsageTests : BunitTest
         child2.Instance.TextChanges[0].Value!.Should().Be("#fcefe5");
         child2.Instance.ValueChanges[0].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#fcefe5");
 
-        // Change only Text
-        await ButtonOnlyText().ClickAsync();
+        // Change Text, Value null
+        await ButtonSetTextValueNull().ClickAsync();
         CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #5fa9e2");
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #5fa9e2");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #5fa9e2");
@@ -641,5 +643,19 @@ public class ParameterStateUsageTests : BunitTest
         child2.Instance.TextChanges[5].Value!.Should().Be("#662f18");
         child2.Instance.TextChanges[6].Value!.Should().Be("#30102a");
         child2.Instance.ValueChanges[4].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#30102a");
+
+        // Change Value only
+        await ButtonValueOnly().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #1abc65");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #1abc65");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #1abc65");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #1abc65");
+
+        // Change Text only
+        await ButtonTextOnly().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #d5dbe3");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #d5dbe3");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #d5dbe3");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #d5dbe3");
     }
 }
