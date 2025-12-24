@@ -34,7 +34,6 @@ internal static class ParameterChangeHandlerUtility
         // to see *all* changed parameters via ParameterStateCollection.
         // If we return early without collecting here, ParameterStateValues would be incomplete
         // for shared handlers.
-
         var parameterStateValue = targetSnapshot.GetParameterStateValue();
         if (parameterStateValue.HasValue)
         {
