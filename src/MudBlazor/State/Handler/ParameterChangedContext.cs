@@ -50,6 +50,28 @@ public readonly struct ParameterChangedContext
         ParameterStates = parameterStates;
     }
 
+    /// <summary>
+    /// Resolves which parameter is effective when coordinating changes between two related parameters.
+    /// </summary>
+    /// <typeparam name="TParameter1">The type of the first parameter.</typeparam>
+    /// <typeparam name="TParameter2">The type of the second parameter.</typeparam>
+    /// <param name="parameterState1">The state object for the first parameter.</param>
+    /// <param name="parameterState2">The state object for the second parameter.</param>
+    /// <param name="dominantParameterName">
+    /// The name of the parameter that should take precedence if both parameters have changed.
+    /// </param>
+    /// <returns>
+    /// An <see cref="EffectiveParameterResult{TParameter1, TParameter2}"/> indicating which parameter is effective,
+    /// including its name and value.
+    /// </returns>
+    /// <remarks>
+    /// This method compares the current and previous values of both parameters, determines which (if any) has changed,
+    /// and applies precedence rules to select the effective parameter. If both parameters have changed and are non-null,
+    /// the parameter specified by <paramref name="dominantParameterName"/> is selected.
+    /// </remarks>
+    /// <exception cref="ArgumentException">
+    /// Thrown if <paramref name="dominantParameterName"/> does not match either parameter name when both have changed.
+    /// </exception>
     public EffectiveParameterResult<TParameter1, TParameter2> ResolveEffectiveParameter<TParameter1, TParameter2>(
         ParameterState<TParameter1> parameterState1,
         ParameterState<TParameter2> parameterState2,
@@ -165,23 +187,6 @@ public readonly struct ParameterChangedContext
             parameter2Name);
     }
 
-    /// <summary>
-    /// Resolves which parameter should be selected when both parameters have changed and have the same nullability.
-    /// </summary>
-    /// <typeparam name="TParameter1">The type of the first parameter.</typeparam>
-    /// <typeparam name="TParameter2">The type of the second parameter.</typeparam>
-    /// <param name="parameter1Value">The current value of the first parameter.</param>
-    /// <param name="parameter2Value">The current value of the second parameter.</param>
-    /// <param name="dominantParameterName">The name of the parameter that should take precedence when both have changed.</param>
-    /// <param name="parameter1Name">The name of the first parameter.</param>
-    /// <param name="parameter2Name">The name of the second parameter.</param>
-    /// <returns>
-    /// An <see cref="EffectiveParameterResult{TParameter1, TParameter2}"/> indicating which parameter was selected
-    /// based on the dominant parameter name.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="dominantParameterName"/> does not match either <paramref name="parameter1Name"/> or <paramref name="parameter2Name"/>.
-    /// </exception>
     private static EffectiveParameterResult<TParameter1, TParameter2> ResolveDominantParameter<TParameter1, TParameter2>(
         TParameter1 parameter1Value,
         TParameter2 parameter2Value,
