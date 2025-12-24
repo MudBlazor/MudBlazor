@@ -46,12 +46,6 @@ public readonly struct ParameterStateValue
         LastValue = lastValue;
         Value = value;
     }
-
-    /// <summary>
-    /// Returns a string representation of the parameter state value showing the transition from last value to current value.
-    /// </summary>
-    /// <returns>A string in the format "Name: LastValue -> Value".</returns>
-    public override string ToString() => $"{Name}: {LastValue} -> {Value}";
 }
 
 /// <summary>
@@ -273,6 +267,7 @@ public readonly struct ParameterChangedContext
 /// <summary>
 /// Debugger type proxy for <see cref="ParameterStateCollection"/> that provides a better view of the collection in the debugger.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal sealed class ParameterStateCollectionDebugView
 {
     private readonly ParameterStateCollection _collection;

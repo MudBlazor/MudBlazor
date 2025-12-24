@@ -27,9 +27,53 @@ public class ParameterChangedContextTests
     [TestCase(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
     [TestCase(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
     [TestCase(null, null, null, null, "", null)]
-    public void ResolveEffectiveParameter_ShouldSelectCorrectParameter(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
+    public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_TextDominant(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
     {
         var result = Resolve(textBefore, textAfter, valueBefore, valueAfter, "Text");
+
+        switch (expectedParameter)
+        {
+            case "Text":
+                result.HasEffectiveParameter.Should().BeTrue();
+                result.IsParameter1.Should().BeTrue();
+                result.IsParameter2.Should().BeFalse();
+                result.Parameter1Value.Should().Be(expectedColor);
+                result.Parameter2Value.Should().BeNull();
+                break;
+            case "Value":
+                result.HasEffectiveParameter.Should().BeTrue();
+                result.IsParameter2.Should().BeTrue();
+                result.IsParameter1.Should().BeFalse();
+                result.Parameter1Value.Should().BeNull();
+                result.Parameter2Value.Should().Be(expectedColor);
+                break;
+            default:
+                result.HasEffectiveParameter.Should().BeFalse();
+                result.IsParameter1.Should().BeFalse();
+                result.IsParameter2.Should().BeFalse();
+                result.Parameter1Value.Should().BeNull();
+                result.Parameter2Value.Should().BeNull();
+                break;
+        }
+    }
+
+    [Test]
+    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
+    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase("#fcefe5", null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase("#fcefe5", null, "#fcefe5", null, "Value", null)]
+    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#fcefe5", "Text", "#5fa9e2")]
+    [TestCase("#fcefe5", null, "#fcefe5", "#fcefe5", "Value", "#fcefe5")]
+    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#fcefe5", "", null)]
+    [TestCase(null, "#5fa9e2", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase(null, "#5fa9e2", null, "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
+    [TestCase(null, null, null, null, "", null)]
+    public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_ValueDominant(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
+    {
+        var result = Resolve(textBefore, textAfter, valueBefore, valueAfter, "Value");
 
         switch (expectedParameter)
         {
