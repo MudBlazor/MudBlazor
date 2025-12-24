@@ -15,7 +15,7 @@ namespace MudBlazor.State;
 /// This struct is used to pass parameter state information to shared change handlers
 /// that need to coordinate changes across multiple parameters.
 /// </remarks>
-[DebuggerDisplay("{Name}: {LastValue} -> {Value}")]
+[DebuggerDisplay("{ToString(),nq}")]
 public readonly struct ParameterStateValue
 {
     /// <summary>
@@ -45,6 +45,9 @@ public readonly struct ParameterStateValue
         LastValue = lastValue;
         Value = value;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => $"{Name}: {LastValue ?? "null"} -> {Value ?? "null"}";
 }
 
 /// <summary>
