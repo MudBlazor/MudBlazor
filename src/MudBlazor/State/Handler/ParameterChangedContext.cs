@@ -3,142 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
 #nullable enable
-/// <summary>
-/// Represents a non-generic snapshot of a parameter's name, current value, and last value.
-/// </summary>
-/// <remarks>
-/// This struct is used to pass parameter state information to shared change handlers
-/// that need to coordinate changes across multiple parameters.
-/// </remarks>
-[DebuggerDisplay("{Name}: {LastValue} -> {Value}")]
-public readonly struct ParameterStateValue
-{
-    /// <summary>
-    /// Gets the name of the parameter.
-    /// </summary>
-    public string Name { get; }
-
-    /// <summary>
-    /// Gets the current value of the parameter.
-    /// </summary>
-    public object? Value { get; }
-
-    /// <summary>
-    /// Gets the last value of the parameter before the change.
-    /// </summary>
-    public object? LastValue { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterStateValue"/> struct.
-    /// </summary>
-    /// <param name="name">The name of the parameter.</param>
-    /// <param name="lastValue">The last value of the parameter.</param>
-    /// <param name="value">The current value of the parameter.</param>
-    internal ParameterStateValue(string name, object? lastValue, object? value)
-    {
-        Name = name;
-        LastValue = lastValue;
-        Value = value;
-    }
-}
-
-/// <summary>
-/// A collection of parameter state values that allows efficient lookup by parameter name.
-/// </summary>
-/// <remarks>
-/// This type is similar to <see cref="Microsoft.AspNetCore.Components.ParameterView"/> but for parameter state values.
-/// It provides O(1) lookup performance for accessing parameter last values by name using a frozen dictionary.
-/// </remarks>
-[DebuggerDisplay("Count = {Count}")]
-[DebuggerTypeProxy(typeof(ParameterStateCollectionDebugView))]
-public readonly struct ParameterStateCollection
-{
-    internal readonly IReadOnlyDictionary<string, ParameterStateValue>? Dictionary;
-
-    /// <summary>
-    /// Gets an empty <see cref="ParameterStateCollection"/>.
-    /// </summary>
-    public static ParameterStateCollection Empty { get; } = new(null);
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterStateCollection"/> struct.
-    /// </summary>
-    /// <param name="dictionary">The dictionary of parameter state values keyed by parameter name.</param>
-    internal ParameterStateCollection(IReadOnlyDictionary<string, ParameterStateValue>? dictionary)
-    {
-        Dictionary = dictionary;
-    }
-
-    /// <summary>
-    /// Gets the number of parameter state values in the collection.
-    /// </summary>
-    public int Count => Dictionary?.Count ?? 0;
-
-    /// <summary>
-    /// Attempts to get a parameter state value by its name.
-    /// </summary>
-    /// <param name="parameterName">The name of the parameter.</param>
-    /// <param name="value">When this method returns, contains the parameter state value if found; otherwise, the default value.</param>
-    /// <returns><c>true</c> if the parameter was found; otherwise, <c>false</c>.</returns>
-    public bool TryGetValue(string parameterName, out ParameterStateValue value)
-    {
-        if (Dictionary is not null && Dictionary.TryGetValue(parameterName, out value))
-        {
-            return true;
-        }
-
-        value = default;
-        return false;
-    }
-
-    /// <summary>
-    /// Attempts to get a strongly-typed value for a parameter.
-    /// </summary>
-    /// <typeparam name="T">The expected type of the parameter value.</typeparam>
-    /// <param name="parameterName">The name of the parameter.</param>
-    /// <param name="value">When this method returns, contains the current value if found and successfully cast; otherwise, the default value.</param>
-    /// <param name="lastValue">When this method returns, contains the last value if found and successfully cast; otherwise, the default value.</param>
-    /// <returns><c>true</c> if the parameter was found; otherwise, <c>false</c>.</returns>
-    public bool TryGetValue<T>(string parameterName, [NotNullWhen(true)] out T? value, [NotNullWhen(true)] out T? lastValue)
-    {
-        if (TryGetValue(parameterName, out var parameterState))
-        {
-            value = (T)parameterState.Value!;
-            lastValue = (T)parameterState.LastValue!;
-            return true;
-        }
-
-        value = default;
-        lastValue = default;
-        return false;
-    }
-
-    /// <summary>
-    /// Gets the parameter state value by its name.
-    /// </summary>
-    /// <param name="parameterName">The name of the parameter.</param>
-    /// <returns>The parameter state value.</returns>
-    /// <exception cref="KeyNotFoundException">Thrown when the parameter is not found.</exception>
-    public ParameterStateValue this[string parameterName]
-    {
-        get
-        {
-            if (Dictionary is not null && Dictionary.TryGetValue(parameterName, out var value))
-            {
-                return value;
-            }
-
-            throw new KeyNotFoundException($"The parameter '{parameterName}' was not found.");
-        }
-    }
-}
-
 /// <summary>
 /// Combines <see cref="ParameterView"/> and <see cref="ParameterStateCollection"/> to provide
 /// complete information about parameter changes including current values and last values.
@@ -220,9 +89,9 @@ public readonly struct ParameterChangedContext
     private (bool HasChanged, TParameter? Value) CheckParameterChange<TParameter>(ParameterStateInternal<TParameter> parameterStateInternal)
     {
         if (ParameterStates.TryGetValue<TParameter>(
-            parameterStateInternal.Metadata.ParameterName,
-            out _,
-            out var lastValue))
+                parameterStateInternal.Metadata.ParameterName,
+                out _,
+                out var lastValue))
         {
             var comparer = parameterStateInternal.ExtractComparer(ParameterView);
             var hasChanged = ParameterView.HasParameterChanged(
@@ -295,6 +164,23 @@ public readonly struct ParameterChangedContext
             parameter2Name);
     }
 
+    /// <summary>
+    /// Resolves which parameter should be selected when both parameters have changed and have the same nullability.
+    /// </summary>
+    /// <typeparam name="TParameter1">The type of the first parameter.</typeparam>
+    /// <typeparam name="TParameter2">The type of the second parameter.</typeparam>
+    /// <param name="parameter1Value">The current value of the first parameter.</param>
+    /// <param name="parameter2Value">The current value of the second parameter.</param>
+    /// <param name="dominantParameterName">The name of the parameter that should take precedence when both have changed.</param>
+    /// <param name="parameter1Name">The name of the first parameter.</param>
+    /// <param name="parameter2Name">The name of the second parameter.</param>
+    /// <returns>
+    /// An <see cref="EffectiveParameterResult{TParameter1, TParameter2}"/> indicating which parameter was selected
+    /// based on the dominant parameter name.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="dominantParameterName"/> does not match either <paramref name="parameter1Name"/> or <paramref name="parameter2Name"/>.
+    /// </exception>
     private static EffectiveParameterResult<TParameter1, TParameter2> ResolveDominantParameter<TParameter1, TParameter2>(
         TParameter1? parameter1Value,
         TParameter2? parameter2Value,
@@ -319,50 +205,4 @@ public readonly struct ParameterChangedContext
     /// Gets an empty <see cref="ParameterChangedContext"/>.
     /// </summary>
     public static ParameterChangedContext Empty { get; } = new(ParameterView.Empty, ParameterStateCollection.Empty);
-}
-
-/// <summary>
-/// Debugger type proxy for <see cref="ParameterStateCollection"/> that provides a better view of the collection in the debugger.
-/// </summary>
-[ExcludeFromCodeCoverage]
-internal sealed class ParameterStateCollectionDebugView
-{
-    private readonly ParameterStateCollection _collection;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterStateCollectionDebugView"/> class.
-    /// </summary>
-    /// <param name="collection">The collection to provide a debug view for.</param>
-    public ParameterStateCollectionDebugView(ParameterStateCollection collection)
-    {
-        _collection = collection;
-    }
-
-    /// <summary>
-    /// Gets an array of parameter state values for display in the debugger.
-    /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    public ParameterStateValue[] Items
-    {
-        get
-        {
-            if (_collection.Count == 0)
-            {
-                return [];
-            }
-
-            var items = new ParameterStateValue[_collection.Count];
-            var index = 0;
-            var dictionary = _collection.Dictionary;
-            if (dictionary is not null)
-            {
-                foreach (var kvp in dictionary)
-                {
-                    items[index++] = kvp.Value;
-                }
-            }
-
-            return items;
-        }
-    }
 }
