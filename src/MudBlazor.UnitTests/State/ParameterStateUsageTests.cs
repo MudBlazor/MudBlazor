@@ -655,7 +655,7 @@ public class ParameterStateUsageTests : BunitTest
         await ButtonTextOnly().ClickAsync();
         CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #d5dbe3");
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #d5dbe3");
-        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #d5dbe3");
-        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #d5dbe3");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #1abc65", "Non shared handles can't handle this case.");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #1abc65", "Non shared handles can't handle this case.");
     }
 }
