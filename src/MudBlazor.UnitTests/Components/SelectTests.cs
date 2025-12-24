@@ -69,8 +69,8 @@ namespace MudBlazor.UnitTests.Components
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-            await items[1].ClickAsync();
+            IReadOnlyList<IElement> Items() => comp.FindAll("div.mud-list-item");
+            await Items()[1].ClickAsync();
             // menu should be closed now
             await comp.WaitForAssertionAsync(() => menu.ClassList.Should().NotContain("mud-popover-open"));
             select.Instance.ReadValue.Should().Be("2");
@@ -78,13 +78,12 @@ namespace MudBlazor.UnitTests.Components
 
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            items = comp.FindAll("div.mud-list-item").ToArray();
 
-            await items[0].ClickAsync();
+            await Items()[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
             //Check user on blur implementation works
             IElement Switch() => comp.Find("#switch");
-            Switch().Change(true);
+            await Switch().ChangeAsync(true);
             Switch().HasAttribute("checked").Should().BeTrue();
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             Switch().HasAttribute("checked").Should().BeFalse();
