@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
 
+#nullable enable
 [TestFixture]
 public class ParameterStateCollectionTests
 {
