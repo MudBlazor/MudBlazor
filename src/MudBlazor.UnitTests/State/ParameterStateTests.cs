@@ -133,11 +133,17 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
+        var snapshot = parameterState.CreateInvocationSnapshot();
+        var parameterStateValue = snapshot.GetParameterStateValue();
+        await snapshot.ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeTrue();
         parameterState.HasHandler.Should().BeTrue();
+        parameterStateValue.HasValue.Should().BeTrue();
+        parameterStateValue!.Value.Name.Should().Be(ParameterName);
+        parameterStateValue.Value.LastValue.Should().Be(InitialValue);
+        parameterStateValue.Value.Value.Should().Be(NewValue);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
             new ParameterChangedEventArgs<int>(parameters, ParameterName, InitialValue, NewValue)
@@ -173,10 +179,17 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
+        var snapshot = parameterState.CreateInvocationSnapshot();
+        var parameterStateValue = snapshot.GetParameterStateValue();
+        await snapshot.ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeTrue();
+        parameterState.HasHandler.Should().BeTrue();
+        parameterStateValue.HasValue.Should().BeTrue();
+        parameterStateValue!.Value.Name.Should().Be(ParameterName);
+        parameterStateValue.Value.LastValue.Should().Be(InitialValue);
+        parameterStateValue.Value.Value.Should().Be(NewValue);
         parameterState.HasHandler.Should().BeTrue();
         changes.Should().Be(1);
     }
@@ -202,10 +215,13 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
+        var snapshot = parameterState.CreateInvocationSnapshot();
+        var parameterStateValue = snapshot.GetParameterStateValue();
+        await snapshot.ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeFalse();
+        parameterStateValue.HasValue.Should().BeFalse();
         parameterState.HasHandler.Should().BeTrue();
         parameterChangedHandlerMock.Changes.Should().BeEmpty();
     }
