@@ -59,7 +59,7 @@ public readonly struct ParameterStateCollection
     /// <param name="value">When this method returns, contains the current value if found and successfully cast; otherwise, the default value.</param>
     /// <param name="lastValue">When this method returns, contains the last value if found and successfully cast; otherwise, the default value.</param>
     /// <returns><c>true</c> if the parameter was found; otherwise, <c>false</c>.</returns>
-    public bool TryGetValue<T>(string parameterName, [NotNullWhen(true)] out T? value, [NotNullWhen(true)] out T? lastValue)
+    public bool TryGetValue<T>(string parameterName, [MaybeNullWhen(false)] out T value, [MaybeNullWhen(false)] out T lastValue)
     {
         if (TryGetValue(parameterName, out var parameterState))
         {

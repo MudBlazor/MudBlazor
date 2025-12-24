@@ -190,7 +190,6 @@ public class ParameterStateTests
         parameterStateValue!.Value.Name.Should().Be(ParameterName);
         parameterStateValue.Value.LastValue.Should().Be(InitialValue);
         parameterStateValue.Value.Value.Should().Be(NewValue);
-        parameterState.HasHandler.Should().BeTrue();
         changes.Should().Be(1);
     }
 

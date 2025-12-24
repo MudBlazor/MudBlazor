@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
@@ -86,7 +87,7 @@ public readonly struct ParameterChangedContext
             parameterState2Internal.Metadata.ParameterName);
     }
 
-    private (bool HasChanged, TParameter? Value) CheckParameterChange<TParameter>(ParameterStateInternal<TParameter> parameterStateInternal)
+    private ParameterChange<TParameter> CheckParameterChange<TParameter>(ParameterStateInternal<TParameter> parameterStateInternal)
     {
         if (ParameterStates.TryGetValue<TParameter>(
                 parameterStateInternal.Metadata.ParameterName,
@@ -100,16 +101,16 @@ public readonly struct ParameterChangedContext
                 out var currentValue,
                 comparer);
 
-            return (hasChanged, currentValue);
+            return new ParameterChange<TParameter>(hasChanged, currentValue);
         }
 
-        return (false, default);
+        return new ParameterChange<TParameter>(false, default);
     }
 
     private static EffectiveParameterResult<TParameter1, TParameter2> ResolveWhenOneChanged<TParameter1, TParameter2>(
         bool hasParameter1Changed,
-        TParameter1? parameter1Value,
-        TParameter2? parameter2Value,
+        TParameter1 parameter1Value,
+        TParameter2 parameter2Value,
         string parameter1Name,
         string parameter2Name)
     {
@@ -135,8 +136,8 @@ public readonly struct ParameterChangedContext
     }
 
     private static EffectiveParameterResult<TParameter1, TParameter2> ResolveWhenBothChanged<TParameter1, TParameter2>(
-        TParameter1? parameter1Value,
-        TParameter2? parameter2Value,
+        TParameter1 parameter1Value,
+        TParameter2 parameter2Value,
         string dominantParameterName,
         string parameter1Name,
         string parameter2Name)
@@ -147,12 +148,12 @@ public readonly struct ParameterChangedContext
         // Prefer non-null value when only one is non-null
         if (parameter1IsNonNull && !parameter2IsNonNull)
         {
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value!);
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value);
         }
 
         if (!parameter1IsNonNull && parameter2IsNonNull)
         {
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value!);
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value);
         }
 
         // Both non-null or both null, use dominant parameter
@@ -182,20 +183,20 @@ public readonly struct ParameterChangedContext
     /// Thrown when <paramref name="dominantParameterName"/> does not match either <paramref name="parameter1Name"/> or <paramref name="parameter2Name"/>.
     /// </exception>
     private static EffectiveParameterResult<TParameter1, TParameter2> ResolveDominantParameter<TParameter1, TParameter2>(
-        TParameter1? parameter1Value,
-        TParameter2? parameter2Value,
+        TParameter1 parameter1Value,
+        TParameter2 parameter2Value,
         string dominantParameterName,
         string parameter1Name,
         string parameter2Name)
     {
         if (dominantParameterName == parameter1Name)
         {
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value!);
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter1(parameter1Name, parameter1Value);
         }
 
         if (dominantParameterName == parameter2Name)
         {
-            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value!);
+            return EffectiveParameterResult<TParameter1, TParameter2>.FromParameter2(parameter2Name, parameter2Value);
         }
 
         throw new ArgumentException($"Unknown dominant parameter '{dominantParameterName}'.");
@@ -205,4 +206,6 @@ public readonly struct ParameterChangedContext
     /// Gets an empty <see cref="ParameterChangedContext"/>.
     /// </summary>
     public static ParameterChangedContext Empty { get; } = new(ParameterView.Empty, ParameterStateCollection.Empty);
+
+    internal readonly record struct ParameterChange<T>(bool HasChanged, [AllowNull] T Value);
 }

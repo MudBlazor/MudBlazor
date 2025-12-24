@@ -44,10 +44,10 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
         // Value
         if (effectiveParameter is { IsParameter1: true })
         {
-            await _textState.SetValueAsync(effectiveParameter.Parameter1Value.ToString(MudColorOutputFormats.Hex));
+            await _textState.SetValueAsync(effectiveParameter.Parameter1Value?.ToString(MudColorOutputFormats.Hex));
         }
         // Text
-        if (effectiveParameter is { IsParameter2: true })
+        if (effectiveParameter is { IsParameter2: true, Parameter2Value: not null })
         {
             await _valueState.SetValueAsync(MudColor.Parse(effectiveParameter.Parameter2Value));
         }

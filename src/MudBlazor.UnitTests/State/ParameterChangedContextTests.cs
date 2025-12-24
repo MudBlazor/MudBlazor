@@ -37,6 +37,7 @@ public class ParameterChangedContextTests
         switch (expectedParameter)
         {
             case "Text":
+                result.EffectiveParameterName.Should().Be("Text");
                 result.HasEffectiveParameter.Should().BeTrue();
                 result.IsParameter1.Should().BeTrue();
                 result.IsParameter2.Should().BeFalse();
@@ -44,6 +45,7 @@ public class ParameterChangedContextTests
                 result.Parameter2Value.Should().BeNull();
                 break;
             case "Value":
+                result.EffectiveParameterName.Should().Be("Value");
                 result.HasEffectiveParameter.Should().BeTrue();
                 result.IsParameter2.Should().BeTrue();
                 result.IsParameter1.Should().BeFalse();
@@ -51,6 +53,7 @@ public class ParameterChangedContextTests
                 result.Parameter2Value.Should().Be(expectedColor);
                 break;
             default:
+                result.EffectiveParameterName.Should().Be(string.Empty);
                 result.HasEffectiveParameter.Should().BeFalse();
                 result.IsParameter1.Should().BeFalse();
                 result.IsParameter2.Should().BeFalse();
@@ -84,6 +87,7 @@ public class ParameterChangedContextTests
         switch (expectedParameter)
         {
             case "Text":
+                result.EffectiveParameterName.Should().Be("Text");
                 result.HasEffectiveParameter.Should().BeTrue();
                 result.IsParameter1.Should().BeTrue();
                 result.IsParameter2.Should().BeFalse();
@@ -91,6 +95,7 @@ public class ParameterChangedContextTests
                 result.Parameter2Value.Should().BeNull();
                 break;
             case "Value":
+                result.EffectiveParameterName.Should().Be("Value");
                 result.HasEffectiveParameter.Should().BeTrue();
                 result.IsParameter2.Should().BeTrue();
                 result.IsParameter1.Should().BeFalse();
@@ -98,6 +103,7 @@ public class ParameterChangedContextTests
                 result.Parameter2Value.Should().Be(expectedColor);
                 break;
             default:
+                result.EffectiveParameterName.Should().Be(string.Empty);
                 result.HasEffectiveParameter.Should().BeFalse();
                 result.IsParameter1.Should().BeFalse();
                 result.IsParameter2.Should().BeFalse();
