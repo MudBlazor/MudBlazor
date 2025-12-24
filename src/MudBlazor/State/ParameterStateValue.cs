@@ -97,19 +97,6 @@ public readonly struct ParameterStateCollection
         return false;
     }
 
-    public ParameterStateValue this[string parameterName]
-    {
-        get
-        {
-            if (Dictionary is not null && Dictionary.TryGetValue(parameterName, out var value))
-            {
-                return value;
-            }
-
-            throw new KeyNotFoundException($"The parameter '{parameterName}' was not found.");
-        }
-    }
-
     /// <summary>
     /// Attempts to get a strongly-typed value for a parameter.
     /// </summary>
@@ -130,6 +117,25 @@ public readonly struct ParameterStateCollection
         value = default;
         lastValue = default;
         return false;
+    }
+
+    /// <summary>
+    /// Gets the parameter state value by its name.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter.</param>
+    /// <returns>The parameter state value.</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when the parameter is not found.</exception>
+    public ParameterStateValue this[string parameterName]
+    {
+        get
+        {
+            if (Dictionary is not null && Dictionary.TryGetValue(parameterName, out var value))
+            {
+                return value;
+            }
+
+            throw new KeyNotFoundException($"The parameter '{parameterName}' was not found.");
+        }
     }
 }
 
