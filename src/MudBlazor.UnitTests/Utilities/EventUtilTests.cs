@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Utilities;
 using NUnit.Framework;
@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void EventUtil_ShouldPreventRenderCycle()
         {
-            var comp = Context.RenderComponent<EventUtil1Test>();
+            var comp = Context.Render<EventUtil1Test>();
             comp.Find("#clicks").TrimmedText().Should().Be("Clicks: 0/0/0");
             comp.RenderCount.Should().Be(1);
             // normal click handler causes a re-render automatically (normal Blazor behavior)

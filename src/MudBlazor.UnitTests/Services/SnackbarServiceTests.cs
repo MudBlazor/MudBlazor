@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit.TestDoubles;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
@@ -13,12 +13,12 @@ namespace MudBlazor.UnitTests.Services;
 [TestFixture]
 public class SnackbarServiceTests : BunitTest
 {
-    private FakeNavigationManager _navigationManager;
+    private BunitNavigationManager _navigationManager;
 
     public override void Setup()
     {
         base.Setup();
-        _navigationManager = Context.Services.GetRequiredService<FakeNavigationManager>();
+        _navigationManager = Context.Services.GetRequiredService<BunitNavigationManager>();
     }
 
     [Test]

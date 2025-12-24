@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Charts;
 
+#nullable enable
 /// <summary>
 /// Represents the default options for a bar chart.
 /// </summary>

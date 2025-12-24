@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
@@ -14,11 +14,11 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<SimpleTimePickerTest> comp;
             if (parameterBuilder is null)
             {
-                comp = Context.RenderComponent<SimpleTimePickerTest>();
+                comp = Context.Render<SimpleTimePickerTest>();
             }
             else
             {
-                comp = Context.RenderComponent<SimpleTimePickerTest>(parameterBuilder);
+                comp = Context.Render<SimpleTimePickerTest>(parameterBuilder);
             }
 
             // should not be open
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerOpenButtonDefaultAriaLabel()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
@@ -41,22 +41,22 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePicker_Should_Clear()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
             picker.Text.Should().Be(null);
-            picker.Time.Should().Be(null);
+            picker.ReadValue.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Clearable, true)
                 .Add(p => p.Time, new TimeSpan(637940935730000000)));
-            picker.Time.Should().Be(new TimeSpan(637940935730000000));
+            picker.ReadValue.Should().Be(new TimeSpan(637940935730000000));
             picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
 
             comp.Find(".mud-input-clear-button").Click(); //clear the input
 
             picker.Text.Should().Be(""); //ensure the text and time are reset. Note this is an empty string rather than null due to how the reset works internally
-            picker.Time.Should().Be(null);
+            picker.ReadValue.Should().Be(null);
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.Render<MudTimePicker>();
             var picker = comp.Instance;
 
             // valid time
@@ -197,7 +197,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>();
+            var comp = Context.Render<SimpleTimePickerTest>();
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
             await comp.Instance.Open();
@@ -210,91 +210,91 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePickerTest_KeyboardNavigation()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>();
+            var comp = Context.Render<SimpleTimePickerTest>();
             var timePickerComponent = comp.FindComponent<MudTimePicker>();
             var timePicker = timePickerComponent.Instance;
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Time, new TimeSpan(02, 00, 00)));
-            comp.WaitForAssertion(() => comp.Instance.Time.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => comp.Instance.Time.Should().Be(new TimeSpan(02, 00, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 00, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
             //Enter keys submit, so time should only change with enter
-            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(02, 00, 00)));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(01, 59, 00)));
             //If Open is false, arrowkeys should now change TimeIntermediate
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(01, 59, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
             //Escape key should turn last submitted time
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
-            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(01, 59, 00)));
             //Space key should also submit
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
-            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(new TimeSpan(02, 00, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", CtrlKey = true, Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", CtrlKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 00, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 00, 00)));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Time, new TimeSpan(03, 56, 00)));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(04, 01, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(04, 01, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 56, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 56, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", CtrlKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 51, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 51, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(07, 56, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(07, 56, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(null));
-            comp.WaitForAssertion(() => timePicker.Time.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => timePicker.ReadValue.Should().Be(null));
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             //When its disabled, keys should not work
@@ -303,7 +303,7 @@ namespace MudBlazor.UnitTests.Components
             await timePicker.FocusAsync();
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             await timePickerComponent.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.TimeFormat, "hhmm")
@@ -318,7 +318,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
-            var comp = Context.RenderComponent<MudTimePicker>(parameters
+            var comp = Context.Render<MudTimePicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
             comp.Find("input").Id.Should().NotBeNullOrEmpty();
@@ -333,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
         public void DatePickerWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
             var expectedId = "test-id";
-            var comp = Context.RenderComponent<MudTimePicker>(parameters
+            var comp = Context.Render<MudTimePicker>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
@@ -349,7 +349,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimePickerInputId()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters => parameters
+            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters
                 .Add(c => c.InputId, "start-time"));
 
             comp.Find("input[id='start-time']").Should().NotBeNull();

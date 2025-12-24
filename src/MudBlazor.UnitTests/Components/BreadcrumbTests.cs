@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithSeparators()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
             {
                 new("Link 1", "link1"),
                 new("Link 2", "link2"),
@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithIcons()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
             {
                 new("Link 1", "link1", icon: Icons.Material.Filled.Home),
                 new("Link 2", "link2", icon: Icons.Material.Filled.List),
@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldCollapseWhenMaxItemsIsReached()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
                 .Add(x => x.MaxItems, (byte)4)
                 .Add(x => x.Items, new List<BreadcrumbItem>
                 {
@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudBreadcrumbs_Other()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(parameters => parameters
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
                 .Add(x => x.MaxItems, (byte)4)
                 .Add(x => x.Items, new List<BreadcrumbItem>
                 {
@@ -67,14 +67,14 @@ namespace MudBlazor.UnitTests.Components
                     new("Link 5", "link5", disabled: true)
                 }));
 
-            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Collapsed.Should().BeTrue());
             await comp.InvokeAsync(() => comp.Instance.Expand());
-            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Collapsed.Should().BeFalse());
 
             await comp.InvokeAsync(() => comp.Instance.Expand());
-            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Collapsed.Should().BeFalse());
 
-            comp.WaitForAssertion(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
+            await comp.WaitForAssertionAsync(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
         }
     }
 }

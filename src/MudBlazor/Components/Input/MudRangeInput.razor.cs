@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 
 #nullable enable
 namespace MudBlazor
@@ -31,7 +30,7 @@ namespace MudBlazor
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text)
+            () => !string.IsNullOrEmpty(ReadText)
                   || Adornment == Adornment.Start
                   || !string.IsNullOrWhiteSpace(PlaceholderStart)
                   || !string.IsNullOrWhiteSpace(PlaceholderEnd)
@@ -156,7 +155,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -171,31 +170,31 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
-        protected bool IsClearable() => Clearable && Value is not null;
+        protected bool IsClearable() => Clearable && ReadValue is not null;
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             await base.UpdateTextPropertyAsync(updateValue);
 
-            RangeUtility.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
 
-            RangeUtility.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await _elementReferenceStart.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }

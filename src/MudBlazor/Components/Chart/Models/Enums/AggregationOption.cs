@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Charts;
 
+#nullable enable
 /// <summary>
 /// Specifies the options for aggregating data in a dataset.
 /// </summary>

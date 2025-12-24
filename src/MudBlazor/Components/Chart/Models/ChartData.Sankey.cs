@@ -5,6 +5,7 @@
 using MudBlazor.Charts;
 
 namespace MudBlazor;
+#nullable enable
 
 public partial class ChartData<T>
 {

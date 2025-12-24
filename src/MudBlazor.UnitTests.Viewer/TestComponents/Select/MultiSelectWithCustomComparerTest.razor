@@ -21,7 +21,7 @@
 @code {
     private static CoffeeComparer Comparer { get; } = new();
 
-    private readonly HashSet<Coffee?> _selected = new(Comparer);
+    private HashSet<Coffee?> _selected = new(Comparer);
 
     private void SelectedChanged(IEnumerable<Coffee?>? newSelected)
     {
@@ -34,9 +34,12 @@
 
     private void SetSelection()
     {
-        _selected.Clear();
-        _selected.Add(new Coffee("lat", "Selected Cafe Latte"));
-        _selected.Add(new Coffee("esp", "Selected Espresso"));
+        _selected = new HashSet<Coffee?>(Comparer)
+        {
+            new Coffee("lat", "Selected Cafe Latte"),
+            new Coffee("esp", "Selected Espresso")
+        };
+        StateHasChanged();
     }
 
     private class Coffee(string key, string name)

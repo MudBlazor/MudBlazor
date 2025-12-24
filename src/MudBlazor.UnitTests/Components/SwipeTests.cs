@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.SwipeArea;
 using NUnit.Framework;
@@ -12,23 +12,23 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SwipeTest_1()
         {
-            var comp = Context.RenderComponent<SwipeAreaTest>();
+            var comp = Context.Render<SwipeAreaTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             await comp.InvokeAsync(() => swipe.Instance._yDown = 50);
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerCancelAsync(new PointerEventArgs()));
-            comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => swipe.Instance._xDown.Should().Be(null));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
-            comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => swipe.Instance._xDown.Should().Be(null));
         }
 
         [Test]
         public async Task SwipeTest_2()
         {
-            var comp = Context.RenderComponent<SwipeAreaOnSwipeEndTest>();
+            var comp = Context.Render<SwipeAreaOnSwipeEndTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             // Swipe below the sensitivity should not make change.
@@ -36,15 +36,15 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 20, ClientY = 20 }));
 
-            comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
-            comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDelta.Should().Be(null));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 150, ClientY = 200 }));
             await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 50 }));
 
-            comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
-            comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(-200));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDelta.Should().Be(-200));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             comp.WaitForState(() => comp.Instance.PreventDefault);
             comp.Instance._listenerIds.Should().BeEquivalentTo(listenerIds);
@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             var handler = Context.JSInterop.SetupVoid(invocation => invocation.Identifier == "mudElementRef.removeDefaultPreventingHandlers")
                 .SetVoidResult();

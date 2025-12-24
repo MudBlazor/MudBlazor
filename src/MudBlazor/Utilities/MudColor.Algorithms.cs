@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
+#nullable enable
 public partial class MudColor
 {
     /// <summary>

@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Justification.StackedBars;
 
+#nullable enable
 internal class FlexEndStrategy : IStackedBarPositionStrategy
 {
     public double[] CalculatePositions(StackedBarContext ctx)

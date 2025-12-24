@@ -80,7 +80,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         }
 
         /// <inheritdoc />
-        public IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object converter)
+        public IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object? converter)
         {
             ArgumentNullException.ThrowIfNull(specificType);
             ArgumentNullException.ThrowIfNull(converter);

@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(2, true)]
         public async Task MessageBox_Should_ReturnTrue(int clickButtonIndex, bool? expectedResult)
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
             Task<bool?> yesNoCancel = null;
             await comp.InvokeAsync(() =>
             {
-                yesNoCancel = service?.ShowMessageBox(
+                yesNoCancel = service?.ShowMessageBoxAsync(
                     "Boom!",
                     "I'm a pickle. What do you make of that?",
                     "Great",
@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(2, true)]
         public async Task MessageBox_Should_ReturnTrueWithMarkupVariant(int clickButtonIndex, bool? expectedResult)
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
             Task<bool?> yesNoCancel = null;
             await comp.InvokeAsync(() =>
             {
-                yesNoCancel = service?.ShowMessageBox(
+                yesNoCancel = service?.ShowMessageBoxAsync(
                     "Boom!",
                     (MarkupString)"I'm a pickle. What do you make of that?",
                     "Great",
@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_NoOptions_NoMudDefaults()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = (DialogService)Context.Services.GetService<IDialogService>()!;
             service.Should().NotBe(null);
@@ -180,7 +180,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_WithOptions_NoMudDefaults()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = (DialogService)Context.Services.GetService<IDialogService>();
             service.Should().NotBe(null);
@@ -250,7 +250,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_NoOptions_WithMudDefaults()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>(builder =>
+            var comp = Context.Render<MudDialogProvider>(builder =>
             {
                 builder.Add(p => p.CloseOnEscapeKey, true);
             });

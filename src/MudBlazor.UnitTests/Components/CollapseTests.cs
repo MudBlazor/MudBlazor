@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Collapse;
 using NUnit.Framework;
 
@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Collapse_TwoWayBinding_Test1()
         {
-            var comp = Context.RenderComponent<CollapseBindingTest>();
+            var comp = Context.Render<CollapseBindingTest>();
             var collapse = comp.FindComponent<MudCollapse>();
 
             collapse.Markup.Should().Contain("mud-collapse-entered");

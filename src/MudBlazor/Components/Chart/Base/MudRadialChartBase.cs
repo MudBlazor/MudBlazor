@@ -37,7 +37,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     private const int DebounceIntervalMs = 200;
 
     private readonly DotNetObjectReference<MudRadialChartBase<T, TOptions>> _dotNetObjectReference;
-    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs, leading: true);
 
     private ElementSize? _elementSize;
 
@@ -343,7 +343,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         _boundWidth = minDimension;
         _boundHeight = minDimension;
 
-        _debouncer.DebounceAfterFirstExecuteAsync(async () =>
+        _debouncer.DebounceAsync(async () =>
         {
             await InvokeAsync(() =>
             {
@@ -370,7 +370,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     {
         if (disposing)
         {
-            _debouncer?.Cancel();
+            _debouncer.Dispose();
         }
 
         _dotNetObjectReference.Dispose();

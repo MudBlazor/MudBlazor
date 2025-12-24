@@ -9,7 +9,7 @@ namespace MudBlazor.UnitTests.Shared
 {
     public abstract class BunitTest
     {
-        protected Bunit.TestContext Context { get; private set; } = null!;
+        protected Bunit.BunitContext Context { get; private set; } = null!;
 
         [SetUp]
         public virtual void Setup()
