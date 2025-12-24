@@ -24,22 +24,22 @@ public class ExitPromptsTests : BunitTest
         var component = Context.Render<MudExitPrompt>();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()), Times.Exactly(1));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Never);
-        
+
         await component.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Disabled, true));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()), Times.Exactly(1));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Exactly(1));
-        
+
         var navigationManager = Context.Services.GetRequiredService<BunitNavigationManager>();
         navigationManager.NavigateTo("/test1");
         jsRuntimeMock.Verify(x => x.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()), Times.Never);
-        
+
         await component.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Disabled, false));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Exactly(1));
-        
+
         navigationManager.NavigateTo("/test2");
         jsRuntimeMock.Verify(x => x.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()), Times.Exactly(1));
-        
+
         await Context.DisposeComponentsAsync();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Exactly(2));
     }
