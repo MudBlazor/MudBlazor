@@ -13,31 +13,33 @@ namespace MudBlazor.State;
 /// <typeparam name="T">The type of the component's property value.</typeparam>
 internal class ParameterChangedLambdaTaskParameterViewHandler<T> : IParameterChangedHandler<T>
 {
-    private readonly Func<ParameterView, Task> _lambda;
+    private readonly Func<ParameterChangedContext, Task> _lambda;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterChangedLambdaTaskParameterViewHandler{T}"/> class
     /// with the specified lambda expression.
     /// </summary>
     /// <param name="lambda">
-    /// The <c>Func&lt;ParameterView, Task&gt;</c> lambda expression to be executed when handling parameter changes.
-    /// The lambda receives the <see cref="ParameterView"/> snapshot provided by Blazor when parameters were set.
+    /// The <c>Func&lt;ParameterChangedContext, Task&gt;</c> lambda expression to be executed when handling parameter changes.
+    /// The lambda receives the <see cref="ParameterChangedContext"/> containing both the <see cref="ParameterView"/> 
+    /// snapshot and the <see cref="ParameterStateCollection"/> with last and current values.
     /// </param>
-    public ParameterChangedLambdaTaskParameterViewHandler(Func<ParameterView, Task> lambda)
+    public ParameterChangedLambdaTaskParameterViewHandler(Func<ParameterChangedContext, Task> lambda)
     {
         _lambda = lambda;
     }
 
     /// <summary>
-    /// Invokes the specified lambda expression when handling parameter changes, passing the captured <see cref="ParameterView"/>.
+    /// Invokes the specified lambda expression when handling parameter changes, passing the captured <see cref="ParameterChangedContext"/>.
     /// </summary>
     /// <param name="parameterChangedEventArgs">
     /// The <see cref="ParameterChangedEventArgs{T}"/> containing the captured <see cref="ParameterView"/> and the last/current values
     /// for the changed parameter.
     /// </param>
+    /// <param name="context">The parameter changed context.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs)
+    public Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs, ParameterChangedContext context)
     {
-        return _lambda(parameterChangedEventArgs.ParameterView);
+        return _lambda(context);
     }
 }

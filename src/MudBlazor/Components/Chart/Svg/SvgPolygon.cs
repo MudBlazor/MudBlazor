@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 public sealed class SvgPolygon : SvgPath
 {
     /// <summary>

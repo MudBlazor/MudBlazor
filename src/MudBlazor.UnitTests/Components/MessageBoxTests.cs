@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
             Task<bool?> yesNoCancel = null;
             await comp.InvokeAsync(() =>
             {
-                yesNoCancel = service?.ShowMessageBox(
+                yesNoCancel = service?.ShowMessageBoxAsync(
                     "Boom!",
                     "I'm a pickle. What do you make of that?",
                     "Great",
@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
             Task<bool?> yesNoCancel = null;
             await comp.InvokeAsync(() =>
             {
-                yesNoCancel = service?.ShowMessageBox(
+                yesNoCancel = service?.ShowMessageBoxAsync(
                     "Boom!",
                     (MarkupString)"I'm a pickle. What do you make of that?",
                     "Great",

@@ -192,6 +192,36 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 
         var changed = false;
         _parameterChangedEventArgs = null;
+        var comparer = ExtractComparer(parameters);
+
+        // This if construction is to trigger [MaybeNullWhen(false)] for newValue, otherwise it wouldn't if we assign it directly to a variable,
+        // and we'd need to suppress it's nullability.
+        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: comparer))
+        {
+            changed = true;
+            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(parameters, Metadata.ParameterName, currentParameterValue, newValue);
+        }
+
+        return changed;
+    }
+
+    /// <summary>
+    /// Extracts the appropriate equality comparer for the parameter from the provided <see cref="ParameterView"/>.
+    /// </summary>
+    /// <param name="parameters">The <see cref="ParameterView"/> containing the incoming parameter values.</param>
+    /// <returns>
+    /// The equality comparer to use for comparing parameter values. Returns either the updated comparer from the 
+    /// <paramref name="parameters"/> if available, or the current comparer stored in <see cref="_comparer"/>.
+    /// </returns>
+    /// <remarks>
+    /// This method handles a special edge case where both a parameter and its associated comparer parameter 
+    /// change simultaneously in Razor syntax. Since Blazor calls <c>SetParameterProperties</c> after this method executes,
+    /// the new comparer may not yet be set in the component. This method manually extracts the updated comparer 
+    /// from the <paramref name="parameters"/> to ensure <see cref="HasParameterChanged"/> uses the correct comparer 
+    /// instead of a stale one.
+    /// </remarks>
+    public IEqualityComparer<T> ExtractComparer(ParameterView parameters)
+    {
         IEqualityComparer<T> comparer = _comparer;
 
         // This handles a very special case when the Parameter and the associated Comparer change in razor syntax at same time.
@@ -205,15 +235,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
             }
         }
 
-        // This if construction is to trigger [MaybeNullWhen(false)] for newValue, otherwise it wouldn't if we assign it directly to a variable,
-        // and we'd need to suppress it's nullability.
-        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: comparer))
-        {
-            changed = true;
-            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(parameters, Metadata.ParameterName, currentParameterValue, newValue);
-        }
-
-        return changed;
+        return comparer;
     }
 
     ///  <summary>

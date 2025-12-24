@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

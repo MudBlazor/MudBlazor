@@ -119,7 +119,7 @@ namespace MudBlazor.Charts
 
         private PointF _hoveredLegendPosition;
 
-        private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+        private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs, leading: true);
 
         private const int DebounceIntervalMs = 150;
 
@@ -542,7 +542,7 @@ namespace MudBlazor.Charts
 
         private void DebouncedRebuild()
         {
-            _debouncer.DebounceAfterFirstExecuteAsync(async () =>
+            _debouncer.DebounceAsync(async () =>
             {
                 await InvokeAsync(() =>
                 {
@@ -589,7 +589,7 @@ namespace MudBlazor.Charts
         {
             if (!disposing) return;
 
-            _debouncer?.Cancel();
+            _debouncer.Dispose();
             _dotNetObjectReference?.Dispose();
         }
     }

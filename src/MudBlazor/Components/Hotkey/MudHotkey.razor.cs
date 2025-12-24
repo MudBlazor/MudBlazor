@@ -86,8 +86,7 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
             .WithChangeHandler(RegisterOrUpdateHotkeyAsync);
         registerScope.RegisterParameter<IEnumerable<JsKeyModifier>>(nameof(KeyModifiers))
             .WithParameter(() => KeyModifiers)
-            .WithChangeHandler(RegisterOrUpdateHotkeyAsync)
-            .WithComparer(EnumerableEqualityComparer<JsKeyModifier>.Default);
+            .WithChangeHandler(RegisterOrUpdateHotkeyAsync);
         registerScope.RegisterParameter<bool>(nameof(PreventEventPropagation))
             .WithParameter(() => PreventEventPropagation)
             .WithChangeHandler(RegisterOrUpdateHotkeyAsync);
@@ -172,20 +171,5 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
 
             await UnregisterHotkeyAsync();
         }
-    }
-
-    /// <summary>
-    /// Treats all <see cref="IEnumerable{T}"/> as unequal to force re-registration of hotkeys even if the sequence is the same.
-    /// </summary>
-    /// <remarks>
-    /// https://github.com/MudBlazor/MudBlazor/pull/12079#issuecomment-3577671129 Remove this when input components will be in better shape.
-    /// </remarks>
-    private sealed class EnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>> where T : notnull
-    {
-        public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y) => false;
-
-        public int GetHashCode(IEnumerable<T> obj) => Random.Shared.Next();
-
-        public static readonly EnumerableEqualityComparer<T> Default = new();
     }
 }

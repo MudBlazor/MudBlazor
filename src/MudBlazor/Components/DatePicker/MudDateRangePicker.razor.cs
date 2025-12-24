@@ -3,6 +3,7 @@ using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -13,8 +14,8 @@ namespace MudBlazor
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
         private DateTime? _firstDate = null, _secondDate, _minValidDate, _maxValidDate;
-        private DateRange _dateRange;
-        private Range<string> _rangeText;
+        private DateRange? _dateRange;
+        private Range<string>? _rangeText;
 
         protected override bool IsRange => true;
 
@@ -70,7 +71,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string PlaceholderStart { get; set; }
+        public string? PlaceholderStart { get; set; }
 
         /// <summary>
         /// The text displayed in the end input if no date is specified.
@@ -80,7 +81,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string PlaceholderEnd { get; set; }
+        public string? PlaceholderEnd { get; set; }
 
         /// <summary>
         /// The icon displayed between start and end dates.
@@ -96,14 +97,14 @@ namespace MudBlazor
         /// Occurs when <see cref="DateRange"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<DateRange> DateRangeChanged { get; set; }
+        public EventCallback<DateRange?> DateRangeChanged { get; set; }
 
         /// <summary>
         /// The currently selected date range.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public DateRange DateRange
+        public DateRange? DateRange
         {
             get => _dateRange;
             set => SetDateRangeAsync(value, true).CatchAndLog();
@@ -119,7 +120,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
-        protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
+        protected async Task SetDateRangeAsync(DateRange? range, bool updateValue)
         {
             if (_dateRange != range)
             {
@@ -168,7 +169,7 @@ namespace MudBlazor
             }
         }
 
-        private Range<string> RangeText
+        private Range<string>? RangeText
         {
             get => _rangeText;
             set
@@ -182,7 +183,7 @@ namespace MudBlazor
             }
         }
 
-        private MudRangeInput<string> _rangeInput;
+        private MudRangeInput<string> _rangeInput = null!;
 
         /// <summary>
         /// Focuses the start input.
@@ -220,7 +221,7 @@ namespace MudBlazor
         /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
 
-        protected override Task DateFormatChangedAsync(string newFormat)
+        protected override Task DateFormatChangedAsync(string? newFormat)
         {
             Touched = true;
             _rangeText = null;
@@ -234,7 +235,7 @@ namespace MudBlazor
             return SetTextAsync(_dateRange?.ToString(GetConverter()), false);
         }
 
-        protected override Task StringValueChangedAsync(string value)
+        protected override Task StringValueChangedAsync(string? value)
         {
             Touched = true;
             // Update the date range property (without updating back the Value property)
@@ -328,12 +329,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private DateRange ParseDateRangeValue(string value)
+        private DateRange? ParseDateRangeValue(string? value)
         {
             return DateRange.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
         }
 
-        private DateRange ParseDateRangeValue(string start, string end)
+        private DateRange? ParseDateRangeValue(string? start, string? end)
         {
             return DateRange.TryParse(start, end, GetConverter(), out var dateRange) ? dateRange : null;
         }

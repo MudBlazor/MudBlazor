@@ -24,8 +24,7 @@ namespace MudBlazor
     public class DialogService : IDialogService
     {
         /// <summary>
-        /// This internal wrapper components prevents overwriting parameters of once
-        /// instantiated dialog instances
+        /// This internal wrapper component prevents overwriting parameters of once instantiated dialog instances.
         /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
         /// </summary>
         private class DialogHelperComponent : IComponent
@@ -134,10 +133,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public Task<bool?> ShowMessageBox(string? title, string message, string yesText = "OK",
+        public Task<bool?> ShowMessageBoxAsync(string? title, string message, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null)
         {
-            return ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBoxAsync(new MessageBoxOptions
             {
                 Title = title,
                 Message = message,
@@ -148,10 +147,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public Task<bool?> ShowMessageBox(string? title, MarkupString markupMessage, string yesText = "OK",
+        public Task<bool?> ShowMessageBoxAsync(string? title, MarkupString markupMessage, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null)
         {
-            return ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBoxAsync(new MessageBoxOptions
             {
                 Title = title,
                 MarkupMessage = markupMessage,
@@ -162,7 +161,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public async Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
+        public async Task<bool?> ShowMessageBoxAsync(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
         {
             var parameters = new DialogParameters
             {

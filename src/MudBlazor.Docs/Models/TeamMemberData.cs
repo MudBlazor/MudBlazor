@@ -26,6 +26,16 @@ namespace MudBlazor.Docs.Models
             },
             new TeamMember
             {
+                Name = "Meinrad Recheis (Co-Creator)",
+                From = "Vienna, Austria",
+                GitHub = "henon",
+                GitHubSponsor = true,
+                LinkedIn = "https://www.linkedin.com/in/meinrad-recheis-6a9885171/",
+                Bio = "Entrepreneur and Open Source contributor. Co-founder of MudBlazor. Creator of Numpy.NET and Python.Included. ",
+                Team = Team.Core
+            },
+            new TeamMember
+            {
                 Name = "Artyom M.",
                 From = "Estonia, Tallinn",
                 GitHub = "ScarletKuro",
@@ -42,15 +52,6 @@ namespace MudBlazor.Docs.Models
                 LinkedIn = "https://www.linkedin.com/in/daniel-c-5799252b1",
                 Bio = "Full Stack Engineer | AI, .NET, Blazor, WPF",
                 Team = Team.CoreMaintainer
-            },
-            new TeamMember
-            {
-                Name = "Jonas B.",
-                From = "Germany",
-                GitHub = "JonBunator",
-                LinkedIn = null,
-                Bio = null,
-                Team = Team.Core
             },
             new TeamMember
             {
@@ -159,16 +160,6 @@ namespace MudBlazor.Docs.Models
         [
             new TeamMember
             {
-                Name = "Meinrad Recheis (Co-Creator)",
-                From = "Vienna, Austria",
-                GitHub = "henon",
-                GitHubSponsor = true,
-                LinkedIn = "https://www.linkedin.com/in/meinrad-recheis-6a9885171/",
-                Bio = "Entrepreneur and Open Source contributor. Co-founder of MudBlazor. Creator of Numpy.NET and Python.Included. ",
-                Team = Team.Core
-            },
-            new TeamMember
-            {
                 Name = "Mike Surcouf",
                 From = "Jersey, Channel Islands",
                 GitHub = "mikes-gh",
@@ -183,6 +174,15 @@ namespace MudBlazor.Docs.Models
                 GitHub = "just-the-benno",
                 LinkedIn = "https://www.linkedin.com/in/benjamin-kappel-558428168/",
                 Bio = "A long time ago, there was an enormous book with an even more significant discount on it, titled C#. That is the starting point of still ongoing love.",
+                Team = Team.Core
+            },
+            new TeamMember
+            {
+                Name = "Jonas B.",
+                From = "Germany",
+                GitHub = "JonBunator",
+                LinkedIn = null,
+                Bio = null,
                 Team = Team.Core
             },
             new TeamMember

@@ -9,14 +9,12 @@ using MudBlazor.State;
 
 namespace MudBlazor.Benchmarks;
 
-#nullable enable
-
 /// <summary>
 /// Before vs After benchmark comparing old and new ParameterContainer implementations.
 /// This measures the actual performance improvement from the architectural optimizations.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net90)]
+[SimpleJob(RuntimeMoniker.Net10_0)]
 public class BeforeAfterComparisonBenchmark
 {
     private SyntheticParameterStateContainer? _container;

@@ -104,7 +104,7 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<ParameterView, Task> parameterChangedHandler)
+    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<ParameterChangedContext, Task> parameterChangedHandler)
     {
         _parameterChangedHandler = new ParameterChangedLambdaTaskParameterViewHandler<T>(parameterChangedHandler);
 
@@ -128,7 +128,7 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action<ParameterView> parameterChangedHandler)
+    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action<ParameterChangedContext> parameterChangedHandler)
     {
         _parameterChangedHandler = new ParameterChangedLambdaParameterViewHandler<T>(parameterChangedHandler);
 

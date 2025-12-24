@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Justification.BarGroup;
 
+#nullable enable
 internal class CenterStrategy : IBarGroupPositionStrategy
 {
     public double[] CalculatePositions(BarGroupContext ctx)

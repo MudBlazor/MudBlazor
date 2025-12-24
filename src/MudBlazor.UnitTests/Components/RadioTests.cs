@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
 using NUnit.Framework;
@@ -243,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
             await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
-            await comp.WaitForAssertionAsync(() => radio.Instance.ReadValue().Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => radio.Instance.ReadValue.Should().Be("1"));
             await radio.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
 
