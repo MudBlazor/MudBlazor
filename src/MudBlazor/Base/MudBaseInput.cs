@@ -762,7 +762,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.
         /// </remarks>
-        internal virtual InputType GetInputType() => InputType.Text;
+        protected internal virtual InputType GetInputType() => InputType.Text;
 
         protected internal string? ReadText => _textState.Value;
 

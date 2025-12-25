@@ -36,7 +36,7 @@ namespace MudBlazor
                   || !string.IsNullOrWhiteSpace(PlaceholderEnd)
                   || ShrinkLabel);
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 

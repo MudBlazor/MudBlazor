@@ -215,7 +215,7 @@ namespace MudBlazor
             return base.SetTextAndUpdateValueAsync(text, updateValue);
         }
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         private bool ShowClearButton()
         {

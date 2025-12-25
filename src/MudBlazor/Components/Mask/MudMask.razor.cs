@@ -321,7 +321,7 @@ namespace MudBlazor
             await UpdateAsync();
         }
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         private string GetCounterText() => Counter switch
         {

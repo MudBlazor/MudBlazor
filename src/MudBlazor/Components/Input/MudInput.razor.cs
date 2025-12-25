@@ -49,7 +49,7 @@ namespace MudBlazor
                 .AddClass("mud-no-activator")
                 .Build();
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
