@@ -785,7 +785,7 @@ namespace MudBlazor
             {
                 changed.CollectionChanged += (s, e) =>
                 {
-                    InvokeAsync(() =>
+                    InvokeAsync(async () =>
                     {
                         _currentRenderFilteredItemsCache = null;
 
@@ -793,9 +793,103 @@ namespace MudBlazor
                             GroupItems();
 
                         ApplyInitialExpansionForNewItems(e);
+                        await CleanupRemovedItemsAsync(e);
                         StateHasChanged();
                     });
                 };
+            }
+        }
+
+        private async Task CleanupRemovedItemsAsync(NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                // For reset, check all items in selection against the current items
+                await CleanupStaleSelectionsAsync();
+                CleanupStaleHierarchyExpansions();
+                return;
+            }
+
+            if (e.OldItems is null)
+                return;
+
+            var selectionChanged = false;
+            foreach (T item in e.OldItems)
+            {
+                // Clean up selection
+                if (Selection.Remove(item))
+                {
+                    selectionChanged = true;
+                }
+
+                // Clean up SelectedItem if it matches the removed item
+                if (Comparer.Equals(_selectedItemState.Value, item))
+                {
+                    await _selectedItemState.SetValueAsync(default);
+                }
+
+                // Clean up hierarchy expansions
+                _openHierarchies.Remove(item);
+                _initialExpansions.Remove(item);
+            }
+
+            if (selectionChanged)
+            {
+                await _selectedItemsState.SetValueAsync(Selection);
+                await SelectedItemsChanged.InvokeAsync(Selection);
+                SelectedItemsChangedEvent?.Invoke(Selection);
+            }
+        }
+
+        private async Task CleanupStaleSelectionsAsync()
+        {
+            if (Selection.Count == 0)
+                return;
+
+            // Get current items from the source
+            var currentItems = _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+
+            // Find items that are in selection but no longer in items
+            var staleItems = Selection.Where(s => !currentItems.Contains(s)).ToList();
+
+            if (staleItems.Count == 0)
+                return;
+
+            foreach (var item in staleItems)
+            {
+                Selection.Remove(item);
+            }
+
+            // Clean up SelectedItem if it's no longer in items
+            if (_selectedItemState.Value is not null && !currentItems.Contains(_selectedItemState.Value))
+            {
+                await _selectedItemState.SetValueAsync(default);
+            }
+
+            await _selectedItemsState.SetValueAsync(Selection);
+            await SelectedItemsChanged.InvokeAsync(Selection);
+            SelectedItemsChangedEvent?.Invoke(Selection);
+        }
+
+        private void CleanupStaleHierarchyExpansions()
+        {
+            if (_openHierarchies.Count == 0 && _initialExpansions.Count == 0)
+                return;
+
+            var currentItems = _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+
+            // Remove items from _openHierarchies that are no longer in the collection
+            var staleHierarchies = _openHierarchies.Where(h => !currentItems.Contains(h)).ToList();
+            foreach (var item in staleHierarchies)
+            {
+                _openHierarchies.Remove(item);
+            }
+
+            // Remove items from _initialExpansions that are no longer in the collection
+            var staleExpansions = _initialExpansions.Where(e => !currentItems.Contains(e)).ToList();
+            foreach (var item in staleExpansions)
+            {
+                _initialExpansions.Remove(item);
             }
         }
 
@@ -826,7 +920,6 @@ namespace MudBlazor
                 }
             }
         }
-
 
         /// <summary>
         /// Shows a loading animation while querying data.
@@ -2442,6 +2535,9 @@ namespace MudBlazor
                     await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
                 }
                 _openHierarchies.Clear();
+                _openHierarchies.Add(item);
+                await InvokeAsync(StateHasChanged);
+                return;
             }
 
             // if item doesn't exist remove will return false and add the item

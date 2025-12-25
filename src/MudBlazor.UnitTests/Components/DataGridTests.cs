@@ -5568,5 +5568,208 @@ namespace MudBlazor.UnitTests.Components
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
         }
+
+        #region Selection Cleanup Tests
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            var firstItem = testComponent.Items.First();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+            });
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldUpdateWhenMultipleItemsRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+
+            var firstItem = testComponent.Items.First();
+            var secondItem = testComponent.Items.Skip(1).First();
+
+            await comp.InvokeAsync(() =>
+            {
+                testComponent.RemoveItem(firstItem);
+                testComponent.RemoveItem(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().NotContain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(2));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldClearWhenCollectionCleared()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+
+            await comp.InvokeAsync(() => testComponent.ClearItems());
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItem_ShouldUpdateWhenItemRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var firstItem = testComponent.Items.First();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+            });
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItem.Should().BeNull());
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldNotAffectNonSelectedItems()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var firstItem = testComponent.Items.First();
+            var secondItem = testComponent.Items.Skip(1).First();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().Contain(secondItem);
+            });
+
+            var thirdItem = testComponent.Items.Skip(2).First();
+            await comp.InvokeAsync(() => testComponent.RemoveItem(thirdItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().Contain(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItem_ShouldNotReferenceRemovedItem_WhenMultipleItemsSelectedAndOneRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var firstItem = testComponent.Items.First();
+            var secondItem = testComponent.Items.Skip(1).First();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(2));
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(secondItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+            });
+
+            // SelectedItem must never reference a removed item.
+            // It should either be null or point to an item still in the Items collection.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var selectedItem = dataGrid.Instance.SelectedItem;
+                if (selectedItem != null)
+                {
+                    testComponent.Items.Should().Contain(selectedItem,
+                        "SelectedItem must reference an item still in the collection");
+                }
+            });
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldKeepRemainingSelectionsWhenOneRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Select 3 items (not using SelectAll)
+            var firstItem = testComponent.Items.ElementAt(0);
+            var secondItem = testComponent.Items.ElementAt(1);
+            var thirdItem = testComponent.Items.ElementAt(2);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, thirdItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(3));
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(secondItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().Contain(thirdItem);
+                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
+        }
+
+        #endregion
     }
 }
