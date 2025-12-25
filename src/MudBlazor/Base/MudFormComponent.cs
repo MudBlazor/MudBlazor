@@ -69,7 +69,7 @@ namespace MudBlazor
         /// If it is sub-component, it will NOT do form validation!!
         /// </summary>
         [CascadingParameter(Name = "SubscribeToParentForm")]
-        internal bool SubscribeToParentForm { get; set; } = true;
+        protected bool SubscribeToParentForm { get; set; } = true;
 
         /// <summary>
         /// Requires an input value.
