@@ -1284,6 +1284,34 @@ namespace MudBlazor.UnitTests.Components
             Assert.That(dateRangeStart.Year == calendarStart.Year);
             Assert.That(dateRangeStart.Month == calendarStart.Month);
         }
+        
+        [Test]
+        public void MudDateRangePicker_DisabledIsNotSpecified_EnabledByDefault()
+        {
+            var comp = Context.Render<DateRangePickerStaticDisabledTest>();
+            var picker = comp.FindComponents<MudDateRangePicker>();
+            picker.Count.Should().Be(2);
+    
+            picker[1].Instance.Disabled.Should().BeFalse();
+        }
+
+        [Test]
+        public void DisabledMudDateRangePicker_ShouldHave_DisabledIsTrue()
+        {
+            var comp = Context.Render<DateRangePickerStaticDisabledTest>();
+            var picker = comp.FindComponents<MudDateRangePicker>();
+            picker.Count.Should().Be(2);
+    
+            picker[0].Instance.Disabled.Should().BeTrue();
+        }
+
+        [Test]
+        public void DisabledMudDateRangePicker_ShouldHave_MudDisabledMarkup()
+        {
+            var comp = Context.Render<DateRangePickerStaticDisabledTest>();
+
+            comp.Markup.Should().Contain("mud-disabled");
+        }
 
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {

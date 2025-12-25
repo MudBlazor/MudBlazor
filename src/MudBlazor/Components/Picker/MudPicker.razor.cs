@@ -57,6 +57,16 @@ namespace MudBlazor
                 .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
                 .AddStyle(Style)
                 .Build();
+        
+        protected string PickerStaticStylename =>
+            new StyleBuilder()
+                .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
+                .AddStyle("opacity", "0.5", GetDisabledState())
+                .AddStyle("pointer-events", "none", GetDisabledState())
+                .AddStyle("filter", "grayscale(1)", GetDisabledState())
+                .AddStyle(Style)
+                .Build();
 
         protected string PickerInlineClassname =>
             new CssBuilder("mud-picker-inline-paper")
