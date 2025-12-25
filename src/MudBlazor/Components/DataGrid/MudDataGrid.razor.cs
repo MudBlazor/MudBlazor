@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -759,6 +759,12 @@ namespace MudBlazor
 
                 _items = value;
 
+                // Always clean up stale selections when Items is reassigned.
+                // For INotifyCollectionChanged (e.g., ObservableCollection), the event handler
+                // additionally handles incremental changes (add/remove without reassigning).
+                CleanupStaleSelections();
+                CleanupStaleHierarchyExpansions();
+
                 OnPagerStateChanged();
                 SetupGrouping();
                 ApplyInitialExpansionForItems(_items);
@@ -869,6 +875,43 @@ namespace MudBlazor
             await _selectedItemsState.SetValueAsync(Selection);
             await SelectedItemsChanged.InvokeAsync(Selection);
             SelectedItemsChangedEvent?.Invoke(Selection);
+        }
+
+        /// <summary>
+        /// Synchronous version of CleanupStaleSelectionsAsync for use in property setters.
+        /// </summary>
+        private void CleanupStaleSelections()
+        {
+            if (Selection.Count == 0)
+                return;
+
+            // Get current items from the source
+            var currentItems = _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+
+            // Find items that are in selection but no longer in items
+            var staleItems = Selection.Where(s => !currentItems.Contains(s)).ToList();
+
+            if (staleItems.Count == 0)
+                return;
+
+            foreach (var item in staleItems)
+            {
+                Selection.Remove(item);
+            }
+
+            // Clean up SelectedItem if it's no longer in items - fire and forget the async operations
+            if (_selectedItemState.Value is not null && !currentItems.Contains(_selectedItemState.Value))
+            {
+                InvokeAsync(async () => await _selectedItemState.SetValueAsync(default));
+            }
+
+            // Fire and forget the async notifications
+            InvokeAsync(async () =>
+            {
+                await _selectedItemsState.SetValueAsync(Selection);
+                await SelectedItemsChanged.InvokeAsync(Selection);
+                SelectedItemsChangedEvent?.Invoke(Selection);
+            });
         }
 
         private void CleanupStaleHierarchyExpansions()
