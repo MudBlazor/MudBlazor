@@ -5569,7 +5569,7 @@ namespace MudBlazor.UnitTests.Components
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
         }
 
-        #region Selection Cleanup Tests
+        #region Selection Cleanup Tests (ObservableCollection)
 
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
@@ -5770,6 +5770,10 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
         }
 
+        #endregion
+
+        #region Selection Cleanup Tests (List)
+
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenItemRemovedFromList()
         {
@@ -5837,6 +5841,112 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItem.Should().BeNull());
             await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+        }
+
+        #endregion
+
+        #region Hierarchy Cleanup Tests (ObservableCollection)
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenExpandedItemRemovedFromObservableCollection()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            var iraItem = testComponent.Items.First(x => x.Name == "Ira");
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().Contain(iraItem));
+
+            // Remove the expanded item
+            await comp.InvokeAsync(() => testComponent.RemoveItem(iraItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().NotContain(iraItem));
+        }
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenManuallyExpandedItemRemovedFromObservableCollection()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var samItem = testComponent.Items.First(x => x.Name == "Sam");
+
+            // Manually expand Sam
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleHierarchyVisibilityAsync(samItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().Contain(samItem));
+
+            // Remove Sam
+            await comp.InvokeAsync(() => testComponent.RemoveItem(samItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().NotContain(samItem));
+        }
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenObservableCollectionCleared()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().BeGreaterThan(0));
+
+            // Clear all items
+            await comp.InvokeAsync(() => testComponent.ClearItems());
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+        }
+
+        #endregion
+
+        #region Hierarchy Cleanup Tests (List)
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenExpandedItemRemovedFromList()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            var iraItem = testComponent.Items.First(x => x.Name == "Ira");
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().Contain(iraItem));
+
+            // Remove the expanded item by reassigning the list
+            await comp.InvokeAsync(() => testComponent.RemoveItem(iraItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().NotContain(iraItem));
+        }
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenListCleared()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().BeGreaterThan(0));
+
+            // Clear all items by reassigning to empty list
+            await comp.InvokeAsync(() => testComponent.ClearItems());
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().Be(0));
         }
 
         #endregion
