@@ -57,7 +57,7 @@ namespace MudBlazor
                 .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
                 .AddStyle(Style)
                 .Build();
-        
+
         protected string PickerStaticStylename =>
             new StyleBuilder()
                 .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
