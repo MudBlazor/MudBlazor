@@ -6,10 +6,12 @@
 /// Equality is set-based: two collections are equal if they contain the same distinct elements,
 /// regardless of order or the number of duplicates. Null is only equal to null.
 /// 
-/// Note:
-/// - The order of elements does not affect equality or hash code.
-/// - Multiple entries of the same value are ignored.
-/// - Null and empty collections are treated as distinct values.
+/// <para>Note:</para>
+/// <list type="bullet">
+///   <item>The order of elements does not affect equality or hash code.</item>
+///   <item>Multiple entries of the same value are ignored.</item>
+///   <item>Null and empty collections are treated as distinct values.</item>
+/// </list>
 /// </summary>
 public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
 {
