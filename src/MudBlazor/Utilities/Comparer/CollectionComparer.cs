@@ -69,7 +69,7 @@ public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
         {
             if (seen.Add(item))
             {
-                hash ^= _comparer.GetHashCode(item!);
+                hash ^= item is null ? 0 : _comparer.GetHashCode(item);
             }
         }
 
