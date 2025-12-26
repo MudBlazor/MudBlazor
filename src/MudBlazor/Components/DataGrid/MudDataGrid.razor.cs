@@ -819,62 +819,48 @@ namespace MudBlazor
             if (e.OldItems is null)
                 return;
 
-            var selectionChanged = false;
-            foreach (T item in e.OldItems)
+            // Build a set of removed items for efficient lookup
+            var removedItems = new HashSet<T>(e.OldItems.Cast<T>(), Comparer);
+            var currentItems = BuildCurrentItemsSet();
+
+            // Reuse the shared helper for selection pruning
+            var (selectionChanged, selectedItemChanged) = PruneSelectionAndSelectedItem(currentItems);
+
+            // Handle SelectedItem reset if needed
+            if (selectedItemChanged)
             {
-                // Clean up selection
-                if (Selection.Remove(item))
-                {
-                    selectionChanged = true;
-                }
-
-                // Clean up SelectedItem if it matches the removed item
-                if (Comparer.Equals(_selectedItemState.Value, item))
-                {
-                    await _selectedItemState.SetValueAsync(default);
-                }
-
-                // Clean up hierarchy expansions
-                _openHierarchies.Remove(item);
-                _initialExpansions.Remove(item);
+                await _selectedItemState.SetValueAsync(default);
             }
+
+            // Clean up hierarchy expansions for removed items
+            PruneHierarchyExpansions(removedItems);
 
             if (selectionChanged)
             {
-                await _selectedItemsState.SetValueAsync(Selection);
-                await SelectedItemsChanged.InvokeAsync(Selection);
-                SelectedItemsChangedEvent?.Invoke(Selection);
+                await FireSelectionChangedEventsAsync();
             }
         }
 
         private async Task CleanupStaleSelectionsAsync()
         {
-            if (Selection.Count == 0)
+            if (Selection.Count == 0 && _selectedItemState.Value is null)
                 return;
 
-            // Get current items from the source
-            var currentItems = _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+            var currentItems = BuildCurrentItemsSet();
+            var (selectionChanged, selectedItemChanged) = PruneSelectionAndSelectedItem(currentItems);
 
-            // Find items that are in selection but no longer in items
-            var staleItems = Selection.Where(s => !currentItems.Contains(s)).ToList();
-
-            if (staleItems.Count == 0)
+            if (!selectionChanged && !selectedItemChanged)
                 return;
 
-            foreach (var item in staleItems)
-            {
-                Selection.Remove(item);
-            }
-
-            // Clean up SelectedItem if it's no longer in items
-            if (_selectedItemState.Value is not null && !currentItems.Contains(_selectedItemState.Value))
+            if (selectedItemChanged)
             {
                 await _selectedItemState.SetValueAsync(default);
             }
 
-            await _selectedItemsState.SetValueAsync(Selection);
-            await SelectedItemsChanged.InvokeAsync(Selection);
-            SelectedItemsChangedEvent?.Invoke(Selection);
+            if (selectionChanged)
+            {
+                await FireSelectionChangedEventsAsync();
+            }
         }
 
         /// <summary>
@@ -882,36 +868,25 @@ namespace MudBlazor
         /// </summary>
         private void CleanupStaleSelections()
         {
-            if (Selection.Count == 0)
+            if (Selection.Count == 0 && _selectedItemState.Value is null)
                 return;
 
-            // Get current items from the source
-            var currentItems = _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+            var currentItems = BuildCurrentItemsSet();
+            var (selectionChanged, selectedItemChanged) = PruneSelectionAndSelectedItem(currentItems);
 
-            // Find items that are in selection but no longer in items
-            var staleItems = Selection.Where(s => !currentItems.Contains(s)).ToList();
-
-            if (staleItems.Count == 0)
+            if (!selectionChanged && !selectedItemChanged)
                 return;
 
-            foreach (var item in staleItems)
-            {
-                Selection.Remove(item);
-            }
-
-            // Clean up SelectedItem if it's no longer in items - fire and forget the async operations
-            if (_selectedItemState.Value is not null && !currentItems.Contains(_selectedItemState.Value))
+            // Fire and forget the async operations
+            if (selectedItemChanged)
             {
                 InvokeAsync(async () => await _selectedItemState.SetValueAsync(default));
             }
 
-            // Fire and forget the async notifications
-            InvokeAsync(async () =>
+            if (selectionChanged)
             {
-                await _selectedItemsState.SetValueAsync(Selection);
-                await SelectedItemsChanged.InvokeAsync(Selection);
-                SelectedItemsChangedEvent?.Invoke(Selection);
-            });
+                InvokeAsync(FireSelectionChangedEventsAsync);
+            }
         }
 
         private void CleanupStaleHierarchyExpansions()
@@ -919,21 +894,60 @@ namespace MudBlazor
             if (_openHierarchies.Count == 0 && _initialExpansions.Count == 0)
                 return;
 
-            var currentItems = _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+            var currentItems = BuildCurrentItemsSet();
+            PruneHierarchyExpansionsFromCurrentItems(currentItems);
+        }
 
-            // Remove items from _openHierarchies that are no longer in the collection
-            var staleHierarchies = _openHierarchies.Where(h => !currentItems.Contains(h)).ToList();
-            foreach (var item in staleHierarchies)
-            {
-                _openHierarchies.Remove(item);
-            }
+        /// <summary>
+        /// Builds a HashSet of current items from the data source.
+        /// </summary>
+        private HashSet<T> BuildCurrentItemsSet()
+        {
+            return _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+        }
 
-            // Remove items from _initialExpansions that are no longer in the collection
-            var staleExpansions = _initialExpansions.Where(e => !currentItems.Contains(e)).ToList();
-            foreach (var item in staleExpansions)
-            {
-                _initialExpansions.Remove(item);
-            }
+        /// <summary>
+        /// Removes items from Selection that are not present in currentItems.
+        /// Returns a tuple indicating whether Selection changed and whether SelectedItem needs to be reset.
+        /// </summary>
+        private (bool SelectionChanged, bool SelectedItemChanged) PruneSelectionAndSelectedItem(HashSet<T> currentItems)
+        {
+            var selectionChanged = Selection.RemoveWhere(s => !currentItems.Contains(s)) > 0;
+
+            // Check if SelectedItem needs to be reset
+            var selectedItemChanged = _selectedItemState.Value is not null && !currentItems.Contains(_selectedItemState.Value);
+
+            return (selectionChanged, selectedItemChanged);
+        }
+
+        /// <summary>
+        /// Removes items from _openHierarchies and _initialExpansions that are present in the removedItems set.
+        /// Used when specific items are removed from the collection.
+        /// </summary>
+        private void PruneHierarchyExpansions(HashSet<T> removedItems)
+        {
+            _openHierarchies.ExceptWith(removedItems);
+            _initialExpansions.ExceptWith(removedItems);
+        }
+
+        /// <summary>
+        /// Removes items from _openHierarchies and _initialExpansions that are not present in currentItems.
+        /// Used when checking against the full current items set.
+        /// </summary>
+        private void PruneHierarchyExpansionsFromCurrentItems(HashSet<T> currentItems)
+        {
+            _openHierarchies.RemoveWhere(h => !currentItems.Contains(h));
+            _initialExpansions.RemoveWhere(e => !currentItems.Contains(e));
+        }
+
+        /// <summary>
+        /// Fires SelectedItemsChanged event and invokes SelectedItemsChangedEvent.
+        /// </summary>
+        private async Task FireSelectionChangedEventsAsync()
+        {
+            await _selectedItemsState.SetValueAsync(Selection);
+            await SelectedItemsChanged.InvokeAsync(Selection);
+            SelectedItemsChangedEvent?.Invoke(Selection);
         }
 
         private void ApplyInitialExpansionForNewItems(NotifyCollectionChangedEventArgs e)

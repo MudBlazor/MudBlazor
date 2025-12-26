@@ -5574,8 +5574,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
             var testComponent = comp.Instance;
 
             await comp.WaitForAssertionAsync(() =>
@@ -5601,8 +5601,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenMultipleItemsRemoved()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
             var testComponent = comp.Instance;
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
@@ -5631,8 +5631,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldClearWhenCollectionCleared()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
             var testComponent = comp.Instance;
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
@@ -5670,8 +5670,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldNotAffectNonSelectedItems()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
             var testComponent = comp.Instance;
 
             var firstItem = testComponent.Items.First();
@@ -5704,8 +5704,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItem_ShouldNotReferenceRemovedItem_WhenMultipleItemsSelectedAndOneRemoved()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
             var testComponent = comp.Instance;
 
             var firstItem = testComponent.Items.First();
@@ -5741,8 +5741,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldKeepRemainingSelectionsWhenOneRemoved()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
             var testComponent = comp.Instance;
 
             // Select 3 items (not using SelectAll)
