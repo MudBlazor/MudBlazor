@@ -2,10 +2,14 @@
 
 #nullable enable
 /// <summary>
-/// Provides a comparer for <see cref="IReadOnlyCollection{T}"/> values by using a <see cref="IEqualityComparer{T}"/>.
-/// Equality is based on HashSet and the given IEqualityComparer
+/// Provides a comparer for <see cref="IReadOnlyCollection{T}"/> values using a <see cref="IEqualityComparer{T}"/>.
+/// Equality is set-based: two collections are equal if they contain the same distinct elements,
+/// regardless of order or the number of duplicates. Null is only equal to null.
 /// 
-/// Note: Order of the sequence is not relevant, neither are multiple entries of the same value !
+/// Note:
+/// - The order of elements does not affect equality or hash code.
+/// - Multiple entries of the same value are ignored.
+/// - Null and empty collections are treated as distinct values.
 /// </summary>
 public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
 {
