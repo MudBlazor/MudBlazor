@@ -20,6 +20,7 @@ public partial class MudLink : MudComponentBase
             // To change this for more expected look change hover cursor to a pointer:
             .AddClass("cursor-pointer", Href == default && OnClick.HasDelegate && !Disabled)
             .AddClass("mud-link-disabled", Disabled)
+            .AddClass("d-inline", Inline)
             .AddClass(Class)
             .Build();
 
@@ -114,6 +115,16 @@ public partial class MudLink : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Link.Behavior)]
     public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Whether this link continues on the same line.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>false</c>, the link will start on a new line.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Link.Behavior)]
+    public bool Inline { get; set; }
 
     /// <summary>
     /// The content within this component.
