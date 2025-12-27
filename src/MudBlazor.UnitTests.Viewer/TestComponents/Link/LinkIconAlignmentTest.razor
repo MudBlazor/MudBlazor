@@ -1,63 +1,20 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents.Link
 
-<div style="margin: 20px;">
-    <h2>Icon Alignment Test</h2>
+<MudStack Spacing="4">
+    <MudLink>
+        <MudIcon Icon="@Icons.Material.Rounded.Link"/>
+        Worksheet Title
+    </MudLink>
     
-    <div style="margin-bottom: 30px; padding: 20px; background: #2d2d30; border-radius: 4px;">
-        <h3 style="color: #4ec9b0; margin-bottom: 15px;">MudLink with Icon</h3>
-        <MudLink>
-            <MudIcon Icon="@Icons.Material.Rounded.Link"/>
-            Worksheet Title
-        </MudLink>
-    </div>
+    <MudLink>
+        Worksheet Title
+        <MudIcon Icon="@Icons.Material.Rounded.ArrowForward"/>
+    </MudLink>
     
-    <div style="margin-bottom: 30px; padding: 20px; background: #2d2d30; border-radius: 4px;">
-        <h3 style="color: #4ec9b0; margin-bottom: 15px;">MudText (body1) with Icon</h3>
-        <MudText>
-            <MudIcon Icon="@Icons.Material.Rounded.HeartBroken"/>
-            Worksheet Title
-        </MudText>
-    </div>
-    
-    <div style="margin-bottom: 30px; padding: 20px; background: #2d2d30; border-radius: 4px;">
-        <h3 style="color: #4ec9b0; margin-bottom: 15px;">MudText (h1) with Icon</h3>
-        <MudText Typo="Typo.h1">
-            <MudIcon Icon="@Icons.Material.Rounded.Star"/>
-            Large Heading with Icon
-        </MudText>
-    </div>
-    
-    <div style="margin-bottom: 30px; padding: 20px; background: #2d2d30; border-radius: 4px;">
-        <h3 style="color: #4ec9b0; margin-bottom: 15px;">MudText (caption) with Icon - Inline</h3>
-        <MudText Typo="Typo.caption">
-            <MudIcon Icon="@Icons.Material.Rounded.Info"/>
-            Small caption text
-        </MudText>
-    </div>
-    
-    <div style="margin-bottom: 30px; padding: 20px; background: #2d2d30; border-radius: 4px;">
-        <h3 style="color: #4ec9b0; margin-bottom: 15px;">Multiple MudText Elements (Block Behavior)</h3>
-        <MudText>First paragraph</MudText>
-        <MudText>Second paragraph</MudText>
-        <MudText>Third paragraph</MudText>
-    </div>
-    
-    <div style="margin-bottom: 30px; padding: 20px; background: #2d2d30; border-radius: 4px;">
-        <h3 style="color: #4ec9b0; margin-bottom: 15px;">Icon at End of Text</h3>
-        <MudLink>
-            Worksheet Title
-            <MudIcon Icon="@Icons.Material.Rounded.ArrowForward"/>
-        </MudLink>
-    </div>
-    
-    <div style="margin-bottom: 30px; padding: 20px; background: #2d2d30; border-radius: 4px;">
-        <h3 style="color: #4ec9b0; margin-bottom: 15px;">Multiple Icons</h3>
-        <MudText>
-            <MudIcon Icon="@Icons.Material.Rounded.Favorite"/>
-            Text with icons
-            <MudIcon Icon="@Icons.Material.Rounded.Star"/>
-            in between
-            <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"/>
-        </MudText>
-    </div>
-</div>
+    <MudLink>
+        <MudIcon Icon="@Icons.Material.Rounded.Favorite"/>
+        Text with icons
+        <MudIcon Icon="@Icons.Material.Rounded.Star"/>
+        in between
+    </MudLink>
+</MudStack>
