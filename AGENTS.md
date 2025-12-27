@@ -321,7 +321,15 @@ private Task ToggleAsync()
 - Add documentation page in `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`
 - Include examples ordered from simple to complex
 - Collapse examples with more than 15 lines by default
-- Add media for visual changes when needed
+- Add screenshots/videos for visual changes
+
+## PR Guidelines
+
+### Title Format
+```
+<component name>: <short description in imperative>
+```
+Example: `DateRangePicker: Fix initializing DateRange with null values`
 
 ## Workflow Checkpoints (REQUIRED)
 
