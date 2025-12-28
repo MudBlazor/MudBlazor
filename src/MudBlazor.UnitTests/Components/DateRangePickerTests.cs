@@ -1313,7 +1313,7 @@ namespace MudBlazor.UnitTests.Components
             picker.Count.Should().Be(2);
 
             picker[0].Markup.Should().Contain("mud-disabled");
-            picker[1].Markup.Should().NotContain("mud-disabled"));
+            picker[1].Markup.Should().NotContain("mud-disabled");
         }
 
         [Test]
