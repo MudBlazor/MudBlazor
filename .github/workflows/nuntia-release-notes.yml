@@ -30,7 +30,7 @@ jobs:
       issues: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Generate release notes
         id: nuntia
         uses: danielchalmers/Nuntia@main
