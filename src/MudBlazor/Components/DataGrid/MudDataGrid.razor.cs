@@ -821,10 +821,9 @@ namespace MudBlazor
 
             // Build a set of removed items for efficient lookup
             var removedItems = new HashSet<T>(e.OldItems.Cast<T>(), Comparer);
-            var currentItems = BuildCurrentItemsSet();
 
-            // Reuse the shared helper for selection pruning
-            var (selectionChanged, selectedItemChanged) = PruneSelectionAndSelectedItem(currentItems);
+            // Directly check removed items against selection (more efficient for small removals)
+            var (selectionChanged, selectedItemChanged) = PruneSelectionFromRemovedItems(removedItems);
 
             // Handle SelectedItem reset if needed
             if (selectedItemChanged)
@@ -877,15 +876,15 @@ namespace MudBlazor
             if (!selectionChanged && !selectedItemChanged)
                 return;
 
-            // Fire and forget the async operations
+            // Fire and forget with proper exception handling
             if (selectedItemChanged)
             {
-                InvokeAsync(async () => await _selectedItemState.SetValueAsync(default));
+                InvokeAsync(() => _selectedItemState.SetValueAsync(default)).CatchAndLog();
             }
 
             if (selectionChanged)
             {
-                InvokeAsync(FireSelectionChangedEventsAsync);
+                InvokeAsync(FireSelectionChangedEventsAsync).CatchAndLog();
             }
         }
 
@@ -916,6 +915,27 @@ namespace MudBlazor
 
             // Check if SelectedItem needs to be reset
             var selectedItemChanged = _selectedItemState.Value is not null && !currentItems.Contains(_selectedItemState.Value);
+
+            return (selectionChanged, selectedItemChanged);
+        }
+
+        /// <summary>
+        /// Removes items from Selection that are present in removedItems.
+        /// More efficient when a small number of items are removed from a large collection.
+        /// </summary>
+        private (bool SelectionChanged, bool SelectedItemChanged) PruneSelectionFromRemovedItems(HashSet<T> removedItems)
+        {
+            var selectionChanged = false;
+            foreach (var item in removedItems)
+            {
+                if (Selection.Remove(item))
+                {
+                    selectionChanged = true;
+                }
+            }
+
+            // Check if SelectedItem needs to be reset
+            var selectedItemChanged = _selectedItemState.Value is not null && removedItems.Contains(_selectedItemState.Value);
 
             return (selectionChanged, selectedItemChanged);
         }
