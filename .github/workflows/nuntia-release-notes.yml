@@ -12,7 +12,7 @@ on:
       branch:
         description: "Branch name"
         required: true
-        default: "main"
+        default: "dev"
       prompt-url:
         description: "Prompt URL (raw)"
         required: true
