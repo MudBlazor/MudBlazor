@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
@@ -53,11 +52,6 @@ namespace MudBlazor
 
         public MudColorPicker()
         {
-            Converter = new DefaultConverter<MudColor>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
             AdornmentIcon = Icons.Material.Outlined.Palette;
             ShowToolbar = false;
 
@@ -398,6 +392,16 @@ namespace MudBlazor
         public Task ChangeViewAsync(ColorPickerView value)
         {
             return _colorPickerViewState.SetValueAsync(value);
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<MudColor?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<MudColor>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         private async Task SetColorAsync(MudColor? newColor, bool forceUpdate = false)

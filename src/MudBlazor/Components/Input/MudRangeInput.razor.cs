@@ -22,11 +22,6 @@ namespace MudBlazor
         public MudRangeInput()
         {
             Value = new Range<T>();
-            Converter = new RangeConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
@@ -177,6 +172,16 @@ namespace MudBlazor
         protected string InputTypeString => InputType.ToDescriptionString();
 
         protected bool IsClearable() => Clearable && ReadValue is not null;
+
+        /// <inheritdoc />
+        protected override IConverter<Range<T>?, string?> GetDefaultConverter()
+        {
+            return new RangeConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {

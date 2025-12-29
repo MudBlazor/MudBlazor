@@ -27,6 +27,7 @@ namespace MudBlazor
     /// <typeparam name="U">The value type managed by this input.</typeparam>
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
+        private IConverter<T?, U?>? _defaultConverter;
         private ConversionResult<T?>? _getConversionResult;
         // ReSharper disable NotAccessedField.Local maybe we use it later, original converter didn't read the set errors
         private ConversionResult<U?>? _setConversionResult;
@@ -35,7 +36,7 @@ namespace MudBlazor
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
         private readonly ParameterState<CultureInfo> _cultureState;
-        private readonly ParameterState<IConverter<T?, U?>> _converterState;
+        private readonly ParameterState<IConverter<T?, U?>?> _converterState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
@@ -56,9 +57,9 @@ namespace MudBlazor
                 .WithParameter(() => Culture)
                 .WithChangeHandler(OnCultureAndFormatChangedAsync)
                 .WithComparer(ReferenceCultureComparer.Default);
-            _converterState = registerScope.RegisterParameter<IConverter<T?, U?>>(nameof(Converter))
+            _converterState = registerScope.RegisterParameter<IConverter<T?, U?>?>(nameof(Converter))
                 .WithParameter(() => Converter)
-                .WithChangeHandler(args => OnConverterChangedAsync(args));
+                .WithChangeHandler(OnConverterChangedAsync);
         }
 
         [CascadingParameter]
@@ -159,7 +160,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IConverter<T?, U?> Converter { get; set; } = null!;
+        public IConverter<T?, U?>? Converter { get; set; }
 
         /// <summary>
         /// The culture used to format and interpret values such as dates and currency.
@@ -819,34 +820,130 @@ namespace MudBlazor
             }
         }
 
-        protected Task SetCultureAsync(CultureInfo newCultureInfo)
+        /// <summary>
+        /// Sets the culture used for parsing and formatting values in this component.
+        /// </summary>
+        /// <remarks>
+        /// This method updates the <see cref="Culture"/> parameter.
+        /// The converter will automatically use the latest culture when performing conversions.
+        /// If the converter supports <see cref="ICultureAwareConverter"/>, it will be updated with the new culture and format after the state change.
+        /// </remarks>
+        /// <param name="newCultureInfo">The new <see cref="CultureInfo"/> to use for this component. Must not be <c>null</c>.</param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation of updating the culture.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="newCultureInfo"/> is <c>null</c>.
+        /// </exception>
+        protected async Task SetCultureAsync(CultureInfo? newCultureInfo)
         {
             ArgumentNullException.ThrowIfNull(newCultureInfo);
-            // Skip InjectCultureAndFormatToConverter.
-            // The converter relies on Func delegates that read Culture/Format at runtime
-            // The latest Culture is always used automatically when SetValueAsync updates _cultureState.Value.
-            return _cultureState.SetValueAsync(newCultureInfo);
+
+            await _cultureState.SetValueAsync(newCultureInfo);
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
         }
 
-        protected virtual Task OnCultureAndFormatChangedAsync() => Task.CompletedTask;
+        /// <summary>
+        /// Called when the <see cref="Culture"/> or format string changes.
+        /// </summary>
+        /// <remarks>
+        /// Override this method in derived components to react to changes in culture or format settings.
+        /// The default implementation updates the converter with the latest culture and format,
+        /// but only if the converter implements <see cref="ICultureAwareConverter"/>.
+        /// This method is typically invoked automatically when the <see cref="Culture"/> or format parameter changes,
+        /// allowing components to refresh parsing and formatting logic as needed.
+        /// </remarks>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task OnCultureAndFormatChangedAsync()
+        {
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+            return Task.CompletedTask;
+        }
 
+        /// <summary>
+        /// Called when the <see cref="Converter"/> parameter changes.
+        /// </summary>
+        /// <remarks>
+        /// Override this method in derived components to react to changes in the converter.
+        /// The default implementation updates the converter with the latest culture and format,
+        /// but only if the converter implements <see cref="ICultureAwareConverter"/>.
+        /// This method is typically invoked automatically when the <see cref="Converter"/> parameter is set or updated,
+        /// allowing components to refresh parsing and formatting logic as needed.
+        /// </remarks>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task OnConverterChangedAsync()
+        {
+            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Returns the <see cref="CultureInfo"/> used for parsing and formatting values in this component.
+        /// </summary>
+        /// <remarks>
+        /// Override this method in derived components to provide a custom culture for value conversion and display.
+        /// The culture is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>) 
+        /// to control how values are parsed from and formatted to strings, such as date, time, or numeric formats.
+        /// <para>
+        /// By default, this method returns the value of the <see cref="Culture"/> parameter, which is tracked by the component's state.
+        /// </para>
+        /// </remarks>
+        /// <returns>
+        /// The <see cref="CultureInfo"/> to be used for parsing and formatting values.
+        /// </returns>
         protected virtual CultureInfo GetCulture() => _cultureState.Value;
 
+        /// <summary>
+        /// Returns the format string used for parsing and formatting values in this component.
+        /// </summary>
+        /// <remarks>
+        /// Override this method in derived components to provide a custom format string for value conversion and display.
+        /// The format string is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>) 
+        /// to control how values are parsed from and formatted to strings, such as date, time, or numeric formats.
+        /// <para>
+        /// By default, this method returns <c>null</c>, which means the converter will use its default formatting behavior.
+        /// </para>
+        /// </remarks>
+        /// <returns>
+        /// A format string to be used for parsing and formatting values, or <c>null</c> to use the default format.
+        /// </returns>
         protected virtual string? GetFormat() => null;
 
-        internal IConverter<T?, U?> GetConverter() => _converterState.Value;
+        /// <summary>
+        /// Returns the default converter used to convert between the component's model type <typeparamref name="T"/> and value type <typeparamref name="U"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method is called when no custom <see cref="Converter"/> is provided. Derived components must override this method to supply
+        /// an appropriate default converter for their value type. The converter is responsible for converting between the model value and the
+        /// input value, including parsing, formatting, and handling culture-specific conversions if needed via <see cref="ICultureAwareConverter"/>.
+        /// </remarks>
+        /// <returns>
+        /// An <see cref="IConverter{T, U}"/> instance that performs the default conversion for this component.
+        /// </returns>
+        protected abstract IConverter<T?, U?> GetDefaultConverter();
 
+        /// <summary>
+        /// Converts the specified input value of type <typeparamref name="U"/> to the model value of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method uses the current <see cref="Converter"/> (or the default converter <see cref="GetDefaultConverter"/> if none is set) to convert the input value
+        /// from the component's value type to its model type. If conversion fails, the error is captured and can be accessed via
+        /// <see cref="ConversionError"/> and <see cref="ConversionErrorMessage"/>.
+        /// </remarks>
+        /// <param name="input">The input value to convert.</param>
+        /// <returns>
+        /// The converted value of type <typeparamref name="T"/>, or <c>null</c> if conversion fails.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if no converter is available for this component.
+        /// </exception>
         protected virtual T? ConvertGet(U? input)
         {
             var converter = GetConverter();
-            if (converter is null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(Converter)} parameter cannot be null. " +
-                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
-                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
-                );
-            }
             var result = converter.TryConvertBack(input);
             _getConversionResult = result;
             HandleConversionResult(result);
@@ -854,17 +951,24 @@ namespace MudBlazor
             return result.Value;
         }
 
+        /// <summary>
+        /// Converts the specified model value of type <typeparamref name="T"/> to the component's value type <typeparamref name="U"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method uses the current <see cref="Converter"/> (or the default converter from <see cref="GetDefaultConverter"/> if none is set) to convert the model value
+        /// to the component's value type. If conversion fails, the error is captured and can be accessed via
+        /// <see cref="ConversionError"/> and <see cref="ConversionErrorMessage"/>.
+        /// </remarks>
+        /// <param name="input">The model value to convert.</param>
+        /// <returns>
+        /// The converted value of type <typeparamref name="U"/>, or <c>null</c> if conversion fails.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if no converter is available for this component.
+        /// </exception>
         protected virtual U? ConvertSet(T? input)
         {
             var converter = GetConverter();
-            if (converter is null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(Converter)} parameter cannot be null. " +
-                    "If you are deriving from MudFormComponent component, provide a default converter in your constructor. " +
-                    "The converter should only be assigned in the derived class constructor or via the Blazor parameter."
-                );
-            }
             var result = converter.TryConvert(input);
             _setConversionResult = result;
             HandleConversionResult(result);
@@ -872,16 +976,17 @@ namespace MudBlazor
             return result.Value;
         }
 
-        protected virtual Task OnConverterChangedAsync()
+        internal IConverter<T?, U?> GetConverter()
         {
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
+            if (_converterState.Value is not null)
+            {
+                return _converterState.Value;
+            }
 
-            return Task.CompletedTask;
+            // Cached default converter
+            return _defaultConverter ??= GetDefaultConverter() ?? throw new InvalidOperationException(
+                $"{nameof(GetDefaultConverter)} must return a non-null IConverter.");
         }
-
-        private Task OnConverterChangedAsync(ParameterChangedEventArgs<IConverter<T?, U?>> args) => args.Value is null
-            ? throw new InvalidOperationException(nameof(Converter))
-            : OnConverterChangedAsync();
 
         private void HandleConversionResult<TResult>(ConversionResult<TResult?> result)
         {

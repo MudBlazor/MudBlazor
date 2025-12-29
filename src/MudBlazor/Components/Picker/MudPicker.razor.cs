@@ -16,7 +16,7 @@ namespace MudBlazor
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
     /// <seealso cref="MudPickerToolbar" />
-    public partial class MudPicker<T> : MudFormComponent<T, string>
+    public abstract partial class MudPicker<T> : MudFormComponent<T, string>
     {
         private string? _text;
         private bool _pickerSquare;
@@ -465,8 +465,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
-
-
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
