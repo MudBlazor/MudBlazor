@@ -1,26 +1,26 @@
-name: Generate Release Notes with AI
+name: Nuntia (Release Notes)
 
 on:
   workflow_dispatch:
     inputs:
       base-commit:
-        description: "Start commit SHA (inclusive)"
+        description: "Start commit SHA"
         required: true
       head-commit:
-        description: "End commit SHA (inclusive)"
+        description: "End commit SHA"
         required: true
       branch:
         description: "Branch name"
         required: true
-        default: "dev"
+        default: "main"
+      prompt-url:
+        description: "Prompt URL (raw)"
+        required: true
+        default: "https://raw.githubusercontent.com/danielchalmers/Nuntia/refs/heads/main/examples/Nuntia.prompt"
       model:
-        description: "Model to use for release notes generation"
+        description: "Gemini model"
         required: false
         default: "gemini-3-pro-preview"
-      prompt-path:
-        description: "Prompt file path"
-        required: false
-        default: ".github/Nuntia.prompt"
 
 jobs:
   release-notes:
@@ -38,7 +38,7 @@ jobs:
           base-commit: ${{ inputs.base-commit }}
           head-commit: ${{ inputs.head-commit }}
           branch: ${{ inputs.branch }}
-          prompt-path: ${{ inputs.prompt-path }}
+          prompt-url: ${{ inputs.prompt-url }}
           model: ${{ inputs.model }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
