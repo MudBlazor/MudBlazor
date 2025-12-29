@@ -20,7 +20,7 @@ on:
       model:
         description: "Gemini model"
         required: false
-        default: "gemini-3-pro-preview"
+        default: "gemini-3-flash-preview"
 
 jobs:
   release-notes:
