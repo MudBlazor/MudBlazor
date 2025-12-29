@@ -13,6 +13,10 @@ on:
         description: "Branch name"
         required: true
         default: "dev"
+      model:
+        description: "Model to use for release notes generation"
+        required: false
+        default: "gemini-3-pro-preview"
       prompt-path:
         description: "Prompt file path"
         required: false
@@ -35,11 +39,11 @@ jobs:
           head-commit: ${{ inputs.head-commit }}
           branch: ${{ inputs.branch }}
           prompt-path: ${{ inputs.prompt-path }}
-          model: "gemini-3-pro-preview"
+          model: ${{ inputs.model }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      - name: Upload release notes artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
           name: nuntia-${{ github.run_number }}
