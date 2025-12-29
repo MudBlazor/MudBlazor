@@ -21,7 +21,7 @@ namespace MudBlazor
                 .AddClass("mud-icon-default", Color == Color.Default && !Disabled)
                 .AddClass("mud-svg-icon", !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith("<"))
                 .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit && !Disabled)
-                .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-icon-size-{Size?.ToDescriptionString()}", Size.HasValue)
                 .AddClass(Class)
                 .Build();
 
@@ -49,11 +49,11 @@ namespace MudBlazor
         /// The size of this icon.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
+        /// Defaults to <see cref="Size.Medium"/>. When <c>null</c>, the icon inherits its font-size.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Icon.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size? Size { get; set; } = MudBlazor.Size.Medium;
 
         /// <summary>
         /// Ignores any custom color.
