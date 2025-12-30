@@ -976,7 +976,19 @@ namespace MudBlazor
             return result.Value;
         }
 
-
+        /// <summary>
+        /// Gets the converter used to convert between the component's model type <typeparamref name="T"/> and value type <typeparamref name="U"/>.
+        /// </summary>
+        /// <remarks>
+        /// If the <see cref="Converter"/> property is set, this method returns it. Otherwise, it returns the default converter from <see cref="GetDefaultConverter"/>.
+        /// If no converter is available, an <see cref="InvalidOperationException"/> is thrown.
+        /// </remarks>
+        /// <returns>
+        /// An <see cref="IConverter{T, U}"/> instance for value conversion.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if neither <see cref="Converter"/> nor <see cref="GetDefaultConverter"/> provide a non-null converter.
+        /// </exception>
         protected IConverter<T?, U?> GetConverter()
         {
             if (Converter is not null)
