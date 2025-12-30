@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.State;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -23,6 +23,11 @@ namespace MudBlazor
         private bool _validated;
         protected bool _isFocused;
         protected bool _forceTextUpdate;
+        
+        /// <summary>
+        /// To find out whether or not ValueExpression parameter has changed we keep a separate reference.
+        /// </summary>
+        private Expression<Func<T>>? _currentValueExpression;
 
         /// <summary>
         /// The resolved input element ID.
@@ -412,6 +417,10 @@ namespace MudBlazor
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public T? Value { get; set; }
+        
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public Expression<Func<T>>? ValueExpression { get; set; }
 
         /// <summary>
         /// The format applied to values.
@@ -634,6 +643,11 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
+            // Setting "For" is required before calling the parent in the context of a MudForm parent,
+            // otherwise its validation will not be passed down to our input. 
+            _currentValueExpression = ValueExpression;
+            For ??= _currentValueExpression;
+            
             await base.OnInitializedAsync();
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
@@ -702,6 +716,15 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
+            if (ValueExpression != _currentValueExpression)
+            {
+                _currentValueExpression = ValueExpression;
+                if (!HasForChanged())
+                {
+                    For = ValueExpression;
+                }
+            }
+            
             if (SubscribeToParentForm)
             {
                 base.OnParametersSet();

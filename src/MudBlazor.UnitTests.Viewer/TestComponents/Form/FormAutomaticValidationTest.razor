@@ -3,6 +3,9 @@
 <MudForm Model="@_model" Validation="@(_validationRules.ValidateValue)">
     <MudTextField @bind-Value="_model.String1" For="(() => _model.String1)" />
     <MudTextField @bind-Value="_model.String2" />
+    <MudTextField Value="_model.String3"
+                  ValueChanged="@((string? s) => _model.String3 = s)"
+                  ValueExpression="@null" />
     <MudDatePicker @bind-Date="_model.DateTime1" For="(() => _model.DateTime1)" />
     <MudDatePicker @bind-Date="_model.DateTime2" />
 </MudForm>
@@ -27,6 +30,8 @@
         public string? String1 { get; set; }
 
         public string? String2 { get; set; }
+        
+        public string? String3 { get; set; }
 
         public DateTime? DateTime1 { get; set; }
 
