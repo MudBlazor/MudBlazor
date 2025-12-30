@@ -1029,7 +1029,7 @@ namespace MudBlazor
 
         private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
         {
-            if (_converterState.Value is ICultureAwareConverter cultureAwareConverter)
+            if (GetConverter() is ICultureAwareConverter cultureAwareConverter)
             {
                 cultureAwareConverter.Culture = culture;
                 cultureAwareConverter.Format = format;
