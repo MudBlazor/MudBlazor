@@ -917,9 +917,15 @@ namespace MudBlazor
         /// Returns the default converter used to convert between the component's model type <typeparamref name="T"/> and value type <typeparamref name="U"/>.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// This method is called when no custom <see cref="Converter"/> is provided. Derived components must override this method to supply
         /// an appropriate default converter for their value type. The converter is responsible for converting between the model value and the
         /// input value, including parsing, formatting, and handling culture-specific conversions if needed via <see cref="ICultureAwareConverter"/>.
+        /// </para>
+        /// <para>
+        /// This method is called only once per component instance; the returned converter is cached and reused for all subsequent operations.
+        /// Do not include conditional logic that depends on per-call state or parameters.
+        /// </para>
         /// </remarks>
         /// <returns>
         /// An <see cref="IConverter{T, U}"/> instance that performs the default conversion for this component.
