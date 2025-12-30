@@ -308,6 +308,7 @@ namespace MudBlazor
             FieldChanged(value);
         }
 
+        /// <inheritdoc />
         protected override IConverter<T?, string?> GetDefaultConverter()
         {
             return new DefaultConverter<T>

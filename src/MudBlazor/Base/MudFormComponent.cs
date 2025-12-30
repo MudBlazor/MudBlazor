@@ -156,7 +156,8 @@ namespace MudBlazor
         /// The type converter for this input.
         /// </summary>
         /// <remarks>
-        /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.  If no converter is specified, a default will be chosen based on the kind of input.
+        /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.
+        /// You can assign <c>null</c> to this property; in that case, the component will use the default converter returned by <see cref="GetDefaultConverter"/>.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
