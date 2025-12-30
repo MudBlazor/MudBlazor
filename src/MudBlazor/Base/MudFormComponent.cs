@@ -36,7 +36,6 @@ namespace MudBlazor
         protected readonly ParameterState<string?> ErrorIdState;
         protected readonly ParameterState<string?> ErrorTextState;
         private readonly ParameterState<CultureInfo> _cultureState;
-        private readonly ParameterState<IConverter<T?, U?>?> _converterState;
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
@@ -57,7 +56,7 @@ namespace MudBlazor
                 .WithParameter(() => Culture)
                 .WithChangeHandler(OnCultureAndFormatChangedAsync)
                 .WithComparer(ReferenceCultureComparer.Default);
-            _converterState = registerScope.RegisterParameter<IConverter<T?, U?>?>(nameof(Converter))
+            registerScope.RegisterParameter<IConverter<T?, U?>?>(nameof(Converter))
                 .WithParameter(() => Converter)
                 .WithChangeHandler(OnConverterChangedAsync);
         }
@@ -159,7 +158,7 @@ namespace MudBlazor
         /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.
         /// You can assign <c>null</c> to this property; in that case, the component will use the default converter returned by <see cref="GetDefaultConverter"/>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public IConverter<T?, U?>? Converter { get; set; }
 
@@ -977,11 +976,12 @@ namespace MudBlazor
             return result.Value;
         }
 
-        internal IConverter<T?, U?> GetConverter()
+
+        protected IConverter<T?, U?> GetConverter()
         {
-            if (_converterState.Value is not null)
+            if (Converter is not null)
             {
-                return _converterState.Value;
+                return Converter;
             }
 
             // Cached default converter
