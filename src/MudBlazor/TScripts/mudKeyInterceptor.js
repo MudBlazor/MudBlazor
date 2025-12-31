@@ -181,14 +181,14 @@ class MudKeyInterceptor {
             var keyOptions = self._keyOptions[key];
             self.logger('[MudBlazor | KeyInterceptor] options for "' + key + '"', keyOptions);
             self.processKeyDown(args, keyOptions);
-            if (keyOptions.subscribeDown)
+            if (self.shouldInvokeKeyDown(args, keyOptions))
                 invoke = true;
         }
         for (const keyOptions of self._regexOptions) {
             if (keyOptions.regex.test(key)) {
                 self.logger('[MudBlazor | KeyInterceptor] regex options for "' + key + '"', keyOptions);
                 self.processKeyDown(args, keyOptions);
-                if (keyOptions.subscribeDown)
+                if (self.shouldInvokeKeyDown(args, keyOptions))
                     invoke = true;
             }
         }
@@ -204,6 +204,10 @@ class MudKeyInterceptor {
             args.preventDefault();
         if (this.matchesKeyCombination(keyOptions.stopDown, args))
             args.stopPropagation();
+    }
+
+    shouldInvokeKeyDown(args, keyOptions) {
+        return keyOptions.subscribeDown && (!keyOptions.ignoreDownRepeats || !args.repeat);
     }
 
     onKeyUp(args) {
