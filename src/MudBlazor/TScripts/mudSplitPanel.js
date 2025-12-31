@@ -81,9 +81,9 @@ class MudSplitPanel {
         this.firstPanel.style.height = "100%";
         this.secondPanel.style.height = "100%";
 
-        const firstPanelNewSize = firstPanelSize ?? this.firstPanelInitialSize;
-        if (firstPanelNewSize !== null) {
-            this._setPanelSizes(firstPanelNewSize, this._getContainerSize());
+        const firstPanelSizeNew = firstPanelSize !== null ? firstPanelSize : this.firstPanelInitialSize;
+        if (firstPanelSizeNew !== null) {
+            this._setPanelSizes(firstPanelSizeNew, this._getContainerSize());
         } else {
             this.divider.ariaValueNow = "50";
         }
@@ -92,10 +92,10 @@ class MudSplitPanel {
     getDividerPosition() {
         return this.horizontal ? this.firstPanel.clientHeight : this.firstPanel.clientWidth;
     }
-    
+
     setDividerPosition(offset) {
         this.resetSizes(offset);
-    }   
+    }
 
     _getContainerSize() {
         return this.horizontal ? this.container.offsetHeight : this.container.offsetWidth;
