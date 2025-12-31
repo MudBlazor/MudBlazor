@@ -994,7 +994,7 @@ namespace MudBlazor
         /// <exception cref="InvalidOperationException">
         /// Thrown if neither <see cref="Converter"/> nor <see cref="GetDefaultConverter"/> provide a non-null converter.
         /// </exception>
-        protected IConverter<T?, U?> GetConverter()
+        protected internal IConverter<T?, U?> GetConverter()
         {
             if (Converter is not null)
             {
