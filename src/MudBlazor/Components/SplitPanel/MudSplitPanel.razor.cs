@@ -202,11 +202,33 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Resets the sizes of the panels to their initial values.
+    /// Resets the divider position to their initial values.
     /// </summary>
-    public async Task ResetSizesAsync()
+    public async Task ResetDividerPositionAsync()
     {
-        await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetSizes", _containerId);
+        await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetDividerPosition", _containerId);
+    }
+
+    /// <summary>
+    /// Sets the divider to the given offset.
+    /// </summary>
+    /// <remarks>
+    /// Note that this function ignores <see cref="MinPanelSize"/>.
+    /// </remarks>
+    /// <Param name="offset">The offset in pixels from the left or top border.</Param>
+    /// <returns></returns>
+    public async Task SetDividerPositionAsync(int offset)
+    {
+        await JsRuntime.InvokeVoidAsync("mudSplitPanel_setDividerPosition", _containerId, offset);
+    }
+
+    /// <summary>
+    /// Returns the current offset of the divider from the left or top border in pixels.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<int> GetDividerPositionAsync()
+    {
+        return await JsRuntime.InvokeAsync<int>("mudSplitPanel_getDividerPosition", _containerId);
     }
 
     /// <inheritdoc/>
