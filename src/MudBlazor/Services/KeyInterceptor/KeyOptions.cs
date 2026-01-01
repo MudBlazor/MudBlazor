@@ -80,7 +80,7 @@ public class KeyOptions
     /// <summary>
     /// Invoke event KeyDown on C# side only for the initial keydown event and not for the repeats.
     /// </summary>
-    public bool IgnoreDownRepeats { get; init; } = false;
+    public bool IgnoreDownRepeats { get; init; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="KeyOptions"/> class.
