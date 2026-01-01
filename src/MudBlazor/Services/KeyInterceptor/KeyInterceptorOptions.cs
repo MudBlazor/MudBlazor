@@ -11,7 +11,8 @@ namespace MudBlazor.Services;
 public class KeyInterceptorOptions
 {
     /// <summary>
-    /// The CSS class of the target HTML element that should be observed for keyboard events.
+    /// The CSS class of the target HTML element that should be observed for keyboard events or <see langword="null" />
+    /// to observe the element for which the subscription is created.
     /// </summary>
     /// <remarks>
     /// Note: This must be a single class name.
@@ -33,6 +34,15 @@ public class KeyInterceptorOptions
     /// </summary>
     public KeyInterceptorOptions()
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KeyInterceptorOptions"/> class with the specified key options.
+    /// </summary>
+    /// <param name="keys">The key options to intercept.</param>
+    public KeyInterceptorOptions(params KeyOptions[] keys)
+    {
+        Keys = keys;
     }
 
     /// <summary>

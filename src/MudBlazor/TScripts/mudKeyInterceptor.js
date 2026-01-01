@@ -46,8 +46,6 @@ class MudKeyInterceptor {
             return;
         if (!this._options.keys) 
             throw "_options.keys: array of KeyOptions expected";
-        if (!this._options.targetClass)
-            throw "_options.targetClass: css class name expected";
         if (this._observer) {
             // don't do double registration
             return;
@@ -73,8 +71,12 @@ class MudKeyInterceptor {
         if (this._regexOptions.size > 0)
             this.logger('[MudBlazor | KeyInterceptor] regex options: ', this._regexOptions);
         // register handlers
-        for (const child of this._element.getElementsByClassName(targetClass)) {
-            this.attachHandlers(child);
+        if (targetClass) {
+            for (const child of this._element.getElementsByClassName(targetClass)) {
+                this.attachHandlers(child);
+            }
+        } else {
+            this.attachHandlers(this._element);
         }
     }
 
