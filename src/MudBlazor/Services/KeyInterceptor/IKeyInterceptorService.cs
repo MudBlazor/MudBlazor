@@ -24,6 +24,8 @@ public interface IKeyInterceptorService : IAsyncDisposable
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task SubscribeAsync(IKeyInterceptorObserver observer, KeyInterceptorOptions options);
 
+    Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Action<KeyMapBuilder> configure);
+
     /// <summary>
     /// Subscribes to key events for a specified element with the provided options.
     /// </summary>
@@ -62,6 +64,8 @@ public interface IKeyInterceptorService : IAsyncDisposable
     /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Func<KeyboardEventArgs, Task>? keyDown = null, Func<KeyboardEventArgs, Task>? keyUp = null);
+
+    Task DispatchAsync(string elementId, KeyEventKind kind, KeyboardEventArgs args);
 
     /// <summary>
     /// Updates the key options for a specified element.
