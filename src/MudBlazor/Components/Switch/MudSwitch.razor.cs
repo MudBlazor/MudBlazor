@@ -15,7 +15,7 @@ namespace MudBlazor
     /// <seealso cref="MudRadio{T}"/>
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
-        private string _elementId = Identifier.Create("switch");
+        internal string ElementId { get; } = Identifier.Create("switch");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -83,46 +83,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ThumbIconColor { get; set; } = Color.Default;
 
-        /// <summary>
-        /// Occurs when a key is pressed.
-        /// </summary>
-        /// <param name="obj">Information about which key was pressed.</param>
-        /// <remarks>
-        /// Supported keys are:<br />
-        /// <c>ArrowLeft</c> or <c>Delete</c> to uncheck the switch.<br />
-        /// <c>ArrowRight</c>, <c>Enter</c>, or <c>NumpadEnter</c> to check the switch.<br />
-        /// <c>Space</c> to toggle the selected value.
-        /// </remarks>
-        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
-        {
-            if (GetDisabledState() || GetReadOnlyState())
-            {
-                return;
-            }
-
-            switch (obj.Key)
-            {
-                case "ArrowLeft" or "Delete":
-                    await SetBoolValueAsync(false, true);
-                    break;
-                case "ArrowRight" or "Enter" or "NumpadEnter":
-                    await SetBoolValueAsync(true, true);
-                    break;
-                case " ":
-                    switch (BoolValue)
-                    {
-                        case true:
-                            await SetBoolValueAsync(false, true);
-                            break;
-                        default:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                    }
-
-                    break;
-            }
-        }
-
         /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -138,11 +98,19 @@ namespace MudBlazor
                         new(" ", preventDown: "key+none", preventUp: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDownAny(["ArrowLeft", "Delete"], () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAny(["ArrowRight", "Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDown(" ", () => SetBoolValueAsync(!BoolValue, true))));
             }
 
             await base.OnAfterRenderAsync(firstRender);
         }
+
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, obj);
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
@@ -151,7 +119,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
     }

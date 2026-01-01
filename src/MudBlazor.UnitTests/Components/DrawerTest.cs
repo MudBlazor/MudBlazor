@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DrawerTest : BunitTest
     {
-        private BrowserViewportService GetBrowserViewportService(BrowserWindowSize browserWindowSize)
+        private static BrowserViewportService GetBrowserViewportService(BrowserWindowSize browserWindowSize)
         {
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);

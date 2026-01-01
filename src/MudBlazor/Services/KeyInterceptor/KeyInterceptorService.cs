@@ -60,6 +60,18 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
         }
     }
 
+    public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Action<KeyMapBuilder> configure)
+    {
+        ArgumentNullException.ThrowIfNull(configure);
+
+        var builder = KeyMapBuilder.Create();
+        configure(builder);
+
+        var (keyDown, keyUp) = builder.Build();
+
+        return SubscribeAsync(elementId, options, keyDown, keyUp);
+    }
+
     /// <inheritdoc />
     public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, IKeyDownObserver? keyDown, IKeyUpObserver? keyUp)
     {
@@ -76,6 +88,16 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
     public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Func<KeyboardEventArgs, Task>? keyDown, Func<KeyboardEventArgs, Task>? keyUp)
     {
         return SubscribeAsync(new KeyObserver(elementId, KeyObserver.KeyDown(keyDown), KeyObserver.KeyUp(keyUp)), options);
+    }
+
+    public Task DispatchAsync(string elementId, KeyEventKind kind, KeyboardEventArgs args)
+    {
+        return kind switch
+        {
+            KeyEventKind.Down => OnKeyDown(elementId, args),
+            KeyEventKind.Up => OnKeyUp(elementId, args),
+            _ => Task.CompletedTask
+        };
     }
 
     /// <inheritdoc />
