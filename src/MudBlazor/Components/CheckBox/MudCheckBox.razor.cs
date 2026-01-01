@@ -155,48 +155,7 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
-        {
-            if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
-            {
-                return;
-            }
-
-            switch (obj.Key)
-            {
-                case "Delete":
-                    await SetBoolValueAsync(false, true);
-                    break;
-                case "Enter" or "NumpadEnter":
-                    await SetBoolValueAsync(true, true);
-                    break;
-                case "Backspace":
-                    if (TriState)
-                    {
-                        await SetBoolValueAsync(null, true);
-                    }
-
-                    break;
-                case " ":
-                    switch (BoolValue)
-                    {
-                        case null:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                        case true:
-                            await SetBoolValueAsync(false, true);
-                            break;
-                        case false when TriState:
-                            await SetBoolValueAsync(null, true);
-                            break;
-                        case false:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                    }
-
-                    break;
-            }
-        }
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
         protected override void OnInitialized()
         {
@@ -224,7 +183,12 @@ namespace MudBlazor
                         new("Backspace", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDown("Backspace", HandleBackspaceAsync)
+                        .OnKeyDown(" ", HandleSpaceAsync)));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -243,11 +207,28 @@ namespace MudBlazor
             {
                 return BoolValue is not null;
             }
-            else
-            {
-                return base.HasValue(value);
-            }
+
+            return base.HasValue(value);
         }
+
+        private bool CanHandleKeys() => KeyboardEnabled && !GetDisabledState() && !GetReadOnlyState();
+
+        private Task HandleSpaceAsync()
+        {
+            bool? nextValue = BoolValue switch
+            {
+                null => true,
+                true => false,
+                false when TriState => null,
+                false => true
+            };
+
+            return SetBoolValueAsync(nextValue, true);
+        }
+
+        private Task HandleBackspaceAsync() => TriState
+                ? SetBoolValueAsync(null, true)
+                : Task.CompletedTask;
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

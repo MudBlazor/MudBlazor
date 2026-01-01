@@ -12,6 +12,15 @@
   <ItemGroup>
     <PackageReference Include="bunit" Version="2.5.3" />
     <PackageReference Include="nunit" Version="4.4.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="MudBlazor.UnitTests" />
+    <InternalsVisibleTo Include="MudBlazor.UnitTests.Docs" />
+    <InternalsVisibleTo Include="MudBlazor.UnitTests.Viewer" />
+    <!--We need to make internal types to be visible for mocking-->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
 </Project>

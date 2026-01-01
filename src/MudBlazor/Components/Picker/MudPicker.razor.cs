@@ -21,8 +21,9 @@ namespace MudBlazor
         private string? _text;
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
-        private bool _keyInterceptorObserving = false;
-        private readonly string _elementId = Identifier.Create("picker");
+        private bool _keyInterceptorObserving;
+
+        internal string ElementId { get; } = Identifier.Create("picker");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -646,7 +647,29 @@ namespace MudBlazor
                     new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                .HookKeyDown(OnHandleKeyDownAsync)
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDown("Backspace", HandleBackspaceAsync)
+                    .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
+        }
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
+        private async Task HandleBackspaceAsync(KeyboardEventArgs args)
+        {
+            // Ctrl+Shift+Backspace clears the value
+            if (args.CtrlKey && args.ShiftKey)
+            {
+                await ClearAsync();
+                await SetValueCoreAsync(default);
+                await ResetAsync();
+            }
+        }
+
+        protected internal virtual Task OnHandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            return Task.CompletedTask;
         }
 
         private async Task OnClickAsync(MouseEventArgs args)
@@ -699,7 +722,7 @@ namespace MudBlazor
             }
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
 
         protected virtual async Task OnClosedAsync()
@@ -707,7 +730,7 @@ namespace MudBlazor
             await OnPickerClosedAsync();
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "none"));
         }
 
         protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
@@ -728,28 +751,6 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
-        {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-            switch (args.Key)
-            {
-                case "Backspace":
-                    if (args.CtrlKey && args.ShiftKey)
-                    {
-                        await ClearAsync();
-                        await SetValueCoreAsync(default);
-                        await ResetAsync();
-                    }
-
-                    break;
-                case "Escape":
-                case "Tab":
-                    await CloseAsync(false);
-                    break;
-            }
-        }
-
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
@@ -757,7 +758,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
     }
