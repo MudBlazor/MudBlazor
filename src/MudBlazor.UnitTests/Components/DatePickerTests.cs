@@ -1742,22 +1742,22 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).ToMarkup().Should().Contain("mud-picker-month-selected");
 
             //select new month (March)
-            await comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Mar")).ClickAsync(new MouseEventArgs());
-            await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
+            await comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Mar")).ClickAsync();
+            await comp.Find("button.mud-button-month").ClickAsync();
 
             //confirm Jan is highlighted
             comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).ToMarkup().Should().Contain("mud-picker-month-selected");
 
             //change year
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync();
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync();
 
             //confirm no month is highlighted
             comp.Find(".mud-picker-month-container").ToMarkup().Should().NotContain("mud-picker-month-selected");
 
             //back to present year
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Next year']").ClickAsync(new MouseEventArgs());
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Next year']").ClickAsync(new MouseEventArgs());
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Next year']").ClickAsync();
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Next year']").ClickAsync();
 
             //confirm Jan is highlighted
             comp.FindAll("button.mud-picker-month").First(x => x.TrimmedText().Equals("Jan")).ToMarkup().Should().Contain("mud-picker-month-selected");
@@ -1771,15 +1771,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
 
             //go to year view
-            await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
-            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync(new MouseEventArgs());
+            await comp.Find("button.mud-button-month").ClickAsync();
+            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync();
 
             //2025 is highlighted
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
 
             //select new year
-            await comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2020")).ClickAsync(new MouseEventArgs());
-            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync(new MouseEventArgs());
+            await comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2020")).ClickAsync();
+            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync();
 
             //2025 is still highlighted
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
@@ -1793,26 +1793,83 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DatePickerStaticTest>(p => p.Add(x => x.Date, selectedDate));
             var picker = comp.Instance;
 
-            await comp.Find("button.mud-button-month").ClickAsync(new MouseEventArgs());
+            await comp.Find("button.mud-button-month").ClickAsync();
 
             //back 5 years
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
-            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync(new MouseEventArgs());
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync();
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync();
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync();
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync();
+            await comp.Find(".mud-picker-calendar-header-switch button[aria-label^='Previous year']").ClickAsync();
 
             //Jump to 2020
-            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync(new MouseEventArgs());
+            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync();
 
             picker.PickerReference.PickerMonth!.Value.Year.Should().Be(2020);
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
 
             //Jump to 2025
-            await comp.Find("button.mud-button-year").ClickAsync(new MouseEventArgs());
+            await comp.Find("button.mud-button-year").ClickAsync();
 
             picker.PickerReference.PickerMonth!.Value.Year.Should().Be(2025);
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
+        }
+
+        [Test]
+        public async Task DatePicker_FixYear_Past()
+        {
+            var comp = Context.Render<DatePickerFixYearTest>(p => p.Add(x => x.FixYear, 1900));
+
+            // click to open menu
+            await comp.Find("input").ClickAsync();
+
+            await comp.Find("button.mud-button-month").ClickAsync();
+            var pickerHeader = comp.Find(".mud-picker-calendar-header-switch");
+            pickerHeader.TextContent.Trim().Should().Be("1900");
+        }
+
+        [Test]
+        public async Task DatePicker_FixYear_Future()
+        {
+            var futureYear = DateTime.Now.Year + 1;
+            var component = Context.Render<DatePickerFixYearTest>(p => p.Add(x => x.FixYear, futureYear));
+            var datePickerComponent = component.FindComponent<MudDatePicker>();
+
+            // Click to open date picker menu
+            await component.Find("input").ClickAsync();
+
+            var highlightedDate = datePickerComponent.Instance.HighlightedDate.GetValueOrDefault();
+            var firstDayOfMonth = new DateTime(highlightedDate.Year, highlightedDate.Month, 1);
+
+            // Calculate how many days from the previous month are shown at the start
+            var daysFromPreviousMonth = (int)firstDayOfMonth.DayOfWeek;
+
+            // Calculate total days in the current month
+            var totalDaysInMonth = DateTime.DaysInMonth(highlightedDate.Year, highlightedDate.Month);
+
+            // Get all the date buttons in the calendar
+            var dayButtons = component.FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day");
+
+            // Split the buttons into previous, current, and next month days
+            var prevMonthDays = dayButtons.Take(daysFromPreviousMonth);
+            var currMonthDays = dayButtons.Skip(daysFromPreviousMonth).Take(totalDaysInMonth);
+            var nextMonthDays = dayButtons.Skip(daysFromPreviousMonth + totalDaysInMonth);
+
+            // Validate hidden and visible days
+            foreach (var prevMonthDay in prevMonthDays)
+            {
+                prevMonthDay.ClassList.Contains("mud-hidden").Should().BeTrue("Previous month days should be hidden");
+            }
+
+            foreach (var currMonthDay in currMonthDays)
+            {
+                currMonthDay.ClassList.Contains("mud-hidden").Should().BeFalse("Current month days should be visible");
+            }
+
+            foreach (var nextMonthDay in nextMonthDays)
+            {
+                nextMonthDay.ClassList.Contains("mud-hidden").Should().BeTrue("Next month days should be hidden");
+            }
         }
     }
 }

@@ -116,7 +116,7 @@ namespace MudBlazor
         /// <remarks>
         /// This date is highlighted in the UI
         /// </remarks>
-        protected DateTime? HighlightedDate { get; set; }
+        protected internal DateTime? HighlightedDate { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="PickerMonth"/> has changed.
