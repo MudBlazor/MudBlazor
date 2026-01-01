@@ -834,7 +834,7 @@ namespace MudBlazor
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="newCultureInfo"/> is <c>null</c>.
         /// </exception>
-        protected async Task SetCultureAsync(CultureInfo? newCultureInfo)
+        protected async Task SetCultureAsync(CultureInfo newCultureInfo)
         {
             ArgumentNullException.ThrowIfNull(newCultureInfo);
 
@@ -917,13 +917,15 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This method is called when no custom <see cref="Converter"/> is provided. Derived components must override this method to supply
-        /// an appropriate default converter for their value type. The converter is responsible for converting between the model value and the
-        /// input value, including parsing, formatting, and handling culture-specific conversions if needed via <see cref="ICultureAwareConverter"/>.
+        /// This method is used when no custom <see cref="Converter"/> is provided (that is, when <see cref="Converter"/> is <c>null</c>). Derived components must
+        /// override this method to supply an appropriate default converter for their value type. The converter is responsible for converting
+        /// between the model value and the input value, including parsing, formatting, and handling culture-specific conversions if needed via
+        /// <see cref="ICultureAwareConverter"/>.
         /// </para>
         /// <para>
-        /// This method is called only once per component instance; the returned converter is cached and reused for all subsequent operations.
-        /// Do not include conditional logic that depends on per-call state or parameters.
+        /// This method is called at most once per component instance: it is invoked the first time a default converter is needed (when
+        /// <see cref="Converter"/> is <c>null</c>), and the returned converter is cached and reused for all subsequent operations. Do not include
+        /// conditional logic that depends on per-call state or parameters.
         /// </para>
         /// </remarks>
         /// <returns>
@@ -944,7 +946,7 @@ namespace MudBlazor
         /// The converted value of type <typeparamref name="T"/>, or <c>null</c> if conversion fails.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        /// Thrown if no converter is available for this component.
+        /// Thrown if <see cref="GetDefaultConverter"/> returns <c>null</c>, which indicates a programming error in the derived component class.
         /// </exception>
         protected virtual T? ConvertGet(U? input)
         {
@@ -969,7 +971,7 @@ namespace MudBlazor
         /// The converted value of type <typeparamref name="U"/>, or <c>null</c> if conversion fails.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        /// Thrown if no converter is available for this component.
+        /// Thrown if <see cref="GetDefaultConverter"/> returns <c>null</c>, which indicates a programming error in the derived component class.
         /// </exception>
         protected virtual U? ConvertSet(T? input)
         {
