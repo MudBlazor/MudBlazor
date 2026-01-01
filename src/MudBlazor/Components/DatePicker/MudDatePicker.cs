@@ -254,12 +254,17 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? Date ?? TimeProvider.GetLocalNow().Date;
+            var date = StartMonth ?? Date ?? HighlightedDate ?? TimeProvider.GetLocalNow().Date;
             return date.StartOfMonth(GetCulture());
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
+            if (FixYear.HasValue)
+            {
+                return FixYear.Value;
+            }
+
             var date = Date ?? TimeProvider.GetLocalNow().Date;
             var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
             var calenderYear = GetCulture().Calendar.GetYear(date);
