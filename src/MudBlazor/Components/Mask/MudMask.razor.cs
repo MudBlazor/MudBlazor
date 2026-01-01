@@ -28,7 +28,7 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IMask _mask = new PatternMask("** **-** **");
-        private string _elementId = Identifier.Create("mask");
+        private readonly string _elementId = Identifier.Create("mask");
 
         protected string Classname =>
             new CssBuilder("mud-input")
@@ -37,7 +37,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
+                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(ReadText) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
@@ -135,15 +135,10 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
-        public MudMask()
-        {
-            TextUpdateSuppression = false;
-        }
-
         protected override async Task OnInitializedAsync()
         {
-            if (Text != Mask.Text)
-                await SetTextAsync(Mask.Text, updateValue: false);
+            if (ReadText != Mask.Text)
+                await SetTextAndUpdateValueAsync(Mask.Text, updateValue: false);
             await base.OnInitializedAsync();
         }
 
@@ -195,10 +190,8 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected internal async Task OnInputAsync(ChangeEventArgs e)
+        protected internal async Task OnInputAsync(string? inputValue)
         {
-            var inputValue = e.Value?.ToString();
-
             if (inputValue == null)
                 return;
 
@@ -251,7 +244,7 @@ namespace MudBlazor
 
         private void UpdateClearable()
         {
-            var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
+            var showClearable = Clearable && !string.IsNullOrWhiteSpace(ReadText);
 
             if (_showClearable != showClearable)
             {
@@ -269,11 +262,11 @@ namespace MudBlazor
             _updating = true;
             try
             {
-                await base.SetTextAsync(text, updateValue: false);
+                await base.SetTextAndUpdateValueAsync(text, updateValue: false);
                 if (Clearable)
                     UpdateClearable();
                 var v = ConvertGet(cleanText);
-                Value = v;
+                await SetValueAsync(v);
                 await ValueChanged.InvokeAsync(v);
                 await SetCaretPositionAsync(caret, selection);
             }
@@ -296,7 +289,7 @@ namespace MudBlazor
             // allow this only via changes from the outside
             if (_updating)
                 return;
-            var text = ConvertSet(Value);
+            var text = ConvertSet(ReadValue);
             var cleanText = Mask.GetCleanText();
             if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
@@ -309,7 +302,7 @@ namespace MudBlazor
                     return;
             }
 
-            if (Text != Mask.Text)
+            if (ReadText != Mask.Text)
                 await UpdateAsync();
         }
 
@@ -318,7 +311,7 @@ namespace MudBlazor
             // allow this only via changes from the outside
             if (_updating)
                 return;
-            var text = Text;
+            var text = ReadText;
             if (Mask.Text == text)
                 return;
             var maskText = Mask.Text;
@@ -328,13 +321,13 @@ namespace MudBlazor
             await UpdateAsync();
         }
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         private string GetCounterText() => Counter switch
         {
             null => string.Empty,
-            0 => string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}",
-            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+            0 => string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}",
+            _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
         private bool ShowClearButton()
@@ -379,10 +372,9 @@ namespace MudBlazor
             return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
-        internal void OnCopy()
-            => CopySelectionToClipboard();
+        internal Task OnCopyAsync() => CopySelectionToClipboard();
 
-        internal async void OnPaste(string? text)
+        internal async Task OnPasteAsync(string? text)
         {
             if (text == null || GetReadOnlyState())
                 return;
@@ -466,16 +458,16 @@ namespace MudBlazor
 
             // swap masks while retaining text
             // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
-            other.SetText(Text);
+            other.SetText(ReadText);
             _mask = other;
         }
 
-        private async void OnCut(ClipboardEventArgs obj)
+        private async Task OnCutAsync(ClipboardEventArgs obj)
         {
             if (GetReadOnlyState())
                 return;
 
-            CopySelectionToClipboard();
+            await CopySelectionToClipboard();
             if (_selection != null)
                 Mask.Delete();
             await UpdateAsync();
@@ -499,18 +491,20 @@ namespace MudBlazor
             }
         }
 
+        private async void OnPaste(string e) => await OnPasteAsync(e);
+
         /// <summary>
         /// Copies the currently selected text (or the entire text if nothing is selected) to the clipboard.
         /// </summary>
-        private void CopySelectionToClipboard()
+        private async Task CopySelectionToClipboard()
         {
-            var text = Text;
+            var text = ReadText;
             if (Mask.Selection != null)
             {
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
 
-            JsApiService.CopyToClipboardAsync(text ?? string.Empty);
+            await JsApiService.CopyToClipboardAsync(text ?? string.Empty);
         }
 
         [GeneratedRegex(@"^.$")]

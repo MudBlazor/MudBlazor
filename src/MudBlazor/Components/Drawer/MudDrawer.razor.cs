@@ -16,12 +16,9 @@ namespace MudBlazor
     {
         private double _height;
         private bool _disposed;
-        private readonly ParameterState<bool> _rtlState;
         private readonly ParameterState<bool> _openState;
-        private readonly ParameterState<Breakpoint> _breakpointState;
-        private readonly ParameterState<DrawerClipMode> _clipModeState;
         private ElementReference _contentRef;
-        private bool _closeOnPointerLeave = false;
+        private bool _closeOnPointerLeave;
         private bool _initial = true;
         private bool _keepInitialState;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
@@ -32,17 +29,17 @@ namespace MudBlazor
         public MudDrawer()
         {
             using var registerScope = CreateRegisterScope();
-            _clipModeState = registerScope.RegisterParameter<DrawerClipMode>(nameof(ClipMode))
-                .WithParameter(() => ClipMode)
-                .WithChangeHandler(OnClipModeParameterChange);
-            _breakpointState = registerScope.RegisterParameter<Breakpoint>(nameof(Breakpoint))
-                .WithParameter(() => Breakpoint)
-                .WithChangeHandler(OnBreakpointParameterChangedAsync);
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
                 .WithEventCallback(() => OpenChanged)
                 .WithChangeHandler(OnOpenParameterChangedAsync);
-            _rtlState = registerScope.RegisterParameter<bool>(nameof(RightToLeft))
+            registerScope.RegisterParameter<DrawerClipMode>(nameof(ClipMode))
+                .WithParameter(() => ClipMode)
+                .WithChangeHandler(OnClipModeParameterChange);
+            registerScope.RegisterParameter<Breakpoint>(nameof(Breakpoint))
+                .WithParameter(() => Breakpoint)
+                .WithChangeHandler(OnBreakpointParameterChangedAsync);
+            registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnRightToLeftParameterChanged);
         }
@@ -56,8 +53,8 @@ namespace MudBlazor
                 .AddClass($"mud-drawer--open", _openState.Value)
                 .AddClass($"mud-drawer--closed", !_openState.Value)
                 .AddClass($"mud-drawer--initial", _initial)
-                .AddClass($"mud-drawer-{_breakpointState.Value.ToDescriptionString()}")
-                .AddClass($"mud-drawer-clipped-{_clipModeState.Value.ToDescriptionString()}")
+                .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
+                .AddClass($"mud-drawer-clipped-{ClipMode.ToDescriptionString()}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
@@ -69,7 +66,7 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer-overlay--open", _openState.Value)
                 .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-drawer-overlay-{_breakpointState.Value.ToDescriptionString()}")
+                .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
                 .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
                 .AddClass($"mud-skip-overlay-section") // drawer overlay remains outside of Section
@@ -214,7 +211,7 @@ namespace MudBlazor
         /// Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Responsive"/> or <see cref="DrawerVariant.Mini" />.
         /// </para>
         /// </remarks> 
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
 
@@ -267,7 +264,7 @@ namespace MudBlazor
         /// <summary>
         /// The position of this drawer when opened, relative to a <see cref="MudAppBar"/> when inside a <see cref="MudLayout"/>.
         /// </summary>
-        [Parameter, ParameterState]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerClipMode ClipMode { get; set; }
 
@@ -399,20 +396,20 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(_breakpointState.Value);
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(Breakpoint);
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
-        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
+        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
-        private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
+        private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
 
         internal string GetPosition()
         {
             return Anchor switch
             {
-                Anchor.Start => _rtlState.Value ? "right" : "left",
-                Anchor.End => _rtlState.Value ? "left" : "right",
+                Anchor.Start => RightToLeft ? "right" : "left",
+                Anchor.End => RightToLeft ? "left" : "right",
                 _ => Anchor.ToDescriptionString()
             };
         }
@@ -440,7 +437,7 @@ namespace MudBlazor
         async Task INavigationEventReceiver.OnNavigation()
         {
             if (Variant == DrawerVariant.Temporary ||
-                (Variant == DrawerVariant.Responsive && await BrowserViewportService.GetCurrentBreakpointAsync() < _breakpointState.Value))
+                (Variant == DrawerVariant.Responsive && await BrowserViewportService.GetCurrentBreakpointAsync() < Breakpoint))
             {
                 await _openState.SetValueAsync(false);
             }
@@ -488,8 +485,8 @@ namespace MudBlazor
             await InvokeAsync(() => UpdateBreakpointStateAsync(browserViewportEventArgs.Breakpoint));
             return;
 
-            bool HandleBreakpointNone() => _breakpointState.Value == Breakpoint.None;
-            bool HandleBreakpointAlways() => _breakpointState.Value == Breakpoint.Always;
+            bool HandleBreakpointNone() => Breakpoint == Breakpoint.None;
+            bool HandleBreakpointAlways() => Breakpoint == Breakpoint.Always;
             bool HandleBelowBreakpointAndOpenState() => IsBelowBreakpoint(browserViewportEventArgs.Breakpoint) && _openState.Value;
             Task InitialOpenState(bool open)
             {

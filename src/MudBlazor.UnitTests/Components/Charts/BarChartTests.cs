@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
@@ -42,7 +42,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartEmptyData()
         {
-            var comp = Context.RenderComponent<Bar<double>>();
+            var comp = Context.Render<Bar<double>>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -121,7 +121,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -196,7 +196,7 @@ namespace MudBlazor.UnitTests.Charts
                 new ChartSeries<double>() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -239,7 +239,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")

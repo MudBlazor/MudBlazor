@@ -29,8 +29,7 @@
                           Label="@Label"
                           Variant="@Variant"
                           Typo="@Typo"
-                          TextUpdateSuppression="false"
-                          Value="@(Strict && !IsValueInList ? null : Text)"
+                          Value="@(Strict && !IsValueInList ? null : ReadText)"
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="true"
@@ -97,7 +96,6 @@
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
                             Fixed="@PopoverFixed"
-                            OverflowBehavior="@OverflowBehavior"
                             RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
@@ -139,6 +137,6 @@ feature relies on pointerdown event resulting in the same order of events.
 <MudOverlay Visible="_open"
             @onpointerdown="@(() => CloseMenu(false))"
             LockScroll="@LockScroll"
-            AutoClose="@(!Modal)"
-            Modal="@Modal"
+            AutoClose="@(!GetModal())"
+            Modal="@GetModal()"
             OnClosed="@(() => CloseMenu(false))"/>

@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Charts;
 
+#nullable enable
 /// <summary>
 /// Represents a link in a Sankey diagram, defining the source and target edges.
 /// </summary>

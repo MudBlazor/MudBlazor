@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+#nullable enable
 namespace MudBlazor.Utilities
 {
     [ExcludeFromCodeCoverage]

@@ -2,9 +2,7 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using System;
-using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 

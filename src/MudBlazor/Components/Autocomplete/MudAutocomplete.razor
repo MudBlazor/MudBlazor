@@ -27,8 +27,7 @@
                           Variant="@Variant"
                           Typo="@Typo"
                           Label="@Label"
-                          TextUpdateSuppression="@TextUpdateSuppression"
-                          Value="@Text" Underline="@Underline"
+                          Value="@ReadText" Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="@GetReadOnlyState()"
                           Error="@ErrorState.Value"
@@ -75,8 +74,7 @@
                             RelativeWidth="@RelativeWidth"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            Fixed="@PopoverFixed"
-                            OverflowBehavior="@OverflowBehavior">
+                            Fixed="@PopoverFixed">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
@@ -147,4 +145,4 @@
             Visible="Open"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
-            Modal="@Modal" />
+            Modal="@GetModal()" />

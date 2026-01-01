@@ -1,11 +1,11 @@
-@using System.Threading
+﻿@using System.Threading
 @using MudBlazor
 
 <MudPopoverProvider />
 
 <MudMenu Label="Open Menu">
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" id="menu-open">OPEN MENU</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" id="menu-open" OnClick="@context.ToggleAsync">OPEN MENU</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem AutoClose="false">

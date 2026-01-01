@@ -1,10 +1,8 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -32,6 +30,8 @@ namespace MudBlazor
         protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
+        private readonly ParameterState<string?> _textState;
+        private readonly ParameterState<T?> _valueState;
         private readonly ParameterState<string?> _formatState;
         private readonly ParameterState<string?> _inputIdState;
 
@@ -44,6 +44,14 @@ namespace MudBlazor
             };
 
             using var registerScope = CreateRegisterScope();
+            _textState = registerScope.RegisterParameter<string?>(nameof(Text))
+                .WithParameter(() => Text)
+                .WithEventCallback(() => TextChanged)
+                .WithChangeHandler(OnTextParameterChangedAsync);
+            _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithEventCallback(() => ValueChanged)
+                .WithChangeHandler(OnValueParameterChangedAsync);
             _formatState = registerScope.RegisterParameter<string?>(nameof(Format))
                 .WithParameter(() => Format)
                 .WithChangeHandler(OnCultureAndFormatChangedAsync);
@@ -304,19 +312,9 @@ namespace MudBlazor
         /// <summary>
         /// The text displayed in the input.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
-
-        /// <summary>
-        /// Prevents the text from being updated via a bound value.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.  Applies only to Blazor Server (BSS) applications.  When <c>false</c>, the input's text can be updated programmatically while the input has focus.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool TextUpdateSuppression { get; set; } = true; // Solves issue #1012: Textfield swallowing chars when typing rapidly
 
         /// <summary>
         /// The type of input expected.
@@ -353,7 +351,7 @@ namespace MudBlazor
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<string> TextChanged { get; set; }
+        public EventCallback<string?> TextChanged { get; set; }
 
         /// <summary>
         /// Occurs when the input loses focus.
@@ -365,7 +363,7 @@ namespace MudBlazor
         /// Occurs when the internal text value has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
+        public EventCallback<string?> OnInternalInputChanged { get; set; }
 
         /// <summary>
         /// Occurs when a key has been pressed down.
@@ -403,7 +401,7 @@ namespace MudBlazor
         /// Occurs when the <see cref="Value"/> property has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<T> ValueChanged { get; set; }
+        public EventCallback<T?> ValueChanged { get; set; }
 
         /// <summary>
         /// The value for this input.
@@ -411,13 +409,9 @@ namespace MudBlazor
         /// <remarks>
         /// This property represents the strongly typed value for the input.  It is typically the result of parsing raw input via the <see cref="Text"/> property.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T? Value
-        {
-            get => _value;
-            set => _value = value;
-        }
+        public T? Value { get; set; }
 
         /// <summary>
         /// The format applied to values.
@@ -443,27 +437,6 @@ namespace MudBlazor
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
-        protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
-        {
-            if (Text != text)
-            {
-                Text = text;
-                _validated = false;
-
-                if (!string.IsNullOrEmpty(Text))
-                {
-                    Touched = true;
-                }
-
-                if (updateValue)
-                {
-                    await UpdateValuePropertyAsync(false);
-                }
-
-                await TextChanged.InvokeAsync(Text);
-            }
-        }
-
         /// <summary>
         /// Occurs when the value has changed internally.
         /// </summary>
@@ -472,7 +445,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            return SetTextAsync(ConvertSet(Value), updateValue);
+            return SetTextAndUpdateValueAsync(ConvertSet(ReadValue), updateValue);
         }
 
         /// <summary>
@@ -553,27 +526,63 @@ namespace MudBlazor
             return OnKeyUp.InvokeAsync(obj);
         }
 
-        protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected virtual async Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
-            if (EqualityComparer<T>.Default.Equals(Value, value) && !force)
+            var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, value);
+
+            if (!valueChanged && !force)
             {
                 return;
             }
 
             _isDirty = true;
             _validated = false;
-            Value = value;
 
-            await ValueChanged.InvokeAsync(Value);
+            // Use ParameterState to set Value instead of direct assignment
+            // This ensures proper parameter lifecycle management
+            await _valueState.SetValueAsync(value);
+
+            // If force is true but value hasn't changed, ParameterState won't fire the callback
+            // so we need to manually invoke it to maintain backward compatibility
+            if (force && !valueChanged)
+            {
+                await ValueChanged.InvokeAsync(value);
+            }
 
             if (updateText)
             {
                 await UpdateTextPropertyAsync(false);
             }
 
-            FieldChanged(Value);
+            FieldChanged(value);
             await BeginValidateAsync();
         }
+
+        private async Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
+        {
+            _isDirty = true;
+            _validated = false;
+
+            // When Value changes from parent, update Text from Value
+            // But only if Text is not also being set in the same parameter update
+            // Check ParameterView to see if Text is also present
+            if (!arg.ParameterView.Contains<string?>(nameof(Text)))
+            {
+                // Always update text when Value changes (TextUpdateSuppression removed)
+                _forceTextUpdate = false;
+                await UpdateTextPropertyAsync(false);
+            }
+        }
+
+        /// <summary>
+        /// Override to read Value from ParameterState instead of backing field.
+        /// </summary>
+        protected internal override T? ReadValue => _valueState.Value;
+
+        /// <summary>
+        /// Override to write Value to ParameterState instead of backing field.
+        /// </summary>
+        protected override Task SetValueAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// Sets the value, values, and text, and calls validation.
@@ -586,7 +595,7 @@ namespace MudBlazor
         /// </returns>
         public virtual Task ForceUpdate()
         {
-            return SetValueAsync(Value, force: true);
+            return SetValueAndUpdateTextAsync(ReadValue, force: true);
         }
 
         /// <summary>
@@ -597,7 +606,7 @@ namespace MudBlazor
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            return SetValueAsync(ConvertGet(Text), updateText);
+            return SetValueAndUpdateTextAsync(ConvertGet(ReadText), updateText);
         }
 
         protected override string? GetFormat() => _formatState.Value;
@@ -641,7 +650,7 @@ namespace MudBlazor
 
             _userAttributesId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
 
-            if (InputId is null)
+            if (_inputIdState.Value is null)
             {
                 await UpdateInputIdStateAsync();
             }
@@ -666,30 +675,15 @@ namespace MudBlazor
 
             await base.SetParametersAsync(parameters);
 
-            // Refresh Value from Text
-            if (hasText && !hasValue)
-            {
-                await UpdateValuePropertyAsync(false);
-            }
-
-            // Refresh Text from Value
+            // Refresh Text from Value if Value is present but Text is not
+            // This maintains backward compatibility with the old `if (hasValue && !hasText)` logic
+            // ParameterState only fires OnValueParameterChangedAsync when value CHANGES,
+            // but we need to update Text even when Value is passed unchanged (for formatting)
             if (hasValue && !hasText)
             {
-                var updateText = true;
-                if (_isFocused && !_forceTextUpdate)
-                {
-                    // Text update suppression, only in BSS (not in WASM).
-                    // This is a fix for #1012
-                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-                    {
-                        updateText = false;
-                    }
-                }
-                if (updateText)
-                {
-                    _forceTextUpdate = false;
-                    await UpdateTextPropertyAsync(false);
-                }
+                // Always update text when Value changes (TextUpdateSuppression removed)
+                _forceTextUpdate = false;
+                await UpdateTextPropertyAsync(false);
             }
         }
 
@@ -728,7 +722,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async Task ResetValueAsync()
         {
-            await SetTextAsync(null, updateValue: true);
+            await SetTextAndUpdateValueAsync(null, updateValue: true);
             _isDirty = false;
             _validated = false;
             await base.ResetValueAsync();
@@ -768,11 +762,54 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.
         /// </remarks>
-        internal virtual InputType GetInputType() => InputType.Text;
+        protected internal virtual InputType GetInputType() => InputType.Text;
+
+        protected internal string? ReadText => _textState.Value;
+
+        protected Task SetTextAsync(string? text) => _textState.SetValueAsync(text);
+
+        protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
+        {
+            if (ReadText == text)
+            {
+                return;
+            }
+
+            _validated = false;
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                Touched = true;
+            }
+
+            await _textState.SetValueAsync(text);
+            if (updateValue)
+            {
+                await UpdateValuePropertyAsync(false);
+            }
+        }
+
+        private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
+        {
+            _validated = false;
+
+            if (!string.IsNullOrEmpty(arg.Value))
+            {
+                Touched = true;
+            }
+
+            // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
+            // But only if Value is not also being set in the same parameter update
+            // Check ParameterView to see if Value is also present
+            if (!arg.ParameterView.Contains<T?>(nameof(Value)))
+            {
+                await UpdateValuePropertyAsync(updateText: false);
+            }
+        }
 
         private async Task UpdateInputIdStateAsync()
         {
-            if (InputId is not null)
+            if (_inputIdState.Value is not null)
             {
                 return;
             }

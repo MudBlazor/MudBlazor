@@ -47,16 +47,30 @@ internal class ParameterStateInvocationSnapshot<T> : IParameterStateInvocationSn
     private bool HasHandler => _parameterChangedHandler is not null;
 
     /// <inheritdoc />
-    public Task ParameterChangeHandleAsync()
+    public Task ParameterChangeHandleAsync(ParameterChangedContext context)
     {
         if (HasHandler && HasParameterChangedEventArgs)
         {
             // Since the ParameterSet lifecycles control all operations, it is acceptable to trigger the handler only when
             // HasParameterChanged has been invoked and stored the ParameterChangedEventArgs.
             // Direct invocation of this method by external callers is discouraged, so we shouldn't worry about it.
-            return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs.ChildOriginated(_isChildOriginatedChangeFunc()));
+            return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs.ChildOriginated(_isChildOriginatedChangeFunc()), context);
         }
 
         return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public ParameterStateValue? GetParameterStateValue()
+    {
+        if (HasParameterChangedEventArgs)
+        {
+            return new ParameterStateValue(
+                Metadata.ParameterName,
+                _parameterChangedEventArgs.LastValue,
+                _parameterChangedEventArgs.Value);
+        }
+
+        return null;
     }
 }

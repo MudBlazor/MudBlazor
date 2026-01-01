@@ -1,8 +1,6 @@
-﻿
-using System;
-using System.Globalization;
+﻿using System.Globalization;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -40,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(200, 400, 230, 220, 15, 10)]
         public void CheckingPercentageAndBufferValue(double min, double max, double value, double buffervalue, double expectedValue, double expectedBufferValue)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, min);
                 x.Add(y => y.Max, max);
@@ -68,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
 
         public void EnsureMaxAndMinConsitency(double min, double max, double value, double buffervalue, double expectedValue, double expectedBufferValue)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, min);
                 x.Add(y => y.Max, max);
@@ -88,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void DefaultStructure(bool isVertical)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
                 {
                     x.Add(y => y.Min, -500);
                     x.Add(y => y.Max, 500);
@@ -117,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IndeterminateStructure()
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, -500);
                 x.Add(y => y.Max, 500);
@@ -147,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void BufferStructure(bool isVertical)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, -500);
                 x.Add(y => y.Max, 500);
@@ -189,7 +187,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IndeterminateWithChildContent()
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, -500);
                 x.Add(y => y.Max, 500);
@@ -226,7 +224,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForRounded(bool rounded)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
+            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -245,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForStriped(bool striped)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
+            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -264,7 +262,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
+            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -285,7 +283,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, true)]
         public void TestClassesForBuffer(bool buffer, bool indeterminate)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Indeterminate, indeterminate);
                 x.Add(y => y.Buffer, buffer);
@@ -310,7 +308,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Size, size));
+            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Size, size));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -323,7 +321,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Color, color));
+            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Color, color));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -335,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForVertical(bool vertical)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
+            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -364,7 +362,7 @@ namespace MudBlazor.UnitTests.Components
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.Render<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, 10.2);
                 x.Add(y => y.Max, 125.22);

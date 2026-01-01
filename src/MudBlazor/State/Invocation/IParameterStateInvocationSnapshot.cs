@@ -39,6 +39,13 @@ internal interface IParameterStateInvocationSnapshot
     /// as it may bypass lifecycle consistency guarantees.
     /// </para>
     /// </remarks>
+    /// <param name="context">The parameter changed context containing parameter view and state values.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task ParameterChangeHandleAsync();
+    Task ParameterChangeHandleAsync(ParameterChangedContext context);
+
+    /// <summary>
+    /// Gets the <see cref="ParameterStateValue"/> for this snapshot if a parameter change event occurred.
+    /// </summary>
+    /// <returns>The <see cref="ParameterStateValue"/> if available, otherwise null.</returns>
+    ParameterStateValue? GetParameterStateValue();
 }
