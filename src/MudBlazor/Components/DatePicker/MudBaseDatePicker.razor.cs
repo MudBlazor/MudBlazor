@@ -549,16 +549,32 @@ namespace MudBlazor
 
         private void OnNextMonthClick()
         {
+            // It is impossible to go further into the future after the last year and the last month!
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 9999
+                && GetCulture().Calendar.GetMonth(PickerMonth.Value) == GetCulture().Calendar.GetMonthsInYear(GetCulture().Calendar.GetYear(PickerMonth.Value)))
+            {
+                return;
+            }
             PickerMonth = GetMonthEnd(0).AddDays(1);
         }
 
         private void OnPreviousYearClick()
         {
+            // It is impossible to go further into the past after the first year!
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 1)
+            {
+                return;
+            }
             PickerMonth = GetMonthStart(0).AddYears(-1);
         }
 
         private void OnNextYearClick()
         {
+            // It is impossible to go further into the future after the last year!
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 9999)
+            {
+                return;
+            }
             PickerMonth = GetMonthStart(0).AddYears(1);
         }
 

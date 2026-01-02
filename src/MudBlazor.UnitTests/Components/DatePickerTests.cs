@@ -1871,5 +1871,109 @@ namespace MudBlazor.UnitTests.Components
                 nextMonthDay.ClassList.Contains("mud-hidden").Should().BeTrue("Next month days should be hidden");
             }
         }
+
+        [Test]
+        public async Task DatePicker_NavigationButtons_ShouldNotThrowExceptionAtMaxDate()
+        {
+            // Test that clicking next month arrow at December 9999 doesn't throw exception
+            var maxDate = new DateTime(9999, 12, 1);
+            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(x => x.Date, maxDate));
+
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+
+            // Verify we're at December 9999
+            comp.Find("button.mud-button-year").InnerHtml.Should().Contain("9999");
+            comp.Find(".mud-button-month").InnerHtml.Should().Contain("Dec");
+
+            // Click next month button - should not throw exception
+            var nextMonthButton = comp.Find(".mud-picker-nav-button-next");
+            await nextMonthButton.ClickAsync(new MouseEventArgs());
+
+            // Should still be at December 9999
+            comp.Find("button.mud-button-year").InnerHtml.Should().Contain("9999");
+            comp.Find(".mud-button-month").InnerHtml.Should().Contain("Dec");
+            datePicker.PickerMonth.Should().Be(maxDate);
+        }
+
+        [Test]
+        public async Task DatePicker_NavigationButtons_ShouldNotThrowExceptionAtMinDate()
+        {
+            // Test that clicking previous month arrow at January 0001 doesn't throw exception
+            var minDate = new DateTime(1, 1, 1);
+            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(x => x.Date, minDate));
+
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+
+            // Verify we're at January 0001
+            comp.Find("button.mud-button-year").InnerHtml.Should().Contain("1");
+
+            // Click previous month button - should not throw exception
+            var prevMonthButton = comp.Find(".mud-picker-nav-button-prev");
+            await prevMonthButton.ClickAsync(new MouseEventArgs());
+
+            // Should still be at January 0001
+            comp.Find("button.mud-button-year").InnerHtml.Should().Contain("1");
+            datePicker.PickerMonth.Should().Be(minDate);
+        }
+
+        [Test]
+        public async Task DatePicker_YearNavigationButtons_ShouldNotThrowExceptionAtMaxYear()
+        {
+            // Test that clicking next year arrow at year 9999 doesn't throw exception
+            var maxDate = new DateTime(9999, 6, 15);
+            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(x => x.Date, maxDate)
+                .Add(x => x.OpenTo, OpenTo.Month));
+
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+
+            // Navigate to month view
+            comp.Find("button.mud-picker-calendar-header-transition").InnerHtml.Should().Contain("9999");
+
+            // Click next year button - should not throw exception
+            var buttons = comp.FindAll("button[aria-label*='Next year']");
+            if (buttons.Count > 0)
+            {
+                await buttons[0].ClickAsync(new MouseEventArgs());
+
+                // Should still be at year 9999
+                comp.Find("button.mud-picker-calendar-header-transition").InnerHtml.Should().Contain("9999");
+                datePicker.PickerMonth.Should().NotBeNull();
+                datePicker.PickerMonth!.Value.Year.Should().Be(9999);
+            }
+        }
+
+        [Test]
+        public async Task DatePicker_YearNavigationButtons_ShouldNotThrowExceptionAtMinYear()
+        {
+            // Test that clicking previous year arrow at year 0001 doesn't throw exception
+            var minDate = new DateTime(1, 6, 15);
+            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(x => x.Date, minDate)
+                .Add(x => x.OpenTo, OpenTo.Month));
+
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+
+            // Navigate to month view
+            comp.Find("button.mud-picker-calendar-header-transition").InnerHtml.Should().Contain("1");
+
+            // Click previous year button - should not throw exception
+            var buttons = comp.FindAll("button[aria-label*='Previous year']");
+            if (buttons.Count > 0)
+            {
+                await buttons[0].ClickAsync(new MouseEventArgs());
+
+                // Should still be at year 0001
+                comp.Find("button.mud-picker-calendar-header-transition").InnerHtml.Should().Contain("1");
+                datePicker.PickerMonth.Should().NotBeNull();
+                datePicker.PickerMonth!.Value.Year.Should().Be(1);
+            }
+        }
     }
 }
