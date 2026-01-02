@@ -33,6 +33,13 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     private readonly ILogger _log;
 
     /// <summary>
+    /// Initial capacity for the defunct observers list.
+    /// This value (4) is chosen to handle a small number of failures without resizing,
+    /// while keeping the allocation small since observer failures are rare.
+    /// </summary>
+    private const int DefunctListInitialCapacity = 4;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
     /// </summary>
     public ObserverManager(ILogger log) : this(log, null)
@@ -118,10 +125,15 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <param name="observer">The observer to subscribe if it does not already exist.</param>
     /// <param name="newObserver">When this method returns, contains the observer associated with the specified identity, whether it was already subscribed or newly subscribed.</param>
     /// <returns>True if the observer was already subscribed; otherwise, false.</returns>
+    /// <remarks>
+    /// This method needs to determine if the observer existed before the update.
+    /// We use TryGetValue before the indexer assignment to detect existence,
+    /// since the indexer assignment doesn't provide this information.
+    /// </remarks>
     public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
     {
         // Check if observer exists before unconditionally setting it.
-        // We use TryGetValue to avoid two dictionary lookups (ContainsKey + indexer).
+        // We need to know if it existed for the return value and logging.
         var existed = _observers.TryGetValue(id, out _);
         
         // Always set the observer (add or update)
@@ -205,7 +217,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
             {
                 // Failing observers are considered defunct and will be removed.
                 // Lazy allocation with small initial capacity to reduce resize operations.
-                defunct ??= new List<TIdentity>(4);
+                defunct ??= new List<TIdentity>(DefunctListInitialCapacity);
                 defunct.Add(observer.Key);
             }
         }
