@@ -1317,7 +1317,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DisabledMudDateRangePickerStaticVariant_ShouldHave_MudDisabledMarkup___()
+        public void DisabledMudDateRangePickerStaticVariant_ShouldHave_MudDisabledMarkup()
         {
             var comp = Context.Render<DateRangePickerStaticDisabledTest>();
 
