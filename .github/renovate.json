@@ -19,6 +19,14 @@
     },
     "packageRules": [
         {
+            "matchManagers": [
+                "github-actions"
+            ],
+            "reviewers": [
+                "danielchalmers"
+            ]
+        },
+        {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
             ],
