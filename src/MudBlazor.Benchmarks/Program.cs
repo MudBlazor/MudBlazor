@@ -22,9 +22,10 @@ public class Program
             Console.WriteLine("  3. Comparer Strategies (--comparer)");
             Console.WriteLine("  4. Identifier Generation (--identifier)");
             Console.WriteLine("  5. ObserverManager (--observer)");
-            Console.WriteLine("  6. All benchmarks (--all or no arguments)");
+            Console.WriteLine("  6. ObserverManager Quick (--observerquick)");
+            Console.WriteLine("  7. All benchmarks (--all or no arguments)");
             Console.WriteLine();
-            Console.WriteLine("Usage: dotnet run -c Release -- [--basic|--largescale|--comparer|--identifier|--observer|--all]");
+            Console.WriteLine("Usage: dotnet run -c Release -- [--basic|--largescale|--comparer|--identifier|--observer|--observerquick|--all]");
             Console.WriteLine();
             Console.WriteLine("Running all benchmarks...");
             Console.WriteLine();
@@ -51,13 +52,17 @@ public class Program
         {
             BenchmarkRunner.Run<ObserverManagerBenchmark>();
         }
+        else if (args.Contains("--observerquick"))
+        {
+            BenchmarkRunner.Run<ObserverManagerQuickBenchmark>();
+        }
         else if (args.Contains("--all"))
         {
             BenchmarkRunner.Run(typeof(Program).Assembly);
         }
         else
         {
-            Console.WriteLine("Unknown argument. Use --basic, --largescale, --comparer, --identifier, --observer, or --all");
+            Console.WriteLine("Unknown argument. Use --basic, --largescale, --comparer, --identifier, --observer, --observerquick, or --all");
         }
     }
 }
