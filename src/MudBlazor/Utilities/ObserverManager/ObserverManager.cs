@@ -22,7 +22,10 @@ namespace MudBlazor.Utilities.ObserverManager;
 /// <remarks>
 /// This class maintains a collection of observers and provides functionality to add, remove, and notify observers.
 /// It also supports removing defunct observers that have failed during the notification process.
-/// Optimized for performance with minimal memory allocations.
+/// Optimized for performance with minimal memory allocations:
+/// - Observers are stored directly in the dictionary without wrapper objects
+/// - Lazy allocation of defunct observer lists (only when failures occur)
+/// - Direct iteration patterns to avoid LINQ overhead
 /// </remarks>
 internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
 {
@@ -117,28 +120,26 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <returns>True if the observer was already subscribed; otherwise, false.</returns>
     public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
     {
-        // Try to update existing subscription
-        if (_observers.TryGetValue(id, out _))
+        // Check if observer exists to determine return value
+        var exists = _observers.ContainsKey(id);
+        
+        // Always set the observer (add or update)
+        _observers[id] = observer;
+        
+        if (_log.IsEnabled(LogLevel.Trace))
         {
-            _observers[id] = observer;
-            if (_log.IsEnabled(LogLevel.Trace))
+            if (exists)
             {
                 _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
             }
-
-            newObserver = observer;
-            return true;
-        }
-
-        // Add new subscription
-        _observers[id] = observer;
-        if (_log.IsEnabled(LogLevel.Trace))
-        {
-            _log.LogTrace("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, _observers.Count);
+            else
+            {
+                _log.LogTrace("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, _observers.Count);
+            }
         }
 
         newObserver = observer;
-        return false;
+        return exists;
     }
 
     /// <summary>
@@ -202,8 +203,8 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
             catch (Exception)
             {
                 // Failing observers are considered defunct and will be removed.
-                // Lazy allocation - only create list when there's an actual failure (common case has no failures).
-                defunct ??= new List<TIdentity>();
+                // Lazy allocation with small initial capacity to reduce resize operations.
+                defunct ??= new List<TIdentity>(4);
                 defunct.Add(observer.Key);
             }
         }
