@@ -8,10 +8,11 @@ namespace MudBlazor.Services;
 /// <summary>
 /// Configuration options for key interception.
 /// </summary>
-public class KeyInterceptorOptions
+public sealed class KeyInterceptorOptions
 {
     /// <summary>
-    /// The CSS class of the target HTML element that should be observed for keyboard events.
+    /// The CSS class of the target HTML element that should be observed for keyboard events or <see langword="null" />
+    /// to observe the element for which the subscription is created.
     /// </summary>
     /// <remarks>
     /// Note: This must be a single class name.
@@ -36,11 +37,20 @@ public class KeyInterceptorOptions
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="KeyInterceptorOptions"/> class with the specified key options.
+    /// </summary>
+    /// <param name="keys">The key options to intercept.</param>
+    public KeyInterceptorOptions(params KeyOptions[] keys)
+        : this(null, keys)
+    {
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="KeyInterceptorOptions"/> class with the specified target class and key options.
     /// </summary>
     /// <param name="targetClass">The CSS class of the target HTML element.</param>
     /// <param name="keys">The key options to intercept.</param>
-    public KeyInterceptorOptions(string targetClass, params KeyOptions[] keys)
+    public KeyInterceptorOptions(string? targetClass, params KeyOptions[] keys)
     {
         TargetClass = targetClass;
         Keys = keys;
@@ -52,7 +62,7 @@ public class KeyInterceptorOptions
     /// <param name="targetClass">The CSS class of the target HTML element.</param>
     /// <param name="keys">The key options to intercept.</param>
     /// <param name="enableLogging">Specifies whether resize events should be logged in the browser's console.</param>
-    public KeyInterceptorOptions(string targetClass, bool enableLogging = false, params KeyOptions[] keys)
+    public KeyInterceptorOptions(string? targetClass, bool enableLogging = false, params KeyOptions[] keys)
         : this(targetClass, keys)
     {
         EnableLogging = enableLogging;

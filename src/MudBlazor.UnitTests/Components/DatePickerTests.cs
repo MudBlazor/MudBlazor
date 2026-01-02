@@ -1840,9 +1840,8 @@ namespace MudBlazor.UnitTests.Components
 
             var highlightedDate = datePickerComponent.Instance.HighlightedDate.GetValueOrDefault();
             var firstDayOfMonth = new DateTime(highlightedDate.Year, highlightedDate.Month, 1);
-
             // Calculate how many days from the previous month are shown at the start
-            var daysFromPreviousMonth = (int)firstDayOfMonth.DayOfWeek;
+            var daysFromPreviousMonth = ((int)firstDayOfMonth.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
 
             // Calculate total days in the current month
             var totalDaysInMonth = DateTime.DaysInMonth(highlightedDate.Year, highlightedDate.Month);
