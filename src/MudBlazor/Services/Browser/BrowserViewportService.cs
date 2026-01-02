@@ -285,7 +285,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         // Instead, it checks if a listener with the corresponding ResizeOption already exists (which is why it implements IEquatable), and only creates a new listener if necessary.
         // In certain scenarios, you may have multiple observers monitoring changes (e.g., 10 observers), but only a single JavaScript listener on the other side.
         // Without this optimization, the number of observers and JavaScript listeners would be equal.
-        if (javaScriptListenerId == default)
+        if (javaScriptListenerId == Guid.Empty)
         {
             // Create new listener on JS side
             var dotNetReference = _dotNetReferenceLazy.Value;

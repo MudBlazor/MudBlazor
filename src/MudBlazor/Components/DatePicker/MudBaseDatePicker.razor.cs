@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 
 #nullable enable
 namespace MudBlazor
@@ -23,11 +19,6 @@ namespace MudBlazor
         {
             _mudPickerCalendarContentElementId = Identifier.Create();
             Culture = CultureInfo.CurrentCulture;
-            Converter = new DefaultConverter<DateTime?>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
 
             using var registerScope = CreateRegisterScope();
             _dateFormatState = registerScope.RegisterParameter<string?>(nameof(DateFormat))
@@ -125,7 +116,7 @@ namespace MudBlazor
         /// <remarks>
         /// This date is highlighted in the UI
         /// </remarks>
-        protected DateTime? HighlightedDate { get; set; }
+        protected internal DateTime? HighlightedDate { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="PickerMonth"/> has changed.
@@ -739,6 +730,16 @@ namespace MudBlazor
 
             if (_scrollToYearAfterRender)
                 ScrollToYearAsync().CatchAndLog();
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<DateTime?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<DateTime?>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         protected override string GetFormat()

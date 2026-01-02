@@ -18,7 +18,6 @@ namespace MudBlazor
 
         public MudBooleanInput()
         {
-            Converter = BoolConverter<T?>.Instance;
             using var registerScope = CreateRegisterScope();
             _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
                 .WithParameter(() => Value)
@@ -156,6 +155,10 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
+        protected override IConverter<T?, bool?> GetDefaultConverter() => BoolConverter<T?>.Instance;
+
+        /// <inheritdoc />
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();

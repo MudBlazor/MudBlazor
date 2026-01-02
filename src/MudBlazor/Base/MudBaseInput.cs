@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.State;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -37,12 +36,6 @@ namespace MudBlazor
 
         protected MudBaseInput()
         {
-            Converter = new DefaultConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
-
             using var registerScope = CreateRegisterScope();
             _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
@@ -611,12 +604,24 @@ namespace MudBlazor
 
         protected override string? GetFormat() => _formatState.Value;
 
+        /// <inheritdoc />
+        protected override IConverter<T?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
+
+        /// <inheritdoc />
         protected override async Task OnCultureAndFormatChangedAsync()
         {
             await base.OnCultureAndFormatChangedAsync();
             await UpdateTextPropertyAsync(false);
         }
 
+        /// <inheritdoc />
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();

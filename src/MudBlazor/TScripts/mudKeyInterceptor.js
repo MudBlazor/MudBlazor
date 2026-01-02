@@ -46,8 +46,6 @@ class MudKeyInterceptor {
             return;
         if (!this._options.keys) 
             throw "_options.keys: array of KeyOptions expected";
-        if (!this._options.targetClass)
-            throw "_options.targetClass: css class name expected";
         if (this._observer) {
             // don't do double registration
             return;
@@ -73,8 +71,12 @@ class MudKeyInterceptor {
         if (this._regexOptions.size > 0)
             this.logger('[MudBlazor | KeyInterceptor] regex options: ', this._regexOptions);
         // register handlers
-        for (const child of this._element.getElementsByClassName(targetClass)) {
-            this.attachHandlers(child);
+        if (targetClass) {
+            for (const child of this._element.getElementsByClassName(targetClass)) {
+                this.attachHandlers(child);
+            }
+        } else {
+            this.attachHandlers(this._element);
         }
     }
 
@@ -181,14 +183,14 @@ class MudKeyInterceptor {
             var keyOptions = self._keyOptions[key];
             self.logger('[MudBlazor | KeyInterceptor] options for "' + key + '"', keyOptions);
             self.processKeyDown(args, keyOptions);
-            if (keyOptions.subscribeDown)
+            if (self.shouldInvokeKeyDown(args, keyOptions))
                 invoke = true;
         }
         for (const keyOptions of self._regexOptions) {
             if (keyOptions.regex.test(key)) {
                 self.logger('[MudBlazor | KeyInterceptor] regex options for "' + key + '"', keyOptions);
                 self.processKeyDown(args, keyOptions);
-                if (keyOptions.subscribeDown)
+                if (self.shouldInvokeKeyDown(args, keyOptions))
                     invoke = true;
             }
         }
@@ -204,6 +206,10 @@ class MudKeyInterceptor {
             args.preventDefault();
         if (this.matchesKeyCombination(keyOptions.stopDown, args))
             args.stopPropagation();
+    }
+
+    shouldInvokeKeyDown(args, keyOptions) {
+        return keyOptions.subscribeDown && (!keyOptions.ignoreDownRepeats || !args.repeat);
     }
 
     onKeyUp(args) {
