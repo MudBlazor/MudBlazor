@@ -211,7 +211,7 @@ internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObser
 
             try
             {
-                await notification(observer);
+                await notification(observer).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -225,6 +225,45 @@ internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObser
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Notifies a single observer identified by <paramref name="id"/>.
+    /// </summary>
+    /// <param name="id">
+    /// The identity of the observer to notify. This should correspond to the key used in the observer manager.
+    /// </param>
+    /// <param name="notification">
+    /// The delegate to invoke on the observer.
+    /// </param>
+    /// <returns>
+    /// A <see cref="Task"/> representing the asynchronous notification operation.
+    /// </returns>
+    /// <remarks>
+    /// If the observer fails during the notification, it is considered defunct and removed from the collection.
+    /// This method performs an O(1) lookup by <paramref name="id"/>, making it more efficient than 
+    /// using <see cref="NotifyAsync(Func{TObserver, Task}, Func{TIdentity, TObserver, bool}?)"/> with a predicate.
+    /// </remarks>
+    public Task NotifyAsync(TIdentity id, Func<TObserver, Task> notification)
+    {
+        if (_observers.TryGetValue(id, out var entry))
+        {
+            try
+            {
+                return notification(entry.Observer);
+            }
+            catch (Exception)
+            {
+                _observers.TryRemove(id, out _);
+                if (_log.IsEnabled(LogLevel.Trace))
+                {
+                    var count = _observers.Count;
+                    _log.LogTrace("Removing defunct entry for {Id}. {Count} total observers after remove.", id, count);
+                }
+            }
+        }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

@@ -169,6 +169,53 @@ public class ObserverManagerTests
     }
 
     [Test]
+    public async Task NotifyAsync_ById_CallsNotificationForObserver()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var list = new List<string>();
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+
+        Task NotificationAsync(string observer)
+        {
+            list.Add(observer);
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(1, NotificationAsync);
+
+        // Assert
+        list.Count.Should().Be(1);
+        list.Should().BeEquivalentTo(observer1);
+    }
+
+    [Test]
+    public async Task NotifyAsync_ById_DoesNotCallIfObserverMissing()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var list = new List<string>();
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+
+        Task NotificationAsync(string observer)
+        {
+            list.Add(observer);
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(3, NotificationAsync);
+
+        // Assert
+        list.Count.Should().Be(0);
+    }
+
+    [Test]
     public async Task NotifyAsync_CallsNotificationForEachObserver()
     {
         // Arrange
@@ -216,6 +263,38 @@ public class ObserverManagerTests
         }
 
         await _observerManager.NotifyAsync(NotificationAsync);
+
+        // Assert
+        _observerManager.Count.Should().Be(2);
+        _observerManager.IsSubscribed(1).Should().BeTrue();
+        _observerManager.IsSubscribed(3).Should().BeTrue();
+        _observerManager.IsSubscribed(2).Should().BeFalse();
+    }
+
+    [Test]
+    public async Task NotifyAsync_ById_RemovesDefunctObserver()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var observer3 = "Observer3";
+
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+        _observerManager.Subscribe(3, observer3);
+
+        Task NotificationAsync(string observer)
+        {
+            if (observer == observer2)
+            {
+                throw new Exception("Notification failed");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(2, NotificationAsync).ConfigureAwait(false);
 
         // Assert
         _observerManager.Count.Should().Be(2);
