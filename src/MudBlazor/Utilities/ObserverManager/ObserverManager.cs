@@ -118,7 +118,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
     {
         // Try to update existing subscription
-        if (_observers.TryGetValue(id, out var existing))
+        if (_observers.TryGetValue(id, out _))
         {
             _observers[id] = observer;
             if (_log.IsEnabled(LogLevel.Trace))
