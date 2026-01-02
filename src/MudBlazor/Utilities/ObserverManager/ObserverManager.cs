@@ -282,23 +282,8 @@ internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObser
     /// </returns>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    private readonly struct Entry(TObserver observer, bool wasExisting) : IEquatable<Entry>
+    private readonly record struct Entry(TObserver Observer, bool WasExisting)
     {
-        public TObserver Observer { get; } = observer;
-
-        public bool WasExisting { get; } = wasExisting;
-
-        public bool Equals(Entry other) => EqualityComparer<TObserver>.Default.Equals(Observer, other.Observer);
-
-        public override bool Equals(object? obj) => obj is Entry other && Equals(other);
-
-        public override int GetHashCode()
-        {
-            return Observer is null
-                ? 0
-                : EqualityComparer<TObserver>.Default.GetHashCode(Observer);
-        }
-
         public static implicit operator TObserver(Entry entry) => entry.Observer;
     }
 }
