@@ -1842,7 +1842,7 @@ namespace MudBlazor.UnitTests.Components
             var firstDayOfMonth = new DateTime(highlightedDate.Year, highlightedDate.Month, 1);
 
             // Calculate how many days from the previous month are shown at the start
-            var daysFromPreviousMonth = (int)firstDayOfMonth.DayOfWeek;
+            var daysFromPreviousMonth = ((int)firstDayOfMonth.DayOfWeek + 6) % 7;
 
             // Calculate total days in the current month
             var totalDaysInMonth = DateTime.DaysInMonth(highlightedDate.Year, highlightedDate.Month);
@@ -1851,9 +1851,9 @@ namespace MudBlazor.UnitTests.Components
             var dayButtons = component.FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day");
 
             // Split the buttons into previous, current, and next month days
-            var prevMonthDays = dayButtons.Take(daysFromPreviousMonth);
-            var currMonthDays = dayButtons.Skip(daysFromPreviousMonth).Take(totalDaysInMonth);
-            var nextMonthDays = dayButtons.Skip(daysFromPreviousMonth + totalDaysInMonth);
+            var prevMonthDays = dayButtons.Take(daysFromPreviousMonth).ToArray();
+            var currMonthDays = dayButtons.Skip(daysFromPreviousMonth).Take(totalDaysInMonth).ToArray();
+            var nextMonthDays = dayButtons.Skip(daysFromPreviousMonth + totalDaysInMonth).ToArray();
 
             // Validate hidden and visible days
             foreach (var prevMonthDay in prevMonthDays)

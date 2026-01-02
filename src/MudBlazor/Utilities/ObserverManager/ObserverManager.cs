@@ -27,10 +27,10 @@ namespace MudBlazor.Utilities.ObserverManager;
 /// - Lazy allocation of defunct observer lists (only when failures occur)
 /// - Direct iteration patterns to avoid LINQ overhead
 /// </remarks>
-internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
+internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
 {
-    private readonly ConcurrentDictionary<TIdentity, TObserver> _observers;
     private readonly ILogger _log;
+    private readonly ConcurrentDictionary<TIdentity, Entry> _observers;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
@@ -66,7 +66,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
             var result = new Dictionary<TIdentity, TObserver>(_observers.Count);
             foreach (var (id, observer) in _observers)
             {
-                result[id] = observer;
+                result.Add(id, observer);
             }
             return result;
         }
@@ -92,7 +92,13 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <returns>True if the observer is found; otherwise, false.</returns>
     public bool TryGetSubscription(TIdentity id, [MaybeNullWhen(false)] out TObserver observer)
     {
-        return _observers.TryGetValue(id, out observer);
+        if (_observers.TryGetValue(id, out var entry))
+        {
+            observer = entry.Observer;
+            return true;
+        }
+        observer = default;
+        return false;
     }
 
     /// <summary>
@@ -104,7 +110,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     {
         foreach (var (id, observer) in _observers)
         {
-            if (predicate(id, observer))
+            if (predicate(id, observer.Observer))
             {
                 yield return id;
             }
@@ -123,36 +129,30 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// </remarks>
     public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
     {
-        var updatedExisting = false;
-
-        newObserver = _observers.AddOrUpdate(
+        var entry = _observers.AddOrUpdate(
             id,
-            // Add factory
-            _ =>
-            {
-                updatedExisting = false;
-                return observer;
-            },
-            // Update factory
-            (_, __) =>
-            {
-                updatedExisting = true;
-                return observer;
-            });
+            // Add path
+            _ => new Entry(observer, false),
+            // Update path
+            (_, _) => new Entry(observer, true)
+        );
+        newObserver = entry.Observer;
 
         if (_log.IsEnabled(LogLevel.Trace))
         {
-            if (updatedExisting)
+            if (entry.WasExisting)
             {
-                _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
+                var count = _observers.Count;
+                _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, count);
             }
             else
             {
-                _log.LogTrace("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, _observers.Count);
+                var count = _observers.Count;
+                _log.LogTrace("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, count);
             }
         }
 
-        return updatedExisting;
+        return entry.WasExisting;
     }
 
     /// <summary>
@@ -181,7 +181,8 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
         _observers.TryRemove(id, out _);
         if (_log.IsEnabled(LogLevel.Trace))
         {
-            _log.LogTrace("Removed entry for {Id}. {Count} total observers after remove.", id, _observers.Count);
+            var count = _observers.Count;
+            _log.LogTrace("Removed entry for {Id}. {Count} total observers after remove.", id, count);
         }
     }
 
@@ -203,7 +204,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
         foreach (var (id, observer) in _observers)
         {
             // Skip observers which don't match the provided predicate.
-            if (predicate != null && !predicate(id, observer))
+            if (predicate is not null && !predicate(id, observer.Observer))
             {
                 continue;
             }
@@ -219,7 +220,8 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
                 _observers.TryRemove(id, out _);
                 if (_log.IsEnabled(LogLevel.Trace))
                 {
-                    _log.LogTrace("Removing defunct entry for {Id}. {Count} total observers after remove.", id, _observers.Count);
+                    var count = _observers.Count;
+                    _log.LogTrace("Removing defunct entry for {Id}. {Count} total observers after remove.", id, count);
                 }
             }
         }
@@ -246,4 +248,9 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
     /// </returns>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private readonly record struct Entry(TObserver Observer, bool WasExisting)
+    {
+        public static implicit operator TObserver(Entry entry) => entry.Observer;
+    }
 }
