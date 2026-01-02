@@ -22,10 +22,6 @@ namespace MudBlazor.Utilities.ObserverManager;
 /// <remarks>
 /// This class maintains a collection of observers and provides functionality to add, remove, and notify observers.
 /// It also supports removing defunct observers that have failed during the notification process.
-/// Optimized for performance with minimal memory allocations:
-/// - Observers are stored directly in the dictionary without wrapper objects
-/// - Lazy allocation of defunct observer lists (only when failures occur)
-/// - Direct iteration patterns to avoid LINQ overhead
 /// </remarks>
 internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
 {
