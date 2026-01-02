@@ -240,13 +240,13 @@ internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObser
     /// This method performs an O(1) lookup by <paramref name="id"/>, making it more efficient than 
     /// using <see cref="NotifyAsync(Func{TObserver, Task}, Func{TIdentity, TObserver, bool}?)"/> with a predicate.
     /// </remarks>
-    public Task NotifyAsync(TIdentity id, Func<TObserver, Task> notification)
+    public async Task NotifyAsync(TIdentity id, Func<TObserver, Task> notification)
     {
         if (_observers.TryGetValue(id, out var entry))
         {
             try
             {
-                return notification(entry.Observer);
+                await notification(entry.Observer).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -258,8 +258,6 @@ internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObser
                 }
             }
         }
-
-        return Task.CompletedTask;
     }
 
     /// <summary>

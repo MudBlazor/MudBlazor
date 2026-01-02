@@ -448,6 +448,35 @@ public class ObserverManagerTests
     }
 
     [Test]
+    public async Task NotifyAsync_ById_DefunctObserver_LogsTraceInformation()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger>();
+        loggerMock.Setup(x => x.IsEnabled(LogLevel.Trace)).Returns(true);
+
+        var observerManager = new ObserverManager<int, string>(loggerMock.Object);
+
+        const int DefunctObserverId = 1;
+        const string DefunctObserver = "DefunctObserver";
+
+        observerManager.Subscribe(DefunctObserverId, DefunctObserver);
+
+        async Task NotificationAsync(string observer)
+        {
+            await Task.Delay(10); // Simulating some asynchronous operation
+            throw new Exception("Simulated exception");
+        }
+
+        // Act
+        await observerManager.NotifyAsync(DefunctObserverId, NotificationAsync);
+
+        // Assert
+        loggerMock
+            .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.", LogLevel.Trace)
+            .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.", LogLevel.Trace);
+    }
+
+    [Test]
     public void CollectionModified()
     {
         // Arrange
