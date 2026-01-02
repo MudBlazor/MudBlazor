@@ -33,13 +33,6 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     private readonly ILogger _log;
 
     /// <summary>
-    /// Initial capacity for the defunct observers list.
-    /// This value (4) is chosen to handle a small number of failures without resizing,
-    /// while keeping the allocation small since observer failures are rare.
-    /// </summary>
-    private const int DefunctListInitialCapacity = 4;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
     /// </summary>
     public ObserverManager(ILogger log) : this(log, null)
@@ -71,9 +64,9 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
         get
         {
             var result = new Dictionary<TIdentity, TObserver>(_observers.Count);
-            foreach (var kvp in _observers)
+            foreach (var (id, observer) in _observers)
             {
-                result[kvp.Key] = kvp.Value;
+                result[id] = observer;
             }
             return result;
         }
@@ -109,11 +102,11 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <returns>An enumerable collection of observer identities that match the predicate.</returns>
     public IEnumerable<TIdentity> FindObserverIdentities(Func<TIdentity, TObserver, bool> predicate)
     {
-        foreach (var kvp in _observers)
+        foreach (var (id, observer) in _observers)
         {
-            if (predicate(kvp.Key, kvp.Value))
+            if (predicate(id, observer))
             {
-                yield return kvp.Key;
+                yield return id;
             }
         }
     }
@@ -126,22 +119,30 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <param name="newObserver">When this method returns, contains the observer associated with the specified identity, whether it was already subscribed or newly subscribed.</param>
     /// <returns>True if the observer was already subscribed; otherwise, false.</returns>
     /// <remarks>
-    /// This method needs to determine if the observer existed before the update.
-    /// We use TryGetValue before the indexer assignment to detect existence,
-    /// since the indexer assignment doesn't provide this information.
+    /// Uses AddOrUpdate for atomic operation that determines if the observer existed.
     /// </remarks>
     public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
     {
-        // Check if observer exists before unconditionally setting it.
-        // We need to know if it existed for the return value and logging.
-        var existed = _observers.TryGetValue(id, out _);
-        
-        // Always set the observer (add or update)
-        _observers[id] = observer;
-        
+        var updatedExisting = false;
+
+        newObserver = _observers.AddOrUpdate(
+            id,
+            // Add factory
+            _ =>
+            {
+                updatedExisting = false;
+                return observer;
+            },
+            // Update factory
+            (_, __) =>
+            {
+                updatedExisting = true;
+                return observer;
+            });
+
         if (_log.IsEnabled(LogLevel.Trace))
         {
-            if (existed)
+            if (updatedExisting)
             {
                 _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
             }
@@ -151,8 +152,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
             }
         }
 
-        newObserver = observer;
-        return existed;
+        return updatedExisting;
     }
 
     /// <summary>
@@ -178,7 +178,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// </param>
     public void Unsubscribe(TIdentity id)
     {
-        _observers.Remove(id, out _);
+        _observers.TryRemove(id, out _);
         if (_log.IsEnabled(LogLevel.Trace))
         {
             _log.LogTrace("Removed entry for {Id}. {Count} total observers after remove.", id, _observers.Count);
@@ -199,35 +199,24 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// </returns>
     public async Task NotifyAsync(Func<TObserver, Task> notification, Func<TIdentity, TObserver, bool>? predicate = null)
     {
-        List<TIdentity>? defunct = null;
-
-        foreach (var observer in _observers)
+        // Use tuple deconstruction to avoid KeyValuePair struct copying
+        foreach (var (id, observer) in _observers)
         {
             // Skip observers which don't match the provided predicate.
-            if (predicate != null && !predicate(observer.Key, observer.Value))
+            if (predicate != null && !predicate(id, observer))
             {
                 continue;
             }
 
             try
             {
-                await notification(observer.Value);
+                await notification(observer);
             }
             catch (Exception)
             {
-                // Failing observers are considered defunct and will be removed.
-                // Lazy allocation with small initial capacity to reduce resize operations.
-                defunct ??= new List<TIdentity>(DefunctListInitialCapacity);
-                defunct.Add(observer.Key);
-            }
-        }
-
-        // Remove defunct observers.
-        if (defunct != null)
-        {
-            foreach (var id in defunct)
-            {
-                _observers.Remove(id, out _);
+                // Failing observers are considered defunct and removed immediately.
+                // Use TryRemove directly to avoid allocating a defunct list.
+                _observers.TryRemove(id, out _);
                 if (_log.IsEnabled(LogLevel.Trace))
                 {
                     _log.LogTrace("Removing defunct entry for {Id}. {Count} total observers after remove.", id, _observers.Count);
@@ -244,9 +233,9 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// </returns>
     public IEnumerator<TObserver> GetEnumerator()
     {
-        foreach (var kvp in _observers)
+        foreach (var (_, observer) in _observers)
         {
-            yield return kvp.Value;
+            yield return observer;
         }
     }
 
