@@ -539,8 +539,8 @@ namespace MudBlazor
 
         private void OnPreviousMonthClick()
         {
-            // It is impossible to go further into the past after the first year and the first month!
-            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 1 && GetCulture().Calendar.GetMonth(PickerMonth.Value) == 1)
+            // It is impossible to go further into the past after reaching DateTime.MinValue
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == DateTime.MinValue.Year && GetCulture().Calendar.GetMonth(PickerMonth.Value) == DateTime.MinValue.Month)
             {
                 return;
             }
@@ -549,9 +549,9 @@ namespace MudBlazor
 
         private void OnNextMonthClick()
         {
-            // It is impossible to go further into the future after the last year and the last month!
-            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 9999
-                && GetCulture().Calendar.GetMonth(PickerMonth.Value) == GetCulture().Calendar.GetMonthsInYear(GetCulture().Calendar.GetYear(PickerMonth.Value)))
+            // It is impossible to go further into the future after reaching DateTime.MaxValue
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == DateTime.MaxValue.Year
+                && GetCulture().Calendar.GetMonth(PickerMonth.Value) == DateTime.MaxValue.Month)
             {
                 return;
             }
@@ -560,8 +560,8 @@ namespace MudBlazor
 
         private void OnPreviousYearClick()
         {
-            // It is impossible to go further into the past after the first year!
-            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 1)
+            // It is impossible to go further into the past after reaching DateTime.MinValue
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == DateTime.MinValue.Year)
             {
                 return;
             }
@@ -570,8 +570,8 @@ namespace MudBlazor
 
         private void OnNextYearClick()
         {
-            // It is impossible to go further into the future after the last year!
-            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == 9999)
+            // It is impossible to go further into the future after reaching DateTime.MaxValue
+            if (PickerMonth.HasValue && GetCulture().Calendar.GetYear(PickerMonth.Value) == DateTime.MaxValue.Year)
             {
                 return;
             }
