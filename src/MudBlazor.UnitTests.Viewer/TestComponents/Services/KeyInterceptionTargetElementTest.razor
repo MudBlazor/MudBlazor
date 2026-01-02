@@ -29,7 +29,7 @@
                 <MudList id="@_targetSelf.Id" T="string" tabindex="0">
                     @foreach (string item in _items)
                     {
-                        <MudListItem Text="@item" Value="@item" />
+                        <MudListItem @key="@item" Text="@item" Value="@item" />
                     }
                 </MudList>
             </MudStack>
@@ -43,7 +43,7 @@
                 <MudList id="@_targetChildren.Id" T="string">
                     @foreach (string item in _items)
                     {
-                        <MudListItem Text="@item" Value="@item" tabindex="0" />
+                        <MudListItem @key="@item" Text="@item" Value="@item" tabindex="0" />
                     }
                 </MudList>
             </MudStack>
