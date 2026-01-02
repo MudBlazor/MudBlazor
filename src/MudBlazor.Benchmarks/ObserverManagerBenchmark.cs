@@ -220,7 +220,12 @@ public class ObserverManagerBenchmark
     [Benchmark(Description = "FindObserverIdentities - Find matching (100 observers, 10 match)")]
     public int FindObserverIdentities_100()
     {
-        return _managerWith100!.FindObserverIdentities((id, _) => id % 10 == 0).Count();
+        var count = 0;
+        foreach (var _ in _managerWith100!.FindObserverIdentities((id, _) => id % 10 == 0))
+        {
+            count++;
+        }
+        return count;
     }
 
     /// <summary>

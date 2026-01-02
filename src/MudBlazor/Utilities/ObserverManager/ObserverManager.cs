@@ -120,15 +120,16 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <returns>True if the observer was already subscribed; otherwise, false.</returns>
     public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
     {
-        // Check if observer exists to determine return value
-        var exists = _observers.ContainsKey(id);
+        // Check if observer exists before unconditionally setting it.
+        // We use TryGetValue to avoid two dictionary lookups (ContainsKey + indexer).
+        var existed = _observers.TryGetValue(id, out _);
         
         // Always set the observer (add or update)
         _observers[id] = observer;
         
         if (_log.IsEnabled(LogLevel.Trace))
         {
-            if (exists)
+            if (existed)
             {
                 _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
             }
@@ -139,7 +140,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
         }
 
         newObserver = observer;
-        return exists;
+        return existed;
     }
 
     /// <summary>
