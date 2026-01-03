@@ -55,16 +55,9 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
                 .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
-                .AddStyle(Style)
-                .Build();
-
-        protected string PickerStaticStylename =>
-            new StyleBuilder()
-                .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
-                .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
-                .AddStyle("opacity", "0.5", GetDisabledState())
-                .AddStyle("pointer-events", "none", GetDisabledState())
-                .AddStyle("filter", "grayscale(1)", GetDisabledState())
+                .AddStyle("opacity", "0.5", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("pointer-events", "none", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("filter", "grayscale(1)", GetDisabledState() && PickerVariant == PickerVariant.Static)
                 .AddStyle(Style)
                 .Build();
 
