@@ -479,6 +479,8 @@ namespace MudBlazor
             _secondDate = null;
         }
 
+        protected override Task ResetValueAsync() => ClearAsync();
+
         public override Task ClearAsync(bool close = true)
         {
             DateRange = null;
