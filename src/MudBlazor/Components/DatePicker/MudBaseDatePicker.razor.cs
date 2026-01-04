@@ -742,6 +742,39 @@ namespace MudBlazor
             };
         }
 
+        protected override void ValidateValueInternal(DateTime? value, List<string> errors)
+        {
+            if (!value.HasValue)
+            {
+                return;
+            }
+
+            if (MinDate.HasValue && value < MinDate)
+            {
+                errors.Add($"Value may not be before {MinDate}");
+            }
+
+            if (MaxDate.HasValue && value > MaxDate)
+            {
+                errors.Add($"Value may not be after {MaxDate}");
+            }
+
+            if (FixYear.HasValue && value.Value.Year != FixYear)
+            {
+                errors.Add($"Year must be {FixYear}");
+            }
+
+            if (FixMonth.HasValue && value.Value.Month != FixMonth)
+            {
+                errors.Add($"Month must be {FixMonth}");
+            }
+
+            if (FixDay.HasValue && value.Value.Day != FixDay)
+            {
+                errors.Add($"Day must be {FixDay}");
+            }
+        }
+
         protected override string GetFormat()
         {
             if (!string.IsNullOrEmpty(_dateFormatState.Value))

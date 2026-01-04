@@ -352,6 +352,7 @@ namespace MudBlazor
                     errors.Add(ConversionErrorMessage);
                 }
                 // validation errors
+                ValidateValueInternal(ReadValue, errors);
                 if (Validation is ValidationAttribute validationAttribute)
                 {
                     ValidateWithAttribute(validationAttribute, ReadValue, errors);
@@ -430,6 +431,10 @@ namespace MudBlazor
                     StateHasChanged();
                 }
             }
+        }
+
+        protected virtual void ValidateValueInternal(T? value, List<string> errors)
+        {
         }
 
         protected virtual bool HasValue(T? value)
