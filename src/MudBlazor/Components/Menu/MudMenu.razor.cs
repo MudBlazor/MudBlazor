@@ -176,7 +176,7 @@ namespace MudBlazor
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// The color of this menu’s button when <see cref="Icon"/> is not set, or the color of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
+        /// The color of this menu's button when <see cref="Icon"/> is not set, or the color of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.
