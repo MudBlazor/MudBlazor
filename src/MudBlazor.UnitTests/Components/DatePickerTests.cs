@@ -1870,5 +1870,18 @@ namespace MudBlazor.UnitTests.Components
                 nextMonthDay.ClassList.Contains("mud-hidden").Should().BeTrue("Next month days should be hidden");
             }
         }
+
+        [Test]
+        public void GetMonthStart_Should_NormalizeToFirstDayOfMonth()
+        {
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.PickerMonth, new DateTime(2026, 2, 15)));
+
+            var button = comp
+                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
+                .Single(x => x.GetAttribute("style") == "--day-id: 1;");
+
+            button.TextContent.Should().Be("1");
+        }
     }
 }
