@@ -46,16 +46,20 @@ class MudKeyInterceptor {
             return;
         if (!this._options.keys) 
             throw "_options.keys: array of KeyOptions expected";
-        if (this._observer) {
+        if (this._isConnected) {
             // don't do double registration
             return;
         }
-        var targetClass = this._options.targetClass;
-        this.logger('[MudBlazor | KeyInterceptor] Start observing DOM of element for changes to child with class ', { element, targetClass});
+        this._isConnected = true;
         this._element = element;
-        this._observer = new MutationObserver(this.onDomChanged);
-        this._observer.mudKeyInterceptor = this;
-        this._observer.observe(this._element, { attributes: false, childList: true, subtree: true });
+        var targetClass = this._options.targetClass;
+        // changes to the DOM subtree only require observation when targeting child elements for target class
+        if (targetClass) {
+            this.logger('[MudBlazor | KeyInterceptor] Start observing DOM of element for changes to child with class ', { element, targetClass });
+            this._observer = new MutationObserver(this.onDomChanged);
+            this._observer.mudKeyInterceptor = this;
+            this._observer.observe(this._element, { attributes: false, childList: true, subtree: true });
+        }
         this._observedChildren = [];
         // transform key options into a key lookup
         this._keyOptions = {};
@@ -104,13 +108,16 @@ class MudKeyInterceptor {
     }
 
     disconnect() {
-        if (!this._observer)
+        if (!this._isConnected)
             return;
-        this.logger('[MudBlazor | KeyInterceptor] disconnect mutation observer and event handlers');
-        this._observer.disconnect();
-        this._observer = null;
+        if (this._observer) {
+            this.logger('[MudBlazor | KeyInterceptor] disconnect mutation observer and event handlers');
+            this._observer.disconnect();
+            this._observer = null;
+        }
         for (const child of this._observedChildren)
             this.detachHandlers(child);
+        this._isConnected = false;
     }
     
     attachHandlers(child) {
