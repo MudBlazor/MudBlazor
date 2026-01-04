@@ -14,6 +14,11 @@ namespace MudBlazor
     {
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
+        private readonly ParameterState<DateTime?> _maxDateState;
+        private readonly ParameterState<DateTime?> _minDateState;
+        private readonly ParameterState<int?> _fixYearState;
+        private readonly ParameterState<int?> _fixMonthState;
+        private readonly ParameterState<int?> _fixDayState;
 
         protected MudBaseDatePicker()
         {
@@ -24,6 +29,21 @@ namespace MudBlazor
             _dateFormatState = registerScope.RegisterParameter<string?>(nameof(DateFormat))
                 .WithParameter(() => DateFormat)
                 .WithChangeHandler(DateFormatChangedAsync);
+            _maxDateState = registerScope.RegisterParameter<DateTime?>(nameof(MaxDate))
+                .WithParameter(() => MaxDate)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _minDateState = registerScope.RegisterParameter<DateTime?>(nameof(MinDate))
+                .WithParameter(() => MinDate)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _fixYearState = registerScope.RegisterParameter<int?>(nameof(FixYear))
+                .WithParameter(() => FixYear)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _fixMonthState = registerScope.RegisterParameter<int?>(nameof(FixMonth))
+                .WithParameter(() => FixMonth)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _fixDayState = registerScope.RegisterParameter<int?>(nameof(FixDay))
+                .WithParameter(() => FixDay)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
         }
 
         [Inject]
@@ -740,6 +760,11 @@ namespace MudBlazor
                 Culture = GetCulture,
                 Format = GetFormat
             };
+        }
+
+        private Task RevalidateForParameterChangeAsync<T>(ParameterChangedEventArgs<T> args)
+        {
+            return ValidateAsync();
         }
 
         protected override void ValidateValueInternal(DateTime? value, List<string> errors)
