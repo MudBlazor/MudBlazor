@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -776,27 +777,30 @@ namespace MudBlazor
 
             if (MinDate.HasValue && value < MinDate)
             {
-                errors.Add($"Value may not be before {MinDate}");
+                var minDate = GetDefaultConverter().Convert(MinDate.Value) ?? MinDate.Value.ToString("d");
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_MinDateError, minDate]);
             }
 
             if (MaxDate.HasValue && value > MaxDate)
             {
-                errors.Add($"Value may not be after {MaxDate}");
+                var maxDate = GetDefaultConverter().Convert(MaxDate.Value) ?? MaxDate.Value.ToString("d");
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_MaxDateError, maxDate]);
             }
 
             if (FixYear.HasValue && value.Value.Year != FixYear)
             {
-                errors.Add($"Year must be {FixYear}");
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_FixYearError, FixYear.Value]);
             }
 
             if (FixMonth.HasValue && value.Value.Month != FixMonth)
             {
-                errors.Add($"Month must be {FixMonth}");
+                var fixMonth = GetCulture().DateTimeFormat.GetMonthName(FixMonth.Value);
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_FixMonthError, fixMonth]);
             }
 
             if (FixDay.HasValue && value.Value.Day != FixDay)
             {
-                errors.Add($"Day must be {FixDay}");
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_FixDayError, FixDay.Value]);
             }
         }
 

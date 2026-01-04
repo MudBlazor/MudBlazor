@@ -471,4 +471,19 @@
   <data name="MudFileUpload_FileSizeError" xml:space="preserve">
     <value>File '{0}' exceeds the maximum allowed size of {1} bytes.</value>
   </data>
+  <data name="MudBaseDatePicker_MinDateError" xml:space="preserve">
+    <value>Value should not be before {0}</value>
+  </data>
+  <data name="MudBaseDatePicker_MaxDateError" xml:space="preserve">
+    <value>Value should not be after {0}</value>
+  </data>
+  <data name="MudBaseDatePicker_FixYearError" xml:space="preserve">
+    <value>Year should be {0}</value>
+  </data>
+  <data name="MudBaseDatePicker_FixMonthError" xml:space="preserve">
+    <value>Month should be {0}</value>
+  </data>
+  <data name="MudBaseDatePicker_FixDayError" xml:space="preserve">
+    <value>Day should be {0}</value>
+  </data>
 </root>
