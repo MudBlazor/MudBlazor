@@ -1975,6 +1975,7 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
         public void GetMonthStart_Should_NormalizeToFirstDayOfMonth()
         {
             var comp = OpenPicker(parameters => parameters
