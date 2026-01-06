@@ -751,13 +751,75 @@ public class DebounceDispatcherTests
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
 
         var tasks = new Task[200];
-        for (int i = 0; i < tasks.Length; i++)
+        for (var i = 0; i < tasks.Length; i++)
         {
             tasks[i] = Task.Run(async () =>
             {
                 await dispatcher.DebounceAsync(() => Task.Delay(10));
                 // ReSharper disable once MethodHasAsyncOverload
                 dispatcher.Cancel();
+            });
+        }
+
+        var act = async () => await Task.WhenAll(tasks);
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task CancelAsync_Swallows_AggregateException_From_Callbacks()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        // create CTS by starting a debounce
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+
+        // wait briefly for dispatcher to create the CTS
+        await Task.Delay(20);
+
+        var cts = GetPrivateCts(dispatcher);
+        cts.Should().NotBeNull();
+
+        // register a callback that throws when Cancel() is called
+        cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
+
+        // Cancel should swallow exceptions
+        var act = () => dispatcher.CancelAsync();
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task CancelAsync_Swallows_ObjectDisposedException_When_CtsDisposed()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+        await Task.Delay(20);
+
+        var cts = GetPrivateCts(dispatcher);
+        cts.Should().NotBeNull();
+
+        // Dispose the CTS to simulate race
+        cts.Dispose();
+
+        var act = () => dispatcher.CancelAsync();
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task CancelAsync_Race_Stress_NoUnhandledExceptions()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
+
+        var tasks = new Task[200];
+        for (int i = 0; i < tasks.Length; i++)
+        {
+            tasks[i] = Task.Run(async () =>
+            {
+                await dispatcher.DebounceAsync(() => Task.Delay(10));
+                await dispatcher.CancelAsync();
             });
         }
 

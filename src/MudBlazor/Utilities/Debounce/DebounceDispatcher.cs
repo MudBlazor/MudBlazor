@@ -150,6 +150,7 @@ internal sealed class DebounceDispatcher : IDisposable
 
         // Cancel the previous CTS outside the lock, but don't dispose it yet.
         // The thread that owns it will dispose it in its finally block.
+        // ReSharper disable once MethodHasAsyncOverload
         oldCts?.Cancel();
 
         if (executeImmediately)
