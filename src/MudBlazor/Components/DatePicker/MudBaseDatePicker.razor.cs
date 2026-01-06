@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -14,6 +15,11 @@ namespace MudBlazor
     {
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
+        private readonly ParameterState<DateTime?> _maxDateState;
+        private readonly ParameterState<DateTime?> _minDateState;
+        private readonly ParameterState<int?> _fixYearState;
+        private readonly ParameterState<int?> _fixMonthState;
+        private readonly ParameterState<int?> _fixDayState;
 
         protected MudBaseDatePicker()
         {
@@ -24,6 +30,21 @@ namespace MudBlazor
             _dateFormatState = registerScope.RegisterParameter<string?>(nameof(DateFormat))
                 .WithParameter(() => DateFormat)
                 .WithChangeHandler(DateFormatChangedAsync);
+            _maxDateState = registerScope.RegisterParameter<DateTime?>(nameof(MaxDate))
+                .WithParameter(() => MaxDate)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _minDateState = registerScope.RegisterParameter<DateTime?>(nameof(MinDate))
+                .WithParameter(() => MinDate)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _fixYearState = registerScope.RegisterParameter<int?>(nameof(FixYear))
+                .WithParameter(() => FixYear)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _fixMonthState = registerScope.RegisterParameter<int?>(nameof(FixMonth))
+                .WithParameter(() => FixMonth)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
+            _fixDayState = registerScope.RegisterParameter<int?>(nameof(FixDay))
+                .WithParameter(() => FixDay)
+                .WithChangeHandler(RevalidateForParameterChangeAsync);
         }
 
         [Inject]
@@ -740,6 +761,47 @@ namespace MudBlazor
                 Culture = GetCulture,
                 Format = GetFormat
             };
+        }
+
+        private Task RevalidateForParameterChangeAsync<T>(ParameterChangedEventArgs<T> args)
+        {
+            return ValidateAsync();
+        }
+
+        protected override void ValidateValueInternal(DateTime? value, List<string> errors)
+        {
+            if (!value.HasValue)
+            {
+                return;
+            }
+
+            if (MinDate.HasValue && value < MinDate)
+            {
+                var minDate = GetDefaultConverter().Convert(MinDate.Value) ?? MinDate.Value.ToString("d");
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_MinDateError, minDate]);
+            }
+
+            if (MaxDate.HasValue && value > MaxDate)
+            {
+                var maxDate = GetDefaultConverter().Convert(MaxDate.Value) ?? MaxDate.Value.ToString("d");
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_MaxDateError, maxDate]);
+            }
+
+            if (FixYear.HasValue && value.Value.Year != FixYear)
+            {
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_FixYearError, FixYear.Value]);
+            }
+
+            if (FixMonth.HasValue && value.Value.Month != FixMonth)
+            {
+                var fixMonth = GetCulture().DateTimeFormat.GetMonthName(FixMonth.Value);
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_FixMonthError, fixMonth]);
+            }
+
+            if (FixDay.HasValue && value.Value.Day != FixDay)
+            {
+                errors.Add(Localizer[LanguageResource.MudBaseDatePicker_FixDayError, FixDay.Value]);
+            }
         }
 
         protected override string GetFormat()

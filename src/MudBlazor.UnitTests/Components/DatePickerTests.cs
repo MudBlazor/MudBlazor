@@ -1870,5 +1870,21 @@ namespace MudBlazor.UnitTests.Components
                 nextMonthDay.ClassList.Contains("mud-hidden").Should().BeTrue("Next month days should be hidden");
             }
         }
+
+        [Test]
+        public async Task DatePicker_Editable_ShouldRespectMinDateConstraint()
+        {
+            var minDate = DateTime.Today;
+            var component = Context.Render<DatePickerEditableTest>(p => p
+                .Add(x => x.MinDate, minDate)
+                .Add(x => x.Date, minDate));
+
+            var datePickerComponent = component.FindComponent<MudDatePicker>();
+            var datePicker = datePickerComponent.Instance;
+
+            var invalidDate = minDate.AddYears(-1);
+            await component.InvokeAsync(() => component.Find("input").Change(DateOnly.FromDateTime(invalidDate)));
+            await component.WaitForAssertionAsync(() => datePicker.HasErrors.Should().BeTrue());
+        }
     }
 }

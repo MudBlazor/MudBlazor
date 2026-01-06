@@ -1,0 +1,12 @@
+﻿<MudDatePicker @bind-Date="Date" Editable MinDate="MinDate" />
+<MudText>Selected: @Date</MudText>
+
+@code {
+
+    [Parameter]
+    public DateTime? Date { get; set; }
+
+    [Parameter]
+    public DateTime? MinDate { get; set; } = DateTime.Today;
+
+}
