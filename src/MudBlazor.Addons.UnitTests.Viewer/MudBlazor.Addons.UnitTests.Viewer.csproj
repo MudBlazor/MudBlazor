@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>MudBlazor.Addons.UnitTests</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Razor sourcegenerator doesn't work well with this kind of nullable (null for generic) https://github.com/dotnet/razor/issues/8720 -->
+  <PropertyGroup>
+    <NoWarn>CS8669</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'MudBlazor.Addons.UnitTests.Viewer' " />
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
+    <ProjectReference Include="..\MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj" />
+    <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
+    <ProjectReference Include="..\MudBlazor.Addons\MudBlazor.Addons.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -134,6 +134,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="MudBlazor.Addons" />
     <InternalsVisibleTo Include="MudBlazor.Docs" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests.Shared" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests" />
