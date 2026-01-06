@@ -1444,6 +1444,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Calling form.Reset() should clear the DateRangePicker
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearDateRangePicker()
+        {
+            var comp = Context.Render<FormResetTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateRangePickerComp = comp.FindComponent<MudDateRangePicker>();
+            var dateRangePicker = dateRangePickerComp.Instance;
+            // create test value and it's localized string representation
+            var testStartDate = new DateTime(2020, 05, 24);
+            var testEndDate = new DateTime(2020, 06, 24);
+
+            // input a date
+            dateRangePickerComp.FindAll("input")[0].Change(testStartDate.ToShortDateString());
+            dateRangePickerComp.FindAll("input")[1].Change(testEndDate.ToShortDateString());
+            dateRangePicker.DateRange.Start.Should().Be(testStartDate);
+            dateRangePicker.DateRange.End.Should().Be(testEndDate);
+
+            // call reset directly
+            await comp.InvokeAsync(() => form.ResetAsync());
+            dateRangePicker.DateRange.Should().BeNull();
+
+            // input a date
+            dateRangePickerComp.FindAll("input")[0].Change(testStartDate.ToShortDateString());
+            dateRangePickerComp.FindAll("input")[1].Change(testEndDate.ToShortDateString());
+            dateRangePicker.DateRange.Start.Should().Be(testStartDate);
+            dateRangePicker.DateRange.End.Should().Be(testEndDate);
+            // hit reset button
+            comp.Find("button.reset").Click();
+            dateRangePicker.DateRange.Should().BeNull();
+        }
+
+        /// <summary>
         /// Reset() should reset the form's state
         /// </summary>
         [Test]

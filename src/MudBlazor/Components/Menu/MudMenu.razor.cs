@@ -146,7 +146,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon when <see cref="Icon"/> is set.
+        /// The color of the <see cref="StartIcon"/> and <see cref="EndIcon"/> icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Inherit"/>.
@@ -156,7 +156,7 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The icon displayed before the text.
+        /// The icon displayed before the text when <see cref="Icon"/> is not set. Also used for nested <see cref="MudMenu"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -166,7 +166,7 @@ namespace MudBlazor
         public string? StartIcon { get; set; }
 
         /// <summary>
-        /// The icon displayed after the text.
+        /// The icon displayed after the text when <see cref="Icon"/> is not set.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -176,7 +176,7 @@ namespace MudBlazor
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// The color of this menu's button when <see cref="Icon"/> is not set.
+        /// The color of this menu's button when <see cref="Icon"/> is not set, or the color of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.
@@ -186,8 +186,11 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of this menu's button when <see cref="Icon" /> is not set.
+        /// The size of this menu's button when <see cref="Icon"/> is not set, or the size of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
         public Size Size { get; set; } = Size.Medium;

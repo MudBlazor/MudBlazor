@@ -310,7 +310,7 @@ namespace MudBlazor
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(GetCulture());
             var correctYear = FixYear ?? GetCulture().Calendar.GetYear(monthStartDate);
             var correctMonth = FixMonth ?? GetCulture().Calendar.GetMonth(monthStartDate);
-            monthStartDate = new DateTime(correctYear, correctMonth, GetCulture().Calendar.GetDayOfMonth(monthStartDate), 0, 0, 0, 0, GetCulture().Calendar, DateTimeKind.Utc);
+            monthStartDate = new DateTime(correctYear, correctMonth, 1, 0, 0, 0, 0, GetCulture().Calendar, DateTimeKind.Utc);
 
             // Return the min supported datetime of the calendar when this is year 1 and first month!
             if (_picker_month is { Year: 1, Month: 1 })

@@ -1285,6 +1285,54 @@ namespace MudBlazor.UnitTests.Components
             Assert.That(dateRangeStart.Month == calendarStart.Month);
         }
 
+        [Test]
+        public void MudDateRangePickerStaticVariant_DisabledIsNotSpecified_EnabledByDefault()
+        {
+            var comp = Context.Render<DateRangePickerStaticDisabledTest>();
+            var picker = comp.FindComponents<MudDateRangePicker>();
+            picker.Count.Should().Be(2);
+
+            picker[1].Instance.Disabled.Should().BeFalse();
+        }
+
+        [Test]
+        public void DisabledMudDateRangePickerStaticVariant_ShouldHave_DisabledIsTrue()
+        {
+            var comp = Context.Render<DateRangePickerStaticDisabledTest>();
+            var picker = comp.FindComponents<MudDateRangePicker>();
+            picker.Count.Should().Be(2);
+
+            picker[0].Instance.Disabled.Should().BeTrue();
+        }
+
+        [Test]
+        public void MudDateRangePickerStaticVariant_Disabled_HasMudDisabledClass()
+        {
+            var comp = Context.Render<DateRangePickerStaticDisabledTest>();
+            var picker = comp.FindComponents<MudDateRangePicker>();
+            picker.Count.Should().Be(2);
+
+            picker[0].Markup.Should().Contain("mud-disabled");
+            picker[1].Markup.Should().NotContain("mud-disabled");
+        }
+
+        [Test]
+        public void DisabledMudDateRangePickerStaticVariant_ShouldHave_MudDisabledMarkup()
+        {
+            var comp = Context.Render<DateRangePickerStaticDisabledTest>();
+
+            var pickers = comp.FindComponents<MudDateRangePicker>();
+            pickers.Count.Should().Be(2);
+
+            pickers[0].Markup.Should().Contain("opacity:0.5");
+            pickers[0].Markup.Should().Contain("pointer-events:none");
+            pickers[0].Markup.Should().Contain("filter:grayscale(1)");
+
+            pickers[1].Markup.Should().NotContain("opacity:0.5");
+            pickers[1].Markup.Should().NotContain("pointer-events:none");
+            pickers[1].Markup.Should().NotContain("filter:grayscale(1)");
+        }
+
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
