@@ -135,6 +135,11 @@ internal sealed class DebounceDispatcher : IDisposable
                 // Do not dispose oldCts while still holding the lock; capture and dispose after releasing
             }
         }
+        catch (ObjectDisposedException)
+        {
+            // CTS was disposed by another thread between capture and access
+            return;
+        }
         catch (OperationCanceledException)
         {
             // Cancellation requested while waiting for the lock or via provided token
