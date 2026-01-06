@@ -159,13 +159,8 @@ internal sealed class DebounceDispatcher : IDisposable
             return;
         }
 
-        // local reference for delay
-        var localCts = newCts;
-        if (localCts is null)
-        {
-            // Shouldn't happen, but guard defensively
-            return;
-        }
+        // Local reference for delay - guaranteed to be non-null here
+        var localCts = newCts!;
 
         CancellationToken token;
         try
@@ -255,9 +250,13 @@ internal sealed class DebounceDispatcher : IDisposable
             {
                 ctsToCancel.Cancel();
             }
-            catch
+            catch (ObjectDisposedException)
             {
-                // Ignore exceptions during cancellation
+                // CTS was already disposed - ignore
+            }
+            catch (AggregateException)
+            {
+                // Cancellation callbacks threw - ignore
             }
             ctsToCancel.Dispose();
         }
@@ -336,9 +335,13 @@ internal sealed class DebounceDispatcher : IDisposable
             {
                 ctsToCancel.Cancel();
             }
-            catch
+            catch (ObjectDisposedException)
             {
-                // Ignore exceptions during cancellation
+                // CTS was already disposed - ignore
+            }
+            catch (AggregateException)
+            {
+                // Cancellation callbacks threw - ignore
             }
             ctsToCancel.Dispose();
         }
@@ -358,6 +361,7 @@ internal sealed class DebounceDispatcher : IDisposable
             return;
         }
 
+        CancellationTokenSource? cts = null;
         _lock.Wait();
         try
         {
@@ -369,23 +373,29 @@ internal sealed class DebounceDispatcher : IDisposable
             _disposed = true;
 
             // Swap and capture CTS to cancel/dispose outside of lock
-            var cts = Interlocked.Exchange(ref _cancellationTokenSource, null);
-            if (cts is not null)
-            {
-                try
-                {
-                    cts.Cancel();
-                }
-                catch
-                {
-                    // Ignore exceptions during cancellation
-                }
-                cts.Dispose();
-            }
+            cts = Interlocked.Exchange(ref _cancellationTokenSource, null);
         }
         finally
         {
             _lock.Release();
+        }
+
+        // Cancel and dispose outside the lock to avoid blocking other threads
+        if (cts is not null)
+        {
+            try
+            {
+                cts.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // CTS was already disposed - ignore
+            }
+            catch (AggregateException)
+            {
+                // Cancellation callbacks threw - ignore
+            }
+            cts.Dispose();
         }
 
         _lock.Dispose();
