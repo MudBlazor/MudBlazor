@@ -310,27 +310,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("9999");
         }
 
-        private IRenderedComponent<SimpleMudDatePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudDatePickerTest>>? parameterBuilder = null)
-        {
-            IRenderedComponent<SimpleMudDatePickerTest> comp;
-            if (parameterBuilder is null)
-            {
-                comp = Context.Render<SimpleMudDatePickerTest>();
-            }
-            else
-            {
-                comp = Context.Render<SimpleMudDatePickerTest>(parameterBuilder);
-            }
-
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            return comp;
-        }
-
         [Test]
         public void Open_CloseByClickingOutsidePicker_CheckClosed()
         {
@@ -451,14 +430,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Date?.Date.Should().Be(new DateTime(DateTime.Now.Year, 3, 2));
         }
 
-        private IRenderedComponent<SimpleMudDatePickerTest> OpenTo12thMonth()
-        {
-            var comp = OpenPicker(parameters => parameters
-                .Add(x => x.PickerMonth, new DateTime(DateTime.Now.Year, 12, 01)));
-            comp.Instance.PickerMonth?.Month.Should().Be(12);
-            return comp;
-        }
-
         [Test]
         public async Task Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDate()
         {
@@ -526,7 +497,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenTo12thMonth_NavigateBack_CheckMonth()
         {
-            var comp = OpenTo12thMonth();
+            var comp = OpenTo12ThMonth();
             var picker = comp.Instance;
             comp.Find("div.mud-picker-calendar-header-switch > button:nth-child(1)").Click();
             picker.PickerMonth?.Month.Should().Be(11);
@@ -536,7 +507,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenTo12thMonth_NavigateForward_CheckYear()
         {
-            var comp = OpenTo12thMonth();
+            var comp = OpenTo12ThMonth();
             var picker = comp.Instance;
             comp.Find("div.mud-picker-calendar-header-switch > button:nth-child(3)").Click();
             picker.PickerMonth?.Month.Should().Be(1);
@@ -1981,6 +1952,35 @@ namespace MudBlazor.UnitTests.Components
                 .Single(x => x.GetAttribute("style") == "--day-id: 1;");
 
             button.TextContent.Should().Be("1");
+        }
+
+        private IRenderedComponent<SimpleMudDatePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudDatePickerTest>>? parameterBuilder = null)
+        {
+            IRenderedComponent<SimpleMudDatePickerTest> comp;
+            if (parameterBuilder is null)
+            {
+                comp = Context.Render<SimpleMudDatePickerTest>();
+            }
+            else
+            {
+                comp = Context.Render<SimpleMudDatePickerTest>(parameterBuilder);
+            }
+
+            // should not be open
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            // click to open menu
+            comp.Find("input").Click();
+            // now its open
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            return comp;
+        }
+
+        private IRenderedComponent<SimpleMudDatePickerTest> OpenTo12ThMonth()
+        {
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.PickerMonth, new DateTime(DateTime.Now.Year, 12, 01)));
+            comp.Instance.PickerMonth?.Month.Should().Be(12);
+            return comp;
         }
     }
 }
