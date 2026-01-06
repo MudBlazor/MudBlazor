@@ -18,7 +18,8 @@
                    MaxDate="@MaxDate"
                    AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
                    Culture="@(new CultureInfo("en-US"))"
-                   InputId="@InputId" />
+                   InputId="@InputId"
+                   FirstDayOfWeek="@FirstDayOfWeek" />
 }
 else
 {
@@ -35,7 +36,8 @@ else
                    MaxDate="@MaxDate"
                    AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
                    Culture="@(new CultureInfo("en-US"))"
-                   InputId="@InputId" />
+                   InputId="@InputId"
+                   FirstDayOfWeek="@FirstDayOfWeek"/>
 }
 
 @code {
@@ -79,6 +81,9 @@ else
 
     [Parameter]
     public string? InputId { get; set; }
+
+    [Parameter]
+    public DayOfWeek? FirstDayOfWeek { get; set; }
 
     private async Task HandleDateChanged(DateTime? input)
     {

@@ -203,15 +203,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public Func<DateTime, bool> IsDateDisabledFunc
-        {
-            get => _isDateDisabledFunc;
-            set
-            {
-                _isDateDisabledFunc = value ?? (_ => false);
-            }
-        }
-        private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
+        public Func<DateTime, bool> IsDateDisabledFunc { get; set; } = _ => false;
 
         /// <summary>
         /// The function which returns CSS classes for a date.
@@ -273,8 +265,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int? FixDay { get; set; }
 
-        protected virtual bool IsRange { get; } = false;
-
         protected OpenTo CurrentView;
 
         protected override async Task OnPickerOpenedAsync()
@@ -319,13 +309,43 @@ namespace MudBlazor
             }
 
             if (_picker_month.HasValue && GetCulture().Calendar.GetYear(_picker_month.Value) == 9999
-                && GetCulture().Calendar.GetMonth(_picker_month.Value) == GetCulture().Calendar.GetMonthsInYear(GetCulture().Calendar.GetYear(_picker_month.Value))
-                && month >= 1)
+                                       && GetCulture().Calendar.GetMonth(_picker_month.Value) == GetCulture().Calendar.GetMonthsInYear(GetCulture().Calendar.GetYear(_picker_month.Value))
+                                       && month >= 1)
             {
                 return GetCulture().Calendar.MaxSupportedDateTime;
             }
             return GetCulture().Calendar.AddMonths(monthStartDate, month);
         }
+        //protected DateTime GetMonthStart(int month)
+        //{
+        //    var culture = GetCulture();
+        //    var calendar = culture.Calendar;
+
+        //    // Handle explicit min boundary
+        //    if (_picker_month is { Year: 1, Month: 1 })
+        //    {
+        //        return calendar.MinSupportedDateTime;
+        //    }
+
+        //    var baseDate = _picker_month ?? DateTime.Today.StartOfMonth(culture);
+
+        //    var year = FixYear ?? calendar.GetYear(baseDate);
+        //    var startMonth = FixMonth ?? calendar.GetMonth(baseDate);
+
+        //    var monthStart = new DateTime(year, startMonth, 1, 0, 0, 0, 0, calendar, DateTimeKind.Utc);
+
+        //    // Handle explicit max boundary
+        //    if (_picker_month.HasValue &&
+        //        calendar.GetYear(_picker_month.Value) == 9999 &&
+        //        calendar.GetMonth(_picker_month.Value) ==
+        //        calendar.GetMonthsInYear(9999) &&
+        //        month >= 1)
+        //    {
+        //        return calendar.MaxSupportedDateTime;
+        //    }
+
+        //    return calendar.AddMonths(monthStart, month);
+        //}
 
         /// <summary>
         /// Get the last of the month to display
@@ -661,7 +681,6 @@ namespace MudBlazor
         {
             // todo: raise an event the user can handle
         }
-
 
         private IEnumerable<DateTime> GetAllMonths()
         {

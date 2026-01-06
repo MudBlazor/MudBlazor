@@ -243,10 +243,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // clicking a day buttons to select a range and close
-            comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click();
-            comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).Click();
+            await comp
+                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
+            await comp
+                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
         }
@@ -256,8 +256,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // clicking a day buttons to select a range and close
-            await comp.SelectDateAsync("10");
-            await comp.SelectDateAsync("8");
+            comp.SelectDate("10");
+            comp.SelectDate("8");
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
@@ -1340,9 +1340,14 @@ namespace MudBlazor.UnitTests.Components
     }
     public static class DatePickerRenderedFragmentExtensions
     {
-        public static async Task SelectDateAsync(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
+        public static void SelectDate(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
         {
-            await comp.ValidateSelection(day, firstOccurrence).ClickAsync(new MouseEventArgs());
+            comp.ValidateSelection(day, firstOccurrence).Click();
+        }
+
+        public static Task SelectDateAsync(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
+        {
+            return comp.ValidateSelection(day, firstOccurrence).ClickAsync();
         }
 
         private static IElement ValidateSelection(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence)

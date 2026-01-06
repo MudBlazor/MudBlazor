@@ -13,11 +13,9 @@ namespace MudBlazor
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
-        private DateTime? _firstDate = null, _secondDate, _minValidDate, _maxValidDate;
+        private DateTime? _firstDate, _secondDate, _minValidDate, _maxValidDate;
         private DateRange? _dateRange;
         private Range<string>? _rangeText;
-
-        protected override bool IsRange => true;
 
         /// <summary>
         /// Creates a new instance.

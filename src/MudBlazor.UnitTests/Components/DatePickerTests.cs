@@ -1973,7 +1973,8 @@ namespace MudBlazor.UnitTests.Components
         public void GetMonthStart_Should_NormalizeToFirstDayOfMonth()
         {
             var comp = OpenPicker(parameters => parameters
-                .Add(x => x.PickerMonth, new DateTime(2026, 2, 15)));
+                .Add(x => x.PickerMonth, new DateTime(2026, 2, 15))
+                .Add(x => x.FirstDayOfWeek, DayOfWeek.Sunday));
 
             var button = comp
                 .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
