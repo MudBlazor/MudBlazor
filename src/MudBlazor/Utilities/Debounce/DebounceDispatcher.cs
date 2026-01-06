@@ -404,6 +404,10 @@ internal sealed class DebounceDispatcher : IDisposable
             cts.Dispose();
         }
 
-        _lock.Dispose();
+        // Note: We intentionally don't dispose _lock here. Disposing a SemaphoreSlim while threads
+        // are waiting on it can cause unpredictable behavior - on some platforms/runtimes, waiting threads
+        // may hang indefinitely instead of receiving ObjectDisposedException. The SemaphoreSlim will be
+        // garbage collected when this object is finalized, which is acceptable since SemaphoreSlim
+        // doesn't hold unmanaged resources that require deterministic cleanup.
     }
 }
