@@ -57,7 +57,7 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            if (_value != date || (date is null && ReadText != null))
             {
                 Touched = true;
 
@@ -474,7 +474,7 @@ namespace MudBlazor
                         {
                             await SubmitAsync();
                             await CloseAsync();
-                            _inputReference?.SetText(Text);
+                            _inputReference?.SetText(ReadText);
                         }
                     }
 
@@ -502,7 +502,7 @@ namespace MudBlazor
                     break;
                 default:
                     await SubmitAsync();
-                    _inputReference?.SetText(Text);
+                    _inputReference?.SetText(ReadText);
                     await CloseAsync();
                     break;
             }

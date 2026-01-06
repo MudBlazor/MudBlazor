@@ -1427,20 +1427,20 @@ namespace MudBlazor.UnitTests.Components
             // input a date
             datePickerComp.Find("input").Change(testDateString);
             datePicker.Date.Should().Be(testDate);
-            datePicker.Text.Should().Be(testDateString);
+            datePicker.ReadText.Should().Be(testDateString);
             // call reset directly
             await comp.InvokeAsync(() => form.ResetAsync());
             datePicker.Date.Should().BeNull();
-            datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.ReadText.Should().BeNullOrEmpty();
 
             // input a date
             datePickerComp.Find("input").Change(testDateString);
             datePicker.Date.Should().Be(testDate);
-            datePicker.Text.Should().Be(testDateString);
+            datePicker.ReadText.Should().Be(testDateString);
             // hit reset button
             comp.Find("button.reset").Click();
             datePicker.Date.Should().BeNull();
-            datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.ReadText.Should().BeNullOrEmpty();
         }
 
         /// <summary>

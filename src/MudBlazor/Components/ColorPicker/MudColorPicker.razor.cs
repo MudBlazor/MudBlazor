@@ -30,7 +30,6 @@ namespace MudBlazor
         private readonly string _id = Identifier.Create();
         private ThrottleDispatcher? _throttleDispatcher;
         private readonly ParameterState<bool> _alphaState;
-        private readonly ParameterState<string?> _textState;
         private readonly ParameterState<MudColor?> _valueState;
         private readonly ParameterState<int> _throttleIntervalState;
         private readonly ParameterState<ColorPickerView> _colorPickerViewState;
@@ -61,9 +60,6 @@ namespace MudBlazor
                 .WithEventCallback(() => ValueChanged)
                 .WithChangeHandler(OnValueChangeHandlerAsync)
                 .WithComparer(MudColor.MudColorComparer.RgbaAndHsl);
-            _textState = registerScope.RegisterParameter<string?>(nameof(Text))
-                .WithParameter(() => Text)
-                .WithEventCallback(() => TextChanged);
             _colorPickerViewState = registerScope.RegisterParameter<ColorPickerView>(nameof(ColorPickerView))
                 .WithParameter(() => ColorPickerView);
             _alphaState = registerScope.RegisterParameter<bool>(nameof(ShowAlpha))
@@ -104,7 +100,7 @@ namespace MudBlazor
             if (!args.Value)
             {
                 var colorWithoutAlpha = _valueState.Value?.SetAlpha(1.0);
-                await _textState.SetValueAsync(GetColorTextValue(colorWithoutAlpha));
+                await WriteTextAsync(GetColorTextValue(colorWithoutAlpha));
                 if (!ValueChanged.HasDelegate)
                 {
                     await SetColorAsync(colorWithoutAlpha);
@@ -112,7 +108,7 @@ namespace MudBlazor
             }
             else
             {
-                await _textState.SetValueAsync(GetColorTextValue(_valueState.Value));
+                await WriteTextAsync(GetColorTextValue(_valueState.Value));
             }
         }
 
@@ -229,13 +225,6 @@ namespace MudBlazor
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public MudColor? Value { get; set; } = "#594ae2";
-
-        /// <summary>
-        /// The currently selected value, as a string.
-        /// </summary>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public override string? Text { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Value"/> property has changed.
@@ -449,10 +438,10 @@ namespace MudBlazor
             {
                 await StringValueChangedAsync(value);
             }
-            await _textState.SetValueAsync(value);
+            await WriteTextAsync(value);
         }
 
-        protected override string? ReadText => GetColorTextValue(_valueState.Value);
+        protected internal override string? ReadText => GetColorTextValue(_valueState.Value);
 
         protected override Task WriteTextAsync(string? value) => SetInputStringAsync(value);
 

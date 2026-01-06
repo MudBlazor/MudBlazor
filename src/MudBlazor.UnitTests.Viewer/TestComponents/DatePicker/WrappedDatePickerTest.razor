@@ -2,8 +2,8 @@
 
 <MudGrid>
     <MudItem>
-        <MudDatePicker @ref="@Picker"
-                       Style="max-width: 300px"
+        <MudDatePicker Style="max-width: 300px"
+                       @bind-Text="@_text"
                        Placeholder="dd-MM-yyyy"
                        Editable="true"
                        Required="false"
@@ -14,15 +14,14 @@
         </MudDatePicker>
     </MudItem>
     <MudItem Class="align-self-center">
-        <MudText>@Picker?.Text</MudText>
+        <MudText>@_text</MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-
     public static string __description__ = "Selected date should show in input on first selection";
 
-    public DateTime? SelectedDate { get; set; }
+    private string _text = string.Empty;
 
-    public MudDatePicker Picker { get; set; } = null!;
+    public DateTime? SelectedDate { get; set; }
 }

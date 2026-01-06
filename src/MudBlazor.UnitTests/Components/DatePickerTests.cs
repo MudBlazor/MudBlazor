@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
             var picker = comp.Instance;
 
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
             picker.MaxDate.Should().Be(null);
             picker.MinDate.Should().Be(null);
@@ -106,12 +106,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, new DateTime(2020, 10, 23).ToShortDateString()));
             picker.Date.Should().Be(new DateTime(2020, 10, 23));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, new DateTime(2020, 10, 26)));
-            picker.Text.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
+            picker.ReadText.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
         }
 
         [Test]
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.DateFormat, "dd/MM/yyyy")
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "23/10/2020"));
             picker.Date.Should().Be(new DateTime(2020, 10, 23));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, new DateTime(2020, 10, 26)));
-            picker.Text.Should().Be("26/10/2020");
+            picker.ReadText.Should().Be("26/10/2020");
         }
 
         [Test]
@@ -137,14 +137,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.DateFormat, "dd/MM/yyyy")
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
                 .Add(p => p.Date, new DateTime(2020, 10, 26)));
             picker.Date.Should().Be(new DateTime(2020, 10, 26));
-            picker.Text.Should().Be("26/10/2020");
+            picker.ReadText.Should().Be("26/10/2020");
         }
 
         [Test]
@@ -153,7 +153,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
 
             var customCulture = new CultureInfo("en-US") { DateTimeFormat = { ShortDatePattern = "dd MM yyyy" } };
@@ -163,13 +163,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "23 10 2020"));
             picker.Date.Should().Be(new DateTime(2020, 10, 23));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, new DateTime(2020, 10, 26)));
-            picker.Text.Should().Be("26 10 2020");
+            picker.ReadText.Should().Be("26 10 2020");
 
             customCulture.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "2020-10-13"));
             picker.Date.Should().Be(new DateTime(2020, 10, 13));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, new DateTime(2020, 10, 16)));
-            picker.Text.Should().Be("2020-10-16");
+            picker.ReadText.Should().Be("2020-10-16");
         }
 
         [Test]
@@ -178,14 +178,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.DateFormat, "dd MM yyyy")
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
                 .Add(p => p.Date, new DateTime(2020, 10, 26)));
             picker.Date.Should().Be(new DateTime(2020, 10, 26));
-            picker.Text.Should().Be("26 10 2020");
+            picker.ReadText.Should().Be("26 10 2020");
         }
 
         [Test]
@@ -210,16 +210,16 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.ReadOnly.Should().Be(false);
             picker.Date.Should().Be(null);
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Clearable, true)
                 .Add(p => p.Date, new DateTime(2020, 10, 26)));
             picker.Date.Should().Be(new DateTime(2020, 10, 26));
-            picker.Text.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
+            picker.ReadText.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
 
             comp.Find(".mud-input-clear-button").Click(); //clear the input
 
-            picker.Text.Should().Be(""); //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
+            picker.ReadText.Should().Be(""); //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
             picker.Date.Should().Be(null);
         }
 
@@ -229,21 +229,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
 
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
 
             var invalid = "INVALID_DATE";
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
 
             picker.Date.Should().Be(null);
-            picker.Text.Should().Be(invalid);
+            picker.ReadText.Should().Be(invalid);
 
             await Task.Delay(150);
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
 
             picker.Date.Should().Be(null);
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
         }
 
 
@@ -253,19 +253,19 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
 
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
 
             var invalid = "INVALID_DATE";
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
 
             picker.Date.Should().Be(null);
-            picker.Text.Should().Be(invalid);
+            picker.ReadText.Should().Be(invalid);
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
 
             picker.Date.Should().Be(null);
-            picker.Text.Should().Be(invalid);
+            picker.ReadText.Should().Be(invalid);
         }
 
         [Test]
@@ -274,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>();
 
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.Date.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
 
@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
             );
             var picker = comp.Instance;
             picker.Date.Should().Be(new DateTime(2021, 1, 13));
-            picker.Text.Should().Be("13/01/2021");
+            picker.ReadText.Should().Be("13/01/2021");
         }
 
         [Test]
@@ -695,9 +695,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<PersianDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
             await comp.InvokeAsync(() => datePicker.OpenAsync());
-            datePicker.Text.Should().Be("1399/11/26");
+            datePicker.ReadText.Should().Be("1399/11/26");
             await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2024, 5, 8)));
-            await comp.WaitForAssertionAsync(() => datePicker.Text.Should().Be("1403/02/19"));
+            await comp.WaitForAssertionAsync(() => datePicker.ReadText.Should().Be("1403/02/19"));
             var button = comp
                 .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
                 .Single(x => x.GetAttribute("style") == "--day-id: 1;");
@@ -711,11 +711,11 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
             timeProvider.SetUtcNow(new DateTime(2025, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
-            var comp = Context.Render<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
+            var comp = Context.Render<PersianDatePickerTest>(parameter => parameter.Add(p => p.Date, null));
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
             await comp.InvokeAsync(() => datePicker.OpenAsync());
 
-            datePicker.Text.Should().BeNull();
+            datePicker.ReadText.Should().BeNull();
             comp.Find("button.mud-button-year").TrimmedText().Equals("1403");
             comp.Find("button.mud-button-month").TrimmedText().Should().Contain("1403");
             comp.Find("button.mud-button-date").TrimmedText().Should().BeNullOrEmpty();
@@ -747,7 +747,7 @@ namespace MudBlazor.UnitTests.Components
 
             var text = date.ToShortDateString();
 
-            picker.Text.Should().Be(text);
+            picker.ReadText.Should().Be(text);
             ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(text);
         }
 
@@ -1571,6 +1571,7 @@ namespace MudBlazor.UnitTests.Components
         public void Display_SelectedDate_WhenWrapped()
         {
             var comp = Context.Render<WrappedDatePickerTest>();
+            var datePicker = comp.FindComponent<MudDatePicker>();
 
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             comp.Find(".mud-input-adornment button").Click();
@@ -1578,7 +1579,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SelectDate("15");
 
-            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(comp.Instance.Picker.Text);
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(datePicker.Instance.ReadText);
         }
 
         /// <summary>

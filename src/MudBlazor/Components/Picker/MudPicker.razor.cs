@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -18,11 +19,19 @@ namespace MudBlazor
     /// <seealso cref="MudPickerToolbar" />
     public abstract partial class MudPicker<T> : MudFormComponent<T, string>
     {
-        private string? _text;
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
         private bool _keyInterceptorObserving = false;
+        private readonly ParameterState<string?> _textState;
         private readonly string _elementId = Identifier.Create("picker");
+
+        public MudPicker()
+        {
+            using var registerScope = CreateRegisterScope();
+            _textState = registerScope.RegisterParameter<string?>(nameof(Text))
+                .WithParameter(() => Text)
+                .WithEventCallback(() => TextChanged);
+        }
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -378,13 +387,9 @@ namespace MudBlazor
         /// <summary>
         /// The currently selected value, as a string.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public virtual string? Text
-        {
-            get => _text;
-            set => SetTextAsync(value, true).CatchAndLog();
-        }
+        public string? Text { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the action buttons container.
@@ -489,12 +494,11 @@ namespace MudBlazor
 
         protected virtual async Task SetTextAsync(string? value, bool callback)
         {
-            if (_text != value)
+            if (_textState.Value != value)
             {
-                _text = value;
+                await _textState.SetValueAsync(value);
                 if (callback)
-                    await StringValueChangedAsync(_text);
-                await TextChanged.InvokeAsync(_text);
+                    await StringValueChangedAsync(_textState.Value);
             }
         }
 
@@ -707,16 +711,12 @@ namespace MudBlazor
         // A proxy for components that will utilize ParameterState
         // Since for ParameterState we don't want to read directly from the Text property, but we have other components that inherit from MudPicker
         // In future when all Pickers will use ParameterState, we can remove this.
-        protected virtual string? ReadText => Text;
+        protected internal virtual string? ReadText => _textState.Value;
 
         // A proxy for components that will utilize ParameterState
         // Since for ParameterState we don't want to write directly from the Text property, but we have other components that inherit from MudPicker
         // In future when all Pickers will use ParameterState, we can remove this.
-        protected virtual Task WriteTextAsync(string? value)
-        {
-            Text = value;
-            return Task.CompletedTask;
-        }
+        protected virtual Task WriteTextAsync(string? value) => _textState.SetValueAsync(value);
 
         protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {

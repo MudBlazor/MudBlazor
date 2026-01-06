@@ -749,7 +749,7 @@ namespace MudBlazor
                     {
                         await SubmitAsync();
                         await CloseAsync();
-                        _inputReference?.SetText(Text);
+                        _inputReference?.SetText(ReadText);
                     }
 
                     break;
@@ -764,7 +764,7 @@ namespace MudBlazor
                         {
                             await SubmitAsync();
                             await CloseAsync();
-                            _inputReference?.SetText(Text);
+                            _inputReference?.SetText(ReadText);
                         }
                     }
 

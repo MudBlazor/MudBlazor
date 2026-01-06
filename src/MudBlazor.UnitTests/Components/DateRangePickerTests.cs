@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDateRangePicker>();
             var picker = comp.Instance;
 
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.DateRange.Should().Be(null);
             picker.MaxDate.Should().Be(null);
             picker.MinDate.Should().Be(null);
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDateRangePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().BeNullOrEmpty();
+            picker.ReadText.Should().BeNullOrEmpty();
             picker.DateRange.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.Text, RangeUtility.Join(
@@ -162,7 +162,7 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.End.Should().Be(new DateTime(2021, 01, 10));
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.DateRange, new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01))));
-            picker.Text.Should().Be(RangeUtility.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
+            picker.ReadText.Should().Be(RangeUtility.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
         }
 
         [Test]
@@ -440,7 +440,7 @@ namespace MudBlazor.UnitTests.Components
             var textStart = date.ToShortDateString();
             var textEnd = date.AddDays(5).ToShortDateString();
 
-            picker.Text.Should().Be(RangeUtility.Join(textStart, textEnd));
+            picker.ReadText.Should().Be(RangeUtility.Join(textStart, textEnd));
             var inputs = comp.FindAll("input");
             ((IHtmlInputElement)inputs[0]).Value.Should().Be(textStart);
             ((IHtmlInputElement)inputs[1]).Value.Should().Be(textEnd);
@@ -621,7 +621,7 @@ namespace MudBlazor.UnitTests.Components
             var dateRangePickerInstance = dateRangePickerComponent.Instance;
 
             // assert default's
-            dateRangePickerInstance.Text.Should().BeNullOrEmpty();
+            dateRangePickerInstance.ReadText.Should().BeNullOrEmpty();
             dateRangePickerInstance.DateRange.Should().Be(null);
 
             // validated the picker
@@ -648,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.ClearAsync());
 
             // assert values have been nulled
-            dateRangePickerInstance.Text.Should().BeNullOrEmpty();
+            dateRangePickerInstance.ReadText.Should().BeNullOrEmpty();
             dateRangePickerInstance.DateRange.Should().Be(null);
             dateRangePickerInstance.GetState(x => x.Error).Should().BeTrue("Value has been cleared and should be handled as invalid");
             dateRangePickerComponent.Markup.Should().Contain(errorMessage);
@@ -760,7 +760,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDateRangePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadText.Should().Be(null);
             picker.DateRange.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Clearable, true)

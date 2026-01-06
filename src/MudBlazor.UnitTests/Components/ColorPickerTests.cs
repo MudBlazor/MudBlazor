@@ -1241,7 +1241,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Editable, true));
 
             comp.Find("input").Change("#180f6fff");
-            comp.Instance.GetState(x => x.Text).Should().Be("#180f6fff");
+            comp.Instance.ReadText.Should().Be("#180f6fff");
             comp.Instance.GetState(x => x.Value).Should().Be(new MudColor("#180f6fff"));
         }
 
