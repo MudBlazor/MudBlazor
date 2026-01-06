@@ -252,7 +252,7 @@ namespace MudBlazor
             var selectedDate = _firstDate.Value;
             var validDateRange = GetValidDateRange(selectedDate);
 
-            return base.IsDayDisabled(date) || MudDateRangePicker.IsDateOutOfRange(date, selectedDate, validDateRange);
+            return base.IsDayDisabled(date) || IsDateOutOfRange(date, selectedDate, validDateRange);
         }
 
         private DateRange GetValidDateRange(DateTime selectedDate)
@@ -406,7 +406,8 @@ namespace MudBlazor
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             }
-            else if (_firstDate?.Date < day)
+
+            if (_firstDate?.Date < day)
             {
                 return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
                     .AddClass("mud-range-selection")

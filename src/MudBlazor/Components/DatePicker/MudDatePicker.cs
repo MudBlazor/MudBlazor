@@ -145,24 +145,26 @@ namespace MudBlazor
             var nextView = GetNextView();
             if (nextView == null)
             {
+                var culture = GetCulture();
+                var calendar = culture.Calendar;
                 _selectedDate = _selectedDate.HasValue
                     ?
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(
-                        GetCulture().Calendar.GetYear(month),
-                        GetCulture().Calendar.GetMonth(month),
-                        GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetHour(_selectedDate.Value),
-                        GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                        GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                        (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                        GetCulture().Calendar,
+                        calendar.GetYear(month),
+                        calendar.GetMonth(month),
+                        calendar.GetDayOfMonth(_selectedDate.Value),
+                        calendar.GetHour(_selectedDate.Value),
+                        calendar.GetMinute(_selectedDate.Value),
+                        calendar.GetSecond(_selectedDate.Value),
+                        (int)calendar.GetMilliseconds(_selectedDate.Value),
+                        calendar,
                         _selectedDate.Value.Kind)
                     //We can assume day here, as it was not set yet. If a fix value is set, it will be overridden in Submit
-                    : new DateTime(GetCulture().Calendar.GetYear(month),
-                        GetCulture().Calendar.GetMonth(month),
+                    : new DateTime(calendar.GetYear(month),
+                        calendar.GetMonth(month),
                         1,
-                        GetCulture().Calendar);
+                        calendar);
                 await SubmitAndCloseAsync();
             }
             else
@@ -179,7 +181,9 @@ namespace MudBlazor
         {
             await FocusAsync();
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, GetCulture().Calendar.GetMonth(current), 1, GetCulture().Calendar);
+            var culture = GetCulture();
+            var calendar = culture.Calendar;
+            PickerMonth = new DateTime(year, calendar.GetMonth(current), 1, calendar);
             var nextView = GetNextView();
             if (nextView == null)
             {
@@ -188,16 +192,16 @@ namespace MudBlazor
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(
                         year,
-                        GetCulture().Calendar.GetMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetHour(_selectedDate.Value),
-                        GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                        GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                        (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                        GetCulture().Calendar,
+                        calendar.GetMonth(_selectedDate.Value),
+                        calendar.GetDayOfMonth(_selectedDate.Value),
+                        calendar.GetHour(_selectedDate.Value),
+                        calendar.GetMinute(_selectedDate.Value),
+                        calendar.GetSecond(_selectedDate.Value),
+                        (int)calendar.GetMilliseconds(_selectedDate.Value),
+                        calendar,
                         _selectedDate.Value.Kind)
                     //We can assume month and day here, as they were not set yet
-                    : new DateTime(year, 1, 1, GetCulture().Calendar);
+                    : new DateTime(year, 1, 1, calendar);
                 await SubmitAndCloseAsync();
             }
             else
@@ -220,16 +224,19 @@ namespace MudBlazor
             if (_selectedDate == null)
                 return;
 
-            if (FixYear.HasValue ||
-                FixMonth.HasValue || FixDay.HasValue)
-                _selectedDate = new DateTime(FixYear ?? GetCulture().Calendar.GetYear(_selectedDate.Value),
-                    FixMonth ?? GetCulture().Calendar.GetMonth(_selectedDate.Value),
-                    FixDay ?? GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                    GetCulture().Calendar.GetHour(_selectedDate.Value),
-                    GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                    GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                    (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                    GetCulture().Calendar);
+            if (FixYear.HasValue || FixMonth.HasValue || FixDay.HasValue)
+            {
+                var culture = GetCulture();
+                var calendar = culture.Calendar;
+                _selectedDate = new DateTime(FixYear ?? calendar.GetYear(_selectedDate.Value),
+                    FixMonth ?? calendar.GetMonth(_selectedDate.Value),
+                    FixDay ?? calendar.GetDayOfMonth(_selectedDate.Value),
+                    calendar.GetHour(_selectedDate.Value),
+                    calendar.GetMinute(_selectedDate.Value),
+                    calendar.GetSecond(_selectedDate.Value),
+                    (int)calendar.GetMilliseconds(_selectedDate.Value),
+                    calendar);
+            }
 
             await SetDateAsync(_selectedDate, true);
             _selectedDate = null;
@@ -584,10 +591,12 @@ namespace MudBlazor
         /// </summary>
         public async Task GoToDate(DateTime date, bool submitDate = true)
         {
-            PickerMonth = new DateTime(GetCulture().Calendar.GetYear(date),
-                GetCulture().Calendar.GetMonth(date),
+            var culture = GetCulture();
+            var calendar = culture.Calendar;
+            PickerMonth = new DateTime(calendar.GetYear(date),
+                calendar.GetMonth(date),
                 1,
-                GetCulture().Calendar);
+                calendar);
             if (submitDate)
             {
                 await SetDateAsync(date, true);
