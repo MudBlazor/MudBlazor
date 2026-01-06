@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Debounce;
 using NUnit.Framework;
@@ -699,5 +700,75 @@ public class DebounceDispatcherTests
 
         // Assert
         executionCount.Should().Be(2);
+    }
+
+
+    [Test]
+    public async Task Cancel_Swallows_AggregateException_From_Callbacks()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        // create CTS by starting a debounce
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+
+        // wait briefly for dispatcher to create the CTS
+        await Task.Delay(20);
+
+        var cts = GetPrivateCts(dispatcher);
+        cts.Should().NotBeNull();
+
+        // register a callback that throws when Cancel() is called
+        cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
+
+        // Cancel should swallow exceptions
+        var act = () => dispatcher.Cancel();
+
+        act.Should().NotThrow();
+    }
+
+    [Test]
+    public async Task Cancel_Swallows_ObjectDisposedException_When_CtsDisposed()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+        await Task.Delay(20);
+
+        var cts = GetPrivateCts(dispatcher);
+        cts.Should().NotBeNull();
+
+        // Dispose the CTS to simulate race
+        cts.Dispose();
+
+        var act = () => dispatcher.Cancel();
+
+        act.Should().NotThrow();
+    }
+
+    [Test]
+    public async Task Cancel_Race_Stress_NoUnhandledExceptions()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
+
+        var tasks = new Task[200];
+        for (int i = 0; i < tasks.Length; i++)
+        {
+            tasks[i] = Task.Run(async () =>
+            {
+                await dispatcher.DebounceAsync(() => Task.Delay(10));
+                // ReSharper disable once MethodHasAsyncOverload
+                dispatcher.Cancel();
+            });
+        }
+
+        var act = async () => await Task.WhenAll(tasks);
+
+        await act.Should().NotThrowAsync();
+    }
+
+    private static CancellationTokenSource? GetPrivateCts(object dispatcher)
+    {
+        var field = dispatcher.GetType().GetField("_cancellationTokenSource", BindingFlags.NonPublic | BindingFlags.Instance);
+        return (CancellationTokenSource?)field?.GetValue(dispatcher);
     }
 }
