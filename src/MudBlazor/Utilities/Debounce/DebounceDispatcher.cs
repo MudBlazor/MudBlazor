@@ -148,9 +148,9 @@ internal sealed class DebounceDispatcher : IDisposable
             }
         }
 
-        // Dispose the previous CTS outside the lock to avoid races
+        // Cancel the previous CTS outside the lock, but don't dispose it yet.
+        // The thread that owns it will dispose it in its finally block.
         oldCts?.Cancel();
-        oldCts?.Dispose();
 
         if (executeImmediately)
         {
@@ -167,9 +167,20 @@ internal sealed class DebounceDispatcher : IDisposable
             return;
         }
 
+        CancellationToken token;
         try
         {
-            await Task.Delay(_interval, localCts.Token).ConfigureAwait(false);
+            token = localCts.Token;
+        }
+        catch (ObjectDisposedException)
+        {
+            // CTS was disposed by another thread between capture and access
+            return;
+        }
+
+        try
+        {
+            await Task.Delay(_interval, token).ConfigureAwait(false);
 
             if (_leading)
             {
@@ -177,7 +188,7 @@ internal sealed class DebounceDispatcher : IDisposable
                 var acquired2 = false;
                 try
                 {
-                    await _lock.WaitAsync(localCts.Token).ConfigureAwait(false);
+                    await _lock.WaitAsync(token).ConfigureAwait(false);
                     acquired2 = true;
                     _lastExecutionTime = DateTime.UtcNow;
                 }
@@ -191,6 +202,10 @@ internal sealed class DebounceDispatcher : IDisposable
             }
 
             await action().ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Silently ignore if CTS was disposed (happens when a new debounce call comes in or dispatcher is disposed)
         }
         catch (TaskCanceledException)
         {
