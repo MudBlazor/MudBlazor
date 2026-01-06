@@ -51,6 +51,14 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Rel
 - Expected output: "Passed! - Failed: 0, Passed: 3734, Skipped: 10"
 - **ALWAYS use `--no-build`** to avoid rebuilding (saves time)
 
+**For MudBlazor.Addons:**
+```bash
+dotnet test src/MudBlazor.Addons.UnitTests/MudBlazor.Addons.UnitTests.csproj --no-build -c Release --nologo
+```
+- **Duration: ~10 seconds**
+- Expected output: "Passed! - Failed: 0, Passed: X, Skipped: 0"
+- **ALWAYS use `--no-build`** to avoid rebuilding (saves time)
+
 ### Formatting (REQUIRED)
 
 ```bash
@@ -128,6 +136,9 @@ src/
 │   ├── TScripts/                      # JavaScript interop files (checked by ESLint)
 │   ├── Enums/                         # Shared enumerations
 │   └── MudBlazor.csproj               # Core project file
+├── MudBlazor.Addons/                  # Official extension library
+│   ├── Components/                    # Additional Blazor components
+│   └── MudBlazor.Addons.csproj        # Addons project file
 ├── MudBlazor.Docs/                    # Documentation site components
 │   └── Pages/Components/              # Component documentation pages
 ├── MudBlazor.Docs.Server/             # Server-side docs project (for local dev)
@@ -137,6 +148,11 @@ src/
 │   └── Components/                    # Component test files
 ├── MudBlazor.UnitTests.Viewer/        # Visual test runner
 │   └── TestComponents/                # Test components used by bUnit tests
+├── MudBlazor.Addons.UnitTests/        # bUnit tests for Addons
+│   └── Components/                    # Addons component test files
+├── MudBlazor.Addons.UnitTests.Viewer/ # Visual test runner for Addons
+│   └── TestComponents/                # Test components for Addons
+├── MudBlazor.UnitTests.Shared/        # Shared test utilities
 ├── MudBlazor.UnitTests.Docs/          # Auto-generated tests from docs
 ├── MudBlazor.Analyzers/               # Roslyn analyzers
 └── MudBlazor.SourceGenerator/         # Source generators
@@ -365,6 +381,19 @@ Example: `DateRangePicker: Fix initializing DateRange with null values`
 2. Write bUnit test in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
 3. Build and run tests using the Build and Test sequence
 4. Debug visually if needed with the test viewer command
+
+**For MudBlazor.Addons Component Changes:**
+1. Locate files:
+   - Component code: `src/MudBlazor.Addons/Components/<ComponentName>/`
+   - Component tests: `src/MudBlazor.Addons.UnitTests/Components/<ComponentName>Tests.cs`
+   - Test components: `src/MudBlazor.Addons.UnitTests.Viewer/TestComponents/<ComponentName>/`
+2. Make your changes (follow same patterns as MudBlazor core)
+3. Build and test iteratively using the Build and Test sequence (including Addons tests)
+4. Before finalizing, run `dotnet format src/MudBlazor.slnx` (REQUIRED)
+5. Run viewer locally to verify (optional):
+   ```bash
+   dotnet run --project src/MudBlazor.Addons.UnitTests.Viewer/MudBlazor.Addons.UnitTests.Viewer.csproj
+   ```
 
 ## Code Style Highlights
 

@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2024
+﻿// Copyright (c) MudBlazor 2024
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -32,7 +32,7 @@ public partial class MudDummyComponent : MudComponentBase
     public RenderFragment? ChildContent { get; set; }
 
     protected string Classname =>
-        string.IsNullOrEmpty(Class) 
-            ? "mud-dummy-component" 
+        string.IsNullOrEmpty(Class)
+            ? "mud-dummy-component"
             : $"mud-dummy-component {Class}";
 }

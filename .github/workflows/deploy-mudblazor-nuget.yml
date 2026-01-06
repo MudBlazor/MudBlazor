@@ -53,18 +53,27 @@ jobs:
           8.0.x
           9.0.x
           10.0.x
-    - name: Pack nuget package
+    - name: Pack MudBlazor nuget package
       run: dotnet pack -c Release --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
       working-directory: ./src/MudBlazor
-    - name: Check package contains css
+    - name: Check MudBlazor package contains css
       shell: pwsh
       run: ./tools/CheckPackageContainsStaticAssets.ps1 ./src/MudBlazor/nupkgs MudBlazor.min.css
-    - name: Check package contains js
+    - name: Check MudBlazor package contains js
       shell: pwsh
       run: ./tools/CheckPackageContainsStaticAssets.ps1 ./src/MudBlazor/nupkgs MudBlazor.min.js
-    - name: Publish nuget package
+    - name: Publish MudBlazor nuget package
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
       working-directory: ./src/MudBlazor
-    - name: Push nuget generated package symbols
+    - name: Push MudBlazor nuget generated package symbols
       run: dotnet nuget push nupkgs/*.snupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
       working-directory: ./src/MudBlazor
+    - name: Pack MudBlazor.Addons nuget package
+      run: dotnet pack -c Release --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
+      working-directory: ./src/MudBlazor.Addons
+    - name: Publish MudBlazor.Addons nuget package
+      run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      working-directory: ./src/MudBlazor.Addons
+    - name: Push MudBlazor.Addons nuget generated package symbols
+      run: dotnet nuget push nupkgs/*.snupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      working-directory: ./src/MudBlazor.Addons
