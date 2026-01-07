@@ -9,21 +9,21 @@ namespace MudBlazor.Addons;
 #nullable enable
 
 /// <summary>
-/// A dummy component for testing the MudBlazor.Addons infrastructure.
+/// An example component for demonstrating the MudBlazor.Addons infrastructure.
 /// </summary>
-public partial class MudDummyComponent : MudComponentBase
+public partial class MudAddonExampleComponent : MudComponentBase
 {
     /// <summary>
     /// The title to display.
     /// </summary>
     [Parameter]
-    public string? Title { get; set; } = "Dummy Component";
+    public string? Title { get; set; } = "Addon Example";
 
     /// <summary>
     /// The content to display.
     /// </summary>
     [Parameter]
-    public string? Content { get; set; } = "This is a dummy component for testing.";
+    public string? Content { get; set; } = "This is an example addon component.";
 
     /// <summary>
     /// Child content to render inside the component.
@@ -33,6 +33,6 @@ public partial class MudDummyComponent : MudComponentBase
 
     protected string Classname =>
         string.IsNullOrEmpty(Class)
-            ? "mud-dummy-component"
-            : $"mud-dummy-component {Class}";
+            ? "mud-addon-example"
+            : $"mud-addon-example {Class}";
 }

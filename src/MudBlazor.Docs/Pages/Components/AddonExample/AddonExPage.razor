@@ -1,0 +1,32 @@
+@page "/components/addonexample"
+@namespace MudBlazor.Docs.Pages
+
+<DocsPage>
+    <DocsPageHeader Title="Addon Example" Component="@nameof(MudBlazor.Addons.MudAddonExampleComponent)" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>This is an example component from MudBlazor.Addons, demonstrating the addon infrastructure.</MudText>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Example">
+                <Description>
+                    A simple example showing the addon component with default values.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AddonExampleBasicExample)">
+                <AddonExampleBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Content">
+                <Description>You can customize the title and content using parameters.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AddonExampleCustomExample)">
+                <AddonExampleCustomExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

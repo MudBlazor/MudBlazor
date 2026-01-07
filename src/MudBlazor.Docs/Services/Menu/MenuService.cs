@@ -132,6 +132,11 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
                 .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
+
+            //Addons
+            .AddNavGroup("Addons", false, new DocsComponents()
+                .AddItem("Addon Example", typeof(MudBlazor.Addons.MudAddonExampleComponent))
+            )
             // this must be last!
             .GetComponentsSortedByName();
 
