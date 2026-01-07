@@ -85,6 +85,22 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public EventCallback<bool> HiddenChanged { get; set; }
 
     /// <summary>
+    /// Specifies the display order of this column within the DataGrid.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. When set, determines the column's relative position during rendering.
+    /// Lower values appear earlier. When not set, defaults to priority 0 (appears first).
+    /// </remarks>
+    [Parameter]
+    public int? Order { get; set; }
+
+    /// <summary>
+    /// Occurs when the <see cref="Order"/> property has changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int?> OrderChanged { get; set; }
+
+    /// <summary>
     /// Whether or not to show a button in the header to expand/collapse all columns.
     /// </summary>
     /// <remarks>Defaults to <c>false</c>.</remarks>

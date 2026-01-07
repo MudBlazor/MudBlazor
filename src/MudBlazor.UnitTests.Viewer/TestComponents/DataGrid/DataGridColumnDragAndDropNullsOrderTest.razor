@@ -1,0 +1,42 @@
+@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+<MudDataGrid @ref="_dataGrid" Items="@_items" DragDropColumnReordering="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" @bind-Order="@NameColumnOrder" />
+        <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="@AgeColumnOrder" />
+        <PropertyColumn Property="x => x.Position" Title="Position" @bind-Order="@PositionColumnOrder" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<Model> _dataGrid = null!;
+
+    public class Model
+    {
+        public string? Name { get; set; }
+        public int Age { get; set; }
+        public string? Position { get; set; }
+    }
+
+    private IEnumerable<Model> _items = new List<Model>();
+
+    [Parameter]
+    public int? NameColumnOrder { get; set; } = 1;
+
+    [Parameter]
+    public int? AgeColumnOrder { get; set; } = 2;
+
+    [Parameter]
+    public int? PositionColumnOrder { get; set; }
+
+    public MudDataGrid<Model> DataGrid => _dataGrid;
+
+    protected override void OnInitialized()
+    {
+        _items = new[]
+        {
+            new Model { Name = "Alice", Age = 30, Position = "Engineer" },
+            new Model { Name = "Bob", Age = 25, Position = "Designer" },
+        };
+    }
+}
