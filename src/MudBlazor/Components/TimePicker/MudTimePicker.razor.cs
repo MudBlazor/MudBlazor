@@ -34,11 +34,6 @@ namespace MudBlazor
         [DynamicDependency(nameof(SelectTimeFromStick))]
         public MudTimePicker()
         {
-            Converter = new TimeSpanConverter
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
             AdornmentIcon = Icons.Material.Filled.AccessTime;
             _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
         }
@@ -787,6 +782,16 @@ namespace MudBlazor
             }
 
             return AmPm ? TimeSpanConverter.Format12Hours : TimeSpanConverter.Format24Hours;
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<TimeSpan?, string?> GetDefaultConverter()
+        {
+            return new TimeSpanConverter
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         protected Task ChangeMinuteAsync(int minute)

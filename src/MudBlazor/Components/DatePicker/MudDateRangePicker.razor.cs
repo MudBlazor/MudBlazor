@@ -13,11 +13,9 @@ namespace MudBlazor
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
-        private DateTime? _firstDate = null, _secondDate, _minValidDate, _maxValidDate;
+        private DateTime? _firstDate, _secondDate, _minValidDate, _maxValidDate;
         private DateRange? _dateRange;
         private Range<string>? _rangeText;
-
-        protected override bool IsRange => true;
 
         /// <summary>
         /// Creates a new instance.
@@ -254,7 +252,7 @@ namespace MudBlazor
             var selectedDate = _firstDate.Value;
             var validDateRange = GetValidDateRange(selectedDate);
 
-            return base.IsDayDisabled(date) || MudDateRangePicker.IsDateOutOfRange(date, selectedDate, validDateRange);
+            return base.IsDayDisabled(date) || IsDateOutOfRange(date, selectedDate, validDateRange);
         }
 
         private DateRange GetValidDateRange(DateTime selectedDate)
@@ -408,7 +406,8 @@ namespace MudBlazor
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             }
-            else if (_firstDate?.Date < day)
+
+            if (_firstDate?.Date < day)
             {
                 return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
                     .AddClass("mud-range-selection")
@@ -478,6 +477,8 @@ namespace MudBlazor
             _firstDate = null;
             _secondDate = null;
         }
+
+        protected override Task ResetValueAsync() => ClearAsync();
 
         public override Task ClearAsync(bool close = true)
         {

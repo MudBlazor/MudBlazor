@@ -36,6 +36,7 @@ internal sealed class DebounceDispatcher : IDisposable
     private readonly bool _leading;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private CancellationTokenSource? _cancellationTokenSource;
+    private CancellationTokenSource? _previousCancellationTokenSource;
     private DateTime _lastExecutionTime = DateTime.MinValue;
     private bool _disposed;
 
@@ -136,7 +137,10 @@ internal sealed class DebounceDispatcher : IDisposable
                 if (_cancellationTokenSource is not null)
                 {
                     await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
-                    _cancellationTokenSource.Dispose();
+                    // Dispose the previously-previous CTS if it exists (safe to dispose now)
+                    _previousCancellationTokenSource?.Dispose();
+                    // Move current to previous (don't dispose yet - another thread might be using it)
+                    _previousCancellationTokenSource = _cancellationTokenSource;
                 }
 
                 // Create new cancellation token source linked with provided token
@@ -182,6 +186,10 @@ internal sealed class DebounceDispatcher : IDisposable
 
             // Execute the action
             await action().ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Silently ignore if CTS was disposed (happens when a new debounce call comes in or dispatcher is disposed)
         }
         catch (TaskCanceledException)
         {
@@ -310,6 +318,8 @@ internal sealed class DebounceDispatcher : IDisposable
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
+            _previousCancellationTokenSource?.Dispose();
+            _previousCancellationTokenSource = null;
         }
         finally
         {

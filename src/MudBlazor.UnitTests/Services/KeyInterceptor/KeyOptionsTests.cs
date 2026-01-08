@@ -27,5 +27,6 @@ public class KeyOptionsTests
         keyOptions1.PreventUp.Should().Be(keyOptions2.PreventUp);
         keyOptions1.StopDown.Should().Be(keyOptions2.StopDown);
         keyOptions1.StopUp.Should().Be(keyOptions2.StopUp);
+        keyOptions1.IgnoreDownRepeats.Should().Be(keyOptions2.IgnoreDownRepeats);
     }
 }

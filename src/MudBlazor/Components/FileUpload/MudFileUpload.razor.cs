@@ -11,7 +11,6 @@ using MudBlazor.Interfaces;
 using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -36,11 +35,6 @@ namespace MudBlazor
         /// </summary>
         public MudFileUpload()
         {
-            Converter = new DefaultConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
             using var registerScope = CreateRegisterScope();
             _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
                 .WithParameter(() => Files)
@@ -312,6 +306,16 @@ namespace MudBlazor
             await _filesState.SetValueAsync(value);
             await BeginValidateAsync();
             FieldChanged(value);
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<T?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         protected internal override T? ReadValue => _filesState.Value;
