@@ -5346,7 +5346,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1", ShouldBeDisabled = true } };
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.MultiSelection, true)
                 .Add(p => p.Columns, SelectColumnWithFunc)
@@ -5363,7 +5363,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1", ShouldBeDisabled = false } };
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.Columns, SelectColumnWithFunc)
             );
@@ -5378,7 +5378,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1" } };
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.Columns, SelectColumnNoFunc)
             );
@@ -5393,7 +5393,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1" } };
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.MultiSelection, false) // Explicitly set MultiSelection to false
                 .Add(p => p.Columns, SelectColumnNoFunc)
@@ -5409,7 +5409,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var items = new List<TestDataItem> { new TestDataItem { Id = 1, Name = "Item 1" } };
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.MultiSelection, true) // Explicitly set MultiSelection to true
                 .Add(p => p.Columns, SelectColumnNoFunc)
@@ -5430,7 +5430,7 @@ namespace MudBlazor.UnitTests.Components
             };
             Func<TestDataItem, bool> disabledFunc = item => item.ShouldBeDisabled;
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.SelectOnRowClick, true)
                 .Add(p => p.MultiSelection, true) // Enable multi-selection to check SelectedItems
@@ -5472,7 +5472,7 @@ namespace MudBlazor.UnitTests.Components
             };
             Func<TestDataItem, bool> disabledFunc = item => item.ShouldBeDisabled;
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.MultiSelection, true)
                 .Add(p => p.Columns, SelectColumnWithFunc)
@@ -5496,7 +5496,7 @@ namespace MudBlazor.UnitTests.Components
                 new TestDataItem { Id = 2, Name = "Item 2" }
             };
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.MultiSelection, true)
                 .Add(p => p.Columns, SelectColumnNoFunc)
@@ -5519,7 +5519,7 @@ namespace MudBlazor.UnitTests.Components
             };
             Func<TestDataItem, bool> disabledFunc = item => false; // All items are effectively enabled
 
-            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.MultiSelection, true)
                 .Add(p => p.Columns, SelectColumnWithFunc)

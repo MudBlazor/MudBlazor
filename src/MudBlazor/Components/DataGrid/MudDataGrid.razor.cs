@@ -1428,7 +1428,7 @@ namespace MudBlazor
         /// <returns><see langword="true"/> when the cell can be displayed</returns>
         private static bool IsFooterCellDisplayable(Column<T> column)
         {
-            return !column.HiddenState.Value && (column.FooterTemplate != null || column.AggregateDefinition != null);
+            return !column.HiddenState.Value && (column.GetFooterTemplate() != null || column.AggregateDefinition != null);
         }
 
         protected IEnumerable<T> GetItemsOfPage(int page, int pageSize)
@@ -2259,7 +2259,7 @@ namespace MudBlazor
                 DataGrid = this,
                 Selector = column.groupBy,
                 Expanded = expanded,
-                GroupTemplate = column.GroupTemplate,
+                GroupTemplate = column.GetGroupTemplate(),
                 Indentation = column.GroupIndented,
                 Title = column.Title,
                 Grouping = new EmptyGrouping<object?, T>(null), // Ensure Grouping is not null

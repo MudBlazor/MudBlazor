@@ -349,7 +349,7 @@
                  {
                      if (!column.HiddenState.Value)
                      {
-                         if (column.AggregateDefinition is not null || column.FooterTemplate is not null || HasFooter)
+                         if (column.AggregateDefinition is not null || column.GetFooterTemplate() is not null || HasFooter)
                          {
                              <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
                          }
@@ -395,9 +395,10 @@
                  }
                  else
                  {
-                     if (column.CellTemplate is not null)
+                     var cellTemplate = column.GetCellTemplate();
+                     if (cellTemplate is not null)
                      {
-                         @column.CellTemplate(cell._cellContext)
+                         @cellTemplate(cell._cellContext)
                      }
                      else if (column.Culture is not null && column.isNumber)
                      {

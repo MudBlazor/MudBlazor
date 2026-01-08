@@ -4,7 +4,7 @@
 
 @code {
 #nullable enable
-    public RenderFragment<HeaderContext<T>>? GetHeaderTemplate() => context =>
+    public RenderFragment<HeaderContext<T>>? GetSelectHeaderTemplate() => context =>
     {
         if (ShowInHeader && context.IsMultiSelection)
         {
@@ -17,7 +17,7 @@
         return null;
     };
 
-    public RenderFragment<CellContext<T>> GetCellTemplate() => context =>
+    public RenderFragment<CellContext<T>> GetSelectCellTemplate() => context =>
         @<MudCheckBox T="bool"
                       Size="@Size"
                       Value="@context.Selected"
@@ -25,7 +25,7 @@
                       Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)" />;
 
 #nullable enable
-    private RenderFragment<FooterContext<T>>? GetFooterTemplate() => context =>
+    private RenderFragment<FooterContext<T>>? GetSelectFooterTemplate() => context =>
     {
         if (ShowInFooter && context.IsMultiSelection)
         {
