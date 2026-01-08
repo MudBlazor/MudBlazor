@@ -1167,6 +1167,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task SelectTest_SelectionOnEnter_ShouldOnlyChangeOnEnter()
+        {
+            var comp = Context.Render<SelectTest3>();
+            // print the generated html
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true, Type = "keydown" }));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // ArrowDown should move the highlight but NOT change the value
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown" })); // Move to "1"
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown" })); // Move to "2"
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown" })); // Move to "1"
+
+            // Value is still null/default even though we moved focus
+            await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().BeNull());
+
+            // Confirm selection with Enter
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown" }));
+
+            // Now the value should be "1" and popover should close
+            await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
+
+        [Test]
         public async Task SelectTest_KeyboardNavigation_MultiSelect()
         {
             var comp = Context.Render<MultiSelectTest3>();

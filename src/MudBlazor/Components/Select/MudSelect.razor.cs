@@ -115,9 +115,15 @@ namespace MudBlazor
                 item = _items[index];
                 if (!MultiSelection)
                 {
-                    _selectedValues.Clear();
-                    _selectedValues.Add(item.Value);
-                    await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                    // If SelectionOnEnter is false (default), it behaves as it always has.
+                    // If true, it skips this block and only executes HighlightItem(item) below.
+                    if (!SelectionOnEnter)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(item.Value);
+                        await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                    }
+
                     HighlightItem(item);
                     break;
                 }
@@ -725,6 +731,14 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        /// <summary>
+        /// If true, the selected value will not be updated when navigating with arrow keys. 
+        /// The user must press Enter or click to confirm the selection.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool SelectionOnEnter { get; set; }
 
         internal bool _open;
 
