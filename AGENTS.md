@@ -19,45 +19,98 @@ The project follows Material Design guidelines and provides a complete set of UI
 
 ## Core Commands and Timings
 
-### Build and Test (CRITICAL TIMINGS)
+### Build and Test (CRITICAL: Use Targeted Commands)
 
-**ALWAYS follow this exact sequence:**
+**IMPORTANT:** Only build, clean, and format the specific projects/files affected by your changes. Running commands on the entire solution is too slow.
 
-1. **Clean (when needed):**
+#### Determining Target Projects
+
+Based on what you're changing, target these specific projects:
+
+- **Component changes** (`.razor`, `.razor.cs` in `MudBlazor/Components/`):
+  - Build: `src/MudBlazor/MudBlazor.csproj`
+  - Test: `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`
+  
+- **Documentation changes** (files in `MudBlazor.Docs/`):
+  - Build: `src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj` and `src/MudBlazor.Docs/MudBlazor.Docs.csproj`
+  - Test: `src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj` (if docs examples changed)
+
+- **Analyzer/Source Generator changes**:
+  - Build: `src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj` or `src/MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj`
+
+- **Test-only changes** (files in `MudBlazor.UnitTests/`):
+  - Build: `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`
+  - Test: `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`
+
+#### 1. Clean (when needed)
+
+**Target specific project:**
 ```bash
-dotnet clean src/MudBlazor.slnx
+# For component changes
+dotnet clean src/MudBlazor/MudBlazor.csproj
+
+# For test changes
+dotnet clean src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
 ```
-- Runs in ~2-3 seconds
+- Runs in ~1 second per project
 - Use when: Build failures occur or unexplained issues
 - No warnings or errors expected
 
-2. **Build:**
-```bash
-dotnet build src/MudBlazor.slnx -c Release --nologo
-```
-- **Duration: ~2-2.5 minutes** (this is NORMAL - do NOT timeout before 150 seconds)
-- Builds 15+ projects including docs and source generators
-- Expected output: "Build succeeded" with 0 warnings, 0 errors
-- JavaScript files are compiled: wwwroot/MudBlazor.min.js
-- SCSS is compiled to CSS automatically
-- **IMPORTANT:** The build generates files during compilation - this is expected and not an error
+#### 2. Build
 
-3. **Test:**
+**Target specific project:**
 ```bash
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
+# For component changes
+dotnet build src/MudBlazor/MudBlazor.csproj -c Release --nologo
+
+# For documentation changes
+dotnet build src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj -c Release --nologo
+
+# For test changes
+dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --nologo
 ```
-- **Duration: ~1.5 minutes (90 seconds)** - do NOT timeout before 120 seconds
-- Runs 3,734+ tests (some skipped performance tests)
-- Expected output: "Passed! - Failed: 0, Passed: 3734, Skipped: 10"
-- **ALWAYS use `--no-build`** to avoid rebuilding (saves time)
+- **Duration: ~20-40 seconds per project** (much faster than solution-wide build)
+- Expected output: "Build succeeded" with 0 warnings, 0 errors
+- JavaScript files are compiled when building `MudBlazor.csproj`
+- SCSS is compiled to CSS automatically when building `MudBlazor.csproj`
+
+#### 3. Test
+
+**Target specific test project or test filter:**
+```bash
+# Run all tests in the unit test project
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
+
+# Run tests for specific component (much faster)
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo
+
+# Run tests in specific test file
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests" --no-build -c Release --nologo
+```
+- **Duration: ~5-30 seconds for filtered tests** (vs. ~1.5 minutes for all tests)
+- **ALWAYS use `--no-build`** to avoid rebuilding
+- Use test filters to run only relevant tests during development
 
 ### Formatting (REQUIRED)
 
+**Target specific files or folders:**
 ```bash
-dotnet format src/MudBlazor.slnx
+# Format only changed files in a specific directory
+dotnet format src/MudBlazor/MudBlazor.csproj --include Components/Button/
+
+# Format specific changed files
+dotnet format src/MudBlazor/MudBlazor.csproj --include Components/Button/MudButton.razor.cs
+
+# Format all files in a project (if many files changed)
+dotnet format src/MudBlazor/MudBlazor.csproj
+
+# Format test files
+dotnet format src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --include Components/ButtonTests.cs
 ```
 - MUST run before finalizing changes
 - CI will fail if code is not properly formatted
+- **Use `--include` parameter to format only the files you changed**
+- Runs in ~1-5 seconds for targeted files (vs. ~30+ seconds for entire solution)
 
 ### Running Docs Locally
 
@@ -80,7 +133,7 @@ dotnet pack src/MudBlazor/MudBlazor.csproj -c Release -o ./LocalNuGet -p:Version
 ### Troubleshooting
 
 **If build fails:**
-1. Run `dotnet clean src/MudBlazor.slnx` first
+1. Run `dotnet clean <project.csproj>` on the specific project first (e.g., `src/MudBlazor/MudBlazor.csproj`)
 2. Check that .NET 10.0 SDK is installed: `dotnet --version`
 3. Ensure you're in the repository root directory
 4. Check for file permission issues
@@ -88,12 +141,14 @@ dotnet pack src/MudBlazor/MudBlazor.csproj -c Release -o ./LocalNuGet -p:Version
 **If tests fail:**
 1. Ensure build completed successfully first
 2. Use `--no-build` flag to avoid rebuild
-3. Check that you haven't broken existing tests with your changes
-4. Review test output for specific failure reasons
+3. Use `--filter` to run only the failing tests for faster iteration
+4. Check that you haven't broken existing tests with your changes
+5. Review test output for specific failure reasons
 
 **If CI formatting check fails:**
-1. Run `dotnet format src/MudBlazor.slnx` to auto-fix formatting issues
+1. Run `dotnet format <project.csproj> --include <path/to/changed/files>` to auto-fix formatting issues
 2. Common issues: blank lines after attributes, missing UTF-8 BOM, incorrect indentation
+3. Example: `dotnet format src/MudBlazor/MudBlazor.csproj --include Components/Button/`
 
 ## Project Structure
 
@@ -155,11 +210,18 @@ src/
 ## Testing Instructions
 
 ### Running Tests
-- Build first is required; use the Build and Test sequence above.
+- Build the test project first: `dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --nologo`
 - Always use `--no-build` for tests after a successful build.
-- Run a specific test:
+- **Always use `--filter` to run only relevant tests** for faster iteration:
 ```bash
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "TestName" --no-build -c Release
+# Run tests for a specific component
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo
+
+# Run a specific test method
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests.MudButton_ClickAsync" --no-build -c Release --nologo
+
+# Run all tests in a test class
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests" --no-build -c Release --nologo
 ```
 
 ### Writing bUnit Tests
@@ -334,13 +396,16 @@ Example: `DateRangePicker: Fix initializing DateRange with null values`
 ## Workflow Checkpoints (REQUIRED)
 
 ### Before Starting Work
-- Always check initial state by running the Build and Test sequence (skip Clean unless needed).
+- Identify which project(s) your changes will affect
+- Build only the specific project(s) you'll be working on
+- Run tests with `--filter` for the component you'll be changing
 
 ### After Changes
-1. Clean if needed (use the Clean command above)
-2. Format code (REQUIRED - MUST run before finalizing changes)
-3. Run the Build and Test sequence
-4. (Optional) Run docs locally with the Docs Server command above
+1. Clean the specific project if needed (e.g., `dotnet clean src/MudBlazor/MudBlazor.csproj`)
+2. Format only the files you changed (REQUIRED - use `--include` parameter)
+3. Build only the affected project(s)
+4. Test only the affected components (use `--filter`)
+5. (Optional) Run docs locally with the Docs Server command above
 
 ## Development Workflow by Task Type
 
@@ -351,20 +416,49 @@ Example: `DateRangePicker: Fix initializing DateRange with null values`
    - Component tests: `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
    - Test components: `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`
 2. Make your changes (follow ParameterState pattern)
-3. Build and test iteratively using the Build and Test sequence
-4. Before finalizing, run `dotnet format src/MudBlazor.slnx` (REQUIRED)
-5. Run docs locally to verify (optional)
+3. Build only the affected project:
+   ```bash
+   dotnet build src/MudBlazor/MudBlazor.csproj -c Release --nologo
+   ```
+4. Test only the affected component:
+   ```bash
+   dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~<ComponentName>" --no-build -c Release --nologo
+   ```
+5. Before finalizing, format only your changed files:
+   ```bash
+   dotnet format src/MudBlazor/MudBlazor.csproj --include Components/<ComponentName>/
+   dotnet format src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --include Components/<ComponentName>Tests.cs
+   ```
+6. Run docs locally to verify (optional)
 
 **For Documentation Changes:**
 1. Edit in `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`
-2. Run the Build command to generate files (MudBlazor.Docs.Compiler)
-3. Preview locally with docs server
+2. Build the docs compiler to generate files:
+   ```bash
+   dotnet build src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj -c Release --nologo
+   ```
+3. Format your changed documentation files:
+   ```bash
+   dotnet format src/MudBlazor.Docs/MudBlazor.Docs.csproj --include Pages/Components/<ComponentName>.razor
+   ```
+4. Preview locally with docs server
 
 **For Test Changes:**
 1. Create test component in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`
 2. Write bUnit test in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
-3. Build and run tests using the Build and Test sequence
-4. Debug visually if needed with the test viewer command
+3. Build only the test project:
+   ```bash
+   dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --nologo
+   ```
+4. Run only the new/modified tests:
+   ```bash
+   dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~<ComponentName>Tests" --no-build -c Release --nologo
+   ```
+5. Format your test files:
+   ```bash
+   dotnet format src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --include Components/<ComponentName>Tests.cs
+   ```
+6. Debug visually if needed with the test viewer command
 
 ## Code Style Highlights
 
@@ -410,10 +504,10 @@ Example: `DateRangePicker: Fix initializing DateRange with null values`
 2. **Stale HTML element references in tests** - Always re-query with `Find()` instead of saving elements
 3. **Direct parameter assignment on component refs** - Use declarative binding (BL0005 warning)
 4. **Missing `InvokeAsync` in tests** - Required for parameter changes in bUnit tests
-5. **Breaking existing tests** - Run full test suite before finalizing changes
-6. **Build timeouts** - Set timeout to at least 180 seconds for builds, 120 seconds for tests
+5. **Breaking existing tests** - Run relevant tests with `--filter` during development, full suite before finalizing
+6. **Running solution-wide commands** - Always target specific projects/files to save time
 7. **Missing `--no-build` flag** - Always use when running tests after a successful build
-8. **Forgetting to run `dotnet format`** - MUST run `dotnet format src/MudBlazor.slnx` before finalizing changes
+8. **Forgetting to run `dotnet format`** - MUST format your changed files before finalizing (use `--include` to target specific files)
 
 ## Continuous Integration
 
