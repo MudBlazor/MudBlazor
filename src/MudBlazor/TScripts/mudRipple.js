@@ -10,7 +10,11 @@
     const FADE_OUT_DURATION = 400;
 
     function getRippleTarget(event) {
-        return event.target?.closest?.('.mud-ripple') ?? null;
+        if (!event.target || !event.target.closest) {
+            return null;
+        }
+
+        return event.target.closest('.mud-ripple');
     }
 
     /**
@@ -89,7 +93,9 @@
         const startTime = Date.now();
 
         // Store ripple info on the element for cleanup
-        target._mudRipples ??= new Map();
+        if (!target._mudRipples) {
+            target._mudRipples = new Map();
+        }
         target._mudRipples.set(event.pointerId, { ripple: ripple, startTime: startTime });
     }
 
