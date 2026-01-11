@@ -1795,7 +1795,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
         {
-            // The default PopoverOptions should have OverflowBehavior.FlipOnOpen and ModalOverlay = false
+            // The default PopoverOptions should have OverflowBehavior.FlipAlways and ModalOverlay = false
             var select = Context.Render<MudSelect<string>>();
 
             // Verify that the component is using the global defaults
