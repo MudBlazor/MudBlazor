@@ -3,14 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 (function () {
-    // Counter for unique ripple IDs
-    let rippleIdCounter = 0;
-
     // Minimum duration (ms) before ripple can start fading out
     const MIN_RIPPLE_DURATION = 500;
 
     // Animation duration for the fade out (ms) - should match CSS transition
     const FADE_OUT_DURATION = 400;
+
+    function getRippleTarget(event) {
+        return event.target?.closest?.('.mud-ripple') ?? null;
+    }
 
     /**
      * Creates a ripple element at the pointer position
@@ -21,7 +22,6 @@
     function createRipple(event, target) {
         const rect = target.getBoundingClientRect();
         const ripple = document.createElement('span');
-        const rippleId = ++rippleIdCounter;
 
         // Calculate ripple size - should be large enough to cover the entire element
         const size = Math.max(rect.width, rect.height) * 2;
@@ -31,7 +31,6 @@
         const y = event.clientY - rect.top;
 
         ripple.className = 'mud-ripple-effect';
-        ripple.dataset.rippleId = rippleId;
         ripple.style.width = ripple.style.height = `${size}px`;
         ripple.style.left = `${x - size / 2}px`;
         ripple.style.top = `${y - size / 2}px`;
@@ -39,7 +38,7 @@
         target.appendChild(ripple);
 
         // Trigger reflow to ensure the initial state is applied before animation
-        ripple.offsetHeight;
+        ripple.getBoundingClientRect();
 
         // Start the expansion animation
         ripple.classList.add('mud-ripple-effect-expanding');
@@ -66,9 +65,7 @@
 
             // Remove the element after fade out animation completes
             setTimeout(function () {
-                if (ripple.parentNode) {
-                    ripple.parentNode.removeChild(ripple);
-                }
+                ripple.remove();
             }, FADE_OUT_DURATION);
         }, remaining);
     }
@@ -83,7 +80,7 @@
             return;
         }
 
-        const target = event.target && event.target.closest ? event.target.closest('.mud-ripple') : null;
+        const target = getRippleTarget(event);
         if (!target) {
             return;
         }
@@ -92,9 +89,7 @@
         const startTime = Date.now();
 
         // Store ripple info on the element for cleanup
-        if (!target._mudRipples) {
-            target._mudRipples = new Map();
-        }
+        target._mudRipples ??= new Map();
         target._mudRipples.set(event.pointerId, { ripple: ripple, startTime: startTime });
     }
 
@@ -103,7 +98,7 @@
      * @param {PointerEvent} event
      */
     function handlePointerUp(event) {
-        const target = event.target && event.target.closest ? event.target.closest('.mud-ripple') : null;
+        const target = getRippleTarget(event);
         if (!target || !target._mudRipples) {
             return;
         }
@@ -121,7 +116,7 @@
      * @param {PointerEvent} event
      */
     function handlePointerLeave(event) {
-        const target = event.target && event.target.closest ? event.target.closest('.mud-ripple') : null;
+        const target = getRippleTarget(event);
         if (!target || !target._mudRipples) {
             return;
         }

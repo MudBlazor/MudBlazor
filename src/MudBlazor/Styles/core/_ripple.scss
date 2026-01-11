@@ -27,15 +27,6 @@
   transition: opacity 0.4s linear;
 }
 
-// Checkbox, switch, and radio ripples need larger size
-.mud-ripple-checkbox,
-.mud-ripple-switch,
-.mud-ripple-radio {
-  .mud-ripple-effect {
-    // These use a circular ripple that extends beyond the visible area
-  }
-}
-
 .mud-ripple-switch {
   position: absolute;
 }
