@@ -52,7 +52,6 @@ dotnet clean src/MudBlazor/MudBlazor.csproj
 # For test changes
 dotnet clean src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
 ```
-- Runs in ~1 second per project
 - Use when: Build failures occur or unexplained issues
 - No warnings or errors expected
 
@@ -69,7 +68,6 @@ dotnet build src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj -c Relea
 # For test changes
 dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --nologo
 ```
-- **Duration: ~20-40 seconds per project** (much faster than solution-wide build)
 - Expected output: "Build succeeded" with 0 warnings, 0 errors
 - JavaScript files are compiled when building `MudBlazor.csproj`
 - SCSS is compiled to CSS automatically when building `MudBlazor.csproj`
@@ -78,18 +76,14 @@ dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --nol
 
 **Target specific test project or test filter:**
 ```bash
-# Run all tests in the unit test project
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
-
-# Run tests for specific component (much faster)
+# Run tests for specific component
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo
 
 # Run tests in specific test file
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests" --no-build -c Release --nologo
 ```
-- **Duration: ~5-30 seconds for filtered tests** (vs. ~1.5 minutes for all tests)
 - **ALWAYS use `--no-build`** to avoid rebuilding
-- Use test filters to run only relevant tests during development
+- Use test filters to run only relevant tests
 
 ### Formatting (REQUIRED)
 
@@ -110,7 +104,6 @@ dotnet format src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --include Compo
 - MUST run before finalizing changes
 - CI will fail if code is not properly formatted
 - **Use `--include` parameter to format only the files you changed**
-- Runs in ~1-5 seconds for targeted files (vs. ~30+ seconds for entire solution)
 
 ### Running Docs Locally
 
@@ -504,7 +497,7 @@ Example: `DateRangePicker: Fix initializing DateRange with null values`
 2. **Stale HTML element references in tests** - Always re-query with `Find()` instead of saving elements
 3. **Direct parameter assignment on component refs** - Use declarative binding (BL0005 warning)
 4. **Missing `InvokeAsync` in tests** - Required for parameter changes in bUnit tests
-5. **Breaking existing tests** - Run relevant tests with `--filter` during development, full suite before finalizing
+5. **Breaking existing tests** - Run relevant tests with `--filter` during development
 6. **Running solution-wide commands** - Always target specific projects/files to save time
 7. **Missing `--no-build` flag** - Always use when running tests after a successful build
 8. **Forgetting to run `dotnet format`** - MUST format your changed files before finalizing (use `--include` to target specific files)
