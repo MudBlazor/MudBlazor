@@ -6,6 +6,10 @@
     // Counter for unique ripple IDs
     let rippleIdCounter = 0;
 
+    // Active ripples keyed by pointerId.
+    // This ensures pointerup can end the ripple even if released outside the original element.
+    const activeRipples = new Map();
+
     // Minimum duration (ms) before ripple can start fading out
     const MIN_RIPPLE_DURATION = 500;
 
@@ -39,7 +43,7 @@
         target.appendChild(ripple);
 
         // Trigger reflow to ensure the initial state is applied before animation
-        ripple.offsetHeight;
+        ripple.getBoundingClientRect();
 
         // Start the expansion animation
         ripple.classList.add('mud-ripple-effect-expanding');
@@ -66,9 +70,7 @@
 
             // Remove the element after fade out animation completes
             setTimeout(function () {
-                if (ripple.parentNode) {
-                    ripple.parentNode.removeChild(ripple);
-                }
+                ripple.remove();
             }, FADE_OUT_DURATION);
         }, remaining);
     }
@@ -83,7 +85,12 @@
             return;
         }
 
-        const target = event.target.closest('.mud-ripple');
+        const rawTarget = event.target;
+        if (!rawTarget || typeof rawTarget.closest !== 'function') {
+            return;
+        }
+
+        const target = rawTarget.closest('.mud-ripple');
         if (!target) {
             return;
         }
@@ -91,11 +98,7 @@
         const ripple = createRipple(event, target);
         const startTime = Date.now();
 
-        // Store ripple info on the element for cleanup
-        if (!target._mudRipples) {
-            target._mudRipples = new Map();
-        }
-        target._mudRipples.set(event.pointerId, { ripple: ripple, startTime: startTime });
+        activeRipples.set(event.pointerId, { target: target, ripple: ripple, startTime: startTime });
     }
 
     /**
@@ -103,39 +106,17 @@
      * @param {PointerEvent} event
      */
     function handlePointerUp(event) {
-        const target = event.target.closest('.mud-ripple');
-        if (!target || !target._mudRipples) {
+        const rippleInfo = activeRipples.get(event.pointerId);
+        if (!rippleInfo) {
             return;
         }
 
-        const rippleInfo = target._mudRipples.get(event.pointerId);
-        if (rippleInfo) {
-            removeRipple(rippleInfo.ripple, rippleInfo.startTime);
-            target._mudRipples.delete(event.pointerId);
-        }
-    }
-
-    /**
-     * Handles pointer leave - removes all ripples for that element
-     * This ensures ripples are cleaned up when pointer leaves the element
-     * @param {PointerEvent} event
-     */
-    function handlePointerLeave(event) {
-        const target = event.target.closest('.mud-ripple');
-        if (!target || !target._mudRipples) {
-            return;
-        }
-
-        // Remove all active ripples for this element
-        target._mudRipples.forEach(function (rippleInfo) {
-            removeRipple(rippleInfo.ripple, rippleInfo.startTime);
-        });
-        target._mudRipples.clear();
+        removeRipple(rippleInfo.ripple, rippleInfo.startTime);
+        activeRipples.delete(event.pointerId);
     }
 
     // Register event listeners
     document.addEventListener('pointerdown', handlePointerDown, { passive: true });
     document.addEventListener('pointerup', handlePointerUp, { passive: true });
     document.addEventListener('pointercancel', handlePointerUp, { passive: true });
-    document.addEventListener('pointerleave', handlePointerLeave, { passive: true, capture: true });
 })();
