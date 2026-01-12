@@ -18,7 +18,7 @@
                            AriaLabel="@AdornmentAriaLabel" />
     }
 
-    @if (AutoGrow || Lines > 1)
+    @if (ShouldUseTextArea)
     {
         <textarea class="@InputClassname"
                   @ref="ElementReference"

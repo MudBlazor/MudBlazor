@@ -69,7 +69,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Typically set to common masks such as <see cref="PatternMask"/>, <see cref="MultiMask"/>, <see cref="RegexMask"/>, and <see cref="BlockMask"/>.
-        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.AutoGrow"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
+        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="Sizing"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
@@ -83,14 +83,27 @@ namespace MudBlazor
         /// Stretches this input vertically to accommodate the <see cref="MudBaseInput{T}.Text"/> value.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>false</c>. Use <see cref="Sizing"/> property with <see cref="InputSizing.Auto"/> instead.
         /// </remarks>
+        [Obsolete($"Use {nameof(Sizing)} with {nameof(InputSizing)}.{nameof(InputSizing.Auto)} instead.", false)]
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public bool AutoGrow { get; set; }
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="AutoGrow"/> is <c>true</c>.
+        /// Defines the resizing behavior of this input.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="InputSizing.Fixed"/>.
+        /// When <see cref="InputSizing.Auto"/>, the height grows and shrinks dynamically to fit the text content.
+        /// When <see cref="InputSizing.Fill"/>, the height fills the available space of the parent container.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public InputSizing Sizing { get; set; } = InputSizing.Fixed;
+
+        /// <summary>
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/> or <see cref="InputSizing.Fill"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
@@ -98,6 +111,20 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public int MaxLines { get; set; }
+
+        /// <summary>
+        /// Gets the effective sizing mode, considering both <see cref="Sizing"/> and the obsolete <see cref="AutoGrow"/> property.
+        /// </summary>
+        private InputSizing GetEffectiveSizing()
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            if (AutoGrow && Sizing == InputSizing.Fixed)
+            {
+                return InputSizing.Auto;
+            }
+#pragma warning restore CS0618 // Type or member is obsolete
+            return Sizing;
+        }
 
         [MemberNotNullWhen(false, nameof(InputReference))]
         [MemberNotNullWhen(true, nameof(_mask), nameof(Mask), nameof(_maskReference))]
