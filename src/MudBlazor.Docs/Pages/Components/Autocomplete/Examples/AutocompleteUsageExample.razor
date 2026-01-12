@@ -1,39 +1,62 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Threading
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1"
-                         ResetValueOnEmptyText="@resetValueOnEmptyText"
-                         CoerceText="@coerceText" CoerceValue="@coerceValue" SelectValueOnTab="@selectedOnTab" />
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="7">
+        <MudPaper Class="pa-4 mud-width-full" Elevation="3">
+            <MudStack Spacing="2">
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h6">Quick search</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">Two common patterns: show a full list or wait for input.</MudText>
+                </MudStack>
+                <MudAutocomplete T="string" Label="Show results on focus" @bind-Value="_value1" SearchFunc="@SearchAll"
+                                 ResetValueOnEmptyText="_resetValueOnEmptyText"
+                                 CoerceText="_coerceText" CoerceValue="_coerceValue" SelectValueOnTab="_selectValueOnTab"
+                                 Clearable="_clearable" OpenOnFocus="_openOnFocus" MinCharacters="_minCharacters"
+                                 DebounceInterval="0" Adornment="Adornment.Start"
+                                 AdornmentIcon="@Icons.Material.Filled.Place" />
+                <MudAutocomplete T="string" Label="Search after typing" @bind-Value="_value2" SearchFunc="@SearchOnType"
+                                 ResetValueOnEmptyText="_resetValueOnEmptyText"
+                                 CoerceText="_coerceText" CoerceValue="_coerceValue" SelectValueOnTab="_selectValueOnTab"
+                                 Clearable="_clearable" OpenOnFocus="_openOnFocus" MinCharacters="_minCharacters"
+                                 DebounceInterval="0" Adornment="Adornment.Start"
+                                 AdornmentIcon="@Icons.Material.Filled.Search" />
+                <MudStack Row Wrap="Wrap.Wrap" Spacing="1" AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.caption" Class="mr-2">Selected</MudText>
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">@(_value1 ?? "None")</MudChip>
+                    <MudChip T="string" Color="Color.Secondary" Variant="Variant.Outlined">@(_value2 ?? "None")</MudChip>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search2"
-                         ResetValueOnEmptyText="@resetValueOnEmptyText"
-                         CoerceText="@coerceText" CoerceValue="@coerceValue" SelectValueOnTab="@selectedOnTab"
-                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
-    </MudItem>
-    <MudItem xs="12" md="12">
-        <MudText Class="mb-n3" Typo="Typo.body2">
-            <MudChip T="string">@(value1 ?? "Not selected")</MudChip><MudChip T="string">@(value2 ?? "Not selected")</MudChip>
-        </MudText>
-    </MudItem>
-    <MudItem xs="12" md="12" class="flex-column">
-        <MudSwitch @bind-Value="resetValueOnEmptyText" Color="Color.Primary">Reset Value on empty Text</MudSwitch>
-        <MudSwitch @bind-Value="coerceText" Color="Color.Secondary">Coerce Text to Value</MudSwitch>
-        <MudSwitch @bind-Value="coerceValue" Color="Color.Tertiary">Coerce Value to Text (if not found)</MudSwitch>
-        <MudSwitch @bind-Value="selectedOnTab" Color="Color.Tertiary">Select Value On Tab Key Press</MudSwitch>
-
+    <MudItem xs="12" md="5">
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">Behavior</MudText>
+                <MudText Typo="Typo.caption">Min characters</MudText>
+                <MudSlider T="int" @bind-Value="_minCharacters" Min="0" Max="4" Step="1" />
+                <MudSwitch @bind-Value="_openOnFocus" Color="Color.Primary">Open on focus</MudSwitch>
+                <MudSwitch @bind-Value="_clearable" Color="Color.Primary">Clearable</MudSwitch>
+                <MudSwitch @bind-Value="_resetValueOnEmptyText" Color="Color.Primary">Reset value on empty</MudSwitch>
+                <MudSwitch @bind-Value="_coerceText" Color="Color.Secondary">Coerce text to value</MudSwitch>
+                <MudSwitch @bind-Value="_coerceValue" Color="Color.Tertiary">Coerce value to text</MudSwitch>
+                <MudSwitch @bind-Value="_selectValueOnTab" Color="Color.Tertiary">Select value on Tab</MudSwitch>
+            </MudStack>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
-    private bool resetValueOnEmptyText;
-    private bool coerceText;
-    private bool coerceValue;
-    private bool selectedOnTab;
-    private string value1, value2;
-    private string[] states =
+    private bool _resetValueOnEmptyText = true;
+    private bool _coerceText = true;
+    private bool _coerceValue;
+    private bool _selectValueOnTab;
+    private bool _clearable = true;
+    private bool _openOnFocus = true;
+    private int _minCharacters;
+    private string _value1;
+    private string _value2;
+    private string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -51,25 +74,25 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+    private Task<IEnumerable<string>> SearchAll(string value, CancellationToken token)
     {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
-
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        {
+            return Task.FromResult<IEnumerable<string>>(_states);
+        }
+
+        return Task.FromResult(_states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
     }
 
-    private async Task<IEnumerable<string>> Search2(string value, CancellationToken token)
+    private Task<IEnumerable<string>> SearchOnType(string value, CancellationToken token)
     {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
-
         // if text is null or empty, don't return values (drop-down will not open)
         if (string.IsNullOrEmpty(value))
-            return new string[0];
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        {
+            return Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
+        }
+
+        return Task.FromResult(_states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
     }
 }

@@ -4,38 +4,68 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1" 
-                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" />
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="4">
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">Objects with ToString</MudText>
+                <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1"
+                                 SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")"
+                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Science" />
+            </MudStack>
+        </MudPaper>
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2" 
-                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
-            <ItemTemplate Context="e">                          
-                <MudText>
-                    <MudIcon Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" Class="mb-n1 mr-3"/>@($"{e.Name} ({e.Sign})")
-                </MudText>
-            </ItemTemplate>
-            <ItemSelectedTemplate Context="e">                
-                <MudText>
-                    <MudIcon Icon="@Icons.Material.Filled.CheckBox" Class="mb-n1 mr-3"/>@($"{e.Name} ({e.Sign})")
-                </MudText>
-            </ItemSelectedTemplate>
-        </MudAutocomplete>
+    <MudItem xs="12" md="4">
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">Custom item templates</MudText>
+                <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2"
+                                 SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")"
+                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.EmojiObjects">
+                    <ItemTemplate Context="e">
+                        <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+                            <MudAvatar Color="Color.Primary" Size="Size.Small">@e.Sign</MudAvatar>
+                            <MudStack Spacing="0">
+                                <MudText Typo="Typo.subtitle2">@e.Name</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">#@e.Number - @e.Group</MudText>
+                            </MudStack>
+                        </MudStack>
+                    </ItemTemplate>
+                    <ItemSelectedTemplate Context="e">
+                        <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+                            <MudAvatar Color="Color.Success" Size="Size.Small">@e.Sign</MudAvatar>
+                            <MudStack Spacing="0">
+                                <MudText Typo="Typo.subtitle2">@e.Name</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">Selected</MudText>
+                            </MudStack>
+                        </MudStack>
+                    </ItemSelectedTemplate>
+                </MudAutocomplete>
+            </MudStack>
+        </MudPaper>
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
-                   SearchFunc="@Search" ItemDisabledFunc="@((Element e) => (e.Name.Contains("H")))" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
-            <ItemDisabledTemplate>
-                <MudText>Not available: @context.ToString()</MudText>
-            </ItemDisabledTemplate>
-        </MudAutocomplete>
+    <MudItem xs="12" md="4">
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">Disabled items</MudText>
+                <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
+                                 SearchFunc="@Search" ItemDisabledFunc="@((Element e) => (e.Name.Contains("H")))"
+                                 ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")"
+                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Block">
+                    <ItemDisabledTemplate>
+                        <MudText Class="mud-text-disabled">Not available: @context.ToString()</MudText>
+                    </ItemDisabledTemplate>
+                </MudAutocomplete>
+            </MudStack>
+        </MudPaper>
     </MudItem>
-    <MudItem xs="12" md="12">
-        <MudText Class="mb-n3" Typo="Typo.body2">
-            Selected values: <MudChip T="string">@(value1?.ToString() ?? "Not selected")</MudChip><MudChip T="string">@(value2?.ToString() ?? "Not selected")</MudChip><MudChip T="string">@(value3?.ToString() ?? "Not selected")</MudChip>
-        </MudText>
+    <MudItem xs="12">
+        <MudStack Row Wrap="Wrap.Wrap" Spacing="1" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.caption" Class="mr-2">Selected</MudText>
+            <MudChip T="string" Variant="Variant.Outlined">@(value1?.ToString() ?? "None")</MudChip>
+            <MudChip T="string" Variant="Variant.Outlined">@(value2?.ToString() ?? "None")</MudChip>
+            <MudChip T="string" Variant="Variant.Outlined">@(value3?.ToString() ?? "None")</MudChip>
+        </MudStack>
     </MudItem>
 </MudGrid>
 
