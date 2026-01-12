@@ -7,7 +7,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A button which lets the user jump to the top of the page.
+    /// A button to quickly return to the top of the page.
     /// </summary>
     public partial class MudScrollToTop : IDisposable
     {

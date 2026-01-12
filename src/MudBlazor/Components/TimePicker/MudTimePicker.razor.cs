@@ -14,7 +14,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting time values.
+    /// Provides a simple way to select time values.
     /// </summary>
     /// <seealso cref="MudDatePicker"/>
     /// <seealso cref="MudDateRangePicker"/>

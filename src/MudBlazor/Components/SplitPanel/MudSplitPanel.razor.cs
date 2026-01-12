@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Two panels which are resizable.
+/// Allows users to dynamically resize content with a draggable splitter.
 /// </summary>
 public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 {

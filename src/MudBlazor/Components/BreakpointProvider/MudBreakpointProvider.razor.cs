@@ -10,7 +10,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a cascading parameter which exposes the window's current breakpoint (xs, sm, md, lg, xl).
+    /// Exposes the current breakpoint (xs, sm, md, lg, xl) to child components via a cascading parameter.
     /// </summary>
     public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {

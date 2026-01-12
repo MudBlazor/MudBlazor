@@ -16,8 +16,9 @@ using MudBlazor.Utilities.Throttle;
 namespace MudBlazor
 {
     /// <summary>
-    /// A set of views organized into one or more <see cref="MudTabPanel" /> components.
+    /// Organizes content across multiple tab pages.
     /// </summary>
+    /// <seealso cref="MudTabPanel"/>
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         internal List<MudTabPanel> _panels;

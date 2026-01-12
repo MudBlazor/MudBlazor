@@ -8,7 +8,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A component which allows users to select a value within a specified range.
+    /// Allows users to select a value within a specified range. Sliders should present the full range of available values and the value should take effect immediately.
     /// </summary>
     /// <typeparam name="T">The type of the value the slider represents.</typeparam>
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>

@@ -12,11 +12,12 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// An option from a set of mutually exclusive options, often as part of a <see cref="MudRadioGroup{T}"/>.
+    /// Allows the user to select a single choice from a group of options. Use radio buttons (not switches) when only one item can be selected from a list.
     /// </summary>
     /// <typeparam name="T">The type of value being selected, often a <c>bool</c>.</typeparam>
     /// <seealso cref="MudCheckBox{T}" />
     /// <seealso cref="MudRadioGroup{T}" />
+    /// <seealso cref="MudSwitch{T}"/>
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;

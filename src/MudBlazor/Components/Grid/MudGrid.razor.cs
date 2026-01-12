@@ -10,7 +10,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// A component for organizing the layout of page content.
+/// A 12-point grid system for organizing content with responsive breakpoints for different screen sizes.
 /// </summary>
 /// <seealso cref="MudItem"/>
 public partial class MudGrid : MudComponentBase

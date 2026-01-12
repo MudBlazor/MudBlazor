@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A component for collecting and displaying ratings.
+    /// Ratings provide insight regarding other's opinions and experiences with a product. Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.
     /// </summary>
     /// <seealso cref="MudRatingItem"/>
     public partial class MudRating : MudComponentBase
