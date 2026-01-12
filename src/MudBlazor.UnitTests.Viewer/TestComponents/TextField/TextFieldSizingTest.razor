@@ -1,0 +1,16 @@
+@using MudBlazor
+
+<MudStack Spacing="4" Class="pa-4">
+    <MudText Typo="Typo.h6">TextField Sizing</MudText>
+
+    <MudText Typo="Typo.subtitle2">Fixed</MudText>
+    <MudTextField T="string" Label="Fixed" Variant="Variant.Filled" Lines="3" Sizing="InputSizing.Fixed" />
+
+    <MudText Typo="Typo.subtitle2">Auto</MudText>
+    <MudTextField T="string" Label="Auto" Variant="Variant.Filled" Lines="3" MaxLines="6" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.subtitle2">Fill</MudText>
+    <MudPaper Outlined="true" Class="pa-4 d-flex" Style="height: 240px;">
+        <MudTextField T="string" Label="Fill" Variant="Variant.Filled" Lines="3" MaxLines="10" Sizing="InputSizing.Fill" Class="flex-grow-1" />
+    </MudPaper>
+</MudStack>

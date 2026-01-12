@@ -15,7 +15,7 @@ namespace MudBlazor
     {
         private string? _internalText;
         private string? _oldText = null;
-        private bool _shouldInitAutoGrow;
+        private bool _shouldInitSizing;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
@@ -33,8 +33,7 @@ namespace MudBlazor
                               Adornment == Adornment.Start ||
                               !string.IsNullOrWhiteSpace(Placeholder) ||
                               ShrinkLabel))
-                .AddClass("mud-input-auto-grow", () => Sizing == InputSizing.Auto)
-                .AddClass("mud-input-fill", () => Sizing == InputSizing.Fill)
+                .AddClass($"mud-input-sizing-{Sizing.ToDescriptionString()}")
                 .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
@@ -292,10 +291,10 @@ namespace MudBlazor
             // Always update internal text (TextUpdateSuppression removed)
             _internalText = ReadText;
 
-            // Flag sizing to be initialized on the next render.
+            // Flag dynamic sizing to be initialized on the next render.
             if (oldSizing == InputSizing.Fixed && newSizing != InputSizing.Fixed)
             {
-                _shouldInitAutoGrow = true;
+                _shouldInitSizing = true;
             }
 
             if (IsJSRuntimeAvailable)
@@ -303,15 +302,15 @@ namespace MudBlazor
                 if (oldSizing != InputSizing.Fixed && newSizing == InputSizing.Fixed)
                 {
                     // Disable dynamic sizing.
-                    _shouldInitAutoGrow = false;
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                    _shouldInitSizing = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
                 else if (oldLines != Lines || oldMaxLines != MaxLines || oldSizing != newSizing)
                 {
-                    if (newSizing != InputSizing.Fixed && !_shouldInitAutoGrow)
+                    if (newSizing != InputSizing.Fixed && !_shouldInitSizing)
                     {
-                        // Update sizing parameters (if it was already enabled).
-                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines, newSizing == InputSizing.Fill);
+                        // Update dynamic sizing parameters (if it was already enabled).
+                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.updateParams", ElementReference, MaxLines, newSizing == InputSizing.Fill);
                     }
                 }
             }
@@ -322,18 +321,17 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            var effectiveSizing = Sizing;
-            if (effectiveSizing != InputSizing.Fixed)
+            if (Sizing != InputSizing.Fixed)
             {
-                if (firstRender || _shouldInitAutoGrow)
+                if (firstRender || _shouldInitSizing)
                 {
-                    _shouldInitAutoGrow = false;
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines, effectiveSizing == InputSizing.Fill);
+                    _shouldInitSizing = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.init", ElementReference, MaxLines, Sizing == InputSizing.Fill);
                     _oldText = _internalText;
                 }
                 else if (_oldText != _internalText)
                 {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.adjustHeight", ElementReference);
                     _oldText = _internalText;
                 }
             }
@@ -377,7 +375,7 @@ namespace MudBlazor
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference);
                 if (Sizing != InputSizing.Fixed)
                 {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
             }
 

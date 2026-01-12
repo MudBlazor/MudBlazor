@@ -1,8 +1,8 @@
-﻿// Copyright (c) MudBlazor 2023
+// Copyright (c) MudBlazor 2023
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-window.mudInputAutoGrow = {
-    initAutoGrow: (elem, maxLines, isFillMode) => {
+window.mudInputSizing = {
+    init: (elem, maxLines, isFillMode) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
         const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
@@ -10,7 +10,7 @@ window.mudInputAutoGrow = {
         let maxHeight = 0;
         let fillMode = isFillMode || false;
 
-        // Update parameters that effect the functionality and visuals of the auto-growing input.
+        // Update parameters that affect the functionality and visuals of the dynamically sized input.
         elem.updateParameters = function (newMaxLines, newFillMode) {
             fillMode = newFillMode || false;
             if (newMaxLines > 0) {
@@ -22,7 +22,7 @@ window.mudInputAutoGrow = {
         }
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
-        elem.adjustAutoGrowHeight = function (didReflow = false) {
+        elem.adjustSizingHeight = function (didReflow = false) {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
@@ -92,7 +92,7 @@ window.mudInputAutoGrow = {
                 // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
                 if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
                     elem.style.textAlign = 'end'; // Change to something other than the default.
-                    elem.adjustAutoGrowHeight(true);
+                    elem.adjustSizingHeight(true);
                 }
             }
 
@@ -104,35 +104,35 @@ window.mudInputAutoGrow = {
             });
         }
 
-        // Terminate the ability to auto-grow and restore the input element back to its original state.
+        // Terminate dynamic sizing and restore the input element back to its original state.
         elem.restoreToInitialState = function () {
-            elem.removeEventListener('input', elem.adjustAutoGrowHeight);
+            elem.removeEventListener('input', elem.adjustSizingHeight);
             elem.style.overflowY = null;
             elem.style.height = null;
             elem.style.minHeight = null;
         }
 
         // Adjust height when input happens.
-        elem.addEventListener('input', elem.adjustAutoGrowHeight);
+        elem.addEventListener('input', elem.adjustSizingHeight);
 
         // Adjust height when the window resizes.
-        window.addEventListener('resize', elem.adjustAutoGrowHeight);
+        window.addEventListener('resize', elem.adjustSizingHeight);
 
         // Initial parameters and height adjustment.
         elem.updateParameters(maxLines, fillMode);
-        elem.adjustAutoGrowHeight();
+        elem.adjustSizingHeight();
     },
     adjustHeight: (elem) => {
-        if (typeof elem.adjustAutoGrowHeight === 'function') {
-            elem.adjustAutoGrowHeight();
+        if (typeof elem.adjustSizingHeight === 'function') {
+            elem.adjustSizingHeight();
         }
     },
     updateParams: (elem, maxLines, isFillMode) => {
         if (typeof elem.updateParameters === 'function') {
             elem.updateParameters(maxLines, isFillMode);
         }
-        if (typeof elem.adjustAutoGrowHeight === 'function') {
-            elem.adjustAutoGrowHeight();
+        if (typeof elem.adjustSizingHeight === 'function') {
+            elem.adjustSizingHeight();
         }
     },
     destroy: (elem) => {
@@ -140,7 +140,7 @@ window.mudInputAutoGrow = {
             return;
         }
 
-        window.removeEventListener('resize', elem.adjustAutoGrowHeight);
+        window.removeEventListener('resize', elem.adjustSizingHeight);
         if (typeof elem.restoreToInitialState === 'function') {
             elem.restoreToInitialState();
         }

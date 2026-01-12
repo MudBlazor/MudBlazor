@@ -13,20 +13,67 @@ public static class Paths
     {
         get
         {
-            var workingPath = Path.GetFullPath(".");
-            do
+            static string? FindRepoSrcDir(string startPath)
             {
-                workingPath = Path.GetDirectoryName(workingPath);
-            }
-            while (Path.GetFileName(workingPath) != "src" && !string.IsNullOrWhiteSpace(workingPath));
+                if (string.IsNullOrWhiteSpace(startPath))
+                {
+                    return null;
+                }
 
-            return workingPath!;
+                var current = new DirectoryInfo(startPath);
+                while (current is not null)
+                {
+                    if (string.Equals(current.Name, "src", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var docsCandidate = Path.Combine(current.FullName, DocsDirectory);
+                        var testsCandidate = Path.Combine(current.FullName, TestDirectory);
+                        if (Directory.Exists(docsCandidate) && Directory.Exists(testsCandidate))
+                        {
+                            return current.FullName;
+                        }
+                    }
+
+                    current = current.Parent;
+                }
+
+                return null;
+            }
+
+            return FindRepoSrcDir(Directory.GetCurrentDirectory())
+                ?? FindRepoSrcDir(AppContext.BaseDirectory)
+                ?? string.Empty;
         }
     }
 
-    public static string DocsDirPath => Directory.EnumerateDirectories(SrcDirPath, DocsDirectory).FirstOrDefault() ?? string.Empty;
+    public static string DocsDirPath
+    {
+        get
+        {
+            var srcDirPath = SrcDirPath;
+            if (string.IsNullOrWhiteSpace(srcDirPath))
+            {
+                return string.Empty;
+            }
 
-    public static string TestDirPath => Path.Join(Directory.EnumerateDirectories(SrcDirPath, TestDirectory).FirstOrDefault(), "Generated");
+            var docsDirPath = Path.Combine(srcDirPath, DocsDirectory);
+            return Directory.Exists(docsDirPath) ? docsDirPath : string.Empty;
+        }
+    }
+
+    public static string TestDirPath
+    {
+        get
+        {
+            var srcDirPath = SrcDirPath;
+            if (string.IsNullOrWhiteSpace(srcDirPath))
+            {
+                return string.Empty;
+            }
+
+            var testDirPath = Path.Combine(srcDirPath, TestDirectory, "Generated");
+            return Directory.Exists(testDirPath) ? testDirPath : string.Empty;
+        }
+    }
 
     public static string ComponentTestsFilePath => Path.Join(TestDirPath, ComponentTestsFile);
 

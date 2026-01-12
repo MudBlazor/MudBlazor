@@ -422,14 +422,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AutoGrowTextField_Should_InvokeJavaScriptInitOnRender()
+        public async Task AutoSizingTextField_Should_InvokeJavaScriptInitOnRender()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Sizing, InputSizing.Auto)
                 .Add(p => p.MaxLines, 5));
 
-            Context.JSInterop.VerifyInvoke("mudInputAutoGrow.initAutoGrow", 1);
-            Context.JSInterop.Invocations["mudInputAutoGrow.initAutoGrow"].Single()
+            Context.JSInterop.VerifyInvoke("mudInputSizing.init", 1);
+            Context.JSInterop.Invocations["mudInputSizing.init"].Single()
                 .Arguments
                 .Should()
                 .HaveCount(3)
@@ -440,7 +440,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
 
-            Context.JSInterop.Invocations["mudInputAutoGrow.adjustHeight"].Single()
+                Context.JSInterop.Invocations["mudInputSizing.adjustHeight"].Single()
                .Arguments
                .Should()
                .HaveCount(1);
@@ -1125,19 +1125,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with Sizing=Auto enabled should contain a special class.
+        /// A text field with Sizing=Auto enabled should contain a sizing class.
         /// </summary>
         [Test]
-        public void TextFieldAutoGrowHasClass()
+        public void TextFieldAutoSizingHasClass()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
             .Add(p => p.Sizing, InputSizing.Auto));
 
-            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-auto-grow");
+            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-sizing-auto");
         }
 
         /// <summary>
-        /// A text field with Sizing=Fill enabled should contain a special class.
+        /// A text field with Sizing=Fill enabled should contain a sizing class.
         /// </summary>
         [Test]
         public void TextFieldFillSizingHasClass()
@@ -1145,7 +1145,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
             .Add(p => p.Sizing, InputSizing.Fill));
 
-            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-fill");
+            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-sizing-fill");
+        }
+
+        /// <summary>
+        /// A text field with Sizing=Fixed enabled should contain a sizing class.
+        /// </summary>
+        [Test]
+        public void TextFieldFixedSizingHasClass()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Sizing, InputSizing.Fixed)
+                .Add(p => p.Lines, 3));
+
+            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-sizing-fixed");
         }
 
         /// <summary>
@@ -1158,8 +1171,8 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Sizing, InputSizing.Fill)
                 .Add(p => p.MaxLines, 10));
 
-            Context.JSInterop.VerifyInvoke("mudInputAutoGrow.initAutoGrow", 1);
-            Context.JSInterop.Invocations["mudInputAutoGrow.initAutoGrow"].Single()
+            Context.JSInterop.VerifyInvoke("mudInputSizing.init", 1);
+            Context.JSInterop.Invocations["mudInputSizing.init"].Single()
                 .Arguments
                 .Should()
                 .HaveCount(3)
@@ -1170,10 +1183,10 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
 
-            Context.JSInterop.Invocations["mudInputAutoGrow.adjustHeight"].Single()
-               .Arguments
-               .Should()
-               .HaveCount(1);
+            Context.JSInterop.Invocations["mudInputSizing.adjustHeight"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(1);
         }
 
         /// <summary>
@@ -1490,7 +1503,7 @@ namespace MudBlazor.UnitTests.Components
         /// Optional TextField with Sizing=Auto should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
-        public void OptionalTextFieldWithAutoGrow_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalTextFieldWithAutoSizing_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Sizing, InputSizing.Auto));
@@ -1503,7 +1516,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required TextField with Sizing=Auto should have required and aria-required attributes.
         /// </summary>
         [Test]
-        public void RequiredTextFieldWithAutoGrow_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredTextFieldWithAutoSizing_Should_HaveRequiredAndAriaRequiredAttributes()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Required, true)
@@ -1517,7 +1530,7 @@ namespace MudBlazor.UnitTests.Components
         /// Required and aria-required TextField with Sizing=Auto attributes should be dynamic.
         /// </summary>
         [Test]
-        public async Task RequiredAndAriaRequiredTextFieldWithAutoGrowAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredTextFieldWithAutoSizingAttributes_Should_BeDynamic()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Sizing, InputSizing.Auto));

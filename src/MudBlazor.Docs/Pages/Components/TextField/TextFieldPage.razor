@@ -246,15 +246,16 @@
     </MudAlert>
     <SectionSubGroups>
         <DocsPageSection>
-            <SectionHeader Title="Auto Grow">
+            <SectionHeader Title="Sizing">
                 <Description>
-                    With <CodeInline>Sizing</CodeInline> set to <CodeInline>InputSizing.Auto</CodeInline>, the height of the text field automatically changes with the number of lines of text.
-                    The text field will not get smaller than the number of lines specified with the <CodeInline>Lines</CodeInline> property.
-                    You can limit the maximum height of the text field with the <CodeInline>MaxLines</CodeInline> property.
+                    Use the <CodeInline>Sizing</CodeInline> property to control the vertical sizing behavior of multiline text fields.
+                    <CodeInline>InputSizing.Fixed</CodeInline> keeps a fixed height based on <CodeInline>Lines</CodeInline>,
+                    <CodeInline>InputSizing.Auto</CodeInline> grows with content up to <CodeInline>MaxLines</CodeInline>,
+                    and <CodeInline>InputSizing.Fill</CodeInline> expands to fill the available height.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldAutoGrowExample)" ShowCode="false">
-                <TextFieldAutoGrowExample />
+            <SectionContent Code="@nameof(TextFieldSizingExample)" ShowCode="false">
+                <TextFieldSizingExample />
             </SectionContent>
         </DocsPageSection>
     </SectionSubGroups>

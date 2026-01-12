@@ -1,0 +1,46 @@
+@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.subtitle2">Sizing = Fixed</MudText>
+    <MudTextField T="string"
+                  Label="Fixed"
+                  Variant="Variant.Text"
+                  Lines="3"
+                  Sizing="InputSizing.Fixed"
+                  Text="@_fixedText"
+                  TextChanged="@((string v) => _fixedText = v)"
+                  HelperText="Fixed height based on Lines" />
+
+    <MudText Typo="Typo.subtitle2">Sizing = Auto</MudText>
+    <MudTextField T="string"
+                  Label="Auto"
+                  Variant="Variant.Text"
+                  Lines="3"
+                  MaxLines="6"
+                  Sizing="InputSizing.Auto"
+                  Text="@_autoText"
+                  TextChanged="@((string v) => _autoText = v)"
+                  HelperText="Grows with content up to MaxLines" />
+
+    <MudText Typo="Typo.subtitle2">Sizing = Fill</MudText>
+    <MudPaper Outlined="true" Class="pa-4 d-flex" Style="height: 220px;">
+        <MudTextField T="string"
+                      Label="Fill"
+                      Variant="Variant.Text"
+                      Lines="3"
+                      MaxLines="10"
+                      Sizing="InputSizing.Fill"
+                      Text="@_fillText"
+                      TextChanged="@((string v) => _fillText = v)"
+                      Class="flex-grow-1"
+                      HelperText="Fills the available height" />
+    </MudPaper>
+</MudStack>
+
+@code {
+    private string _fixedText = "Fixed\n\n(does not auto-grow)";
+    private string _autoText = "Auto\n\n(type more lines)";
+    private string _fillText = "Fill\n\n(fills container height)";
+}
