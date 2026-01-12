@@ -5,9 +5,9 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Quick start">
+            <SectionHeader Title="Quick Start">
                 <Description>
-                    Use a local list for instant filtering.
+                    Use a local list for instant filtering and set <CodeInline>DebounceInterval="0"</CodeInline> for a snappy feel.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
@@ -16,7 +16,16 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Debouncing search">
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>ArrowDown</CodeInline> opens the list, <CodeInline>Escape</CodeInline> closes it.</MudText>
+                    <MudText><CodeInline>ArrowUp</CodeInline>/<CodeInline>ArrowDown</CodeInline> move selection, <CodeInline>Enter</CodeInline> selects.</MudText>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Debouncing Search">
                 <Description>
                     Debounce controls how often <CodeInline>SearchFunc</CodeInline> runs while typing.
                     Keep it at 0 for local data, raise it (200-400ms) to reduce remote calls.
@@ -28,7 +37,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Text, value, and strictness">
+            <SectionHeader Title="Text, Value, and Strictness">
                 <Description>
                     Bind both <CodeInline>Value</CodeInline> and <CodeInline>Text</CodeInline> to see how
                     <CodeInline>Strict</CodeInline>, <CodeInline>CoerceText</CodeInline>, and <CodeInline>CoerceValue</CodeInline> affect behavior.
@@ -40,7 +49,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Objects and templates">
+            <SectionHeader Title="Objects and Templates">
                 <Description>
                     Use objects with <CodeInline>ToStringFunc</CodeInline> or render fragments for rich list items.
                 </Description>
@@ -51,7 +60,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="List extras">
+            <SectionHeader Title="List Extras">
                 <Description>
                     Customize the list with <CodeInline Tag="true">MoreItemsTemplate</CodeInline>,
                     <CodeInline Tag="true">NoItemsTemplate</CodeInline>, and header/footer templates.
@@ -74,36 +83,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Progress indicator">
+            <SectionHeader Title="Progress Indicator">
                 <Description>
                     When your search is async, show progress with a spinner or custom templates.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(AutocompleteProgressExample)">
                 <AutocompleteProgressExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Cancellation token">
-                <Description>
-                    Forward the cancellation token to cancel in-flight requests when the user keeps typing.
-                </Description>
-            </SectionHeader>
-            <SectionContent ShowCode="false" Code="@nameof(AutocompleteCancellationTokenExample)">
-                <AutocompleteCancellationTokenExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Keyboard navigation">
-                <Description>
-                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>ArrowDown</CodeInline> opens the list, <CodeInline>Escape</CodeInline> closes it.</MudText>
-                    <MudText><CodeInline>ArrowUp</CodeInline>/<CodeInline>ArrowDown</CodeInline> move selection, <CodeInline>Enter</CodeInline> selects.</MudText>
-                </Description>
-            </SectionHeader>
-            <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
-                <AutocompleteUsageExample />
             </SectionContent>
         </DocsPageSection>
 

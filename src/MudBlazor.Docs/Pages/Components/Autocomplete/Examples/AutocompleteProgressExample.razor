@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Threading
 
-<MudGrid>
+<MudGrid Class="pa-4">
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="Spinner"
                          @bind-Value="_valueSpinner"
@@ -51,22 +51,12 @@
 
     private Color _indicatorColor = Color.Default;
 
-    private readonly string[] _states =
+    private readonly string[] _options =
     [
-        "Alabama", "Alaska", "American Samoa", "Arizona",
-        "Arkansas", "California", "Colorado", "Connecticut",
-        "Delaware", "District of Columbia", "Federated States of Micronesia",
-        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
-        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
-        "Louisiana", "Maine", "Marshall Islands", "Maryland",
-        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
-        "Missouri", "Montana", "Nebraska", "Nevada",
-        "New Hampshire", "New Jersey", "New Mexico", "New York",
-        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
-        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
-        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
-        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+        "Archive", "Assign", "Audit", "Backup",
+        "Build", "Deploy", "Document", "Export",
+        "Import", "Index", "Monitor", "Notify",
+        "Publish", "Review", "Schedule", "Sync"
     ];
 
     private async Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token)
@@ -75,10 +65,10 @@
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            return _states;
+            return _options;
         }
 
-        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return _options.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
 }

@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Threading
 
-<MudGrid>
+<MudGrid Class="pa-4">
     <MudItem xs="12" sm="6">
-        <MudAutocomplete T="string" Label="State"
-                         @bind-Value="_state"
+        <MudAutocomplete T="string" Label="Feature"
+                         @bind-Value="_feature"
                          SearchFunc="SearchAll"
                          DebounceInterval="0"
                          Clearable="true"
@@ -15,7 +15,7 @@
     </MudItem>
     <MudItem xs="12" sm="6">
         <MudAutocomplete T="string" Label="Type at least 2 letters"
-                         @bind-Value="_stateTyped"
+                         @bind-Value="_featureTyped"
                          SearchFunc="SearchTyped"
                          DebounceInterval="0"
                          MinCharacters="2"
@@ -26,41 +26,35 @@
     </MudItem>
     <MudItem xs="12">
         <MudStack Row="true" Spacing="1" Class="flex-wrap">
-            <MudChip T="string">Primary: @(_state ?? "None")</MudChip>
-            <MudChip T="string" Color="Color.Secondary">Typed: @(_stateTyped ?? "None")</MudChip>
+            <MudChip T="string">Primary: @(_feature ?? "None")</MudChip>
+            <MudChip T="string" Color="Color.Secondary">Typed: @(_featureTyped ?? "None")</MudChip>
         </MudStack>
     </MudItem>
 </MudGrid>
 
 @code {
-    private string _state;
-    private string _stateTyped;
+    private string _feature;
+    private string _featureTyped;
 
-    private readonly string[] _states =
+    private readonly string[] _features =
     [
-        "Alabama", "Alaska", "American Samoa", "Arizona",
-        "Arkansas", "California", "Colorado", "Connecticut",
-        "Delaware", "District of Columbia", "Federated States of Micronesia",
-        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
-        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
-        "Louisiana", "Maine", "Marshall Islands", "Maryland",
-        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
-        "Missouri", "Montana", "Nebraska", "Nevada",
-        "New Hampshire", "New Jersey", "New Mexico", "New York",
-        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
-        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
-        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
-        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+        "Accounts", "Activity", "Alerts", "Analytics",
+        "Approvals", "Archives", "Billing", "Calendar",
+        "Chat", "Dashboard", "Exports", "Files",
+        "Imports", "Insights", "Invoices", "Notes",
+        "Notifications", "Profile", "Projects", "Reports",
+        "Search", "Security", "Settings", "Tags",
+        "Tasks", "Teams", "Timeline", "Uploads",
+        "Users", "Workflows"
     ];
 
     private Task<IEnumerable<string>> SearchAll(string value, CancellationToken token)
     {
-        IEnumerable<string> result = _states;
+        IEnumerable<string> result = _features;
 
         if (!string.IsNullOrWhiteSpace(value))
         {
-            result = _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            result = _features.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         }
 
         return Task.FromResult(result);
@@ -73,7 +67,7 @@
             return Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
         }
 
-        var result = _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        var result = _features.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         return Task.FromResult(result);
     }
 }

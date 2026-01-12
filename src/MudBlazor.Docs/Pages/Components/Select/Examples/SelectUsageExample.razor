@@ -1,15 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
+<MudGrid Class="pa-4">
     <MudItem xs="12" sm="6">
-        <MudSelect T="string" Label="Framework"
-                   @bind-Value="_framework"
+        <MudSelect T="string" Label="Category"
+                   @bind-Value="_category"
                    Clearable="true"
                    Placeholder="Pick one"
                    HelperText="String values"
                    AdornmentIcon="@Icons.Material.Filled.ViewQuilt"
                    AdornmentColor="Color.Primary">
-            @foreach (var item in _frameworks)
+            @foreach (var item in _categories)
             {
                 <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
             }
@@ -30,19 +30,19 @@
     </MudItem>
     <MudItem xs="12">
         <MudStack Row="true" Spacing="1" Class="flex-wrap">
-            <MudChip T="string">Framework: @(_framework ?? "None")</MudChip>
+            <MudChip T="string">Category: @(_category ?? "None")</MudChip>
             <MudChip T="string" Color="Color.Secondary">Priority: @_priority</MudChip>
         </MudStack>
     </MudItem>
 </MudGrid>
 
 @code {
-    private string _framework;
+    private string _category;
     private Priority _priority = Priority.Medium;
 
-    private readonly string[] _frameworks =
+    private readonly string[] _categories =
     [
-        "Blazor", "MAUI", "React", "Svelte", "Vue"
+        "General", "Internal", "Operations", "Personal", "Shared"
     ];
 
     public enum Priority

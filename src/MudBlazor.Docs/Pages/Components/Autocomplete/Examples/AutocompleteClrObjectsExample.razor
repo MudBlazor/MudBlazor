@@ -1,44 +1,44 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Threading
 
-<MudGrid>
+<MudGrid Class="pa-4">
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="City" Label="City"
-                         @bind-Value="_city"
+        <MudAutocomplete T="Location" Label="Location"
+                         @bind-Value="_location"
                          SearchFunc="Search"
                          DebounceInterval="0"
-                         ToStringFunc="@(city => city?.DisplayName)" />
+                         ToStringFunc="@(location => location?.DisplayName)" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="City" Label="Template"
+        <MudAutocomplete T="Location" Label="Template"
                          @bind-Value="_templated"
                          SearchFunc="Search"
                          DebounceInterval="0">
-            <ItemTemplate Context="city">
+            <ItemTemplate Context="location">
                 <MudStack Spacing="0">
-                    <MudText Typo="Typo.body1">@city.Name</MudText>
-                    <MudText Typo="Typo.caption">@city.State</MudText>
+                    <MudText Typo="Typo.body1">@location.Name</MudText>
+                    <MudText Typo="Typo.caption">@location.Zone</MudText>
                 </MudStack>
             </ItemTemplate>
-            <ItemSelectedTemplate Context="city">
-                <MudText>@city.DisplayName</MudText>
+            <ItemSelectedTemplate Context="location">
+                <MudText>@location.DisplayName</MudText>
             </ItemSelectedTemplate>
         </MudAutocomplete>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="City" Label="Disable smaller cities"
+        <MudAutocomplete T="Location" Label="Disable smaller locations"
                          @bind-Value="_disabled"
                          SearchFunc="Search"
                          DebounceInterval="0"
-                         ItemDisabledFunc="@(city => city.Population < 700000)">
-            <ItemDisabledTemplate Context="city">
-                <MudText Color="Color.Secondary">@city.DisplayName (too small)</MudText>
+                         ItemDisabledFunc="@(location => location.Capacity < 700)">
+            <ItemDisabledTemplate Context="location">
+                <MudText Color="Color.Secondary">@location.DisplayName (too small)</MudText>
             </ItemDisabledTemplate>
         </MudAutocomplete>
     </MudItem>
     <MudItem xs="12">
         <MudStack Row="true" Spacing="1" Class="flex-wrap">
-            <MudChip T="string">Default: @(_city?.DisplayName ?? "None")</MudChip>
+            <MudChip T="string">Default: @(_location?.DisplayName ?? "None")</MudChip>
             <MudChip T="string" Color="Color.Primary">Templated: @(_templated?.DisplayName ?? "None")</MudChip>
             <MudChip T="string" Color="Color.Secondary">Disabled: @(_disabled?.DisplayName ?? "None")</MudChip>
         </MudStack>
@@ -46,38 +46,38 @@
 </MudGrid>
 
 @code {
-    private City _city;
-    private City _templated;
-    private City _disabled;
+    private Location _location;
+    private Location _templated;
+    private Location _disabled;
 
-    private readonly City[] _cities =
+    private readonly Location[] _locations =
     [
-        new("Austin", "TX", 965000),
-        new("Boston", "MA", 675000),
-        new("Denver", "CO", 716000),
-        new("Nashville", "TN", 703000),
-        new("Portland", "OR", 652000),
-        new("Raleigh", "NC", 469000),
-        new("Seattle", "WA", 749000)
+        new("Harbor", "Zone A", 920),
+        new("Meadow", "Zone B", 640),
+        new("Oakridge", "Zone C", 780),
+        new("Pinecrest", "Zone D", 610),
+        new("Riverside", "Zone E", 560),
+        new("Stonegate", "Zone F", 840),
+        new("Summit", "Zone G", 730)
     ];
 
-    private Task<IEnumerable<City>> Search(string value, CancellationToken token)
+    private Task<IEnumerable<Location>> Search(string value, CancellationToken token)
     {
-        IEnumerable<City> result = _cities;
+        IEnumerable<Location> result = _locations;
 
         if (!string.IsNullOrWhiteSpace(value))
         {
-            result = _cities.Where(city =>
-                city.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase) ||
-                city.State.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            result = _locations.Where(location =>
+                location.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase) ||
+                location.Zone.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         }
 
         return Task.FromResult(result);
     }
 
-    public record City(string Name, string State, int Population)
+    public record Location(string Name, string Zone, int Capacity)
     {
-        public string DisplayName => $"{Name}, {State}";
+        public string DisplayName => $"{Name} - {Zone}";
         public override string ToString() => DisplayName;
     }
 }

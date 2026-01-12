@@ -1,18 +1,20 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect T="string" Label="Services"
-           MultiSelection="true"
-           SelectAll="true"
-           SelectAllText="Select all services"
-           @bind-Value="_summary"
-           @bind-SelectedValues="_selected"
-           MultiSelectionTextFunc="GetSelectionText"
-           AdornmentIcon="@Icons.Material.Filled.Dns">
-    @foreach (var item in _services)
-    {
-        <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
-    }
-</MudSelect>
+<MudPaper Class="pa-4">
+    <MudSelect T="string" Label="Services"
+               MultiSelection="true"
+               SelectAll="true"
+               SelectAllText="Select all services"
+               @bind-Value="_summary"
+               @bind-SelectedValues="_selected"
+               MultiSelectionTextFunc="GetSelectionText"
+               AdornmentIcon="@Icons.Material.Filled.Dns">
+        @foreach (var item in _services)
+        {
+            <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
+        }
+    </MudSelect>
+</MudPaper>
 
 @code {
     private string _summary = "Nothing selected";

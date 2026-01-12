@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Threading
 
-<MudGrid>
+<MudGrid Class="pa-4">
     <MudItem xs="12" md="6">
-        <MudAutocomplete T="string" Label="Search libraries"
+        <MudAutocomplete T="string" Label="Search actions"
                          @bind-Value="_value"
                          SearchFunc="SearchAsync"
                          DebounceInterval="_debounce"
@@ -17,8 +17,8 @@
             <MudText Typo="Typo.subtitle2">Debounce interval (ms)</MudText>
             <MudSlider T="int" @bind-Value="_debounce" Min="0" Max="800" Step="50" Color="Color.Primary" />
             <MudText Typo="Typo.caption">Interval: @_debounce ms</MudText>
-            <MudText Typo="Typo.caption">• Search calls: @_searchCalls</MudText>
-            <MudText Typo="Typo.caption">• Last input: @(_lastSearch ?? "None")</MudText>
+            <MudText Typo="Typo.caption">Search calls: @_searchCalls</MudText>
+            <MudText Typo="Typo.caption">Last input: @(_lastSearch ?? "None")</MudText>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -31,8 +31,9 @@
 
     private readonly string[] _items =
     [
-        "Blazor", "Bootstrap", "Bulma", "Chakra UI", "Fluent UI",
-        "Material UI", "MudBlazor", "Prime", "Radzen", "Tailwind"
+        "Archive", "Assign", "Build", "Comment", "Create",
+        "Deploy", "Draft", "Export", "Merge", "Publish",
+        "Review", "Schedule", "Search", "Sync", "Update"
     ];
 
     private async Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token)

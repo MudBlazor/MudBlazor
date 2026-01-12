@@ -1,19 +1,21 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudText Typo="Typo.subtitle2" Class="mb-2">
-    Selected: @(_package?.DisplayName ?? "None")
-</MudText>
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.subtitle2" Class="mb-2">
+        Selected: @(_package?.DisplayName ?? "None")
+    </MudText>
 
-<MudSelect T="Package" @bind-Value="_package"
-           ToStringFunc="package => package?.DisplayName"
-           Label="Package"
-           Variant="Variant.Outlined"
-           Clearable="true">
-    @foreach (var item in _packages)
-    {
-        <MudSelectItem T="Package" Value="@item" />
-    }
-</MudSelect>
+    <MudSelect T="Package" @bind-Value="_package"
+               ToStringFunc="package => package?.DisplayName"
+               Label="Package"
+               Variant="Variant.Outlined"
+               Clearable="true">
+        @foreach (var item in _packages)
+        {
+            <MudSelectItem T="Package" Value="@item" />
+        }
+    </MudSelect>
+</MudPaper>
 
 @code {
     private readonly Package[] _packages =
