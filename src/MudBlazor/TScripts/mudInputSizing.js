@@ -7,6 +7,8 @@ window.mudInputSizing = {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
         const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
+        const paddingBottom = parseFloat(compStyle.getPropertyValue('padding-bottom'));
+        const totalPadding = paddingTop + paddingBottom;
 
         let maxHeight = 0;
         let fillMode = isFillMode || false;
@@ -16,14 +18,14 @@ window.mudInputSizing = {
             fillMode = newFillMode || false;
             if (newMaxLines > 0) {
                 // Cap the height to the number of lines specified in the input.
-                maxHeight = lineHeight * newMaxLines + paddingTop;
+                maxHeight = lineHeight * newMaxLines + totalPadding;
             } else {
                 maxHeight = 0;
             }
         }
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
-        elem.adjustSizingHeight = function (didReflow = false) {
+        elem.adjustSizingHeight = function () {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
@@ -37,7 +39,7 @@ window.mudInputSizing = {
             if (fillMode) {
                 // In fill mode, use flex or 100% height to fill the available space
                 elem.style.height = '100%';
-                elem.style.minHeight = (lineHeight * elem.rows + paddingTop) + 'px';
+                elem.style.minHeight = (lineHeight * elem.rows + totalPadding) + 'px';
 
                 // Get the actual available height from the parent container
                 const parent = elem.parentElement;
@@ -69,32 +71,23 @@ window.mudInputSizing = {
                 }
             } else {
                 // Auto mode - grow/shrink based on content
-                elem.style.height = 0;
+                // Temporarily collapse to get accurate scrollHeight for shrinking
+                elem.style.height = '0';
+                elem.style.minHeight = '0';
 
-                if (didReflow) {
-                    elem.style.textAlign = null;
-                }
-
-                let minHeight = lineHeight * elem.rows + paddingTop;
+                let minHeight = lineHeight * elem.rows + totalPadding;
                 let newHeight = Math.max(minHeight, elem.scrollHeight);
-                let initialOverflowY = elem.style.overflowY;
                 if (maxHeight > 0 && newHeight > maxHeight) {
                     // Content height exceeds the max height so we'll see a scrollbar.
                     elem.style.overflowY = 'auto';
                     newHeight = maxHeight;
                 } else {
-                    // Scrollbar isn't needed and could either flash on resize or could appear
-                    // due to rounding inaccuracy in scrollHeight when the display is scaled.
+                    // Scrollbar isn't needed.
                     elem.style.overflowY = 'hidden';
                 }
 
                 elem.style.height = newHeight + "px";
-
-                // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
-                if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
-                    elem.style.textAlign = 'end'; // Change to something other than the default.
-                    elem.adjustSizingHeight(true);
-                }
+                elem.style.minHeight = minHeight + "px";
             }
 
             // Restore scroll positions.
