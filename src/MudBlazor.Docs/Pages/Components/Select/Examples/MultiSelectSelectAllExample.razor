@@ -1,25 +1,28 @@
 ﻿@namespace MudBlazor.Docs.Examples
-@using System.Linq
 
-
-<MudSelect T="string" MultiSelection="true" SelectAll="true" SelectAllText="Select all felines" HelperText="@value" @bind-Value="value" @bind-SelectedValues="options" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" Label="Felines" AdornmentIcon="@Icons.Material.Filled.Search">
-    @foreach (var feline in felines)
+<MudSelect T="string" Label="Services"
+           MultiSelection="true"
+           SelectAll="true"
+           SelectAllText="Select all services"
+           @bind-Value="_summary"
+           @bind-SelectedValues="_selected"
+           MultiSelectionTextFunc="GetSelectionText"
+           AdornmentIcon="@Icons.Material.Filled.Dns">
+    @foreach (var item in _services)
     {
-        <MudSelectItem T="string" Value="@feline">@feline</MudSelectItem>
+        <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
     }
 </MudSelect>
 
-@code { 
-    private string value { get; set; } = "Nothing selected";
-    private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Lion" };
+@code {
+    private string _summary = "Nothing selected";
+    private IEnumerable<string> _selected = new HashSet<string> { "Auth" };
 
-    private string[] felines =
-    {
-        "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"
-    };
+    private readonly string[] _services =
+    [
+        "API", "Auth", "Cache", "Notifications", "Search", "Storage"
+    ];
 
-    private string GetMultiSelectionText(List<string> selectedValues)
-    {
-        return $"{selectedValues.Count} feline{(selectedValues.Count > 1 ? "s have" : " has")} been selected";
-    }
+    private string GetSelectionText(List<string> selectedValues)
+        => $"{selectedValues.Count} service{(selectedValues.Count == 1 ? "" : "s")} selected";
 }

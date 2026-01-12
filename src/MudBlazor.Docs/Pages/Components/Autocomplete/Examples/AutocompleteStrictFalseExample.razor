@@ -1,27 +1,60 @@
-﻿@using System.Net.Http.Json
-@using MudBlazor.Examples.Data.Models
+﻿@namespace MudBlazor.Docs.Examples
 @using System.Threading
-@namespace MudBlazor.Docs.Examples
-@inject HttpClient httpClient
 
 <MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Strict false with ToString" @bind-Value="value1"
-                         SearchFunc="@Search" Strict="false">
-        </MudAutocomplete>
+    <MudItem xs="12" md="6">
+        <MudAutocomplete T="string" Label="Tags"
+                         @bind-Value="_value"
+                         @bind-Text="_text"
+                         SearchFunc="SearchTags"
+                         DebounceInterval="0"
+                         Clearable="true"
+                         Strict="_strict"
+                         CoerceText="_coerceText"
+                         CoerceValue="_coerceValue"
+                         ResetValueOnEmptyText="_resetOnEmpty"
+                         HelperText="Click the field after selecting to see the strict behavior" />
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Strict false with ToStringFunc" @bind-Value="value2"
-                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" Strict="false">
-        </MudAutocomplete>
+    <MudItem xs="12" md="6">
+        <MudStack Spacing="1">
+            <MudSwitch @bind-Value="_strict" Color="Color.Primary">Strict</MudSwitch>
+            <MudSwitch @bind-Value="_coerceText" Color="Color.Primary">Coerce Text</MudSwitch>
+            <MudSwitch @bind-Value="_coerceValue" Color="Color.Primary">Coerce Value</MudSwitch>
+            <MudSwitch @bind-Value="_resetOnEmpty" Color="Color.Primary">Reset Value On Empty</MudSwitch>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12">
+        <MudStack Row="true" Spacing="1" Class="flex-wrap">
+            <MudChip T="string">Value: @(_value ?? "None")</MudChip>
+            <MudChip T="string" Color="Color.Secondary">Text: @(_text ?? "None")</MudChip>
+        </MudStack>
     </MudItem>
 </MudGrid>
 
 @code {
-    private Element value1, value2;
+    private string _value;
+    private string _text;
+    private bool _strict = true;
+    private bool _coerceText = true;
+    private bool _coerceValue;
+    private bool _resetOnEmpty = true;
 
-    private async Task<IEnumerable<Element>> Search(string value, CancellationToken token)
+    private readonly string[] _tags =
+    [
+        "Accessibility", "Animation", "Charts", "Dark Mode",
+        "Data Grid", "Forms", "Icons", "Localization",
+        "Navigation", "Pickers", "Theming", "Virtualization"
+    ];
+
+    private Task<IEnumerable<string>> SearchTags(string value, CancellationToken token)
     {
-        return await httpClient.GetFromJsonAsync<List<Element>>($"webapi/periodictable/{value}", token);
+        IEnumerable<string> result = _tags;
+
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            result = _tags.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        return Task.FromResult(result);
     }
 }

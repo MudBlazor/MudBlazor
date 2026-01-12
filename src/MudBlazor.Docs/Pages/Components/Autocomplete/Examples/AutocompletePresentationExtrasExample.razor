@@ -1,61 +1,75 @@
-﻿@using System.Net.Http.Json
-@using MudBlazor.Examples.Data.Models
+﻿@namespace MudBlazor.Docs.Examples
 @using System.Threading
-@namespace MudBlazor.Docs.Examples
-@inject HttpClient httpClient
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1"
-                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+        <MudAutocomplete T="string" Label="More items"
+                         @bind-Value="_moreItems"
+                         SearchFunc="Search"
+                         DebounceInterval="0"
+                         MaxItems="5"
+                         Clearable="true">
             <MoreItemsTemplate>
-                <MudText Align="Align.Center" Class="px-4 py-1">
-                    Only the first 10 items are shown
+                <MudText Typo="Typo.caption" Align="Align.Center" Class="px-4 py-2">
+                    Only the first 5 results are shown
                 </MudText>
             </MoreItemsTemplate>
         </MudAutocomplete>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2"
-                         SearchFunc="@SearchEmpty" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+        <MudAutocomplete T="string" Label="No results"
+                         @bind-Value="_noItems"
+                         SearchFunc="SearchEmpty"
+                         DebounceInterval="0"
+                         Clearable="true">
             <NoItemsTemplate>
-                <MudText Align="Align.Center" Class="px-4 py-1">
-                    No items found
+                <MudText Typo="Typo.caption" Align="Align.Center" Class="px-4 py-2">
+                    No matches found
                 </MudText>
             </NoItemsTemplate>
         </MudAutocomplete>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
-                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+        <MudAutocomplete T="string" Label="Custom header/footer"
+                         @bind-Value="_decorated"
+                         SearchFunc="Search"
+                         DebounceInterval="0"
+                         Clearable="true">
             <BeforeItemsTemplate>
-                <MudText Color="Color.Primary" Class="px-4 py-1">Always Shows Before List</MudText>
+                <MudText Typo="Typo.caption" Class="px-4 py-2">Popular commands</MudText>
             </BeforeItemsTemplate>
-        </MudAutocomplete>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value4"
-                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
             <AfterItemsTemplate>
-                <div class="pa-2">
-                    <MudButton Color="Color.Primary">Add item (does nothing)</MudButton>
-                </div>
+                <MudDivider />
+                <MudText Typo="Typo.caption" Class="px-4 py-2">Tip: press Enter to select</MudText>
             </AfterItemsTemplate>
         </MudAutocomplete>
     </MudItem>
 </MudGrid>
 
 @code {
-    private Element value1, value2, value3, value4;
+    private string _moreItems;
+    private string _noItems;
+    private string _decorated;
 
-    private async Task<IEnumerable<Element>> Search(string value, CancellationToken token)
+    private readonly string[] _commands =
+    [
+        "Add", "Archive", "Assign", "Build", "Clone", "Commit",
+        "Deploy", "Draft", "Merge", "Publish", "Rebase", "Release",
+        "Review", "Revert", "Sync", "Tag", "Test", "Update"
+    ];
+
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
-        return await httpClient.GetFromJsonAsync<List<Element>>($"webapi/periodictable/{value}", token);
+        IEnumerable<string> result = _commands;
+
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            result = _commands.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        return Task.FromResult(result);
     }
 
-    private async Task<IEnumerable<Element>> SearchEmpty(string value, CancellationToken token)
-    {
-        await Task.Delay(5, token);
-        return Array.Empty<Element>();
-    }
+    private Task<IEnumerable<string>> SearchEmpty(string value, CancellationToken token)
+        => Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
 }

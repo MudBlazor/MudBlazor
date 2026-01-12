@@ -1,26 +1,33 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudText Typo="Typo.h6" Class="mud-width-full">@(_pizza is null ? "Nothing selected." : $"Pizza: {_pizza.Name}")</MudText>
+<MudText Typo="Typo.subtitle2" Class="mb-2">
+    Selected: @(_package?.DisplayName ?? "None")
+</MudText>
 
-<MudSelect T="Pizza" @bind-Value="@_pizza" ToStringFunc="@_toStringFunc" Label="Select your pizza" Variant="Variant.Outlined" Clearable>
-    <MudSelectItem Value="@(new Pizza("Cardinale"))" />
-    <MudSelectItem Value="@(new Pizza("Diavolo"))" />
-    <MudSelectItem Value="@(new Pizza("Margarita"))" />
-    <MudSelectItem Value="@(new Pizza("Spinaci"))" />
+<MudSelect T="Package" @bind-Value="_package"
+           ToStringFunc="package => package?.DisplayName"
+           Label="Package"
+           Variant="Variant.Outlined"
+           Clearable="true">
+    @foreach (var item in _packages)
+    {
+        <MudSelectItem T="Package" Value="@item" />
+    }
 </MudSelect>
 
 @code {
-    private Pizza _pizza = new("Diavolo");
-    private readonly Func<Pizza, string> _toStringFunc = p => p?.Name;
+    private readonly Package[] _packages =
+    [
+        new("Starter", "1.0"),
+        new("Core", "1.2"),
+        new("Pro", "2.0"),
+        new("Enterprise", "2.1")
+    ];
 
-    public class Pizza(string name)
+    private Package _package = new("Core", "1.2");
+
+    public record Package(string Name, string Version)
     {
-        public string Name { get; } = name;
-
-        // Note: this is important so the select can compare pizzas
-        public override bool Equals(object obj) => obj is Pizza other && string.Equals(Name, other.Name, StringComparison.Ordinal);
-
-        // Note: this is important so the select can compare pizzas
-        public override int GetHashCode() => Name.GetHashCode();
+        public string DisplayName => $"{Name} {Version}";
     }
 }

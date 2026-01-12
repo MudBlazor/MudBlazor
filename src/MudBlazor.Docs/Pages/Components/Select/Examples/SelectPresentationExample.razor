@@ -1,35 +1,45 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect @bind-Value="country" Label="With render fragements" Variant="Variant.Outlined">
-    <MudSelectItem Value="@("Austria")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg" height="14" class="mr-1" /> Austria
-    </MudSelectItem>
-    <MudSelectItem Value="@("Hungary")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Hungary.png" height="14" class="mr-1" /> Hungary
-    </MudSelectItem>
-    <MudSelectItem Value="@("Sweden")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Flag_of_Sweden_fixed.svg" height="14" class="mr-1" /> Sweden
-    </MudSelectItem>
-</MudSelect>
-
-<MudSelect @bind-Value="country" Label="Without render fragements" Variant="Variant.Outlined">
-    <MudSelectItem Value="@("Austria")" />
-    <MudSelectItem Value="@("Hungary")" />
-    <MudSelectItem Value="@("Sweden")" />
-</MudSelect>
-
-<MudSelect @bind-Value="country" Label="Austria not representable" Variant="Variant.Outlined">
-    <MudSelectItem Value="@("Germany")">
-        <img src="https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg" height="14" class="mr-1" /> Germany
-    </MudSelectItem>
-    <MudSelectItem Value="@("Hungary")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Hungary.png" height="14" class="mr-1" /> Hungary
-    </MudSelectItem>
-    <MudSelectItem Value="@("Sweden")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Flag_of_Sweden_fixed.svg" height="14" class="mr-1" /> Sweden
-    </MudSelectItem>
-</MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="Status" @bind-Value="_status" Label="With templates" Variant="Variant.Outlined">
+            @foreach (var option in _options)
+            {
+                <MudSelectItem T="Status" Value="@option.Value">
+                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                        <MudIcon Icon="@option.Icon" Color="@option.Color" />
+                        <MudText>@option.Label</MudText>
+                    </MudStack>
+                </MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="Status" @bind-Value="_status" Label="Without templates" Variant="Variant.Outlined">
+            @foreach (var option in _options)
+            {
+                <MudSelectItem T="Status" Value="@option.Value" />
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
 
 @code {
-    string country="Austria";
+    private Status _status = Status.Ready;
+
+    private readonly StatusOption[] _options =
+    [
+        new(Status.Ready, "Ready", Icons.Material.Filled.CheckCircle, Color.Success),
+        new(Status.InProgress, "In progress", Icons.Material.Filled.Sync, Color.Info),
+        new(Status.Blocked, "Blocked", Icons.Material.Filled.Block, Color.Error)
+    ];
+
+    public enum Status
+    {
+        Ready,
+        InProgress,
+        Blocked
+    }
+
+    public record StatusOption(Status Value, string Label, string Icon, Color Color);
 }

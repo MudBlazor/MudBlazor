@@ -3,83 +3,68 @@
 @using System.Threading
 
 <MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <EditForm EditContext="editContext1">
-        <DataAnnotationsValidator />
-            <MudAutocomplete Label="US States" @bind-Value="choice1.State" Required="true"
-             SearchFunc="@SearchAsync" Immediate="true" CoerceValue="@coerceValue" ResetValueOnEmptyText="true"
-             AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
-             For="@(() => choice1.State)"/>
-            <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
-             Class="ml-auto mt-3 mb-3" OnClick="@(()=>success1=editContext1.Validate())">Validate</MudButton>
-                   @if (success1)
-                   {
-                       <MudText Color="Color.Success">Success</MudText>
-                   }
+    <MudItem xs="12" sm="6">
+        <EditForm EditContext="_editContext">
+            <DataAnnotationsValidator />
+            <MudAutocomplete T="string" Label="State (EditForm)"
+                             @bind-Value="_choice.State"
+                             For="@(() => _choice.State)"
+                             SearchFunc="SearchAsync"
+                             DebounceInterval="0"
+                             Required="true"
+                             ResetValueOnEmptyText="true"
+                             CoerceValue="_coerceValue"
+                             Clearable="true"
+                             AdornmentIcon="@Icons.Material.Filled.Search"
+                             AdornmentColor="Color.Primary" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="ValidateEditForm">
+                Validate
+            </MudButton>
+            @if (_editValid)
+            {
+                <MudText Color="Color.Success" Typo="Typo.caption">Valid selection</MudText>
+            }
         </EditForm>
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <EditForm EditContext="editContext2">
-        <DataAnnotationsValidator />
-            <MudAutocomplete Label="US States" @bind-Value="choice2.State" Required="true"
-             SearchFunc="@SearchAsync" Immediate="true" CoerceValue="@coerceValue" ResetValueOnEmptyText="true"
-             OpenIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary"
-             Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
-            <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
-                       Class="ml-auto mt-3 mb-3" OnClick="@(()=>success2=editContext2.Validate())">Validate</MudButton>
-                   @if (success2)
-                   {
-                       <MudText Color="Color.Success">Success</MudText>
-                   }
-        </EditForm>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudForm @ref="form">
-            <MudAutocomplete T="string" Label="US States" @bind-Value="choice3.State" Required="true"
-             SearchFunc="@SearchAsync" Immediate="true" CoerceValue="@coerceValue" ResetValueOnEmptyText="true"
-             CloseIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary"
-             Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto mt-3 mb-3" 
-             OnClick="@(()=>form.Validate())">Validate</MudButton>
-                    @if (form.IsTouched && form.IsValid)
-                    {
-                        <MudText Color="Color.Success">Success</MudText>
-                    }
-                    else
-                    {
-                        <MudText>IsTouched: @form.IsTouched, IsValid: @form.IsValid</MudText>
-                    }
+    <MudItem xs="12" sm="6">
+        <MudForm @ref="_mudForm">
+            <MudAutocomplete T="string" Label="State (MudForm)"
+                             @bind-Value="_manualState"
+                             SearchFunc="SearchAsync"
+                             DebounceInterval="0"
+                             Required="true"
+                             ResetValueOnEmptyText="true"
+                             CoerceValue="_coerceValue"
+                             Clearable="true"
+                             Validation="ValidateState"
+                             AdornmentIcon="@Icons.Material.Filled.Search"
+                             AdornmentColor="Color.Secondary" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="@(() => _mudForm.Validate())">
+                Validate
+            </MudButton>
+            <MudText Typo="Typo.caption">IsValid: @(_mudForm?.IsValid ?? false)</MudText>
         </MudForm>
-	</MudItem>
-    <MudItem xs="12" md="12">
-        <MudText Class="mb-n3" Typo="Typo.body2">
-            <MudChip T="string">@(choice1.State ?? "Not selected")</MudChip><MudChip T="string">@(choice2.State ?? "Not selected")</MudChip><MudChip T="string">@(choice3.State ?? "Not selected")</MudChip>
-        </MudText>
     </MudItem>
-    <MudItem xs="12" md="12" class="flex-column">
-        <MudSwitch @bind-Value="coerceValue" Color="Color.Tertiary">Coerce Value to Text (if not found)</MudSwitch>
+    <MudItem xs="12">
+        <MudSwitch @bind-Value="_coerceValue" Color="Color.Tertiary">Coerce Value</MudSwitch>
     </MudItem>
 </MudGrid>
 
 @code {
-    private MudForm form;
-    private bool coerceValue;
-    private bool success1;
-    private bool success2;
-    private Choice choice1 = new();
-    private Choice choice2 = new();
-    private Choice choice3 = new();
-    private EditContext editContext1;
-    private EditContext editContext2;
+    private MudForm _mudForm;
+    private bool _coerceValue;
+    private bool _editValid;
+    private Choice _choice = new();
+    private EditContext _editContext;
+    private string _manualState;
 
     protected override void OnInitialized()
     {
-        editContext1 = new EditContext(choice1);
-        editContext2 = new EditContext(choice2);
-    } 
+        _editContext = new EditContext(_choice);
+    }
 
-    private static string[] states =
-    {
+    private static readonly string[] States =
+    [
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
         "Delaware", "District of Columbia", "Federated States of Micronesia",
@@ -94,33 +79,36 @@
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
+    ];
 
-    private async Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token)
+    private Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token)
     {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        IEnumerable<string> result = States;
 
-        // if text is null or empty, show complete list
-        if (string.IsNullOrEmpty(value))
+        if (!string.IsNullOrWhiteSpace(value))
         {
-            return states;
+            result = States.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(result);
     }
 
-    private IEnumerable<string> Validate(string value)
-    {        
+    private void ValidateEditForm()
+    {
+        _editValid = _editContext.Validate();
+    }
+
+    private IEnumerable<string> ValidateState(string value)
+    {
         if (string.IsNullOrWhiteSpace(value))
         {
-            yield return "The State field is required";
+            yield return "State is required";
             yield break;
         }
 
-        if (!states.Contains(value))
+        if (!States.Any(state => state.Equals(value, StringComparison.InvariantCultureIgnoreCase)))
         {
-            yield return "This is an incorrect value";
+            yield return "Select a state from the list";
         }
     }
 
@@ -128,7 +116,7 @@
     {
         [Required]
         [State]
-        public string State { get; set;}
+        public string State { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
@@ -136,12 +124,13 @@
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (!states.Contains(value))
+            if (value is not string state ||
+                !States.Any(item => item.Equals(state, StringComparison.InvariantCultureIgnoreCase)))
             {
-                return new ValidationResult("This is an incorrect value", new[] { validationContext.MemberName });
+                return new ValidationResult("Select a state from the list", new[] { validationContext.MemberName });
             }
 
-            return null;
+            return ValidationResult.Success;
         }
     }
 }

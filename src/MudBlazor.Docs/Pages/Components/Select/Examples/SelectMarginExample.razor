@@ -1,17 +1,34 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect Margin="Margin.Dense" T="string" Label="Coffee" Variant="Variant.Text">
-    <MudSelectItem Value="@("Tyrannosaur")" />
-    <MudSelectItem Value="@("Triceratops")" />
-    <MudSelectItem Value="@("Mike Rex")" />
-</MudSelect>
-<MudSelect Margin="Margin.Dense" T="string" Label="Coffee" Variant="Variant.Outlined">
-    <MudSelectItem Value="@("Tyrannosaur")" />
-    <MudSelectItem Value="@("Triceratops")" />
-    <MudSelectItem Value="@("Henon Rex")" />
-</MudSelect>
-<MudSelect Margin="Margin.Dense" T="string" Label="Coffee" Variant="Variant.Filled">
-    <MudSelectItem Value="@("Tyrannosaur")" />
-    <MudSelectItem Value="@("Triceratops")" />
-    <MudSelectItem Value="@("Benno Rex")" />
-</MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" Label="Workspace"
+                   @bind-Value="_workspace"
+                   Margin="_margin"
+                   Variant="Variant.Outlined"
+                   Clearable="true">
+            @foreach (var item in _workspaces)
+            {
+                <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="Margin" Label="Margin" Dense="true" @bind-Value="_margin">
+            @foreach (var item in Enum.GetValues<Margin>())
+            {
+                <MudSelectItem T="Margin" Value="@item">@item</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _workspace;
+    private Margin _margin = Margin.Dense;
+
+    private readonly string[] _workspaces =
+    [
+        "Design", "Development", "Docs", "QA", "Release"
+    ];
+}
