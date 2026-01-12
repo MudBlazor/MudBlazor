@@ -8,7 +8,7 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Hotkey listener that maps keyboard shortcuts to actions.
+/// Add keyboard shortcuts that trigger actions or toggle content.
 /// </summary>
 public partial class MudHotkey : MudComponentBase, IAsyncDisposable
 {

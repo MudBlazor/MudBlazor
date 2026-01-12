@@ -11,7 +11,7 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Overlay layer for blocking interactions or showing loading states.
+/// Overlays block interaction and focus attention during loading or modal states.
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {

@@ -5,7 +5,7 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Flexible spacer that grows to fill available space.
+    /// Spacers create flexible gaps to push content apart in rows and stacks.
     /// </summary>
     public partial class MudSpacer
     {

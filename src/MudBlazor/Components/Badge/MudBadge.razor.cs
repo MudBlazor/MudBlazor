@@ -7,7 +7,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Badge that overlays or wraps content to highlight counts, status, or notifications.
+    /// Badges show notifications, counts, or status information on navigation items and icons.
     /// </summary>
     public partial class MudBadge : MudComponentBase
     {

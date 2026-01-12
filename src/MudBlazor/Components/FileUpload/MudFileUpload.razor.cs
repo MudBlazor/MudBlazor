@@ -16,7 +16,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// File upload control with drag-and-drop and customizable templates.
+    /// Let users pick or drag files into your app with customizable activators and templates.
     /// </summary>
     /// <typeparam name="T">The type of the selected file value.</typeparam>
     public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable

@@ -5,7 +5,7 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Responsive container that centers content with fluid or fixed widths.
+    /// Containers keep content aligned and readable across breakpoints with fluid or fixed widths.
     /// </summary>
     public partial class MudContainer
     {
