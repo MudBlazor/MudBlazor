@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2023
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -7,25 +7,23 @@ window.mudInputSizing = {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
         const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
-        const paddingBottom = parseFloat(compStyle.getPropertyValue('padding-bottom'));
-        const totalPadding = paddingTop + paddingBottom;
 
         let maxHeight = 0;
         let fillMode = isFillMode || false;
 
-        // Update parameters that affect the functionality and visuals of the dynamically sized input.
+        // Update parameters that affect the functionality and visuals of the sizing input.
         elem.updateParameters = function (newMaxLines, newFillMode) {
             fillMode = newFillMode || false;
             if (newMaxLines > 0) {
                 // Cap the height to the number of lines specified in the input.
-                maxHeight = lineHeight * newMaxLines + totalPadding;
+                maxHeight = lineHeight * newMaxLines + paddingTop;
             } else {
                 maxHeight = 0;
             }
         }
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
-        elem.adjustSizingHeight = function () {
+        elem.adjustSizingHeight = function (didReflow = false) {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
@@ -37,11 +35,7 @@ window.mudInputSizing = {
             }
 
             if (fillMode) {
-                // In fill mode, use flex or 100% height to fill the available space
-                elem.style.height = '100%';
-                elem.style.minHeight = (lineHeight * elem.rows + totalPadding) + 'px';
-
-                // Get the actual available height from the parent container
+                // Fill mode - expand to fill the parent container's height
                 const parent = elem.parentElement;
                 if (parent) {
                     const parentRect = parent.getBoundingClientRect();
@@ -70,24 +64,33 @@ window.mudInputSizing = {
                     }
                 }
             } else {
-                // Auto mode - grow/shrink based on content
-                // Temporarily collapse to get accurate scrollHeight for shrinking
-                elem.style.height = '0';
-                elem.style.minHeight = '0';
+                // Auto mode - grow/shrink based on content (original AutoGrow logic)
+                elem.style.height = 0;
 
-                let minHeight = lineHeight * elem.rows + totalPadding;
+                if (didReflow) {
+                    elem.style.textAlign = null;
+                }
+
+                let minHeight = lineHeight * elem.rows + paddingTop;
                 let newHeight = Math.max(minHeight, elem.scrollHeight);
+                let initialOverflowY = elem.style.overflowY;
                 if (maxHeight > 0 && newHeight > maxHeight) {
                     // Content height exceeds the max height so we'll see a scrollbar.
                     elem.style.overflowY = 'auto';
                     newHeight = maxHeight;
                 } else {
-                    // Scrollbar isn't needed.
+                    // Scrollbar isn't needed and could either flash on resize or could appear
+                    // due to rounding inaccuracy in scrollHeight when the display is scaled.
                     elem.style.overflowY = 'hidden';
                 }
 
                 elem.style.height = newHeight + "px";
-                elem.style.minHeight = minHeight + "px";
+
+                // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
+                if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
+                    elem.style.textAlign = 'end'; // Change to something other than the default.
+                    elem.adjustSizingHeight(true);
+                }
             }
 
             // Restore scroll positions.
@@ -98,12 +101,11 @@ window.mudInputSizing = {
             });
         }
 
-        // Terminate dynamic sizing and restore the input element back to its original state.
+        // Terminate sizing and restore the input element back to its original state.
         elem.restoreToInitialState = function () {
             elem.removeEventListener('input', elem.adjustSizingHeight);
             elem.style.overflowY = null;
             elem.style.height = null;
-            elem.style.minHeight = null;
         }
 
         // Adjust height when input happens.
