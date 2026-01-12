@@ -777,22 +777,11 @@ namespace MudBlazor
             _items = searchedItems;
 
             var enabledItemIndices = new List<int>(_items.Length);
-            var itemDisabledFunc = ItemDisabledFunc;
-            if (itemDisabledFunc is null)
+            for (int i = 0; i < _items.Length; i++)
             {
-                for (int i = 0; i < _items.Length; i++)
+                if (ItemDisabledFunc?.Invoke(_items[i]) != true)
                 {
                     enabledItemIndices.Add(i);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < _items.Length; i++)
-                {
-                    if (!itemDisabledFunc(_items[i]))
-                    {
-                        enabledItemIndices.Add(i);
-                    }
                 }
             }
 
