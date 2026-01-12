@@ -3,46 +3,54 @@
 
 <MudGrid Spacing="3">
     <MudItem xs="12" md="8">
-        <MudGrid Spacing="2">
-            <MudItem xs="12" sm="6">
-                <MudAutocomplete T="string" Label="Circular indicator" @bind-Value="value1" SearchFunc="@Search1"
-                                 Variant="Variant.Outlined" ShowProgressIndicator="true" ProgressIndicatorColor="SelectedColor"
-                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CloudDownload" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudAutocomplete T="string" Label="Popover indicator" @bind-Value="value3" SearchFunc="@Search1"
-                                 Variant="Variant.Outlined" ProgressIndicatorColor="SelectedColor"
-                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CloudSync">
-                    <ProgressIndicatorInPopoverTemplate>
-                        <MudList T="string" ReadOnly>
-                            <MudListItem>
-                                Loading...
-                            </MudListItem>
-                        </MudList>
-                    </ProgressIndicatorInPopoverTemplate>
-                </MudAutocomplete>
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudAutocomplete T="string" Label="Linear indicator" @bind-Value="value2" SearchFunc="@Search1"
-                                 ShowProgressIndicator="true"
-                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Downloading">
-                    <ProgressIndicatorTemplate>
-                        <MudProgressLinear Size="Size.Small" Indeterminate="true" Color="SelectedColor" />
-                    </ProgressIndicatorTemplate>
-                </MudAutocomplete>
-            </MudItem>
-        </MudGrid>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="3">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">Progress indicators</MudText>
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="6">
+                        <MudAutocomplete T="string" Label="Circular indicator" @bind-Value="value1" SearchFunc="@Search1"
+                                         Variant="Variant.Outlined" ShowProgressIndicator="true" ProgressIndicatorColor="SelectedColor"
+                                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CloudDownload" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudAutocomplete T="string" Label="Popover indicator" @bind-Value="value3" SearchFunc="@Search1"
+                                         Variant="Variant.Outlined" ProgressIndicatorColor="SelectedColor"
+                                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CloudSync">
+                            <ProgressIndicatorInPopoverTemplate>
+                                <MudList T="string" ReadOnly>
+                                    <MudListItem>
+                                        Loading...
+                                    </MudListItem>
+                                </MudList>
+                            </ProgressIndicatorInPopoverTemplate>
+                        </MudAutocomplete>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudAutocomplete T="string" Label="Linear indicator" @bind-Value="value2" SearchFunc="@Search1"
+                                         ShowProgressIndicator="true"
+                                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Downloading">
+                            <ProgressIndicatorTemplate>
+                                <MudProgressLinear Size="Size.Small" Indeterminate="true" Color="SelectedColor" />
+                            </ProgressIndicatorTemplate>
+                        </MudAutocomplete>
+                    </MudItem>
+                </MudGrid>
+            </MudStack>
+        </MudPaper>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudStack Spacing="2">
-            <MudSelect T="Color" Label="Color" Margin="Margin.Dense" Dense="true" Value="@SelectedColor" ValueChanged="OnColorSelected">
-                <MudSelectItem T="Color" Value="@Color.Default">Default</MudSelectItem>
-                <MudSelectItem T="Color" Value="@Color.Info">Info</MudSelectItem>
-                <MudSelectItem T="Color" Value="@Color.Success">Success</MudSelectItem>
-                <MudSelectItem T="Color" Value="@Color.Warning">Warning</MudSelectItem>
-                <MudSelectItem T="Color" Value="@Color.Error">Error</MudSelectItem>
-            </MudSelect>
-        </MudStack>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">Progress options</MudText>
+                <MudSelect T="Color" Label="Color" Margin="Margin.Dense" Dense="true" Value="@SelectedColor" ValueChanged="OnColorSelected">
+                    <MudSelectItem T="Color" Value="@Color.Default">Default</MudSelectItem>
+                    <MudSelectItem T="Color" Value="@Color.Info">Info</MudSelectItem>
+                    <MudSelectItem T="Color" Value="@Color.Success">Success</MudSelectItem>
+                    <MudSelectItem T="Color" Value="@Color.Warning">Warning</MudSelectItem>
+                    <MudSelectItem T="Color" Value="@Color.Error">Error</MudSelectItem>
+                </MudSelect>
+            </MudStack>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 

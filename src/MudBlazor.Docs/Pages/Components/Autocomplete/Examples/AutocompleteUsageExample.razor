@@ -3,37 +3,46 @@
 
 <MudGrid Spacing="3">
     <MudItem xs="12" md="7">
-        <MudStack Spacing="2">
-            <MudAutocomplete T="string" Label="Show results on focus" @bind-Value="_value1" SearchFunc="@SearchAll"
-                             ResetValueOnEmptyText="_resetValueOnEmptyText"
-                             CoerceText="_coerceText" CoerceValue="_coerceValue" SelectValueOnTab="_selectValueOnTab"
-                             Clearable="_clearable" OpenOnFocus="_openOnFocus" MinCharacters="_minCharacters"
-                             DebounceInterval="0" Adornment="Adornment.Start"
-                             AdornmentIcon="@Icons.Material.Filled.Place" />
-            <MudAutocomplete T="string" Label="Search after typing" @bind-Value="_value2" SearchFunc="@SearchOnType"
-                             ResetValueOnEmptyText="_resetValueOnEmptyText"
-                             CoerceText="_coerceText" CoerceValue="_coerceValue" SelectValueOnTab="_selectValueOnTab"
-                             Clearable="_clearable" OpenOnFocus="_openOnFocus" MinCharacters="_minCharacters"
-                             DebounceInterval="0" Adornment="Adornment.Start"
-                             AdornmentIcon="@Icons.Material.Filled.Search" />
-            <MudStack Row Wrap="Wrap.Wrap" Spacing="1" AlignItems="AlignItems.Center">
-                <MudText Typo="Typo.caption" Class="mr-2">Selected</MudText>
-                <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">@(_value1 ?? "None")</MudChip>
-                <MudChip T="string" Color="Color.Secondary" Variant="Variant.Outlined">@(_value2 ?? "None")</MudChip>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="3">
+            <MudStack Spacing="2">
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h6">Quick search</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">Two common patterns: show a full list or wait for input.</MudText>
+                </MudStack>
+                <MudAutocomplete T="string" Label="Show results on focus" @bind-Value="_value1" SearchFunc="@SearchAll"
+                                 ResetValueOnEmptyText="_resetValueOnEmptyText"
+                                 CoerceText="_coerceText" CoerceValue="_coerceValue" SelectValueOnTab="_selectValueOnTab"
+                                 Clearable="_clearable" OpenOnFocus="_openOnFocus" MinCharacters="_minCharacters"
+                                 DebounceInterval="0" Adornment="Adornment.Start"
+                                 AdornmentIcon="@Icons.Material.Filled.Place" />
+                <MudAutocomplete T="string" Label="Search after typing" @bind-Value="_value2" SearchFunc="@SearchOnType"
+                                 ResetValueOnEmptyText="_resetValueOnEmptyText"
+                                 CoerceText="_coerceText" CoerceValue="_coerceValue" SelectValueOnTab="_selectValueOnTab"
+                                 Clearable="_clearable" OpenOnFocus="_openOnFocus" MinCharacters="_minCharacters"
+                                 DebounceInterval="0" Adornment="Adornment.Start"
+                                 AdornmentIcon="@Icons.Material.Filled.Search" />
+                <MudStack Row Wrap="Wrap.Wrap" Spacing="1" AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.caption" Class="mr-2">Selected</MudText>
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">@(_value1 ?? "None")</MudChip>
+                    <MudChip T="string" Color="Color.Secondary" Variant="Variant.Outlined">@(_value2 ?? "None")</MudChip>
+                </MudStack>
             </MudStack>
-        </MudStack>
+        </MudPaper>
     </MudItem>
     <MudItem xs="12" md="5">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.caption">Min characters</MudText>
-            <MudSlider T="int" @bind-Value="_minCharacters" Min="0" Max="4" Step="1" />
-            <MudSwitch @bind-Value="_openOnFocus" Color="Color.Primary">Open on focus</MudSwitch>
-            <MudSwitch @bind-Value="_clearable" Color="Color.Primary">Clearable</MudSwitch>
-            <MudSwitch @bind-Value="_resetValueOnEmptyText" Color="Color.Primary">Reset value on empty</MudSwitch>
-            <MudSwitch @bind-Value="_coerceText" Color="Color.Secondary">Coerce text to value</MudSwitch>
-            <MudSwitch @bind-Value="_coerceValue" Color="Color.Tertiary">Coerce value to text</MudSwitch>
-            <MudSwitch @bind-Value="_selectValueOnTab" Color="Color.Tertiary">Select value on Tab</MudSwitch>
-        </MudStack>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">Behavior</MudText>
+                <MudText Typo="Typo.caption">Min characters</MudText>
+                <MudSlider T="int" @bind-Value="_minCharacters" Min="0" Max="4" Step="1" />
+                <MudSwitch @bind-Value="_openOnFocus" Color="Color.Primary">Open on focus</MudSwitch>
+                <MudSwitch @bind-Value="_clearable" Color="Color.Primary">Clearable</MudSwitch>
+                <MudSwitch @bind-Value="_resetValueOnEmptyText" Color="Color.Primary">Reset value on empty</MudSwitch>
+                <MudSwitch @bind-Value="_coerceText" Color="Color.Secondary">Coerce text to value</MudSwitch>
+                <MudSwitch @bind-Value="_coerceValue" Color="Color.Tertiary">Coerce value to text</MudSwitch>
+                <MudSwitch @bind-Value="_selectValueOnTab" Color="Color.Tertiary">Select value on Tab</MudSwitch>
+            </MudStack>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 

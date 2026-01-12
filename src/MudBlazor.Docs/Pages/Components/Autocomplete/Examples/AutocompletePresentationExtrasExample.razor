@@ -6,54 +6,62 @@
 
 <MudGrid Spacing="3">
     <MudItem xs="12" md="4">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.overline">More items</MudText>
-            <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1"
-                             SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
-                <MoreItemsTemplate>
-                    <MudText Align="Align.Center" Class="px-4 py-1">
-                        Only the first 10 items are shown
-                    </MudText>
-                </MoreItemsTemplate>
-            </MudAutocomplete>
-        </MudStack>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">More items</MudText>
+                <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1"
+                                 SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
+                    <MoreItemsTemplate>
+                        <MudText Align="Align.Center" Class="px-4 py-1">
+                            Only the first 10 items are shown
+                        </MudText>
+                    </MoreItemsTemplate>
+                </MudAutocomplete>
+            </MudStack>
+        </MudPaper>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.overline">No results</MudText>
-            <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2"
-                             SearchFunc="@SearchEmpty" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
-                <NoItemsTemplate>
-                    <MudText Align="Align.Center" Class="px-4 py-1">
-                        No items found
-                    </MudText>
-                </NoItemsTemplate>
-            </MudAutocomplete>
-        </MudStack>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">No results</MudText>
+                <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2"
+                                 SearchFunc="@SearchEmpty" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
+                    <NoItemsTemplate>
+                        <MudText Align="Align.Center" Class="px-4 py-1">
+                            No items found
+                        </MudText>
+                    </NoItemsTemplate>
+                </MudAutocomplete>
+            </MudStack>
+        </MudPaper>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.overline">Before list</MudText>
-            <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
-                             SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
-                <BeforeItemsTemplate>
-                    <MudText Color="Color.Primary" Class="px-4 py-1">Always shows before list</MudText>
-                </BeforeItemsTemplate>
-            </MudAutocomplete>
-        </MudStack>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">Before list</MudText>
+                <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
+                                 SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
+                    <BeforeItemsTemplate>
+                        <MudText Color="Color.Primary" Class="px-4 py-1">Always shows before list</MudText>
+                    </BeforeItemsTemplate>
+                </MudAutocomplete>
+            </MudStack>
+        </MudPaper>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.overline">After list</MudText>
-            <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value4"
-                             SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
-                <AfterItemsTemplate>
-                    <div class="pa-2">
-                        <MudButton Color="Color.Primary">Add item (does nothing)</MudButton>
-                    </div>
-                </AfterItemsTemplate>
-            </MudAutocomplete>
-        </MudStack>
+        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle1">After list</MudText>
+                <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value4"
+                                 SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")">
+                    <AfterItemsTemplate>
+                        <div class="pa-2">
+                            <MudButton Color="Color.Primary">Add item (does nothing)</MudButton>
+                        </div>
+                    </AfterItemsTemplate>
+                </MudAutocomplete>
+            </MudStack>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 
