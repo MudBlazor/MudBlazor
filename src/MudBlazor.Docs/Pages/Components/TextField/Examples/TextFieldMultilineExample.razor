@@ -25,7 +25,7 @@
     </MudItem>
 
     <MudItem xs="12" md="4">
-        <div class="d-flex flex-grow-1" style="min-height: 0;">
+        <MudPaper Outlined="true" Class="pa-4 d-flex flex-column" Style="height: 200px;">
             <MudTextField T="string"
                 Label="Fill"
                 Variant="Variant.Outlined"
@@ -34,9 +34,8 @@
                 Sizing="InputSizing.Fill"
                 Text="@_fillText"
                 TextChanged="@((string v) => _fillText = v)"
-                Class="flex-grow-1"
                 HelperText="Fills the container height" />
-        </div>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 

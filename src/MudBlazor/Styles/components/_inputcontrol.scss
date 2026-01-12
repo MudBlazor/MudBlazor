@@ -13,6 +13,15 @@
     width: 100%;
   }
 
+  &.mud-input-sizing-fill {
+    height: 100%;
+
+    > .mud-input-control-input-container {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+  }
+
   &.mud-input-control-boolean-input {
     flex: none;
     margin: 0;
