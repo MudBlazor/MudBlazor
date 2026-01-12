@@ -766,7 +766,6 @@ namespace MudBlazor
             }
         }
 
-
         private void OnPagerStateChanged()
         {
             if (PagerStateHasChangedEvent is not null)
@@ -826,7 +825,6 @@ namespace MudBlazor
                 }
             }
         }
-
 
         /// <summary>
         /// Shows a loading animation while querying data.
@@ -1231,7 +1229,6 @@ namespace MudBlazor
         /// The items returned by the <see cref="ServerData"/> function.
         /// </summary>
         public IEnumerable<T> ServerItems => _serverData.Items;
-
 
         /// <summary>
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
@@ -2468,7 +2465,6 @@ namespace MudBlazor
 
             await InvokeAsync(StateHasChanged);
         }
-
 
         #region Resize feature
 

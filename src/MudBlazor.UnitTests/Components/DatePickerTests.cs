@@ -246,7 +246,6 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
         }
 
-
         [Test]
         public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
         {
@@ -387,7 +386,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
         }
 
-
         [Test]
         public void OpenToMonth_CheckMonthsShown()
         {
@@ -449,7 +447,6 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.FindComponent<MudDatePicker>();
 
             picker.Markup.Should().Contain("mud-selected"); //confirm selected date is shown
-
 
             // Calculate expected date before selection
             var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
@@ -937,8 +934,6 @@ namespace MudBlazor.UnitTests.Components
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
-
-
         [Test]
         //mud-button-root added for graying out and making buttons not clickable if month is disabled
         public void MonthButtons_ButtonRootClassPresent()
@@ -1087,7 +1082,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Open the datepicker
             await picker.Open();
-
 
             // Clicking a day button to select a date
             if (now.Day != 21)
@@ -1240,7 +1234,6 @@ namespace MudBlazor.UnitTests.Components
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
 
-
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
@@ -1261,8 +1254,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
             datePicker.Date.Should().Be(expectedDate1);
-
-
 
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
@@ -1301,7 +1292,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(parameter => parameter.OpenTo, OpenTo.Month));
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
-
 
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
@@ -1344,7 +1334,6 @@ namespace MudBlazor.UnitTests.Components
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComponent.Instance;
 
-
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
@@ -1356,7 +1345,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             //date
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-
 
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));

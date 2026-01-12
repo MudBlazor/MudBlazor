@@ -366,7 +366,6 @@ namespace MudBlazor
             static bool isEqualTo(DateTime date1, DateTime date2) => date1 == date2;
             static bool isNotEqualTo(DateTime date1, DateTime date2) => date1 != date2;
 
-
             if ((_firstDate?.Date < day && _secondDate?.Date > day) || CheckDateRange(day, compareStart: isLessThan, compareEnd: isGreaterThan))
             {
                 return b

@@ -254,7 +254,6 @@ namespace MudBlazor.UnitTests.Components
             textfield.GetState(x => x.ErrorText).Should().NotBeNullOrEmpty();
         }
 
-
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
@@ -362,7 +361,6 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
-
 
         /// <summary>
         /// Ensures that a text field with both 'Lines' > 1 and 'Mask' parameters generates a 'textarea'.
@@ -568,7 +566,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValidationErrors[0].Should().Be("Bar");
             comp.Instance.GetErrorText().Should().Be("Bar");
         }
-
 
         public class CustomThrowingValidationAttribute : ValidationAttribute
         {

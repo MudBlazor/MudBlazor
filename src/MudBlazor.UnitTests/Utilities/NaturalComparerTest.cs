@@ -54,7 +54,6 @@ namespace MudBlazor.UnitTests.Utilities
                 "Myp5LWE0KnlhMyp5YTQqej96IDA1MD96IDIxP3ohMjE/ejIwP3oyMj96YTIxP3rCqTIxP1sxKl8xKsKt" +
                 "bjEyKsKtbjEzKsSwKg==";
 
-
         private static string[] s_orderedFileNames = new string[]
         {
             "_1.txt"

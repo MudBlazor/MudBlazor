@@ -348,7 +348,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<RadioGroupRequiredTest>();
 
-
             comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
 

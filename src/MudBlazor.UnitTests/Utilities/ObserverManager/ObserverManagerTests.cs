@@ -391,7 +391,6 @@ public class ObserverManagerTests
         actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
-
     [Test]
     public void Unsubscribe_Subscribe_UpdateSubscribe_TraceLogEnabled_LogsDebugInformation()
     {

@@ -2,7 +2,6 @@
 // Copyright (c) 2023 - Adaptations by Simon Schulze
 // Copyright (c) 2024 - Adaptations by MudBlazor
 
-
 using System.Linq.Expressions;
 
 namespace MudBlazor;

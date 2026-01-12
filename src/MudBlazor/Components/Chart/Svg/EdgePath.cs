@@ -42,7 +42,6 @@ public sealed class EdgePath : SvgPath
     public required NodeRect Target { get; set; }
 }
 
-
 /// <summary>
 /// Represents a rectangular node in a Sankey chart, including its position,
 /// dimensions, color.

@@ -227,7 +227,6 @@ namespace MudBlazor
         /// </summary>
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
 
-
         /// <summary>
         /// The color for skeletons.
         /// </summary>

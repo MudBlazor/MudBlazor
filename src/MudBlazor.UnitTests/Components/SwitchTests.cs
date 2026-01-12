@@ -135,7 +135,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").HasAttribute("required").Should().BeTrue();
         }
 
-
         [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {

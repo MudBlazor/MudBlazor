@@ -249,8 +249,6 @@ namespace MudBlazor
         [Parameter]
         public bool PopoverFixed { get; set; }
 
-
-
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
         /// </summary>

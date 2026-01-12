@@ -555,7 +555,6 @@ namespace MudBlazor.UnitTests.Components
 
         }
 
-
         [Test]
         public async Task SetDateRange_NoChangedIfSameValues()
         {
@@ -629,7 +628,6 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.GetState(x => x.Error).Should().BeTrue("Value is required and should be handled as invalid");
             dateRangePickerComponent.Markup.Should().Contain(errorMessage);
             dateRangePickerInstance.GetState(x => x.ErrorText).Should().Be(errorMessage);
-
 
             // set a value
             await dateRangePickerComponent.SetParametersAndRenderAsync(parameters => parameters

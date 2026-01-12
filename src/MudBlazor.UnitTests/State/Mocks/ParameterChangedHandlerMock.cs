@@ -4,7 +4,6 @@
 
 using MudBlazor.State;
 
-
 namespace MudBlazor.UnitTests.State.Mocks;
 
 #nullable enable

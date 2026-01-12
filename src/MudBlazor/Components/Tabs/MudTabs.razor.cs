@@ -684,7 +684,6 @@ namespace MudBlazor
             return null;
         }
 
-
         /// <summary>
         /// Handles when ActivePanelIndex is changed outside of the component
         /// </summary>
@@ -1239,7 +1238,6 @@ namespace MudBlazor
                 await OnItemDropped.InvokeAsync(dropItem);
             }
         }
-
 
         /// <summary>
         /// Handles keyboard navigation for tabs according to W3C accessibility guidelines

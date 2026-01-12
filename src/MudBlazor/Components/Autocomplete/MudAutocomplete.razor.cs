@@ -414,8 +414,6 @@ namespace MudBlazor
         [Parameter]
         public bool PopoverFixed { get; set; }
 
-
-
         /// <summary>
         /// The function used to determine if an item should be disabled.
         /// </summary>

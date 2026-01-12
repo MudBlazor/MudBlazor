@@ -658,7 +658,6 @@ public class ParameterStateUsageTests : BunitTest
         child2.Instance.TextChanges.Count.Should().Be(10);
         child2.Instance.ValueChanges.Count.Should().Be(6);
 
-
         // Change History of child2
         // ButtonSetValueNullText
         child2.Instance.TextChanges[0].Value!.Should().Be("#fcefe5");
@@ -679,7 +678,6 @@ public class ParameterStateUsageTests : BunitTest
         child2.Instance.TextChanges[5].Value!.Should().Be("#662f18");
         child2.Instance.TextChanges[6].Value!.Should().Be("#30102a");
         child2.Instance.ValueChanges[4].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#30102a");
-
 
         // Change History of child1
         // ButtonSetValueNullText

@@ -1251,7 +1251,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridEditComplexPropertyExpressionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditComplexPropertyExpressionTest.Item>>();
 
-
             dataGrid.Render();
 
             // Make sure that the value is as expected before we try to change it
@@ -4545,7 +4544,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 3);
 
-
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
             await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortBy, x => x.Name));
             dataGrid.Render();
@@ -4622,7 +4620,6 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1);
-
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
@@ -4752,7 +4749,6 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterRow)
                 .Add(x => x.SortMode, SortMode.None));
-
 
             // Assert that the `column-options` span is present but empty
             var columnOptionsSpan = comp.Find(".column-options");
@@ -5720,7 +5716,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridHierarchyVisibilityToggledTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
             var testComponent = comp.Instance;
-
 
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
             testComponent.ToggledEvents.Clear();

@@ -113,7 +113,6 @@ namespace MudBlazor
         /// </remarks>
         public double? Width { get; internal set; }
 
-
         #region Computed Properties and Functions
 
         private bool Expanded => DataGrid?._openHierarchies.Count > 0;

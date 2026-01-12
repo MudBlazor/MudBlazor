@@ -205,7 +205,6 @@ namespace MudBlazor.UnitTests.Services.Browser
             option2.Should().NotBe(option1);
         }
 
-
         [Test]
         public void Equals_NotTheSame_BreakpointDefinitions_EmptyAndNull()
         {

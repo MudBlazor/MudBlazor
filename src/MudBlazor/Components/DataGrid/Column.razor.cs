@@ -373,7 +373,6 @@ namespace MudBlazor
         /// </summary>
         public string Identifier { get; set; }
 
-
         private CultureInfo _culture;
 
         /// <summary>
@@ -749,7 +748,6 @@ namespace MudBlazor
             if (DataGrid != null)
                 DataGrid.RemoveColumn(this);
         }
-
 
         #region Abstract Members
 

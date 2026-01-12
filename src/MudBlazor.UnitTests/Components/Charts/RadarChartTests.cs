@@ -86,7 +86,6 @@ public class RadarChartTests : BunitTest
         comp.FindAll("path.mud-chart-axis-line").Count.Should().Be(1);
     }
 
-
     [Test]
     public void RadarChart_Option_ShowGridLines_And_GridLevels()
     {
@@ -623,7 +622,6 @@ public class RadarChartTests : BunitTest
         };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-
         var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
@@ -701,7 +699,6 @@ public class RadarChartTests : BunitTest
         };
         var chartLabels = new string[] { "Max", "Zero", "Min", "Normal" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
-
 
         var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
@@ -980,7 +977,6 @@ public class RadarChartTests : BunitTest
         tooltip.TextContent.Should().Contain(seriesName);
         tooltip.TextContent.Should().Contain(seriesData[0].ToString());
 
-
         // Test with Custom Tooltip Template
         RenderFragment CustomTooltip((SvgPath Segment, string Color) info) => builder =>
         {
@@ -1102,7 +1098,6 @@ public class RadarChartTests : BunitTest
 
         var newLabels = new[] { "Price", "Speed", "Ease of Use", "Support" }; // Changed names and count
         var updatedSeriesData = new List<ChartSeries<double>> { new() { Name = "ProductX", Data = new double[] { 10, 20, 30, 40 } } };
-
 
         await comp.SetParametersAndRenderAsync(parameters => parameters
             .Add(p => p.ChartLabels, newLabels)

@@ -76,7 +76,6 @@ public class ServiceCollectionExtensionsTests
         actualOptions.Should().BeSameAs(expectedOptions);
     }
 
-
     [Test]
     public void AddMudBlazorResizeListener_ShouldRegisterServices()
     {
