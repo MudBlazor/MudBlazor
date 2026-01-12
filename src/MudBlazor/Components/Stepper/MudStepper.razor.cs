@@ -9,9 +9,8 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
-
 /// <summary>
-/// A wizard that guides the user through a series of steps to complete a transaction.
+/// Step-by-step wizard that guides users through a multi-step flow.
 /// </summary>
 public partial class MudStepper : MudComponentBase
 {

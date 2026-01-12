@@ -8,9 +8,8 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
-/// A component for aligning child items horizontally or vertically.
+/// Layout container that stacks children horizontally or vertically with spacing.
 /// </summary>
 public partial class MudStack : MudComponentBase
 {

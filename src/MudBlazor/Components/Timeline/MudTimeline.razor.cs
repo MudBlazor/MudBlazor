@@ -8,11 +8,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// Displays items in chronological order.
+    /// Timeline layout that presents items in chronological order.
     /// </summary>
-    /// <seealso cref="MudTimelineItem"/>
+
     public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
     {
         protected string Classnames =>

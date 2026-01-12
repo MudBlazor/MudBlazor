@@ -7,13 +7,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A component which prevents the keyboard focus from cycling out of its child content.
+    /// Focus trap that keeps keyboard focus within its content.
     /// </summary>
-    /// <remarks>
-    /// Typically used within dialogs and other overlays.
-    /// </remarks>
+
     public partial class MudFocusTrap : IDisposable
     {
         private bool _shiftDown;

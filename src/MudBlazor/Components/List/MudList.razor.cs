@@ -7,16 +7,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A scrollable list for displaying text, avatars, and icons.
+    /// List component for navigation, selection, or grouping items.
     /// </summary>
-    /// <remarks>
-    /// This component contains an optional <see cref="MudListSubheader"/> and one or more <see cref="MudListItem{T}"/>.
-    /// </remarks>
-    /// <typeparam name="T">The type of item being listed.</typeparam>
-    /// <seealso cref="MudListItem{T}"/>
-    /// <seealso cref="MudListSubheader"/>
+    /// <typeparam name="T">The type of item displayed by the list.</typeparam>
+
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
         public MudList()

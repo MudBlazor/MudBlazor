@@ -7,9 +7,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a component with simple and flexible type-ahead functionality.
+    /// Type-ahead input that searches large option sets by calling your search function, including async queries.
     /// </summary>
     /// <typeparam name="T">The type of item to search.</typeparam>
+
     public partial class MudAutocomplete<T> : MudBaseInput<T>
     {
         /// <summary>

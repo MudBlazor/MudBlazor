@@ -8,9 +8,8 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
-/// A surface for grouping other components.
+/// Paper surface with elevation or outlined styles.
 /// </summary>
 public partial class MudPaper : MudComponentBase
 {

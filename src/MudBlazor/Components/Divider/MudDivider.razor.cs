@@ -8,9 +8,8 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
-/// A thin line that groups content in lists and layouts.
+/// Divider line that separates content sections.
 /// </summary>
 public partial class MudDivider : MudComponentBase
 {

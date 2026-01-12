@@ -8,9 +8,10 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A component which allows users to select a value within a specified range.
+    /// Slider for selecting a value within a defined range.
     /// </summary>
-    /// <typeparam name="T">The type of the value the slider represents.</typeparam>
+    /// <typeparam name="T">The numeric value type for the slider.</typeparam>
+
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
     {
         private int _tickMarkCount = 0;

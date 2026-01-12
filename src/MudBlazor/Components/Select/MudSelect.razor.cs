@@ -13,12 +13,11 @@ using MudBlazor.Utilities.Exceptions;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A component for choosing an item from a list of options.
+    /// Dropdown select input for choosing from a list of options.
     /// </summary>
-    /// <typeparam name="T">The kind of object being selected.</typeparam>
-    /// <seealso cref="MudSelectItem{T}"/>
+    /// <typeparam name="T">The type of value to select.</typeparam>
+
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private string? _activeItemId;

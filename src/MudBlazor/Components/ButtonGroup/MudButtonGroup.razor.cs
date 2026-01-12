@@ -5,9 +5,9 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a group of connected <see cref="MudButton"/> components.
+    /// Group related buttons into a single segmented control.
     /// </summary>
-    /// <seealso cref="MudButton" />
+
     public partial class MudButtonGroup : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-button-group-root")

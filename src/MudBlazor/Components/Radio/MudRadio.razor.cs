@@ -10,13 +10,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// An option from a set of mutually exclusive options, often as part of a <see cref="MudRadioGroup{T}"/>.
+    /// Single-choice radio button used within a group.
     /// </summary>
-    /// <typeparam name="T">The type of value being selected, often a <c>bool</c>.</typeparam>
-    /// <seealso cref="MudCheckBox{T}" />
-    /// <seealso cref="MudRadioGroup{T}" />
+    /// <typeparam name="T">The type of the bound value.</typeparam>
+
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;

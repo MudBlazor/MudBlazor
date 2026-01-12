@@ -5,10 +5,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// An area which receives swipe events.
+    /// Gesture area that raises swipe events in multiple directions.
     /// </summary>
+
     public partial class MudSwipeArea : MudComponentBase
     {
         private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave"];

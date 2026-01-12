@@ -5,9 +5,8 @@ using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
-
 /// <summary>
-/// Two panels which are resizable.
+/// Resizable split panel for adjusting two panes.
 /// </summary>
 public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 {

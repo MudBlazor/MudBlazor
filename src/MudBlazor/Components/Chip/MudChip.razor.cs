@@ -7,12 +7,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
-/// Represents a compact element used to enter information, select a choice, filter content, or trigger an action.
+/// Compact chip for tags, filters, or input tokens.
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
 /// <seealso cref="MudChipSet{T}"/>
+
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
     [Inject]

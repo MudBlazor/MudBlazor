@@ -6,11 +6,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A component for collecting and displaying ratings.
+    /// Rating control for collecting feedback with selectable icons.
     /// </summary>
-    /// <seealso cref="MudRatingItem"/>
+
     public partial class MudRating : MudComponentBase
     {
         private readonly ParameterState<int> _selectedValueState;

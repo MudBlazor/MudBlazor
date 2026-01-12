@@ -6,11 +6,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A component which switches between two values.
+    /// Switch-style toggle between two values.
     /// </summary>
-    /// <typeparam name="T">The kind of value being switched, typically a <see cref="bool"/>.</typeparam>
+    /// <typeparam name="T">The type of the bound value.</typeparam>
+
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         private string _elementId = Identifier.Create("switch");

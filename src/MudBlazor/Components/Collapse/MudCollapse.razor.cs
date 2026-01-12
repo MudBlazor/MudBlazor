@@ -6,10 +6,9 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a container for content which can be collapsed and expanded.
+    /// Smoothly collapse and expand content with animated height transitions.
     /// </summary>
-    /// <seealso cref="MudExpansionPanels"/>
-    /// <seealso cref="MudExpansionPanel"/>
+
     public partial class MudCollapse : MudComponentBase
     {
         private enum CollapseState

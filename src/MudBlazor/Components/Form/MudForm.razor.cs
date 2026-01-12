@@ -6,9 +6,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for collecting and validating user input. Every input derived from MudFormComponent 
-    /// within it is monitored and validated.
+    /// Form container that coordinates validation and error display for inputs.
     /// </summary>
+
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
         // Note: w/o any children the form is automatically valid.

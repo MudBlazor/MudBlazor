@@ -17,6 +17,11 @@ using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor.Charts
 {
+    /// <summary>
+    /// Heat map chart that visualizes values as colored cells.
+    /// </summary>
+    /// <typeparam name="T">The numeric value type for the heat map.</typeparam>
+
     partial class HeatMap<T> : MudChartBase<T, HeatMapChartOptions>, IDisposable where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         internal record CellDimension(double Width, double Height, int Padding);

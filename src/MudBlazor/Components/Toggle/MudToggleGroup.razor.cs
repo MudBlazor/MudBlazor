@@ -11,14 +11,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// Maintains the selection of a group of <see cref="MudToggleItem{T}"/> components.
+    /// Group of toggle buttons for single or multiple selection.
     /// </summary>
-    /// <typeparam name="T">The type of item being toggled.</typeparam>
-    /// <seealso cref="MudToggleItem{T}"/>
-    /// <seealso cref="MudRadioGroup{T}"/>
-    /// <seealso cref="MudRadio{T}"/>
+    /// <typeparam name="T">The type of value represented by each toggle.</typeparam>
+
     public partial class MudToggleGroup<T> : MudComponentBase
     {
         public MudToggleGroup()

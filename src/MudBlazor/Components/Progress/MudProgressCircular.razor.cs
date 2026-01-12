@@ -9,11 +9,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A circle-shaped indicator of progress for an ongoing operation.
+    /// Circular progress indicator for determinate or indeterminate progress.
     /// </summary>
-    /// <seealso cref="MudProgressLinear"/>
+
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;

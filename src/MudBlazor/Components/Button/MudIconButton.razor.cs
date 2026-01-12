@@ -6,17 +6,9 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a button consisting of an icon.
+    /// Icon-only button for compact actions.
     /// </summary>
-    /// <remarks>
-    /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
-    /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
-    /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
-    /// </remarks>
-    /// <seealso cref="MudButton" />
-    /// <seealso cref="MudFab" />
-    /// <seealso cref="MudToggleIconButton" />
-    /// <seealso cref="MudIcon"/>
+
     public partial class MudIconButton : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")

@@ -7,10 +7,10 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a form input for boolean values or selecting multiple items in a list.
+    /// Checkbox control for toggling a boolean or tri-state value.
     /// </summary>
-    /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
-    /// <seealso cref="MudRadio{T}"/>
+    /// <typeparam name="T">The type of the bound value.</typeparam>
+
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         private readonly string _elementId = Identifier.Create("checkbox");

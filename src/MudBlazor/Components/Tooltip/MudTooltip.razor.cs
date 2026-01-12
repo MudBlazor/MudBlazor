@@ -5,10 +5,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A small popup which provides more information.
+    /// Small popup tooltip that provides extra context on hover or focus.
     /// </summary>
+
     public partial class MudTooltip : MudComponentBase
     {
         private readonly ParameterState<bool> _visibleState;

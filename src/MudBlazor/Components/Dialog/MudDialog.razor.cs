@@ -13,15 +13,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// An overlay providing the user with information, a choice, or other input.
+    /// Modal dialog container for focused content and actions.
     /// </summary>
-    /// <seealso cref="MudDialogContainer"/>
-    /// <seealso cref="MudDialogProvider"/>
-    /// <seealso cref="DialogOptions"/>
-    /// <seealso cref="DialogParameters{T}"/>
-    /// <seealso cref="DialogReference"/>
-    /// <seealso cref="MudBlazor.DialogService"/>
-    /// <seealso cref="MudMessageBox" />
+
     public partial class MudDialog : MudComponentBase
     {
         private IDialogReference? _reference;

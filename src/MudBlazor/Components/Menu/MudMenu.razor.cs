@@ -15,9 +15,9 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// An interactive menu that displays a list of options.
+    /// Popup menu anchored to a trigger element.
     /// </summary>
-    /// <seealso cref="MudMenuItem" />
+
     public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;

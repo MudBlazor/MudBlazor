@@ -4,9 +4,8 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
-/// A customizable piece of text.
+/// Typography component for rendering text with Material styles.
 /// </summary>
 public partial class MudText : MudComponentBase
 {

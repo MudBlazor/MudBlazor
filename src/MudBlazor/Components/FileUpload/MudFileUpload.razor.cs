@@ -15,11 +15,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    /// A form component for uploading one or more files.  For <c>T</c>, use either <c>IBrowserFile</c> for a single file or <c>IReadOnlyList&lt;IBrowserFile&gt;</c> for multiple files.
+    /// File upload control with drag-and-drop and customizable templates.
     /// </summary>
-    /// <typeparam name="T">Either <see cref="IBrowserFile"/> for a single file or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see> for multiple files.</typeparam>
+    /// <typeparam name="T">The type of the selected file value.</typeparam>
+
     public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable
     {
         private readonly ParameterState<T?> _filesState;

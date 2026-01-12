@@ -14,10 +14,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting time values.
+    /// Time picker for selecting a time value.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
-    /// <seealso cref="MudDateRangePicker"/>
+
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
         private bool _amPm = false;

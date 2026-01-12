@@ -7,8 +7,9 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents an overlay added to an icon or button to add information such as a number of new items.
+    /// Badge that overlays or wraps content to highlight counts, status, or notifications.
     /// </summary>
+
     public partial class MudBadge : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-badge-root")

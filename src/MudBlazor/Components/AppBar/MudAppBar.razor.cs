@@ -5,14 +5,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
-/// Represents a bar used to display actions, branding, navigation and screen titles.
+/// App bar that keeps navigation, branding, and actions visible at the top or bottom of the page.
 /// </summary>
 /// <remarks>
 /// This component is often used to keep important information persistent while browsing different pages to ease navigation and access to actions for users.
 /// </remarks>
 /// <seealso cref="MudContextualActionBar"/>
+
 public partial class MudAppBar : MudComponentBase
 {
     internal static SectionOutlet ContextualActionBar { get; } = new();

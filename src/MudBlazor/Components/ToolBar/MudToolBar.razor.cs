@@ -8,11 +8,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
-/// A set of action buttons.  
+/// Toolbar layout for grouping actions and content.
 /// </summary>
 /// <seealso cref="MudIconButton" />
+
 public partial class MudToolBar : MudComponentBase
 {
     protected string Classname =>
