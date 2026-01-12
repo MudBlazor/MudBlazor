@@ -17,7 +17,6 @@ namespace MudBlazor
     /// <summary>
     /// Popup menu anchored to a trigger element.
     /// </summary>
-
     public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;

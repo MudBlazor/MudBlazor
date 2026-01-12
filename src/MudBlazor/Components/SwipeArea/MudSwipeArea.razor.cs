@@ -8,7 +8,6 @@ namespace MudBlazor
     /// <summary>
     /// Gesture area that raises swipe events in multiple directions.
     /// </summary>
-
     public partial class MudSwipeArea : MudComponentBase
     {
         private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave"];

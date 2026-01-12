@@ -12,7 +12,6 @@ namespace MudBlazor;
 /// Toolbar layout for grouping actions and content.
 /// </summary>
 /// <seealso cref="MudIconButton" />
-
 public partial class MudToolBar : MudComponentBase
 {
     protected string Classname =>

@@ -10,7 +10,6 @@ namespace MudBlazor
     /// Switch-style toggle between two values.
     /// </summary>
     /// <typeparam name="T">The type of the bound value.</typeparam>
-
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         private string _elementId = Identifier.Create("switch");

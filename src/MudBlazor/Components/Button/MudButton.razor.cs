@@ -7,7 +7,6 @@ namespace MudBlazor
     /// <summary>
     /// Button component for triggering actions with filled, outlined, or text variants.
     /// </summary>
-
     public partial class MudButton : MudBaseButton, IDisposable
     {
         protected string Classname => new CssBuilder("mud-button-root mud-button")

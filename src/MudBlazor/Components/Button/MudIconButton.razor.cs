@@ -8,7 +8,6 @@ namespace MudBlazor
     /// <summary>
     /// Icon-only button for compact actions.
     /// </summary>
-
     public partial class MudIconButton : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")

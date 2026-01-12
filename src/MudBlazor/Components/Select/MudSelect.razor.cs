@@ -17,7 +17,6 @@ namespace MudBlazor
     /// Dropdown select input for choosing from a list of options.
     /// </summary>
     /// <typeparam name="T">The type of value to select.</typeparam>
-
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private string? _activeItemId;

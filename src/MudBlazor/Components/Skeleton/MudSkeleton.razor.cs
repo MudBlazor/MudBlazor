@@ -7,7 +7,6 @@ namespace MudBlazor
     /// <summary>
     /// Skeleton placeholder that mimics content while data loads.
     /// </summary>
-
     public partial class MudSkeleton : MudComponentBase
     {
         protected string Classname =>

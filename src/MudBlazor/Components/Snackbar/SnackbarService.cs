@@ -15,9 +15,6 @@ namespace MudBlazor
     /// <summary>
     /// Service that queues and displays snackbars (toast notifications).
     /// </summary>
-    /// <summary>
-    /// A service for managing snackbars.
-    /// </summary>
     public class SnackbarService : ISnackbar
     {
         private readonly List<Snackbar> _snackBarList;

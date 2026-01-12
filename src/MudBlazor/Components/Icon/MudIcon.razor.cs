@@ -9,7 +9,6 @@ namespace MudBlazor
     /// <summary>
     /// Icon component for Material or custom icon glyphs.
     /// </summary>
-
     public partial class MudIcon : MudComponentBase
     {
         protected string Classname =>

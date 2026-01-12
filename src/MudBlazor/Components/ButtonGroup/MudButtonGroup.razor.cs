@@ -7,7 +7,6 @@ namespace MudBlazor
     /// <summary>
     /// Group related buttons into a single segmented control.
     /// </summary>
-
     public partial class MudButtonGroup : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-button-group-root")

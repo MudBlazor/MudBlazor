@@ -14,7 +14,6 @@ namespace MudBlazor
     /// Single-choice radio button used within a group.
     /// </summary>
     /// <typeparam name="T">The type of the bound value.</typeparam>
-
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;

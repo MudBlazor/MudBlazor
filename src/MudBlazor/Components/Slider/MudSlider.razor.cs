@@ -11,7 +11,6 @@ namespace MudBlazor
     /// Slider for selecting a value within a defined range.
     /// </summary>
     /// <typeparam name="T">The numeric value type for the slider.</typeparam>
-
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
     {
         private int _tickMarkCount = 0;

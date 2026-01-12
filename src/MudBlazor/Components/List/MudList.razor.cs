@@ -11,7 +11,6 @@ namespace MudBlazor
     /// List component for navigation, selection, or grouping items.
     /// </summary>
     /// <typeparam name="T">The type of item displayed by the list.</typeparam>
-
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
         public MudList()

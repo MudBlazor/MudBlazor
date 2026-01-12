@@ -1,14 +1,16 @@
 ﻿@page "/components/messagebox"
 
 <DocsPage>
-    <DocsPageHeader Title="Message Box" Component="@nameof(MudMessageBox)" />
+    <DocsPageHeader Title="Message Box" Component="@nameof(MudMessageBox)">
+        <Description>
+            <MudAlert Severity="Severity.Info">
+                <MudText>The MessageBox component uses <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline> for its functionality.</MudText>
+                <MudText>Global settings on MudDialogProvider affect all MessageBoxes in your app.</MudText>
+                <MudText>See the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for details on global dialog setup.</MudText>
+            </MudAlert>
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
-        
-        <MudAlert Severity="Severity.Info">
-            <MudText>The MessageBox component uses <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline> for its functionality.</MudText>
-            <MudText>Global settings on MudDialogProvider affect all MessageBoxes in your app.</MudText>
-            <MudText>See the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for details on global dialog setup.</MudText>
-        </MudAlert>
 
         <DocsPageSection>
             <SectionHeader Title="Message Box">
@@ -56,4 +58,3 @@
 
     </DocsPageContent>
 </DocsPage>
-

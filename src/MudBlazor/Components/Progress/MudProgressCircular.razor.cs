@@ -12,7 +12,6 @@ namespace MudBlazor
     /// <summary>
     /// Circular progress indicator for determinate or indeterminate progress.
     /// </summary>
-
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;

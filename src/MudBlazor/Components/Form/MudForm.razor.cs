@@ -8,7 +8,6 @@ namespace MudBlazor
     /// <summary>
     /// Form container that coordinates validation and error display for inputs.
     /// </summary>
-
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
         // Note: w/o any children the form is automatically valid.

@@ -8,7 +8,6 @@ namespace MudBlazor
     /// <summary>
     /// Trigger component that scrolls a target element back to the top.
     /// </summary>
-
     public partial class MudScrollToTop : IDisposable
     {
         private IScrollListener? _scrollListener;

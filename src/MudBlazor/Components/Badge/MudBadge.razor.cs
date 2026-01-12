@@ -9,7 +9,6 @@ namespace MudBlazor
     /// <summary>
     /// Badge that overlays or wraps content to highlight counts, status, or notifications.
     /// </summary>
-
     public partial class MudBadge : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-badge-root")

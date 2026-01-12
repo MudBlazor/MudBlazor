@@ -8,7 +8,6 @@ namespace MudBlazor
     /// <summary>
     /// Smoothly collapse and expand content with animated height transitions.
     /// </summary>
-
     public partial class MudCollapse : MudComponentBase
     {
         private enum CollapseState

@@ -11,7 +11,6 @@ namespace MudBlazor
     /// <summary>
     /// Timeline layout that presents items in chronological order.
     /// </summary>
-
     public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
     {
         protected string Classnames =>

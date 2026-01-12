@@ -15,7 +15,6 @@ namespace MudBlazor
     /// <summary>
     /// Modal dialog container for focused content and actions.
     /// </summary>
-
     public partial class MudDialog : MudComponentBase
     {
         private IDialogReference? _reference;

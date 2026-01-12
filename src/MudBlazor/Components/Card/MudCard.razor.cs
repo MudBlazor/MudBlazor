@@ -7,7 +7,6 @@ namespace MudBlazor
     /// <summary>
     /// Card surface for grouping related content and actions.
     /// </summary>
-
     public partial class MudCard : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card")

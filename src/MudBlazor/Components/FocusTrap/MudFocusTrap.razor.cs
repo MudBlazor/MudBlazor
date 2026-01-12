@@ -10,7 +10,6 @@ namespace MudBlazor
     /// <summary>
     /// Focus trap that keeps keyboard focus within its content.
     /// </summary>
-
     public partial class MudFocusTrap : IDisposable
     {
         private bool _shiftDown;

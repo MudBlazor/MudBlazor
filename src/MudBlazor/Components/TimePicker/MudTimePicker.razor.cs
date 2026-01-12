@@ -16,7 +16,6 @@ namespace MudBlazor
     /// <summary>
     /// Time picker for selecting a time value.
     /// </summary>
-
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
         private bool _amPm = false;

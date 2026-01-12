@@ -12,7 +12,6 @@ namespace MudBlazor;
 /// Responsive grid layout for rows and columns.
 /// </summary>
 /// <seealso cref="MudItem"/>
-
 public partial class MudGrid : MudComponentBase
 {
     protected string Classname =>

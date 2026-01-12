@@ -12,7 +12,6 @@ namespace MudBlazor
     /// <summary>
     /// Provides the current responsive breakpoint to descendant components.
     /// </summary>
-
     public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {
         /// <summary>

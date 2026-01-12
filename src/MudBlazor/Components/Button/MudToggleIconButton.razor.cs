@@ -15,7 +15,6 @@ namespace MudBlazor;
 /// <seealso cref="MudButton" />
 /// <seealso cref="MudFab" />
 /// <seealso cref="MudIconButton" />
-
 public partial class MudToggleIconButton : MudComponentBase
 {
     /// <summary>

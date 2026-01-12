@@ -15,7 +15,6 @@ namespace MudBlazor;
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
 /// <seealso cref="MudChip{T}"/>
-
 public partial class MudChipSet<T> : MudComponentBase, IDisposable
 {
     public MudChipSet()

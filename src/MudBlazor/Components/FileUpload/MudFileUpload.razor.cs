@@ -19,7 +19,6 @@ namespace MudBlazor
     /// File upload control with drag-and-drop and customizable templates.
     /// </summary>
     /// <typeparam name="T">The type of the selected file value.</typeparam>
-
     public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable
     {
         private readonly ParameterState<T?> _filesState;

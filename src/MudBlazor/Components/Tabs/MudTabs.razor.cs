@@ -18,7 +18,6 @@ namespace MudBlazor
     /// <summary>
     /// Tabbed navigation that organizes content into pages.
     /// </summary>
-
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         internal List<MudTabPanel> _panels;

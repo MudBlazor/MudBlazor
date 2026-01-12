@@ -9,7 +9,6 @@ namespace MudBlazor
     /// <summary>
     /// Rating control for collecting feedback with selectable icons.
     /// </summary>
-
     public partial class MudRating : MudComponentBase
     {
         private readonly ParameterState<int> _selectedValueState;
