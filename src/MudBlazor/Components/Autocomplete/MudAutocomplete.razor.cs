@@ -760,18 +760,48 @@ namespace MudBlazor
                         startIndex = Math.Max(0, endIndex - maxItems);
                     }
 
-                    searchedItems = searchedItems.Take(new Range(startIndex, endIndex)).ToArray();
+                    int length = endIndex - startIndex;
+                    if (length < searchedItems.Length)
+                    {
+                        var slicedItems = new T[length];
+                        Array.Copy(searchedItems, startIndex, slicedItems, 0, length);
+                        searchedItems = slicedItems;
+                    }
                 }
                 else
                 {
-                    searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                    int length = Math.Min(MaxItems.Value, searchedItems.Length);
+                    if (length < searchedItems.Length)
+                    {
+                        var slicedItems = new T[length];
+                        Array.Copy(searchedItems, 0, slicedItems, 0, length);
+                        searchedItems = slicedItems;
+                    }
                 }
             }
 
             _items = searchedItems;
 
-            var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
-            _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
+            var enabledItemIndices = new List<int>(_items.Length);
+            if (ItemDisabledFunc is null)
+            {
+                for (int i = 0; i < _items.Length; i++)
+                {
+                    enabledItemIndices.Add(i);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _items.Length; i++)
+                {
+                    if (!ItemDisabledFunc(_items[i]))
+                    {
+                        enabledItemIndices.Add(i);
+                    }
+                }
+            }
+
+            _enabledItemIndices = enabledItemIndices;
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
                 _selectedListItemIndex = Array.IndexOf(_items, ReadValue);
