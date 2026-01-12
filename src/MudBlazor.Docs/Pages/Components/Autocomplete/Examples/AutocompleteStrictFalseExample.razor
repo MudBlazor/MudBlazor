@@ -6,25 +6,15 @@
 
 <MudGrid Spacing="3">
     <MudItem xs="12" md="6">
-        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
-            <MudStack Spacing="2">
-                <MudText Typo="Typo.subtitle1">Strict false + default string</MudText>
-                <MudAutocomplete T="Element" Label="Element" @bind-Value="value1"
-                                 SearchFunc="@Search" Strict="false"
-                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.FilterAlt" />
-            </MudStack>
-        </MudPaper>
+        <MudAutocomplete T="Element" Label="Strict false (ToString)" @bind-Value="value1"
+                         SearchFunc="@Search" Strict="false"
+                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.FilterAlt" />
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
-            <MudStack Spacing="2">
-                <MudText Typo="Typo.subtitle1">Strict false + ToStringFunc</MudText>
-                <MudAutocomplete T="Element" Label="Element" @bind-Value="value2"
-                                 SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")"
-                                 Strict="false"
-                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.FilterAlt" />
-            </MudStack>
-        </MudPaper>
+        <MudAutocomplete T="Element" Label="Strict false (ToStringFunc)" @bind-Value="value2"
+                         SearchFunc="@Search" ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Sign})")"
+                         Strict="false"
+                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.FilterAlt" />
     </MudItem>
 </MudGrid>
 

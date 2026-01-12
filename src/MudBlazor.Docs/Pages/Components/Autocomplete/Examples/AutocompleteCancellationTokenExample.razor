@@ -4,14 +4,9 @@
 
 <MudGrid Spacing="3">
     <MudItem xs="12">
-        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
-            <MudStack Spacing="2">
-                <MudText Typo="Typo.subtitle1">Cancellation-aware search</MudText>
-                <MudAutocomplete T="string" Label="US States" @bind-Value="_state"
-                                 SearchFunc="@Search" Variant="Variant.Outlined" ShowProgressIndicator="true"
-                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Bolt" />
-            </MudStack>
-        </MudPaper>
+        <MudAutocomplete T="string" Label="US States" @bind-Value="_state"
+                         SearchFunc="@Search" Variant="Variant.Outlined" ShowProgressIndicator="true"
+                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Bolt" />
     </MudItem>
 </MudGrid>
 
