@@ -80,17 +80,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Stretches this input vertically to accommodate the <see cref="MudBaseInput{T}.Text"/> value.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. Use <see cref="Sizing"/> property with <see cref="InputSizing.Auto"/> instead.
-        /// </remarks>
-        [Obsolete($"Use {nameof(Sizing)} with {nameof(InputSizing)}.{nameof(InputSizing.Auto)} instead.", false)]
-        [Parameter]
-        [Category(CategoryTypes.General.Behavior)]
-        public bool AutoGrow { get; set; }
-
-        /// <summary>
         /// Defines the resizing behavior of this input.
         /// </summary>
         /// <remarks>
@@ -111,20 +100,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public int MaxLines { get; set; }
-
-        /// <summary>
-        /// Gets the effective sizing mode, considering both <see cref="Sizing"/> and the obsolete <see cref="AutoGrow"/> property.
-        /// </summary>
-        private InputSizing GetEffectiveSizing()
-        {
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (AutoGrow && Sizing == InputSizing.Fixed)
-            {
-                return InputSizing.Auto;
-            }
-#pragma warning restore CS0618 // Type or member is obsolete
-            return Sizing;
-        }
 
         [MemberNotNullWhen(false, nameof(InputReference))]
         [MemberNotNullWhen(true, nameof(_mask), nameof(Mask), nameof(_maskReference))]
