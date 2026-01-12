@@ -2,76 +2,48 @@
 @using MudBlazor
 @using System.Threading
 
-<MudGrid Spacing="3">
-    <MudItem xs="12" md="7">
-        <MudPaper Class="pa-4 mud-width-full" Elevation="3">
-            <MudStack Spacing="2">
-                <MudStack Spacing="0">
-                    <MudText Typo="Typo.h6">Style playground</MudText>
-                    <MudText Typo="Typo.body2" Color="Color.Secondary">Tune the feel while keeping search instant.</MudText>
-                </MudStack>
-                <MudAutocomplete T="string" @bind-Value="_value"
-                                 SearchFunc="Search"
-                                 Variant="_variant"
-                                 Label="Search states"
-                                 Margin="_margin"
-                                 Dense="_dense"
-                                 Disabled="_disabled"
-                                 ReadOnly="_readonly"
-                                 Placeholder="@(_placeholder ? "Start typing..." : null)"
-                                 HelperText="@(_helperText ? "Pick or type a state" : null)"
-                                 HelperTextOnFocus="_helperTextOnFocus"
-                                 Clearable="_clearable"
-                                 OpenOnFocus="_openOnFocus"
-                                 MinCharacters="_minCharacters"
-                                 Adornment="Adornment.Start"
-                                 AdornmentIcon="@Icons.Material.Filled.Search"
-                                 DebounceInterval="0"
-                                 Modal="_modal" />
-                <MudStack Row Wrap="Wrap.Wrap" Spacing="1" AlignItems="AlignItems.Center">
-                    <MudText Typo="Typo.caption" Class="mr-2">Selected</MudText>
-                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">@(_value ?? "None")</MudChip>
-                </MudStack>
-            </MudStack>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" md="5">
-        <MudPaper Class="pa-4 mud-width-full" Elevation="2">
-            <MudStack Spacing="2">
-                <MudSelect @bind-Value="_variant" Label="Variant">
-                    @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
-                    {
-                        <MudSelectItem Value="variant">@variant</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudSelect @bind-Value="_margin" Label="Margin">
-                    @foreach (var margin in Enum.GetValues(typeof(Margin)).Cast<Margin>())
-                    {
-                        <MudSelectItem Value="margin">@margin</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudText Typo="Typo.caption">Min characters</MudText>
-                <MudSlider T="int" @bind-Value="_minCharacters" Min="0" Max="4" Step="1" />
-                <MudSwitch @bind-Value="_openOnFocus" Label="Open on focus" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_placeholder" Label="Placeholder" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_helperText" Label="Helper text" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_helperTextOnFocus" Label="Helper on focus" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
-                <MudSwitch @bind-Value="_modal" Label="Modal popover" Color="Color.Primary" />
-            </MudStack>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+<MudStack Row Class="justify-space-between mud-width-full">
+    <MudStack Style="width: 300px">
+        @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
+        {
+            <MudAutocomplete @bind-Value="_value"
+                             SearchFunc="Search"
+                             Variant="variant"
+                             Label="@variant.ToString()"
+                             Margin="_margin"
+                             Dense="_dense"
+                             Disabled="_disabled"
+                             ReadOnly="_readonly"
+                             Placeholder="@(_placeholder ? "Placeholder" : null)"
+                             HelperText="@(_helperText ? "Helper Text" : null)"
+                             HelperTextOnFocus="_helperTextOnFocus"
+                             Clearable="_clearable"
+                             Modal="_modal" />
+        }
+    </MudStack>
+
+    <MudStack>
+        <MudSelect @bind-Value="_margin" Label="Margin">
+            @foreach (var margin in Enum.GetValues(typeof(Margin)).Cast<Margin>())
+            {
+                <MudSelectItem Value="margin">@margin</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_placeholder" Label="Placeholder" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_helperText" Label="HelperText" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_modal" Label="Modal" Color="Color.Primary" />
+    </MudStack>
+</MudStack>
 
 @code {
     private string _value;
-    private Variant _variant = Variant.Filled;
     private Margin _margin;
-    private int _minCharacters;
-    private bool _openOnFocus = true;
     private bool _dense;
     private bool _disabled;
     private bool _readonly;
@@ -95,14 +67,17 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming"
     };
 
-    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
         {
-            return Task.FromResult<IEnumerable<string>>(_states);
+            return _states;
         }
 
-        return Task.FromResult(_states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }
