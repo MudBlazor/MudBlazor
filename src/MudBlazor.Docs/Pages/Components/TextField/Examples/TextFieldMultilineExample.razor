@@ -1,113 +1,62 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudStack Spacing="4">
-    <MudPaper Outlined="true" Class="pa-4">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.subtitle2">Multiline variants</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">
-                Set <CodeInline>Lines</CodeInline> to render a <CodeInline>&lt;textarea&gt;</CodeInline>.
-            </MudText>
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="4">
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2">Fixed</MudText>
+                <MudTextField T="string"
+                              Label="Fixed"
+                              Variant="Variant.Outlined"
+                              Lines="3"
+                              Sizing="InputSizing.Fixed"
+                              Text="@_fixedText"
+                              TextChanged="@((string v) => _fixedText = v)"
+                              HelperText="Fixed height (Lines=3)" />
+            </MudStack>
+        </MudPaper>
+    </MudItem>
 
-            <MudGrid Spacing="3">
-                <MudItem xs="12" md="4">
+    <MudItem xs="12" md="4">
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2">Auto</MudText>
+                <MudTextField T="string"
+                              Label="Auto"
+                              Variant="Variant.Outlined"
+                              Lines="3"
+                              MaxLines="8"
+                              Sizing="InputSizing.Auto"
+                              Text="@_autoText"
+                              TextChanged="@((string v) => _autoText = v)"
+                              HelperText="Grows with content (MaxLines=8)" />
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="4">
+        <MudPaper Outlined="true" Class="pa-4 d-flex flex-column" Style="height: 260px;">
+            <MudStack Spacing="2" Class="flex-grow-1" Style="min-height: 0;">
+                <MudText Typo="Typo.subtitle2">Fill</MudText>
+                <div class="d-flex flex-grow-1" style="min-height: 0;">
                     <MudTextField T="string"
-                                  Label="Text"
-                                  Variant="Variant.Text"
-                                  Lines="4"
-                                  Text="@_multilineText"
-                                  TextChanged="@((string v) => _multilineText = v)" />
-                </MudItem>
-                <MudItem xs="12" md="4">
-                    <MudTextField T="string"
-                                  Label="Filled"
-                                  Variant="Variant.Filled"
-                                  Lines="4"
-                                  Text="@_multilineText"
-                                  TextChanged="@((string v) => _multilineText = v)" />
-                </MudItem>
-                <MudItem xs="12" md="4">
-                    <MudTextField T="string"
-                                  Label="Outlined"
+                                  Label="Fill"
                                   Variant="Variant.Outlined"
-                                  Lines="4"
-                                  Text="@_multilineText"
-                                  TextChanged="@((string v) => _multilineText = v)" />
-                </MudItem>
-            </MudGrid>
-        </MudStack>
-    </MudPaper>
-
-    <MudPaper Outlined="true" Class="pa-4">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.subtitle2">Sizing modes</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">
-                Use <CodeInline>Sizing</CodeInline> to control how a multiline field behaves:
-                <CodeInline>Fixed</CodeInline> stays at <CodeInline>Lines</CodeInline>,
-                <CodeInline>Auto</CodeInline> grows up to <CodeInline>MaxLines</CodeInline>,
-                and <CodeInline>Fill</CodeInline> expands to the available height.
-            </MudText>
-
-            <MudGrid Spacing="3">
-                <MudItem xs="12" md="4">
-                    <MudPaper Outlined="true" Class="pa-4">
-                        <MudStack Spacing="2">
-                            <MudText Typo="Typo.subtitle2">Fixed</MudText>
-                            <MudTextField T="string"
-                                          Label="Fixed"
-                                          Variant="Variant.Outlined"
-                                          Lines="3"
-                                          Sizing="InputSizing.Fixed"
-                                          Text="@_fixedText"
-                                          TextChanged="@((string v) => _fixedText = v)"
-                                          HelperText="Fixed height (Lines=3)" />
-                        </MudStack>
-                    </MudPaper>
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudPaper Outlined="true" Class="pa-4">
-                        <MudStack Spacing="2">
-                            <MudText Typo="Typo.subtitle2">Auto</MudText>
-                            <MudTextField T="string"
-                                          Label="Auto"
-                                          Variant="Variant.Outlined"
-                                          Lines="3"
-                                          MaxLines="8"
-                                          Sizing="InputSizing.Auto"
-                                          Text="@_autoText"
-                                          TextChanged="@((string v) => _autoText = v)"
-                                          HelperText="Grows with content (MaxLines=8)" />
-                        </MudStack>
-                    </MudPaper>
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudPaper Outlined="true" Class="pa-4 d-flex flex-column" Style="height: 260px;">
-                        <MudStack Spacing="2" Class="flex-grow-1" Style="min-height: 0;">
-                            <MudText Typo="Typo.subtitle2">Fill</MudText>
-                            <div class="d-flex flex-grow-1" style="min-height: 0;">
-                                <MudTextField T="string"
-                                              Label="Fill"
-                                              Variant="Variant.Outlined"
-                                              Lines="3"
-                                              MaxLines="12"
-                                              Sizing="InputSizing.Fill"
-                                              Text="@_fillText"
-                                              TextChanged="@((string v) => _fillText = v)"
-                                              Class="flex-grow-1"
-                                              HelperText="Fills the container height" />
-                            </div>
-                        </MudStack>
-                    </MudPaper>
-                </MudItem>
-            </MudGrid>
-        </MudStack>
-    </MudPaper>
-</MudStack>
+                                  Lines="3"
+                                  MaxLines="12"
+                                  Sizing="InputSizing.Fill"
+                                  Text="@_fillText"
+                                  TextChanged="@((string v) => _fillText = v)"
+                                  Class="flex-grow-1"
+                                  HelperText="Fills the container height" />
+                </div>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 @code
 {
-    private string _multilineText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nTry adding more lines.";
     private string _fixedText = "Fixed\n\n(stays at Lines)";
     private string _autoText = "Auto\n\n(add more lines)";
     private string _fillText = "Fill\n\n(fills the card)";
