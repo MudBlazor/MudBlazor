@@ -53,9 +53,12 @@
 
     private readonly string[] _commands =
     [
-        "Add", "Archive", "Assign", "Build", "Clone", "Commit",
-        "Deploy", "Draft", "Merge", "Publish", "Rebase", "Release",
-        "Review", "Revert", "Sync", "Tag", "Test", "Update"
+        "Align", "Archive", "Assemble", "Calibrate",
+        "Catalog", "Checkpoint", "Compile", "Compute",
+        "Convert", "Deploy", "Estimate", "Generate",
+        "Index", "Inspect", "Merge", "Normalize",
+        "Prepare", "Reprocess", "Schedule", "Simulate",
+        "Stack", "Summarize", "Tag", "Validate"
     ];
 
     private Task<IEnumerable<string>> Search(string value, CancellationToken token)

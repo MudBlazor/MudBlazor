@@ -53,10 +53,12 @@
 
     private readonly string[] _options =
     [
-        "Archive", "Assign", "Audit", "Backup",
-        "Build", "Deploy", "Document", "Export",
-        "Import", "Index", "Monitor", "Notify",
-        "Publish", "Review", "Schedule", "Sync"
+        "Acquisition", "Alignment", "Analysis", "Assembly",
+        "Calibration", "Classification", "Computation", "Decoding",
+        "Detection", "Estimation", "Filtering", "Fitting",
+        "Generation", "Indexing", "Integration", "Monitoring",
+        "Normalization", "Optimization", "Reconstruction", "Resolution",
+        "Scheduling", "Simulation", "Solving", "Tracking"
     ];
 
     private async Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token)

@@ -31,9 +31,13 @@
 
     private readonly string[] _items =
     [
-        "Archive", "Assign", "Build", "Comment", "Create",
-        "Deploy", "Draft", "Export", "Merge", "Publish",
-        "Review", "Schedule", "Search", "Sync", "Update"
+        "Alignment", "Annotation", "Calibration", "Cataloging",
+        "Clustering", "Correlation", "Decoding", "Deconvolve",
+        "Detection", "Extraction", "Filtering", "Fitting",
+        "Indexing", "Inversion", "Mapping", "Matching",
+        "Normalization", "Optimization", "Reconstruction", "Regression",
+        "Sampling", "Scheduling", "Simulation", "Smoothing",
+        "Stacking", "Streaming", "Tracking", "Validation"
     ];
 
     private async Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token)

@@ -52,13 +52,15 @@
 
     private readonly Location[] _locations =
     [
-        new("Harbor", "Zone A", 920),
-        new("Meadow", "Zone B", 640),
-        new("Oakridge", "Zone C", 780),
-        new("Pinecrest", "Zone D", 610),
-        new("Riverside", "Zone E", 560),
-        new("Stonegate", "Zone F", 840),
-        new("Summit", "Zone G", 730)
+        new("Aurora", "SectorA", 920),
+        new("Coriolis", "SectorB", 640),
+        new("Helios", "SectorC", 780),
+        new("Kepler", "SectorD", 610),
+        new("Lagrange", "SectorE", 560),
+        new("Orion", "SectorF", 840),
+        new("Pulsar", "SectorG", 730),
+        new("Quasar", "SectorH", 690),
+        new("Spectra", "SectorI", 710)
     ];
 
     private Task<IEnumerable<Location>> Search(string value, CancellationToken token)
@@ -77,7 +79,7 @@
 
     public record Location(string Name, string Zone, int Capacity)
     {
-        public string DisplayName => $"{Name} - {Zone}";
+        public string DisplayName => $"{Name} {Zone}";
         public override string ToString() => DisplayName;
     }
 }

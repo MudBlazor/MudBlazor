@@ -38,14 +38,15 @@
 
     private readonly string[] _features =
     [
-        "Accounts", "Activity", "Alerts", "Analytics",
-        "Approvals", "Archives", "Billing", "Calendar",
-        "Chat", "Dashboard", "Exports", "Files",
-        "Imports", "Insights", "Invoices", "Notes",
-        "Notifications", "Profile", "Projects", "Reports",
-        "Search", "Security", "Settings", "Tags",
-        "Tasks", "Teams", "Timeline", "Uploads",
-        "Users", "Workflows"
+        "Astrometry", "Atmospheres", "Catalogs", "Celestia",
+        "Chronometry", "Comets", "Cosmics", "Datasets",
+        "Ephemerides", "Exoplanets", "Fluxes", "Galaxies",
+        "Gravitation", "Helioseism", "Imaging", "Kinematics",
+        "Lensing", "Magnetics", "Neutrinos", "Observatory",
+        "Orbits", "Particles", "Photometry", "Pulsars",
+        "Redshift", "Relativity", "Simulations", "Spectra",
+        "Stellar", "Supernovae", "Telemetry", "Thermodyn",
+        "Timing", "Waveforms"
     ];
 
     private Task<IEnumerable<string>> SearchAll(string value, CancellationToken token)
