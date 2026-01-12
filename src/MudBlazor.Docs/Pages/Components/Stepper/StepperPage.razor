@@ -1,21 +1,18 @@
 ﻿@page "/components/stepper"
 
 <DocsPage>
-    <DocsPageHeader Title="Stepper" Component="@nameof(MudStepper)" SubTitle="A wizard that guides the user through a series of steps to complete a transaction.">
-        <Description>
-            <DocsPageSection>
-                <MudAlert Class="mt-4" Severity="Severity.Warning">
-                    <b>Warning:</b> This component is currently under development.
-                    <br />
-                    <br />
-                    Breaking changes such as updates to the API, look and feel, or CSS classes, may occur even in minor patch releases.
-                    Please use it only if you are prepared to adapt your code accordingly and provide feedback or contribute code.
-                </MudAlert>
-            </DocsPageSection>
-        </Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Stepper" Component="@nameof(MudStepper)" />
 
     <DocsPageContent>
+        <DocsPageSection>
+            <MudAlert Class="mt-4" Severity="Severity.Warning">
+                <b>Warning:</b> This component is currently under development.
+                <br />
+                <br />
+                Breaking changes such as updates to the API, look and feel, or CSS classes, may occur even in minor patch releases.
+                Please use it only if you are prepared to adapt your code accordingly and provide feedback or contribute code.
+            </MudAlert>
+        </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Horizontal stepper">
