@@ -440,10 +440,10 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
 
-                Context.JSInterop.Invocations["mudInputSizing.adjustHeight"].Single()
-               .Arguments
-               .Should()
-               .HaveCount(1);
+            Context.JSInterop.Invocations["mudInputSizing.adjustHeight"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(1);
         }
 
         [Test]
