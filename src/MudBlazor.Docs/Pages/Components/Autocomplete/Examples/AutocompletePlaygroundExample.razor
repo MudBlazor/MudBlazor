@@ -15,9 +15,10 @@
     <MudItem xs="12" md="6">
         <MudPaper Class="pa-4">
             <MudText Typo="Typo.subtitle2">Debounce interval (ms)</MudText>
-            <MudSlider T="int" @bind-Value="_debounce" Min="0" Max="800" Step="100" Color="Color.Primary" />
-            <MudText Typo="Typo.caption">Search calls: @_searchCalls</MudText>
-            <MudText Typo="Typo.caption">Last input: @(_lastSearch ?? "None")</MudText>
+            <MudSlider T="int" @bind-Value="_debounce" Min="0" Max="800" Step="50" Color="Color.Primary" />
+            <MudText Typo="Typo.caption">Interval: @_debounce ms</MudText>
+            <MudText Typo="Typo.caption">• Search calls: @_searchCalls</MudText>
+            <MudText Typo="Typo.caption">• Last input: @(_lastSearch ?? "None")</MudText>
         </MudPaper>
     </MudItem>
 </MudGrid>

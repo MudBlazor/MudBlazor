@@ -32,7 +32,7 @@
                          DebounceInterval="0"
                          ItemDisabledFunc="@(city => city.Population < 700000)">
             <ItemDisabledTemplate Context="city">
-                <MudText Color="Color.TextSecondary">@city.DisplayName (too small)</MudText>
+                <MudText Color="Color.Secondary">@city.DisplayName (too small)</MudText>
             </ItemDisabledTemplate>
         </MudAutocomplete>
     </MudItem>

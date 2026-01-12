@@ -1,18 +1,13 @@
 ﻿@page "/components/autocomplete"
 
 <DocsPage>
-    <DocsPageHeader Title="Autocomplete" Component="@nameof(MudAutocomplete<T>)">
-        <Description>
-            Autocomplete combines a text field with a searchable list. Provide a search function (local or async)
-            and the component handles filtering, selection, and keyboard navigation.
-        </Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Autocomplete" Component="@nameof(MudAutocomplete<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Quick start">
                 <Description>
-                    Use a local list for instant filtering. Set <CodeInline>DebounceInterval="0"</CodeInline> for the snappiest feel.
+                    Use a local list for instant filtering.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
