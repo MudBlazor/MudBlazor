@@ -737,6 +737,9 @@ namespace MudBlazor
 
             if (MaxItems.HasValue)
             {
+                int startIndex = 0;
+                int length = Math.Min(MaxItems.Value, searchedItems.Length);
+
                 // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
                 if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(ReadValue, default(T)))
                 {
@@ -745,7 +748,7 @@ namespace MudBlazor
 
                     // Center the selected item in the list if possible
                     int half = maxItems / 2;
-                    int startIndex = valueIndex - half;
+                    startIndex = valueIndex - half;
                     int endIndex = startIndex + maxItems;
 
                     // Adjust if out of bounds
@@ -760,30 +763,22 @@ namespace MudBlazor
                         startIndex = Math.Max(0, endIndex - maxItems);
                     }
 
-                    int length = endIndex - startIndex;
-                    if (length < searchedItems.Length)
-                    {
-                        var slicedItems = new T[length];
-                        Array.Copy(searchedItems, startIndex, slicedItems, 0, length);
-                        searchedItems = slicedItems;
-                    }
+                    length = endIndex - startIndex;
                 }
-                else
+
+                if (length < searchedItems.Length)
                 {
-                    int length = Math.Min(MaxItems.Value, searchedItems.Length);
-                    if (length < searchedItems.Length)
-                    {
-                        var slicedItems = new T[length];
-                        Array.Copy(searchedItems, 0, slicedItems, 0, length);
-                        searchedItems = slicedItems;
-                    }
+                    var slicedItems = new T[length];
+                    Array.Copy(searchedItems, startIndex, slicedItems, 0, length);
+                    searchedItems = slicedItems;
                 }
             }
 
             _items = searchedItems;
 
             var enabledItemIndices = new List<int>(_items.Length);
-            if (ItemDisabledFunc is null)
+            var itemDisabledFunc = ItemDisabledFunc;
+            if (itemDisabledFunc is null)
             {
                 for (int i = 0; i < _items.Length; i++)
                 {
@@ -794,7 +789,7 @@ namespace MudBlazor
             {
                 for (int i = 0; i < _items.Length; i++)
                 {
-                    if (!ItemDisabledFunc(_items[i]))
+                    if (!itemDisabledFunc(_items[i]))
                     {
                         enabledItemIndices.Add(i);
                     }
