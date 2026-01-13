@@ -12,7 +12,7 @@ namespace MudBlazor
     /// </summary>
     public class Snackbar : IDisposable
     {
-        private readonly object _syncLock = new object();
+        private readonly object _timerLock = new object();
         private bool _disposed = false;
         private bool _paused = false;
         private bool _transitionCancellable = true;
@@ -51,55 +51,42 @@ namespace MudBlazor
 
         internal void Init()
         {
-            lock (_syncLock)
-            {
-                if (_disposed)
-                {
-                    return;
-                }
-
-                TransitionTo(SnackbarState.Showing);
-            }
+            if (_disposed) return;
+            TransitionTo(SnackbarState.Showing);
         }
 
         internal void Clicked(bool fromCloseIcon)
         {
-            lock (_syncLock)
+            if (_disposed) return;
+
+            // You should only be able to interact with the snackbar once.
+            if (State.UserHasInteracted)
             {
-                if (_disposed)
-                {
-                    return;
-                }
-
-                // You should only be able to interact with the snackbar once.
-                if (State.UserHasInteracted)
-                {
-                    return;
-                }
-
-                if (fromCloseIcon)
-                {
-                    // Invoke user-defined task when close button is clicked.
-                    // The returned Task is deliberately ignored. This approach allows the method
-                    // to proceed without awaiting the completion of the task, maintaining UI responsiveness.
-                    _ = State.Options.CloseButtonClickFunc?.Invoke(this);
-                }
-                else
-                {
-                    // Do not start the hiding transition if no click action
-                    if (State.Options.OnClick is null)
-                    {
-                        return;
-                    }
-
-                    // Click action is executed only if it's not from the close icon.
-                    // Same as above, we are deliberately not awaiting.
-                    _ = State.Options.OnClick?.Invoke(this);
-                }
-
-                State.UserHasInteracted = true;
-                TransitionTo(SnackbarState.Hiding, cancellable: false);
+                return;
             }
+
+            if (fromCloseIcon)
+            {
+                // Invoke user-defined task when close button is clicked.
+                // The returned Task is deliberately ignored. This approach allows the method
+                // to proceed without awaiting the completion of the task, maintaining UI responsiveness.
+                _ = State.Options.CloseButtonClickFunc?.Invoke(this);
+            }
+            else
+            {
+                // Do not start the hiding transition if no click action
+                if (State.Options.OnClick is null)
+                {
+                    return;
+                }
+
+                // Click action is executed only if it's not from the close icon.
+                // Same as above, we are deliberately not awaiting.
+                _ = State.Options.OnClick?.Invoke(this);
+            }
+
+            State.UserHasInteracted = true;
+            TransitionTo(SnackbarState.Hiding, cancellable: false);
         }
 
         /// <summary>
@@ -107,15 +94,8 @@ namespace MudBlazor
         /// </summary>
         public void ForceClose()
         {
-            lock (_syncLock)
-            {
-                if (_disposed)
-                {
-                    return;
-                }
-
-                TransitionTo(SnackbarState.Hiding, false, false);
-            }
+            if (_disposed) return;
+            TransitionTo(SnackbarState.Hiding, false, false);
         }
 
         /// <summary>
@@ -124,9 +104,6 @@ namespace MudBlazor
         /// <param name="state">The state to transition to.</param>
         /// <param name="animate">The transition should be animated or instant.</param>
         /// <param name="cancellable">The transition, if animated, can be cancelled.</param>
-        /// <remarks>
-        /// This method must be called while holding _syncLock.
-        /// </remarks>
         private void TransitionTo(SnackbarState state, bool animate = true, bool cancellable = true)
         {
             if (_disposed)
@@ -151,15 +128,11 @@ namespace MudBlazor
             _transitionCancellable = cancellable;
             var options = State.Options;
 
-            Action? closeCallback = null;
-            Action? updateCallback = null;
-
             if (state.IsShowing())
             {
                 if (!animate || !StartTimer(options.ShowTransitionDuration))
                 {
                     TransitionTo(SnackbarState.Visible);
-                    return; // Skip invoking OnUpdate since the recursive call will handle it
                 }
             }
             else if (state.IsVisible() && !options.RequiresInteraction)
@@ -167,154 +140,96 @@ namespace MudBlazor
                 if (!animate || !StartTimer(options.VisibleStateDuration))
                 {
                     TransitionTo(SnackbarState.Hiding);
-                    return; // Skip invoking OnUpdate since the recursive call will handle it
                 }
             }
             else if (state.IsHiding())
             {
                 if (!animate || !StartTimer(options.HideTransitionDuration))
                 {
-                    closeCallback = () => OnClose?.Invoke(this);
+                    OnClose?.Invoke(this);
                 }
             }
 
-            updateCallback = () => OnUpdate?.Invoke();
-
-            // Release lock before invoking callbacks to avoid deadlocks
-            Monitor.Exit(_syncLock);
-            try
-            {
-                closeCallback?.Invoke();
-                updateCallback?.Invoke();
-            }
-            finally
-            {
-                Monitor.Enter(_syncLock);
-            }
+            OnUpdate?.Invoke();
         }
 
         public void PauseTransitions(bool pause)
         {
-            lock (_syncLock)
+            if (_disposed) return;
+
+            // Some transitions, like from the close button, can't be cancelled or it would restart the transition when the user leaves the snackbar.
+            if (!_transitionCancellable)
             {
-                if (_disposed)
-                {
-                    return;
-                }
+                _paused = false;
+                return;
+            }
 
-                // Some transitions, like from the close button, can't be cancelled or it would restart the transition when the user leaves the snackbar.
-                if (!_transitionCancellable)
-                {
-                    _paused = false;
-                    return;
-                }
+            // Pause any transitions and stay visible.
+            _paused = pause;
 
-                // Pause any transitions and stay visible.
-                _paused = pause;
-
-                Action? updateCallback = null;
-
-                if (pause)
+            if (pause)
+            {
+                switch (State.SnackbarState)
                 {
-                    switch (State.SnackbarState)
-                    {
-                        case SnackbarState.Showing:
-                            // Skip the Showing animation and go straight to Visible.
-                            TransitionTo(SnackbarState.Visible);
-                            return; // TransitionTo will invoke OnUpdate
-                        case SnackbarState.Hiding:
-                            // Stop the Hiding transition and go to a Visible state with no duration.
-                            // As soon as we resume we will trigger the Hiding transition again.
-                            StopTimer();
-                            State.SnackbarState = SnackbarState.Visible;
-                            _hideOnResume = true;
-                            updateCallback = () => OnUpdate?.Invoke();
-                            break;
-                    }
+                    case SnackbarState.Showing:
+                        // Skip the Showing animation and go straight to Visible.
+                        TransitionTo(SnackbarState.Visible);
+                        break;
+                    case SnackbarState.Hiding:
+                        // Stop the Hiding transition and go to a Visible state with no duration.
+                        // As soon as we resume we will trigger the Hiding transition again.
+                        StopTimer();
+                        State.SnackbarState = SnackbarState.Visible;
+                        _hideOnResume = true;
+                        OnUpdate?.Invoke();
+                        break;
                 }
-                else if (_hideOnResume)
-                {
-                    // The Hiding transition has been pending and we can now execute it.
-                    _hideOnResume = false;
-                    TransitionTo(SnackbarState.Hiding);
-                    return; // TransitionTo will invoke OnUpdate
-                }
-
-                // Release lock before invoking callback
-                if (updateCallback != null)
-                {
-                    Monitor.Exit(_syncLock);
-                    try
-                    {
-                        updateCallback.Invoke();
-                    }
-                    finally
-                    {
-                        Monitor.Enter(_syncLock);
-                    }
-                }
+            }
+            else if (_hideOnResume)
+            {
+                // The Hiding transition has been pending and we can now execute it.
+                _hideOnResume = false;
+                TransitionTo(SnackbarState.Hiding);
             }
         }
 
         private void TimerElapsed(object? _)
         {
-            lock (_syncLock)
+            // Check if disposed without holding lock to avoid overhead
+            if (_disposed)
             {
-                if (_disposed)
+                return;
+            }
+
+            // Let the transition be triggered after the pause is ended.
+            if (_paused)
+            {
+                if (State.SnackbarState.IsVisible() || State.SnackbarState.IsHiding())
                 {
-                    return;
+                    _hideOnResume = true;
                 }
 
-                // Let the transition be triggered after the pause is ended.
-                if (_paused)
-                {
-                    if (State.SnackbarState.IsVisible() || State.SnackbarState.IsHiding())
-                    {
-                        _hideOnResume = true;
-                    }
+                return;
+            }
 
-                    return;
-                }
-
-                Action? closeCallback = null;
-
-                // Take the next step after the current state has transitioned.
-                switch (State.SnackbarState)
-                {
-                    case SnackbarState.Showing:
-                        TransitionTo(SnackbarState.Visible);
-                        return; // TransitionTo will invoke callbacks
-                    case SnackbarState.Visible:
-                        TransitionTo(SnackbarState.Hiding);
-                        return; // TransitionTo will invoke callbacks
-                    case SnackbarState.Hiding:
-                        closeCallback = () => OnClose?.Invoke(this);
-                        break;
-                }
-
-                // Release lock before invoking callback
-                if (closeCallback != null)
-                {
-                    Monitor.Exit(_syncLock);
-                    try
-                    {
-                        closeCallback.Invoke();
-                    }
-                    finally
-                    {
-                        Monitor.Enter(_syncLock);
-                    }
-                }
+            // Take the next step after the current state has transitioned.
+            switch (State.SnackbarState)
+            {
+                case SnackbarState.Showing:
+                    TransitionTo(SnackbarState.Visible);
+                    break;
+                case SnackbarState.Visible:
+                    TransitionTo(SnackbarState.Hiding);
+                    break;
+                case SnackbarState.Hiding:
+                    OnClose?.Invoke(this);
+                    break;
             }
         }
 
         /// <summary>
         /// Starts the transition timer that elapses after the specified duration; or return <c>false</c> if the period would be instantaneous.
         /// </summary>
-        /// <remarks>
-        /// This method must be called while holding _syncLock.
-        /// For very short durations, uses Task.Delay instead of Timer for more reliable behavior.
-        /// </remarks>
         private bool StartTimer(int duration)
         {
             if (duration <= 0)
@@ -322,20 +237,11 @@ namespace MudBlazor
                 return false;
             }
 
-            State.Stopwatch.Restart();
-
-            // For durations less than 50ms, use Task.Delay which is more reliable than System.Threading.Timer
-            // System.Threading.Timer has platform-dependent minimum resolution (typically 15-16ms on Windows)
-            if (duration < 50)
+            lock (_timerLock)
             {
-                _ = Task.Run(async () =>
-                {
-                    await Task.Delay(duration);
-                    TimerElapsed(null);
-                });
-            }
-            else
-            {
+                if (_disposed) return false;
+                
+                State.Stopwatch.Restart();
                 _timer?.Change(duration, Timeout.Infinite);
             }
 
@@ -345,13 +251,13 @@ namespace MudBlazor
         /// <summary>
         /// Stops the timer.
         /// </summary>
-        /// <remarks>
-        /// This method must be called while holding _syncLock.
-        /// </remarks>
         private void StopTimer()
         {
-            State.Stopwatch.Stop();
-            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            lock (_timerLock)
+            {
+                State.Stopwatch.Stop();
+                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            }
         }
 
         public void Dispose()
@@ -367,7 +273,7 @@ namespace MudBlazor
                 return;
             }
 
-            lock (_syncLock)
+            lock (_timerLock)
             {
                 if (_disposed)
                 {
@@ -377,7 +283,8 @@ namespace MudBlazor
                 _disposed = true;
 
                 // Stop the timer first
-                StopTimer();
+                State.Stopwatch.Stop();
+                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
 
                 // Clear event handlers to prevent any further invocations
                 OnClose = null;
