@@ -260,10 +260,10 @@ csharp_space_between_square_brackets = false
 dotnet_separate_import_directive_groups = false
 
 # Parentheses preferences
-dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:warning
-dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:warning
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:suggestion
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary:suggestion
-dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:warning
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:suggestion
 
 # Modifier preferences
 dotnet_style_require_accessibility_modifiers = for_non_interface_members
@@ -275,7 +275,7 @@ dotnet_style_prefer_simplified_boolean_expressions = true
 dotnet_style_prefer_simplified_interpolation = true
 
 # Parameter preferences
-dotnet_code_quality_unused_parameters = non_public:warning
+dotnet_code_quality_unused_parameters = non_public:suggestion
 
 # New line preferences
 dotnet_style_allow_multiple_blank_lines_experimental = false:suggestion
@@ -291,7 +291,7 @@ csharp_style_deconstructed_variable_declaration = true
 csharp_style_implicit_object_creation_when_type_is_apparent = true
 csharp_style_prefer_method_group_conversion = true
 csharp_style_prefer_local_over_anonymous_function = true
-csharp_style_prefer_null_check_over_type_check = true:warning
+csharp_style_prefer_null_check_over_type_check = true
 csharp_style_prefer_tuple_swap = true:silent
 csharp_style_prefer_utf8_string_literals = true
 csharp_style_unused_value_assignment_preference = discard_variable
@@ -302,7 +302,7 @@ csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimenta
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true
 csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true
 csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false:suggestion
-csharp_style_allow_embedded_statements_on_same_line_experimental = false:warning
+csharp_style_allow_embedded_statements_on_same_line_experimental = false:silent
 
 ############################################################################
 #                                                                          #
