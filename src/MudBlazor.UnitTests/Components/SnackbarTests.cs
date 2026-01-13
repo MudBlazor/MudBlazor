@@ -528,7 +528,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
-                    c.VisibleStateDuration = 100; // Increased from 10ms to 100ms for reliable timer firing
+                    c.VisibleStateDuration = 100;
                     c.Action = "Close";
                     c.OnClick = _ => Task.CompletedTask;
                 })
@@ -554,7 +554,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
-                    c.VisibleStateDuration = 100; // Increased from 10ms to 100ms for reliable timer firing
+                    c.VisibleStateDuration = 100;
                     c.Action = "Close";
                     c.RequireInteraction = false;
                 })

@@ -12,10 +12,12 @@ namespace MudBlazor
     /// </summary>
     public class Snackbar : IDisposable
     {
-        private bool _paused = false;
+        private readonly object _lock = new();
+        private readonly Timer _timer;
+        private volatile bool _disposed;
+        private bool _paused;
         private bool _transitionCancellable = true;
-        private bool _hideOnResume = false;
-        private Timer Timer { get; }
+        private bool _hideOnResume;
         internal SnackBarMessageState State { get; }
 
         /// <summary>
@@ -44,41 +46,53 @@ namespace MudBlazor
         {
             SnackbarMessage = message;
             State = new SnackBarMessageState(options);
-            Timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            _timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
         }
 
-        internal void Init() => TransitionTo(SnackbarState.Showing);
+        internal void Init()
+        {
+            lock (_lock)
+            {
+                if (_disposed) return;
+                TransitionTo(SnackbarState.Showing);
+            }
+        }
 
         internal void Clicked(bool fromCloseIcon)
         {
-            // You should only be able to interact with the snackbar once.
-            if (State.UserHasInteracted)
+            lock (_lock)
             {
-                return;
-            }
+                if (_disposed) return;
 
-            if (fromCloseIcon)
-            {
-                // Invoke user-defined task when close button is clicked.
-                // The returned Task is deliberately ignored. This approach allows the method
-                // to proceed without awaiting the completion of the task, maintaining UI responsiveness.
-                _ = State.Options.CloseButtonClickFunc?.Invoke(this);
-            }
-            else
-            {
-                // Do not start the hiding transition if no click action
-                if (State.Options.OnClick is null)
+                // You should only be able to interact with the snackbar once.
+                if (State.UserHasInteracted)
                 {
                     return;
                 }
 
-                // Click action is executed only if it's not from the close icon.
-                // Same as above, we are deliberately not awaiting.
-                _ = State.Options.OnClick?.Invoke(this);
-            }
+                if (fromCloseIcon)
+                {
+                    // Invoke user-defined task when close button is clicked.
+                    // The returned Task is deliberately ignored. This approach allows the method
+                    // to proceed without awaiting the completion of the task, maintaining UI responsiveness.
+                    _ = State.Options.CloseButtonClickFunc?.Invoke(this);
+                }
+                else
+                {
+                    // Do not start the hiding transition if no click action
+                    if (State.Options.OnClick is null)
+                    {
+                        return;
+                    }
 
-            State.UserHasInteracted = true;
-            TransitionTo(SnackbarState.Hiding, cancellable: false);
+                    // Click action is executed only if it's not from the close icon.
+                    // Same as above, we are deliberately not awaiting.
+                    _ = State.Options.OnClick?.Invoke(this);
+                }
+
+                State.UserHasInteracted = true;
+                TransitionTo(SnackbarState.Hiding, cancellable: false);
+            }
         }
 
         /// <summary>
@@ -86,7 +100,11 @@ namespace MudBlazor
         /// </summary>
         public void ForceClose()
         {
-            TransitionTo(SnackbarState.Hiding, false, false);
+            lock (_lock)
+            {
+                if (_disposed) return;
+                TransitionTo(SnackbarState.Hiding, false, false);
+            }
         }
 
         /// <summary>
@@ -97,6 +115,11 @@ namespace MudBlazor
         /// <param name="cancellable">The transition, if animated, can be cancelled.</param>
         private void TransitionTo(SnackbarState state, bool animate = true, bool cancellable = true)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             // A new non-cancellable transition takes priority and will force a resume.
             if (!cancellable)
             {
@@ -141,67 +164,79 @@ namespace MudBlazor
 
         public void PauseTransitions(bool pause)
         {
-            // Some transitions, like from the close button, can't be cancelled or it would restart the transition when the user leaves the snackbar.
-            if (!_transitionCancellable)
+            lock (_lock)
             {
-                _paused = false;
-                return;
-            }
+                if (_disposed) return;
 
-            // Pause any transitions and stay visible.
-            _paused = pause;
-
-            if (pause)
-            {
-                switch (State.SnackbarState)
+                // Some transitions, like from the close button, can't be cancelled or it would restart the transition when the user leaves the snackbar.
+                if (!_transitionCancellable)
                 {
-                    case SnackbarState.Showing:
-                        // Skip the Showing animation and go straight to Visible.
-                        TransitionTo(SnackbarState.Visible);
-                        break;
-                    case SnackbarState.Hiding:
-                        // Stop the Hiding transition and go to a Visible state with no duration.
-                        // As soon as we resume we will trigger the Hiding transition again.
-                        StopTimer();
-                        State.SnackbarState = SnackbarState.Visible;
-                        _hideOnResume = true;
-                        OnUpdate?.Invoke();
-                        break;
+                    _paused = false;
+                    return;
                 }
-            }
-            else if (_hideOnResume)
-            {
-                // The Hiding transition has been pending and we can now execute it.
-                _hideOnResume = false;
-                TransitionTo(SnackbarState.Hiding);
+
+                // Pause any transitions and stay visible.
+                _paused = pause;
+
+                if (pause)
+                {
+                    switch (State.SnackbarState)
+                    {
+                        case SnackbarState.Showing:
+                            // Skip the Showing animation and go straight to Visible.
+                            TransitionTo(SnackbarState.Visible);
+                            break;
+                        case SnackbarState.Hiding:
+                            // Stop the Hiding transition and go to a Visible state with no duration.
+                            // As soon as we resume we will trigger the Hiding transition again.
+                            StopTimer();
+                            State.SnackbarState = SnackbarState.Visible;
+                            _hideOnResume = true;
+                            OnUpdate?.Invoke();
+                            break;
+                    }
+                }
+                else if (_hideOnResume)
+                {
+                    // The Hiding transition has been pending and we can now execute it.
+                    _hideOnResume = false;
+                    TransitionTo(SnackbarState.Hiding);
+                }
             }
         }
 
         private void TimerElapsed(object? _)
         {
-            // Let the transition be triggered after the pause is ended.
-            if (_paused)
+            if (_disposed) return;
+
+            lock (_lock)
             {
-                if (State.SnackbarState.IsVisible() || State.SnackbarState.IsHiding())
+                if (_disposed) return;
+
+                // Let the transition be triggered after the pause is ended.
+                if (_paused)
                 {
-                    _hideOnResume = true;
+                    if (State.SnackbarState.IsVisible() || State.SnackbarState.IsHiding())
+                    {
+                        _hideOnResume = true;
+                    }
+
+                    return;
                 }
 
-                return;
-            }
-
-            // Take the next step after the current state has transitioned.
-            switch (State.SnackbarState)
-            {
-                case SnackbarState.Showing:
-                    TransitionTo(SnackbarState.Visible);
-                    break;
-                case SnackbarState.Visible:
-                    TransitionTo(SnackbarState.Hiding);
-                    break;
-                case SnackbarState.Hiding:
-                    OnClose?.Invoke(this);
-                    break;
+                // Take the next step after the current state has transitioned.
+                switch (State.SnackbarState)
+                {
+                    case SnackbarState.Showing:
+                        TransitionTo(SnackbarState.Visible);
+                        break;
+                    case SnackbarState.Visible:
+                        TransitionTo(SnackbarState.Hiding);
+                        break;
+                    case SnackbarState.Hiding:
+                        OnClose?.Invoke(this);
+                        break;
+                }
             }
         }
 
@@ -215,16 +250,29 @@ namespace MudBlazor
                 return false;
             }
 
-            State.Stopwatch.Restart();
-            Timer.Change(duration, Timeout.Infinite);
-
-            return true;
+            try
+            {
+                State.Stopwatch.Restart();
+                _timer.Change(duration, Timeout.Infinite);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void StopTimer()
         {
-            State.Stopwatch.Stop();
-            Timer.Change(Timeout.Infinite, Timeout.Infinite);
+            try
+            {
+                State.Stopwatch.Stop();
+                _timer.Change(Timeout.Infinite, Timeout.Infinite);
+            }
+            catch
+            {
+                // Ignore timer errors during stop
+            }
         }
 
         public void Dispose()
@@ -240,9 +288,11 @@ namespace MudBlazor
                 return;
             }
 
-            StopTimer();
-
-            Timer.Dispose();
+            lock (_lock)
+            {
+                if (_disposed) return;
+                _disposed = true;
+            }
         }
     }
 }
