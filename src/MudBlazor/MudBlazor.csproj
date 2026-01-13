@@ -86,22 +86,28 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.1" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="MudBlazor.SassCompiler" Version="2.0.7">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.25173.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.17">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
+
+  <!-- Only rebuild web assets if any of the source files have changed -->
+  <ItemGroup>
+    <JsAssetInputs Include="TScripts/**/*.js" />
+    <ScssAssetInputs Include="Styles/**/*.scss" />
+    <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
+  </ItemGroup>
+  <Target
+    Name="BuildWebAssets"
+    Inputs="@(WebAssetInputs)"
+    Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
+    BeforeTargets="BeforeBuild"
+   >
+    <!-- TODO: Install bun if not present -->
+    <Exec Command="bun run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
   
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
