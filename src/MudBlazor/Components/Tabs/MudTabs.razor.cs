@@ -40,7 +40,7 @@ namespace MudBlazor
         private double _scrollPosition;
         private IResizeObserver? _resizeObserver;
         private MudDropContainer<MudTabPanel>? _dropContainer;
-        private ThrottleDispatcher? _throttleDispatcher;
+        private readonly Lazy<ThrottleDispatcher> _throttleDispatcher;
         private readonly ParameterState<int> _activePanelIndexState;
         private readonly Dictionary<ElementReference, BoundingClientRect> _tabSizes = [];
         /// <summary>
@@ -460,6 +460,7 @@ namespace MudBlazor
         {
             _panels = new List<MudTabPanel>();
             Panels = _panels.AsReadOnly();
+            _throttleDispatcher = new Lazy<ThrottleDispatcher>(() => new ThrottleDispatcher(500, TimeProvider));
             using var registerScope = CreateRegisterScope();
             _activePanelIndexState = registerScope.RegisterParameter<int>(nameof(ActivePanelIndex))
                 .WithParameter(() => ActivePanelIndex)
@@ -470,7 +471,6 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override void OnInitialized()
         {
-            _throttleDispatcher = new ThrottleDispatcher(500, TimeProvider);
             _resizeObserver = _resizeObserverFactory.Create();
             _tabListId = $"tablist-{_componentId}";
             base.OnInitialized();
@@ -566,7 +566,10 @@ namespace MudBlazor
             if (_isDisposed)
                 return;
             _isDisposed = true;
-            _throttleDispatcher?.Dispose();
+            if (_throttleDispatcher.IsValueCreated)
+            {
+                _throttleDispatcher.Value.Dispose();
+            }
             if (_resizeObserver is not null)
             {
                 _resizeObserver.OnResized -= OnResized;
