@@ -194,7 +194,14 @@ namespace MudBlazor
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
         {
-            DismissAll();
+            foreach (var dialog in _dialogs.ToArray())
+            {
+                if (dialog.Options.CloseOnNavigation == true)
+                {
+                    DismissInstance(dialog, DialogResult.Cancel());
+                }
+            }
+            StateHasChanged();
         }
 
         protected virtual void Dispose(bool disposing)
