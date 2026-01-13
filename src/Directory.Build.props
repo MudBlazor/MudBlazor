@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'MudBlazor.Core'">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 </Project>
