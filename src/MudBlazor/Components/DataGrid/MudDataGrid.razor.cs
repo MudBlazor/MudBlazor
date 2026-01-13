@@ -324,6 +324,15 @@ namespace MudBlazor
         public EventCallback<T> CommittedItemChanges { get; set; }
 
         /// <summary>
+        /// Occurs when the user saved changes to an item.
+        /// Allows configuring whether the edit form remains open based on the returned value.
+        /// When set, will be invoked instead of <see cref="CommittedItemChanges"/>.
+        /// Called when the EditMode is anything but Cell.
+        /// </summary>
+        [Parameter]
+        public Func<T, Task<DataGridEditFormCloseBehavior>> CommittedItemChangesBehavior { get; set; }
+
+        /// <summary>
         /// Occurs when a field changes in the edit dialog.
         /// </summary>
         /// <remarks>
@@ -1802,6 +1811,15 @@ namespace MudBlazor
         /// <returns></returns>
         internal async Task CommitItemChangesAsync()
         {
+            void UpdateSourceItem()
+            {
+                foreach (var property in _properties)
+                {
+                    if (property.CanWrite)
+                        property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+                }
+            }
+
             await _editForm.Validate();
             if (!_editForm.IsValid)
             {
@@ -1810,13 +1828,22 @@ namespace MudBlazor
 
             if (_editingSourceItem != null)
             {
-                foreach (var property in _properties)
+                if (CommittedItemChangesBehavior != null)
                 {
-                    if (property.CanWrite)
-                        property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+                    var item = CloneStrategy.CloneObject(_editingItem);
+                    var closeBehavior = await CommittedItemChangesBehavior(item);
+
+                    if (closeBehavior == DataGridEditFormCloseBehavior.KeepOpen)
+                        return;
+
+                    UpdateSourceItem();
+                }
+                else
+                {
+                    UpdateSourceItem();
+                    await CommittedItemChanges.InvokeAsync(_editingSourceItem);
                 }
 
-                await CommittedItemChanges.InvokeAsync(_editingSourceItem);
                 ClearEditingItem();
                 _isEditFormOpen = false;
             }
@@ -2033,6 +2060,7 @@ namespace MudBlazor
         /// <param name="item">The item to edit.</param>
         public async Task SetEditingItemAsync(T item)
         {
+            Console.WriteLine($"Set Editing intem, readonly: {ReadOnly}");
             if (ReadOnly) return;
 
             _editingSourceItem = item;

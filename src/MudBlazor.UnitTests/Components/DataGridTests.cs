@@ -1046,6 +1046,61 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        [Theory]
+        [TestCase(12, true)]
+        [TestCase(-12, false)]
+        public async Task DataGridChangesBehaviorTest(int age, bool shouldClose)
+        {
+            var comp = Context.Render<DataGridFormEditChangesBehaviorTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditChangesBehaviorTest.Model>>();
+
+            //verify values before opening dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("23");
+
+            //verify no dialog open
+            comp.FindAll("div.mud-dialog").Count.Should().Be(0);
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+
+            //verify dialog open
+            comp.Find("div.mud-dialog").Should().NotBeNull();
+
+            //edit data
+            comp.FindAll("div input")[0].Change("Galadriel");
+            comp.FindAll("div input")[1].Change(age);
+
+            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+
+            await Task.Delay(20);
+
+            if (shouldClose)
+            {
+                //verify dialog closed
+                comp.FindAll("div.mud-dialog").Count.Should().Be(0);
+
+                //verify values changed
+                dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+                dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+                dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Galadriel");
+                dataGrid.FindAll("td")[3].Html().Trim().Should().Be($"{age}");
+            }
+            else
+            {
+                //verify dialog still open
+                comp.Find("div.mud-dialog").Should().NotBeNull();
+
+                //verify values not changed
+                dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+                dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+                dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Johanna");
+                dataGrid.FindAll("td")[3].Html().Trim().Should().Be("23");
+            }
+        }
+
         [Test(Description = "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
         public void DataGridNoNullExceptionWhenNestedPropertyNullValue()
         {
