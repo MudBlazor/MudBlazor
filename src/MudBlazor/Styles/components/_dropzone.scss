@@ -18,7 +18,6 @@
 
 .mud-drop-item:not(.mud-drop-item-preview-start) {
   cursor: grab;
-  -webkit-user-select: none;
   user-select: none;
 
   &:active {
@@ -33,7 +32,6 @@
   top: 0;
   left: 0;
   z-index: +1;
-  -webkit-user-select: none;
   user-select: none;
 }
 

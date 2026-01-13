@@ -103,7 +103,6 @@
 .mud-chart-donut {
   & .mud-donut-hole {
     fill: transparent;
-    -webkit-user-select: none;
     user-select: none;
     pointer-events: unset;
   }

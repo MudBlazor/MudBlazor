@@ -111,7 +111,6 @@
       height: 100%;
       outline: none;
       position: absolute;
-      -webkit-user-select: none;
       user-select: none;
       pointer-events: auto;
     }
@@ -253,7 +252,6 @@
       display: inline-flex;
       position: absolute;
       align-items: center;
-      -webkit-user-select: none;
       user-select: none;
       border-radius: 50%;
       justify-content: center;
