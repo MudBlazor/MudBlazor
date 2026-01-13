@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/11789
         /// </remarks>
         [Test]
-        public void InlineDialog_OpenCancelOpen()
+        public async Task InlineDialog_OpenCancelOpen()
         {
             // Arrange
 
@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert : Initial state, dialog should be closed
 
-            comp.FindAll(".mud-dialog-content").Should().BeEmpty();
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-dialog-content").Should().BeEmpty());
 
             // Act : Open the dialog
 
@@ -177,7 +177,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert : Dialog should be open
 
-            comp.Find(".mud-dialog-content").InnerHtml.Trim().Should().NotBeEmpty();
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-dialog-content").InnerHtml.Trim().Should().NotBeEmpty());
 
             // Act : Cancel by click outside
 
@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert : Dialog should be closed
 
-            comp.FindAll(".mud-dialog-content").Should().BeEmpty();
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-dialog-content").Should().BeEmpty());
 
             // Act : Reopen the dialog
 
@@ -193,7 +193,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert : Dialog should be open
 
-            comp.Find(".mud-dialog-content").InnerHtml.Trim().Should().NotBeEmpty();
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-dialog-content").InnerHtml.Trim().Should().NotBeEmpty());
         }
 
         /// <summary>

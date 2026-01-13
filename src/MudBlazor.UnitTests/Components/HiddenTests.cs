@@ -300,10 +300,13 @@ namespace MudBlazor.UnitTests.Components
 
             var component = Context.Render<RenderMultipleHiddenInParallel>();
 
-            await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() =>
+            {
+                component.FindAll(".xl").Should().HaveCount(10);
+                component.FindAll(".lg-and-up").Should().HaveCount(10);
+                component.FindAll(".md-and-up").Should().HaveCount(10);
+                component.FindAll(".sm-and-up").Should().HaveCount(10);
+            });
         }
     }
 }

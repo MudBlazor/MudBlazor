@@ -2486,9 +2486,9 @@ namespace MudBlazor.UnitTests.Components
             var menuItem = comp.Find("div.mud-input-control");
             menuItem.MouseDown();
 
-            //Now select the 25 and check it
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-            items[1].Click();
+            // Now select the 25 and check it. Wait for the popover to render first.
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Should().NotBeEmpty());
+            comp.FindAll("div.mud-list-item").First(x => x.TextContent.Contains(newRowsPerPage.ToString())).Click();
             await comp.WaitForAssertionAsync(() => rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly"));
         }
 

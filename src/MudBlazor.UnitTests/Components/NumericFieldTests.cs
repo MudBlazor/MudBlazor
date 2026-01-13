@@ -837,14 +837,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
-            IElement DelayedRerenderButton() => comp.Find("button#re-render");
-            IElement Input() => comp.Find("input");
             var converter = new DefaultConverter<int>();
-            await Input().InputAsync("1");
+
+            await comp.InvokeAsync(() => comp.Find("input").Input("1"));
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
             // trigger delayed re-render
-            await DelayedRerenderButton().ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("button#re-render").Click());
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = "1";
@@ -852,7 +851,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                await Input().InputAsync(currentText);
+                await comp.InvokeAsync(() => comp.Find("input").Input(currentText));
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
