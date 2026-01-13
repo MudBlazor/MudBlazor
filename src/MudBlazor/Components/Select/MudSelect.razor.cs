@@ -115,8 +115,8 @@ namespace MudBlazor
                 item = _items[index];
                 if (!MultiSelection)
                 {
-                    // If SelectionOnEnter is false (default), it behaves as it always has.
-                    // If true, it skips this block and only executes HighlightItem(item) below.
+                    // When SelectionOnEnter is true, we only update the visual highlight during navigation.
+                    // When false (default), the value is immediately updated as the user moves through the list.
                     if (!SelectionOnEnter)
                     {
                         _selectedValues.Clear();
@@ -733,8 +733,8 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// If true, the selected value will not be updated when navigating with arrow keys. 
-        /// The user must press Enter or click to confirm the selection.
+        /// If <c>true</c>, navigating with arrow keys will only highlight items without updating the selected value.
+        /// The selection must be confirmed by pressing Enter or clicking the item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
