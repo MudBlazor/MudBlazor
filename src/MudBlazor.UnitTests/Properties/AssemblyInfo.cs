@@ -6,6 +6,3 @@ using NUnit.Framework;
 
 // Enable test fixture parallelization for faster test execution
 [assembly: Parallelizable(ParallelScope.Fixtures)]
-
-// Set the maximum number of parallel workers based on available processors
-[assembly: LevelOfParallelism(8)]

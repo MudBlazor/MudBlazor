@@ -30,7 +30,7 @@ dotnet clean <project.csproj>
 dotnet build <project.csproj> -c Release --nologo
 
 # Test (ALWAYS use --filter and --no-build)
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo
+dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release
 ```
 
 ### Formatting (REQUIRED)

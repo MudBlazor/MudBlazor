@@ -38,6 +38,7 @@
             "type": "shell",
             "args": [
                 "test",
+                "--project",
                 "src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary",
