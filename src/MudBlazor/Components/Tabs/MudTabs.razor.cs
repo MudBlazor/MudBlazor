@@ -40,7 +40,7 @@ namespace MudBlazor
         private double _scrollPosition;
         private IResizeObserver? _resizeObserver;
         private MudDropContainer<MudTabPanel>? _dropContainer;
-        private readonly ThrottleDispatcher _throttleDispatcher;
+        private ThrottleDispatcher? _throttleDispatcher;
         private readonly ParameterState<int> _activePanelIndexState;
         private readonly Dictionary<ElementReference, BoundingClientRect> _tabSizes = [];
         /// <summary>
@@ -66,6 +66,9 @@ namespace MudBlazor
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         /// <summary>
         /// Enables drag-and-drop re-ordering of tabs.
@@ -455,7 +458,6 @@ namespace MudBlazor
         /// <inheritdoc />
         public MudTabs()
         {
-            _throttleDispatcher = new ThrottleDispatcher(500);
             _panels = new List<MudTabPanel>();
             Panels = _panels.AsReadOnly();
             using var registerScope = CreateRegisterScope();
@@ -468,6 +470,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override void OnInitialized()
         {
+            _throttleDispatcher = new ThrottleDispatcher(500, TimeProvider);
             _resizeObserver = _resizeObserverFactory.Create();
             _tabListId = $"tablist-{_componentId}";
             base.OnInitialized();

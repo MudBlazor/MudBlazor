@@ -31,10 +31,11 @@ namespace MudBlazor.Utilities.Throttle;
 internal sealed class ThrottleDispatcher : IDisposable
 {
     private readonly TimeSpan _interval;
+    private readonly TimeProvider _timeProvider;
     // TODO: Replace with System.Threading.Lock when targeting .NET 9+
     // ReSharper disable once ChangeFieldTypeToSystemThreadingLock
     private readonly object _lock = new();
-    private DateTime _lastExecutionStartTime = DateTime.MinValue;
+    private DateTimeOffset _lastExecutionStartTime = DateTimeOffset.MinValue;
     private Task? _currentTask;
     private bool _disposed;
 
@@ -42,9 +43,10 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval.
     /// </summary>
     /// <param name="interval">The minimum interval in milliseconds between invocations. Must be non-negative.</param>
+    /// <param name="timeProvider">The time provider to use for time queries. Defaults to <see cref="TimeProvider.System"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
-    public ThrottleDispatcher(int interval)
-        : this(TimeSpan.FromMilliseconds(interval))
+    public ThrottleDispatcher(int interval, TimeProvider? timeProvider = null)
+        : this(TimeSpan.FromMilliseconds(interval), timeProvider)
     {
     }
 
@@ -52,8 +54,9 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval.
     /// </summary>
     /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations. Must be non-negative.</param>
+    /// <param name="timeProvider">The time provider to use for time queries. Defaults to <see cref="TimeProvider.System"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
-    public ThrottleDispatcher(TimeSpan interval)
+    public ThrottleDispatcher(TimeSpan interval, TimeProvider? timeProvider = null)
     {
         if (interval < TimeSpan.Zero)
         {
@@ -61,6 +64,7 @@ internal sealed class ThrottleDispatcher : IDisposable
         }
 
         _interval = interval;
+        _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
     /// <summary>
@@ -98,7 +102,7 @@ internal sealed class ThrottleDispatcher : IDisposable
                 return Task.CompletedTask;
             }
 
-            var now = DateTime.UtcNow;
+            var now = _timeProvider.GetUtcNow();
             var timeSinceLastExecution = now - _lastExecutionStartTime;
 
             // If we have a running task, and we're within the interval, return the same task
