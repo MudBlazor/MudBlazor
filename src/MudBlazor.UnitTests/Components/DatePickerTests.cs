@@ -1985,6 +1985,18 @@ namespace MudBlazor.UnitTests.Components
             button.TextContent.Should().Be("1");
         }
 
+        [Test]
+        public void DatePicker_CustomClearIcon_Should_BeRenderedInMarkup()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Date, new DateTime(2026, 2, 15))
+                .Add(p => p.Editable, true)
+                .Add(p => p.Clearable, true)
+                .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
+
+            comp.Markup.Should().Contain(comp.Instance.ClearIcon);
+        }
+
         private IRenderedComponent<SimpleMudDatePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudDatePickerTest>>? parameterBuilder = null)
         {
             IRenderedComponent<SimpleMudDatePickerTest> comp;

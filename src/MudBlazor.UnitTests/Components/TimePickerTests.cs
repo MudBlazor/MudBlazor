@@ -354,5 +354,17 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input[id='start-time']").Should().NotBeNull();
         }
+
+        [Test]
+        public void TimePicker_CustomClearIcon_Should_BeRenderedInMarkup()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.Time, new TimeSpan(10, 30, 0))
+                .Add(p => p.Editable, true)
+                .Add(p => p.Clearable, true)
+                .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
+
+            comp.Markup.Should().Contain(comp.Instance.ClearIcon);
+        }
     }
 }

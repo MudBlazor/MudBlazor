@@ -213,11 +213,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.<br />
-        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <see cref="ClearIcon"/> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Prevents the user from interacting with this button.
