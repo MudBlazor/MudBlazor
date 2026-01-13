@@ -122,6 +122,7 @@ namespace MudBlazor
         public void Remove(Snackbar snackbar)
         {
             snackbar.OnClose -= Remove;
+            snackbar.Dispose();
 
             _snackBarLock.EnterWriteLock();
             try
@@ -134,12 +135,6 @@ namespace MudBlazor
             {
                 _snackBarLock.ExitWriteLock();
             }
-
-            // Dispose the snackbar after removing it from the list to avoid deadlocks
-            // The snackbar's OnClose event handler (this method) is invoked from within
-            // the snackbar's lock, so we must not call Dispose while holding the service lock
-            // and the snackbar is also holding its own lock.
-            snackbar.Dispose();
 
             OnSnackbarsUpdated?.Invoke();
         }
@@ -249,18 +244,7 @@ namespace MudBlazor
             {
                 Configuration.OnUpdate -= ConfigurationUpdated;
                 _navigationManager.LocationChanged -= NavigationManager_LocationChanged;
-                
-                _snackBarLock.EnterWriteLock();
-                try
-                {
-                    RemoveAllSnackbars(_snackBarList);
-                }
-                finally
-                {
-                    _snackBarLock.ExitWriteLock();
-                }
-                
-                _snackBarLock.Dispose();
+                RemoveAllSnackbars(_snackBarList);
             }
         }
 

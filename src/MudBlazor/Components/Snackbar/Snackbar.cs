@@ -12,12 +12,10 @@ namespace MudBlazor
     /// </summary>
     public class Snackbar : IDisposable
     {
-        private readonly object _timerLock = new object();
-        private int _disposed = 0; // 0 = not disposed, 1 = disposed (using int for Interlocked)
         private bool _paused = false;
         private bool _transitionCancellable = true;
         private bool _hideOnResume = false;
-        private Timer? _timer;
+        private Timer Timer { get; }
         internal SnackBarMessageState State { get; }
 
         /// <summary>
@@ -46,19 +44,13 @@ namespace MudBlazor
         {
             SnackbarMessage = message;
             State = new SnackBarMessageState(options);
-            _timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            Timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
         }
 
-        internal void Init()
-        {
-            if (Interlocked.CompareExchange(ref _disposed, 0, 0) == 1) return;
-            TransitionTo(SnackbarState.Showing);
-        }
+        internal void Init() => TransitionTo(SnackbarState.Showing);
 
         internal void Clicked(bool fromCloseIcon)
         {
-            if (Interlocked.CompareExchange(ref _disposed, 0, 0) == 1) return;
-
             // You should only be able to interact with the snackbar once.
             if (State.UserHasInteracted)
             {
@@ -94,7 +86,6 @@ namespace MudBlazor
         /// </summary>
         public void ForceClose()
         {
-            if (Interlocked.CompareExchange(ref _disposed, 0, 0) == 1) return;
             TransitionTo(SnackbarState.Hiding, false, false);
         }
 
@@ -106,11 +97,6 @@ namespace MudBlazor
         /// <param name="cancellable">The transition, if animated, can be cancelled.</param>
         private void TransitionTo(SnackbarState state, bool animate = true, bool cancellable = true)
         {
-            if (Interlocked.CompareExchange(ref _disposed, 0, 0) == 1)
-            {
-                return;
-            }
-
             // A new non-cancellable transition takes priority and will force a resume.
             if (!cancellable)
             {
@@ -155,8 +141,6 @@ namespace MudBlazor
 
         public void PauseTransitions(bool pause)
         {
-            if (Interlocked.CompareExchange(ref _disposed, 0, 0) == 1) return;
-
             // Some transitions, like from the close button, can't be cancelled or it would restart the transition when the user leaves the snackbar.
             if (!_transitionCancellable)
             {
@@ -195,12 +179,6 @@ namespace MudBlazor
 
         private void TimerElapsed(object? _)
         {
-            // Check if disposed without holding lock to avoid overhead
-            if (Interlocked.CompareExchange(ref _disposed, 0, 0) == 1)
-            {
-                return;
-            }
-
             // Let the transition be triggered after the pause is ended.
             if (_paused)
             {
@@ -237,34 +215,22 @@ namespace MudBlazor
                 return false;
             }
 
-            lock (_timerLock)
-            {
-                if (Interlocked.CompareExchange(ref _disposed, 0, 0) == 1) return false;
-                
-                State.Stopwatch.Restart();
-                _timer?.Change(duration, Timeout.Infinite);
-            }
+            State.Stopwatch.Restart();
+            Timer.Change(duration, Timeout.Infinite);
 
             return true;
         }
 
-        /// <summary>
-        /// Stops the timer.
-        /// </summary>
         private void StopTimer()
         {
-            lock (_timerLock)
-            {
-                State.Stopwatch.Stop();
-                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
-            }
+            State.Stopwatch.Stop();
+            Timer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         public void Dispose()
         {
             Dispose(true);
-            // Don't suppress finalize since we're not disposing the timer
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -274,33 +240,9 @@ namespace MudBlazor
                 return;
             }
 
-            // Use Interlocked to atomically check and set disposed flag
-            if (Interlocked.Exchange(ref _disposed, 1) == 1)
-            {
-                // Already disposed
-                return;
-            }
+            StopTimer();
 
-            // Stop the timer but don't dispose it to avoid deadlock with timer callbacks
-            // The timer callback checks _disposed at the start and will exit immediately
-            // The timer will be garbage collected when the Snackbar is collected
-            try
-            {
-                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
-            }
-            catch
-            {
-                // Ignore any exceptions from timer change during disposal
-            }
-
-            // Clear event handlers to prevent any further invocations
-            OnClose = null;
-            OnUpdate = null;
-
-            // Stop the stopwatch
-            State.Stopwatch.Stop();
-
-            // Don't set _timer to null or dispose it to avoid crashes
+            Timer.Dispose();
         }
     }
 }
