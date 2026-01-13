@@ -10,10 +10,13 @@
   padding: 0;
   position: relative;
   align-items: center;
+  -webkit-user-select: none;
   user-select: none;
   border-radius: 0;
   vertical-align: middle;
+  -webkit-appearance: none;
   -moz-appearance: none;
+  appearance: none;
   justify-content: center;
   text-decoration: none;
   background-color: transparent;

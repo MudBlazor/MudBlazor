@@ -17,6 +17,7 @@
 
   & > div.mud-menu-activator {
     display: contents;
+    -webkit-user-select: none;
     user-select: none;
   }
 }

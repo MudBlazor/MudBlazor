@@ -4,6 +4,7 @@
   color: var(--mud-palette-text-primary);
   display: inline-block;
   width: 100%;
+  -webkit-user-select: none;
   user-select: none;
   touch-action: pinch-zoom;
 
@@ -20,6 +21,7 @@
   .mud-slider-input {
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none;
     position: relative;
     display: block;
     width: 100%;
@@ -43,8 +45,8 @@
 
 
     @include slider-thumb {
-      appearance: none;
       -webkit-appearance: none;
+      appearance: none;
       border: none;
       border-radius: 50%;
       cursor: pointer;
@@ -194,6 +196,7 @@
     opacity: 0;
     transition: opacity .2s ease-in-out;
     pointer-events: none;
+    -webkit-user-select: none;
     user-select: none;
   }
 

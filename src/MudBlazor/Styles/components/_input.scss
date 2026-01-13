@@ -256,8 +256,9 @@
     }
 
     &.mud-input-root-type-search {
-      -moz-appearance: textfield;
       -webkit-appearance: textfield;
+      -moz-appearance: textfield;
+      appearance: textfield;
     }
 
     &:focus, &:active {
@@ -374,8 +375,9 @@
     }
 
     &.mud-input-root-type-search {
-      -moz-appearance: textfield;
       -webkit-appearance: textfield;
+      -moz-appearance: textfield;
+      appearance: textfield;
     }
 
     &:focus, &:active {
@@ -399,6 +401,9 @@
       &.mud-input-root-margin-dense {
         padding-top: 23px;
         padding-bottom: 6px;
+        -webkit-mask-image: linear-gradient(to bottom,
+          transparent 23px,
+          black 23px);
         mask-image: linear-gradient(to bottom,
           transparent 23px,
           black 23px);
@@ -412,6 +417,9 @@
       &.mud-input-root-hidden-label {
         padding-top: 18px;
         padding-bottom: 19px;
+        -webkit-mask-image: linear-gradient(to bottom,
+          transparent 18px,
+          black 18px);
         mask-image: linear-gradient(to bottom,
           transparent 18px,
           black 18px);
@@ -419,6 +427,9 @@
         &.mud-input-root-margin-dense {
           padding-top: 10px;
           padding-bottom: 11px;
+          -webkit-mask-image: linear-gradient(to bottom,
+            transparent 10px,
+            black 10px);
           mask-image: linear-gradient(to bottom,
             transparent 10px,
             black 10px);
@@ -469,6 +480,9 @@
       margin-top: 0px;
       padding-top: 10.5px;
       padding-bottom: 10.5px;
+      -webkit-mask-image: linear-gradient(to bottom,
+        transparent 10.5px,
+        black 10.5px);
       mask-image: linear-gradient(to bottom,
         transparent 10.5px,
         black 10.5px);
@@ -542,5 +556,6 @@
 }
 
 .mud-input-input-control {
+  -webkit-user-select: none;
   user-select: none;
 }
