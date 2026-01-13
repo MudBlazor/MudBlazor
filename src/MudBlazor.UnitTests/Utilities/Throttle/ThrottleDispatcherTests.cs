@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Utilities.Throttle;
 using NUnit.Framework;
 
@@ -60,7 +61,8 @@ public class ThrottleDispatcherTests
     public async Task ThrottleAsync_CallsSpacedByInterval_ExecutesMultipleTimes()
     {
         // Arrange
-        using var dispatcher = new ThrottleDispatcher(50);
+        var timeProvider = new FakeTimeProvider();
+        using var dispatcher = new ThrottleDispatcher(50, timeProvider);
         var counter = 0;
         Task Invoke()
         {
@@ -69,15 +71,18 @@ public class ThrottleDispatcherTests
         }
 
         // Act
-        await dispatcher.ThrottleAsync(Invoke);
+        var task1 = dispatcher.ThrottleAsync(Invoke);
+        await task1;
         counter.Should().Be(1);
 
-        await Task.Delay(100); // Wait for interval to pass
-        await dispatcher.ThrottleAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+        var task2 = dispatcher.ThrottleAsync(Invoke);
+        await task2;
         counter.Should().Be(2);
 
-        await Task.Delay(100);
-        await dispatcher.ThrottleAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+        var task3 = dispatcher.ThrottleAsync(Invoke);
+        await task3;
 
         // Assert
         counter.Should().Be(3);
