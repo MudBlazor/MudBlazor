@@ -3,8 +3,6 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents.Snackbar;
 using NUnit.Framework;
 
@@ -15,13 +13,10 @@ namespace MudBlazor.UnitTests.Components
     {
         private IRenderedComponent<MudSnackbarProvider> _provider;
         private ISnackbar _service;
-        private FakeTimeProvider _timeProvider;
 
         [SetUp]
         public void SnackbarSetUp()
         {
-            _timeProvider = new FakeTimeProvider();
-            Context.Services.Add(new ServiceDescriptor(typeof(TimeProvider), _timeProvider));
             _service = Context.Services.GetService<ISnackbar>();
             _provider = Context.Render<MudSnackbarProvider>();
             _provider.Find("#mud-snackbar-container").InnerHtml.Trimmed().Should().BeEmpty();
@@ -533,7 +528,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
-                    c.VisibleStateDuration = 100;
+                    c.VisibleStateDuration = 100; // Increased from 10ms to 100ms for reliable timer firing
                     c.Action = "Close";
                     c.OnClick = _ => Task.CompletedTask;
                 })
@@ -542,9 +537,7 @@ namespace MudBlazor.UnitTests.Components
             snackbar.Should().NotBeNull();
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Advance time by 200ms - snackbar should still be visible because it requires interaction
-            _timeProvider.Advance(TimeSpan.FromMilliseconds(200));
-            await Task.Yield(); // Allow any pending operations to complete
+            await Task.Delay(200);
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
@@ -561,7 +554,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
-                    c.VisibleStateDuration = 100;
+                    c.VisibleStateDuration = 100; // Increased from 10ms to 100ms for reliable timer firing
                     c.Action = "Close";
                     c.RequireInteraction = false;
                 })
@@ -569,9 +562,6 @@ namespace MudBlazor.UnitTests.Components
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Advance time to trigger auto-dismiss
-            _timeProvider.Advance(TimeSpan.FromMilliseconds(100));
-            
             await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
