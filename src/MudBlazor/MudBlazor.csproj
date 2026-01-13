@@ -99,14 +99,13 @@
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
   </ItemGroup>
-  <Target
-    Name="BuildWebAssets"
-    Inputs="@(WebAssetInputs)"
-    Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
-    BeforeTargets="BeforeBuild"
-   >
-    <!-- TODO: Install bun if not present -->
-    <Exec Command="bun run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Target
+      Name="BuildWebAssets"
+      Inputs="@(WebAssetInputs)"
+      Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
+      BeforeTargets="DispatchToInnerBuilds"
+    >
+    <Exec Command="dotnet ../../tools/bun.cs -- run $(MSBuildProjectDirectory)/build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
   
   <ItemGroup>
