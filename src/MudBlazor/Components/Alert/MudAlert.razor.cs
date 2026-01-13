@@ -10,7 +10,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// Represents an alert used to display an important message which is statically embedded in the page content.
+    /// Displays an important message which is statically embedded in the page content.
     /// </summary>
     /// <seealso cref="SnackbarService"/>
     public partial class MudAlert : MudComponentBase

@@ -225,7 +225,6 @@ namespace MudBlazor
             }
         }
 
-
         private void RemoveAllSnackbars(IEnumerable<Snackbar> snackbars)
         {
             if (_snackBarList.Count == 0) return;

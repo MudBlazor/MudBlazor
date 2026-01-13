@@ -6,7 +6,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a button consisting of an icon.
+    /// A clickable icon for actions and commands.
     /// </summary>
     /// <remarks>
     /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,

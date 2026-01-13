@@ -37,7 +37,6 @@ namespace MudBlazor.Utilities
                 return xComparable.CompareTo(y);
             }
 
-
             return string.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal);
         }
 

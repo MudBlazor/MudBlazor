@@ -11,7 +11,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A circle-shaped indicator of progress for an ongoing operation.
+    /// Informs users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. Shows either the length of a process or unspecified wait time.
     /// </summary>
     /// <seealso cref="MudProgressLinear"/>
     public partial class MudProgressCircular : MudComponentBase

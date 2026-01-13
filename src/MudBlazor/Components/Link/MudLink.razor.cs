@@ -23,6 +23,16 @@ public partial class MudLink : MudComponentBase
             .AddClass(Class)
             .Build();
 
+    protected string StartIconClassname =>
+        new CssBuilder("mud-link-icon-start")
+            .AddClass(IconClass)
+            .Build();
+
+    protected string EndIconClassname =>
+        new CssBuilder("mud-link-icon-end")
+            .AddClass(IconClass)
+            .Build();
+
     private Dictionary<string, object?> Attributes
     {
         get
@@ -63,6 +73,36 @@ public partial class MudLink : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
     public Color Color { get; set; } = Color.Primary;
+
+    /// <summary>
+    /// The icon displayed before the text.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Link.Appearance)]
+    public string? StartIcon { get; set; }
+
+    /// <summary>
+    /// The icon displayed after the text.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Link.Appearance)]
+    public string? EndIcon { get; set; }
+
+    /// <summary>
+    /// The CSS classes applied to the icons.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Link.Appearance)]
+    public string? IconClass { get; set; }
 
     /// <summary>
     /// The typography variant to use.

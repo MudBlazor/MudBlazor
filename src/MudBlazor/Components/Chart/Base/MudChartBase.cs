@@ -92,7 +92,6 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     [Category(CategoryTypes.Chart.Appearance)]
     public RenderFragment? ChildContent { get; set; }
 
-
     /// <summary>
     /// The type of chart to display.
     /// </summary>

@@ -5,7 +5,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a block of content which can include a header, image, content, and actions.
+    /// Cards contain actions, text, or media like images or graphics. Keeping a card to a single subject keeps the design clean.
     /// </summary>
     /// <seealso cref="MudCardActions" />
     /// <seealso cref="MudCardContent" />

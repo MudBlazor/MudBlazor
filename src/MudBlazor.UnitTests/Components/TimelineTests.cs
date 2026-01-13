@@ -110,7 +110,6 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.TimelinePosition, position);
             });
 
-
             timeline.Nodes.Should().ContainSingle();
             timeline.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();
 

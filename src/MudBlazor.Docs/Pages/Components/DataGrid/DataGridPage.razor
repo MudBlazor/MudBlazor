@@ -216,6 +216,27 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Row Selection">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> component supports both single and multi-row selection.<br><br>
+                    Selection can be triggered either by row clicks or by checkboxes.<br>
+                    Row clicks are enabled by default via the <CodeInline>SelectOnRowClick</CodeInline> property (default: <CodeInline>true</CodeInline>). 
+                    This allows users to select a row by clicking anywhere on it.<br>
+                    To provide visual feedback and explicit selection controls, add a <CodeInline>SelectColumn</CodeInline> in the <CodeInline>&lt;Columns></CodeInline> definition. 
+                    This renders a checkbox for each row.<br><br>
+                    Use the <CodeInline>MultiSelection</CodeInline> property (default: <CodeInline>false</CodeInline>) to control whether users can select one or multiple rows.
+                    Single selection is enabled by default.
+                    <br><br>
+                    To disable selection for specific rows, use the <CodeInline>DisabledFunc</CodeInline> parameter on the <CodeInline>SelectColumn</CodeInline>.<br>
+                    For example, rows 5 and 10 can be disabled by returning true for those rows in the function.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridSelectionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Row Detail View">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions.
@@ -382,6 +403,7 @@
                 <DataGridColumReorderingExample />
             </SectionContent>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Columns Panel">
                 <Description>

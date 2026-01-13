@@ -6,7 +6,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A temporary placeholder for content while data is loaded.
+    /// Displays a placeholder preview of content before the data gets loaded, reducing load-time frustration.
     /// </summary>
     public partial class MudSkeleton : MudComponentBase
     {

@@ -2253,7 +2253,6 @@ namespace MudBlazor.UnitTests.Components
                 // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("1302", "Overlay should be present with 1302 as z-index");
             });
 
-
             // Focus on the autocomplete, which opens the autocomplete popover
             comp.Find(".autocomplete input").Focus();
             await comp.WaitForAssertionAsync(() =>
@@ -2261,7 +2260,6 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Both menu & autocomplete should be open");
                 // comp.Find(".mud-overlay").Attributes["style"]?.Value.Should().Contain("z-index:1303");
             });
-
 
             // Click on the backdrop, closes the autocomplete
             comp.Find(".mud-overlay").Click();

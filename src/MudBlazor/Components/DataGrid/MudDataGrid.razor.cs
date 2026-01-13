@@ -766,7 +766,6 @@ namespace MudBlazor
             }
         }
 
-
         private void OnPagerStateChanged()
         {
             if (PagerStateHasChangedEvent is not null)
@@ -826,7 +825,6 @@ namespace MudBlazor
                 }
             }
         }
-
 
         /// <summary>
         /// Shows a loading animation while querying data.
@@ -1232,7 +1230,6 @@ namespace MudBlazor
         /// </summary>
         public IEnumerable<T> ServerItems => _serverData.Items;
 
-
         /// <summary>
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
         /// This property is used to populate items virtually from the server.
@@ -1428,7 +1425,7 @@ namespace MudBlazor
         /// <returns><see langword="true"/> when the cell can be displayed</returns>
         private static bool IsFooterCellDisplayable(Column<T> column)
         {
-            return !column.HiddenState.Value && (column.FooterTemplate != null || column.AggregateDefinition != null);
+            return !column.HiddenState.Value && (column.GetFooterTemplate() != null || column.AggregateDefinition != null);
         }
 
         protected IEnumerable<T> GetItemsOfPage(int page, int pageSize)
@@ -1664,6 +1661,11 @@ namespace MudBlazor
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
+            var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+
+            if (selectColumn?.DisabledFunc?.Invoke(item) is true)
+                return; // Do not change selection if the item is disabled
+
             if (value)
             {
                 if (!MultiSelection)
@@ -1725,14 +1727,20 @@ namespace MudBlazor
             if (!MultiSelection)
                 return;
 
-            var items = HasServerData
-                    ? ServerItems
-                    : FilteredItems;
+            Selection.Clear(); // Clear selection first, regardless of selecting or unselecting all.
 
-            Selection.Clear();
-            if (value)
+            if (value) // Logic for selecting all
             {
-                Selection.UnionWith(items);
+                var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
+
+                var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+                if (selectColumn?.DisabledFunc != null)
+                {
+                    // Filter out disabled items before adding to selection
+                    itemsToSelect = itemsToSelect.Where(item => !selectColumn.DisabledFunc(item));
+                }
+
+                Selection.UnionWith(itemsToSelect);
             }
 
             await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
@@ -2248,7 +2256,7 @@ namespace MudBlazor
                 DataGrid = this,
                 Selector = column.groupBy,
                 Expanded = expanded,
-                GroupTemplate = column.GroupTemplate,
+                GroupTemplate = column.GetGroupTemplate(),
                 Indentation = column.GroupIndented,
                 Title = column.Title,
                 Grouping = new EmptyGrouping<object?, T>(null), // Ensure Grouping is not null
@@ -2457,7 +2465,6 @@ namespace MudBlazor
 
             await InvokeAsync(StateHasChanged);
         }
-
 
         #region Resize feature
 

@@ -10,7 +10,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// A component for aligning child items horizontally or vertically.
+/// Manages layout of its child items along the vertical or horizontal axis with optional spacing.
 /// </summary>
 public partial class MudStack : MudComponentBase
 {

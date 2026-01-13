@@ -617,7 +617,6 @@ namespace MudBlazor.UnitTests.Utilities
             }
         }
 
-
         [Test]
         public void ToStringFormat()
         {

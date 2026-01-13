@@ -340,7 +340,6 @@ public class RoseChartTests : BunitTest
         svgElement.GetAttribute("width").Should().Be("80%");
         svgElement.GetAttribute("height").Should().Be("80%");
 
-
         // Assert that chart content (petals) are defined
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(2);
     }
@@ -476,14 +475,12 @@ public class RoseChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[0]}']").Count.Should().Be(1, "Petal for Set A with correct color should exist.");
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[1]}']").Count.Should().Be(1, "Petal for Set B with correct color should exist.");
 
-
         // Hide "Set A"
         comp.InvokeAsync(() => checkboxSetA.Change(false));
 
         legendCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-query after change
         legendCheckboxes[0].IsChecked().Should().BeFalse("Checkbox for Set A should be unchecked");
         legendCheckboxes[1].IsChecked().Should().BeTrue("Checkbox for Set B should remain checked");
-
 
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[0]}']").Count.Should().Be(0, "Petal for Set A should be hidden.");
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[1]}']").Count.Should().Be(1, "Petal for Set B should still be visible.");

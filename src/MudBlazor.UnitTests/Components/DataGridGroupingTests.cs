@@ -162,7 +162,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
         }
 
-
         [Test]
         public void ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
         {
@@ -736,7 +735,6 @@ namespace MudBlazor.UnitTests.Components
             var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Name:John");
         }
-
 
         [Test]
         public async Task DataGrid_MultilevelGrouping_ExpandSpecificNestedGroup()

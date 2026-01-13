@@ -111,7 +111,6 @@ namespace UtilityTests
                             .AddClass("item-five", when: HasFive)
                             .Build();
 
-
             // Assert
             classToRender.Should().Be("item-one item-three item-four");
         }

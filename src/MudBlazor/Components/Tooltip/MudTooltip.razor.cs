@@ -7,7 +7,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A small popup which provides more information.
+    /// Displays additional context when users hover over or focus on an element.
     /// </summary>
     public partial class MudTooltip : MudComponentBase
     {

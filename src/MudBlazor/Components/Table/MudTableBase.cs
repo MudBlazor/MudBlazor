@@ -56,7 +56,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public string? AriaLabel { get; set; }
 
-
         /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.
         /// </summary>

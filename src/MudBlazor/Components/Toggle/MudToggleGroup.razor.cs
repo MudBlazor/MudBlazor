@@ -13,12 +13,13 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// Maintains the selection of a group of <see cref="MudToggleItem{T}"/> components.
+    /// Toggle buttons grouped to select one or multiple values.
     /// </summary>
     /// <typeparam name="T">The type of item being toggled.</typeparam>
     /// <seealso cref="MudToggleItem{T}"/>
     /// <seealso cref="MudRadioGroup{T}"/>
     /// <seealso cref="MudRadio{T}"/>
+    /// <seealso cref="MudButtonGroup"/>
     public partial class MudToggleGroup<T> : MudComponentBase
     {
         public MudToggleGroup()

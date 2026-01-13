@@ -8,9 +8,11 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A component which switches between two values.
+    /// Toggles between two values with the tap of a button, visually distinct from checkboxes. Use switches (not radio buttons) if the items in a list can be independently controlled.
     /// </summary>
     /// <typeparam name="T">The kind of value being switched, typically a <see cref="bool"/>.</typeparam>
+    /// <seealso cref="MudCheckBox{T}"/>
+    /// <seealso cref="MudRadio{T}"/>
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         private string _elementId = Identifier.Create("switch");

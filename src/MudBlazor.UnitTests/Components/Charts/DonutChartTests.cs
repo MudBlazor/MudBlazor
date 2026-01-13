@@ -24,7 +24,6 @@ namespace MudBlazor.UnitTests.Charts
             "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
         };
 
-
         private readonly string[] _customPalette =
         {
             "#015482", "#CC1512", "#FFE135", "#087830", "#D70040", "#B20931", "#202E54", "#F535AA", "#017B92",
@@ -204,7 +203,6 @@ namespace MudBlazor.UnitTests.Charts
             var series4 = "[stroke='#FF9100']";
 
             string[] series = [series1, series2, series3, series4];
-
 
             // Initially, all segments should be visible and their checkboxes checked
             for (var i = 0; i < chartLabels.Length; i++)

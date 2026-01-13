@@ -15,10 +15,11 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A component for choosing an item from a list of options.
+    /// A dropdown input for selecting an item from a list of options.
     /// </summary>
     /// <typeparam name="T">The kind of object being selected.</typeparam>
     /// <seealso cref="MudSelectItem{T}"/>
+    /// <seealso cref="MudAutocomplete{T}"/>
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private string? _activeItemId;
@@ -247,8 +248,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
         public bool PopoverFixed { get; set; }
-
-
 
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.

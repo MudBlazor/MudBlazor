@@ -15,7 +15,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// An interactive menu that displays a list of options.
+    /// Displays a list of options that users can select from. Make menus easy to open, close, and select. Menus can open from a variety of components.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
     public partial class MudMenu : MudComponentBase, IDisposable
@@ -307,8 +307,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
         public bool PopoverFixed { get; set; }
-
-
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.

@@ -186,6 +186,22 @@ public class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
+        // Early exit: if ApiDocumentation.generated.cs exists and is newer than all input assemblies, skip generation
+        if (File.Exists(Paths.ApiDocumentationFilePath))
+        {
+            var outputLastWrite = File.GetLastWriteTimeUtc(Paths.ApiDocumentationFilePath);
+            var newestInputTime = Assemblies
+                .Select(a => File.GetLastWriteTimeUtc(a.Location))
+                .DefaultIfEmpty(DateTime.MinValue)
+                .Max();
+
+            if (outputLastWrite > newestInputTime)
+            {
+                Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date, skipping generation.");
+                return true;
+            }
+        }
+
         AddTypesToDocument();
         ResolveSeeAlsoLinks();
         FindDeclaringTypes();
@@ -727,6 +743,13 @@ public class ApiDocumentationBuilder
         if (currentCode != writer.ToString())
         {
             File.WriteAllText(Paths.ApiDocumentationFilePath, writer.ToString());
+            Console.WriteLine("ApiDocumentationBuilder: Updated ApiDocumentation.generated.cs");
+        }
+        else
+        {
+            // Touch the file to update its timestamp so future checks skip regeneration
+            File.SetLastWriteTimeUtc(Paths.ApiDocumentationFilePath, DateTime.UtcNow);
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged, touched timestamp.");
         }
     }
 

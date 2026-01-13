@@ -41,7 +41,6 @@ namespace MudBlazor.Analyzers
             {
                 var global = ctx.Options.AnalyzerConfigOptionsProvider.GlobalOptions;
 
-
                 if (global.TryGetValue(DebugAnalyzerProperty, out var debugValue) &&
                     bool.TryParse(debugValue, out var shouldDebug) && shouldDebug)
                 {
@@ -193,7 +192,6 @@ namespace MudBlazor.Analyzers
                         return;
                 }
             }
-
 
             private bool ValidateAttributeList(string attributeName)
             {

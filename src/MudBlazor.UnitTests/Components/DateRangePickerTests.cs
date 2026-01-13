@@ -555,7 +555,6 @@ namespace MudBlazor.UnitTests.Components
 
         }
 
-
         [Test]
         public async Task SetDateRange_NoChangedIfSameValues()
         {
@@ -629,7 +628,6 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.GetState(x => x.Error).Should().BeTrue("Value is required and should be handled as invalid");
             dateRangePickerComponent.Markup.Should().Contain(errorMessage);
             dateRangePickerInstance.GetState(x => x.ErrorText).Should().Be(errorMessage);
-
 
             // set a value
             await dateRangePickerComponent.SetParametersAndRenderAsync(parameters => parameters
@@ -1331,6 +1329,18 @@ namespace MudBlazor.UnitTests.Components
             pickers[1].Markup.Should().NotContain("opacity:0.5");
             pickers[1].Markup.Should().NotContain("pointer-events:none");
             pickers[1].Markup.Should().NotContain("filter:grayscale(1)");
+        }
+
+        [Test]
+        public void DateRangePicker_CustomClearIcon_Should_BeRenderedInMarkup()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)))
+                .Add(p => p.Editable, true)
+                .Add(p => p.Clearable, true)
+                .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
+
+            comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
 
         private sealed class DateRangePickerImpl : MudDateRangePicker

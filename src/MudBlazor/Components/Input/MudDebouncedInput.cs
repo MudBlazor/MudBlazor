@@ -22,6 +22,9 @@ namespace MudBlazor
                 .WithChangeHandler(OnDebounceIntervalChangedAsync);
         }
 
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
+
         /// <summary>
         /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
         /// </summary>
@@ -100,7 +103,7 @@ namespace MudBlazor
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {
-                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value));
+                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value), false, TimeProvider);
             }
             else
             {

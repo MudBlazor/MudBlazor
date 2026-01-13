@@ -34,9 +34,11 @@ internal sealed class DebounceDispatcher : IDisposable
 {
     private TimeSpan _interval;
     private readonly bool _leading;
+    private readonly TimeProvider _timeProvider;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private CancellationTokenSource? _cancellationTokenSource;
-    private DateTime _lastExecutionTime = DateTime.MinValue;
+    private CancellationTokenSource? _previousCancellationTokenSource;
+    private DateTimeOffset _lastExecutionTime = DateTimeOffset.MinValue;
     private bool _disposed;
 
     /// <summary>
@@ -57,7 +59,34 @@ internal sealed class DebounceDispatcher : IDisposable
     /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
     public DebounceDispatcher(TimeSpan interval, bool leading = false)
+        : this(interval, leading, TimeProvider.System)
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The debounce interval in milliseconds. Must be non-negative.</param>
+    /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
+    /// <param name="timeProvider">The time provider to use for delays and time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public DebounceDispatcher(int interval, bool leading, TimeProvider timeProvider)
+        : this(TimeSpan.FromMilliseconds(interval), leading, timeProvider)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The debounce interval as a <see cref="TimeSpan"/>. Must be non-negative.</param>
+    /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
+    /// <param name="timeProvider">The time provider to use for delays and time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public DebounceDispatcher(TimeSpan interval, bool leading, TimeProvider timeProvider)
+    {
+        ArgumentNullException.ThrowIfNull(timeProvider);
         if (interval < TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(nameof(interval), @"Interval must be non-negative.");
@@ -65,6 +94,7 @@ internal sealed class DebounceDispatcher : IDisposable
 
         _interval = interval;
         _leading = leading;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>
@@ -116,7 +146,7 @@ internal sealed class DebounceDispatcher : IDisposable
 
             if (_leading)
             {
-                var now = DateTime.UtcNow;
+                var now = _timeProvider.GetUtcNow();
                 var timeSinceLast = now - _lastExecutionTime;
                 if (timeSinceLast >= _interval)
                 {
@@ -181,7 +211,7 @@ internal sealed class DebounceDispatcher : IDisposable
 
         try
         {
-            await Task.Delay(_interval, token).ConfigureAwait(false);
+            await Task.Delay(_interval, _timeProvider, token).ConfigureAwait(false);
 
             if (_leading)
             {
@@ -191,7 +221,7 @@ internal sealed class DebounceDispatcher : IDisposable
                 {
                     await _lock.WaitAsync(token).ConfigureAwait(false);
                     acquired2 = true;
-                    _lastExecutionTime = DateTime.UtcNow;
+                    _lastExecutionTime = _timeProvider.GetUtcNow();
                 }
                 finally
                 {

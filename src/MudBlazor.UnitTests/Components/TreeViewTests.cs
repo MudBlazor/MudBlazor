@@ -809,7 +809,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValue.Should().Be(null));
         }
 
-
         [Test]
         public async Task TreeViewItem_BodyContent()
         {

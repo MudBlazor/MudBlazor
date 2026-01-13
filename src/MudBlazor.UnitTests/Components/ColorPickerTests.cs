@@ -1463,5 +1463,17 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input[id='primary-color']").Should().NotBeNull();
         }
+
+        [Test]
+        public void ColorPicker_CustomClearIcon_Should_BeRenderedInMarkup()
+        {
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(p => p.Value, new MudColor("#180f6fff"))
+                .Add(p => p.Editable, true)
+                .Add(p => p.Clearable, true)
+                .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
+
+            comp.Markup.Should().Contain(comp.Instance.ClearIcon);
+        }
     }
 }

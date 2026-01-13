@@ -138,7 +138,6 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path expected to be visible");
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path expected to be hidden");
 
-
                 // Hide Series 1
                 await comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
 
