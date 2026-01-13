@@ -21,6 +21,11 @@ namespace MudBlazor
         Guid Id { get; }
 
         /// <summary>
+        /// The options used for this dialog.
+        /// </summary>
+        DialogOptions Options { get; }
+        
+        /// <summary>
         /// The content within this dialog.
         /// </summary>
         RenderFragment? RenderFragment { get; set; }

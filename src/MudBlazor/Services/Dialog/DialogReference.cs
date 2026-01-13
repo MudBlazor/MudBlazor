@@ -29,10 +29,12 @@ namespace MudBlazor
         /// Creates a new instance.
         /// </summary>
         /// <param name="dialogInstanceId">The unique ID of the dialog.</param>
+        /// <param name="options">The options used for this dialog.</param>
         /// <param name="dialogService">The service used to manage dialogs.</param>
-        public DialogReference(Guid dialogInstanceId, IDialogService dialogService)
+        public DialogReference(Guid dialogInstanceId, DialogOptions options, IDialogService dialogService)
         {
             Id = dialogInstanceId;
+            Options = options;
             _dialogService = dialogService;
         }
 
@@ -56,6 +58,9 @@ namespace MudBlazor
 
         /// <inheritdoc />
         public Guid Id { get; }
+        
+        /// <inheritdoc />
+        public DialogOptions Options { get; }
 
         /// <inheritdoc />
         public object? Dialog { get; private set; }

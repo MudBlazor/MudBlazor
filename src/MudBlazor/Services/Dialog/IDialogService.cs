@@ -118,8 +118,9 @@ namespace MudBlazor
         /// <summary>
         /// Creates a reference to a dialog.
         /// </summary>
+        /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>The dialog reference.</returns>
-        IDialogReference CreateReference();
+        IDialogReference CreateReference(DialogOptions options);
 
         /// <summary>
         /// Shows a simple dialog with a title, message, and up to three custom buttons.
