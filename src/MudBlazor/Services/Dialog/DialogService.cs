@@ -203,7 +203,7 @@ namespace MudBlazor
         /// <inheritdoc />
         public virtual IDialogReference CreateReference(DialogOptions options)
         {
-            return new DialogReference(Guid.NewGuid(), options,this);
+            return new DialogReference(Guid.NewGuid(), options, this);
         }
 
         private async Task<IDialogReference> ShowCoreAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters,
