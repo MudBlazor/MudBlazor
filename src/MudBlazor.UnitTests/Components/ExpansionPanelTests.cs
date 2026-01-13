@@ -8,6 +8,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable] // Modifies global AssertionConfiguration in OneTimeSetUp/OneTimeTearDown
     public class ExpansionPanelTests : BunitTest
     {
 

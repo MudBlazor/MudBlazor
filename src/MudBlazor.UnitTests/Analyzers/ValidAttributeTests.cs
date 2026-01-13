@@ -12,6 +12,7 @@ extern alias MudBlazorAnalyzer;
 
 #nullable enable
 [TestFixture]
+[NonParallelizable] // Uses shared workspace state via OneTimeSetUp/OneTimeTearDown
 //[Ignore("Until a solution for matching SDK/roslyn package reference is found see https://github.com/dotnet/roslyn/issues/77979")]
 public class ValidAttributeTests : BunitTest
 {
