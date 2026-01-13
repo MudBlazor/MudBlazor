@@ -45,7 +45,7 @@ public class DebounceDispatcherTests
     {
         // Arrange
         var timeProvider = new FakeTimeProvider();
-        using var debounceDispatcher = new DebounceDispatcher(100, timeProvider: timeProvider);
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
         var counter = 0;
         Task Invoke()
         {

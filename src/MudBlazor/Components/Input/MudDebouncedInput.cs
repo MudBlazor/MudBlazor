@@ -103,7 +103,7 @@ namespace MudBlazor
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {
-                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value), timeProvider: TimeProvider);
+                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value), false, TimeProvider);
             }
             else
             {

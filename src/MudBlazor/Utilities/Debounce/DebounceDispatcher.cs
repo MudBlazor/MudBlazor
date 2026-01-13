@@ -46,10 +46,9 @@ internal sealed class DebounceDispatcher : IDisposable
     /// </summary>
     /// <param name="interval">The debounce interval in milliseconds. Must be non-negative.</param>
     /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
-    /// <param name="timeProvider">The time provider to use for delays and time queries. Defaults to <see cref="TimeProvider.System"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
-    public DebounceDispatcher(int interval, bool leading = false, TimeProvider? timeProvider = null)
-        : this(TimeSpan.FromMilliseconds(interval), leading, timeProvider)
+    public DebounceDispatcher(int interval, bool leading = false)
+        : this(TimeSpan.FromMilliseconds(interval), leading)
     {
     }
 
@@ -58,9 +57,32 @@ internal sealed class DebounceDispatcher : IDisposable
     /// </summary>
     /// <param name="interval">The debounce interval as a <see cref="TimeSpan"/>. Must be non-negative.</param>
     /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
-    /// <param name="timeProvider">The time provider to use for delays and time queries. Defaults to <see cref="TimeProvider.System"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
-    public DebounceDispatcher(TimeSpan interval, bool leading = false, TimeProvider? timeProvider = null)
+    public DebounceDispatcher(TimeSpan interval, bool leading = false)
+        : this(interval, leading, TimeProvider.System)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The debounce interval in milliseconds. Must be non-negative.</param>
+    /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
+    /// <param name="timeProvider">The time provider to use for delays and time queries.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public DebounceDispatcher(int interval, bool leading, TimeProvider timeProvider)
+        : this(TimeSpan.FromMilliseconds(interval), leading, timeProvider)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The debounce interval as a <see cref="TimeSpan"/>. Must be non-negative.</param>
+    /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
+    /// <param name="timeProvider">The time provider to use for delays and time queries.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public DebounceDispatcher(TimeSpan interval, bool leading, TimeProvider timeProvider)
     {
         if (interval < TimeSpan.Zero)
         {

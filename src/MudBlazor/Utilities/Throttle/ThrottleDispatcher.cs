@@ -43,10 +43,9 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval.
     /// </summary>
     /// <param name="interval">The minimum interval in milliseconds between invocations. Must be non-negative.</param>
-    /// <param name="timeProvider">The time provider to use for time queries. Defaults to <see cref="TimeProvider.System"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
-    public ThrottleDispatcher(int interval, TimeProvider? timeProvider = null)
-        : this(TimeSpan.FromMilliseconds(interval), timeProvider)
+    public ThrottleDispatcher(int interval)
+        : this(TimeSpan.FromMilliseconds(interval))
     {
     }
 
@@ -54,9 +53,30 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval.
     /// </summary>
     /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations. Must be non-negative.</param>
-    /// <param name="timeProvider">The time provider to use for time queries. Defaults to <see cref="TimeProvider.System"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
-    public ThrottleDispatcher(TimeSpan interval, TimeProvider? timeProvider = null)
+    public ThrottleDispatcher(TimeSpan interval)
+        : this(interval, TimeProvider.System)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The minimum interval in milliseconds between invocations. Must be non-negative.</param>
+    /// <param name="timeProvider">The time provider to use for time queries.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public ThrottleDispatcher(int interval, TimeProvider timeProvider)
+        : this(TimeSpan.FromMilliseconds(interval), timeProvider)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations. Must be non-negative.</param>
+    /// <param name="timeProvider">The time provider to use for time queries.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public ThrottleDispatcher(TimeSpan interval, TimeProvider timeProvider)
     {
         if (interval < TimeSpan.Zero)
         {
