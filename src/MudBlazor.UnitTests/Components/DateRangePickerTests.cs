@@ -1331,6 +1331,18 @@ namespace MudBlazor.UnitTests.Components
             pickers[1].Markup.Should().NotContain("filter:grayscale(1)");
         }
 
+        [Test]
+        public void DateRangePicker_CustomClearIcon_Should_BeRenderedInMarkup()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)))
+                .Add(p => p.Editable, true)
+                .Add(p => p.Clearable, true)
+                .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
+
+            comp.Markup.Should().Contain(comp.Instance.ClearIcon);
+        }
+
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
