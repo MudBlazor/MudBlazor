@@ -53,6 +53,14 @@ namespace MudBlazor
         public bool? CloseOnEscapeKey { get; init; }
 
         /// <summary>
+        /// Determines if the dialog should close on navigation.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        public bool? CloseOnNavigation { get; init; } = true;
+
+        /// <summary>
         /// Hides the dialog header.
         /// </summary>
         /// <remarks>
