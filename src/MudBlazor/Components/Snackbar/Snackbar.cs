@@ -13,11 +13,12 @@ namespace MudBlazor
     public class Snackbar : IDisposable
     {
         private readonly object _timerLock = new object();
+        private readonly TimeProvider _timeProvider;
         private bool _disposed = false;
         private bool _paused = false;
         private bool _transitionCancellable = true;
         private bool _hideOnResume = false;
-        private Timer? _timer;
+        private ITimer? _timer;
         internal SnackBarMessageState State { get; }
 
         /// <summary>
@@ -42,11 +43,12 @@ namespace MudBlazor
         /// </summary>
         public Severity Severity => State.Options.Severity;
 
-        internal Snackbar(SnackbarMessage message, SnackbarOptions options)
+        internal Snackbar(SnackbarMessage message, SnackbarOptions options, TimeProvider timeProvider)
         {
             SnackbarMessage = message;
             State = new SnackBarMessageState(options);
-            _timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            _timeProvider = timeProvider;
+            _timer = _timeProvider.CreateTimer(TimerElapsed, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         }
 
         internal void Init()
@@ -242,7 +244,7 @@ namespace MudBlazor
                 if (_disposed) return false;
                 
                 State.Stopwatch.Restart();
-                _timer?.Change(duration, Timeout.Infinite);
+                _timer?.Change(TimeSpan.FromMilliseconds(duration), Timeout.InfiniteTimeSpan);
             }
 
             return true;
@@ -256,7 +258,7 @@ namespace MudBlazor
             lock (_timerLock)
             {
                 State.Stopwatch.Stop();
-                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+                _timer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
             }
         }
 
@@ -284,7 +286,7 @@ namespace MudBlazor
 
                 // Stop the timer first
                 State.Stopwatch.Stop();
-                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+                _timer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
                 // Clear event handlers to prevent any further invocations
                 OnClose = null;
