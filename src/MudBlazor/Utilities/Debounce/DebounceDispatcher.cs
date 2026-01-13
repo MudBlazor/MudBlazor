@@ -69,6 +69,7 @@ internal sealed class DebounceDispatcher : IDisposable
     /// <param name="interval">The debounce interval in milliseconds. Must be non-negative.</param>
     /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
     /// <param name="timeProvider">The time provider to use for delays and time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
     public DebounceDispatcher(int interval, bool leading, TimeProvider timeProvider)
         : this(TimeSpan.FromMilliseconds(interval), leading, timeProvider)
@@ -81,9 +82,11 @@ internal sealed class DebounceDispatcher : IDisposable
     /// <param name="interval">The debounce interval as a <see cref="TimeSpan"/>. Must be non-negative.</param>
     /// <param name="leading">If true, executes on the leading edge (immediately on first call). Default is false (trailing edge).</param>
     /// <param name="timeProvider">The time provider to use for delays and time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
     public DebounceDispatcher(TimeSpan interval, bool leading, TimeProvider timeProvider)
     {
+        ArgumentNullException.ThrowIfNull(timeProvider);
         if (interval < TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(nameof(interval), @"Interval must be non-negative.");
@@ -91,7 +94,7 @@ internal sealed class DebounceDispatcher : IDisposable
 
         _interval = interval;
         _leading = leading;
-        _timeProvider = timeProvider ?? TimeProvider.System;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>

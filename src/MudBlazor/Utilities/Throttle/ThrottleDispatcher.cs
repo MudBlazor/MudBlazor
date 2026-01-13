@@ -64,6 +64,7 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// </summary>
     /// <param name="interval">The minimum interval in milliseconds between invocations. Must be non-negative.</param>
     /// <param name="timeProvider">The time provider to use for time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
     public ThrottleDispatcher(int interval, TimeProvider timeProvider)
         : this(TimeSpan.FromMilliseconds(interval), timeProvider)
@@ -75,16 +76,18 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// </summary>
     /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations. Must be non-negative.</param>
     /// <param name="timeProvider">The time provider to use for time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
     public ThrottleDispatcher(TimeSpan interval, TimeProvider timeProvider)
     {
+        ArgumentNullException.ThrowIfNull(timeProvider);
         if (interval < TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(nameof(interval), @"Interval must be non-negative.");
         }
 
         _interval = interval;
-        _timeProvider = timeProvider ?? TimeProvider.System;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>
