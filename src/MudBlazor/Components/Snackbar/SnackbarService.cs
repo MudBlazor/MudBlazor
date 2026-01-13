@@ -244,7 +244,18 @@ namespace MudBlazor
             {
                 Configuration.OnUpdate -= ConfigurationUpdated;
                 _navigationManager.LocationChanged -= NavigationManager_LocationChanged;
-                RemoveAllSnackbars(_snackBarList);
+                
+                _snackBarLock.EnterWriteLock();
+                try
+                {
+                    RemoveAllSnackbars(_snackBarList);
+                }
+                finally
+                {
+                    _snackBarLock.ExitWriteLock();
+                }
+                
+                _snackBarLock.Dispose();
             }
         }
 
