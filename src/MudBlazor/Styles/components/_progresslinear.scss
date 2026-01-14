@@ -2,7 +2,7 @@
 .mud-progress-linear {
   position: relative;
 
-  &::before {
+  &:not(.mud-progress-linear-transparent-background)::before {
     content: '';
     position: absolute;
     top: 0;
@@ -261,12 +261,6 @@
 
     &::before {
       border-radius: var(--mud-default-borderradius);
-    }
-  }
-
-  &.mud-progress-linear-transparent-background {
-    &::before {
-      display: none;
     }
   }
 }
