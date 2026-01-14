@@ -164,7 +164,7 @@ namespace MudBlazor
         public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/> or <see cref="InputSizing.Fill"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
@@ -308,7 +308,7 @@ namespace MudBlazor
                     if (newSizing != InputSizing.Fixed && !_shouldInitSizing)
                     {
                         // Update dynamic sizing parameters (if it was already enabled).
-                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.updateParams", ElementReference, MaxLines);
+                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.updateParams", ElementReference, MaxLines, Sizing.ToDescriptionString());
                     }
                 }
             }
@@ -324,7 +324,7 @@ namespace MudBlazor
                 if (firstRender || _shouldInitSizing)
                 {
                     _shouldInitSizing = false;
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.init", ElementReference, MaxLines);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.init", ElementReference, MaxLines, Sizing.ToDescriptionString());
                     _oldText = _internalText;
                 }
                 else if (_oldText != _internalText)

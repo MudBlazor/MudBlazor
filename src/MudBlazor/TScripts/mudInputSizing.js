@@ -3,20 +3,27 @@
 // See the LICENSE file in the project root for more information.
 
 window.mudInputSizing = {
-    init: (elem, maxLines) => {
+    init: (elem, maxLines, sizing) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
         const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
+        const marginTop = parseFloat(compStyle.getPropertyValue('margin-top'));
+        const marginBottom = parseFloat(compStyle.getPropertyValue('margin-bottom'));
 
         let maxHeight = 0;
+        let sizingMode = sizing ?? 'auto';
 
         // Update parameters that affect the functionality and visuals of the sizing input.
-        elem.updateParameters = function (newMaxLines) {
+        elem.updateParameters = function (newMaxLines, newSizing) {
             if (newMaxLines > 0) {
                 // Cap the height to the number of lines specified in the input.
                 maxHeight = lineHeight * newMaxLines + paddingTop;
             } else {
                 maxHeight = 0;
+            }
+
+            if (newSizing) {
+                sizingMode = newSizing;
             }
         }
 
@@ -30,6 +37,33 @@ window.mudInputSizing = {
                     scrollTops.push([curElem.parentNode, curElem.parentNode.scrollTop]);
                 }
                 curElem = curElem.parentNode;
+            }
+
+            if (sizingMode === 'fill') {
+                const container = elem.closest('.mud-input') ?? elem.parentElement;
+                const containerHeight = container ? container.clientHeight : 0;
+                const minHeight = lineHeight * elem.rows + paddingTop;
+                const availableHeight = containerHeight > 0
+                    ? containerHeight - marginTop - marginBottom
+                    : minHeight;
+                let newHeight = Math.max(minHeight, availableHeight);
+
+                if (maxHeight > 0) {
+                    newHeight = Math.min(newHeight, maxHeight);
+                }
+
+                newHeight = Math.max(newHeight, minHeight);
+
+                elem.style.height = newHeight + "px";
+                elem.style.overflowY = elem.scrollHeight > newHeight ? 'auto' : 'hidden';
+
+                // Restore scroll positions.
+                scrollTops.forEach(([node, scrollTop]) => {
+                    node.style.scrollBehavior = 'auto';
+                    node.scrollTop = scrollTop;
+                    node.style.scrollBehavior = null;
+                });
+                return;
             }
 
             // Auto mode - grow/shrink based on content
@@ -82,7 +116,7 @@ window.mudInputSizing = {
         window.addEventListener('resize', elem.adjustSizingHeight);
 
         // Initial parameters and height adjustment.
-        elem.updateParameters(maxLines);
+        elem.updateParameters(maxLines, sizingMode);
         elem.adjustSizingHeight();
     },
     adjustHeight: (elem) => {
@@ -90,9 +124,9 @@ window.mudInputSizing = {
             elem.adjustSizingHeight();
         }
     },
-    updateParams: (elem, maxLines) => {
+    updateParams: (elem, maxLines, sizing) => {
         if (typeof elem.updateParameters === 'function') {
-            elem.updateParameters(maxLines);
+            elem.updateParameters(maxLines, sizing);
         }
         if (typeof elem.adjustSizingHeight === 'function') {
             elem.adjustSizingHeight();

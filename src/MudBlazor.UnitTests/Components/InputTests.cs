@@ -23,6 +23,7 @@ public class InputTests : BunitTest
     }
 
     [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
+    [TestCase(InputSizing.Fill, "mud-input-sizing-fill")]
     [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
     public void InputSizingHasClass(InputSizing sizing, string expectedClass)
     {

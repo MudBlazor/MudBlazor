@@ -215,6 +215,18 @@
   }
 }
 
+.mud-input.mud-input-sizing-fill {
+  height: 100%;
+
+  > .mud-input-root {
+    height: 100%;
+  }
+
+  > textarea.mud-input-root {
+    height: 100%;
+  }
+}
+
 .mud-input-error .mud-input-outlined-border {
   border-color: var(--mud-palette-error) !important;
 }

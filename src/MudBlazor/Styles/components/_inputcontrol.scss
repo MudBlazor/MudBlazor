@@ -164,6 +164,15 @@
   }
 }
 
+.mud-input-control.mud-input-sizing-fill {
+  height: 100%;
+
+  > .mud-input-control-input-container {
+    flex: 1 1 auto;
+    height: 100%;
+  }
+}
+
 .mud-input-control-helper-container {
   overflow: hidden;
   margin-top: 3px;

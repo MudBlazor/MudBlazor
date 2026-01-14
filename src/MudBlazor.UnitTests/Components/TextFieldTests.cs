@@ -430,9 +430,11 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Invocations["mudInputSizing.init"].Single()
                 .Arguments
                 .Should()
-                .HaveCount(2)
+                .HaveCount(3)
                 .And
-                .HaveElementAt(1, 5); // MaxLines
+                .HaveElementAt(1, 5) // MaxLines
+                .And
+                .HaveElementAt(2, "auto");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
 
@@ -440,6 +442,24 @@ namespace MudBlazor.UnitTests.Components
                 .Arguments
                 .Should()
                 .HaveCount(1);
+        }
+
+        [Test]
+        public void FillSizingTextField_Should_InvokeJavaScriptInitOnRender()
+        {
+            Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Sizing, InputSizing.Fill)
+                .Add(p => p.MaxLines, 4));
+
+            Context.JSInterop.VerifyInvoke("mudInputSizing.init", 1);
+            Context.JSInterop.Invocations["mudInputSizing.init"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(3)
+                .And
+                .HaveElementAt(1, 4) // MaxLines
+                .And
+                .HaveElementAt(2, "fill");
         }
 
         [Test]
@@ -1123,6 +1143,7 @@ namespace MudBlazor.UnitTests.Components
         /// A text field with sizing enabled should contain the correct sizing class.
         /// </summary>
         [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
+        [TestCase(InputSizing.Fill, "mud-input-sizing-fill")]
         [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
         public void TextFieldSizingHasClass(InputSizing sizing, string expectedClass)
         {
