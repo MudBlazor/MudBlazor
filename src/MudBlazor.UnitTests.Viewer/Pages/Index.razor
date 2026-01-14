@@ -132,7 +132,7 @@
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: start;
         gap: 12px;
-        text-align: left;
+        text-align: start;
     }
 
     .test-viewer-entry-name {
@@ -146,7 +146,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        text-align: right;
+        text-align: end;
     }
 
     .test-viewer-show-all {
@@ -155,7 +155,8 @@
 
     .test-viewer-entry {
         justify-content: flex-start;
-        padding: 10px 0 10px 10px;
+        padding: 8px 0 8px 0;
+        padding-inline-start: 12px;
         border-radius: var(--mud-default-borderradius);
         text-transform: none;
     }
@@ -209,7 +210,8 @@
     {
         LayoutProperties = new LayoutProperties
         {
-            DrawerWidthLeft = "340px"
+            DrawerWidthLeft = "340px",
+            DrawerWidthRight = "340px"
         }
     };
 
