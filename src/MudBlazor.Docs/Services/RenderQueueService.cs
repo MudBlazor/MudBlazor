@@ -23,6 +23,7 @@ namespace MudBlazor.Docs.Services
     {
         private TaskCompletionSource _tcs;
         private readonly Queue<QueuedContent> _queue = new();
+        private const int BatchSize = 3; // Render 3 components at a time
 
         public int Capacity { get; init; }
 
@@ -57,10 +58,12 @@ namespace MudBlazor.Docs.Services
 
         private void RenderNext()
         {
-            QueuedContent componentToRender = null;
+            List<QueuedContent> componentsToRender = new();
             lock (_queue)
             {
-                while (_queue.Count > 0)
+                // Get a batch of components to render
+                int batchCount = 0;
+                while (_queue.Count > 0 && batchCount < BatchSize)
                 {
                     var component = _queue.Dequeue();
                     if (component.IsDisposed || component.IsRendered)
@@ -69,17 +72,21 @@ namespace MudBlazor.Docs.Services
                         component.Disposed -= OnComponentDisposed;
                         continue;
                     }
-                    componentToRender = component;
-                    break;
+                    componentsToRender.Add(component);
+                    batchCount++;
                 }
-                if (componentToRender == null)
+                if (componentsToRender.Count == 0)
                 {
                     _tcs?.TrySetResult();
                     _tcs = null;
                     return;
                 }
             }
-            componentToRender.Render();
+            // Render all components in the batch
+            foreach (var component in componentsToRender)
+            {
+                component.Render();
+            }
         }
 
         private void OnComponentRendered(QueuedContent component)
