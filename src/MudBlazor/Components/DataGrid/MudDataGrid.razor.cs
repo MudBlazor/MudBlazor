@@ -1813,11 +1813,8 @@ namespace MudBlazor
         {
             void UpdateSourceItem()
             {
-                foreach (var property in _properties)
-                {
-                    if (property.CanWrite)
-                        property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
-                }
+                foreach (var property in _properties.Where(p => p.CanWrite))
+                    property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
             }
 
             await _editForm.Validate();
@@ -2060,7 +2057,6 @@ namespace MudBlazor
         /// <param name="item">The item to edit.</param>
         public async Task SetEditingItemAsync(T item)
         {
-            Console.WriteLine($"Set Editing intem, readonly: {ReadOnly}");
             if (ReadOnly) return;
 
             _editingSourceItem = item;

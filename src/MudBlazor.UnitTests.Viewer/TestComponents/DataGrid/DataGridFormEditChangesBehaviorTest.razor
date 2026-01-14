@@ -27,23 +27,12 @@
 
     private async Task<DataGridEditFormCloseBehavior> CommittedItemChangesAsync(Model item)
     {
-        if (await MockPersistAndVaidateChangesAsync(item))
-        {
-            _items.Add(item);
-            return DataGridEditFormCloseBehavior.Close;
-        }
-
-        return DataGridEditFormCloseBehavior.KeepOpen;
-    }
-
-    private async Task<bool> MockPersistAndVaidateChangesAsync(Model item)
-    {
         // Simulate server call.
         await Task.Delay(5);
 
         if (item.Age < 0)
-            return false;
+            return DataGridEditFormCloseBehavior.KeepOpen;
 
-        return true;
+        return DataGridEditFormCloseBehavior.Close;
     }
 }
