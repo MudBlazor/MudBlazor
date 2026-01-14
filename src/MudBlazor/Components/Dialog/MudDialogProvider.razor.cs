@@ -167,6 +167,11 @@ namespace MudBlazor
                 DismissInstance(reference, result);
         }
 
+        internal bool ShouldDismissOnNavigation(IDialogReference dialog)
+        {
+            return dialog.Options?.CloseOnNavigation == true;
+        }
+
         private Task AddInstanceAsync(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
@@ -202,7 +207,7 @@ namespace MudBlazor
         {
             foreach (var dialog in _dialogs.ToArray())
             {
-                if (dialog.Options?.CloseOnNavigation == true)
+                if (ShouldDismissOnNavigation(dialog))
                 {
                     DismissInstance(dialog, DialogResult.Cancel());
                 }
@@ -219,7 +224,7 @@ namespace MudBlazor
                 DialogService.OnDialogCloseRequested -= DismissInstance;
             }
         }
-
+        
         public void Dispose()
         {
             Dispose(true);
