@@ -51,13 +51,19 @@
 
 .mud-card-content {
   flex-grow: 1;
-  padding: 16px;
+
+  &.mud-card-content-padding {
+    padding: 16px;
+  }
 }
 
 .mud-card-actions {
   display: flex;
-  padding: 8px;
   align-items: center;
+
+  &.mud-card-actions-padding {
+    padding: 8px;
+  }
 
   &:empty {
     display: none;
