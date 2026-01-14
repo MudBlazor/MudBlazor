@@ -2,10 +2,6 @@
 @namespace MudBlazor.Docs.Examples
 
 <style>
-    .row-class {
-        background-color: rgba(var(--mud-palette-primary-rgb), 0.1);
-    }
-
     .selected {
         background-color: #1E88E5 !important;
     }
@@ -19,8 +15,7 @@
     }
 </style>
 
-<MudTable T="Element" Items="@ELEMENTS.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @ref="_mudTable"
-          RowClass="row-class" RowClassFunc="@SelectedRowClassFunc"
+<MudTable T="Element" Items="@ELEMENTS.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @ref="_mudTable" RowClassFunc="@SelectedRowClassFunc"
           OnRowClick="RowClickEvent" RowDisabledFunc="@(context => _rowTwoIsDisabled && context.Number == 2)">
     <HeaderContent>
         <MudTh>Nr</MudTh>
