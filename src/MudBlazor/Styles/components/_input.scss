@@ -12,16 +12,6 @@
     width: 100%;
   }
 
-  &.mud-input-sizing-fill {
-    flex: 1 1 auto;
-    height: 100%;
-    align-items: stretch;
-
-    > textarea {
-      flex: 1 1 auto;
-    }
-  }
-
   &.mud-disabled {
     color: var(--mud-palette-text-disabled);
     cursor: default;

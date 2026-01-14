@@ -23,11 +23,4 @@ public enum InputSizing
     /// </summary>
     [Description("auto")]
     Auto,
-
-    /// <summary>
-    /// The height fills the available space of the parent container.
-    /// Uses Lines as minimum and MaxLines as maximum.
-    /// </summary>
-    [Description("fill")]
-    Fill
 }

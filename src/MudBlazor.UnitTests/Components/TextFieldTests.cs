@@ -432,11 +432,9 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Invocations["mudInputSizing.init"].Single()
                 .Arguments
                 .Should()
-                .HaveCount(3)
+                .HaveCount(2)
                 .And
-                .HaveElementAt(1, 5) // MaxLines
-                .And
-                .HaveElementAt(2, false); // isFillMode
+                .HaveElementAt(1, 5); // MaxLines
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
 
@@ -1137,18 +1135,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with Sizing=Fill enabled should contain a sizing class.
-        /// </summary>
-        [Test]
-        public void TextFieldFillSizingHasClass()
-        {
-            var comp = Context.Render<MudTextField<string>>(parameters => parameters
-            .Add(p => p.Sizing, InputSizing.Fill));
-
-            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-sizing-fill");
-        }
-
-        /// <summary>
         /// A text field with Sizing=Fixed enabled should contain a sizing class.
         /// </summary>
         [Test]
@@ -1159,34 +1145,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Lines, 3));
 
             comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-sizing-fixed");
-        }
-
-        /// <summary>
-        /// A text field with Sizing=Fill should invoke JavaScript with correct parameters.
-        /// </summary>
-        [Test]
-        public async Task FillTextField_Should_InvokeJavaScriptInitOnRender()
-        {
-            var comp = Context.Render<MudTextField<string>>(parameters => parameters
-                .Add(p => p.Sizing, InputSizing.Fill)
-                .Add(p => p.MaxLines, 10));
-
-            Context.JSInterop.VerifyInvoke("mudInputSizing.init", 1);
-            Context.JSInterop.Invocations["mudInputSizing.init"].Single()
-                .Arguments
-                .Should()
-                .HaveCount(3)
-                .And
-                .HaveElementAt(1, 10) // MaxLines
-                .And
-                .HaveElementAt(2, true); // isFillMode
-
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
-
-            Context.JSInterop.Invocations["mudInputSizing.adjustHeight"].Single()
-                .Arguments
-                .Should()
-                .HaveCount(1);
         }
 
         /// <summary>

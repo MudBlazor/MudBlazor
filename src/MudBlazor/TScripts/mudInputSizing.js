@@ -3,17 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 window.mudInputSizing = {
-    init: (elem, maxLines, isFillMode) => {
+    init: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
         const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
 
         let maxHeight = 0;
-        let fillMode = isFillMode || false;
 
         // Update parameters that affect the functionality and visuals of the sizing input.
-        elem.updateParameters = function (newMaxLines, newFillMode) {
-            fillMode = newFillMode || false;
+        elem.updateParameters = function (newMaxLines) {
             if (newMaxLines > 0) {
                 // Cap the height to the number of lines specified in the input.
                 maxHeight = lineHeight * newMaxLines + paddingTop;
@@ -34,63 +32,32 @@ window.mudInputSizing = {
                 curElem = curElem.parentNode;
             }
 
-            if (fillMode) {
-                // Fill mode - expand to fill the parent container's height
-                const parent = elem.parentElement;
-                if (parent) {
-                    const parentRect = parent.getBoundingClientRect();
-                    const parentStyle = getComputedStyle(parent);
-                    const parentPaddingTop = parseFloat(parentStyle.paddingTop) || 0;
-                    const parentPaddingBottom = parseFloat(parentStyle.paddingBottom) || 0;
-                    const availableHeight = parentRect.height - parentPaddingTop - parentPaddingBottom;
+            // Auto mode - grow/shrink based on content (original AutoGrow logic)
+            elem.style.height = 0;
 
-                    if (availableHeight > 0) {
-                        let newHeight = availableHeight;
+            if (didReflow) {
+                elem.style.textAlign = null;
+            }
 
-                        // Apply maxHeight constraint if set
-                        if (maxHeight > 0 && newHeight > maxHeight) {
-                            elem.style.overflowY = 'auto';
-                            newHeight = maxHeight;
-                        } else {
-                            // Check if content exceeds available height
-                            if (elem.scrollHeight > newHeight) {
-                                elem.style.overflowY = 'auto';
-                            } else {
-                                elem.style.overflowY = 'hidden';
-                            }
-                        }
-
-                        elem.style.height = newHeight + 'px';
-                    }
-                }
+            let minHeight = lineHeight * elem.rows + paddingTop;
+            let newHeight = Math.max(minHeight, elem.scrollHeight);
+            let initialOverflowY = elem.style.overflowY;
+            if (maxHeight > 0 && newHeight > maxHeight) {
+                // Content height exceeds the max height so we'll see a scrollbar.
+                elem.style.overflowY = 'auto';
+                newHeight = maxHeight;
             } else {
-                // Auto mode - grow/shrink based on content (original AutoGrow logic)
-                elem.style.height = 0;
+                // Scrollbar isn't needed and could either flash on resize or could appear
+                // due to rounding inaccuracy in scrollHeight when the display is scaled.
+                elem.style.overflowY = 'hidden';
+            }
 
-                if (didReflow) {
-                    elem.style.textAlign = null;
-                }
+            elem.style.height = newHeight + "px";
 
-                let minHeight = lineHeight * elem.rows + paddingTop;
-                let newHeight = Math.max(minHeight, elem.scrollHeight);
-                let initialOverflowY = elem.style.overflowY;
-                if (maxHeight > 0 && newHeight > maxHeight) {
-                    // Content height exceeds the max height so we'll see a scrollbar.
-                    elem.style.overflowY = 'auto';
-                    newHeight = maxHeight;
-                } else {
-                    // Scrollbar isn't needed and could either flash on resize or could appear
-                    // due to rounding inaccuracy in scrollHeight when the display is scaled.
-                    elem.style.overflowY = 'hidden';
-                }
-
-                elem.style.height = newHeight + "px";
-
-                // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
-                if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
-                    elem.style.textAlign = 'end'; // Change to something other than the default.
-                    elem.adjustSizingHeight(true);
-                }
+            // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
+            if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
+                elem.style.textAlign = 'end'; // Change to something other than the default.
+                elem.adjustSizingHeight(true);
             }
 
             // Restore scroll positions.
@@ -115,7 +82,7 @@ window.mudInputSizing = {
         window.addEventListener('resize', elem.adjustSizingHeight);
 
         // Initial parameters and height adjustment.
-        elem.updateParameters(maxLines, fillMode);
+        elem.updateParameters(maxLines);
         elem.adjustSizingHeight();
     },
     adjustHeight: (elem) => {
@@ -123,9 +90,9 @@ window.mudInputSizing = {
             elem.adjustSizingHeight();
         }
     },
-    updateParams: (elem, maxLines, isFillMode) => {
+    updateParams: (elem, maxLines) => {
         if (typeof elem.updateParameters === 'function') {
-            elem.updateParameters(maxLines, isFillMode);
+            elem.updateParameters(maxLines);
         }
         if (typeof elem.adjustSizingHeight === 'function') {
             elem.adjustSizingHeight();

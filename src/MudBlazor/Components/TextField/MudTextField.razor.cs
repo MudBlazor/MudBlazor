@@ -86,14 +86,13 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="InputSizing.Fixed"/>.
         /// When <see cref="InputSizing.Auto"/>, the height grows and shrinks dynamically to fit the text content.
-        /// When <see cref="InputSizing.Fill"/>, the height fills the available space of the parent container.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/> or <see cref="InputSizing.Fill"/>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
