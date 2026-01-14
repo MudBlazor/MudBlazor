@@ -1,4 +1,4 @@
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -86,9 +86,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 CloseOnNavigation = false
             };
-            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(options: closeOnNavigationOptions));
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>("test", options: closeOnNavigationOptions));
             await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>());
-            var cont = comp.FindAll("div.mud-dialog-container");
+            cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(2);
             var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
             await comp.InvokeAsync(() => navigationManager.NavigateTo(Guid.NewGuid().ToString()));
@@ -1104,7 +1104,7 @@ namespace MudBlazor.UnitTests.Components
             // Arrange
             var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
-            var reference = service.CreateReference();
+            var reference = service.CreateReference(new DialogOptions());
             var invoked = false;
             Type type = null;
             service.OnDialogCloseRequested += (_, result) =>
