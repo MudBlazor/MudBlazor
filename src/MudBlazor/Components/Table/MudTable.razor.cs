@@ -27,7 +27,7 @@ namespace MudBlazor
         private TableGroupDefinition<T>? _groupBy;
         private bool _currentRenderFilteredItemsCached;
         private CancellationTokenSource? _cancellationTokenSrc;
-        private TableData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
+        private TableData<T> _serverData = new() { TotalItems = 0, Items = [] };
 
         [MemberNotNullWhen(true, nameof(_preEditSort))]
         private bool HasPreEditSort => _preEditSort is not null;
@@ -70,7 +70,7 @@ namespace MudBlazor
         /// The columns for each row when a row is being edited.
         /// </summary>
         /// <remarks>
-        /// Use <see cref="MudTd"/> to define columns, and <c>context</c> to access item properties for each column.  Typically looks similar to rows in <see cref="RowTemplate"/> but with edit components.
+        /// Use <see cref="MudTd"/> to define columns, and <c>context</c> to access item properties for each column. Typically looks similar to rows in <see cref="RowTemplate"/> but with edit components.
         /// </remarks>        
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
@@ -80,11 +80,27 @@ namespace MudBlazor
         /// The function which determines if a row can be edited.
         /// </summary>
         /// <remarks>
-        /// Make the function return <c>true</c> to allow editing, and <c>false</c> to prevent it.  When no value is set, all rows are considered editable.
+        /// Make the function return <c>true</c> to allow editing, and <c>false</c> to prevent it. When no value is set, all rows are considered editable.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public Func<T, bool>? RowEditableFunc { get; set; }
+
+        /// <summary>
+        /// The function which determines if a row is disabled.
+        /// A disabled row ignores mouse events and uses <c>--mud-palette-text-disabled</c> as color.
+        /// </summary>
+        /// <remarks>
+        /// Make the function return <c>true</c> to diable the corresponding row. When no value is set, all rows are considered enabled.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public Func<T, bool>? RowDisabledFunc { get; set; }
+
+        private bool IsRowDisabled(T item)
+        {
+            return RowDisabledFunc != null && RowDisabledFunc(item);
+        }
 
         private bool IsItemEditable(T item)
         {
@@ -217,7 +233,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Filtering)]
-        public Func<T, bool>? Filter { get; set; } = null;
+        public Func<T, bool>? Filter { get; set; }
 
         /// <summary>
         /// Occurs when a row has been clicked.
