@@ -7,9 +7,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    #nullable enable
+#nullable enable
 
-    // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
+    // Note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
     /// <summary>
     /// A sortable, filterable table with multiselection and pagination.
