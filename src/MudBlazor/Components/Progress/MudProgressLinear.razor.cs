@@ -24,9 +24,9 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass("mud-progress-linear-rounded", Rounded)
-                .AddClass("mud-progress-linear-striped", Striped)
-                .AddClass("mud-progress-indeterminate", Indeterminate)
-                .AddClass("mud-progress-linear-buffer", Buffer && !Indeterminate)
+                .AddClass($"mud-progress-linear-striped", Striped)
+                .AddClass($"mud-progress-indeterminate", Indeterminate)
+                .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
                 .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
                 .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
                 .AddClass("mud-progress-linear-transparent-background", TransparentBackground)
@@ -60,21 +60,21 @@ namespace MudBlazor
         /// Displays a constant animation without any value.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the <see cref="Value"/> will be ignored.
+        /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="Value"/> will be ignored.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public bool Indeterminate { get; set; }
+        public bool Indeterminate { get; set; } = false;
 
         /// <summary>
         /// Displays an additional value ahead of <see cref="Value" />.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the value of <see cref="BufferValue"/> is displayed.
+        /// Defaults to <c>false</c>.  When <c>true</c>, the value of <see cref="BufferValue"/> is displayed.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public bool Buffer { get; set; }
+        public bool Buffer { get; set; } = false;
 
         /// <summary>
         /// Displays a rounded border.
@@ -95,7 +95,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-        public bool Striped { get; set; }
+        public bool Striped { get; set; } = false;
 
         /// <summary>
         /// Displays this progress bar vertically.
@@ -105,7 +105,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-        public bool Vertical { get; set; }
+        public bool Vertical { get; set; } = false;
 
         /// <summary>
         /// The content within this progress bar.
@@ -118,17 +118,17 @@ namespace MudBlazor
         /// The lowest possible value.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0.0</c>. Usually a percentage. Should be lower than <see cref="Max"/>.
+        /// Defaults to <c>0.0</c>.  Usually a percentage.  Should be lower than <see cref="Max"/>.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public double Min { get; set; }
+        public double Min { get; set; } = 0.0;
 
         /// <summary>
         /// The highest possible value.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>100.0</c>. Usually a percentage. Should be higher than <see cref="Min"/>.
+        /// Defaults to <c>100.0</c>.  Usually a percentage.  Should be higher than <see cref="Min"/>.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
@@ -138,7 +138,7 @@ namespace MudBlazor
         /// The current progress amount.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>. Only applies when <see cref="Indeterminate"/> is <c>false</c>. Should be between <see cref="Min"/> and <see cref="Max"/>.
+        /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>false</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
@@ -148,9 +148,7 @@ namespace MudBlazor
         /// The amount to display ahead of the value.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>.
-        /// Only shows when <see cref="Buffer"/> is <c>true</c> and <see cref="Indeterminate"/> is <c>false</c>.
-        /// Typically, a value greater than <see cref="Value"/>.
+        /// Defaults to <c>0</c>.  Only shows when <see cref="Buffer"/> is <c>true</c> and <see cref="Indeterminate"/> is <c>false</c>.  Typically a value greater than <see cref="Value"/>.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
