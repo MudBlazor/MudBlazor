@@ -229,10 +229,15 @@ namespace MudBlazor
             set
             {
                 if (_items == value)
+                {
                     return;
+                }
+
                 _items = value;
                 if (Context?.PagerStateHasChanged != null)
+                {
                     InvokeAsync(Context.PagerStateHasChanged);
+                }
             }
         }
 
@@ -347,9 +352,15 @@ namespace MudBlazor
             set
             {
                 if (_comparer != null && _comparer.Equals(SelectedItem, value))
+                {
                     return;
+                }
+
                 if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
+                {
                     return;
+                }
+
                 _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(value);
             }
@@ -425,7 +436,11 @@ namespace MudBlazor
             get => _comparer;
             set
             {
-                if (value == _comparer) return;
+                if (value == _comparer)
+                {
+                    return;
+                }
+
                 _comparer = value;
 
                 // Apply comparer and (selected values are refreshed in the Context.Comparer setter)
@@ -457,7 +472,9 @@ namespace MudBlazor
             {
                 _groupBy = value;
                 if (_groupBy != null)
+                {
                     _groupBy.Context = Context;
+                }
             }
         }
 
@@ -538,15 +555,27 @@ namespace MudBlazor
             get
             {
                 if (_currentRenderFilteredItemsCached)
+                {
                     return _preEditSort ?? [];
+                }
+
                 if (Editing && HasPreEditSort)
+                {
                     return _preEditSort;
+                }
+
                 if (HasServerData)
+                {
                     _preEditSort = _serverData.Items?.ToList();
+                }
                 else if (Filter == null)
+                {
                     _preEditSort = Context.Sort(Items)?.ToList();
+                }
                 else
+                {
                     _preEditSort = Context.Sort(Items?.Where(Filter))?.ToList();
+                }
 
                 _currentRenderFilteredItemsCached = true;
                 unchecked
@@ -563,15 +592,16 @@ namespace MudBlazor
             get
             {
                 if (@PagerContent == null)
+                {
                     return FilteredItems; // we have no pagination
+                }
+
                 if (!HasServerData)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
-                    int lastPageNo;
-                    if (filteredItemCount == 0)
-                        lastPageNo = 0;
-                    else
-                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                    var lastPageNo = filteredItemCount == 0
+                        ? 0
+                        : filteredItemCount / RowsPerPage - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
                     CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
                 }
 
@@ -582,24 +612,21 @@ namespace MudBlazor
         protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
         {
             if (n < 0 || pageSize <= 0)
+            {
                 return [];
+            }
 
             if (HasServerData)
+            {
                 return _serverData.Items ?? [];
+            }
 
             return FilteredItems.Skip(n * pageSize).Take(pageSize);
         }
 
-        protected override int NumPages
-        {
-            get
-            {
-                if (HasServerData)
-                    return (int)Math.Ceiling(_serverData.TotalItems / (double)RowsPerPage);
-
-                return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
-            }
-        }
+        protected override int NumPages => HasServerData
+            ? (int)Math.Ceiling(_serverData.TotalItems / (double)RowsPerPage)
+            : (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
 
         /// <summary>
         /// Gets the number of filtered items.
@@ -607,7 +634,9 @@ namespace MudBlazor
         /// <returns>When <see cref="ServerData"/> is set, the total number of items, otherwise the number of <see cref="FilteredItems"/>.</returns>
         public override int GetFilteredItemsCount()
         {
-            return HasServerData ? _serverData.TotalItems : FilteredItems.Count();
+            return HasServerData
+                ? _serverData.TotalItems
+                : FilteredItems.Count();
         }
 
         /// <summary>
@@ -741,7 +770,9 @@ namespace MudBlazor
         internal override async Task InvokeServerLoadFunc()
         {
             if (!HasServerData)
+            {
                 return;
+            }
 
             Loading = true;
             await InvokeAsync(StateHasChanged);
@@ -762,7 +793,9 @@ namespace MudBlazor
             _serverData = await ServerData(state, _cancellationTokenSrc!.Token);
 
             if (CurrentPage * RowsPerPage > _serverData.TotalItems)
+            {
                 CurrentPage = 0;
+            }
 
             Loading = false;
             await InvokeAsync(StateHasChanged);
