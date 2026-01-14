@@ -94,8 +94,18 @@ namespace MudBlazor
         /// Make the function return <c>true</c> to diable the corresponding row. When no value is set, all rows are considered enabled.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Table.Editing)]
+        [Category(CategoryTypes.Table.Behavior)]
         public Func<T, bool>? RowDisabledFunc { get; set; }
+        
+        /// <summary>
+        /// The class to use for disabled rows.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>mud-table-row-disabled</c>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string DisabledClass { get; set; } = "mud-table-row-disabled";
 
         private bool IsRowDisabled(T item)
         {

@@ -18,7 +18,7 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
-            .AddClass("mud-table-row-disabled", Disabled)
+            .AddClass(DisabledClass, Disabled)
             .Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -100,6 +100,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The class to use if <see cref="Disabled"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>mud-table-row-disabled</c>
+        /// </remarks>
+        [Parameter]
+        public string DisabledClass { get; set; } = "mud-table-row-disabled";
 
         /// <summary>
         /// The state of the checkbox when <see cref="Checkable"/> is <c>true</c>.

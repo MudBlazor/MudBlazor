@@ -101,7 +101,7 @@
                                 }
                                 <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
                                        Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
-                                       Disabled="IsRowDisabled(item)" Checked="@(IsCheckedRow(item))"
+                                       Disabled="IsRowDisabled(item)" DisabledClass="@DisabledClass" Checked="@(IsCheckedRow(item))"
                                        CheckedChanged="@(value => OnRowCheckboxChanged(value, item))">
                                     @if (!ReadOnly && Editable && Equals(_editingItem, item))
                                     {
@@ -215,7 +215,7 @@
                      var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndexForId)).Build();
                  }
                  <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
-                        Editable="IsItemEditable(item)" Expandable="expandable" Disabled="IsRowDisabled(item)"
+                        Editable="IsItemEditable(item)" Expandable="expandable" Disabled="IsRowDisabled(item)" DisabledClass="@DisabledClass"
                         Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { OnRowCheckboxChanged(value, item); })">
                      @if (!ReadOnly && Editable && Equals(_editingItem, item))
                      {
