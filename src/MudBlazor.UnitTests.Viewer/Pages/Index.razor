@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using System.Reflection
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
 @using MudBlazor
 @using FuzzySharp
 @inject NavigationManager NavManager
@@ -10,20 +11,19 @@
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
-        <MudAppBar Elevation="0" Dense="true" Class="test-viewer-appbar">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="ToggleDrawer" aria-label="Toggle drawer" />
-            <MudText Typo="Typo.subtitle1" Class="mx-2 test-viewer-title">Test Viewer</MudText>
-            <MudSpacer />
-            <MudTooltip Text="@ThemeLabel">
-                <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
-            </MudTooltip>
-            <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
-                <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
-            </MudTooltip>
-        </MudAppBar>
-
         <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
             <div class="test-viewer-drawer-inner">
+                <div class="test-viewer-sidebar-header">
+                    <MudText Typo="Typo.subtitle1" Class="test-viewer-title">Test Viewer</MudText>
+                    <MudSpacer />
+                    <MudTooltip Text="@ThemeLabel">
+                        <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
+                    </MudTooltip>
+                    <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
+                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
+                    </MudTooltip>
+                </div>
+
                 <div class="test-viewer-search">
                     <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="0"
                                   Placeholder="Search tests…" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense"
@@ -76,7 +76,7 @@
                 }
             </div>
 
-            <MudPaper Class="test-viewer-surface" Elevation="1" Square="true">
+            <div class="test-viewer-surface">
                 @if (_selectedType is null)
                 {
                     <MudText Class="pa-4">Pick a test from the left.</MudText>
@@ -88,22 +88,13 @@
                         @TestComponent()
                     </CascadingValue>
                 }
-            </MudPaper>
+            </div>
         </MudMainContent>
     </MudRTLProvider>
 </MudLayout>
 <style>
-    .mud-appbar .mud-icon-button {
-        color: var(--mud-palette-appbar-text) !important;
-    }
-
-    .test-viewer-appbar {
-        display: flex;
-        align-items: center;
-    }
-
     .test-viewer-title {
-        color: var(--mud-palette-appbar-text);
+        color: var(--mud-palette-text-primary);
     }
 
     .test-viewer-drawer {
@@ -114,6 +105,12 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+    }
+
+    .test-viewer-sidebar-header {
+        padding: 10px 12px 0 12px;
+        display: flex;
+        align-items: center;
     }
 
     .test-viewer-search {
@@ -182,7 +179,7 @@
         display: flex;
         flex-direction: column;
         gap: 12px;
-        height: calc(100vh - 48px);
+        height: 100vh;
     }
 
     .test-viewer-header {
@@ -210,6 +207,8 @@
     private int _remainingResultsCount;
     private bool _showAllResults;
     private bool _canShowAllLink;
+    private CancellationTokenSource? _searchCts;
+    private Task? _searchTask;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
     {
@@ -239,7 +238,7 @@
 
             _searchText = value;
             _showAllResults = false;
-            RecomputeFilteredEntries();
+            StartSearch();
         }
     }
 
@@ -255,7 +254,7 @@
             .ToArray();
 
         _entryByType = _entries.ToDictionary(x => x.Type, x => x);
-        RecomputeFilteredEntries();
+        StartSearch();
 
         ParseQueryString();
         NavManager.LocationChanged += HandleLocationChanged;
@@ -270,6 +269,8 @@
     public void Dispose()
     {
         NavManager.LocationChanged -= HandleLocationChanged;
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
     }
 
     private void ParseQueryString()
@@ -405,62 +406,149 @@
         return GetDisplayName(type.Name);
     }
 
-    private void RecomputeFilteredEntries()
+    private void StartSearch()
     {
-        _totalMatchCount = 0;
-        _remainingResultsCount = 0;
-        _canShowAllLink = false;
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
+        _searchCts = new CancellationTokenSource();
+        _searchTask = RecomputeFilteredEntriesAsync(_searchCts.Token);
+    }
 
-        if (_entries.Length == 0)
+    private async Task RecomputeFilteredEntriesAsync(CancellationToken token)
+    {
+        try
         {
-            _filteredEntries = [];
-            _filteredCountLabel = string.Empty;
+            _totalMatchCount = 0;
+            _remainingResultsCount = 0;
+            _canShowAllLink = false;
+
+            if (_entries.Length == 0)
+            {
+                _filteredEntries = [];
+                _filteredCountLabel = string.Empty;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(_searchText))
+            {
+                _filteredEntries = _entries;
+                _filteredCountLabel = $"{_entries.Length} tests";
+                _totalMatchCount = _entries.Length;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            var query = _searchText.Trim();
+            _filteredCountLabel = "Searching…";
+            await InvokeAsync(StateHasChanged);
+
+            const int threshold = 35;
+            const int defaultLimit = 20;
+
+            var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
+            List<(TestEntry Entry, int Score)>? all = _showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
+
+            for (var i = 0; i < _entries.Length; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                var entry = _entries[i];
+                var score = GetSearchScore(query, entry);
+                if (score < threshold)
+                {
+                    if (i % 25 == 0)
+                    {
+                        await Task.Yield();
+                    }
+                    continue;
+                }
+
+                _totalMatchCount++;
+
+                if (all is not null)
+                {
+                    all.Add((entry, score));
+                }
+                else
+                {
+                    InsertTopK(top, (entry, score), defaultLimit);
+                }
+
+                if (i % 25 == 0)
+                {
+                    await Task.Yield();
+                }
+            }
+
+            token.ThrowIfCancellationRequested();
+
+            IReadOnlyList<(TestEntry Entry, int Score)> final = all ?? top;
+            var ordered = final
+                .OrderByDescending(x => x.Score)
+                .ThenBy(x => x.Entry.Name)
+                .Select(x => x.Entry)
+                .ToArray();
+
+            _filteredEntries = ordered;
+            _filteredCountLabel = _totalMatchCount switch
+            {
+                0 => "No matches",
+                1 => "1 match",
+                _ => $"{_totalMatchCount} matches"
+            };
+
+            if (!_showAllResults)
+            {
+                _filteredEntries = _filteredEntries.Take(defaultLimit).ToArray();
+                _remainingResultsCount = Math.Max(0, _totalMatchCount - _filteredEntries.Length);
+                _canShowAllLink = _remainingResultsCount > 0;
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore; newer search already started.
+        }
+    }
+
+    private static void InsertTopK(List<(TestEntry Entry, int Score)> list, (TestEntry Entry, int Score) candidate, int k)
+    {
+        if (list.Count == 0)
+        {
+            list.Add(candidate);
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(_searchText))
+        var inserted = false;
+        for (var i = 0; i < list.Count; i++)
         {
-            _filteredEntries = _entries;
-            _filteredCountLabel = $"{_entries.Length} tests";
-            _totalMatchCount = _entries.Length;
-            return;
+            if (candidate.Score > list[i].Score)
+            {
+                list.Insert(i, candidate);
+                inserted = true;
+                break;
+            }
         }
 
-        var query = _searchText.Trim();
-
-        var scored = _entries
-            .Select(e => (Entry: e, Score: GetSearchScore(query, e)))
-            .Where(x => x.Score >= 35)
-            .OrderByDescending(x => x.Score)
-            .ThenBy(x => x.Entry.Name)
-            .ToArray();
-
-        _totalMatchCount = scored.Length;
-
-        _filteredCountLabel = scored.Length switch
+        if (!inserted)
         {
-            0 => "No matches",
-            1 => "1 match",
-            _ => $"{scored.Length} matches"
-        };
-
-        var results = scored.Select(x => x.Entry).ToArray();
-
-        if (_showAllResults)
-        {
-            _filteredEntries = results;
-            return;
+            if (list.Count < k)
+            {
+                list.Add(candidate);
+            }
         }
 
-        _filteredEntries = results.Take(10).ToArray();
-        _remainingResultsCount = Math.Max(0, _totalMatchCount - _filteredEntries.Length);
-        _canShowAllLink = _remainingResultsCount > 0;
+        if (list.Count > k)
+        {
+            list.RemoveAt(list.Count - 1);
+        }
     }
 
     private void ShowAllResults(MouseEventArgs args)
     {
         _showAllResults = true;
-        RecomputeFilteredEntries();
+        StartSearch();
     }
 
     private static int GetSearchScore(string query, TestEntry entry)
