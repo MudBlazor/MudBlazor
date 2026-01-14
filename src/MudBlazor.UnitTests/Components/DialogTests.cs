@@ -1534,7 +1534,7 @@ namespace MudBlazor.UnitTests.Components
             closeBtn.Should().NotBeNull();
             closeBtn.GetAttribute("blazor:onmousedown:preventdefault").Should().Be("");
         }
-        
+
         /// <summary>
         /// InjectOptions() should set the options of the calling IDialogReference.
         /// </summary>
@@ -1548,7 +1548,7 @@ namespace MudBlazor.UnitTests.Components
             var reference = await service.ShowAsync<DialogOkCancel>();
             reference.InjectOptions(new DialogOptions());
             reference.Options.Should().NotBe(null);
-            
+
             provider.Instance.SetOptions(reference.Id, new DialogOptions());
         }
 

@@ -224,7 +224,7 @@ namespace MudBlazor
                 DialogService.OnDialogCloseRequested -= DismissInstance;
             }
         }
-        
+
         public void Dispose()
         {
             Dispose(true);
