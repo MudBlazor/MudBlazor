@@ -32,8 +32,8 @@ jobs:
           echo "VERSION=${VERSION#v}" >> $GITHUB_OUTPUT
 
   deploy-nuget:
-    needs: get-version
     runs-on: ubuntu-latest
+    needs: get-version
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
