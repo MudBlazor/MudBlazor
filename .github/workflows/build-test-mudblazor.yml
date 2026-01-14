@@ -31,6 +31,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5
         with:
+          # We need all runtimes for the tests
           dotnet-version: |
             10.x
             9.x
