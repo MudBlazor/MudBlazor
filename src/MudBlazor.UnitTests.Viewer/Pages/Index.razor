@@ -10,9 +10,9 @@
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
-        <MudAppBar Elevation="0" Dense="true">
+        <MudAppBar Elevation="0" Dense="true" Class="test-viewer-appbar">
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="ToggleDrawer" aria-label="Toggle drawer" />
-            <MudText Typo="Typo.subtitle1" Class="mx-2 mud-text-secondary">Test Viewer</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mx-2 test-viewer-title">Test Viewer</MudText>
             <MudSpacer />
             <MudTooltip Text="@ThemeLabel">
                 <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
@@ -34,21 +34,30 @@
                     </MudText>
                 </div>
 
-                <MudDivider />
+                <div class="test-viewer-divider" />
 
                 <div class="test-viewer-results">
                     <MudVirtualize Items="@_filteredEntries" Enabled="true" Context="entry">
                         <MudButton Variant="Variant.Text" Color="Color.Inherit" FullWidth="true" DisableElevation="true"
                                    Class="@GetEntryClass(entry)" OnClick="() => Select(entry.Type)">
                             <div class="test-viewer-result-row">
-                                <MudText Typo="Typo.body2">@entry.Name</MudText>
+                                <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.DisplayName</MudText>
                                 @if (!string.IsNullOrWhiteSpace(entry.Category))
                                 {
-                                    <MudText Typo="Typo.caption" Class="mud-text-secondary">@entry.Category</MudText>
+                                    <MudText Typo="Typo.caption" Class="mud-text-secondary test-viewer-entry-category">@entry.Category</MudText>
                                 }
                             </div>
                         </MudButton>
                     </MudVirtualize>
+
+                    @if (_canShowAllLink)
+                    {
+                        <div class="test-viewer-show-all">
+                            <MudLink Href="#" OnClick="ShowAllResults" Typo="Typo.caption">
+                                Show all results (@_remainingResultsCount more)
+                            </MudLink>
+                        </div>
+                    }
                 </div>
             </div>
         </MudDrawer>
@@ -62,7 +71,7 @@
                 }
                 else
                 {
-                    <MudText Typo="Typo.h6">@_selectedType.Name</MudText>
+                    <MudText Typo="Typo.h6">@GetTitleForDisplay(_selectedType)</MudText>
                     <MudText Typo="Typo.body2" Class="mud-text-secondary">@GetDescriptionForDisplay(_selectedType)</MudText>
                 }
             </div>
@@ -88,6 +97,15 @@
         color: var(--mud-palette-appbar-text) !important;
     }
 
+    .test-viewer-appbar {
+        display: flex;
+        align-items: center;
+    }
+
+    .test-viewer-title {
+        color: var(--mud-palette-appbar-text);
+    }
+
     .test-viewer-drawer {
         overflow: hidden;
     }
@@ -104,6 +122,12 @@
         gap: 6px;
     }
 
+    .test-viewer-divider {
+        height: 1px;
+        background: var(--mud-palette-divider);
+        margin: 0 12px;
+    }
+
     .test-viewer-results {
         flex: 1;
         overflow: auto;
@@ -112,11 +136,29 @@
 
     .test-viewer-result-row {
         width: 100%;
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
         gap: 12px;
         text-align: left;
+    }
+
+    .test-viewer-entry-name {
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .test-viewer-entry-category {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: right;
+    }
+
+    .test-viewer-show-all {
+        padding: 10px 12px 6px 12px;
     }
 
     .test-viewer-entry {
@@ -164,6 +206,10 @@
     private Type[] _availableComponentTypes = [];
     private Dictionary<Type, TestEntry> _entryByType = [];
     private string _filteredCountLabel = string.Empty;
+    private int _totalMatchCount;
+    private int _remainingResultsCount;
+    private bool _showAllResults;
+    private bool _canShowAllLink;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
     {
@@ -192,6 +238,7 @@
             }
 
             _searchText = value;
+            _showAllResults = false;
             RecomputeFilteredEntries();
         }
     }
@@ -317,7 +364,14 @@
     {
         var category = type.Namespace?.Split('.').LastOrDefault() ?? string.Empty;
         var description = GetDescriptionOrNull(type);
-        return new TestEntry(type, type.Name, category, description);
+        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description);
+    }
+
+    private static string GetDisplayName(string typeName)
+    {
+        return typeName.EndsWith("Test", StringComparison.Ordinal)
+            ? typeName.Substring(0, typeName.Length - 4)
+            : typeName;
     }
 
     private static string? GetDescriptionOrNull(Type type)
@@ -341,8 +395,22 @@
         return "No description provided (add public static string __description__).";
     }
 
+    private string GetTitleForDisplay(Type type)
+    {
+        if (_entryByType.TryGetValue(type, out var entry))
+        {
+            return entry.DisplayName;
+        }
+
+        return GetDisplayName(type.Name);
+    }
+
     private void RecomputeFilteredEntries()
     {
+        _totalMatchCount = 0;
+        _remainingResultsCount = 0;
+        _canShowAllLink = false;
+
         if (_entries.Length == 0)
         {
             _filteredEntries = [];
@@ -354,6 +422,7 @@
         {
             _filteredEntries = _entries;
             _filteredCountLabel = $"{_entries.Length} tests";
+            _totalMatchCount = _entries.Length;
             return;
         }
 
@@ -366,6 +435,8 @@
             .ThenBy(x => x.Entry.Name)
             .ToArray();
 
+        _totalMatchCount = scored.Length;
+
         _filteredCountLabel = scored.Length switch
         {
             0 => "No matches",
@@ -373,10 +444,23 @@
             _ => $"{scored.Length} matches"
         };
 
-        _filteredEntries = scored
-            .Take(250)
-            .Select(x => x.Entry)
-            .ToArray();
+        var results = scored.Select(x => x.Entry).ToArray();
+
+        if (_showAllResults)
+        {
+            _filteredEntries = results;
+            return;
+        }
+
+        _filteredEntries = results.Take(10).ToArray();
+        _remainingResultsCount = Math.Max(0, _totalMatchCount - _filteredEntries.Length);
+        _canShowAllLink = _remainingResultsCount > 0;
+    }
+
+    private void ShowAllResults(MouseEventArgs args)
+    {
+        _showAllResults = true;
+        RecomputeFilteredEntries();
     }
 
     private static int GetSearchScore(string query, TestEntry entry)
@@ -410,5 +494,5 @@
         return "test-viewer-entry";
     }
 
-    private sealed record TestEntry(Type Type, string Name, string Category, string? Description);
+    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description);
 }
