@@ -159,7 +159,6 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InputSizing.Fixed"/>.
-        /// When <see cref="InputSizing.Auto"/>, the height grows and shrinks dynamically to fit the text content.
         /// </remarks>
         [Parameter]
         public InputSizing Sizing { get; set; } = InputSizing.Fixed;

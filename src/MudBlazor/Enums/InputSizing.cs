@@ -21,6 +21,9 @@ public enum InputSizing
     /// The height grows and shrinks dynamically to fit the text content.
     /// Uses Lines as minimum and MaxLines as maximum.
     /// </summary>
+    /// <remarks>
+    /// Previously known as "AutoGrow".
+    /// </remarks>
     [Description("auto")]
     Auto,
 }
