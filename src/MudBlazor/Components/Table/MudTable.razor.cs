@@ -591,7 +591,7 @@ namespace MudBlazor
         {
             get
             {
-                if (@PagerContent == null)
+                if (PagerContent == null)
                 {
                     return FilteredItems; // we have no pagination
                 }
@@ -806,7 +806,9 @@ namespace MudBlazor
         {
             base.OnAfterRender(firstRender);
             if (!firstRender)
+            {
                 Context?.PagerStateHasChanged?.Invoke();
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
