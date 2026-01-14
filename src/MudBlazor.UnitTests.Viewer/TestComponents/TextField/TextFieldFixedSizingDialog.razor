@@ -12,8 +12,7 @@
                       Typo="Typo.body2"
                       Placeholder="@Placeholder"
                       Lines="@Lines"
-                      MaxLines="@MaxLines"
-                      Sizing="InputSizing.Auto"
+                      Sizing="InputSizing.Fixed"
                       Underline="false"
                       Immediate />
     </DialogContent>
@@ -45,7 +44,7 @@
     private IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
-    public string Title { get; set; } = "Edit note (Auto)";
+    public string Title { get; set; } = "Edit note (Fixed)";
 
     [Parameter]
     public string Placeholder { get; set; } = "Type here";
@@ -55,9 +54,6 @@
 
     [Parameter]
     public int Lines { get; set; } = 8;
-
-    [Parameter]
-    public int MaxLines { get; set; } = 16;
 
     protected override void OnParametersSet()
     {
