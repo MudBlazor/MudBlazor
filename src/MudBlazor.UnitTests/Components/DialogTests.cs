@@ -1534,6 +1534,76 @@ namespace MudBlazor.UnitTests.Components
             closeBtn.Should().NotBeNull();
             closeBtn.GetAttribute("blazor:onmousedown:preventdefault").Should().Be("");
         }
+        
+        /// <summary>
+        /// InjectOptions() should set the options of the calling IDialogReference.
+        /// </summary>
+        [Test]
+        public async Task InjectOptions_ShouldNotBeNull()
+        {
+            // Arrange
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var provider = Context.Render<MudDialogProvider>();
+
+            var reference = await service.ShowAsync<DialogOkCancel>();
+            reference.InjectOptions(new DialogOptions());
+            reference.Options.Should().NotBe(null);
+            
+            provider.Instance.SetOptions(reference.Id, new DialogOptions());
+        }
+
+        /// <summary>
+        /// SetOptions() should set the options of the dialog reference that corresponds to the given id.
+        /// </summary>
+        [Test]
+        public async Task SetOptions_ShouldNotBeNull()
+        {
+            // Arrange
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var provider = Context.Render<MudDialogProvider>();
+
+            var reference = await service.ShowAsync<DialogOkCancel>();
+            provider.Instance.SetOptions(reference.Id, new DialogOptions());
+            reference.Options.Should().NotBe(null);
+        }
+
+        /// <summary>
+        /// ShouldDismissOnNavigation() should return true if the dialog reference's options CloseOnNavigation is set to true.
+        /// </summary>
+        [Test]
+        public async Task ShouldDismissOnNavigation_ShouldBeTrue()
+        {
+            // Arrange
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var provider = Context.Render<MudDialogProvider>();
+
+            var options = new DialogOptions
+            {
+                CloseOnNavigation = true
+            };
+            var reference = await service.ShowAsync<DialogOkCancel>("test", options: options);
+
+            provider.Instance.ShouldDismissOnNavigation(reference).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// ShouldDismissOnNavigation() should return false if the dialog reference's options CloseOnNavigation is set to false.
+        /// </summary>
+        [Test]
+        public async Task ShouldDismissOnNavigation_ShouldBeFalse()
+        {
+            // Arrange
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var provider = Context.Render<MudDialogProvider>();
+
+            var options = new DialogOptions
+            {
+                CloseOnNavigation = false
+            };
+            var reference = await service.ShowAsync<DialogOkCancel>("test", options: options);
+
+            provider.Instance.ShouldDismissOnNavigation(reference).Should().BeFalse();
+        }
     }
     internal class CustomDialogService : DialogService
     {
