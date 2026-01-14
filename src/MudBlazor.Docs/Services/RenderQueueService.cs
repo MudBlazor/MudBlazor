@@ -28,7 +28,7 @@ namespace MudBlazor.Docs.Services
 
         public RenderQueueService()
         {
-            Capacity = 3;
+            Capacity = 10;
         }
 
         public void Clear()
@@ -55,7 +55,7 @@ namespace MudBlazor.Docs.Services
                 component.Render();
         }
 
-        private async void RenderNext()
+        private void RenderNext()
         {
             QueuedContent componentToRender = null;
             lock (_queue)
@@ -79,7 +79,6 @@ namespace MudBlazor.Docs.Services
                     return;
                 }
             }
-            await Task.Delay(1);
             componentToRender.Render();
         }
 

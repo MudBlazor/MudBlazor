@@ -1,6 +1,24 @@
 
 .docs-page-section {
 
+  .docs-queued-content-placeholder {
+    min-height: 400px;
+    background: linear-gradient(90deg, var(--mud-palette-surface) 0%, var(--mud-palette-gray-lighter) 50%, var(--mud-palette-surface) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
   .docs-section-header {
     .mud-typography-h5 {
       margin-top: 40px;
