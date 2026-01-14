@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.Web;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -91,7 +92,13 @@ namespace MudBlazor.UnitTests.Components
             cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(2);
             var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
-            await comp.InvokeAsync(() => navigationManager.NavigateTo(Guid.NewGuid().ToString()));
+
+            var uri = new Uri(navigationManager.Uri);
+            var query = HttpUtility.ParseQueryString(uri.Query);
+            query["query"] = Guid.NewGuid().ToString();
+            var newUri = $"{uri.GetLeftPart(UriPartial.Path)}?{query}";
+
+            await comp.InvokeAsync(() => navigationManager.NavigateTo(newUri));
             cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(1);
 
@@ -1104,7 +1111,7 @@ namespace MudBlazor.UnitTests.Components
             // Arrange
             var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
-            var reference = service.CreateReference(new DialogOptions());
+            var reference = service.CreateReference();
             var invoked = false;
             Type type = null;
             service.OnDialogCloseRequested += (_, result) =>
@@ -1517,14 +1524,14 @@ namespace MudBlazor.UnitTests.Components
     }
     internal class CustomDialogService : DialogService
     {
-        public override IDialogReference CreateReference(DialogOptions options) => new CustomDialogReference(Guid.NewGuid(), options, this);
+        public override IDialogReference CreateReference() => new CustomDialogReference(Guid.NewGuid(), this);
     }
 
     internal class CustomDialogReference : DialogReference
     {
         public bool AllowDismiss { get; set; }
 
-        public CustomDialogReference(Guid dialogInstanceId, DialogOptions options, IDialogService dialogService) : base(dialogInstanceId, options, dialogService) { }
+        public CustomDialogReference(Guid dialogInstanceId, IDialogService dialogService) : base(dialogInstanceId, dialogService) { }
 
         public override bool Dismiss(DialogResult result)
         {
