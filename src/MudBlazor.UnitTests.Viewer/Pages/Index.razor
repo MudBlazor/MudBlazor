@@ -71,7 +71,10 @@
                 }
                 else
                 {
-                    <MudText Typo="Typo.h6">@GetTitleForDisplay(_selectedType)</MudText>
+                    <div class="test-viewer-title-row">
+                        <MudText Typo="Typo.h6">@GetTitleForDisplay(_selectedType)</MudText>
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary test-viewer-path">@GetFilePathForDisplay(_selectedType)</MudText>
+                    </div>
                     <MudText Typo="Typo.body2" Class="mud-text-secondary">@GetDescriptionForDisplay(_selectedType)</MudText>
                 }
             </div>
@@ -186,6 +189,17 @@
     .test-viewer-surface {
         flex: 1;
         overflow: auto;
+    }
+
+    .test-viewer-title-row {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+    }
+
+    .test-viewer-path {
+        font-family: monospace;
+        opacity: 0.6;
     }
 </style>
 
@@ -363,7 +377,16 @@
     {
         var category = type.Namespace?.Split('.').LastOrDefault() ?? string.Empty;
         var description = GetDescriptionOrNull(type);
-        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description);
+        var filePath = GetFilePath(type);
+        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath);
+    }
+
+    private static string GetFilePath(Type type)
+    {
+        var ns = type.Namespace ?? string.Empty;
+        var match = "MudBlazor.UnitTests.";
+        var path = ns.StartsWith(match) ? ns.Substring(match.Length).Replace('.', '/') : ns.Replace('.', '/');
+        return $"{path}/{type.Name}.razor";
     }
 
     private static string GetDisplayName(string typeName)
@@ -392,6 +415,16 @@
         }
 
         return "No description provided (add public static string __description__).";
+    }
+
+    private string GetFilePathForDisplay(Type type)
+    {
+        if (_entryByType.TryGetValue(type, out var entry))
+        {
+            return entry.FilePath;
+        }
+
+        return string.Empty;
     }
 
     private string GetTitleForDisplay(Type type)
@@ -580,5 +613,5 @@
         return "test-viewer-entry";
     }
 
-    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description);
+    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath);
 }
