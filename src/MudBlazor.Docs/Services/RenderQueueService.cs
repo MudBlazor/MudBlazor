@@ -83,6 +83,8 @@ namespace MudBlazor.Docs.Services
                 }
             }
             // Render all components in the batch
+            // Note: QueuedContent.Render() uses InvokeAsync for thread-safe state changes,
+            // so calling multiple renders in sequence is safe
             foreach (var component in componentsToRender)
             {
                 component.Render();
