@@ -58,7 +58,7 @@ namespace MudBlazor
 
         /// <inheritdoc />
         public Guid Id { get; }
-        
+
         /// <inheritdoc />
         public DialogOptions Options { get; }
 

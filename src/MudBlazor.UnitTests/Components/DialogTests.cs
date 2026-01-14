@@ -82,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
             cont.Count.Should().Be(0);
 
             //create 2 instances and dismiss all except for ones with CloseOnNavigation = false
-            var closeOnNavigationOptions = new DialogOptions 
+            var closeOnNavigationOptions = new DialogOptions
             {
                 CloseOnNavigation = false
             };
