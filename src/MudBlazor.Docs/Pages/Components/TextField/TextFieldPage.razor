@@ -234,16 +234,16 @@
     <SectionHeader Title="Multiline">
         <Description>
             Text fields can be expanded to accommodate multiple lines of text by setting the <CodeInline>Lines</CodeInline> property.
-            Use <CodeInline>Sizing</CodeInline> to control whether the field stays fixed, grows with content, or fills the available height.
+            Use <CodeInline>Sizing</CodeInline> to control whether the field stays fixed or grows with content.
         </Description>
     </SectionHeader>
     <SectionContent Code="@nameof(TextFieldMultilineExample)" ShowCode="false">
         <TextFieldMultilineExample/>
     </SectionContent>
     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-        If you use Blazor Server, note there is a default limit on the maximum message size SignalR can handle.
-        If you want to support large texts in the input element (around 15k characters and more) you need to increase the message size limit by setting <CodeInline>MaximumReceiveMessageSize</CodeInline> in the HubOptions in your Program.cs file.
-        See <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/7263">this issue</MudLink> on github.
+        If you use Blazor Server for your app, note that there is a default limit on the maximum message size SignalR can handle. If you want to support large texts in the input element (around 15k characters and more)
+        you need to increase the message size limit by setting <CodeInline>MaximumReceiveMessageSize</CodeInline> accordingly in the HubOptions in your Program.cs file.
+        For more details see <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/7263">this issue</MudLink> on github.
     </MudAlert>
 </DocsPageSection>
 

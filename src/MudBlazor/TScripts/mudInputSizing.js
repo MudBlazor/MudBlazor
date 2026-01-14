@@ -32,7 +32,7 @@ window.mudInputSizing = {
                 curElem = curElem.parentNode;
             }
 
-            // Auto mode - grow/shrink based on content (original AutoGrow logic)
+            // Auto mode - grow/shrink based on content
             elem.style.height = 0;
 
             if (didReflow) {
@@ -54,18 +54,18 @@ window.mudInputSizing = {
 
             elem.style.height = newHeight + "px";
 
-            // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
-            if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
-                elem.style.textAlign = 'end'; // Change to something other than the default.
-                elem.adjustSizingHeight(true);
-            }
-
             // Restore scroll positions.
             scrollTops.forEach(([node, scrollTop]) => {
                 node.style.scrollBehavior = 'auto';
                 node.scrollTop = scrollTop;
                 node.style.scrollBehavior = null;
             });
+
+            // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
+            if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
+                elem.style.textAlign = 'end'; // Change to something other than the default.
+                elem.adjustSizingHeight(true);
+            }
         }
 
         // Terminate sizing and restore the input element back to its original state.
