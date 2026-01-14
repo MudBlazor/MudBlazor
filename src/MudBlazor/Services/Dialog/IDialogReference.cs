@@ -23,7 +23,7 @@ namespace MudBlazor
         /// <summary>
         /// The options used for this dialog.
         /// </summary>
-        DialogOptions Options { get; }
+        DialogOptions? Options { get; }
 
         /// <summary>
         /// The content within this dialog.
@@ -71,6 +71,12 @@ namespace MudBlazor
         /// </summary>
         /// <param name="inst">The new dialog to use.</param>
         void InjectDialog(object inst);
+
+        /// <summary>
+        /// Replaces the dialog options.
+        /// </summary>
+        /// <param name="options">The new options to use</param>
+        public void InjectOptions(DialogOptions options);
 
         /// <summary>
         /// Gets the result of closing the dialog.

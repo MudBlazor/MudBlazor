@@ -326,6 +326,7 @@ namespace MudBlazor
         async Task IMudDialogInstance.SetOptionsAsync(DialogOptions options)
         {
             await _dialogOptionsState.SetValueAsync(options);
+            Parent.SetOptions(Id, options);
             await InvokeAsync(StateHasChanged);
         }
 

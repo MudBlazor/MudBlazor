@@ -154,6 +154,12 @@ namespace MudBlazor
             return base.OnAfterRenderAsync(firstRender);
         }
 
+        internal void SetOptions(Guid id, DialogOptions options)
+        {
+            var reference = GetDialogReference(id);
+            reference?.InjectOptions(options);
+        }
+
         internal void DismissInstance(Guid id, DialogResult result)
         {
             var reference = GetDialogReference(id);
@@ -196,7 +202,7 @@ namespace MudBlazor
         {
             foreach (var dialog in _dialogs.ToArray())
             {
-                if (dialog.Options.CloseOnNavigation == true)
+                if (dialog.Options?.CloseOnNavigation == true)
                 {
                     DismissInstance(dialog, DialogResult.Cancel());
                 }

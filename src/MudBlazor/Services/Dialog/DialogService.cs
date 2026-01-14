@@ -201,9 +201,9 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public virtual IDialogReference CreateReference(DialogOptions options)
+        public virtual IDialogReference CreateReference()
         {
-            return new DialogReference(Guid.NewGuid(), options, this);
+            return new DialogReference(Guid.NewGuid(), this);
         }
 
         private async Task<IDialogReference> ShowCoreAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters,
@@ -214,8 +214,8 @@ namespace MudBlazor
                 throw new ArgumentException($"{contentComponent.FullName} must be a Blazor IComponent");
             }
 
-            var dialogReference = CreateReference(options);
-
+            var dialogReference = CreateReference();
+            dialogReference.InjectOptions(options);
             var dialogContent = DialogHelperComponent.Wrap(builder =>
             {
                 var i = 0;
