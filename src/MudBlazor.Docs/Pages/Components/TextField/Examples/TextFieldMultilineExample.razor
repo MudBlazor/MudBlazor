@@ -41,24 +41,23 @@
     <MudItem xs="12" md="4">
         <MudStack Spacing="4">
             <MudText Typo="Typo.h6">Fill Sizing</MudText>
-            <MudPaper Class="pa-4" Style="height: 240px;">
-                <MudTextField T="string"
-                              Label="Fill (3 to 8 lines)"
-                              Variant="Variant.Outlined"
-                              Lines="3"
-                              MaxLines="8"
-                              Sizing="InputSizing.Fill"
-                              Placeholder="Fills the container height." />
-            </MudPaper>
-            <MudPaper Class="pa-4" Style="height: 200px;">
-                <MudTextField T="string"
-                              Label="Fill (min 2, max 4)"
-                              Variant="Variant.Filled"
-                              Lines="2"
-                              MaxLines="4"
-                              Sizing="InputSizing.Fill"
-                              Placeholder="Stops early with MaxLines." />
-            </MudPaper>
+            <MudTextField T="string"
+                          Label="Fill (3 to 8 lines)"
+                          Variant="Variant.Outlined"
+                          Lines="3"
+                          MaxLines="8"
+                          Sizing="InputSizing.Fill"
+                          Style="height: 240px;"
+                          Placeholder="Fills the container height." />
+
+            <MudTextField T="string"
+                          Label="Fill (min 2, max 4)"
+                          Variant="Variant.Filled"
+                          Lines="2"
+                          MaxLines="4"
+                          Sizing="InputSizing.Fill"
+                          Style="height: 200px;"
+                          Placeholder="Stops early with MaxLines." />
         </MudStack>
     </MudItem>
 </MudGrid>

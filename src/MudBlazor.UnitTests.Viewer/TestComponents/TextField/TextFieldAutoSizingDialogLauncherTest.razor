@@ -13,6 +13,10 @@
             Open Auto Dialog
         </MudButton>
 
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenFillDialogAsync">
+            Open Fill Dialog
+        </MudButton>
+
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="OpenFixedDialogAsync">
             Open Fixed Dialog
         </MudButton>
@@ -84,6 +88,29 @@
         };
 
         var dialog = await DialogService.ShowAsync<TextFieldFixedSizingDialog>("Edit note (Fixed)", parameters, options);
+        await HandleDialogResult(dialog);
+    }
+
+    private async Task OpenFillDialogAsync()
+    {
+        _lastResult = null;
+        _lastCanceled = false;
+
+        var parameters = new DialogParameters<TextFieldFillSizingDialog>
+        {
+            { x => x.Title, "Edit note (Fill)" },
+            { x => x.Placeholder, "What's on your mind?" },
+            { x => x.InitialText, "Line 1\nLine 2\nLine 3" }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Small
+        };
+
+        var dialog = await DialogService.ShowAsync<TextFieldFillSizingDialog>("Edit note (Fill)", parameters, options);
         await HandleDialogResult(dialog);
     }
 
