@@ -170,7 +170,7 @@ namespace MudBlazor
 
         internal bool ShouldDismissOnNavigation(IDialogReference dialog)
         {
-            if(dialog.Options == null)
+            if (dialog.Options == null)
             {
                 return true;
             }
