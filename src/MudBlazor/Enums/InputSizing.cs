@@ -7,7 +7,7 @@ using System.ComponentModel;
 namespace MudBlazor;
 
 /// <summary>
-/// Indicates the strategy for how the input calculates its height.
+/// The strategy for how the input calculates its height.
 /// </summary>
 public enum InputSizing
 {

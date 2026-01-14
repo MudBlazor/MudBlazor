@@ -1,42 +1,30 @@
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
 @using MudBlazor
 
-<MudStack Spacing="3">
-    <MudText Typo="Typo.subtitle2">Sizing = Fixed</MudText>
+<MudStack Row Spacing="3" Style="height: 300px;">
     <MudTextField T="string"
                   Label="Fixed"
                   Variant="Variant.Text"
                   Lines="3"
                   Sizing="InputSizing.Fixed"
-                  Text="@_fixedText"
-                  TextChanged="@((string v) => _fixedText = v)"
-                  HelperText="Fixed height based on Lines" />
+                  @bind-Text="_fixedText"
+                  HelperText="Sizing = Fixed: Fixed height based on Lines" />
 
-    <MudText Typo="Typo.subtitle2">Sizing = Auto</MudText>
     <MudTextField T="string"
                   Label="Auto"
                   Variant="Variant.Text"
                   Lines="3"
-                  MaxLines="6"
                   Sizing="InputSizing.Auto"
-                  Text="@_autoText"
-                  TextChanged="@((string v) => _autoText = v)"
-                  HelperText="Grows with content up to MaxLines" />
+                  @bind-Text="_autoText"
+                  HelperText="Sizing = Auto: Grows with content up to MaxLines" />
 
-    <MudText Typo="Typo.subtitle2">Sizing = Fill</MudText>
-    <MudPaper Outlined="true" Class="pa-4 d-flex" Style="height: 220px;">
-        <MudTextField T="string"
-                      Label="Fill"
-                      Variant="Variant.Text"
-                      Lines="3"
-                      MaxLines="10"
-                      Sizing="InputSizing.Fill"
-                      Text="@_fillText"
-                      TextChanged="@((string v) => _fillText = v)"
-                      Class="flex-grow-1"
-                      HelperText="Fills the available height" />
-    </MudPaper>
+    <MudTextField T="string"
+                  Label="Fill"
+                  Variant="Variant.Text"
+                  Sizing="InputSizing.Fill"
+                  @bind-Text="_fillText"
+                  HelperText="Sizing = Fill: Fills the available height" />
 </MudStack>
 
 @code {

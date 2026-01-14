@@ -1,4 +1,4 @@
-﻿namespace MudBlazor.Docs.Compiler;
+﻿﻿namespace MudBlazor.Docs.Compiler;
 
 public static class Paths
 {
@@ -13,51 +13,18 @@ public static class Paths
     {
         get
         {
-            static string? FindRepoSrcDir(string startPath)
+            var workingPath = Path.GetFullPath(".");
+            do
             {
-                if (string.IsNullOrWhiteSpace(startPath))
-                {
-                    return null;
-                }
-
-                var current = new DirectoryInfo(startPath);
-                while (current is not null)
-                {
-                    if (string.Equals(current.Name, "src", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var docsCandidate = Path.Combine(current.FullName, DocsDirectory);
-                        if (Directory.Exists(docsCandidate))
-                        {
-                            return current.FullName;
-                        }
-                    }
-
-                    current = current.Parent;
-                }
-
-                return null;
+                workingPath = Path.GetDirectoryName(workingPath);
             }
+            while (Path.GetFileName(workingPath) != "src" && !string.IsNullOrWhiteSpace(workingPath));
 
-            return FindRepoSrcDir(Directory.GetCurrentDirectory())
-                ?? FindRepoSrcDir(AppContext.BaseDirectory)
-                ?? string.Empty;
+            return workingPath!;
         }
     }
 
-    public static string DocsDirPath
-    {
-        get
-        {
-            var srcDirPath = SrcDirPath;
-            if (string.IsNullOrWhiteSpace(srcDirPath))
-            {
-                return string.Empty;
-            }
-
-            var docsDirPath = Path.Combine(srcDirPath, DocsDirectory);
-            return Directory.Exists(docsDirPath) ? docsDirPath : string.Empty;
-        }
-    }
+    public static string DocsDirPath => Directory.EnumerateDirectories(SrcDirPath, DocsDirectory).FirstOrDefault() ?? string.Empty;
 
     public static string DocsStringSnippetsDirPath => Path.Join(DocsDirPath, "Models");
 
