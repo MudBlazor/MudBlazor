@@ -10,12 +10,12 @@ namespace MudBlazor;
 public enum DataGridEditFormCloseBehavior
 {
     /// <summary>
-    /// Close the edit form after the edit operation has completed.
+    /// Close the edit form after <see cref="MudDataGrid{T}.CommittedItemChangesBehavior"/> has completed.
     /// </summary>
     Close,
 
     /// <summary>
-    /// Keep the edit form open after the edit operation has completed.
+    /// Keep the edit form open after <see cref="MudDataGrid{T}.CommittedItemChangesBehavior"/> has completed.
     /// </summary>
     KeepOpen
 }
