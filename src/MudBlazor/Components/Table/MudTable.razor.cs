@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
+    #nullable enable
 
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
@@ -130,7 +130,7 @@ namespace MudBlazor
             return RowEditableFunc(item);
         }
 
-#region Code for column based approach
+        #region Code for column based approach
         /// <summary>
         /// The columns for each row in this table.
         /// </summary>
@@ -162,7 +162,7 @@ namespace MudBlazor
                 Loading = true;
             }
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// The content shown when there are no rows to display.
@@ -228,7 +228,7 @@ namespace MudBlazor
             get => _items;
             set
             {
-                if (_items == value)
+                if (Equals(_items, value))
                 {
                     return;
                 }
@@ -406,7 +406,10 @@ namespace MudBlazor
                 if (value == null)
                 {
                     if (Context.Selection.Count == 0)
+                    {
                         return;
+                    }
+
                     Context.Selection = new HashSet<T>(_comparer);
                 }
                 else
@@ -423,8 +426,8 @@ namespace MudBlazor
         /// Checks if the row is selected.
         /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
         /// </summary>
-        protected bool IsCheckedRow(T item)
-            => _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
+        protected bool IsCheckedRow(T item) =>
+            _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
 
         /// <summary>
         /// The comparer used to determine selected items.
@@ -436,7 +439,7 @@ namespace MudBlazor
             get => _comparer;
             set
             {
-                if (value == _comparer)
+                if (Equals(value, _comparer))
                 {
                     return;
                 }
@@ -471,10 +474,7 @@ namespace MudBlazor
             set
             {
                 _groupBy = value;
-                if (_groupBy != null)
-                {
-                    _groupBy.Context = Context;
-                }
+                _groupBy?.Context = Context;
             }
         }
 
@@ -624,6 +624,7 @@ namespace MudBlazor
             return FilteredItems.Skip(n * pageSize).Take(pageSize);
         }
 
+        /// <inheritdoc/>
         protected override int NumPages => HasServerData
             ? (int)Math.Ceiling(_serverData.TotalItems / (double)RowsPerPage)
             : (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
@@ -802,6 +803,7 @@ namespace MudBlazor
             Context?.PagerStateHasChanged?.Invoke();
         }
 
+        /// <inheritdoc/>
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
@@ -811,6 +813,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc/>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
@@ -899,7 +902,10 @@ namespace MudBlazor
             if (_groupBy is not null)
             {
                 _groupBy.IsInitiallyExpanded = expand;
-                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.Expanded = _groupBy.IsInitiallyExpanded);
+                Context?.GroupRows
+                    .Where(gr => gr.GroupDefinition == _groupBy)
+                    .ToList()
+                    .ForEach(gr => gr.Expanded = _groupBy.IsInitiallyExpanded);
             }
         }
 
@@ -946,7 +952,7 @@ namespace MudBlazor
                 if (IsVirtualized)
                 {
                     var targetItemId = $"{_tableId}_row_{itemIndex}";
-                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, (double)ItemSize, targetItemId, ScrollBehavior.Smooth);
+                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, ItemSize, targetItemId, ScrollBehavior.Smooth);
                 }
                 else
                 {
@@ -972,7 +978,7 @@ namespace MudBlazor
 
                 if (IsVirtualized)
                 {
-                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, (double)ItemSize, targetItemId, ScrollBehavior.Auto);
+                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, ItemSize, targetItemId);
                 }
                 else
                 {
