@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public void ToDescriptionStringNew()
+        public void ToStringFast_ShouldReturnLoweredStrings()
         {
             Adornment.Start.ToStringFast(true).Should().Be("start");
             Align.Inherit.ToStringFast(true).Should().Be("inherit");
