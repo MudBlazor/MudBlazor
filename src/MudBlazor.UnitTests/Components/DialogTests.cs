@@ -82,33 +82,46 @@ namespace MudBlazor.UnitTests.Components
             cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(0);
 
-            //create 2 instances and dismiss all except for ones with CloseOnNavigation = false
+            // Close by using default close method
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>());
+            await comp.FindAll("button")[2].ClickAsync();
+            result = await dialogReference.Result;
+            result.Data.Should().BeNull();
+            result.DataType.Should().BeNull();
+            result.Canceled.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Opening and closing dialogs via navigation.
+        /// </summary>
+        [Test]
+        public async Task CloseOnNavigationTest()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var dialogService = Context.Services.GetRequiredService<IDialogService>();
+            dialogService.Should().NotBe(null);
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+            navigationManager.Should().NotBe(null);
+
+            //create 2 instances and dismiss all except for one with CloseOnNavigation = false
             var closeOnNavigationOptions = new DialogOptions
             {
                 CloseOnNavigation = false
             };
-            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>("test", options: closeOnNavigationOptions));
-            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>());
-            cont = comp.FindAll("div.mud-dialog-container");
+            await comp.InvokeAsync(async () => _ = await dialogService.ShowAsync<DialogOkCancel>("test", options: closeOnNavigationOptions));
+            await comp.InvokeAsync(async () => _ = await dialogService.ShowAsync<DialogOkCancel>());
+            var cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(2);
-            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
 
             var uri = new Uri(navigationManager.Uri);
             var query = HttpUtility.ParseQueryString(uri.Query);
             query["query"] = Guid.NewGuid().ToString();
             var newUri = $"{uri.GetLeftPart(UriPartial.Path)}?{query}";
-
             await comp.InvokeAsync(() => navigationManager.NavigateTo(newUri));
+
             cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(1);
-
-            // Close by using default close method
-            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>());
-            comp.FindAll("button")[2].Click();
-            result = await dialogReference.Result;
-            result.Data.Should().BeNull();
-            result.DataType.Should().BeNull();
-            result.Canceled.Should().BeFalse();
         }
 
         /// <summary>
