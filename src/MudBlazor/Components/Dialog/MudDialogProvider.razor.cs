@@ -170,12 +170,15 @@ namespace MudBlazor
 
         internal bool ShouldDismissOnNavigation(IDialogReference dialog)
         {
-            var close = dialog.Options?.CloseOnNavigation;
-            if (close == null)
+            if(dialog.Options == null)
             {
                 return true;
             }
-            return close.Value;
+            if (dialog.Options.CloseOnNavigation == null)
+            {
+                return true;
+            }
+            return dialog.Options.CloseOnNavigation.Value;
         }
 
         private Task AddInstanceAsync(IDialogReference dialog)
