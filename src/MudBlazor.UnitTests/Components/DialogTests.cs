@@ -240,12 +240,12 @@ namespace MudBlazor.UnitTests.Components
             var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
             comp1.Find("button").Click();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-overlay").Click());
+            comp.WaitForElement("div.mud-overlay").Click();
             await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
             comp1.Find("button").Click();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
                 TimeSpan.FromSeconds(5));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-overlay").Click());
+            comp.WaitForElement("div.mud-overlay").Click();
             await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
