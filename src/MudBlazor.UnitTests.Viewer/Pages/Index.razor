@@ -11,16 +11,16 @@
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
-        <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
+        <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Never" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
             <div class="test-viewer-drawer-inner">
                 <div class="test-viewer-sidebar-header">
-                    <MudText Typo="Typo.subtitle1" Class="test-viewer-title">Test Viewer</MudText>
+                    <MudText Typo="Typo.subtitle1" Class="test-viewer-title">MudBlazor Test Viewer</MudText>
                     <MudSpacer />
                     <MudTooltip Text="@ThemeLabel">
                         <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
                     </MudTooltip>
                     <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
-                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
+                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" Edge="Edge.End" />
                     </MudTooltip>
                 </div>
 
@@ -77,11 +77,7 @@
             </div>
 
             <div class="test-viewer-surface">
-                @if (_selectedType is null)
-                {
-                    <MudText Class="pa-4">Pick a test from the left.</MudText>
-                }
-                else
+                @if (_selectedType is not null)
                 {
                     @* Prevent double popovers! *@
                     <CascadingValue Name="UsePopoverProvider" Value="false" IsFixed="true">
@@ -114,7 +110,7 @@
     }
 
     .test-viewer-search {
-        padding: 12px;
+        padding: 0 12px 12px 12px;
         display: grid;
         gap: 6px;
     }
@@ -128,7 +124,6 @@
     .test-viewer-results {
         flex: 1;
         overflow: auto;
-        padding: 6px;
     }
 
     .test-viewer-result-row {
@@ -160,7 +155,7 @@
 
     .test-viewer-entry {
         justify-content: flex-start;
-        padding: 10px 12px;
+        padding: 10px 0 10px 10px;
         border-radius: var(--mud-default-borderradius);
         text-transform: none;
     }
@@ -175,7 +170,7 @@
     }
 
     .test-viewer-main {
-        padding: 12px;
+        padding: 0 12px 12px 12px;
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -183,7 +178,7 @@
     }
 
     .test-viewer-header {
-        padding: 4px 4px 0 4px;
+        padding: 12px 4px 0 4px;
     }
 
     .test-viewer-surface {
