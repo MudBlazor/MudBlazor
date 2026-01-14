@@ -11,8 +11,13 @@ public class MockNavigationManager
     public MockNavigationManager(string baseUri, string uri) =>
         Initialize(baseUri, uri);
 
-    protected override void NavigateToCore(string uri, bool forceLoad) =>
+    protected override void NavigateToCore(string uri, bool forceLoad)
+    {
         WasNavigateInvoked = true;
+        Uri = uri;
+        NotifyLocationChanged(true);
+    }
+
 
     public bool WasNavigateInvoked { get; private set; }
 }
