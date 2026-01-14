@@ -84,7 +84,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Close by using default close method
             await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>());
-            await comp.FindAll("button")[2].ClickAsync();
+            comp.FindAll("button")[2].Click();
             result = await dialogReference.Result;
             result.Data.Should().BeNull();
             result.DataType.Should().BeNull();
