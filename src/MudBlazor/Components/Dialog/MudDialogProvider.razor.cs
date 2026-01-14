@@ -157,7 +157,7 @@ namespace MudBlazor
         internal void SetOptions(Guid id, DialogOptions options)
         {
             var reference = GetDialogReference(id);
-            if(reference != null)
+            if (reference != null)
                 reference.InjectOptions(options);
         }
 
@@ -171,7 +171,7 @@ namespace MudBlazor
         internal bool ShouldDismissOnNavigation(IDialogReference dialog)
         {
             var close = dialog.Options?.CloseOnNavigation;
-            if(close == null)
+            if (close == null)
             {
                 return true;
             }
