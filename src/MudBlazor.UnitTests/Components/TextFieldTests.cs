@@ -1123,28 +1123,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with Sizing=Auto enabled should contain a sizing class.
+        /// A text field with sizing enabled should contain the correct sizing class.
         /// </summary>
-        [Test]
-        public void TextFieldAutoSizingHasClass()
+        [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
+        [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
+        public void TextFieldSizingHasClass(InputSizing sizing, string expectedClass)
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
-            .Add(p => p.Sizing, InputSizing.Auto));
+                .Add(p => p.Sizing, sizing));
 
-            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-sizing-auto");
-        }
-
-        /// <summary>
-        /// A text field with Sizing=Fixed enabled should contain a sizing class.
-        /// </summary>
-        [Test]
-        public void TextFieldFixedSizingHasClass()
-        {
-            var comp = Context.Render<MudTextField<string>>(parameters => parameters
-                .Add(p => p.Sizing, InputSizing.Fixed)
-                .Add(p => p.Lines, 3));
-
-            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-sizing-fixed");
+            comp.Find("div.mud-input").ClassList.Should().Contain(expectedClass);
         }
 
         /// <summary>
