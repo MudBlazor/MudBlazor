@@ -1,0 +1,57 @@
+@page "/components/footer"
+
+<DocsPage>
+    <DocsPageHeader Title="Footer" Component="@nameof(MudFooter)">
+        <Description>
+            <MudText>Use <CodeInline>MudFooter</CodeInline> to render a semantic <CodeInline>&lt;footer&gt;</CodeInline> with MudBlazor styling hooks.</MudText>
+            <MudText>Compose it with <MudLink Href="/components/paper">MudPaper</MudLink> to apply color, elevation, and surface styling.</MudText>
+        </Description>
+    </DocsPageHeader>
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    <MudText>Start with a basic footer and compose it with <CodeInline>MudPaper</CodeInline> for surface styling.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(FooterBasicExample)">
+                <FooterBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Behavior">
+                <Description>
+                    <MudText><CodeInline>Fixed</CodeInline> attaches to the bottom of the viewport.</MudText>
+                    <MudText><CodeInline>Sticky</CodeInline> attaches to the bottom of its scroll container.</MudText>
+                    <MudText>Select only one of them at a time.</MudText>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sticky Footer">
+                <Description>
+                    <MudText>Sticky footers attach to the bottom of their scroll container.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(FooterStickyExample)">
+                <FooterStickyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Fixed Footer">
+                <Description>
+                    <MudText>Fixed footers attach to the bottom of the viewport.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(FooterFixedExample)" ShowCode="false">
+                <iframe src="/iframe/docs/examples/footer/fixed" class="docs-iframe rounded mud-elevation-25" style="height: 450px; ">
+                    <FooterFixedExample />
+                </iframe>
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
