@@ -13,7 +13,7 @@ namespace MudBlazor
     public partial class MudTr : MudComponentBase
     {
         private const int DoubleClickDelayMs = 400;
-        
+
         private bool _checked;
         private bool _hasBeenCanceled;
         private bool _hasBeenCommitted;
@@ -175,7 +175,7 @@ namespace MudBlazor
             {
                 await _clickCancellationTokenSource.CancelAsync();
             }
-            
+
             // Process the double click
             var table = Context?.Table;
             if (table is null)
