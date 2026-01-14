@@ -33,8 +33,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-slider")
-                .AddClass($"mud-slider-{Size.ToDescriptionString()}")
-                .AddClass($"mud-slider-{Color.ToDescriptionString()}")
+                .AddClass($"mud-slider-{Size.ToStringFast(true)}")
+                .AddClass($"mud-slider-{Color.ToStringFast(true)}")
                 .AddClass("mud-slider-vertical", Vertical)
                 .AddClass(Class)
                 .Build();

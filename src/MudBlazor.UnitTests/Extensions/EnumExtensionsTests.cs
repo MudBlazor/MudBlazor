@@ -22,9 +22,9 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public void ToDescriptionStringNew()
         {
-            Adornment.Start.ToDescriptionString().Should().Be("start");
-            Align.Inherit.ToDescriptionString().Should().Be("inherit");
-            Breakpoint.Sm.ToDescriptionString().Should().Be("sm");
+            Adornment.Start.ToStringFast(true).Should().Be("start");
+            Align.Inherit.ToStringFast(true).Should().Be("inherit");
+            Breakpoint.Sm.ToStringFast(true).Should().Be("sm");
         }
 
         [TestCase(Adornment.Start, Edge.Start)]

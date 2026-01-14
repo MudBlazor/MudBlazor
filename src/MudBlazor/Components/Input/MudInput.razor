@@ -29,7 +29,7 @@
                   placeholder="@Placeholder"
                   disabled=@GetDisabledState()
                   readonly="@GetReadOnlyState()"
-                  inputmode="@InputMode.ToDescriptionString()"
+                  inputmode="@InputMode.ToStringFast(true)"
                   @onblur="@OnBlurredAsync"
                   @bind:event="@(Immediate ? "oninput" : "onchange")"
                   @bind:get="@_internalText"
@@ -63,7 +63,7 @@
                placeholder="@Placeholder"
                disabled=@GetDisabledState()
                readonly="@GetReadOnlyState()"
-               inputmode="@(InputType == InputType.Number ? null : InputMode.ToDescriptionString())"
+               inputmode="@(InputType == InputType.Number ? null : InputMode.ToStringFast(true))"
                pattern="@Pattern"
                @onkeydown="@InvokeKeyDownAsync"
                @onkeyup="@InvokeKeyUpAsync"

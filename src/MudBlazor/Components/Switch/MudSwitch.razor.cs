@@ -27,30 +27,30 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-switch")
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToStringFast(true)}")
             .Build();
 
         protected string SwitchClassname => new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
             .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
-            .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+            .AddClass($"mud-{UncheckedColor.ToStringFast(true)}-text hover:mud-{UncheckedColor.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
             .AddClass($"mud-switch-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass($"mud-checked", BoolValue)
-            .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
+            .AddClass($"mud-switch-base-{Size.ToStringFast(true)}")
             .Build();
 
         protected string TrackClassname => new CssBuilder("mud-switch-track")
-            .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
-            .AddClass($"mud-{UncheckedColor.ToDescriptionString()}", BoolValue == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}", BoolValue == true)
+            .AddClass($"mud-{UncheckedColor.ToStringFast(true)}", BoolValue == false)
             .Build();
 
-        protected string ThumbClassname => new CssBuilder($"mud-switch-thumb-{Size.ToDescriptionString()}")
+        protected string ThumbClassname => new CssBuilder($"mud-switch-thumb-{Size.ToStringFast(true)}")
             .AddClass("d-flex align-center justify-center")
             .Build();
 
         protected string SpanClassname => new CssBuilder("mud-switch-span")
-            .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
+            .AddClass($"mud-switch-span-{Size.ToStringFast(true)}")
             .Build();
 
         /// <summary>
