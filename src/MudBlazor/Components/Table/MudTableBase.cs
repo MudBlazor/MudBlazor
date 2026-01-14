@@ -754,7 +754,7 @@ namespace MudBlazor
         internal abstract Task InvokeServerLoadFunc();
 
         internal abstract Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object? item);
-    
+
         internal abstract Task FireRowDoubleClickEventAsync(MouseEventArgs args, MudTr mudTr, object? item);
 
         internal abstract Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr mudTr, object? item);
