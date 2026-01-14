@@ -157,7 +157,8 @@ namespace MudBlazor
         internal void SetOptions(Guid id, DialogOptions options)
         {
             var reference = GetDialogReference(id);
-            reference?.InjectOptions(options);
+            if(reference != null)
+                reference.InjectOptions(options);
         }
 
         internal void DismissInstance(Guid id, DialogResult result)
@@ -169,7 +170,12 @@ namespace MudBlazor
 
         internal bool ShouldDismissOnNavigation(IDialogReference dialog)
         {
-            return dialog.Options?.CloseOnNavigation == true;
+            var close = dialog.Options?.CloseOnNavigation;
+            if(close == null)
+            {
+                return true;
+            }
+            return close.Value;
         }
 
         private Task AddInstanceAsync(IDialogReference dialog)
