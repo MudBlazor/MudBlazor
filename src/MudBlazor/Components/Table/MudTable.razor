@@ -102,7 +102,7 @@
                                 }
                                 <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
                                         Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
-                                        Checked="@(IsCheckedRow(item))"
+                                        Checked="@(IsCheckedRow(item))" WaitForDoubleClick="@OnRowDoubleClick.HasDelegate"
                                         CheckedChanged="((value) => OnRowCheckboxChanged(value, item))">
 
                                     @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
@@ -219,7 +219,7 @@
                  var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndexForId)).Build();
              }
              <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)" Expandable="expandable"
-                Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })" WaitForDoubleClick="@OnRowDoubleClick.HasDelegate">
                 @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
                 {
                     <CascadingValue Value="@Validator" IsFixed="true">

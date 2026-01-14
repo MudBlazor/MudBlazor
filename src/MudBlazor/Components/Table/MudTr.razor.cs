@@ -12,10 +12,13 @@ namespace MudBlazor
     /// </summary>
     public partial class MudTr : MudComponentBase
     {
+        private const int DoubleClickDelayMs = 400;
+        
         private bool _checked;
         private bool _hasBeenCanceled;
         private bool _hasBeenCommitted;
         private bool _hasBeenClickedFirstTime;
+        private CancellationTokenSource? _clickCancellationTokenSource;
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
@@ -87,6 +90,15 @@ namespace MudBlazor
         public bool Expandable { get; set; }
 
         /// <summary>
+        /// Whether to wait for a second click after a single click event occurred.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
+        [Parameter]
+        public bool WaitForDoubleClick { get; set; }
+
+        /// <summary>
         /// Occurs when <see cref="Checked"/> has changed.
         /// </summary>
         [Parameter]
@@ -115,6 +127,27 @@ namespace MudBlazor
         /// <param name="args">The mouse coordinates of the click.</param>
         public async Task OnRowClickedAsync(MouseEventArgs args)
         {
+            // Wait for a potential second click
+            if (WaitForDoubleClick)
+            {
+                if (_clickCancellationTokenSource == null || _clickCancellationTokenSource.IsCancellationRequested)
+                {
+                    _clickCancellationTokenSource = new CancellationTokenSource(DoubleClickDelayMs);
+                }
+                else
+                {
+                    try
+                    {
+                        await Task.Delay(DoubleClickDelayMs, _clickCancellationTokenSource.Token);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            // Process the single click
             var table = Context?.Table;
             if (table is null)
             {
@@ -129,6 +162,28 @@ namespace MudBlazor
             }
 
             await table.FireRowClickEventAsync(args, this, Item);
+        }
+
+        /// <summary>
+        /// Occurs when this row is double-clicked.
+        /// </summary>
+        /// <param name="args">The mouse coordinates of the double click.</param>
+        public async Task OnRowDoubleClickedAsync(MouseEventArgs args)
+        {
+            // Cancel the last single click
+            if (_clickCancellationTokenSource != null)
+            {
+                await _clickCancellationTokenSource.CancelAsync();
+            }
+            
+            // Process the double click
+            var table = Context?.Table;
+            if (table is null)
+            {
+                return;
+            }
+
+            await table.FireRowDoubleClickEventAsync(args, this, Item);
         }
 
         /// <summary>
