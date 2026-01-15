@@ -11,7 +11,7 @@ window.mudInputSizing = {
         const marginBottom = parseFloat(compStyle.getPropertyValue('margin-bottom'));
 
         let maxHeight = 0;
-        let sizingMode = sizing ?? 'auto';
+        let sizingMode = sizing || 'auto';
 
         // Update parameters that affect the functionality and visuals of the sizing input.
         elem.updateParameters = function (newMaxLines, newSizing) {
@@ -40,7 +40,7 @@ window.mudInputSizing = {
             }
 
             if (sizingMode === 'fill') {
-                const container = elem.closest('.mud-input') ?? elem.parentElement;
+                const container = elem.closest('.mud-input') || elem.parentElement;
                 const containerHeight = container ? container.clientHeight : 0;
                 const minHeight = lineHeight * elem.rows + paddingTop;
                 const availableHeight = containerHeight > 0
