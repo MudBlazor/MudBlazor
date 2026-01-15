@@ -38,9 +38,13 @@ jobs:
           # We only need the latest SDK for publishing
           dotnet-version: 10.x
 
+      - name: Restore dependencies
+        working-directory: src/MudBlazor
+        run: dotnet restore
+
       - name: Pack nuget package
         working-directory: ./src/MudBlazor
-        run: dotnet pack -c Release --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
+        run: dotnet pack -c Release --no-restore --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
 
       - name: Check package contains css
         shell: pwsh
