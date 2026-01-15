@@ -1,39 +1,65 @@
 #!/usr/bin/env dotnet
 
 // This is a wrapper script to setup and run Bun. It will use the globally installed Bun if available.
-// If it is not available, or the version is older than the minimum required version, it will download 
+// If it is not available, or the version is older than the minimum required version, it will download
 // and install Bun locally in the user's AppData folder.
 // Usage: "dotnet tools/bun.cs -- [bun arguments]"
 
-using System.Text;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 const string BunMinVersion = "1.3.0";
 Dictionary<Platform, string> DownloadUrls = new()
 {
-    { Platform.WindowsX64, "https://github.com/oven-sh/bun/releases/latest/download/bun-windows-x64-baseline.zip" },
-    { Platform.LinuxX64, "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64-baseline.zip" },
-    { Platform.LinuxArm64, "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-aarch64.zip" },
-    { Platform.MacOsX64, "https://github.com/oven-sh/bun/releases/latest/download/bun-darwin-x64.zip" },
-    { Platform.MacOsArm64, "https://github.com/oven-sh/bun/releases/latest/download/bun-darwin-aarch64.zip" },
+    {
+        Platform.WindowsX64,
+        "https://github.com/oven-sh/bun/releases/latest/download/bun-windows-x64-baseline.zip"
+    },
+    {
+        Platform.LinuxX64,
+        "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64-baseline.zip"
+    },
+    {
+        Platform.LinuxArm64,
+        "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-aarch64.zip"
+    },
+    {
+        Platform.MacOsX64,
+        "https://github.com/oven-sh/bun/releases/latest/download/bun-darwin-x64.zip"
+    },
+    {
+        Platform.MacOsArm64,
+        "https://github.com/oven-sh/bun/releases/latest/download/bun-darwin-aarch64.zip"
+    },
 };
 
 var workingDirectory = Environment.CurrentDirectory;
 var arguments = Environment.GetCommandLineArgs().Skip(1).ToArray();
 
-Platform platform = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Environment.Is64BitOperatingSystem && RuntimeInformation.ProcessArchitecture == Architecture.X64
-    ? Platform.WindowsX64
-    : RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Environment.Is64BitOperatingSystem && RuntimeInformation.ProcessArchitecture == Architecture.X64
+Platform platform =
+    RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+    && Environment.Is64BitOperatingSystem
+    && RuntimeInformation.ProcessArchitecture == Architecture.X64
+        ? Platform.WindowsX64
+    : RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+    && Environment.Is64BitOperatingSystem
+    && RuntimeInformation.ProcessArchitecture == Architecture.X64
         ? Platform.MacOsX64
-    : RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Environment.Is64BitOperatingSystem && RuntimeInformation.ProcessArchitecture == Architecture.Arm64
+    : RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+    && Environment.Is64BitOperatingSystem
+    && RuntimeInformation.ProcessArchitecture == Architecture.Arm64
         ? Platform.MacOsArm64
-    : RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Environment.Is64BitOperatingSystem && RuntimeInformation.ProcessArchitecture == Architecture.X64
+    : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+    && Environment.Is64BitOperatingSystem
+    && RuntimeInformation.ProcessArchitecture == Architecture.X64
         ? Platform.LinuxX64
-    : RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Environment.Is64BitOperatingSystem && RuntimeInformation.ProcessArchitecture == Architecture.Arm64
+    : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+    && Environment.Is64BitOperatingSystem
+    && RuntimeInformation.ProcessArchitecture == Architecture.Arm64
         ? Platform.LinuxArm64
     : throw new NotSupportedException("Unsupported platform");
 
@@ -72,8 +98,8 @@ async Task RunBunAsync(string bunExecutable, string[] args)
             RedirectStandardError = false,
             UseShellExecute = false,
             CreateNoWindow = true,
-            WorkingDirectory = workingDirectory
-        }
+            WorkingDirectory = workingDirectory,
+        },
     };
     process.StartInfo.ArgumentList.Clear();
     foreach (var a in args)
@@ -89,7 +115,7 @@ async Task<bool> IsGlobalInstalledAsync()
     var which = platform switch
     {
         Platform.WindowsX64 => "where",
-        _ => "which"
+        _ => "which",
     };
 
     // first check if bunExecutable exists
@@ -103,8 +129,8 @@ async Task<bool> IsGlobalInstalledAsync()
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
-            WorkingDirectory = workingDirectory
-        }
+            WorkingDirectory = workingDirectory,
+        },
     };
     whichProcess.Start();
     string whichOutput = await whichProcess.StandardOutput.ReadToEndAsync();
@@ -129,8 +155,8 @@ async Task<bool> IsSupportedVersionAsync(string bunExecutable)
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
-            WorkingDirectory = workingDirectory
-        }
+            WorkingDirectory = workingDirectory,
+        },
     };
     process.Start();
     string output = await process.StandardOutput.ReadToEndAsync();
@@ -142,11 +168,15 @@ async Task<bool> IsSupportedVersionAsync(string bunExecutable)
 
     var (major, minor, patch) = ParseVersion(output.Trim());
     var (minMajor, minMinor, minPatch) = ParseVersion(BunMinVersion);
-    if (major < minMajor ||
-        (major == minMajor && minor < minMinor) ||
-        (major == minMajor && minor == minMinor && patch < minPatch))
+    if (
+        major < minMajor
+        || (major == minMajor && minor < minMinor)
+        || (major == minMajor && minor == minMinor && patch < minPatch)
+    )
     {
-        Console.WriteLine($"Bun version {output.Trim()} is older than the required version {BunMinVersion}");
+        Console.WriteLine(
+            $"Bun version {output.Trim()} is older than the required version {BunMinVersion}"
+        );
         return false;
     }
 
@@ -156,19 +186,27 @@ async Task<bool> IsSupportedVersionAsync(string bunExecutable)
 (int, int, int) ParseVersion(string version)
 {
     var m = Regex.Match(version, @"\b(\d+)\.(\d+)\.(\d+)\b");
-    if (!m.Success) throw new FormatException("Invalid version format");
-    return (int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value));
+    if (!m.Success)
+        throw new FormatException("Invalid version format");
+    return (
+        int.Parse(m.Groups[1].Value),
+        int.Parse(m.Groups[2].Value),
+        int.Parse(m.Groups[3].Value)
+    );
 }
 
 async Task<string> InstallAsync()
 {
-
-    string installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MudBlazor", "bun");
+    string installDir = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "MudBlazor",
+        "bun"
+    );
     Directory.CreateDirectory(installDir);
     var exeName = platform switch
     {
         Platform.WindowsX64 => "bun.exe",
-        _ => "bun"
+        _ => "bun",
     };
 
     // Check if bun is already installed
@@ -215,7 +253,12 @@ async Task<string> InstallAsync()
     using var httpClient = new HttpClient();
     var response = await httpClient.GetAsync(downloadUrl);
     response.EnsureSuccessStatusCode();
-    using var zipFileStream = new FileStream(tempZipPath, FileMode.Create, FileAccess.Write, FileShare.None);
+    using var zipFileStream = new FileStream(
+        tempZipPath,
+        FileMode.Create,
+        FileAccess.Write,
+        FileShare.None
+    );
     await response.Content.CopyToAsync(zipFileStream);
     zipFileStream.Close();
 
@@ -265,7 +308,10 @@ async Task<IDisposable> AcquireInstallLockAsync(TimeSpan timeout)
         // write pid info as best-effort metadata (non-essential)
         try
         {
-            File.WriteAllText(MutexReleaser.InstallLockPath, $"{Process.GetCurrentProcess().Id}|{DateTime.UtcNow:o}");
+            File.WriteAllText(
+                MutexReleaser.InstallLockPath,
+                $"{Process.GetCurrentProcess().Id}|{DateTime.UtcNow:o}"
+            );
         }
         catch
         {
@@ -280,20 +326,24 @@ async Task<IDisposable> AcquireInstallLockAsync(TimeSpan timeout)
         {
             mutex.Dispose();
         }
-        catch
-        {
-
-        }
+        catch { }
         throw;
     }
 }
 
 class MutexReleaser : IDisposable
 {
-    public static string InstallLockPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MudBlazor", "bun", "install.lock");
+    public static string InstallLockPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "MudBlazor",
+        "bun",
+        "install.lock"
+    );
 
     private readonly Mutex _mutex;
+
     public MutexReleaser(Mutex mutex) => _mutex = mutex;
+
     public void Dispose()
     {
         try
@@ -321,5 +371,5 @@ enum Platform
     LinuxX64,
     LinuxArm64,
     MacOsX64,
-    MacOsArm64
+    MacOsArm64,
 }
