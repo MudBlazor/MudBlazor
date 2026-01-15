@@ -39,148 +39,148 @@
                     @if (HeaderContent != null || Columns != null)
                     {
                         <thead class="@HeadClassname">
-                        @if (CustomHeader)
-                        {
-                            @HeaderContent
-                        }
-                        else
-                        {
-                            <MudTHeadRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
-                                @if (HeaderContent != null)
-                                {
-                                    @HeaderContent
-                                }
+                            @if (CustomHeader)
+                            {
+                                @HeaderContent
+                            }
+                            else
+                            {
+                                <MudTHeadRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
+                                    @if (HeaderContent != null)
+                                    {
+                                        @HeaderContent
+                                    }
 
-                                @if (Columns != null)
-                                {
-                                    @Columns(Def)
-                                }
-                            </MudTHeadRow>
-                        }
-                        @if (Loading)
-                        {
-                            <tr>
-                                <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
-                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true"/>
-                                </th>
-                            </tr>
-                        }
+                                    @if (Columns != null)
+                                    {
+                                        @Columns(Def)
+                                    }
+                                </MudTHeadRow>
+                            }
+                            @if (Loading)
+                            {
+                                <tr>
+                                    <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
+                                        <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true"/>
+                                    </th>
+                                </tr>
+                            }
                         </thead>
                     }
                     else if (Loading)
                     {
                         <thead class="@HeadClassname">
-                        <tr class="mud-table-row">
-                            <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
-                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true"/>
-                            </th>
-                        </tr>
+                            <tr class="mud-table-row">
+                                <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
+                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true"/>
+                                </th>
+                            </tr>
                         </thead>
                     }
                     <tbody class="mud-table-body">
-                    @if (GroupBy != null)
-                    {
-                        foreach (var group in GroupItemsPage)
+                        @if (GroupBy != null)
                         {
-                            <MudTableGroupRow @key="group.Key" T="T" GroupDefinition="GroupBy" Items="group"
-                                              Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
-                                              HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" HeaderTemplate="@GroupHeaderTemplate"
-                                              FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle" FooterTemplate="@GroupFooterTemplate"/>
+                            foreach (var group in GroupItemsPage)
+                            {
+                                <MudTableGroupRow @key="group.Key" T="T" GroupDefinition="GroupBy" Items="group"
+                                                  Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
+                                                  HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" HeaderTemplate="@GroupHeaderTemplate"
+                                                  FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle" FooterTemplate="@GroupFooterTemplate"/>
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (CurrentPageItems != null && CurrentPageItems.Any())
+                        else
                         {
-                            <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
-                                @{
-                                    var itemIndex = FilteredItems.ToList().IndexOf(item);
-                                    var generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
-                                    var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndex)).Build();
-                                    var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndex)).Build();
-                                }
-                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
-                                       Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
-                                       Disabled="IsRowDisabled(item)" DisabledClass="@DisabledRowClass" Checked="@(IsCheckedRow(item))"
-                                       CheckedChanged="@(value => OnRowCheckboxChanged(value, item))">
-                                    @if (!ReadOnly && Editable && Equals(_editingItem, item))
-                                    {
-                                        <CascadingValue Value="@Validator" IsFixed="true">
-                                            @if (RowEditingTemplate != null)
-                                            {
-                                                @RowEditingTemplate(item)
-                                            }
-                                            @if (Columns != null)
-                                            {
-                                                @Columns(item)
-                                            }
-                                        </CascadingValue>
+                            if (CurrentPageItems != null && CurrentPageItems.Any())
+                            {
+                                <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                    @{
+                                        var itemIndex = FilteredItems.ToList().IndexOf(item);
+                                        var generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
+                                        var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndex)).Build();
+                                        var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndex)).Build();
                                     }
-                                    else
-                                    {
-                                        if (RowTemplate != null)
+                                    <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
+                                           Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
+                                           Disabled="IsRowDisabled(item)" DisabledClass="@DisabledRowClass" Checked="@(IsCheckedRow(item))"
+                                           CheckedChanged="@(value => OnRowCheckboxChanged(value, item))">
+                                        @if (!ReadOnly && Editable && Equals(_editingItem, item))
                                         {
-                                            @RowTemplate(item)
-                                        }
-
-                                        if (Columns != null)
-                                        {
-                                            @Columns(item)
-                                        }
-                                    }
-                                </MudTr>
-                                @if (ChildRowContent != null)
-                                {
-                                    @ChildRowContent(item)
-                                }
-                            </MudVirtualize>
-                        }
-                    }
-                    @if (!(CurrentPageItems is not null && CurrentPageItems.Any()))
-                    {
-                        if (Loading && LoadingContentBody != null)
-                        {
-                            @LoadingContentBody
-                        }
-                        else if (Loading ? LoadingContent != null : NoRecordsContent != null)
-                        {
-                            <tr>
-                                <th colspan="1000" class="mud-table-empty-row">
-                                    <div Class="my-3">
-                                        @if (Loading)
-                                        {
-                                            @LoadingContent
+                                            <CascadingValue Value="@Validator" IsFixed="true">
+                                                @if (RowEditingTemplate != null)
+                                                {
+                                                    @RowEditingTemplate(item)
+                                                }
+                                                @if (Columns != null)
+                                                {
+                                                    @Columns(item)
+                                                }
+                                            </CascadingValue>
                                         }
                                         else
                                         {
-                                            @NoRecordsContent
+                                            if (RowTemplate != null)
+                                            {
+                                                @RowTemplate(item)
+                                            }
+
+                                            if (Columns != null)
+                                            {
+                                                @Columns(item)
+                                            }
                                         }
-                                    </div>
-                                </th>
-                            </tr>
+                                    </MudTr>
+                                    @if (ChildRowContent != null)
+                                    {
+                                        @ChildRowContent(item)
+                                    }
+                                </MudVirtualize>
+                            }
                         }
-                    }
+                        @if (!(CurrentPageItems is not null && CurrentPageItems.Any()))
+                        {
+                            if (Loading && LoadingContentBody != null)
+                            {
+                                @LoadingContentBody
+                            }
+                            else if (Loading ? LoadingContent != null : NoRecordsContent != null)
+                            {
+                                <tr>
+                                    <th colspan="1000" class="mud-table-empty-row">
+                                        <div Class="my-3">
+                                            @if (Loading)
+                                            {
+                                                @LoadingContent
+                                            }
+                                            else
+                                            {
+                                                @NoRecordsContent
+                                            }
+                                        </div>
+                                    </th>
+                                </tr>
+                            }
+                        }
                     </tbody>
                     @if (FooterContent != null || Columns != null)
                     {
                         <tfoot class="@FootClassname">
-                        @if (CustomFooter)
-                        {
-                            @FooterContent
-                        }
-                        else
-                        {
-                            <MudTFootRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
-                                @if (FooterContent != null)
-                                {
-                                    @FooterContent
-                                }
-                                @if (Columns != null)
-                                {
-                                    @Columns(Def)
-                                }
-                            </MudTFootRow>
-                        }
+                            @if (CustomFooter)
+                            {
+                                @FooterContent
+                            }
+                            else
+                            {
+                                <MudTFootRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
+                                    @if (FooterContent != null)
+                                    {
+                                        @FooterContent
+                                    }
+                                    @if (Columns != null)
+                                    {
+                                        @Columns(Def)
+                                    }
+                                </MudTFootRow>
+                            }
                         </tfoot>
                     }
                 </table>
@@ -203,7 +203,7 @@
         RenderFragment rootNode =
             @<text>
                  <MudVirtualize Enabled="@Virtualize" Items="@source?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item" ChildContent="@child()"/>
-        </text>;
+            </text>;
 
         RenderFragment<T> child() => item =>
             @<text>
@@ -247,9 +247,8 @@
                  {
                      @ChildRowContent(item)
                  }
-        </text>;
+            </text>;
 
         return rootNode;
     }
 }
-
