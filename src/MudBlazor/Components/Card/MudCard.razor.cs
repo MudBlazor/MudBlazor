@@ -46,6 +46,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
         public bool Outlined { get; set; }
+        
+        /// <summary>
+        /// Whether card contents (<see cref="MudCardHeader"/>, <see cref="MudCardContent"/> or <see cref="MudCardActions"/>) should use padding.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Card.Appearance)]
+        public bool ContentPadding { get; set; } = true;
 
         /// <summary>
         /// The content within this component.

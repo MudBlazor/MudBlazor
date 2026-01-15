@@ -1,11 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudCard>
+<MudCard ContentPadding="_contentPadding">
     <MudCardContent>
         <MudText>Story of the day</MudText>
         <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary">Learn more</MudButton>
+        <MudSwitch Label="Content padding" @bind-Value="_contentPadding" Color="Color.Primary"/>
     </MudCardActions>
 </MudCard>
+
+@code {
+    private bool _contentPadding = true;
+}
