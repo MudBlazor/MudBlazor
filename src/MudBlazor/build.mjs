@@ -1,3 +1,10 @@
+/**
+ * Build script for MudBlazor JS and SCSS assets.
+ *
+ * Usage:
+ *   bun run build.mjs
+ */
+
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,8 +29,9 @@ async function buildJS() {
     process.exit(1);
   }
 
-  let files = fs.readdirSync(jsInputDir)
-    .filter(f => f.endsWith(".js"))
+  let files = fs
+    .readdirSync(jsInputDir)
+    .filter((f) => f.endsWith(".js"))
     .sort();
 
   if (files.length === 0) {
@@ -55,17 +63,14 @@ function buildSCSS() {
   const result = sass.compile(scssInput, {
     style: "compressed",
     sourceMap: false,
-    silenceDeprecations: [
-      "import",
-      "global-builtin"
-    ]
+    silenceDeprecations: ["import", "global-builtin"],
   });
 
   // Write SCSS bundle
   console.log("Writing SCSS bundle", scssOutput);
   fs.mkdirSync(path.dirname(scssOutput), { recursive: true });
   fs.writeFileSync(scssOutput, result.css);
-};
+}
 
 await buildJS();
 buildSCSS();
