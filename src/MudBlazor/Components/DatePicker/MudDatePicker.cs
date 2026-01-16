@@ -109,11 +109,11 @@ namespace MudBlazor
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
-                return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
+                return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToStringFast(true)}").Build();
             if (day == TimeProvider.GetLocalNow().Date)
                 return b.AddClass("mud-current mud-button-outlined")
                         .AddClass(
-                            $"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text")
+                            $"mud-button-outlined-{Color.ToStringFast(true)} mud-{Color.ToStringFast(true)}-text")
                         .Build();
             return b.Build();
         }

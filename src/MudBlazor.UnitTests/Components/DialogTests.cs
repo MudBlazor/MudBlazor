@@ -233,29 +233,20 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            await ImproveChanceOfSuccess(async () =>
-            {
-                var comp = Context.Render<MudDialogProvider>();
-                comp.Markup.Trim().Should().BeEmpty();
-                var service = Context.Services.GetRequiredService<IDialogService>();
-                service.Should().NotBe(null);
-                // displaying the component with the inline dialog only renders the open button
-                var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
-                // open the dialog
-                comp1.Find("button").Click();
-                await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
-                // close by click outside
-                comp.Find("div.mud-overlay").Click();
-                await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
-                // open again
-                comp1.Find("button").Click();
-                await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
-                    TimeSpan.FromSeconds(5));
-                // close again by click outside
-                await comp.WaitForAssertionAsync(() => comp.Find("div.mud-overlay").Should().NotBeNull());
-                comp.Find("div.mud-overlay").Click();
-                await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
-            });
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
+            comp1.Find("button").Click();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
+            comp.WaitForElement("div.mud-overlay").Click();
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+            comp1.Find("button").Click();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
+                TimeSpan.FromSeconds(5));
+            comp.WaitForElement("div.mud-overlay").Click();
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>

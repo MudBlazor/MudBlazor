@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Utilities.Debounce;
 using NUnit.Framework;
 
@@ -43,7 +44,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_MultipleCallsOutsideInterval_ExecutesMultipleTimes()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
         var counter = 0;
         Task Invoke()
         {
@@ -52,18 +54,20 @@ public class DebounceDispatcherTests
             return Task.CompletedTask;
         }
 
-        // Act
-        await debounceDispatcher.DebounceAsync(Invoke);
+        // Act & Assert
+        var task1 = debounceDispatcher.DebounceAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task1;
         counter.Should().Be(1);
 
-        await Task.Delay(150);
-        await debounceDispatcher.DebounceAsync(Invoke);
+        var task2 = debounceDispatcher.DebounceAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task2;
         counter.Should().Be(2);
 
-        await Task.Delay(150);
-        await debounceDispatcher.DebounceAsync(Invoke);
-
-        // Assert
+        var task3 = debounceDispatcher.DebounceAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task3;
         counter.Should().Be(3);
     }
 
@@ -678,7 +682,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_LeadingMode_ResetsAfterInterval()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider: timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -688,14 +693,16 @@ public class DebounceDispatcherTests
         }
 
         // Act - First call executes immediately
-        await debounceDispatcher.DebounceAsync(TrackingAction);
+        var task1 = debounceDispatcher.DebounceAsync(TrackingAction);
+        await task1;
         executionCount.Should().Be(1);
 
         // Wait for interval to pass
-        await Task.Delay(150);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
 
         // Next call should execute immediately again
-        await debounceDispatcher.DebounceAsync(TrackingAction);
+        var task2 = debounceDispatcher.DebounceAsync(TrackingAction);
+        await task2;
 
         // Assert
         executionCount.Should().Be(2);

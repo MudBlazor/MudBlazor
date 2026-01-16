@@ -16,7 +16,7 @@ namespace MudBlazor
     public partial class MudAlert : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-alert")
-            .AddClass($"mud-alert-{Variant.ToDescriptionString()}-{Severity.ToDescriptionString()}")
+            .AddClass($"mud-alert-{Variant.ToStringFast(true)}-{Severity.ToStringFast(true)}")
             .AddClass($"mud-dense", Dense)
             .AddClass($"mud-square", Square)
             .AddClass($"mud-elevation-{Elevation}")
@@ -24,7 +24,7 @@ namespace MudBlazor
             .Build();
 
         protected string ClassPosition => new CssBuilder("mud-alert-position")
-            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToDescriptionString()}")
+            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToStringFast(true)}")
             .Build();
 
         /// <summary>
