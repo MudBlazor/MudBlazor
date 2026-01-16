@@ -3,22 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
-
-  <!--Outside Visual Studio SolutionDir is not available-->
-  <PropertyGroup>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
-  </PropertyGroup>
   
   <!--Execute the code generator-->
-  <Target Name="GenerateTests" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="GenerateTests" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
     <!--Command-line for the code generator-->
     <Message Text="Generating Tests" Importance="high" />
-    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj&quot;" />
+    <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
-  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="GenerateTests">
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="GenerateTests">
     <ItemGroup>
       <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
       <!--This avoids full recompile after adding generated files-->
@@ -74,6 +69,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
     <ProjectReference Include="..\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj" />
+    <ProjectReference Include="..\MudBlazor.UnitTests.Docs.Generator\MudBlazor.UnitTests.Docs.Generator.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
   </ItemGroup>
 
