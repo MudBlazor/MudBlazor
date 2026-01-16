@@ -18,7 +18,7 @@ public partial class MudGrid : MudComponentBase
     protected string Classname =>
         new CssBuilder("mud-grid")
             .AddClass($"mud-grid-spacing-xs-{Spacing.ToString()}")
-            .AddClass($"justify-{Justify.ToDescriptionString()}")
+            .AddClass($"justify-{Justify.ToStringFast(true)}")
             .AddClass(Class)
             .Build();
 

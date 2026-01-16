@@ -57,9 +57,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public IJsApiService? JsApiService { get; set; }
 
     protected string Classname => new CssBuilder("mud-chip")
-        .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
-        .AddClass($"mud-chip-size-{GetSize().ToDescriptionString()}")
-        .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
+        .AddClass($"mud-chip-{GetVariant().ToStringFast(true)}")
+        .AddClass($"mud-chip-size-{GetSize().ToStringFast(true)}")
+        .AddClass($"mud-chip-color-{GetColor().ToStringFast(true)}")
         .AddClass("mud-clickable", IsButton || IsAnchor)
         .AddClass("mud-ripple", IsButton && GetRipple())
         .AddClass("mud-chip-label", GetLabel())

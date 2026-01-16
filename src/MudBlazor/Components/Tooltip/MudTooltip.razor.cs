@@ -30,10 +30,10 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass("d-flex")
             .AddClass("mud-tooltip-default", Color == Color.Default)
-            .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
+            .AddClass($"mud-tooltip-{ConvertPlacement().ToStringFast(true)}")
             .AddClass("mud-tooltip-arrow", Arrow)
-            .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+            .AddClass($"mud-border-{Color.ToStringFast(true)}", Arrow && Color != Color.Default)
+            .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
             .AddClass(Class)
             .Build();
 

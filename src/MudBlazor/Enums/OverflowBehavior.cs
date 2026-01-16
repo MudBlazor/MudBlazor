@@ -3,12 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Controls how a component behaves when the browser is scrolled.
 /// </summary>
+[EnumExtensions]
 public enum OverflowBehavior
 {
     /// <summary>
