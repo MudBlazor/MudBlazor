@@ -846,21 +846,23 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Find("input").InputAsync("1"));
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            // trigger delayed re-render
-            await comp.InvokeAsync(() => comp.Find("button#re-render").ClickAsync());
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
+            await Task.Delay(10);
+            // imitate "typing in progress" by extending the debounce interval while a re-render occurs
             var currentText = "1";
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            var delay = comp.Instance.DebounceInterval / 2;
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
                 await comp.InvokeAsync(() => comp.Find("input").InputAsync(currentText));
-                await Task.Delay(delay);
-                elapsedTime += delay;
+                if (i == 1)
+                {
+                    comp.Render();
+                }
+                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
             }
             // after the final debounce, the value should be updated without swallowing any user input
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await Task.Delay(10);
             await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(converter.ConvertBack(currentText)));
             await comp.WaitForAssertionAsync(() => numericField.ReadText.Should().Be(currentText));
         }
