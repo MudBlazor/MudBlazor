@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    [EnumExtensions]
     public enum InputType
     {
         [Description("text")]

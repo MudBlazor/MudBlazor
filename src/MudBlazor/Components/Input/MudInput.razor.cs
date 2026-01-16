@@ -33,7 +33,7 @@ namespace MudBlazor
                               Adornment == Adornment.Start ||
                               !string.IsNullOrWhiteSpace(Placeholder) ||
                               ShrinkLabel))
-                .AddClass($"mud-input-sizing-{Sizing.ToDescriptionString()}")
+                .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
                 .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
@@ -51,7 +51,7 @@ namespace MudBlazor
 
         protected internal override InputType GetInputType() => InputType;
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        protected string InputTypeString => InputType.ToStringFast(true);
 
         /// <summary>
         /// The type of input collected by this component.

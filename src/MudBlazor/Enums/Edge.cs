@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
@@ -11,6 +12,7 @@ namespace MudBlazor;
 /// Depending on the design requirements, this margin can be applied at the start or end of an element,
 /// or not applied at all (default behavior).
 /// </remarks>
+[EnumExtensions]
 public enum Edge
 {
     /// <summary>

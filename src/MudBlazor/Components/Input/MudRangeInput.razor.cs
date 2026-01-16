@@ -180,7 +180,7 @@ namespace MudBlazor
             }
         }
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        protected string InputTypeString => InputType.ToStringFast(true);
 
         protected bool IsClearable() => Clearable && ReadValue is not null;
 

@@ -1130,116 +1130,101 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
         {
-            await ImproveChanceOfSuccess(async () =>
-            {
-                var comp = Context.Render<AutocompleteChangeBoundObjectTest>();
-                var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
-                var autocomplete = autocompleteComponent.Instance;
-                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 0));
-                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.CoerceText, true));
-                // TextUpdateSuppression has been removed - text now always updates
-                // check initial state
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Florida"));
-                autocomplete.ReadValue.Should().Be("Florida");
-                autocomplete.ReadText.Should().Be("Florida");
+            var comp = Context.Render<AutocompleteChangeBoundObjectTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompleteComponent.Instance;
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 0));
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.CoerceText, true));
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Florida"));
+            autocomplete.ReadValue.Should().Be("Florida");
+            autocomplete.ReadText.Should().Be("Florida");
 
-                //Get the button to toggle the value
-                comp.Find(".toggle-value-button").Click();
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Georgia"));
-                autocomplete.ReadValue.Should().Be("Georgia");
-                autocomplete.ReadText.Should().Be("Georgia");
+            comp.Find(".toggle-value-button").Click();
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Georgia"));
+            autocomplete.ReadValue.Should().Be("Georgia");
+            autocomplete.ReadText.Should().Be("Georgia");
 
-                //Change the value of the current bound value component
-                //insert "Alabam"
-                autocompleteComponent.Find("input").Input("Alabam");
-                await Task.Delay(100);
+            autocompleteComponent.Find("input").Input("Alabam");
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabam"));
 
-                //press Enter key
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
-                //ensure autocomplete is closed and new value is committed/bound
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "NumpadEnter" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "NumpadEnter" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
+            autocomplete.ReadValue.Should().Be("Alabama");
+            autocomplete.ReadText.Should().Be("Alabama");
 
-                //The value of the input should be Alabama
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
-                autocomplete.ReadValue.Should().Be("Alabama");
-                autocomplete.ReadText.Should().Be("Alabama");
+            comp.Find(".toggle-value-button").Click();
 
-                //Again Change the bound object
-                comp.Find(".toggle-value-button").Click();
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Florida"));
+            autocomplete.ReadValue.Should().Be("Florida");
+            autocomplete.ReadText.Should().Be("Florida");
 
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Florida"));
-                autocomplete.ReadValue.Should().Be("Florida");
-                autocomplete.ReadText.Should().Be("Florida");
+            comp.Find(".toggle-value-button").Click();
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
+            autocomplete.ReadValue.Should().Be("Alabama");
+            autocomplete.ReadText.Should().Be("Alabama");
 
-                //Change the bound object back and check again.
-                comp.Find(".toggle-value-button").Click();
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
-                autocomplete.ReadValue.Should().Be("Alabama");
-                autocomplete.ReadText.Should().Be("Alabama");
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Tab" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectValueOnTab, true));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectValueOnTab, true));
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("Alabama"));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true }));
+            await comp.WaitForAssertionAsync(() => autocompleteComponent.Instance.ReadValue.Should().Be(null));
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true }));
-                await comp.WaitForAssertionAsync(() => autocompleteComponent.Instance.ReadValue.Should().Be(null));
+            await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CoerceText, true));
+            await comp.InvokeAsync(() => autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
+            await autocompleteComponent.Find("input").InputAsync("abc");
+            await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
+            await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
-                //Check popover is closed if coerce text is true (it fixed with a PR)
-                await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CoerceText, true));
-                await comp.InvokeAsync(() => autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
-                await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
-                await autocompleteComponent.Find("input").InputAsync("abc");
-                await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
-                await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            await autocompleteComponent.Find("input").InputAsync("");
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
-                await autocompleteComponent.Find("input").InputAsync("");
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
-
-                await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
-                await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
-            });
+            await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
         }
 
         [Test]
