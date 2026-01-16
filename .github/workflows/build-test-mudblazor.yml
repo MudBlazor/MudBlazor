@@ -14,7 +14,7 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # We should switch to a newer version and config files. Then we can also cache the dependency.
       - name: Install eslint
