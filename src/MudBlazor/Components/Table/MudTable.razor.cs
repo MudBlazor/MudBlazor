@@ -225,12 +225,6 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        /// <summary>
-        /// Occurs when a row has been double-clicked.
-        /// </summary>
-        [Parameter]
-        public EventCallback<TableRowClickEventArgs<T>> OnRowDoubleClick { get; set; }
-
         internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
@@ -240,17 +234,6 @@ namespace MudBlazor
             }
             catch (Exception) { /*ignore*/}
             await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, row, item));
-        }
-
-        internal override async Task FireRowDoubleClickEventAsync(MouseEventArgs args, MudTr row, object? o)
-        {
-            var item = default(T);
-            try
-            {
-                item = (T?)o;
-            }
-            catch (Exception) { /*ignore*/}
-            await OnRowDoubleClick.InvokeAsync(new TableRowClickEventArgs<T>(args, row, item));
         }
 
         /// <summary>
