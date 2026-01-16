@@ -9,7 +9,7 @@ namespace MudBlazor.UnitTests.Extensions
     [NonParallelizable]
     public class TaskExtensionsTests
     {
-        private Action<Exception>? _originalExceptionHandler;
+        private Action<Exception> _originalExceptionHandler = null!;
 
         [SetUp]
         public void SetUp()
