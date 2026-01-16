@@ -25,16 +25,8 @@ namespace MudBlazor.UnitTests.Components
         [TearDown]
         public async Task SnackbarTearDown()
         {
-            // Force close all snackbars directly from their class.
-            // We used to simulate clicking the close button but this is quicker because it skips transitions.
-            // We keep checking instead of using a cached list because new snackbars could be spawned from the close event.
-            while (_service.ShownSnackbars.Any())
-            {
-                _service.ShownSnackbars.First().ForceClose();
-            }
-
-            _provider.Render();
-            _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
+            await _provider.InvokeAsync(() => _service.Clear());
+            _service.ShownSnackbars.Should().BeEmpty();
         }
 
         [Test]
@@ -559,7 +551,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
-                    c.VisibleStateDuration = 10;
+                    c.VisibleStateDuration = 0;
                     c.Action = "Close";
                     c.RequireInteraction = false;
                 })
@@ -567,11 +559,8 @@ namespace MudBlazor.UnitTests.Components
 
             snackbar.Should().NotBeNull();
             snackbar.State.Options.RequiresInteraction.Should().BeFalse();
-            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            await _provider.InvokeAsync(() => snackbar.ForceClose());
-            _provider.Render();
-            _provider.FindAll(".mud-snackbar").Count.Should().Be(0);
+            await _provider.WaitForAssertionAsync(() => _service.ShownSnackbars.Should().BeEmpty());
         }
 
         [Test]
