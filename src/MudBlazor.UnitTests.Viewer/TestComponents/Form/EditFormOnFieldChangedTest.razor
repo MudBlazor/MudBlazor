@@ -2,21 +2,26 @@
     <EditForm EditContext="@_editContext">
         <MudCard>
             <MudCardContent>
-                <MudTextField Label="Field One"
+                <MudTextField Label="Field One (explicit For=)"
                               @bind-Value="_model.Field1"
                               For="@(() => _model.Field1)" />
-                <MudTextField Label="Field Two (no For=)" Class="mt-3"
-                              @bind-Value="_model.Field2" />
-                <MudTextField Label="Field Three" Class="mt-3"
-                              @bind-Value="_model.Field3"
-                              For="@(() => _model.Field3)" />
-
+                <MudTextField Label="Field Two (no For=) (no binding) (no ValueExpression=)" Class="mt-3"
+                              Value="_model.Field2"
+                              ValueChanged="@((string? s) => _model.Field2 = s)"
+                              ValueExpression="@null" />
+                <MudTextField Label="Field Three (no For=) (with full binding)" Class="mt-3"
+                              @bind-Value="_model.Field3" />
+                <MudTextField Label="Field Four (explicit For= to a different field)" Class="mt-3"
+                              @bind-Value="_model.Field4"
+                              For="@(() => _model.Field5)" />
             </MudCardContent>
         </MudCard>
 
         <MudChip T="string" Color="Color.Info" Class="mt-3">@_message1</MudChip>
         <MudChip T="string" Color="Color.Info" Class="mt-3">@_message2</MudChip>
         <MudChip T="string" Color="Color.Info" Class="mt-3">@_message3</MudChip>
+        <MudChip T="string" Color="Color.Info" Class="mt-3">@_message4</MudChip>
+        <MudChip T="string" Color="Color.Info" Class="mt-3">@_message5</MudChip>
     </EditForm>
 </div>
 
@@ -29,6 +34,8 @@
     private string _message1 = "Field1 not changed";
     private string _message2 = "Field2 not changed";
     private string _message3 = "Field3 not changed";
+    private string _message4 = "Field4 not changed";
+    private string _message5 = "Field5 not changed";
 
     protected override void OnInitialized()
     {
@@ -50,6 +57,12 @@
             case "Field3":
                 _message3 = e.FieldIdentifier.FieldName + " changed";
                 break;
+            case "Field4":
+                _message4 = e.FieldIdentifier.FieldName + " changed";
+                break;
+            case "Field5":
+                _message5 = e.FieldIdentifier.FieldName + " changed";
+                break;
         }
     }
 
@@ -60,5 +73,9 @@
         public string? Field2 { get; set; }
 
         public string? Field3 { get; set; }
+        
+        public string? Field4 { get; set; }
+        
+        public string? Field5 { get; set; }
     }
 }

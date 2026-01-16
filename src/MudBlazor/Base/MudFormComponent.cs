@@ -756,6 +756,12 @@ namespace MudBlazor
         private Expression<Func<T>>? _currentFor;
 
         /// <summary>
+        /// Verifies the current value of <see cref="For"/> changed
+        /// since <see cref="OnParametersSet"/> was last executed.
+        /// </summary>
+        protected bool HasForChanged() => For != _currentFor;
+
+        /// <summary>
         /// To find out whether or not EditContext parameter has changed we keep a separate reference
         /// </summary>
         private EditContext? _currentEditContext;
@@ -765,7 +771,7 @@ namespace MudBlazor
             base.OnParametersSet();
 
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
-            if (For is not null && For != _currentFor)
+            if (For is not null && HasForChanged())
             {
                 // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
                 if (EditContext is null)
