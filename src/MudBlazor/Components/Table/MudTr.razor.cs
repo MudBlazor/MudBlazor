@@ -114,7 +114,6 @@ namespace MudBlazor
         /// <param name="args">The mouse coordinates of the click.</param>
         public async Task OnRowClickedAsync(MouseEventArgs args)
         {
-            // Process the single click
             var table = Context?.Table;
             if (table is null)
             {
