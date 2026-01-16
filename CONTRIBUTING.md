@@ -419,7 +419,7 @@ The bUnit test logic is not running on the Blazor UI-thread, so whenever directl
 
 #### Keep tests isolated for parallel execution
 
-Tests run in parallel at the fixture level. Avoid modifying shared/static state (such as `MudGlobal` defaults or singletons) without restoring it in `[TearDown]`. If a fixture must change global state, mark it `[NonParallelizable]` and prefer deterministic timing helpers like `TimeProvider`/`FakeTimeProvider` over `Task.Delay`.
+Avoid modifying shared/static state (such as `MudGlobal` defaults or singletons) without restoring it in `[TearDown]`. If a fixture must change global state, mark it `[NonParallelizable]` and prefer deterministic timing helpers like `TimeProvider`/`FakeTimeProvider` over `Task.Delay`.
 
 ### What does not need to be tested?
 
