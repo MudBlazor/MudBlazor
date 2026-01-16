@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// A wizard that guides the user through a series of steps to complete a transaction.
+/// Guides users through a series of steps to complete a transaction, such as forms or wizards.
 /// </summary>
 public partial class MudStepper : MudComponentBase
 {

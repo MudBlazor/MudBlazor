@@ -23,11 +23,10 @@ button {
   user-select: none;
   border-radius: 0;
   vertical-align: middle;
-  -moz-appearance: none;
+  appearance: none;
   justify-content: center;
   text-decoration: none;
   background-color: transparent;
-  -webkit-appearance: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -65,7 +64,7 @@ button,
 [type="button"],
 [type="reset"],
 [type="submit"] {
-  -webkit-appearance: button;
+  appearance: button;
 }
 
 iframe {

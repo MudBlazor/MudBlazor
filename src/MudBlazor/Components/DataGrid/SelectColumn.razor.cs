@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor;
 
 /// <summary>
@@ -12,7 +13,8 @@ namespace MudBlazor;
 /// </summary>
 /// <typeparam name="T">The type of item to select.</typeparam>
 /// <seealso cref="MudDataGrid{T}"/>
-public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
+public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : TemplateColumn<T>
+    where T : notnull
 {
     /// <summary>
     /// Shows a checkbox in the header.
@@ -42,35 +44,26 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     public Size Size { get; set; } = Size.Medium;
 
     /// <summary>
-    /// Allows this column to be reordered via drag-and-drop operations.
+    /// Determines if the checkbox for a specific row should be disabled.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+    /// When set, this function is called for each row to determine if the checkbox should be disabled.
     /// </remarks>
     [Parameter]
-    public bool? DragAndDropEnabled { get; set; } = false;
+    public Func<T, bool>? DisabledFunc { get; set; }
 
-    /// <summary>
-    /// Allows this column to be hidden.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Hideable"/> property.
-    /// </remarks>
-    [Parameter]
-    public bool? Hideable { get; set; }
+    public override RenderFragment<HeaderContext<T>>? GetHeaderTemplate() => ShowInHeader ? GetSelectHeaderTemplate() : null;
+    public override RenderFragment<CellContext<T>> GetCellTemplate() => GetSelectCellTemplate();
+    public override RenderFragment<FooterContext<T>>? GetFooterTemplate() => ShowInFooter ? GetSelectFooterTemplate() : null;
 
-    /// <summary>
-    /// Hides this column.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
-    [Parameter]
-    public bool Hidden { get; set; }
-
-    /// <summary>
-    /// Occurs when the <see cref="Hidden"/> property has changed.
-    /// </summary>
-    [Parameter]
-    public EventCallback<bool> HiddenChanged { get; set; }
+    public SelectColumn()
+    {
+        Tag = "select-column";
+        Editable = false;
+        Sortable = false;
+        Resizable = false;
+        Filterable = false;
+        ShowColumnOptions = false;
+        HeaderStyle = "width:0%";
+    }
 }

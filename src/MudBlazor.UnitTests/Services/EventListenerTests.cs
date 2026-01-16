@@ -155,7 +155,6 @@ namespace MudBlazor.UnitTests.Services
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
-
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
@@ -190,7 +189,6 @@ namespace MudBlazor.UnitTests.Services
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
-
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
@@ -203,7 +201,6 @@ namespace MudBlazor.UnitTests.Services
             var unsubscribeResult = await _service.Unsubscribe(result);
             unsubscribeResult.Should().BeFalse();
         }
-
 
         [Test]
         public async Task DisposeAsync()

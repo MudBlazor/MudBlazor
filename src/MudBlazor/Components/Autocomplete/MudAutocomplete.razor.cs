@@ -7,9 +7,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a component with simple and flexible type-ahead functionality.
+    /// A text input for searching and selecting from a list of options. Unlike <see cref="MudSelect{T}"/>, it doesn't require the complete item list upfront and supports asynchronous search for database queries.
     /// </summary>
     /// <typeparam name="T">The type of item to search.</typeparam>
+    /// <seealso cref="MudSelect{T}"/>
     public partial class MudAutocomplete<T> : MudBaseInput<T>
     {
         /// <summary>
@@ -413,8 +414,6 @@ namespace MudBlazor
         [Parameter]
         public bool PopoverFixed { get; set; }
 
-
-
         /// <summary>
         /// The function used to determine if an item should be disabled.
         /// </summary>
@@ -737,6 +736,9 @@ namespace MudBlazor
 
             if (MaxItems.HasValue)
             {
+                int startIndex = 0;
+                int length = Math.Min(MaxItems.Value, searchedItems.Length);
+
                 // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
                 if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(ReadValue, default(T)))
                 {
@@ -745,7 +747,7 @@ namespace MudBlazor
 
                     // Center the selected item in the list if possible
                     int half = maxItems / 2;
-                    int startIndex = valueIndex - half;
+                    startIndex = valueIndex - half;
                     int endIndex = startIndex + maxItems;
 
                     // Adjust if out of bounds
@@ -760,18 +762,29 @@ namespace MudBlazor
                         startIndex = Math.Max(0, endIndex - maxItems);
                     }
 
-                    searchedItems = searchedItems.Take(new Range(startIndex, endIndex)).ToArray();
+                    length = endIndex - startIndex;
                 }
-                else
+
+                if (length < searchedItems.Length)
                 {
-                    searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                    var slicedItems = new T[length];
+                    Array.Copy(searchedItems, startIndex, slicedItems, 0, length);
+                    searchedItems = slicedItems;
                 }
             }
 
             _items = searchedItems;
 
-            var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
-            _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
+            var enabledItemIndices = new List<int>(_items.Length);
+            for (int i = 0; i < _items.Length; i++)
+            {
+                if (ItemDisabledFunc?.Invoke(_items[i]) != true)
+                {
+                    enabledItemIndices.Add(i);
+                }
+            }
+
+            _enabledItemIndices = enabledItemIndices;
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
                 _selectedListItemIndex = Array.IndexOf(_items, ReadValue);
@@ -1157,6 +1170,10 @@ namespace MudBlazor
             _isValueCoerced = true;
         }
 
+        /// <remarks>
+        /// If <see cref="ToStringFunc"/> is set, it is used to convert the value to a string; otherwise, the base implementation is used.
+        /// </remarks>
+        /// <inheritdoc />
         protected override string? ConvertSet(T? input)
         {
             return ToStringFunc is not null

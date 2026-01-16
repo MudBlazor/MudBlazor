@@ -13,14 +13,24 @@ public partial class MudLink : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-typography mud-link")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text")
-            .AddClass($"mud-link-underline-{Underline.ToDescriptionString()}")
-            .AddClass($"mud-typography-{Typo.ToDescriptionString()}", Typo != Typo.inherit)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text")
+            .AddClass($"mud-link-underline-{Underline.ToStringFast(true)}")
+            .AddClass($"mud-typography-{Typo.ToStringFast(true)}", Typo != Typo.inherit)
             // When Href is empty, link's hover cursor is text "I beam" even when OnClick has a delegate.
             // To change this for more expected look change hover cursor to a pointer:
             .AddClass("cursor-pointer", Href == default && OnClick.HasDelegate && !Disabled)
             .AddClass("mud-link-disabled", Disabled)
             .AddClass(Class)
+            .Build();
+
+    protected string StartIconClassname =>
+        new CssBuilder("mud-link-icon-start")
+            .AddClass(IconClass)
+            .Build();
+
+    protected string EndIconClassname =>
+        new CssBuilder("mud-link-icon-end")
+            .AddClass(IconClass)
             .Build();
 
     private Dictionary<string, object?> Attributes
@@ -63,6 +73,36 @@ public partial class MudLink : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
     public Color Color { get; set; } = Color.Primary;
+
+    /// <summary>
+    /// The icon displayed before the text.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Link.Appearance)]
+    public string? StartIcon { get; set; }
+
+    /// <summary>
+    /// The icon displayed after the text.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Link.Appearance)]
+    public string? EndIcon { get; set; }
+
+    /// <summary>
+    /// The CSS classes applied to the icons.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Link.Appearance)]
+    public string? IconClass { get; set; }
 
     /// <summary>
     /// The typography variant to use.

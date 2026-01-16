@@ -808,7 +808,6 @@ namespace MudBlazor.UnitTests.Components
             stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
         }
 
-
         [Test]
         public void BackButton_ShouldTriggerActivateStepAction()
         {
@@ -846,7 +845,6 @@ namespace MudBlazor.UnitTests.Components
             action.Should().Be(StepAction.Activate);
             stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
         }
-
 
         [Test]
         public void Stepper_ControlledNavigationTest()

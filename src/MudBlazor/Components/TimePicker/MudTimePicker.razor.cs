@@ -14,7 +14,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting time values.
+    /// Provides a simple way to select time values.
     /// </summary>
     /// <seealso cref="MudDatePicker"/>
     /// <seealso cref="MudDateRangePicker"/>
@@ -34,11 +34,6 @@ namespace MudBlazor
         [DynamicDependency(nameof(SelectTimeFromStick))]
         public MudTimePicker()
         {
-            Converter = new TimeSpanConverter
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
             AdornmentIcon = Icons.Material.Filled.AccessTime;
             _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
         }
@@ -364,22 +359,22 @@ namespace MudBlazor
 
         private string GetClockPinColor()
         {
-            return $"mud-picker-time-clock-pin mud-{Color.ToDescriptionString()}";
+            return $"mud-picker-time-clock-pin mud-{Color.ToStringFast(true)}";
         }
 
         private string GetClockPointerColor()
         {
             return PointerMoving
-                ? $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}"
-                : $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
+                ? $"mud-picker-time-clock-pointer mud-{Color.ToStringFast(true)}"
+                : $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToStringFast(true)}";
         }
 
         private string GetClockPointerThumbColor()
         {
             var deg = GetDeg();
             return deg % 30 == 0
-                ? $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToDescriptionString()}"
-                : $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToDescriptionString()}-text";
+                ? $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToStringFast(true)}"
+                : $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToStringFast(true)}-text";
         }
 
         private string GetNumberColor(int value)
@@ -399,12 +394,12 @@ namespace MudBlazor
 
                 if (h == value)
                 {
-                    return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                    return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
                 }
             }
             else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
             {
-                return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
             }
 
             return "mud-clock-number";
@@ -787,6 +782,16 @@ namespace MudBlazor
             }
 
             return AmPm ? TimeSpanConverter.Format12Hours : TimeSpanConverter.Format24Hours;
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<TimeSpan?, string?> GetDefaultConverter()
+        {
+            return new TimeSpanConverter
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         protected Task ChangeMinuteAsync(int minute)

@@ -657,7 +657,6 @@ namespace MudBlazor.UnitTests.Components
             tableComponent.Instance.SelectedItems?.Count.Should().Be(0);
         }
 
-
         [Test]
         public void TableMultiSelection_CheckboxAndRowClickTest()
         {
@@ -2128,7 +2127,6 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
 
-
             //verify the collapse and expand selection on UI and items
 
             Inputs()[1].Change(false); // LMP1
@@ -2139,7 +2137,6 @@ namespace MudBlazor.UnitTests.Components
             tableComponent.Instance.GroupBy.InnerGroup.Indentation = true;
             tableComponent.Instance.GroupBy.InnerGroup.Expandable = true;
             tableComponent.Instance.GroupBy.InnerGroup.IsInitiallyExpanded = true;
-
 
             comp.Render();
 
@@ -2330,7 +2327,6 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(6); // 01 Table header + 02 Group Headers + 02 Group Footers + 01 Entries
         }
-
 
         /// <summary>
         /// Tests the IsInitiallyExpanded grouping behavior.
@@ -2552,7 +2548,6 @@ namespace MudBlazor.UnitTests.Components
                 trs[1].Click();
                 tableInstance.Editing.Should().BeTrue();
                 tableInstance.SelectedItem.Should().Be(10);
-
 
                 var trs2 = comp.FindAll("tr");
                 trs2[0].InnerHtml.Contains("input").Should().BeFalse();
@@ -2808,7 +2803,6 @@ namespace MudBlazor.UnitTests.Components
 
             var tableInstance = comp.Instance;
 
-
             // Act
             await comp.InvokeAsync(() => tableInstance.ScrollToItemAsync(itemToScrollTo));
 
@@ -2987,7 +2981,6 @@ namespace MudBlazor.UnitTests.Components
 
             jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()));
         }
-
 
         [Test]
         public async Task FocusCellAsync_ItemNotFound_NonVirtualized_DoesNotCallScrollManagerOrJSRuntime()

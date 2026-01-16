@@ -430,7 +430,6 @@ class MyComponent : ComponentBaseWithState
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
 
-
     [Test]
     public async Task NoDiagnostic_ExternalAccessWhenUsingGetState()
     {

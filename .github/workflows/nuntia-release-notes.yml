@@ -1,0 +1,51 @@
+name: Nuntia (Release Notes)
+
+on:
+  workflow_dispatch:
+    inputs:
+      base-commit:
+        description: "Start commit SHA"
+        required: true
+      head-commit:
+        description: "End commit SHA"
+        required: true
+      branch:
+        description: "Branch name"
+        required: true
+        default: "dev"
+      prompt-url:
+        description: "Prompt URL (your raw gist/file)"
+        required: true
+        default: "https://raw.githubusercontent.com/danielchalmers/Nuntia/refs/heads/main/examples/Nuntia.prompt"
+      model:
+        description: "Gemini model (use pro for best results)"
+        required: true
+        default: "gemini-3-flash-preview"
+
+jobs:
+  release-notes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v6
+      - name: Generate release notes
+        id: nuntia
+        uses: danielchalmers/Nuntia@main
+        with:
+          base-commit: ${{ inputs.base-commit }}
+          head-commit: ${{ inputs.head-commit }}
+          branch: ${{ inputs.branch }}
+          prompt-url: ${{ inputs.prompt-url }}
+          model: ${{ inputs.model }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: nuntia-${{ github.run_number }}
+          path: artifacts
+          if-no-files-found: error

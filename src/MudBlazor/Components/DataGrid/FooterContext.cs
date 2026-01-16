@@ -39,6 +39,11 @@ namespace MudBlazor
         public FooterActions Actions { get; }
 
         /// <summary>
+        /// Indicates whether the data grid supports multiple selection.
+        /// </summary>
+        public bool IsMultiSelection => _dataGrid.MultiSelection;
+
+        /// <summary>
         /// Indicates whether all values are currently selected.
         /// </summary>
         public bool? IsAllSelected

@@ -20,7 +20,6 @@ public partial class AppbarButtons
     [Inject]
     private LayoutService LayoutService { get; set; } = null!;
 
-
     /// <summary>
     /// Gets the text for the RTL toggle button, indicating the next state.
     /// </summary>

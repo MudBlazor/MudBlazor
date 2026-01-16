@@ -16,8 +16,9 @@ using MudBlazor.Utilities.Throttle;
 namespace MudBlazor
 {
     /// <summary>
-    /// A set of views organized into one or more <see cref="MudTabPanel" /> components.
+    /// Organizes content across multiple tab pages.
     /// </summary>
+    /// <seealso cref="MudTabPanel"/>
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         internal List<MudTabPanel> _panels;
@@ -39,7 +40,7 @@ namespace MudBlazor
         private double _scrollPosition;
         private IResizeObserver? _resizeObserver;
         private MudDropContainer<MudTabPanel>? _dropContainer;
-        private readonly ThrottleDispatcher _throttleDispatcher;
+        private readonly Lazy<ThrottleDispatcher> _throttleDispatcher;
         private readonly ParameterState<int> _activePanelIndexState;
         private readonly Dictionary<ElementReference, BoundingClientRect> _tabSizes = [];
         /// <summary>
@@ -65,6 +66,9 @@ namespace MudBlazor
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         /// <summary>
         /// Enables drag-and-drop re-ordering of tabs.
@@ -454,9 +458,9 @@ namespace MudBlazor
         /// <inheritdoc />
         public MudTabs()
         {
-            _throttleDispatcher = new ThrottleDispatcher(500);
             _panels = new List<MudTabPanel>();
             Panels = _panels.AsReadOnly();
+            _throttleDispatcher = new Lazy<ThrottleDispatcher>(() => new ThrottleDispatcher(500, TimeProvider));
             using var registerScope = CreateRegisterScope();
             _activePanelIndexState = registerScope.RegisterParameter<int>(nameof(ActivePanelIndex))
                 .WithParameter(() => ActivePanelIndex)
@@ -562,7 +566,10 @@ namespace MudBlazor
             if (_isDisposed)
                 return;
             _isDisposed = true;
-            _throttleDispatcher?.Dispose();
+            if (_throttleDispatcher.IsValueCreated)
+            {
+                _throttleDispatcher.Value.Dispose();
+            }
             if (_resizeObserver is not null)
             {
                 _resizeObserver.OnResized -= OnResized;
@@ -683,7 +690,6 @@ namespace MudBlazor
             return null;
         }
 
-
         /// <summary>
         /// Handles when ActivePanelIndex is changed outside of the component
         /// </summary>
@@ -798,8 +804,8 @@ namespace MudBlazor
             new CssBuilder("mud-tabs-tabbar")
                 .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
                 .AddClass($"mud-tabs-vertical", _isVerticalTabs)
-                .AddClass($"mud-tabs-tabbar-{Color.ToDescriptionString()}", Color != Color.Default)
-                .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
+                .AddClass($"mud-tabs-tabbar-{Color.ToStringFast(true)}", Color != Color.Default)
+                .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToStringFast(true)}", Border)
                 .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
                 .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
                 .AddClass(TabHeaderClass)
@@ -829,7 +835,7 @@ namespace MudBlazor
 
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
-                .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
+                .AddClass($"mud-{SliderColor.ToStringFast(true)}", SliderColor != Color.Inherit)
                 .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical", _isVerticalTabs)
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
@@ -1238,7 +1244,6 @@ namespace MudBlazor
                 await OnItemDropped.InvokeAsync(dropItem);
             }
         }
-
 
         /// <summary>
         /// Handles keyboard navigation for tabs according to W3C accessibility guidelines

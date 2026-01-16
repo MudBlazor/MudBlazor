@@ -12,11 +12,12 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// An option from a set of mutually exclusive options, often as part of a <see cref="MudRadioGroup{T}"/>.
+    /// Allows the user to select a single choice from a group of options. Use radio buttons (not switches) when only one item can be selected from a list.
     /// </summary>
     /// <typeparam name="T">The type of value being selected, often a <c>bool</c>.</typeparam>
     /// <seealso cref="MudCheckBox{T}" />
     /// <seealso cref="MudRadioGroup{T}" />
+    /// <seealso cref="MudSwitch{T}"/>
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;
@@ -32,13 +33,13 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToStringFast(true)}")
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabledState() && !GetReadOnlyState())
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
-            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
             .AddClass("mud-radio-dense", Dense)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())

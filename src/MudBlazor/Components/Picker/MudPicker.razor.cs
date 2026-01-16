@@ -16,7 +16,7 @@ namespace MudBlazor
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
     /// <seealso cref="MudPickerToolbar" />
-    public partial class MudPicker<T> : MudFormComponent<T, string>
+    public abstract partial class MudPicker<T> : MudFormComponent<T, string>
     {
         private string? _text;
         private bool _pickerSquare;
@@ -38,7 +38,7 @@ namespace MudBlazor
                 .AddClass($"mud-elevation-{Elevation ?? 0}", PickerVariant != PickerVariant.Inline)
                 .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
                 .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
-                .AddClass("mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-disabled", GetDisabledState())
                 .AddClass(Class)
                 .Build();
 
@@ -55,6 +55,9 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
                 .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
+                .AddStyle("opacity", "0.5", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("pointer-events", "none", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("filter", "grayscale(1)", GetDisabledState() && PickerVariant == PickerVariant.Static)
                 .AddStyle(Style)
                 .Build();
 
@@ -210,11 +213,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.<br />
-        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <see cref="ClearIcon"/> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Prevents the user from interacting with this button.
@@ -465,8 +478,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
-
-
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.

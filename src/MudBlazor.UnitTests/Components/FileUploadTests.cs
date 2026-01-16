@@ -295,7 +295,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeFalse();
 
-
             await comp.SetParametersAndRenderAsync(parameters =>
                 parameters.Add(x => x.Disabled,
                     true)); //The input and child button should be disabled when file upload is disabled

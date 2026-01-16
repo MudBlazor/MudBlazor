@@ -35,6 +35,7 @@
                        Error="@ErrorState.Value"
                        ErrorText="@ErrorTextState.Value"
                        Clearable="@(Clearable && !GetReadOnlyState())"
+                       ClearIcon="@ClearIcon"
                        OnClearButtonClick="@(async () => await ClearAsync())"
                        ShrinkLabel="@ShrinkLabel"
                        KeyDownPreventDefault="Open"

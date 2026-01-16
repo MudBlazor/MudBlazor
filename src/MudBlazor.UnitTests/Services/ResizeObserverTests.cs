@@ -156,7 +156,6 @@ namespace MudBlazor.UnitTests.Services
                 )
             )).ReturnsAsync(resolvedElements.Values.ToArray).Callback<string, object[]>((x, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 
-
             foreach (var item in resolvedElements)
             {
                 _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>(
@@ -267,7 +266,6 @@ namespace MudBlazor.UnitTests.Services
 
             _runtimeMock.Verify();
         }
-
 
         private static BoundingClientRect GetRandomRect(Random random)
         {

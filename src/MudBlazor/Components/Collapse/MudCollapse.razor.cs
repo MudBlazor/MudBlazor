@@ -6,7 +6,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a container for content which can be collapsed and expanded.
+    /// A container for content which can be collapsed and expanded.
     /// </summary>
     /// <seealso cref="MudExpansionPanels"/>
     /// <seealso cref="MudExpansionPanel"/>

@@ -117,7 +117,6 @@ namespace MudBlazor.UnitTests.Components
 
             var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
 
-
             //no content for the popover node
             popoverContentNode.Children.Should().BeEmpty();
 
@@ -322,7 +321,6 @@ namespace MudBlazor.UnitTests.Components
 
             tooltipComp.Style.Should().Contain("background-color").And.Contain("orangered");
         }
-
 
         [Test]
         public void Tooltip_Disabled_Default_False()

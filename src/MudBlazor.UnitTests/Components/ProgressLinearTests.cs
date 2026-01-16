@@ -159,7 +159,6 @@ namespace MudBlazor.UnitTests.Components
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
-
             container.ChildElementCount.Should().Be(1);
             var barContainer = container.Children[0];
 

@@ -134,7 +134,6 @@ namespace MudBlazor.UnitTests.Components
             resultNull.Should().BeEmpty();
             outRegex.Should().Be(string.Empty);
 
-
             // Test with empty text
             var resultEmpty = GetHtmlAwareFragments(string.Empty, "any", null, out outRegex, false, false);
             resultEmpty.Should().BeEmpty();

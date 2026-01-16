@@ -22,11 +22,6 @@ namespace MudBlazor
         public MudRangeInput()
         {
             Value = new Range<T>();
-            Converter = new RangeConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
@@ -82,9 +77,20 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <see cref="ClearIcon"/> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         public bool Clearable { get; set; }
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// The content within this input component.
@@ -174,9 +180,19 @@ namespace MudBlazor
             }
         }
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        protected string InputTypeString => InputType.ToStringFast(true);
 
         protected bool IsClearable() => Clearable && ReadValue is not null;
+
+        /// <inheritdoc />
+        protected override IConverter<Range<T>?, string?> GetDefaultConverter()
+        {
+            return new RangeConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {

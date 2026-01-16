@@ -15,10 +15,11 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A component for choosing an item from a list of options.
+    /// A dropdown input for selecting an item from a list of options.
     /// </summary>
     /// <typeparam name="T">The kind of object being selected.</typeparam>
     /// <seealso cref="MudSelectItem{T}"/>
+    /// <seealso cref="MudAutocomplete{T}"/>
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private string? _activeItemId;
@@ -115,9 +116,15 @@ namespace MudBlazor
                 item = _items[index];
                 if (!MultiSelection)
                 {
-                    _selectedValues.Clear();
-                    _selectedValues.Add(item.Value);
-                    await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                    // When SelectionOnEnter is true, we only update the visual highlight during navigation.
+                    // When false (default), the value is immediately updated as the user moves through the list.
+                    if (!SelectionOnEnter)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(item.Value);
+                        await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                    }
+
                     HighlightItem(item);
                     break;
                 }
@@ -247,8 +254,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
         public bool PopoverFixed { get; set; }
-
-
 
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
@@ -726,6 +731,14 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
+        /// <summary>
+        /// If <c>true</c>, navigating with arrow keys will only highlight items without updating the selected value.
+        /// The selection must be confirmed by pressing Enter or clicking the item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool SelectionOnEnter { get; set; }
+
         internal bool _open;
 
         /// <summary>
@@ -985,6 +998,10 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <remarks>
+        /// If <see cref="ToStringFunc"/> is set, it is used to convert the value to a string; otherwise, the base implementation is used.
+        /// </remarks>
+        /// <inheritdoc />
         protected override string? ConvertSet(T? input)
         {
             return ToStringFunc is not null
