@@ -66,14 +66,14 @@ namespace MudBlazor
                 return string.Empty;
             }
 
-            var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
+            var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToStringFast(true)}";
             if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
-                className += $"-{drawer.Breakpoint.ToDescriptionString()}";
+                className += $"-{drawer.Breakpoint.ToStringFast(true)}";
             }
             className += $"-{drawer.GetPosition()}";
 
-            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
+            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToStringFast(true)}";
 
             return className;
         }

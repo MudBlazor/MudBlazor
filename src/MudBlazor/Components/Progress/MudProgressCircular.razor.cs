@@ -25,8 +25,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-progress-circular")
-                .AddClass($"mud-{Color.ToDescriptionString()}-text")
-                .AddClass($"mud-progress-{Size.ToDescriptionString()}")
+                .AddClass($"mud-{Color.ToStringFast(true)}-text")
+                .AddClass($"mud-progress-{Size.ToStringFast(true)}")
                 .AddClass("mud-progress-indeterminate", Indeterminate)
                 .AddClass("mud-progress-static", !Indeterminate)
                 .AddClass(Class)

@@ -69,7 +69,7 @@ namespace MudBlazor
         {
             get
             {
-                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
+                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToStringFast(true)}-{Options.Severity.ToStringFast(true)}";
 
                 if (Options.SnackbarVariant != Variant.Filled)
                 {

@@ -50,15 +50,15 @@ public class MudStep : MudComponentBase, IStepContext, IAsyncDisposable
 
     internal string LabelIconClassname =>
         new CssBuilder("mud-step-label-icon")
-            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", CompletedState && !HasErrorState && Parent?.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", HasErrorState)
-            .AddClass($"mud-{(SkippedStepColor.HasValue ? SkippedStepColor.Value.ToDescriptionString() : Parent?.SkippedStepColor.ToDescriptionString())}", SkippedState)
-            .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
+            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToStringFast(true) : Parent?.CompletedStepColor.ToStringFast(true))}", CompletedState && !HasErrorState && Parent?.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToStringFast(true) : Parent?.ErrorStepColor.ToStringFast(true))}", HasErrorState)
+            .AddClass($"mud-{(SkippedStepColor.HasValue ? SkippedStepColor.Value.ToStringFast(true) : Parent?.SkippedStepColor.ToStringFast(true))}", SkippedState)
+            .AddClass($"mud-{Parent?.CurrentStepColor.ToStringFast(true)}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
             .Build();
 
     internal string LabelContentClassname =>
         new CssBuilder("mud-step-label-content")
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", HasErrorState)
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToStringFast(true) : Parent?.ErrorStepColor.ToStringFast(true))}-text", HasErrorState)
             .Build();
 
     internal string Classname => new CssBuilder()
