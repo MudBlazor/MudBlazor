@@ -1056,7 +1056,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
-            
+
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             comp.Find("input").Input(new ChangeEventArgs { Value = "test" });
@@ -1100,7 +1100,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
-            
+
             var comp = Context.Render<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
             DateTime expectedFinalDateTime = default;

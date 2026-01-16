@@ -839,7 +839,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
-            
+
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
             IElement DelayedRerenderButton() => comp.Find("button#re-render");
@@ -887,7 +887,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
-            
+
             var comp = Context.Render<DebouncedNumericFieldCultureChangeRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
             var delayedCultureChange = comp.Find("button#culture-change");
