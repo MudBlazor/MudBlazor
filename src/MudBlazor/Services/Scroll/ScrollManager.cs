@@ -25,11 +25,11 @@ internal sealed class ScrollManager : IScrollManager
 
     /// <inheritdoc />
     public ValueTask ScrollToAsync(string? id, int left, int top, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollIntoViewAsync(string? selector, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollToTopAsync(string? id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
@@ -37,7 +37,7 @@ internal sealed class ScrollManager : IScrollManager
 
     /// <inheritdoc />
     public ValueTask ScrollToBottomAsync(string id, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", id, behavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", id, behavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollToYearAsync(string elementId) =>
@@ -59,5 +59,5 @@ internal sealed class ScrollManager : IScrollManager
 
     /// <inheritdoc />
     public ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
-        _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.scrollToVirtualizedItem", containerId, itemIndex, itemHeight, targetItemId, scrollBehavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.scrollToVirtualizedItem", containerId, itemIndex, itemHeight, targetItemId, scrollBehavior.ToStringFast(true));
 }

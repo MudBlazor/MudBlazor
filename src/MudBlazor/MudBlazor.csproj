@@ -101,6 +101,7 @@
     <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.17">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>
@@ -147,10 +148,6 @@
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\LanguageResource.resx">

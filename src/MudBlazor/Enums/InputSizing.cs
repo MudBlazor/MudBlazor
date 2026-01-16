@@ -3,12 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// The strategy for how the input calculates its height.
 /// </summary>
+[EnumExtensions]
 public enum InputSizing
 {
     /// <summary>

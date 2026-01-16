@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the type of animation used for a <see cref="MudSkeleton"/> component.
 /// </summary>
+[EnumExtensions]
 public enum Animation
 {
     /// <summary>

@@ -804,8 +804,8 @@ namespace MudBlazor
             new CssBuilder("mud-tabs-tabbar")
                 .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
                 .AddClass($"mud-tabs-vertical", _isVerticalTabs)
-                .AddClass($"mud-tabs-tabbar-{Color.ToDescriptionString()}", Color != Color.Default)
-                .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
+                .AddClass($"mud-tabs-tabbar-{Color.ToStringFast(true)}", Color != Color.Default)
+                .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToStringFast(true)}", Border)
                 .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
                 .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
                 .AddClass(TabHeaderClass)
@@ -835,7 +835,7 @@ namespace MudBlazor
 
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
-                .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
+                .AddClass($"mud-{SliderColor.ToStringFast(true)}", SliderColor != Color.Inherit)
                 .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical", _isVerticalTabs)
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
