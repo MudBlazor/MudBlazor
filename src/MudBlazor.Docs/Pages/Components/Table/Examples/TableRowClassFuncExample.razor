@@ -15,8 +15,8 @@
     }
 </style>
 
-<MudTable T="Element" Items="@ELEMENTS.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @ref="_mudTable" RowClassFunc="@SelectedRowClassFunc"
-          OnRowClick="RowClickEvent" RowDisabledFunc="@(context => _rowTwoIsDisabled && context.Number == 2)">
+<MudTable T="Element" @bind-SelectedItem="_selectedElement" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" 
+          OnRowClick="@RowClickEvent" RowDisabledFunc="@(context => _rowTwoIsDisabled && context.Number == 2)">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -51,21 +51,21 @@
 
 @code {
 
-    private static readonly IEnumerable<Element> ELEMENTS = new List<Element>()
+    private static readonly IEnumerable<Element> Elements = new List<Element>
     {
         new() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 0, Molar = 1.00794 },
         new() { Number = 2, Sign = "He", Name = "Helium", Position = 17, Molar = 4.002602 },
         new() { Number = 3, Sign = "Li", Name = "Lithium", Position = 0, Molar = 6.941 }
     };
 
+    private Element _selectedElement;
     private int _selectedRowNumber = -1;
-    private MudTable<Element> _mudTable;
     private readonly List<string> _clickedEvents = [];
     private bool _rowTwoIsDisabled;
 
     private void RowClickEvent(TableRowClickEventArgs<Element> tableRowClickEventArgs)
     {
-        _clickedEvents.Add("Row has been clicked");
+        _clickedEvents.Add($"Row has been clicked {tableRowClickEventArgs.MouseEventArgs.Detail} times");
     }
 
     private string SelectedRowClassFunc(Element element, int rowNumber)
@@ -77,7 +77,7 @@
             return string.Empty;
         }
 
-        if (_mudTable.SelectedItem != null && _mudTable.SelectedItem.Equals(element))
+        if (_selectedElement is not null && _selectedElement.Equals(element))
         {
             _selectedRowNumber = rowNumber;
             _clickedEvents.Add($"Selected Row: {rowNumber}");

@@ -43,7 +43,6 @@
     <ProjectReference Include="..\MudBlazor.Analyzers.CodeFixes\MudBlazor.Analyzers.CodeFixes.csproj">
       <Aliases>MudBlazorAnalyzer</Aliases>
     </ProjectReference>
-    <ProjectReference Include="..\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Viewer\MudBlazor.UnitTests.Viewer.csproj" />
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
