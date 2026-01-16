@@ -1381,21 +1381,22 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<AutocompleteTest1>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var timeout = TimeSpan.FromSeconds(5);
 
             await autocompletecomp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.ShowProgressIndicator, true)
                 .Add(p => p.ProgressIndicatorTemplate, fragment));
 
             comp.Markup.Should().NotContain("Loading...");
-            autocompletecomp.Find("input").Input("Calif");
+            await comp.InvokeAsync(() => autocompletecomp.Find("input").Input("Calif"));
 
             // Test show
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("Loading..."));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"), timeout);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("Loading..."), timeout);
 
             // Test hide
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("Loading..."));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"), timeout);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("Loading..."), timeout);
         }
 
         [Test]
@@ -1409,21 +1410,22 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var timeout = TimeSpan.FromSeconds(5);
 
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.ShowProgressIndicator, true)
                 .Add(p => p.ProgressIndicatorInPopoverTemplate, fragment));
 
             comp.Markup.Should().NotContain("Loading...");
-            autocompleteComponent.Find("input").Input("Calif");
+            await comp.InvokeAsync(() => autocompleteComponent.Find("input").Input("Calif"));
 
             // Test show
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Loading..."));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"), timeout);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Loading..."), timeout);
 
             // Test hide
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Loading..."));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"), timeout);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Loading..."), timeout);
         }
 
         [Test]

@@ -445,13 +445,28 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_LeadingMode_DebounceSubsequentCalls()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
         {
             Interlocked.Increment(ref executionCount);
             return Task.CompletedTask;
+        }
+
+        static async Task IgnoreCancellation(Task task)
+        {
+            try
+            {
+                await task;
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         // Act - First call executes immediately
@@ -462,11 +477,10 @@ public class DebounceDispatcherTests
         var task1 = debounceDispatcher.DebounceAsync(TrackingAction);
         var task2 = debounceDispatcher.DebounceAsync(TrackingAction);
         var task3 = debounceDispatcher.DebounceAsync(TrackingAction);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
 
         // Wait for all debounced tasks to complete
-        await task1;
-        await task2;
-        await task3;
+        await Task.WhenAll(IgnoreCancellation(task1), IgnoreCancellation(task2), task3);
 
         // Assert - Should have executed twice (first immediate, last after debounce)
         executionCount.Should().Be(2);

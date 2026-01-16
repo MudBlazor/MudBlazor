@@ -33,6 +33,7 @@
     - [What are common errors when writing tests?](#what-are-common-errors-when-writing-tests)
       - [Do not save html elements you query via `Find` or `FindAll` in a variable!](#do-not-save-html-elements-you-query-via-find-or-findall-in-a-variable)
       - [Always use InvokeAsync to set parameter values on a component](#always-use-invokeasync-to-set-parameter-values-on-a-component)
+      - [Keep tests isolated for parallel execution](#keep-tests-isolated-for-parallel-execution)
     - [What does not need to be tested?](#what-does-not-need-to-be-tested)
     - [What is the MudBlazor.UnitTests.Viewer for?](#what-is-the-mudblazorunittestsviewer-for)
     - [What are the auto-generated tests for?](#what-are-the-auto-generated-tests-for)
@@ -415,6 +416,10 @@ The bUnit test logic is not running on the Blazor UI-thread, so whenever directl
    // correct
    await comp.InvokeAsync(()=>textField.Value="I love dogs");
 ```
+
+#### Keep tests isolated for parallel execution
+
+Tests run in parallel at the fixture level. Avoid modifying shared/static state (such as `MudGlobal` defaults or singletons) without restoring it in `[TearDown]`. If a fixture must change global state, mark it `[NonParallelizable]` and prefer deterministic timing helpers like `TimeProvider`/`FakeTimeProvider` over `Task.Delay`.
 
 ### What does not need to be tested?
 

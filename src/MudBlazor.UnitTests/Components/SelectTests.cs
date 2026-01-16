@@ -57,26 +57,26 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement Menu() => comp.Find("div.mud-popover");
+            IElement Input() => comp.Find("div.mud-input-control");
             // check popover class
-            menu.ClassList.Should().Contain("select-popover-class");
+            Menu().ClassList.Should().Contain("select-popover-class");
             // check initial state
             select.Instance.ReadValue.Should().BeNullOrEmpty();
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().NotContain("mud-popover-open"));
             // click and check if it has toggled the menu
-            await input.MouseDownAsync();
-            menu.ClassList.Should().Contain("mud-popover-open");
+            await Input().MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().Contain("mud-popover-open"));
             // now click an item and see the value change
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             IReadOnlyList<IElement> Items() => comp.FindAll("div.mud-list-item");
             await Items()[1].ClickAsync();
             // menu should be closed now
-            await comp.WaitForAssertionAsync(() => menu.ClassList.Should().NotContain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().NotContain("mud-popover-open"));
             select.Instance.ReadValue.Should().Be("2");
             // now we cheat and click the list without opening the menu ;)
 
-            await input.MouseDownAsync();
+            await Input().MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
             await Items()[0].ClickAsync();
@@ -84,9 +84,9 @@ namespace MudBlazor.UnitTests.Components
             //Check user on blur implementation works
             IElement Switch() => comp.Find("#switch");
             await Switch().ChangeAsync(true);
-            Switch().HasAttribute("checked").Should().BeTrue();
+            await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeTrue());
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
-            Switch().HasAttribute("checked").Should().BeFalse();
+            await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeFalse());
         }
 
         [Test]
