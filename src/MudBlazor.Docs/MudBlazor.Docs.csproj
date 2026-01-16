@@ -68,7 +68,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta16" PrivateAssets="all" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
   </ItemGroup>
 
   <!--Project dependencies-->

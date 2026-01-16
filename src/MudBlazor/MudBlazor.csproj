@@ -101,7 +101,7 @@
     <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.17">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta16" PrivateAssets="all" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>
