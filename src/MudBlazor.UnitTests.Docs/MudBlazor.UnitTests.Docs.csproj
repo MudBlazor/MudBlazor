@@ -55,7 +55,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="JunitXml.TestLogger" Version="6.1.0" />
+    <PackageReference Include="JunitXml.TestLogger" Version="7.1.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
