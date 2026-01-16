@@ -844,29 +844,30 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
+            IElement DelayedRerenderButton() => comp.Find("button#re-render");
+            IElement Input() => comp.Find("input");
             var converter = new DefaultConverter<int>();
-            await comp.InvokeAsync(() => comp.Find("input").InputAsync("1"));
+            await Input().InputAsync("1");
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10);
-            // imitate "typing in progress" by extending the debounce interval while a re-render occurs
+            // trigger delayed re-render
+            await DelayedRerenderButton().ClickAsync();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
             var currentText = "1";
-            var delay = comp.Instance.DebounceInterval / 2;
-            for (var i = 0; i < 4; i++)
+            while (elapsedTime < comp.Instance.RerenderDelay)
             {
+                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                await comp.InvokeAsync(() => comp.Find("input").InputAsync(currentText));
-                if (i == 1)
-                {
-                    comp.Render();
-                }
+                await Input().InputAsync(currentText);
                 timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
+                elapsedTime += delay;
             }
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10);
-            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(converter.ConvertBack(currentText)));
-            await comp.WaitForAssertionAsync(() => numericField.ReadText.Should().Be(currentText));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
+            comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
+            numericField.ReadText.Should().Be(currentText);
         }
 
         [Test]
