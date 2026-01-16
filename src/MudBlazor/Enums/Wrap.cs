@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
     /// <summary>
     /// Indicates how items in a <see cref="MudStack"/> are wrapped.
     /// </summary>
+    [EnumExtensions]
     public enum Wrap
     {
         /// <summary>

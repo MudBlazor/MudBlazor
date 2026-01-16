@@ -12,10 +12,10 @@ public partial class MudText : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-typography")
-            .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
+            .AddClass($"mud-typography-{Typo.ToStringFast(true)}")
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default && Color != Color.Inherit)
             .AddClass("mud-typography-gutterbottom", GutterBottom)
-            .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
+            .AddClass($"mud-typography-align-{ConvertAlign(Align).ToStringFast(true)}", Align != Align.Inherit)
             .AddClass("d-inline", Inline)
             .AddClass(Class)
             .Build();

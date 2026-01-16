@@ -6,6 +6,8 @@ using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Field;
@@ -1052,11 +1054,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextFieldRerenderTest()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             comp.Find("input").Input(new ChangeEventArgs { Value = "test" });
             // trigger first value change
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
             // trigger delayed re-render
             await comp.InvokeAsync(() => comp.Find("#re-render-button").Click());
             // imitate "typing in progress" by extending the debounce interval until component re-renders
@@ -1067,11 +1072,12 @@ namespace MudBlazor.UnitTests.Components
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
-                await Task.Delay(delay);
+                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
             // after the final debounce, the value should be updated without swallowing any user input
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
             textField.ReadValue.Should().Be(currentText);
             textField.ReadText.Should().Be(currentText);
         }
@@ -1092,6 +1098,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextFieldFormatChangeRerenderTest()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             var comp = Context.Render<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
             DateTime expectedFinalDateTime = default;
@@ -1107,14 +1116,15 @@ namespace MudBlazor.UnitTests.Components
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 await comp.Find("input").InputAsync(currentText);
-                await Task.Delay(delay);
+                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
             // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
             textField.ReadText.Should().Be(currentText);
             // once debounce occurs, both value and text are reset because they define an invalid DateTime,
             // now with the new Format
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
             textField.ReadValue.Should().Be(expectedFinalDateTime);
             textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
         }

@@ -12,8 +12,8 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-skeleton")
-                .AddClass($"mud-skeleton-{SkeletonType.ToDescriptionString()}")
-                .AddClass($"mud-skeleton-{Animation.ToDescriptionString()}")
+                .AddClass($"mud-skeleton-{SkeletonType.ToStringFast(true)}")
+                .AddClass($"mud-skeleton-{Animation.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 

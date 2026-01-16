@@ -9,6 +9,8 @@ using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
@@ -835,12 +837,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedNumericFieldRerenderTest()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
             var converter = new DefaultConverter<int>();
             await comp.InvokeAsync(() => comp.Find("input").InputAsync("1"));
             // trigger first value change
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
             // trigger delayed re-render
             await comp.InvokeAsync(() => comp.Find("button#re-render").ClickAsync());
             // imitate "typing in progress" by extending the debounce interval until component re-renders
@@ -877,13 +882,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedNumericFieldCultureChangeRerenderTest()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             var comp = Context.Render<DebouncedNumericFieldCultureChangeRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
             var delayedCultureChange = comp.Find("button#culture-change");
             // ensure text is updated on initialize
             numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
             // trigger first value change
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
             // trigger the culture change
             delayedCultureChange.Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
@@ -894,14 +902,15 @@ namespace MudBlazor.UnitTests.Components
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
                 comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
-                await Task.Delay(delay);
+                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
             // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
             numericField.ReadText.Should().Be(currentText);
             // once debounce occurs, both value and text are translated into the new culture
             // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
-            await Task.Delay(comp.Instance.DebounceInterval * 2);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval * 2));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
             numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
         }
 
