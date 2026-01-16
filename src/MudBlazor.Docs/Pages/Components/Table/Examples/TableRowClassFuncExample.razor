@@ -15,7 +15,7 @@
     }
 </style>
 
-<MudTable T="Element" @bind-SelectedItem="_selectedElement" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" 
+<MudTable T="Element" @bind-SelectedItem="_selectedElement" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" Rowclassfunc="@SelectedRowClassFunc"
           OnRowClick="@RowClickEvent" RowDisabledFunc="@(context => _rowTwoIsDisabled && context.Number == 2)">
     <HeaderContent>
         <MudTh>Nr</MudTh>
