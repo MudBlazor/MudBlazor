@@ -34,9 +34,6 @@
 
     public string Format => "N2";
 
-    [CascadingParameter]
-    public TimeProvider? TimeProvider { get; set; }
-
     public int DebounceInterval => 500;
 
     public int RerenderDelay => 2000;
@@ -49,8 +46,7 @@
 
     private async Task LaunchDelayedCultureChange()
     {
-        var timeProvider = TimeProvider ?? TimeProvider.System;
-        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), timeProvider, CancellationToken.None);
+        await Task.Delay(RerenderDelay);
         Culture = new CultureInfo("de-DE");
         StateHasChanged();
     }

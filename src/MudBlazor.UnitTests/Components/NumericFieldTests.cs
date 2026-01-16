@@ -863,6 +863,7 @@ namespace MudBlazor.UnitTests.Components
             }
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
             comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
             numericField.ReadText.Should().Be(currentText);
         }
@@ -912,6 +913,7 @@ namespace MudBlazor.UnitTests.Components
             // once debounce occurs, both value and text are translated into the new culture
             // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval * 2));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
             numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
         }
 
