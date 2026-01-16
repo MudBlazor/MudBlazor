@@ -27,6 +27,9 @@
     [Parameter]
     public int Value { get; set; }
 
+    [CascadingParameter]
+    public TimeProvider? TimeProvider { get; set; }
+
     public int DebounceInterval => 500;
 
     public int RerenderDelay => 2000;
@@ -39,7 +42,8 @@
 
     private async Task LaunchDelayedRerender()
     {
-        await Task.Delay(RerenderDelay);
+        var timeProvider = TimeProvider ?? TimeProvider.System;
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), timeProvider, CancellationToken.None);
         StateHasChanged();
     }
  }
