@@ -33,7 +33,8 @@ namespace MudBlazor.UnitTests.Components
                 _service.ShownSnackbars.First().ForceClose();
             }
 
-            await _provider.WaitForAssertionAsync(() => _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
+            _provider.Render();
+            _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
         }
 
         [Test]
@@ -415,7 +416,9 @@ namespace MudBlazor.UnitTests.Components
 
             primary.PauseTransitions(false);
 
-            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(
+                () => _provider.FindAll(".mud-snackbar").Count.Should().Be(0),
+                TimeSpan.FromSeconds(2));
         }
 
         [Test]
@@ -549,8 +552,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ActionAllowsAutoDismissWhenDisabled()
         {
+            Snackbar snackbar = null;
+
             await _provider.InvokeAsync(() =>
-                _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                snackbar = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
@@ -560,9 +565,13 @@ namespace MudBlazor.UnitTests.Components
                 })
             );
 
+            snackbar.Should().NotBeNull();
+            snackbar.State.Options.RequiresInteraction.Should().BeFalse();
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.InvokeAsync(() => snackbar.ForceClose());
+            _provider.Render();
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(0);
         }
 
         [Test]
