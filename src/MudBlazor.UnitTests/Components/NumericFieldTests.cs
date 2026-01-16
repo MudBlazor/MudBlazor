@@ -834,7 +834,9 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
         /// </summary>
+        // TODO: Re-enable parallel execution. This test intermittently causes test-host hangs under full parallel coverage runs.
         [Test]
+        [NonParallelizable]
         public async Task DebouncedNumericFieldRerenderTest()
         {
             var timeProvider = new FakeTimeProvider();
