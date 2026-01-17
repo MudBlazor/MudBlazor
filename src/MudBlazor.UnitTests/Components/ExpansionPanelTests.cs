@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]
-        public void MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
+        public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_TabsAsync()
         {
             var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
 
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should expand panel
         /// </summary>
         [Test]
-        public void MudExpansionPanel_IsInitiallyExpanded_Expands()
+        public async Task MudExpansionPanel_IsInitiallyExpanded_ExpandsAsync()
         {
             var comp = Context.Render<ExpansionPanelStartExpandedTest>();
 

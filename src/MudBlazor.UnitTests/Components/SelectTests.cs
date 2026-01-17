@@ -649,7 +649,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MultiSelect_SelectAll2()
+        public async Task MultiSelect_SelectAll2Async()
         {
             var comp = Context.Render<MultiSelectTest3>();
             // select element needed for the test
@@ -684,7 +684,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MultiSelect_SelectAll3()
+        public async Task MultiSelect_SelectAll3Async()
         {
             var comp = Context.Render<MultiSelectTest4>();
             // select element needed for the test
@@ -1271,7 +1271,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MultiSelectWithCustomComparerTest()
+        public async Task MultiSelectWithCustomComparerTestAsync()
         {
             var comp = Context.Render<MultiSelectWithCustomComparerTest>();
             // print the generated html

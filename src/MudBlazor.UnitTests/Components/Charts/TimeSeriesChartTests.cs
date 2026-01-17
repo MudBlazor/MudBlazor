@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void TimeSeriesChart_CanHideSeries_Test()
+        public async Task TimeSeriesChart_CanHideSeries_TestAsync()
         {
             var mockYAxisLabelSize = new ElementSize { Width = 27.5, Height = 14.8 };
             var mockXAxisLabelSize = new ElementSize { Width = 50.5, Height = 14.8 }; // Adjusted width slightly

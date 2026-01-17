@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class PageContentNavigationTests : BunitTest
     {
-        public override void Setup()
+        public override async Task SetupAsync()
         {
             await base.SetupAsync(new SetEventArgs());
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), new MockScrollSpyFactory()));
@@ -145,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NavigateBySections()
+        public async Task NavigateBySectionsAsync()
         {
             var spyMock = new MockScrollSpy();
 

@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clearing the value of a required textfield should set form's IsValid to false.
         /// </summary>
         [Test]
-        public void FormIsValidTest()
+        public async Task FormIsValidTestAsync()
         {
             var comp = Context.Render<FormIsValidTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public void FormIsValidTest2()
+        public async Task FormIsValidTest2Async()
         {
             var comp = Context.Render<FormIsValidTest2>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         /// Form should update the bound variables valid and touched whenever they change.
         /// </summary>
         [Test]
-        public void FormIsValidTest3()
+        public async Task FormIsValidTest3Async()
         {
             var comp = Context.Render<FormIsValidTest3>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -236,7 +236,7 @@ namespace MudBlazor.UnitTests.Components
         /// Custom validation func should be called to determine whether or not a form value is good
         /// </summary>
         [Test]
-        public void FormValidationTest1()
+        public async Task FormValidationTest1Async()
         {
             var validationFunc = new Func<string, bool>(x => x?.StartsWith("Marilyn") == true);
             var comp = Context.Render<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
@@ -282,7 +282,7 @@ namespace MudBlazor.UnitTests.Components
         /// Custom validation func should be called to determine whether or not a form value is good
         /// </summary>
         [Test]
-        public void FormValidationTest2()
+        public async Task FormValidationTest2Async()
         {
             var validationFunc = new Func<string, string>(s =>
             {
@@ -407,7 +407,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public void EditFormOnFieldChangedTest()
+        public async Task EditFormOnFieldChangedTestAsync()
         {
             var comp = Context.Render<EditFormOnFieldChangedTest>();
             var textFields = comp.FindAll("input");
@@ -440,7 +440,7 @@ namespace MudBlazor.UnitTests.Components
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
         [Test]
-        public void FormWithCheckboxTest()
+        public async Task FormWithCheckboxTestAsync()
         {
             var comp = Context.Render<FormWithCheckBoxAndTextFieldsTest>();
             var textFields = comp.FindAll("input");
@@ -481,7 +481,7 @@ namespace MudBlazor.UnitTests.Components
         /// Form should become valid as soon as all required fields are filled in correctly.
         /// </summary>
         [Test]
-        public void Form_Should_BecomeValidIfUntouchedFieldsAreNotRequired()
+        public async Task Form_Should_BecomeValidIfUntouchedFieldsAreNotRequiredAsync()
         {
             var comp = Context.Render<FormValidationTest2>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -495,7 +495,7 @@ namespace MudBlazor.UnitTests.Components
         /// Form should become invalid as soon as an in-convertible value is entered.
         /// </summary>
         [Test]
-        public void Form_Should_BecomeInValidWhenAConversionErrorOccurs()
+        public async Task Form_Should_BecomeInValidWhenAConversionErrorOccursAsync()
         {
             var comp = Context.Render<FormConversionErrorTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -1029,7 +1029,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing the functionality of the EditForm example from the docs.
         /// </summary>
         [Test]
-        public void EditFormExample_EmptyValidation()
+        public async Task EditFormExample_EmptyValidationAsync()
         {
             var comp = Context.Render<FormValidationTest3>();
             // same effect as clicking the validate button
@@ -1053,7 +1053,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing the functionality of the EditForm example from the docs.
         /// </summary>
         [Test]
-        public void EditFormExample_FillInValues()
+        public async Task EditFormExample_FillInValuesAsync()
         {
             var comp = Context.Render<FormValidationTest3>();
             await comp.FindAll("input")[0].ChangeAsync("Rick Sanchez");
@@ -1083,7 +1083,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <see cref="https://github.com/MudBlazor/MudBlazor/issues/1229"/>
         [Test]
-        public void EditForm_Validation_NullContext()
+        public async Task EditForm_Validation_NullContextAsync()
         {
             var comp = Context.Render<EditFormIssue1229>();
             // Check first run attribute
@@ -1853,7 +1853,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void FormWithChildFormTest()
+        public async Task FormWithChildFormTestAsync()
         {
             var comp = Context.Render<FormWithChildFormTest>();
             var childFormSwitch = comp.Find(".mud-switch-input");
@@ -1905,7 +1905,7 @@ namespace MudBlazor.UnitTests.Components
         /// 
         /// </summary>
         [Test]
-        public void FormComponentTest_ErrorTextTwoWayBinding()
+        public async Task FormComponentTest_ErrorTextTwoWayBindingAsync()
         {
             var comp = Context.Render<FormWithErrorTextTwoWayBindingTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -1933,7 +1933,7 @@ namespace MudBlazor.UnitTests.Components
         /// CheckBox should be validated like every other form component when ticked using mouse
         /// </summary>
         [Test]
-        public void FormWithCheckBoxTest_When_CheckBoxTickedUsingMouse()
+        public async Task FormWithCheckBoxTest_When_CheckBoxTickedUsingMouseAsync()
         {
             var comp = Context.Render<FormWithCheckBoxTest>();
             var form = comp.FindComponent<MudForm>().Instance;

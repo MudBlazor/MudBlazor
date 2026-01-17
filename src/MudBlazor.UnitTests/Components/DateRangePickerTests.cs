@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Open_CloseByClickingOutsidePicker_CheckClosed()
+        public async Task Open_CloseByClickingOutsidePicker_CheckClosedAsync()
         {
             var comp = OpenPicker();
             // clicking outside to close
@@ -256,8 +256,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // clicking a day buttons to select a range and close
-            comp.SelectDate("10");
-            comp.SelectDate("8");
+            comp.SelectDateAsync("10");
+            comp.SelectDateAsync("8");
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
@@ -276,7 +276,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToYear_ClickYear_CheckMonthsShown()
+        public async Task OpenToYear_ClickYear_CheckMonthsShownAsync()
         {
             var comp = OpenPicker(parameters => parameters
                 .Add(x => x.OpenTo, OpenTo.Year));
@@ -288,7 +288,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToYear_ClickYear_CheckMonthsShown_Close_Reopen_CheckYearsShown()
+        public async Task OpenToYear_ClickYear_CheckMonthsShown_Close_Reopen_CheckYearsShownAsync()
         {
             var comp = OpenPicker(parameters => parameters
                 .Add(x => x.OpenTo, OpenTo.Year));
@@ -317,7 +317,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Open_ClickCalendarHeader_CheckMonthsShown()
+        public async Task Open_ClickCalendarHeader_CheckMonthsShownAsync()
         {
             var comp = OpenPicker();
             // should show months
@@ -326,7 +326,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Open_ClickYear_CheckYearsShown()
+        public async Task Open_ClickYear_CheckYearsShownAsync()
         {
             var comp = OpenPicker(parameters => parameters
                 .Add(x => x.OpenTo, OpenTo.Month));
@@ -336,7 +336,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToMonth_Select3rdMonth_Select2ndDay_CheckDateRange()
+        public async Task OpenToMonth_Select3rdMonth_Select2ndDay_CheckDateRangeAsync()
         {
             var comp = OpenPicker(parameters => parameters
                 .Add(x => x.OpenTo, OpenTo.Month));
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDateRange()
+        public async Task Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDateRangeAsync()
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
@@ -377,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenTo12thMonth_NavigateBack_CheckMonth()
+        public async Task OpenTo12thMonth_NavigateBack_CheckMonthAsync()
         {
             var comp = OpenTo12thMonth();
             var picker = comp.Instance;
@@ -387,7 +387,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenTo12thMonth_NavigateForward_CheckYear()
+        public async Task OpenTo12thMonth_NavigateForward_CheckYearAsync()
         {
             var comp = OpenTo12thMonth();
             var picker = comp.Instance;
@@ -397,7 +397,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Open_ClickYear_ClickCurrentYear_Click2ndMonth_Click1_Click3_CheckDateRange()
+        public async Task Open_ClickYear_ClickCurrentYear_Click2ndMonth_Click1_Click3_CheckDateRangeAsync()
         {
             var comp = OpenPicker();
             await comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").ClickAsync();
@@ -532,7 +532,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SetRangeTextFunc_NullInputNoError()
+        public async Task SetRangeTextFunc_NullInputNoErrorAsync()
         {
             var comp = Context.Render<MudDateRangePicker>(parameters =>
                 parameters.Add(p => p.DateRange,
@@ -544,7 +544,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SetRangeTextFunc_NullRangeTextNoError()
+        public async Task SetRangeTextFunc_NullRangeTextNoErrorAsync()
         {
             var dateTime = new DateTime(2020, 12, 26);
             var comp = Context.Render<MudDateRangePicker>(parameters =>
@@ -712,7 +712,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CurrentDate_ShouldBeMarked()
+        public async Task CurrentDate_ShouldBeMarkedAsync()
         {
             var currentDate = DateTime.Now.Date;
             var comp = OpenPicker();
@@ -1350,7 +1350,7 @@ namespace MudBlazor.UnitTests.Components
     }
     public static class DatePickerRenderedFragmentExtensions
     {
-        public static void SelectDate(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
+        public static async Task SelectDateAsync(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
         {
             await comp.ValidateSelection(day, firstOccurrence).ClickAsync();
         }

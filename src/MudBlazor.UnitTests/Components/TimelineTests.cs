@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TimelineTest_SelectItem()
+        public async Task TimelineTest_SelectItemAsync()
         {
             var comp = Context.Render<TimelineTest>();
 

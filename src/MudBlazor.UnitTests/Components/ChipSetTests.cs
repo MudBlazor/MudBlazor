@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicking a chip selects it, clicking again de-selects it. Clicking one chip de-selects the other
         /// </summary>
         [Test]
-        public void ChipSet_SingleSelection()
+        public async Task ChipSet_SingleSelectionAsync()
         {
             var comp = Context.Render<ChipSetSingleSelectionTest>();
             // initially nothing is selected
@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicking a chip selects it, clicking again does not de-select it when Mandatory="true"
         /// </summary>
         [Test]
-        public void ChipSet_SingleSelection_Mandatory()
+        public async Task ChipSet_SingleSelection_MandatoryAsync()
         {
             var comp = Context.Render<ChipSetSingleSelectionTest>(parameters => parameters
                 .Add(p => p.SelectionMode, SelectionMode.SingleSelection)
@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSet_MultiSelection()
+        public async Task ChipSet_MultiSelectionAsync()
         {
             var comp = Context.Render<ChipSetMultiSelectionTest>();
             // select elements needed for the test
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSet_MultiSelection_WithInitialValues()
+        public async Task ChipSet_MultiSelection_WithInitialValuesAsync()
         {
             var comp = Context.Render<ChipSetMultiSelectionTest>(parameters => parameters.Add(x => x.InitialValues, ["Corn flakes", "Milk", "Red wine"]));
             // initial values should be selected
@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelected()
+        public async Task ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelectedAsync()
         {
             var comp = Context.Render<ChipSetDefaultChipsTest>(p => p.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll(".mud-chip").Count.Should().Be(7);
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSet_MultiSelection_DefaultChipsShouldOverrideInitiallySelected()
+        public async Task ChipSet_MultiSelection_DefaultChipsShouldOverrideInitiallySelectedAsync()
         {
             var comp = Context.Render<ChipSetDefaultChipsTest>(p => p
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
+        public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelectedAsync()
         {
             var comp = Context.Render<ChipSetLateDefaultTest>();
             // check that only one item is present
@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests.Components
         /// added to chips and chip click event should return without executing any code
         /// </summary>
         [Test]
-        public void ChipSet_ReadOnly()
+        public async Task ChipSet_ReadOnlyAsync()
         {
             var comp = Context.Render<ChipSetReadOnlyTest>();
             // print the generated html
@@ -210,7 +210,7 @@ namespace MudBlazor.UnitTests.Components
         /// Whenever one ChipSet changes the other must update to the same selection state.
         /// </summary>
         [Test]
-        public void ChipSet_SelectedValues_TwoWayBinding()
+        public async Task ChipSet_SelectedValues_TwoWayBindingAsync()
         {
             var comp = Context.Render<ChipSetSelectionTwoWayBindingTest>();
             // initial values check
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSetComparerTest()
+        public async Task ChipSetComparerTestAsync()
         {
             var comp = Context.Render<ChipSetComparerTest>();
             // initial values check
@@ -399,7 +399,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChipSet_With_NonValueTypes_DoesntCrash()
+        public async Task ChipSet_With_NonValueTypes_DoesntCrashAsync()
         {
             var a = new object();
             var b = new object();
@@ -419,7 +419,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Chip_TwoWayBinding_ShouldUpdateSelection()
+        public async Task Chip_TwoWayBinding_ShouldUpdateSelectionAsync()
         {
             var comp = Context.Render<ChipSetChipBindingTest>();
             comp.Find("div.selection").TrimmedText().Should().Be("Add ingredients to your cocktail.");

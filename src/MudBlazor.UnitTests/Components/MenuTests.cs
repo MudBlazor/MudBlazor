@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenMenu_ClickClassItem_CheckClass()
+        public async Task OpenMenu_ClickClassItem_CheckClassAsync()
         {
             var comp = Context.Render<MenuTest1>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync();
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenMenu_CheckClass()
+        public async Task OpenMenu_CheckClassAsync()
         {
             var comp = Context.Render<MenuTest1>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync();
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Default_Disabled_CheckDisabled()
+        public async Task Default_Disabled_CheckDisabledAsync()
         {
             var comp = Context.Render<MenuTest1>(x =>
                 x.Add(p => p.DisableMenu, true)
@@ -367,7 +367,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenMenu_CloseMenuOnClick_CheckStillOpen()
+        public async Task OpenMenu_CloseMenuOnClick_CheckStillOpenAsync()
         {
             var comp = Context.Render<MenuTest1>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync();
@@ -569,7 +569,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ActivatorClass()
+        public async Task ActivatorClassAsync()
         {
             var comp = Context.Render<MenuActivatorsTest>();
 
@@ -599,7 +599,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenNestedMenu()
+        public async Task OpenNestedMenuAsync()
         {
             var comp = Context.Render<MenuWithNestingTest>();
 

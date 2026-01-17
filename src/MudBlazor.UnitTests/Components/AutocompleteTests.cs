@@ -331,7 +331,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
+        public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlurAsync()
         {
             // Arrange
 
@@ -369,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
+        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlurAsync()
         {
             // Arrange
 
@@ -407,7 +407,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnEnter()
+        public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnEnterAsync()
         {
             // Arrange
 
@@ -444,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnEnter()
+        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnEnterAsync()
         {
             // Arrange
 
@@ -663,7 +663,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1415"/>
         /// </summary>
         [Test]
-        public void Autocomplete_OnBlurShouldBeCalled()
+        public async Task Autocomplete_OnBlurShouldBeCalledAsync()
         {
             var calls = 0;
             void Fn(FocusEventArgs args) => calls++;

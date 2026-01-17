@@ -548,7 +548,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridCustomComparerTest()
+        public async Task DataGridCustomComparerTestAsync()
         {
             var comp = Context.Render<DataGridSelectionComparerTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionComparerTest.Person>>();
@@ -706,7 +706,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridEditableSelectionTest()
+        public async Task DataGridEditableSelectionTestAsync()
         {
             var comp = Context.Render<DataGridEditableWithSelectColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
@@ -731,7 +731,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridInlineEditVirtualizeServerDataTest()
+        public async Task DataGridInlineEditVirtualizeServerDataTestAsync()
         {
             var comp = Context.Render<DataGridCellEditVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditVirtualizeServerDataTest.Item>>();
@@ -915,7 +915,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridInlineEditTest()
+        public async Task DataGridInlineEditTestAsync()
         {
             var comp = Context.Render<DataGridCellEditTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditTest.Model>>();
@@ -938,7 +938,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridInlineEditWithNullableChangeTest()
+        public async Task DataGridInlineEditWithNullableChangeTestAsync()
         {
             var comp = Context.Render<DataGridCellEditWithNullableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithNullableTest.Model>>();
@@ -953,7 +953,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridInlineEditWithNullableTest()
+        public async Task DataGridInlineEditWithNullableTestAsync()
         {
             var comp = Context.Render<DataGridCellEditWithNullableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithNullableTest.Model>>();
@@ -976,7 +976,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridInlineEditWithTemplateTest()
+        public async Task DataGridInlineEditWithTemplateTestAsync()
         {
             var comp = Context.Render<DataGridCellEditWithTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithTemplateTest.Model>>();
@@ -1006,7 +1006,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridDialogEditTest()
+        public async Task DataGridDialogEditTestAsync()
         {
             var comp = Context.Render<DataGridFormEditTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditTest.Model>>();
@@ -1060,7 +1060,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
-        public void DataGridDialogEditCloneStrategyTest1()
+        public async Task DataGridDialogEditCloneStrategyTest1Async()
         {
             var comp = Context.Render<DataGridFormEditCloneStrategyTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditCloneStrategyTest.Movement>>();
@@ -1096,7 +1096,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridDialogEditCloneStrategyTest2()
+        public async Task DataGridDialogEditCloneStrategyTest2Async()
         {
             var comp = Context.Render<DataGridFormEditCloneStrategyTest>(parameters => parameters
                 .Add(p => p.CloneStrategy, SystemTextJsonDeepCloneStrategy<DataGridFormEditCloneStrategyTest.Movement>.Instance));
@@ -1121,7 +1121,7 @@ namespace MudBlazor.UnitTests.Components
         /// DataGrid edit form should trigger the FormFieldChanged event
         /// </summary>
         [Test]
-        public void DataGridFormFieldChangedTest()
+        public async Task DataGridFormFieldChangedTestAsync()
         {
             var comp = Context.Render<DataGridFormFieldChangedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormFieldChangedTest.Item>>();
@@ -1246,7 +1246,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridEditComplexPropertyExpressionTest()
+        public async Task DataGridEditComplexPropertyExpressionTestAsync()
         {
             var comp = Context.Render<DataGridEditComplexPropertyExpressionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditComplexPropertyExpressionTest.Item>>();
@@ -2741,7 +2741,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridClickFilterButtonTest()
+        public async Task DataGridClickFilterButtonTestAsync()
         {
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
@@ -3051,7 +3051,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridFilterPerColumnTest()
+        public async Task DataGridFilterPerColumnTestAsync()
         {
             var comp = Context.Render<DataGridFilterPerColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterPerColumnTest.Model>>();
@@ -3364,7 +3364,7 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that enabling the loading switch adds a new row to the table header without altering the table body.
         /// </summary>
         [Test]
-        public void DataGridLoadingProgressTest()
+        public async Task DataGridLoadingProgressTestAsync()
         {
             // Render the component
             var comp = Context.Render<DataGridLoadingProgressTest>();
@@ -3759,7 +3759,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridFilterableFalseTest()
+        public async Task DataGridFilterableFalseTestAsync()
         {
             var comp = Context.Render<DataGridFilterableFalseTest>();
 
@@ -3979,17 +3979,17 @@ namespace MudBlazor.UnitTests.Components
 
             IReadOnlyList<IElement> ClearButtons() => dataGrid.FindAll(".align-self-center");
             ClearButtons().Should().HaveCount(5);
-            ClearAllFiltersOneByOne();
+            ClearAllFiltersOneByOneAsync();
 
             var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
             inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear buttons should reset all filters");
 
-            var action = ClearAllFiltersOneByOne;
+            var action = ClearAllFiltersOneByOneAsync;
 
             // We had regressions here before https://github.com/MudBlazor/MudBlazor/issues/10034
             action.Should().NotThrow("We click clear again to make sure that no exception appear when there are no filters left.");
 
-            void ClearAllFiltersOneByOne()
+            async Task ClearAllFiltersOneByOneAsync()
             {
                 for (var index = 0; index < ClearButtons().Count; index++)
                 {
@@ -4000,7 +4000,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridColumnFilterRowPropertyClearAllTest()
+        public async Task DataGridColumnFilterRowPropertyClearAllTestAsync()
         {
             var comp = Context.Render<DataGridColumnFilterRowPropertyTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterRowPropertyTest.Model>>();
@@ -4093,7 +4093,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridObservabilityTest()
+        public async Task DataGridObservabilityTestAsync()
         {
             var comp = Context.Render<DataGridObservabilityTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridObservabilityTest.Model>>();
@@ -4292,7 +4292,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridCultureColumnFilterTest()
+        public async Task DataGridCultureColumnFilterTestAsync()
         {
             var comp = Context.Render<DataGridCultureSimpleTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureSimpleTest.Model>>();
@@ -4333,7 +4333,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridCultureColumnFilterHeaderTest()
+        public async Task DataGridCultureColumnFilterHeaderTestAsync()
         {
             var comp = Context.Render<DataGridCultureEditableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
@@ -4681,7 +4681,7 @@ namespace MudBlazor.UnitTests.Components
 
         }
         [Test]
-        public void DataGridEditFormDialogIsCustomizableTest()
+        public async Task DataGridEditFormDialogIsCustomizableTestAsync()
         {
             var comp = Context.Render<DataGridEditFormCustomizedDialogTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditFormCustomizedDialogTest.Model>>();
@@ -4777,7 +4777,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridSelectColumnTest()
+        public async Task DataGridSelectColumnTestAsync()
         {
             var comp = Context.Render<DataGridSelectColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<int>>();
@@ -4951,7 +4951,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridEnumLocalization()
+        public async Task DataGridEnumLocalizationAsync()
         {
             var comp = Context.Render<DataGridFilterEnumLocalizationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterEnumLocalizationTest.Item>>();
@@ -4974,7 +4974,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridValidatorFormBinding()
+        public async Task DataGridValidatorFormBindingAsync()
         {
             var comp = Context.Render<DataGridValidatorTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -5201,7 +5201,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void DataGridHeaderToggleIconTest(bool rightToLeft)
+        public async Task DataGridHeaderToggleIconTestAsync(bool rightToLeft)
         {
             // Render with EnableHeaderToggle = true and set RTL mode
             var comp = Context.Render<DataGridHierarchyColumnTest>(parameters =>
@@ -5416,7 +5416,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectOnRowClick_IgnoresDisabledRows()
+        public async Task SelectOnRowClick_IgnoresDisabledRowsAsync()
         {
             var items = new List<TestDataItem>
             {

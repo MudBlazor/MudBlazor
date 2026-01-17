@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
         /// Adding the mud-nav-group-disabled css tag to the group
         /// </summary>
         [Test]
-        public void Two_Way_Bindable_Disabled()
+        public async Task Two_Way_Bindable_DisabledAsync()
         {
             var comp = Context.Render<NavMenuGroupDisabledTest>();
 

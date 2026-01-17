@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
+        public async Task ShouldSetIsGenderGroupedToTrueWhenGroupingIsAppliedAsync()
         {
             // Render the DataGridGroupingTest component for testing.
             var comp = Context.Render<DataGridColumnGroupingTest>();
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [SetCulture("en-US")]
-        public void DataGridServerGroupUngroupingTest()
+        public async Task DataGridServerGroupUngroupingTestAsync()
         {
             var comp = Context.Render<DataGridServerDataColumnGroupingTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<Examples.Data.Models.Element>>();
@@ -396,7 +396,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridGrouping_ManualGroupByOrderTest()
+        public async Task DataGridGrouping_ManualGroupByOrderTestAsync()
         {
             var comp = Context.Render<DataGridColumnGroupingTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
@@ -670,7 +670,7 @@ namespace MudBlazor.UnitTests.Components
         // https://github.com/MudBlazor/MudBlazor/pull/10213 
         // Allow grouping by null valus and toggle grouping keeps initial state on other groups
         [Test]
-        public void DataGrid_Grouping_ByNull()
+        public async Task DataGrid_Grouping_ByNullAsync()
         {
             var comp = Context.Render<DataGridGroupByNullTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupByNullTest.Fruit>>();

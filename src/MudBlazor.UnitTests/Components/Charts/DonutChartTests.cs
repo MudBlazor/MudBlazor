@@ -178,7 +178,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void DonutChart_CanHideSeries_Test()
+        public async Task DonutChart_CanHideSeries_TestAsync()
         {
             var chartData = new double[] { 25, 35, 15, 25 };
             string[] chartLabels = { "Area A", "Area B", "Area C", "Area D" };

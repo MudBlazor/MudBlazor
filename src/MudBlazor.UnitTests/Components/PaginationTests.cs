@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Next, 2)]
         [TestCase(Page.Last, 3)]
         [Test]
-        public void PaginationControlButtonEventCallbackTest(Page controlButton, int expectedButtonClickedValue)
+        public async Task PaginationControlButtonEventCallbackTestAsync(Page controlButton, int expectedButtonClickedValue)
         {
             var comp = Context.Render<PaginationButtonTest>();
 
@@ -233,7 +233,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(5, -1, 1)]
         [TestCase(5, 1, -1)]
         [Test]
-        public void PaginationCountWithoutEllipsisTest(int count, int middleCount, int boundaryCount)
+        public async Task PaginationCountWithoutEllipsisTestAsync(int count, int middleCount, int boundaryCount)
         {
             var comp = Context.Render<PaginationCountTest>();
 

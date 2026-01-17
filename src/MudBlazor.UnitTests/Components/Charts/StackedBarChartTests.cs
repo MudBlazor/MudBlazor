@@ -549,7 +549,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Tooltip_ShowToolTipsTrue_ShouldRenderTooltipComponent()
+        public async Task StackedBarChart_Tooltip_ShowToolTipsTrue_ShouldRenderTooltipComponentAsync()
         {
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
             string[] xAxisLabels = { "A" };
@@ -672,7 +672,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Tooltip_TooltipTemplate_ShouldRenderCustomTooltip()
+        public async Task StackedBarChart_Tooltip_TooltipTemplate_ShouldRenderCustomTooltipAsync()
         {
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "TemplateSeries", Data = new[] { 77.0 } } };
             string[] xAxisLabels = { "TX" };
@@ -707,7 +707,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Tooltip_TooltipPositionFunc_ShouldBeCalledOnHover()
+        public async Task StackedBarChart_Tooltip_TooltipPositionFunc_ShouldBeCalledOnHoverAsync()
         {
             _tooltipPositionFuncCalled = false;
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "PosFuncSeries", Data = new[] { 55.0 } } };
@@ -958,7 +958,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_CanHideSeries_Test()
+        public async Task StackedBarChart_CanHideSeries_TestAsync()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {

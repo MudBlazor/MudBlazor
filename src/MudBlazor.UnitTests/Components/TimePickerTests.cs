@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Open_ClickOutside_CheckClosed()
+        public async Task Open_ClickOutside_CheckClosedAsync()
         {
             var comp = OpenPicker();
             // clicking outside to close
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHours()
+        public async Task OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHoursAsync()
         {
             var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
             // Are minutes hidden
@@ -147,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChangeToMinutes_FromHours_CheckHoursHidden()
+        public async Task ChangeToMinutes_FromHours_CheckHoursHiddenAsync()
         {
             var comp = OpenPicker();
             // click on the minutes input
@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void InputStringValues_CheckParsing()
+        public async Task InputStringValues_CheckParsingAsync()
         {
             var comp = Context.Render<MudTimePicker>();
             var picker = comp.Instance;

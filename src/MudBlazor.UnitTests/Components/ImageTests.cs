@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwitchesToFallbackSrcOnError()
+        public async Task SwitchesToFallbackSrcOnErrorAsync()
         {
             var initialSrc = "primary-image.jpg";
             var fallbackSrc = "fallback-image.jpg";
@@ -114,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void FallbackMissingOnError()
+        public async Task FallbackMissingOnErrorAsync()
         {
             var initialSrc = "primary-image.jpg";
 

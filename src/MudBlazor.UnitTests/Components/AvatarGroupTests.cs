@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupChangeMaxTest()
+        public async Task AvatarGroupChangeMaxTestAsync()
         {
             var comp = Context.Render<AvatarGroupChangeMaxTest>();
             // select elements needed for the test
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupRemoveTest()
+        public async Task AvatarGroupRemoveTestAsync()
         {
             var comp = Context.Render<AvatarGroupRemoveTest>();
 

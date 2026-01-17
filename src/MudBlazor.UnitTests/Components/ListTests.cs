@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.Components
         /// <para>In this test no item is selected to begin with</para>
         /// </summary>
         [Test]
-        public void ListSelectionTest()
+        public async Task ListSelectionTestAsync()
         {
             var comp = Context.Render<ListSelectionTest>();
             var list = comp.FindComponent<MudList<string>>().Instance;
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ListToggleSelectionTest()
+        public async Task ListToggleSelectionTestAsync()
         {
             var comp = Context.Render<ListSelectionTest>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
             var list = comp.FindComponent<MudList<string>>().Instance;

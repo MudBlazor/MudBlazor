@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
         [Test]
-        public void WithNoDebounceIntervalValueShouldChangeImmediatelyTest()
+        public async Task WithNoDebounceIntervalValueShouldChangeImmediatelyTestAsync()
         {
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
         /// FluentValidation rules can be used for validating a NumericFields
         /// </summary>
         [Test]
-        public void NumericFieldFluentValidationTest1()
+        public async Task NumericFieldFluentValidationTest1Async()
         {
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate handling of decimal support & precision kept
         /// </summary>
         [Test]
-        public void NumericField_HandleDecimalPrecisionAndValues()
+        public async Task NumericField_HandleDecimalPrecisionAndValuesAsync()
         {
             var comp = Context.Render<MudNumericField<decimal>>();
             var numericField = comp.Instance;
@@ -274,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NumericField_Should_FireTextAndValueChangedOnTextInput()
+        public async Task NumericField_Should_FireTextAndValueChangedOnTextInputAsync()
         {
             var changed_value = 4;
             string changed_text = null;

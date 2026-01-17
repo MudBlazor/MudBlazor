@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public void PieChartSelectionTest()
+        public async Task PieChartSelectionTestAsync()
         {
             var comp = Context.Render<PieChartSelectionTest>();
             // print the generated html
@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DonutChartSelectionTest()
+        public async Task DonutChartSelectionTestAsync()
         {
             var comp = Context.Render<DonutChartSelectionTest>();
             // print the generated html
@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void LineChartSelectionTest()
+        public async Task LineChartSelectionTestAsync()
         {
             var comp = Context.Render<LineChartSelectionTest>();
             // print the generated html
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void BarChartSelectionTest()
+        public async Task BarChartSelectionTestAsync()
         {
             var comp = Context.Render<BarChartSelectionTest>();
             // print the generated html
@@ -648,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void HeatmapChart_CanHideSeries_Test()
+        public async Task HeatmapChart_CanHideSeries_TestAsync()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {

@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void PieChart_CanHideSeries_Test()
+        public async Task PieChart_CanHideSeries_TestAsync()
         {
             var chartData = new double[] { 10, 20, 30, 40 };
             string[] chartLabels = { "Slice 1", "Slice 2", "Slice 3", "Slice 4" };

@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test scrolling and clicking on 'scroll to top' element
         /// </summary>
         [Test]
-        public void ScrollToTopTest()
+        public async Task ScrollToTopTestAsync()
         {
             var comp = Context.Render<ScrollToTopTest>();
 

@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioGroupTest1()
+        public async Task RadioGroupTest1Async()
         {
             var comp = Context.Render<RadioGroupTest1>();
             // select elements needed for the test
@@ -84,7 +84,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioGroupTest3()
+        public async Task RadioGroupTest3Async()
         {
             var comp = Context.Render<RadioGroupTest3>();
             // select elements needed for the test
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioGroupTest4()
+        public async Task RadioGroupTest4Async()
         {
             var comp = Context.Render<RadioGroupTest4>();
             // select elements needed for the test
@@ -153,7 +153,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioGroupTest5()
+        public async Task RadioGroupTest5Async()
         {
             var comp = Context.Render<RadioGroupTest5>();
             // select elements needed for the test
@@ -198,7 +198,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioTest_BindAfter()
+        public async Task RadioTest_BindAfterAsync()
         {
             var comp = Context.Render<RadioGroupTest5>();
             // select elements needed for the test
@@ -268,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the Disabled property of the MudRadio
         /// </summary>
         [Test]
-        public void RadioDisabledTest()
+        public async Task RadioDisabledTestAsync()
         {
             var comp = Context.Render<RadioGroupTest7>();
             comp.Instance.SelectedOption.Should().BeNull();
@@ -285,7 +285,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the Disabled property of the MudRadioGroup
         /// </summary>
         [Test]
-        public void RadioGroupDisabledTest()
+        public async Task RadioGroupDisabledTestAsync()
         {
             var comp = Context.Render<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[1];
@@ -302,7 +302,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the Readonly property of the MudRadioGroup
         /// </summary>
         [Test]
-        public void RadioGroupReadOnlyTest()
+        public async Task RadioGroupReadOnlyTestAsync()
         {
             var comp = Context.Render<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[0];

@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ElementReferenceCapture()
+        public async Task ElementReferenceCaptureAsync()
         {
             var comp = Context.Render<ElementReferenceExceptionTest>();
             await comp.Find("#element-button").ClickAsync();

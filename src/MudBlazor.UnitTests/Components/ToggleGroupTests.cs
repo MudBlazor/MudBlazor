@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
     public class ToggleGroupTests : BunitTest
     {
         [Test]
-        public void ToggleGroup_Bind_Test()
+        public async Task ToggleGroup_Bind_TestAsync()
         {
             var comp = Context.Render<ToggleGroupBindTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_CustomFragmentBind_Test()
+        public async Task ToggleGroup_CustomFragmentBind_TestAsync()
         {
             var comp = Context.Render<ToggleGroupCustomFragmentTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_SelectionMode_Test()
+        public async Task ToggleGroup_SelectionMode_TestAsync()
         {
             var comp = Context.Render<ToggleGroupBindMultiSelectionTest>();
             var group1 = comp.FindComponents<MudToggleGroup<string>>().First();
@@ -71,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_Initialize_Test()
+        public async Task ToggleGroup_Initialize_TestAsync()
         {
             var comp = Context.Render<ToggleGroupInitializeTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
@@ -88,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_ToggleSelection_Test()
+        public async Task ToggleGroup_ToggleSelection_TestAsync()
         {
             var comp = Context.Render<ToggleGroupToggleSelectionTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();
@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_ToggleRemove_Test()
+        public async Task ToggleGroup_ToggleRemove_TestAsync()
         {
             var comp = Context.Render<ToggleGroupRemoveTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();
@@ -296,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(SelectionMode.SingleSelection)]
         [TestCase(SelectionMode.ToggleSelection)]
-        public void ToggleGroup_UnselectPreviousValue_OnToggle_Test(SelectionMode selMode)
+        public async Task ToggleGroup_UnselectPreviousValue_OnToggle_TestAsync(SelectionMode selMode)
         {
             // Arrange
             var comp = Context.Render<MudToggleGroup<string>>(parameters => parameters

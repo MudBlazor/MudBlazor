@@ -15,14 +15,14 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TabsTests : BunitTest
     {
-        public override void Setup()
+        public override void SetupAsync()
         {
             await base.SetupAsync(new SetEventArgs());
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), new MockResizeObserverFactory()));
         }
 
         [Test]
-        public void AddingAndRemovingTabPanels()
+        public async Task AddingAndRemovingTabPanelsAsync()
         {
             var comp = Context.Render<TabsAddingRemovingTabsTest>();
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Components
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
-        public void KeepTabsAliveTest()
+        public async Task KeepTabsAliveTestAsync()
         {
             var comp = Context.Render<TabsKeepAliveTest>();
             // all panels should be evident in the markup:
@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
-        public void KeepTabs_Not_AliveTest()
+        public async Task KeepTabs_Not_AliveTestAsync()
         {
             var comp = Context.Render<TabsKeepAliveTest>(parameters => parameters.Add(p => p.KeepPanelsAlive, false));
             // only one panel should be evident in the markup:
@@ -407,7 +407,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ScrollNext()
+        public async Task ScrollNextAsync()
         {
             var observer = new MockResizeObserver
             {
@@ -1182,7 +1182,7 @@ namespace MudBlazor.UnitTests.Components
         /// See: https://github.com/MudBlazor/MudBlazor/issues/2976
         /// </summary>
         [Test]
-        public void MenuInHeaderPanelCloseOnClickOutside()
+        public async Task MenuInHeaderPanelCloseOnClickOutsideAsync()
         {
             var comp = Context.Render<TabsWithMenuInHeader>();
 

@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         /// Setting an invalid number should show the conversion error message
         /// </summary>
         [Test]
-        public void TextFieldConversionError()
+        public async Task TextFieldConversionErrorAsync()
         {
             var comp = Context.Render<MudTextField<int?>>();
             // print the generated html
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
         [Test]
-        public void WithNoDebounceIntervalValueShouldChangeImmediatelyTest()
+        public async Task WithNoDebounceIntervalValueShouldChangeImmediatelyTestAsync()
         {
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
@@ -238,7 +238,7 @@ namespace MudBlazor.UnitTests.Components
         /// FluentValidation rules can be used for validating a TextFields
         /// </summary>
         [Test]
-        public void TextFieldFluentValidationTest1()
+        public async Task TextFieldFluentValidationTest1Async()
         {
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -296,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextField_Should_FireTextAndValueChangedOnTextInput()
+        public async Task TextField_Should_FireTextAndValueChangedOnTextInputAsync()
         {
             string changed_value = null;
             string changed_text = null;
@@ -314,7 +314,7 @@ namespace MudBlazor.UnitTests.Components
         /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
         /// </summary>
         [Test]
-        public void TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
+        public async Task TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionErrorAsync()
         {
             var comp = Context.Render<MudTextField<int?>>(parameters => parameters.Add(p => p.Required, true));
             var textfield = comp.Instance;
@@ -398,7 +398,7 @@ namespace MudBlazor.UnitTests.Components
         /// <para>After editing the second (multi-line) tf it would not accept any updates from the first tf.</para>
         /// </summary>
         [Test]
-        public void MultiLineTextField_ShouldBe_TwoWayBindable()
+        public async Task MultiLineTextField_ShouldBe_TwoWayBindableAsync()
         {
             var comp = Context.Render<MultilineTextfieldBindingTest>();
             // print the generated html
@@ -445,7 +445,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextFieldClearableTest()
+        public async Task TextFieldClearableTestAsync()
         {
             var comp = Context.Render<TextFieldClearableTest>();
             var textField = comp.FindComponent<MudTextField<string>>();
@@ -949,7 +949,7 @@ namespace MudBlazor.UnitTests.Components
         /// ReadOnly TextFields should not validate when blurred
         /// </summary>
         [Test]
-        public void ReadOnlyTextFieldShouldNotValidate()
+        public async Task ReadOnlyTextFieldShouldNotValidateAsync()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
             .Add(p => p.ReadOnly, true)
@@ -976,7 +976,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
         /// </summary>
         [Test]
-        public void OnBlurWithModifiedValueTriggerValidationOnce1()
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce1Async()
         {
             var callCounter = 0;
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
@@ -992,7 +992,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
         /// </summary>
         [Test]
-        public void OnBlurWithModifiedValueTriggerValidationOnce2()
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce2Async()
         {
             var callCounter = 0;
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
@@ -1416,7 +1416,7 @@ namespace MudBlazor.UnitTests.Components
         /// When the user inputs a single space, the required text field should show an error.
         /// </summary>
         [Test]
-        public void RequiredTextField_WhenInputOneSpace_ShowError()
+        public async Task RequiredTextField_WhenInputOneSpace_ShowErrorAsync()
         {
             // Arrange
 

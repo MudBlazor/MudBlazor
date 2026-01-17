@@ -26,7 +26,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClick()
+    public async Task RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClickAsync()
     {
         var seriesData = new double[] { 10, 20, 30 };
         var chartLabels = new[] { "A", "B", "C" };
@@ -191,7 +191,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Interaction_SelectedIndex()
+    public async Task RadarChart_Interaction_SelectedIndexAsync()
     {
         var selectedIndex = -1;
         var comp = Context.Render<Radar<double>>(parameters => parameters
@@ -232,7 +232,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_CanHideSeries_Test()
+    public async Task RadarChart_CanHideSeries_TestAsync()
     {
         var chartSeries = new List<ChartSeries<double>>()
         {
@@ -886,7 +886,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ShowDefaultTooltip_OnSeriesPathHover()
+    public async Task RadarChart_Should_ShowDefaultTooltip_OnSeriesPathHoverAsync()
     {
         var seriesName = "My Series";
         var seriesData = new double[] { 10, 20, 30 };
@@ -913,7 +913,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ShowCustomTooltip_WithTooltipTemplate()
+    public async Task RadarChart_Should_ShowCustomTooltip_WithTooltipTemplateAsync()
     {
         Context.JSInterop.Mode = JSRuntimeMode.Loose;
         var seriesName = "Custom Series";
@@ -1007,7 +1007,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_HideTooltip_OnMouseOut()
+    public async Task RadarChart_Should_HideTooltip_OnMouseOutAsync()
     {
         Context.JSInterop.Mode = JSRuntimeMode.Loose;
         var seriesName = "Hide Test Series";

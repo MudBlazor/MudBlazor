@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void StepperStepContext_ShouldBeAvailableInsideChildContent()
+        public async Task StepperStepContext_ShouldBeAvailableInsideChildContentAsync()
         {
             MudStepContext? firstStepContext = null;
             MudStepContext? secondStepContext = null;
@@ -101,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Stepper_ShouldDisplayContentOfActiveStep()
+        public async Task Stepper_ShouldDisplayContentOfActiveStepAsync()
         {
             var stepper = Context.Render<MudStepper>(self =>
             {
@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Stepper_ShouldNavigateViaNextAndPrevious()
+        public async Task Stepper_ShouldNavigateViaNextAndPreviousAsync()
         {
             var stepper = Context.Render<MudStepper>(self =>
             {
@@ -203,7 +203,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void PreviousAndNext_ShouldCorrectlyHandleDisabledSteps()
+        public async Task PreviousAndNext_ShouldCorrectlyHandleDisabledStepsAsync()
         {
             var stepper = Context.Render<MudStepper>(self =>
             {
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Stepper_ShouldBeAbleToSkipSkippableSteps()
+        public async Task Stepper_ShouldBeAbleToSkipSkippableStepsAsync()
         {
             var stepper = Context.Render<MudStepper>(self =>
             {
@@ -267,7 +267,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ActiveIndex_ShouldBeTwoWayBindable()
+        public async Task ActiveIndex_ShouldBeTwoWayBindableAsync()
         {
             var comp = Context.Render<StepperTwoWayBindingTestComponent>();
             var stepper1 = comp.FindComponents<MudStepper>()[0];
@@ -565,7 +565,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void StepOnClick_ShouldFireForNonLinearStepper()
+        public async Task StepOnClick_ShouldFireForNonLinearStepperAsync()
         {
             int aClick = 0;
             int bClick = 0;
@@ -659,7 +659,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ResetButton_ShouldTriggerResetStepActionOnAllStepsThenActivateFirstStep()
+        public async Task ResetButton_ShouldTriggerResetStepActionOnAllStepsThenActivateFirstStepAsync()
         {
             var cancel = false;
             var actions = new List<StepAction>();
@@ -703,7 +703,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ResetButton_ShouldTriggerResetStepActionForSkippedSteps()
+        public async Task ResetButton_ShouldTriggerResetStepActionForSkippedStepsAsync()
         {
             var cancel = false;
             var actions = new List<StepAction>();
@@ -746,7 +746,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NextButton_ShouldTriggerCompleteStepAction()
+        public async Task NextButton_ShouldTriggerCompleteStepActionAsync()
         {
             var cancel = false;
             var action = StepAction.Reset;
@@ -778,7 +778,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SkipButton_ShouldTriggerSkipStepAction()
+        public async Task SkipButton_ShouldTriggerSkipStepActionAsync()
         {
             var cancel = false;
             var action = StepAction.Reset;
@@ -809,7 +809,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void BackButton_ShouldTriggerActivateStepAction()
+        public async Task BackButton_ShouldTriggerActivateStepActionAsync()
         {
             var cancel = false;
             var action = StepAction.Reset;
@@ -847,7 +847,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Stepper_ControlledNavigationTest()
+        public async Task Stepper_ControlledNavigationTestAsync()
         {
             var cancel = false;
             var actions = new List<StepAction>();
@@ -1000,7 +1000,7 @@ namespace MudBlazor.UnitTests.Components
             => builder => content(builder);
 
         [Test]
-        public void Stepper_ShouldHandleNullChildContent()
+        public async Task Stepper_ShouldHandleNullChildContentAsync()
         {
             var stepper = Context.Render<MudStepper>(self =>
             {

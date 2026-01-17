@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Warning, Color.Dark)]
         [TestCase(Color.Error, Color.Primary)]
         [TestCase(Color.Dark, Color.Primary)]
-        public void SwitchColorTest(Color color, Color uncheckedcolor)
+        public async Task SwitchColorTestAsync(Color color, Color uncheckedcolor)
         {
             var comp = Context.Render<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
 
