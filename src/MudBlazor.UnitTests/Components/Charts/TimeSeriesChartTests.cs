@@ -312,21 +312,21 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Pressure series path should initially be hidden");
 
             // Hide Temperature series
-            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Temperature checkbox should be unchecked after hiding");
             chartSeries[0].Visible.Should().BeFalse("Temperature Visible property should be false after hiding");
             comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(0, "Temperature series path should be hidden");
 
             // Show Temperature series again
-            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Temperature checkbox should be checked after re-showing");
             chartSeries[0].Visible.Should().BeTrue("Temperature Visible property should be true after re-showing");
             comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Temperature series path should be visible again");
 
             // Hide Humidity series
-            await comp.InvokeAsync(() => seriesCheckboxes[1].ChangeAsync(false));
+            await seriesCheckboxes[1].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[1].IsChecked().Should().BeFalse("Humidity checkbox should be unchecked after hiding");
             chartSeries[1].Visible.Should().BeFalse("Humidity Visible property should be false after hiding");
@@ -334,7 +334,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Temperature series path should remain visible");
 
             // Show Pressure series
-            await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Pressure checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Pressure Visible property should be true after showing");

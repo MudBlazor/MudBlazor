@@ -207,20 +207,20 @@ public class RoseChartTests : BunitTest
         }
 
         // Hide "Petal 1"
-        await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(false));
+        await seriesCheckboxes[0].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeFalse("Petal 1 checkbox should be unchecked after hiding");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Petal 1 path should be hidden");
         comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Petal 2 path should remain visible");
 
         // Show "Petal 1" again
-        await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(true));
+        await seriesCheckboxes[0].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeTrue("Petal 1 checkbox should be checked after re-showing");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Petal 1 path should be visible again");
 
         // Hide "Petal 3"
-        await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(false));
+        await seriesCheckboxes[2].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeFalse("Petal 3 checkbox should be unchecked after hiding");
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Petal 3 path should be hidden");
@@ -229,7 +229,7 @@ public class RoseChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Petal 4 path should still be visible");
 
         // Show "Petal 3" again
-        await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(true));
+        await seriesCheckboxes[2].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeTrue("Petal 3 checkbox should be checked after re-showing");
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Petal 3 path should be visible again");
@@ -476,7 +476,7 @@ public class RoseChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[1]}']").Count.Should().Be(1, "Petal for Set B with correct color should exist.");
 
         // Hide "Set A"
-        await comp.InvokeAsync(() => checkboxSetA.ChangeAsync(false));
+        await checkboxSetA.ChangeAsync(false);
 
         legendCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-query after change
         legendCheckboxes[0].IsChecked().Should().BeFalse("Checkbox for Set A should be unchecked");
@@ -487,7 +487,7 @@ public class RoseChartTests : BunitTest
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(1); // Only Set B's petal remains
 
         // Show "Set A" Again
-        await comp.InvokeAsync(() => checkboxSetA.ChangeAsync(true));
+        await checkboxSetA.ChangeAsync(true);
 
         legendCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-query
         legendCheckboxes[0].IsChecked().Should().BeTrue("Checkbox for Set A should be checked again");

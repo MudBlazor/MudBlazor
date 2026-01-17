@@ -995,21 +995,21 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(0, "Series 3 should have no bar segments visible initially");
 
             // Hide Series 1
-            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
             chartSeries[0].Visible.Should().BeFalse("Series 1 Visible property should be false after hiding");
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(0, "Series 1 bar segments should be hidden");
 
             // Show Series 1 again
-            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after re-showing");
             chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true after re-showing");
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bar segments should be visible again");
 
             // Hide Series 2
-            await comp.InvokeAsync(() => seriesCheckboxes[1].ChangeAsync(false));
+            await seriesCheckboxes[1].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
             chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false after hiding");
@@ -1017,7 +1017,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bar segments should remain visible");
 
             // Show Series 3
-            await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true after showing");

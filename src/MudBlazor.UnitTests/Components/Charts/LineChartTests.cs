@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path expected to be hidden");
 
                 // Hide Series 1
-                await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(false));
+                await seriesCheckboxes[0].ChangeAsync(false);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox hidden");
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path still hidden");
 
                 // Show Series 1 again
-                await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(true));
+                await seriesCheckboxes[0].ChangeAsync(true);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox visible again");
@@ -158,7 +158,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Series 1 path visible again");
 
                 // Show Series 3 (was initially hidden)
-                await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(true));
+                await seriesCheckboxes[2].ChangeAsync(true);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox visible");
@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path still visible (after Series 3 shown)");
 
                 // Hide Series 3 again
-                await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(false));
+                await seriesCheckboxes[2].ChangeAsync(false);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[2].IsChecked().Should().BeFalse("Series 3 checkbox hidden again");

@@ -212,20 +212,20 @@ namespace MudBlazor.UnitTests.Charts
             }
 
             // Hide "Area A"
-            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Area A checkbox should be unchecked after hiding");
             comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Area A path should be hidden");
             comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Area B path should remain visible");
 
             // Show "Area A" again
-            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Area A checkbox should be checked after re-showing");
             comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Area A path should be visible again");
 
             // Hide "Area C"
-            await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(false));
+            await seriesCheckboxes[2].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeFalse("Area C checkbox should be unchecked after hiding");
             comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Area C path should be hidden");
@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Area D path should still be visible");
 
             // Show "Area C" again
-            await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Area C checkbox should be checked after re-showing");
             comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Area C path should be visible again");

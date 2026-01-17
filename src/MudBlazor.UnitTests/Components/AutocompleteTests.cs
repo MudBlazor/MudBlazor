@@ -1212,7 +1212,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CoerceText, true));
-            await comp.InvokeAsync(() => autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" });
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
             await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
             await autocompleteComponent.Find("input").InputAsync("abc");
@@ -1387,7 +1387,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ProgressIndicatorTemplate, fragment));
 
             comp.Markup.Should().NotContain("Loading...");
-            await comp.InvokeAsync(() => autocompletecomp.Find("input").InputAsync("Calif"));
+            await autocompletecomp.Find("input").InputAsync("Calif");
 
             // Test show
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
@@ -1415,7 +1415,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ProgressIndicatorInPopoverTemplate, fragment));
 
             comp.Markup.Should().NotContain("Loading...");
-           await comp.InvokeAsync(() => autocompleteComponent.Find("input").InputAsync("Calif"));
+           await autocompleteComponent.Find("input").InputAsync("Calif");
 
             // Test show
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
@@ -2338,4 +2338,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-
