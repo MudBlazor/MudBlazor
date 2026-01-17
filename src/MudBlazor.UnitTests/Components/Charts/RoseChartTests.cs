@@ -164,7 +164,7 @@ public class RoseChartTests : BunitTest
         );
 
         // Click on the first path segment (index 0)
-        await comp.FindAll("path.mud-chart-serie").First().ClickAsync();
+        await comp.Find("path.mud-chart-serie").ClickAsync();
         selectedIndex.Should().Be(0);
 
         // Click on the third path segment (index 2)

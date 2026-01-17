@@ -208,7 +208,7 @@ public class RadarChartTests : BunitTest
         );
 
         // Simulate click on the first series path (index 0)
-        await comp.FindAll("path.mud-chart-serie").First().ClickAsync();
+        await comp.Find("path.mud-chart-serie").ClickAsync();
         selectedIndex.Should().Be(0);
 
         // Simulate click on the second series path (index 1)

@@ -455,7 +455,7 @@ namespace MudBlazor.UnitTests.Components
             // Test that clicking the close button will actually close the snackbar even with the pointer over.
 
             await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            await _provider.FindAll(".mud-snackbar-close-button").Single().ClickAsync();
+            await _provider.Find(".mud-snackbar-close-button").ClickAsync();
 
             await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
@@ -482,7 +482,7 @@ namespace MudBlazor.UnitTests.Components
 
             counter.Should().Be(0);
 
-            await _provider.FindAll(".mud-snackbar-close-button").Single().ClickAsync();
+            await _provider.Find(".mud-snackbar-close-button").ClickAsync();
 
             counter.Should().Be(1);
             await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
