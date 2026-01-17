@@ -250,10 +250,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_SelectEndDateLowerThanStart_CheckClosed()
         {
-            var comp = await OpenPicker();
+            var comp = OpenPicker();
             // clicking a day buttons to select a range and close
-            await comp.SelectDateAsync("10");
-            await comp.SelectDateAsync("8");
+            comp.SelectDate("10");
+            comp.SelectDate("8");
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
