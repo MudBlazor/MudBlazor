@@ -359,14 +359,14 @@ namespace MudBlazor.UnitTests.Components
             // validate initial field state
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
-           await comp.InvokeAsync(() => TextFieldInput().ChangeAsync("def"));
+            await TextFieldInput().ChangeAsync("def");
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().ContainSingle("invalid"), TimeSpan.FromSeconds(5));
             // make sure success can be detected
-           await comp.InvokeAsync(() => TextFieldInput().ChangeAsync("abc"));
+            await TextFieldInput().ChangeAsync("abc");
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
             // send invalid value, then valid value
-           await comp.InvokeAsync(() => TextFieldInput().ChangeAsync("def"));
-           await comp.InvokeAsync(() => TextFieldInput().ChangeAsync("abc"));
+            await TextFieldInput().ChangeAsync("def");
+            await TextFieldInput().ChangeAsync("abc");
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FormAsyncValidationWithFieldChangedSubscriberTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var input = () => comp.Find("input");
-            await comp.InvokeAsync(() => input().InputAsync("test"));
+            await input().InputAsync("test");
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
@@ -390,7 +390,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await comp.InvokeAsync(() => input().InputAsync(currentText));
+                await input().InputAsync(currentText);
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
@@ -618,7 +618,7 @@ namespace MudBlazor.UnitTests.Components
             colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a valid color
-           await comp.InvokeAsync(() => colorPickerComp.FindAll("input")[0].ChangeAsync("#111111"));
+            await colorPickerComp.FindAll("input")[0].ChangeAsync("#111111");
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
@@ -750,8 +750,8 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.GetState(x => x.Error).Should().BeFalse();
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a date
-           await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[0].ChangeAsync(firstDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
-           await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[1].ChangeAsync(secondDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
+            await dateRangeComp.FindAll("input")[0].ChangeAsync(firstDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
+            await dateRangeComp.FindAll("input")[1].ChangeAsync(secondDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             dateRangePicker.GetState(x => x.Error).Should().BeFalse();
@@ -1615,15 +1615,15 @@ namespace MudBlazor.UnitTests.Components
             //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
 
             var dateString = new DateTime(2022, 04, 03).ToShortDateString();
-           await comp.InvokeAsync(() => datePicker.Find("input").ChangeAsync(dateString));
+            await datePicker.Find("input").ChangeAsync(dateString);
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new DateTime(2022, 04, 03));
             datePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
-           await comp.InvokeAsync(() => timePicker.Find("input").ChangeAsync("00:45"));
+            await timePicker.Find("input").ChangeAsync("00:45");
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new TimeSpan(00, 45, 00));
             timePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
-           await comp.InvokeAsync(() => colorPicker.Find("input").ChangeAsync("#180f6fff"));
+            await colorPicker.Find("input").ChangeAsync("#180f6fff");
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new MudColor("#180f6fff"));
             colorPicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
         }

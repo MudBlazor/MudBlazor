@@ -47,11 +47,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<NavGroupWithExpandedBindingTest>();
             GetExpandedState().Should().BeFalse();
 
-           await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(true));
+            await comp.Find("#navgroup-switch").ChangeAsync(true);
 
             GetExpandedState().Should().BeTrue();
 
-           await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(false));
+            await comp.Find("#navgroup-switch").ChangeAsync(false);
 
             GetExpandedState().Should().BeFalse();
             return;

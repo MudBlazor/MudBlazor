@@ -170,12 +170,12 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
 
             // Clicking the button should close the menu.
-            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
+            await comp.Find("button.mud-button-root").ClickAsync();
             // Check that the component is closed
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
 
             // Clicking the button again should open the menu indefinitely.
-            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
+            await comp.Find("button.mud-button-root").ClickAsync();
             comp.WaitForState(() => comp.FindComponent<MudPopover>().Instance.Open);
 
             // Leaving the menu should no longer close it.
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Clicking the button should now close the menu.
-            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
+            await comp.Find("button.mud-button-root").ClickAsync();
             // Check that the component is closed
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
         }

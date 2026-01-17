@@ -878,7 +878,7 @@ namespace MudBlazor.UnitTests.Components
                 var colorElement = collectionView.Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
-                await comp.InvokeAsync(() => colorElement.ClickAsync());
+                await colorElement.ClickAsync();
                 await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
