@@ -145,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavigateBySectionsAsync()
+        public async Task NavigateBySections()
         {
             var spyMock = new MockScrollSpy();
 

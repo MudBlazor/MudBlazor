@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
     public class SelectTests : BunitTest
     {
         [Test]
-        public async Task SelectTest_CheckListClass()
+        public async Task Select_CheckListClass()
         {
             var comp = Context.Render<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_CheckLayerClass()
+        public async Task Select_CheckLayerClass()
         {
             var comp = Context.Render<MudSelect<string>>();
             await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.OuterClass, "my-outer-class")));
@@ -116,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_KeyDown_WhileClosed()
+        public async Task Select_KeyDown_WhileClosed()
         {
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -203,7 +203,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MultiSelectWithValueContainZeroTest()
+        public async Task MultiSelectWithValueContainZero()
         {
             var comp = Context.Render<MultiSelectWithValueContainZeroTest>();
             var inputs = comp.FindAll("input");
@@ -228,7 +228,7 @@ namespace MudBlazor.UnitTests.Components
         /// After clicking the second item, the render fragment should update
         /// </summary>
         [Test]
-        public async Task SelectWithEnumTest()
+        public async Task SelectWithEnum()
         {
             var comp = Context.Render<SelectWithEnumTest>();
             // select elements needed for the test
@@ -250,7 +250,7 @@ namespace MudBlazor.UnitTests.Components
         /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
         /// </summary>
         [Test]
-        public async Task SelectUnrepresentableValueTest()
+        public async Task SelectUnrepresentableValue()
         {
             var comp = Context.Render<SelectUnrepresentableValueTest>();
             // select elements needed for the test
@@ -299,7 +299,7 @@ namespace MudBlazor.UnitTests.Components
         /// When the select has a null value, the text should be displayed, and the mud-shrink class should be applied.
         /// </summary>
         [Test]
-        public async Task SelectNullValueTest()
+        public async Task SelectNullValue()
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
@@ -334,7 +334,7 @@ namespace MudBlazor.UnitTests.Components
         /// RegisterShadowItem should not throw when the item parameter is null.
         /// </summary>
         [Test]
-        public void SelectRegisterShadowItemNullTest()
+        public void SelectRegisterShadowItemNull()
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
@@ -348,7 +348,7 @@ namespace MudBlazor.UnitTests.Components
         /// RegisterShadowItem should not throw when the item's Value property is null.
         /// </summary>
         [Test]
-        public void SelectRegisterShadowItemWithNullValueTest()
+        public void SelectRegisterShadowItemWithNullValue()
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
@@ -363,7 +363,7 @@ namespace MudBlazor.UnitTests.Components
         /// UnregisterShadowItem should not throw when the item parameter is null.
         /// </summary>
         [Test]
-        public void SelectUnregisterShadowItemNullTest()
+        public void SelectUnregisterShadowItemNull()
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
@@ -377,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
         /// UnregisterShadowItem should not throw when the item's Value property is null.
         /// </summary>
         [Test]
-        public void SelectUnregisterShadowItemWithNullValueTest()
+        public void SelectUnregisterShadowItemWithNullValue()
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
@@ -393,7 +393,7 @@ namespace MudBlazor.UnitTests.Components
         /// The items have no render fragments, so instead of RF the select must display the converted string value
         /// </summary>
         [Test]
-        public async Task SelectWithoutItemPresentersTest()
+        public async Task SelectWithoutItemPresenters()
         {
             var comp = Context.Render<SelectWithoutItemPresentersTest>();
             // select elements needed for the test
@@ -649,7 +649,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MultiSelect_SelectAll2Async()
+        public async Task MultiSelect_SelectAll2()
         {
             var comp = Context.Render<MultiSelectTest3>();
             // select element needed for the test
@@ -684,7 +684,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MultiSelect_SelectAll3Async()
+        public async Task MultiSelect_SelectAll3()
         {
             var comp = Context.Render<MultiSelectTest4>();
             // select element needed for the test
@@ -784,7 +784,7 @@ namespace MudBlazor.UnitTests.Components
         /// Then the returned text in the selection is customized.
         /// </summary>
         [Test]
-        public void MultiSelectCustomizedTextTest()
+        public void MultiSelectCustomizedText()
         {
             var comp = Context.Render<MultiSelectCustomizedTextTest>();
 
@@ -799,7 +799,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectClearableTest()
+        public async Task SelectClearable()
         {
             var comp = Context.Render<SelectClearableTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -858,7 +858,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reselect an already selected value should not call SelectedValuesChanged event.
         /// </summary>
         [Test]
-        public async Task SelectReselectTest()
+        public async Task SelectReselect()
         {
             var comp = Context.Render<ReselectValueTest>();
             // print the generated html
@@ -1050,7 +1050,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_ToggleOpenCloseMenuMethods()
+        public async Task Select_ToggleOpenCloseMenuMethods()
         {
             var comp = Context.Render<SelectTest1>();
             // print the generated html
@@ -1081,7 +1081,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_KeyboardNavigation_SingleSelect()
+        public async Task Select_KeyboardNavigation_SingleSelect()
         {
             var comp = Context.Render<SelectTest1>();
             // print the generated html
@@ -1149,7 +1149,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_SelectionOnEnter_ShouldOnlyChangeOnEnter()
+        public async Task Select_SelectionOnEnter_ShouldOnlyChangeOnEnter()
         {
             var comp = Context.Render<SelectTest3>();
             // print the generated html
@@ -1176,7 +1176,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_KeyboardNavigation_MultiSelect()
+        public async Task Select_KeyboardNavigation_MultiSelect()
         {
             var comp = Context.Render<MultiSelectTest3>();
             // print the generated html
@@ -1237,7 +1237,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_KeyboardNavigation_MultiSelect_Focus()
+        public async Task Select_KeyboardNavigation_MultiSelect_Focus()
         {
             var comp = Context.Render<MultiSelectTest6>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1255,7 +1255,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_ItemlessSelect()
+        public async Task Select_ItemlessSelect()
         {
             var comp = Context.Render<MudSelect<string>>();
 
@@ -1271,7 +1271,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MultiSelectWithCustomComparerTestAsync()
+        public async Task MultiSelectWithCustomComparer()
         {
             var comp = Context.Render<MultiSelectWithCustomComparerTest>();
             // print the generated html
@@ -1307,7 +1307,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Select_ValueChangeEventCountTest()
+        public async Task Select_ValueChangeEventCount()
         {
             var comp = Context.Render<SelectEventCountTest>(x =>
             {
@@ -1672,7 +1672,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectPopoverFullWidthTest()
+        public async Task SelectPopoverFullWidth()
         {
             var comp = Context.Render<SelectPopoverRelativeWidthTest>();
 
@@ -1697,7 +1697,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectFitContentTest()
+        public async Task SelectFitContent()
         {
             var comp = Context.Render<SelectFitContentTest>();
 
@@ -1759,7 +1759,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectMultiSelectFieldChangedTest()
+        public async Task SelectMultiSelectFieldChanged()
         {
             var comp = Context.Render<SelectMultiSelectFieldChangedTest>();
 

@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the chip and tests if the OnClick event works
         /// </summary>
         [Test]
-        public async Task Chip_OnClickAsync()
+        public async Task Chip_OnClick()
         {
             var comp = Context.Render<ChipOnClickTest>();
             // print the generated html
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the close button and tests if the OnClose event works
         /// </summary>
         [Test]
-        public async Task Chip_OnCloseAsync()
+        public async Task Chip_OnClose()
         {
             var comp = Context.Render<ChipOnClickTest>();
             // print the generated html

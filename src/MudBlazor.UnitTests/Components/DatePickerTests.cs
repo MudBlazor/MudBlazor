@@ -424,7 +424,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerStaticWithPickerActionsDayClick_Test()
+        public async Task DatePickerStaticWithPickerActionsDayClick_()
         {
             var comp = Context.Render<DatePickerStaticTest>();
             var picker = comp.FindComponent<MudDatePicker>();
@@ -443,7 +443,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerBindingTest()
+        public async Task DatePickerBinding()
         {
             var comp = Context.Render<DatePickerBindingTest>();
 
@@ -640,7 +640,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PersianCalendarTest_GoToDate()
+        public async Task PersianCalendar_GoToDate()
         {
             var cal = new PersianCalendar();
             var comp = Context.Render<PersianDatePickerTest>();
@@ -656,7 +656,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PersianCalendarDefaultTest()
+        public async Task PersianCalendarDefault()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
@@ -1018,7 +1018,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CheckReadOnlyTest()
+        public async Task CheckReadOnly()
         {
             // Define a date for comparison
             var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
@@ -1084,7 +1084,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CheckDateTimeMinValueTest()
+        public async Task CheckDateTimeMinValue()
         {
             // Get access to the datepicker of the instance
             var comp = Context.Render<DateTimeMinValueDatePickerTest>();
@@ -1105,7 +1105,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(false)]
         [TestCase(true)]
-        public async Task CheckButtonTypeTest(bool navigateToMonthSelection)
+        public async Task CheckButtonType(bool navigateToMonthSelection)
         {
             var dateComp = Context.Render<MudDatePicker>(p =>
             p.Add(x => x.PickerVariant, PickerVariant.Dialog));
@@ -1128,7 +1128,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_Editable()
+        public async Task DatePicker_Editable()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
 
@@ -1150,7 +1150,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_KeyboardNavigation()
+        public async Task DatePicker_KeyboardNavigation()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
@@ -1204,7 +1204,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_KeyboardNavigation_SelectDate()
+        public async Task DatePicker_KeyboardNavigation_SelectDate()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
@@ -1263,7 +1263,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_KeyboardNavigation_SelectMonth()
+        public async Task DatePicker_KeyboardNavigation_SelectMonth()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
@@ -1307,7 +1307,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_KeyboardNavigation_BackspacePreviousView()
+        public async Task DatePicker_KeyboardNavigation_BackspacePreviousView()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
@@ -1342,7 +1342,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_KeyboardNavigation_MinMaxYearLimits()
+        public async Task DatePicker_KeyboardNavigation_MinMaxYearLimits()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
@@ -1380,7 +1380,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_KeyboardNavigation_FixYear_CannotBeChanged()
+        public async Task DatePicker_KeyboardNavigation_FixYear_CannotBeChanged()
         {
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
             var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
@@ -1402,7 +1402,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_KeyboardNavigation_FixMonth_CannotBeChanged()
+        public async Task DatePicker_KeyboardNavigation_FixMonth_CannotBeChanged()
         {
             var startDate = new DateTime(2022, 12, 31, new CultureInfo("en-US").Calendar);
             var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
@@ -1423,7 +1423,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_GoToDate()
+        public async Task DatePicker_GoToDate()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
 
@@ -1443,7 +1443,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_CheckIfMonthsAreDisabled()
+        public async Task DatePicker_CheckIfMonthsAreDisabled()
         {
             var comp = Context.Render<SimpleMudDatePickerTest>();
             var datePickerComponent = comp.FindComponent<MudDatePicker>();
@@ -1648,7 +1648,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         [Test]
         [SetCulture("en-US")]
-        public async Task DatePicker_CustomTimerProviderTest()
+        public async Task DatePicker_CustomTimerProvider()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
@@ -1666,7 +1666,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [SetCulture("en-US")]
-        public async Task DatePickerWithFixYearAndFixMonthTest()
+        public async Task DatePickerWithFixYearAndFixMonth()
         {
             var comp = Context.Render<FixYearFixMonthTest>();
             await comp.Find("input").TriggerEventAsync("onclick", new MouseEventArgs());

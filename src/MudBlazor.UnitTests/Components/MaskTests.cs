@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test all IsMatch variants: letter, digit and symbols.
         /// </summary>
         [Test]
-        public async Task MaskTest_Fundamentals1()
+        public async Task Mask_Fundamentals1()
         {
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_Fundamentals2()
+        public async Task Mask_Fundamentals2()
         {
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_Int()
+        public async Task Mask_Int()
         {
             var comp = Context.Render<MudTextField<int?>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true }));
@@ -274,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_InsertCharactersIntoMiddle()
+        public async Task Mask_InsertCharactersIntoMiddle()
         {
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
@@ -308,7 +308,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_ChangeMask1()
+        public async Task Mask_ChangeMask1()
         {
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_ChangeMask2()
+        public async Task Mask_ChangeMask2()
         {
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(LL) UU")
@@ -372,7 +372,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task MaskTest_KeepInputBlockPositions()
+        public async Task Mask_KeepInputBlockPositions()
         {
             var comp = Context.Render<MudMask>();
             var maskField = comp.Instance;
@@ -417,7 +417,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_Paste()
+        public async Task Mask_Paste()
         {
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
@@ -447,7 +447,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_Selection()
+        public async Task Mask_Selection()
         {
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("0000 0000 000") { Placeholder = '_', CleanDelimiters = true }));
@@ -509,7 +509,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_TwoWayBinding()
+        public async Task Mask_TwoWayBinding()
         {
             var comp = Context.Render<MaskTwoWayBindingTest>();
             var maskField1 = comp.FindComponents<MudMask>().First();
@@ -576,7 +576,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_TimeSpan()
+        public async Task Mask_TimeSpan()
         {
             var comp = Context.Render<MudTextField<TimeSpan?>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("00:00") { CleanDelimiters = false, }));
@@ -611,7 +611,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_MoreCoverage()
+        public async Task Mask_MoreCoverage()
         {
             var comp = Context.Render<MudMask>();
             var maskField = comp.Instance;
@@ -688,7 +688,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskTest_MultipleTFsLinkedViaTwoWayBinding()
+        public async Task Mask_MultipleTFsLinkedViaTwoWayBinding()
         {
             var comp = Context.Render<MaskedTextFieldTwoWayBindingTest>();
             var tfs = comp.FindComponents<MudTextField<string>>().Select(x => x.Instance).ToArray();
@@ -749,7 +749,7 @@ namespace MudBlazor.UnitTests.Components
         /// A readonly masked text should not react to any edit/delete event
         /// </summary>
         [Test]
-        public async Task MaskTest_Readonly()
+        public async Task Mask_Readonly()
         {
             var comp = Context.Render<ReadonlyMaskedTextFieldTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;

@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
     public class TimelineTests : BunitTest
     {
         [Test]
-        public void TimelineTest_DefaultValues()
+        public void Timeline_DefaultValues()
         {
             var comp = Context.Render<MudTimeline>();
 
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing if selection is sync with move commands.
         /// </summary>
         [Test]
-        public async Task TimelineTest()
+        public async Task Timeline()
         {
             var comp = Context.Render<TimelineTest>();
             // print the generated html
@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TimelineTest_SelectItemAsync()
+        public async Task Timeline_SelectItem()
         {
             var comp = Context.Render<TimelineTest>();
 
@@ -134,7 +134,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TimelineTest_DotStyles()
+        public async Task Timeline_DotStyles()
         {
             var comp = Context.Render<TimelineTest>();
             var firstItem = comp.FindComponent<MudTimelineItem>();
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test horizontal timeline inside vertical timeline.
         /// </summary>
         [Test]
-        public async Task HorizontalTimelineInsideVerticalTimeline_Test()
+        public async Task HorizontalTimelineInsideVerticalTimeline_()
         {
             var comp = Context.Render<HorizontalTimelineInsideVerticalTimelineTest>();
             // select elements needed for the test

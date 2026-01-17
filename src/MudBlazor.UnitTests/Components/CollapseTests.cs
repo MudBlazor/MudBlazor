@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
     public class CollapseTests : BunitTest
     {
         [Test]
-        public async Task Collapse_TwoWayBinding_Test1Async()
+        public async Task Collapse_TwoWayBinding_Test1()
         {
             var comp = Context.Render<CollapseBindingTest>();
             var collapse = comp.FindComponent<MudCollapse>();

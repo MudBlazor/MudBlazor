@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         /// OnRowClick event callback should be fired regardless of the selection state
         /// </summary>
         [Test]
-        public async Task TableRowClickAsync()
+        public async Task TableRowClick()
         {
             var comp = Context.Render<TableRowClickTest>();
             comp.Find("p").TextContent.Trim().Should().BeEmpty();
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check if the OnRowMouseEnter and OnRowMouseLeave event callbacks are fired as intended
         /// </summary>
         [Test]
-        public async Task TableRowHoverAsync()
+        public async Task TableRowHover()
         {
             var comp = Context.Render<TableRowHoverTest>();
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: ''");
@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>
         [Test]
-        public async Task TableLoadingTestAsync()
+        public async Task TableLoading()
         {
             var comp = Context.Render<TableLoadingTest>();
 
@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
         /// a new row appears in the table header without affecting the table body.
         /// </summary>
         [Test]
-        public async Task LoadingSwitchAddsRowToHeaderWithoutAffectingBodyAsync()
+        public async Task LoadingSwitchAddsRowToHeaderWithoutAffectingBody()
         {
             // Render the component
             var comp = Context.Render<TableLoadingTest>();
@@ -193,7 +193,7 @@ namespace MudBlazor.UnitTests.Components
         /// will not affect the number of columns in the row with the loader.
         /// </summary>
         [Test]
-        public async Task DynamicColumnsDoNotAffectLoadingRowAsync()
+        public async Task DynamicColumnsDoNotAffectLoadingRow()
         {
             // Render the component
             var comp = Context.Render<TableLoadingTest>();
@@ -231,7 +231,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check if the loading and no records functionality is working in grouped table.
         /// </summary>
         [Test]
-        public async Task TableGroupLoadingAndNoRecordsTestAsync()
+        public async Task TableGroupLoadingAndNoRecords()
         {
             var comp = Context.Render<TableGroupLoadingAndNoRecordsTest>();
             var searchString = comp.Find("#searchString");
@@ -263,7 +263,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check if empty row text is correct when using LoadingContent
         /// </summary>
         [Test]
-        public async Task TableHeadContentTestAsync()
+        public async Task TableHeadContent()
         {
             var comp = Context.Render<TableLoadingTest>();
             var searchString = comp.Find("#searchString");
@@ -289,7 +289,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check if empty row text is correct when using LoadingContentBody
         /// </summary>
         [Test]
-        public async Task TableHeadContentBodyTestAsync()
+        public async Task TableHeadContentBody()
         {
             var comp = Context.Render<TableLoadingBodyTest>();
             var searchString = comp.Find("#searchString");
@@ -325,7 +325,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(TableEditTrigger.RowClick)]
         [TestCase(TableEditTrigger.EditButton)]
-        public async Task TableSingleSelectionAsync(TableEditTrigger trigger)
+        public async Task TableSingleSelection(TableEditTrigger trigger)
         {
             var comp = Context.Render<TableSingleSelectionTest1>(parameters => parameters
                 .Add(p => p.EditTrigger, trigger));
@@ -352,7 +352,7 @@ namespace MudBlazor.UnitTests.Components
         /// test filtereditems and rendering without pager
         /// </summary>
         [Test]
-        public async Task TableFilterAsync()
+        public async Task TableFilter()
         {
             var comp = Context.Render<TableFilterTest1>();
             // print the generated html
@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableFilterCachingTestAsync()
+        public async Task TableFilterCaching()
         {
             var comp = Context.Render<TableFilterTest1>();
             // print the generated html
@@ -405,7 +405,7 @@ namespace MudBlazor.UnitTests.Components
         /// simple navigation using the paging buttons
         /// </summary>
         [Test]
-        public async Task TablePagingNavigationButtonsAsync()
+        public async Task TablePagingNavigationButtons()
         {
             var comp = Context.Render<TablePagingTest1>();
             // print the generated html
@@ -528,7 +528,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that the "All" table pager option shows all items
         /// </summary>
         [Test]
-        public async Task TablePagingAllTest()
+        public async Task TablePagingAll()
         {
             var comp = Context.Render<TablePagingTest1>();
 
@@ -593,7 +593,7 @@ namespace MudBlazor.UnitTests.Components
         /// simple filter with pager
         /// </summary>
         [Test]
-        public async Task TablePagingFilterAsync()
+        public async Task TablePagingFilter()
         {
             var comp = Context.Render<TablePagingTest1>();
             var searchString = comp.Find("#searchString");
@@ -611,7 +611,7 @@ namespace MudBlazor.UnitTests.Components
         /// adjust current page when filtereditems.count is less than the current page start item index
         /// </summary>
         [Test]
-        public async Task TablePagingFilterAdjustCurrentPageAsync()
+        public async Task TablePagingFilterAdjustCurrentPage()
         {
             var comp = Context.Render<TablePagingTest1>();
             // print the generated html
@@ -658,7 +658,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableMultiSelection_CheckboxAndRowClickTestAsync()
+        public async Task TableMultiSelection_CheckboxAndRowClick()
         {
             var comp = Context.Render<TableMultiSelection_CheckboxAndRowClickTest>();
             var checkboxes = comp.FindComponent<MudTable<int>>().FindAll("input").ToArray();
@@ -679,7 +679,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableMultiSelection_IgnoreCheckbox_RowClickTestAsync()
+        public async Task TableMultiSelection_IgnoreCheckbox_RowClick()
         {
             var comp = Context.Render<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
             var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
@@ -693,7 +693,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest()
+        public void TableMultiSelection_MultiGrouping_DefaultCheckboxStates()
         {
             var comp = Context.Render<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
             var mudTable = comp.Instance.MudTable;
@@ -715,7 +715,7 @@ namespace MudBlazor.UnitTests.Components
         /// checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems)
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest2Async()
+        public async Task TableMultiSelectionTest2()
         {
             var comp = Context.Render<TableMultiSelectionTest2>();
             // print the generated html
@@ -748,7 +748,7 @@ namespace MudBlazor.UnitTests.Components
         /// checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems) with multiheader
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest2BAsync()
+        public async Task TableMultiSelectionTest2B()
         {
             var comp = Context.Render<TableMultiSelectionTest2B>();
             // print the generated html
@@ -781,7 +781,7 @@ namespace MudBlazor.UnitTests.Components
         /// Initially the values bound to SelectedItems should be selected
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest3Async()
+        public async Task TableMultiSelectionTest3()
         {
             var comp = Context.Render<TableMultiSelectionTest3>();
             // print the generated html
@@ -807,7 +807,7 @@ namespace MudBlazor.UnitTests.Components
         /// The checkboxes should all be checked on load, even the header checkbox.
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest4Async()
+        public async Task TableMultiSelectionTest4()
         {
             var comp = Context.Render<TableMultiSelectionTest4>();
             // print the generated html
@@ -857,7 +857,7 @@ namespace MudBlazor.UnitTests.Components
         /// checking the footer checkbox should select all items (all checkboxes on, all items in SelectedItems) with multiheader
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest6Async()
+        public async Task TableMultiSelectionTest6()
         {
             var comp = Context.Render<TableMultiSelectionTest6>();
             // print the generated html
@@ -890,7 +890,7 @@ namespace MudBlazor.UnitTests.Components
         /// checking the footer checkbox should select all items (all checkboxes on, all items in SelectedItems) with multiheader
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest6BAsync()
+        public async Task TableMultiSelectionTest6B()
         {
             var comp = Context.Render<TableMultiSelectionTest6B>();
             // print the generated html
@@ -923,7 +923,7 @@ namespace MudBlazor.UnitTests.Components
         /// Filtering and cancelling the filter should not change checking the header checkbox, which should select all items (all checkboxes on, all items in SelectedItems)
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest7Async()
+        public async Task TableMultiSelectionTest7()
         {
             var comp = Context.Render<TableMultiSelectionTest7>();
             // select elements needed for the test
@@ -968,7 +968,7 @@ namespace MudBlazor.UnitTests.Components
         /// Removing rows should not uncheck the header checkbox, which should select all items (all checkboxes on, all items in SelectedItems)
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest8Async()
+        public async Task TableMultiSelectionTest8()
         {
             var comp = Context.Render<TableMultiSelectionTest8>();
             // select elements needed for the test
@@ -1008,7 +1008,7 @@ namespace MudBlazor.UnitTests.Components
         /// The checkboxes should all be disabled on load, even the header and footer checkboxes.
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionTest9Async()
+        public async Task TableMultiSelectionTest9()
         {
             var comp = Context.Render<TableMultiSelectionTest9>();
             // select elements needed for the test
@@ -1029,7 +1029,7 @@ namespace MudBlazor.UnitTests.Components
         /// Changing page should retain the selected items using ServerData
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionServerDataTestAsync()
+        public async Task TableMultiSelectionServerData()
         {
             var comp = Context.Render<TableMultiSelectionServerDataTest>();
             // select elements needed for the test
@@ -1074,7 +1074,7 @@ namespace MudBlazor.UnitTests.Components
         /// Changing page should retain the selected items using Items (not ServerData)
         /// </summary>
         [Test]
-        public async Task TableMultiSelectionItemsTest1_PageChangeAsync()
+        public async Task TableMultiSelectionItemsTest1_PageChange()
         {
             var comp = Context.Render<TableMultiSelectionItemsTest1>();
             // select elements needed for the test
@@ -1171,7 +1171,7 @@ namespace MudBlazor.UnitTests.Components
         /// Checkbox click must not bubble up.
         /// </summary>
         [Test]
-        public async Task TableMultiSelection_Checkbox_Executes_CallbackAsync()
+        public async Task TableMultiSelection_Checkbox_Executes_Callback()
         {
             var comp = Context.Render<TableMultiSelectionCheckboxExecutesCallback>();
 
@@ -1212,7 +1212,7 @@ namespace MudBlazor.UnitTests.Components
         /// The table should call ServerReload to get the items for the current page according to MudTablePager
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest2Async()
+        public async Task TableServerSideDataTest2()
         {
             var comp = Context.Render<TableServerSideDataTest2>();
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
@@ -1238,7 +1238,7 @@ namespace MudBlazor.UnitTests.Components
         /// In this case, the items should be sorted with descending order.
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest3Async()
+        public async Task TableServerSideDataTest3()
         {
             var comp = Context.Render<TableServerSideDataTest3>();
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
@@ -1297,7 +1297,7 @@ namespace MudBlazor.UnitTests.Components
         /// The server-side load callback should be called only once per page change
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest5Async()
+        public async Task TableServerSideDataTest5()
         {
             var comp = Context.Render<TableServerSideDataTest5>();
             comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
@@ -1346,7 +1346,7 @@ namespace MudBlazor.UnitTests.Components
         /// The server-side load callback should be called only once per sort change
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest6Async()
+        public async Task TableServerSideDataTest6()
         {
             var comp = Context.Render<TableServerSideDataTest5>();
             comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
@@ -1418,7 +1418,7 @@ namespace MudBlazor.UnitTests.Components
         /// The table should stop loading data when it is disposed
         /// </summary>
         [Test]
-        public async Task StopLoadingDataWhenDisposedTest()
+        public async Task StopLoadingDataWhenDisposed()
         {
             var comp = Context.Render<TableServerSideDataTest7>();
             var table = comp.FindComponent<MudTable<int>>();
@@ -1430,7 +1430,7 @@ namespace MudBlazor.UnitTests.Components
         /// The table should not render its NoContent fragment prior to loading server data
         /// </summary>
         [Test]
-        public void TableServerDataLoadingTest()
+        public void TableServerDataLoading()
         {
             var comp = Context.Render<TableServerDataLoadingTest>();
             comp.Instance.NoRecordsHasRendered.Should().BeFalse();
@@ -1489,7 +1489,7 @@ namespace MudBlazor.UnitTests.Components
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]
-        public void TableRowClassStyleTest()
+        public void TableRowClassStyle()
         {
             var comp = Context.Render<TableRowClassStyleTest>();
             var trs = comp.FindAll("tr");
@@ -1518,7 +1518,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_SetValidatorModelAsync()
+        public async Task TableInlineEdit_SetValidatorModel()
         {
             var comp = Context.Render<TableInlineEditTest>();
             var validator = comp.Instance.Table.Validator;
@@ -1535,7 +1535,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_TableRowValidatorAsync()
+        public async Task TableInlineEdit_TableRowValidator()
         {
             var comp = Context.Render<TableInlineEditTest>();
             var validator = new TableRowValidatorTest();
@@ -1557,7 +1557,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(TableApplyButtonPosition.StartAndEnd)]
         [TestCase(TableApplyButtonPosition.Start)]
         [TestCase(TableApplyButtonPosition.End)]
-        public async Task TableInlineEdit_ApplyButtonPositionAsync(TableApplyButtonPosition position)
+        public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
         {
             var comp = Context.Render<TableInlineEditTestApplyButtons>(
                 p => p.Add(x => x.ApplyButtonPosition, position));
@@ -1604,7 +1604,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_RowSwitchingAsync()
+        public async Task TableInlineEdit_RowSwitching()
         {
             var comp = Context.Render<TableInlineEditTest>();
 
@@ -1625,7 +1625,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_RowSwitchingBlockedAsync()
+        public async Task TableInlineEdit_RowSwitchingBlocked()
         {
             var comp = Context.Render<TableInlineEditRowBlockingTest>();
 
@@ -1649,7 +1649,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the edit row maintains position on changing sort key for an inline editing table.
         /// </summary>
         [Test]
-        public async Task TableInlineEditSortTest()
+        public async Task TableInlineEditSort()
         {
             var comp = Context.Render<TableInlineEditSortTest>();
 
@@ -1694,7 +1694,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancelTestAsync()
+        public async Task TableInlineEditCancel()
         {
             var comp = Context.Render<TableInlineEditCancelTest>();
 
@@ -1733,7 +1733,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancel2TestAsync()
+        public async Task TableInlineEditCancel2()
         {
             var comp = Context.Render<TableInlineEditCancelTest>();
 
@@ -1765,7 +1765,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the behavior of RowEditPreview. It should run after SelectedItem has been updated.
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancel3Test()
+        public async Task TableInlineEditCancel3()
         {
             var comp = Context.Render<TableInlineEditCancelTest>();
             var tableComponent = comp.FindComponent<MudTable<TableInlineEditCancelTest.Element>>();
@@ -1813,7 +1813,7 @@ namespace MudBlazor.UnitTests.Components
         /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancel4TestAsync()
+        public async Task TableInlineEditCancel4()
         {
             // Get access to the test table
             var comp = Context.Render<TableInlineEditCancelNoSelectedItemTest>();
@@ -1850,7 +1850,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
         [TestCase(false, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
         [TestCase(false, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
-        public void TableEditButtonRenderTest(bool customButton, TableApplyButtonPosition buttonApplyPosition, TableEditButtonPosition buttonEditPosition)
+        public void TableEditButtonRender(bool customButton, TableApplyButtonPosition buttonApplyPosition, TableEditButtonPosition buttonEditPosition)
         {
             IRenderedComponent<ComponentBase> comp;
             if (customButton)
@@ -1907,7 +1907,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the trigger of the edit button
         /// </summary>
         [Test]
-        public async Task TableEditButtonTriggerTestAsync()
+        public async Task TableEditButtonTrigger()
         {
             var comp = Context.Render<TableEditButtonRenderTest>();
             var trs = comp.FindAll("tr");
@@ -1929,7 +1929,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the trigger of the custom edit button
         /// </summary>
         [Test]
-        public async Task TableCustomEditButtonTriggerTestAsync()
+        public async Task TableCustomEditButtonTrigger()
         {
             var comp = Context.Render<TableCustomEditButtonRenderTest>();
             var trs = comp.FindAll("tr");
@@ -1951,7 +1951,7 @@ namespace MudBlazor.UnitTests.Components
         /// Row item data should be passed to EditButtonContext
         /// </summary>
         [Test]
-        public async Task TableCustomEditButtonItemContextAsync()
+        public async Task TableCustomEditButtonItemContext()
         {
             var comp = Context.Render<TableCustomEditButtonItemContextRenderTest>();
 
@@ -1970,7 +1970,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures clicking a different button does not switch the row
         /// </summary>
         [Test]
-        public async Task TableEditButtonRowSwitchBlockTestAsync()
+        public async Task TableEditButtonRowSwitchBlock()
         {
             var comp = Context.Render<TableEditButtonRenderTest>(parameters => parameters
                     .Add(p => p.BlockRowSwitching, true));
@@ -1993,7 +1993,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicking the edit button should not trigger the row click event
         /// </summary>
         [Test]
-        public async Task TableEditButtonNoRowTriggerAsync()
+        public async Task TableEditButtonNoRowTrigger()
         {
             var timesClicked = 0;
             void OnRowClick()
@@ -2020,7 +2020,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task TableGroupingTest()
+        public async Task TableGrouping()
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.Render<TableGroupingTest>();
@@ -2174,7 +2174,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/10250
         /// </remarks>
         [Test]
-        public async Task TableGrouping_ExpandFirstGroupAndRemoveIt_OtherGroupsRemainUnexpandedAsync()
+        public async Task TableGrouping_ExpandFirstGroupAndRemoveIt_OtherGroupsRemainUnexpanded()
         {
             // Arrange
 
@@ -2221,7 +2221,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/10250
         /// </remarks>
         [Test]
-        public async Task TableGrouping_ExpandFirstNestedGroupAndRemoveIt_OtherNestedGroupsRemainUnexpandedAsync()
+        public async Task TableGrouping_ExpandFirstNestedGroupAndRemoveIt_OtherNestedGroupsRemainUnexpanded()
         {
             // Arrange
 
@@ -2293,7 +2293,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public void TableGroupingAndPaginationTest()
+        public void TableGroupingAndPagination()
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.Render<TableGroupingTest2>();
@@ -2337,7 +2337,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task TableGroupIsInitiallyExpandedTest()
+        public async Task TableGroupIsInitiallyExpanded()
         {
             // group by Racing Category and collapse groups as default:
             var comp = Context.Render<TableGroupingTest>();
@@ -2357,7 +2357,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ExpandAndCollapseAllGroupsTest()
+        public async Task ExpandAndCollapseAllGroups()
         {
             var comp = Context.Render<TableGroupingTest>();
             var tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
@@ -2390,7 +2390,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the correct output when filter does not return any matching elements
         /// </summary>
         [Test]
-        public async Task TablePagerInfoTextTest1Async()
+        public async Task TablePagerInfoTextTest1()
         {
             // create the component
             var tableComponent = Context.Render<TablePagerInfoTextTest1>();
@@ -2448,7 +2448,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Next, "Next page")]
         [TestCase(Page.Last, "Last page")]
         [Test]
-        public void TablePagerControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
+        public void TablePagerControlButtonAriaLabel(Page controlButton, string expectedButtonAriaLabel)
         {
             var tableComponent = Context.Render<TablePagerInfoTextTest1>();
 
@@ -2500,7 +2500,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that clicking a row in a non-editable table does not set IsEditing to true and stop the table from updating.
         /// </summary>
         [Test]
-        public async Task TableRowClickNotEditableAsync()
+        public async Task TableRowClickNotEditable()
         {
             var comp = Context.Render<TableRowClickNotEditableTest>();
 
@@ -2528,7 +2528,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(TableEditTrigger.RowClick)]
         [TestCase(TableEditTrigger.EditButton)]
-        public async Task AllowEditRowPreventsEditAsync(TableEditTrigger trigger)
+        public async Task AllowEditRowPreventsEdit(TableEditTrigger trigger)
         {
             var comp = Context.Render<TableNotEditableRowTest>(parameters => parameters.Add(x => x.EditTrigger, trigger));
 
@@ -2597,7 +2597,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests whether record type table items are kept track of when edited
         /// </summary>
         [Test]
-        public async Task TableRecordEditingMultiSelectTestAsync()
+        public async Task TableRecordEditingMultiSelect()
         {
             var comp = Context.Render<TableRecordComparerTest>();
             var table = comp.FindComponent<MudTable<TableRecordComparerTest.Element>>().Instance;
@@ -2638,7 +2638,7 @@ namespace MudBlazor.UnitTests.Components
         /// Setting a comparer should be reflected in all layers of the table
         /// </summary>
         [Test]
-        public async Task TableComparerContextTest()
+        public async Task TableComparerContext()
         {
             var comp = Context.Render<TableComparerContextTest>();
             var table = comp.FindComponent<MudTable<TableComparerContextTest.Element>>().Instance;
@@ -2691,7 +2691,7 @@ namespace MudBlazor.UnitTests.Components
         /// Selecting the 'Select All' checkbox should trigger the 'SelectedItemsChanged' event only once
         /// </summary>
         [Test]
-        public async Task TestSelectedItemsChangedWithMultiSelectionAsync()
+        public async Task TestSelectedItemsChangedWithMultiSelection()
         {
             var comp = Context.Render<TableMultiSelectionSelectedItemsChangedTest>();
             var selectAllCheckbox = comp.Find("input");
@@ -2789,7 +2789,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ScrollToItemAsync_NonVirtualized_ItemExists_CallsScrollIntoViewAsync()
+        public async Task ScrollToItemAsync_NonVirtualized_ItemExists_CallsScrollIntoView()
         {
             // Arrange
             var items = GetTestItems(10);
@@ -2816,7 +2816,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ScrollToItemAsync_Virtualized_ItemExists_CallsScrollToVirtualizedItemAsync()
+        public async Task ScrollToItemAsync_Virtualized_ItemExists_CallsScrollToVirtualizedItem()
         {
             // Arrange
             var items = GetTestItems(50); // Larger list for virtualization

@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
         /// And even so, he changes when clicked
         /// </summary>
         [Test]
-        public async Task One_Way_BindableAsync()
+        public async Task One_Way_Bindable()
         {
             var comp = Context.Render<NavMenuOneWay>();
             comp.Markup.Should().Contain("mud-expanded");
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
         /// Initially is set to false and after clicking the navgroup should change to true
         /// </summary>
         [Test]
-        public async Task Two_Way_BindableAsync()
+        public async Task Two_Way_Bindable()
         {
             var comp = Context.Render<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("mud-expanded");

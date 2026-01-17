@@ -151,7 +151,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_Interaction_SelectedIndexAsync()
+    public async Task RoseChart_Interaction_SelectedIndex()
     {
         var selectedIndex = -1;
         var comp = Context.Render<Rose<double>>(parameters => parameters
@@ -173,7 +173,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_CanHideSeries_TestAsync()
+    public async Task RoseChart_CanHideSeries_()
     {
         var chartData = new double[] { 10, 20, 30, 40 };
         string[] chartLabels = { "Petal 1", "Petal 2", "Petal 3", "Petal 4" };
@@ -435,7 +435,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_CanHideSeries_WithAggregationByDataSet_ShouldHideCorrectSeriesPetalAsync()
+    public async Task RoseChart_CanHideSeries_WithAggregationByDataSet_ShouldHideCorrectSeriesPetal()
     {
         var chartSeries = new List<ChartSeries<double>>
         {
@@ -589,7 +589,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_Tooltips_ShouldDisplayDefaultTooltip_OnPetalHover_When_ShowToolTipsTrueAsync()
+    public async Task RoseChart_Tooltips_ShouldDisplayDefaultTooltip_OnPetalHover_When_ShowToolTipsTrue()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
@@ -619,7 +619,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_Tooltips_ShouldNotDisplayDefaultTooltip_When_ShowToolTipsFalseAsync()
+    public async Task RoseChart_Tooltips_ShouldNotDisplayDefaultTooltip_When_ShowToolTipsFalse()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
@@ -644,7 +644,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_Tooltips_ShouldRenderCustomTooltip_When_TooltipTemplateIsProvidedAsync()
+    public async Task RoseChart_Tooltips_ShouldRenderCustomTooltip_When_TooltipTemplateIsProvided()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
@@ -678,7 +678,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_Tooltips_ShouldPositionTooltipWithCustomLogic_When_TooltipPositionFuncIsProvidedAsync()
+    public async Task RoseChart_Tooltips_ShouldPositionTooltipWithCustomLogic_When_TooltipPositionFuncIsProvided()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0 } } };
         var chartLabels = new[] { "A" };
@@ -740,7 +740,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_Option_ChartPalette_ShouldApplyCustomPaletteColorsToPetalsAsync()
+    public async Task RoseChart_Option_ChartPalette_ShouldApplyCustomPaletteColorsToPetals()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0, 30.0 } } };
         var customPalette = new[] { "rgb(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)" }; // Red, Green, Blue
@@ -765,7 +765,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_Option_ChartPalette_ShouldCycleColors_When_DataPointsExceedPaletteSizeAsync()
+    public async Task RoseChart_Option_ChartPalette_ShouldCycleColors_When_DataPointsExceedPaletteSize()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0, 30.0, 40.0 } } };
         var customPalette = new[] { "rgb(255, 0, 0)", "rgb(0, 255, 0)" };

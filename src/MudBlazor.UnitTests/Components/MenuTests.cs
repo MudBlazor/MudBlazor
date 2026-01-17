@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OpenMenu_ClickClassItem_CheckClassAsync()
+        public async Task OpenMenu_ClickClassItem_CheckClass()
         {
             var comp = Context.Render<MenuTest1>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync();
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OpenMenu_CheckClassAsync()
+        public async Task OpenMenu_CheckClass()
         {
             var comp = Context.Render<MenuTest1>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync();
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Default_Disabled_CheckDisabledAsync()
+        public async Task Default_Disabled_CheckDisabled()
         {
             var comp = Context.Render<MenuTest1>(x =>
                 x.Add(p => p.DisableMenu, true)
@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuTest_LeftAndRightClick_CheckClosed()
+        public async Task Menu_LeftAndRightClick_CheckClosed()
         {
             //Standart button menu -- left click
             var comp = Context.Render<MenuTestVariants>();
@@ -367,7 +367,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OpenMenu_CloseMenuOnClick_CheckStillOpenAsync()
+        public async Task OpenMenu_CloseMenuOnClick_CheckStillOpen()
         {
             var comp = Context.Render<MenuTest1>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync();
@@ -569,7 +569,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ActivatorClassAsync()
+        public async Task ActivatorClass()
         {
             var comp = Context.Render<MenuActivatorsTest>();
 
@@ -599,7 +599,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OpenNestedMenuAsync()
+        public async Task OpenNestedMenu()
         {
             var comp = Context.Render<MenuWithNestingTest>();
 
@@ -638,7 +638,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuContext_Should_ToggleMenu_Via_ToggleMenuAsync()
+        public async Task MenuContext_Should_ToggleMenu_Via_ToggleMenu()
         {
             // Arrange - Create a menu and test the MenuContext operations directly
             var comp = Context.Render<MudMenu>(parameters => parameters

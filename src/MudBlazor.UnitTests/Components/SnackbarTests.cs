@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SimpleTest()
+        public async Task Simple()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
             _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
@@ -227,7 +227,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SnackbarIconConfigurationTest()
+        public async Task SnackbarIconConfiguration()
         {
             var testComponent = Context.Render<SnackbarIconConfiguationTest>();
 
@@ -243,14 +243,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task IconTest()
+        public async Task Icon()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
             _provider.Find("#mud-snackbar-container .mud-snackbar .mud-snackbar-icon").InnerHtml.Trim().Should().NotBeEmpty();
         }
 
         [Test]
-        public async Task HideIconTest()
+        public async Task HideIcon()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
             var hasIcon = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CustomIconTest()
+        public async Task CustomIcon()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.IconColor = Color.Tertiary; config.IconSize = Size.Large; }));
 
@@ -268,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CustomIconDefaultValuesTest()
+        public async Task CustomIconDefaultValues()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success));
 
@@ -304,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DisposeTest()
+        public async Task Dispose()
         {
             // shoot out a snackbar
             Snackbar snackbar = null;

@@ -9,7 +9,7 @@ namespace MudBlazor.UnitTests.Components
     public class AvatarGroupTests : BunitTest
     {
         [Test]
-        public void AvatarGroupTest()
+        public void AvatarGroup()
         {
             var comp = Context.Render<AvatarGroupTest>();
             // select elements needed for the test
@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupMaxDefaultTest()
+        public void AvatarGroupMaxDefault()
         {
             var comp = Context.Render<AvatarGroupMaxDefaultTest>();
             // select elements needed for the test
@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AvatarGroupChangeMaxTestAsync()
+        public async Task AvatarGroupChangeMax()
         {
             var comp = Context.Render<AvatarGroupChangeMaxTest>();
             // select elements needed for the test
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AvatarGroupRemoveTestAsync()
+        public async Task AvatarGroupRemove()
         {
             var comp = Context.Render<AvatarGroupRemoveTest>();
 
@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupMaxAvatarsTemplateTest()
+        public void AvatarGroupMaxAvatarsTemplate()
         {
             var comp = Context.Render<AvatarGroupMaxAvatarsTemplateTest>();
 

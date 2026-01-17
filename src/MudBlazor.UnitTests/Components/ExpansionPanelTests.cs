@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_TabsAsync()
+        public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
         {
             var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
 
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should expand panel
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_IsInitiallyExpanded_ExpandsAsync()
+        public async Task MudExpansionPanel_IsInitiallyExpanded_Expands()
         {
             var comp = Context.Render<ExpansionPanelStartExpandedTest>();
 
@@ -165,7 +165,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that ExpandAll method expands all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_ExpandAllAsync()
+        public async Task MudExpansionPanel_ExpandAll()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
@@ -190,7 +190,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAll method collapses all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllAsync()
+        public async Task MudExpansionPanel_CollapseAll()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAllExcept method collapses all panels except one.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllExceptAsync()
+        public async Task MudExpansionPanel_CollapseAllExcept()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;

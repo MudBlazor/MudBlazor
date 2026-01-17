@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AppBarWithContextualSetTrueAsync()
+        public async Task AppBarWithContextualSetTrue()
         {
             var comp = Context.Render<ContextualAppBarTest>();
             var bar = comp.FindComponent<MudAppBar>();
@@ -92,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AppBarWithContextualSetFalseAsync()
+        public async Task AppBarWithContextualSetFalse()
         {
             var comp = Context.Render<ContextualAppBarTest>(parameters => parameters.Add(x => x.IsContextual, false));
             var bar = comp.FindComponent<MudAppBar>();

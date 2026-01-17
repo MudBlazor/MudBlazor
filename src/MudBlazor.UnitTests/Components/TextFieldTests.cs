@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         /// Setting an invalid number should show the conversion error message
         /// </summary>
         [Test]
-        public async Task TextFieldConversionErrorAsync()
+        public async Task TextFieldConversionError()
         {
             var comp = Context.Render<MudTextField<int?>>();
             // print the generated html
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
         [Test]
-        public async Task WithNoDebounceIntervalValueShouldChangeImmediatelyTestAsync()
+        public async Task WithNoDebounceIntervalValueShouldChangeImmediately()
         {
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
@@ -137,7 +137,7 @@ namespace MudBlazor.UnitTests.Components
         /// Value should not change immediately. Should respect the Debounce Interval
         /// </summary>
         [Test]
-        public async Task ShouldRespectDebounceIntervalPropertyInTextFieldTest()
+        public async Task ShouldRespectDebounceIntervalPropertyInTextField()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
             var textField = comp.Instance;
@@ -236,7 +236,7 @@ namespace MudBlazor.UnitTests.Components
         /// FluentValidation rules can be used for validating a TextFields
         /// </summary>
         [Test]
-        public async Task TextFieldFluentValidationTest1Async()
+        public async Task TextFieldFluentValidationTest1()
         {
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Components
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
         [Test, CancelAfter(1000)]
-        public async Task TextFieldUpdateLoopProtectionTest()
+        public async Task TextFieldUpdateLoopProtection()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(x => x.Converter, Conversions.From<string, string>(s => $"{s}x", s => $"{s}y")));
@@ -294,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_FireTextAndValueChangedOnTextInputAsync()
+        public async Task TextField_Should_FireTextAndValueChangedOnTextInput()
         {
             string changed_value = null;
             string changed_text = null;
@@ -312,7 +312,7 @@ namespace MudBlazor.UnitTests.Components
         /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
         /// </summary>
         [Test]
-        public async Task TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionErrorAsync()
+        public async Task TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
         {
             var comp = Context.Render<MudTextField<int?>>(parameters => parameters.Add(p => p.Required, true));
             var textfield = comp.Instance;
@@ -396,7 +396,7 @@ namespace MudBlazor.UnitTests.Components
         /// <para>After editing the second (multi-line) tf it would not accept any updates from the first tf.</para>
         /// </summary>
         [Test]
-        public async Task MultiLineTextField_ShouldBe_TwoWayBindableAsync()
+        public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
         {
             var comp = Context.Render<MultilineTextfieldBindingTest>();
             // print the generated html
@@ -443,7 +443,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextFieldClearableTestAsync()
+        public async Task TextFieldClearable()
         {
             var comp = Context.Render<TextFieldClearableTest>();
             var textField = comp.FindComponent<MudTextField<string>>();
@@ -471,7 +471,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextField_ClearButton_TabIndex_Test()
+        public void TextField_ClearButton_TabIndex_()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(parameter => parameter.Clearable, true)
@@ -932,7 +932,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextFieldLabelTest()
+        public void TextFieldLabel()
         {
             var value = new DisplayNameLabelClass();
 
@@ -947,7 +947,7 @@ namespace MudBlazor.UnitTests.Components
         /// ReadOnly TextFields should not validate when blurred
         /// </summary>
         [Test]
-        public async Task ReadOnlyTextFieldShouldNotValidateAsync()
+        public async Task ReadOnlyTextFieldShouldNotValidate()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
             .Add(p => p.ReadOnly, true)
@@ -974,7 +974,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
         /// </summary>
         [Test]
-        public async Task OnBlurWithModifiedValueTriggerValidationOnce1Async()
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce1()
         {
             var callCounter = 0;
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
@@ -990,7 +990,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
         /// </summary>
         [Test]
-        public async Task OnBlurWithModifiedValueTriggerValidationOnce2Async()
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce2()
         {
             var callCounter = 0;
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
@@ -1050,7 +1050,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
-        public async Task DebouncedTextFieldRerenderTest()
+        public async Task DebouncedTextFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
@@ -1094,7 +1094,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
         [Test]
-        public async Task DebouncedTextFieldFormatChangeRerenderTest()
+        public async Task DebouncedTextFieldFormatChangeRerender()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
@@ -1414,7 +1414,7 @@ namespace MudBlazor.UnitTests.Components
         /// When the user inputs a single space, the required text field should show an error.
         /// </summary>
         [Test]
-        public async Task RequiredTextField_WhenInputOneSpace_ShowErrorAsync()
+        public async Task RequiredTextField_WhenInputOneSpace_ShowError()
         {
             // Arrange
 
@@ -1722,7 +1722,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OutlineLegendRenderTest()
+        public void OutlineLegendRender()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Variant, Variant.Outlined)

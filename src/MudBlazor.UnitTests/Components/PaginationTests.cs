@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Next, 7, 6, 11, true)]
         [TestCase(Page.Last, 1, 6, 11, true)]
         [Test]
-        public async Task PaginationControlButtonClickTest(Page controlButton, int numberOfClicks, int initiallySelectedPage, int expectedSelectedPage, bool expectedDisabled)
+        public async Task PaginationControlButtonClick(Page controlButton, int numberOfClicks, int initiallySelectedPage, int expectedSelectedPage, bool expectedDisabled)
         {
             var comp = Context.Render<PaginationButtonTest>();
 
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Next, "Next page")]
         [TestCase(Page.Last, "Last page")]
         [Test]
-        public void PaginationControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
+        public void PaginationControlButtonAriaLabel(Page controlButton, string expectedButtonAriaLabel)
         {
             var comp = Context.Render<PaginationButtonTest>();
 
@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(7, "Page 10")]
         [TestCase(8, "Page 11")]
         [Test]
-        public void PaginationPageButtonAriaLabelTest(int index, string label)
+        public void PaginationPageButtonAriaLabel(int index, string label)
         {
             var comp = Context.Render<PaginationButtonTest>();
             var buttons = comp.FindAll(".mud-pagination-item button");
@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Next, 2)]
         [TestCase(Page.Last, 3)]
         [Test]
-        public async Task PaginationControlButtonEventCallbackTestAsync(Page controlButton, int expectedButtonClickedValue)
+        public async Task PaginationControlButtonEventCallback(Page controlButton, int expectedButtonClickedValue)
         {
             var comp = Context.Render<PaginationButtonTest>();
 
@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests if the page buttons are hidden
         /// </summary>
         [Test]
-        public void HidePageButtonTest()
+        public void HidePageButton()
         {
             var comp = Context.Render<PaginationHidePageButtonsTest>();
 
@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(5, 5, 6)]
         [TestCase(2, 5, 3)]
         [Test]
-        public async Task PaginationPageButtonClickTest(int clickIndexPage, int initiallySelectedPage,
+        public async Task PaginationPageButtonClick(int clickIndexPage, int initiallySelectedPage,
             int expectedSelectedPage)
         {
             var comp = Context.Render<PaginationButtonTest>();
@@ -181,7 +181,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Last, 11)]
         [TestCase((Page)50, 6)]
         [Test]
-        public async Task PaginationNavigateToPageTest(Page page, int expectedSelectedPage)
+        public async Task PaginationNavigateToPage(Page page, int expectedSelectedPage)
         {
             var comp = Context.Render<PaginationButtonTest>();
 
@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(-1, 1)]
         [TestCase(12, 11)]
         [Test]
-        public async Task PaginationNavigateToPageTest(int page, int expectedSelectedPage)
+        public async Task PaginationNavigateToPage(int page, int expectedSelectedPage)
         {
             var comp = Context.Render<PaginationButtonTest>();
 
@@ -233,7 +233,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(5, -1, 1)]
         [TestCase(5, 1, -1)]
         [Test]
-        public async Task PaginationCountWithoutEllipsisTestAsync(int count, int middleCount, int boundaryCount)
+        public async Task PaginationCountWithoutEllipsis(int count, int middleCount, int boundaryCount)
         {
             var comp = Context.Render<PaginationCountTest>();
 
@@ -277,7 +277,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [Test]
-        public async Task PaginationCountWithEllipsisTest(int selectedPage, int count, int middleCount,
+        public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
         {
             var comp = Context.Render<PaginationCountTest>();
@@ -304,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests if styles/visual parameters are applied correctly
         /// </summary>
         [Test]
-        public void PaginationStylesTest()
+        public void PaginationStyles()
         {
             var comp = Context.Render<PaginationStylesTest>();
 

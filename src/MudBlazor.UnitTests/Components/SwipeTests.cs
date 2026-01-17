@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Components
     public class SwipeTest : BunitTest
     {
         [Test]
-        public async Task SwipeTest_1()
+        public async Task Swipe_1()
         {
             var comp = Context.Render<SwipeAreaTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SwipeTest_2()
+        public async Task Swipe_2()
         {
             var comp = Context.Render<SwipeAreaOnSwipeEndTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwipeTest_PreventDefault_SetTrue()
+        public void Swipe_PreventDefault_SetTrue()
         {
             var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SwipeTest_PreventDefault_SetFalse()
+        public async Task Swipe_PreventDefault_SetFalse()
         {
             var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 

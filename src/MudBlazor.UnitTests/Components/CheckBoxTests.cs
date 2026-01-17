@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
     {
 
         [Test]
-        public async Task CheckBox_Test_BooleanStateSelectorsAsync()
+        public async Task CheckBox_Test_BooleanStateSelectors()
         {
             // the state of the checkbox should manifest itself in the classes
             // mud-checkbox-true, mud-checkbox-false, mud-checkbox-null applied to the span
@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public async Task CheckBoxTest1Async()
+        public async Task CheckBoxTest1()
         {
             var comp = Context.Render<MudCheckBox<bool>>();
             // print the generated html
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         /// single checkbox, initialized true, check -  uncheck
         /// </summary>
         [Test]
-        public async Task CheckBoxTest2Async()
+        public async Task CheckBoxTest2()
         {
             var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters.Add(x => x.Value, true));
             // select elements needed for the test
@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         /// there are two checkboxes synced via a bound variable, so checking one also check the other and vice versa.
         /// </summary>
         [Test]
-        public async Task CheckBoxTest3Async()
+        public async Task CheckBoxTest3()
         {
             var comp = Context.Render<CheckBoxTest3>();
             // select elements needed for the test
@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check the implementation of the TriState parameter
         /// </summary>
         [Test]
-        public async Task CheckBoxTriStateTestAsync()
+        public async Task CheckBoxTriState()
         {
             var comp = Context.Render<MudCheckBox<bool?>>(parameters => parameters.Add(x => x.TriState, true));
             // print the generated html
@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
         /// Without clicking the required checkbox the form should not validate
         /// </summary>
         [Test]
-        public async Task CheckBoxFormTest1Async()
+        public async Task CheckBoxFormTest1()
         {
             var comp = Context.Render<CheckBoxFormTest1>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -183,7 +183,7 @@ namespace MudBlazor.UnitTests.Components
         /// A required tristate checkbox must have a value of true or false, but not null.
         /// </summary>
         [Test]
-        public async Task TriStateCheckBoxFormTest()
+        public async Task TriStateCheckBoxForm()
         {
             var comp = Context.Render<CheckBoxFormTest2>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -227,7 +227,7 @@ namespace MudBlazor.UnitTests.Components
         /// Binding checkboxes two-way against an array of bools
         /// </summary>
         [Test]
-        public async Task CheckBoxesBindAgainstArrayTestAsync()
+        public async Task CheckBoxesBindAgainstArray()
         {
             var comp = Context.Render<CheckBoxesBindAgainstArrayTest>();
             comp.FindAll("p")[^1].TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
@@ -249,7 +249,7 @@ namespace MudBlazor.UnitTests.Components
         /// Change state with several keys
         /// </summary>
         [Test]
-        public async Task CheckBoxTest_KeyboardInput()
+        public async Task CheckBox_KeyboardInput()
         {
             var comp = Context.Render<MudCheckBox<bool?>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.TriState, true));
@@ -298,7 +298,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test if the keyboard-disabling switch works
         /// </summary>
         [Test]
-        public async Task CheckBoxTest_KeyboardDisabled()
+        public async Task CheckBox_KeyboardDisabled()
         {
             var comp = Context.Render<MudCheckBox<bool?>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters
@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Warning, Color.Dark)]
         [TestCase(Color.Error, Color.Primary)]
         [TestCase(Color.Dark, Color.Primary)]
-        public async Task CheckBoxColorTestAsync(Color color, Color uncheckedcolor)
+        public async Task CheckBoxColor(Color color, Color uncheckedcolor)
         {
             var comp = Context.Render<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
 
@@ -373,14 +373,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CheckBoxDisabledTest()
+        public void CheckBoxDisabled()
         {
             var comp = Context.Render<CheckboxLabelTest>();
             comp.FindAll("label.mud-checkbox")[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
         }
 
         [Test]
-        public void CheckBoxLabelPlacementTest()
+        public void CheckBoxLabelPlacement()
         {
             var comp = Context.Render<CheckboxLabelTest>();
 
@@ -388,7 +388,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CheckBoxLabelTest()
+        public void CheckBoxLabel()
         {
             var value = new DisplayNameLabelClass();
 

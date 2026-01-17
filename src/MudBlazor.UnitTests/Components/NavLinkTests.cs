@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_CheckOnClickEventAsync()
+        public async Task NavLink_CheckOnClickEvent()
         {
             var clicked = false;
             var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.OnClick, (MouseEventArgs args) => { clicked = true; }));
@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_ActiveAsync()
+        public async Task NavLink_Active()
         {
             const string activeClass = "Custom__nav_active_css";
             var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.ActiveClass, activeClass));
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_Enabled_CheckNavigationAsync()
+        public async Task NavLink_Enabled_CheckNavigation()
         {
             var comp = Context.Render<NavLinkDisabledTest>(parameters => parameters.Add(x => x.Disabled, false));
             await comp.Find("a").ClickAsync();
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_Disabled_CheckNoNavigationAsync()
+        public async Task NavLink_Disabled_CheckNoNavigation()
         {
             var comp = Context.Render<NavLinkDisabledTest>(parameters => parameters.Add(x => x.Disabled, true));
             await comp.Find("a").ClickAsync();

@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public async Task PieChartSelectionTestAsync()
+        public async Task PieChartSelection()
         {
             var comp = Context.Render<PieChartSelectionTest>();
             // print the generated html
@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DonutChartSelectionTestAsync()
+        public async Task DonutChartSelection()
         {
             var comp = Context.Render<DonutChartSelectionTest>();
             // print the generated html
@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task LineChartSelectionTestAsync()
+        public async Task LineChartSelection()
         {
             var comp = Context.Render<LineChartSelectionTest>();
             // print the generated html
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task BarChartSelectionTestAsync()
+        public async Task BarChartSelection()
         {
             var comp = Context.Render<BarChartSelectionTest>();
             // print the generated html
@@ -648,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task HeatmapChart_CanHideSeries_TestAsync()
+        public async Task HeatmapChart_CanHideSeries_()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -721,7 +721,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test, TestCaseSource(nameof(YAxisFuncs))]
         [SetCulture("en-US")]
-        public void YAxisToStringFuncTest(YAxisTestCase testCase)
+        public void YAxisToStringFunc(YAxisTestCase testCase)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)

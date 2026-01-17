@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
         [Test]
-        public async Task WithNoDebounceIntervalValueShouldChangeImmediatelyTestAsync()
+        public async Task WithNoDebounceIntervalValueShouldChangeImmediately()
         {
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
@@ -127,7 +127,7 @@ namespace MudBlazor.UnitTests.Components
         /// Value should not change immediately. Should respect the Debounce Interval
         /// </summary>
         [Test]
-        public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
+        public async Task ShouldRespectDebounceIntervalPropertyInNumericField()
         {
             var comp = Context.Render<MudNumericField<int?>>(parameters => parameters
                 .Add(x => x.DebounceInterval, 200d));
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
         /// FluentValidation rules can be used for validating a NumericFields
         /// </summary>
         [Test]
-        public async Task NumericFieldFluentValidationTest1Async()
+        public async Task NumericFieldFluentValidationTest1()
         {
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate handling of decimal support & precision kept
         /// </summary>
         [Test]
-        public async Task NumericField_HandleDecimalPrecisionAndValuesAsync()
+        public async Task NumericField_HandleDecimalPrecisionAndValues()
         {
             var comp = Context.Render<MudNumericField<decimal>>();
             var numericField = comp.Instance;
@@ -238,7 +238,7 @@ namespace MudBlazor.UnitTests.Components
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
         [Test, CancelAfter(1000)]
-        public async Task NumericFieldUpdateLoopProtectionTest()
+        public async Task NumericFieldUpdateLoopProtection()
         {
             var comp = Context.Render<MudNumericField<int>>(parameters => parameters
                 .Add(x => x.Converter, Conversions.From((int s) => s.ToString(), int.Parse)));
@@ -274,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_Should_FireTextAndValueChangedOnTextInputAsync()
+        public async Task NumericField_Should_FireTextAndValueChangedOnTextInput()
         {
             var changed_value = 4;
             string changed_text = null;
@@ -336,7 +336,7 @@ namespace MudBlazor.UnitTests.Components
         /// Increment / Decrement via up / down keys should work
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_KeyboardInput()
+        public async Task NumericField_KeyboardInput()
         {
             var comp = Context.Render<MudNumericField<double>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters
@@ -369,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
         /// KeyDown disabled, should not do anything
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_KeyboardInput_Disabled()
+        public async Task NumericField_KeyboardInput_Disabled()
         {
             var comp = Context.Render<MudNumericField<double>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters
@@ -389,7 +389,7 @@ namespace MudBlazor.UnitTests.Components
         /// KeyDown readonly, should not do anything
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_KeyboardInput_Readonly()
+        public async Task NumericField_KeyboardInput_Readonly()
         {
             var comp = Context.Render<MudNumericField<double>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters
@@ -409,7 +409,7 @@ namespace MudBlazor.UnitTests.Components
         /// MouseWheel actions should work
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_MouseWheel()
+        public async Task NumericField_MouseWheel()
         {
             var comp = Context.Render<MudNumericField<double>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
@@ -455,7 +455,7 @@ namespace MudBlazor.UnitTests.Components
         /// MouseWheel actions should work on Firefox
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_Wheel_Firefox()
+        public async Task NumericField_Wheel_Firefox()
         {
             var comp = Context.Render<MudNumericField<double>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
@@ -837,7 +837,7 @@ namespace MudBlazor.UnitTests.Components
         // TODO: Re-enable parallel execution. This test intermittently causes test-host hangs under full parallel coverage runs.
         [Test]
         [NonParallelizable]
-        public async Task DebouncedNumericFieldRerenderTest()
+        public async Task DebouncedNumericFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
@@ -885,7 +885,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
         /// </summary>
         [Test]
-        public async Task DebouncedNumericFieldCultureChangeRerenderTest()
+        public async Task DebouncedNumericFieldCultureChangeRerender()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);

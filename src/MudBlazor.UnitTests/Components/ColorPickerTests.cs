@@ -1235,7 +1235,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures both the text and value update when the text is changed
         /// </summary>
         [Test]
-        public async Task ColorPickerValueShouldUpdateOnTextTestAsync()
+        public async Task ColorPickerValueShouldUpdateOnText()
         {
             var comp = Context.Render<MudColorPicker>(parameters => parameters
                 .Add(x => x.Editable, true));

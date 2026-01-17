@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click should change selected value
         /// </summary>
         [Test]
-        public async Task RatingTest1Async()
+        public async Task RatingTest1()
         {
             var comp = Context.Render<MudRating>();
             // select elements needed for the test
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click already selected item should change selected value to 0
         /// </summary>
         [Test]
-        public async Task RatingTest2Async()
+        public async Task RatingTest2()
         {
             var comp = Context.Render<MudRating>();
             // select elements needed for the test
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click disabled component don't change SelectedValue
         /// </summary>
         [Test]
-        public async Task RatingTest4Async()
+        public async Task RatingTest4()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
                 .Add(p => p.Disabled, true)
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
         /// Initialized EmptyIconColor and FullIconColor by parameter should have the correct colors set.
         /// </summary>
         [Test]
-        public async Task RatingTestIconColorsAsync()
+        public async Task RatingTestIconColors()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
                 .Add(p => p.SelectedValue, 2)
@@ -222,7 +222,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task RatingTest_KeyboardNavigation()
+        public async Task Rating_KeyboardNavigation()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
                 .Add(p => p.MaxValue, 12));

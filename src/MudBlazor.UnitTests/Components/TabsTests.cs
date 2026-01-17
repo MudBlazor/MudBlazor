@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AddingAndRemovingTabPanelsAsync()
+        public async Task AddingAndRemovingTabPanels()
         {
             var comp = Context.Render<TabsAddingRemovingTabsTest>();
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
-        public async Task KeepTabsAliveTestAsync()
+        public async Task KeepTabsAlive()
         {
             var comp = Context.Render<TabsKeepAliveTest>();
             // all panels should be evident in the markup:
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
-        public async Task KeepTabs_Not_AliveTestAsync()
+        public async Task KeepTabs_Not_Alive()
         {
             var comp = Context.Render<TabsKeepAliveTest>(parameters => parameters.Add(p => p.KeepPanelsAlive, false));
             // only one panel should be evident in the markup:
@@ -408,7 +408,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ScrollNextAsync()
+        public async Task ScrollNext()
         {
             var observer = new MockResizeObserver
             {
@@ -1183,7 +1183,7 @@ namespace MudBlazor.UnitTests.Components
         /// See: https://github.com/MudBlazor/MudBlazor/issues/2976
         /// </summary>
         [Test]
-        public async Task MenuInHeaderPanelCloseOnClickOutsideAsync()
+        public async Task MenuInHeaderPanelCloseOnClickOutside()
         {
             var comp = Context.Render<TabsWithMenuInHeader>();
 
@@ -1253,7 +1253,7 @@ namespace MudBlazor.UnitTests.Components
         #endregion
 
         [Test]
-        public void DynamicTabs_CollectionRenderSyncTest()
+        public void DynamicTabs_CollectionRenderSync()
         {
             var comp = Context.Render<DynamicTabsSimpleTest>();
 
@@ -1293,7 +1293,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TabPanel_ShowCloseIconTest()
+        public void TabPanel_ShowCloseIcon()
         {
             var comp = Context.Render<DynamicTabsSimpleTest>();
             var tabs = comp.FindAll("div.mud-tab");
@@ -1331,7 +1331,7 @@ namespace MudBlazor.UnitTests.Components
 
 #nullable enable
         [Test]
-        public async Task TabsDragAndDrop_With_FiresOnItemDroppedAsync()
+        public async Task TabsDragAndDrop_With_FiresOnItemDropped()
         {
             bool onItemDroppedCalled = false;
             MudItemDropInfo<MudTabPanel>? finalDropInfo = null;
@@ -1769,7 +1769,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test if Tabs and TabPanels combined TabButtonClass and TabPanelsClass are applying the CSS classes properly
         /// </summary>
         [Test]
-        public void Tabs_And_TabPanel_CombinedClassesTest()
+        public void Tabs_And_TabPanel_CombinedClasses()
         {
             var comp = Context.Render<TabsAndTabPanelCssClassesMatchTest>();
 

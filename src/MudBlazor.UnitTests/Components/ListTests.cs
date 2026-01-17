@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Components
     {
 
         [Test]
-        public async Task ListRenderTest()
+        public async Task ListRender()
         {
             var comp = Context.Render<ListSelectionTest>();
             var listItem = comp.FindComponent<MudListItem<string>>();
@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.Components
         /// <para>In this test no item is selected to begin with</para>
         /// </summary>
         [Test]
-        public async Task ListSelectionTestAsync()
+        public async Task ListSelection()
         {
             var comp = Context.Render<ListSelectionTest>();
             var list = comp.FindComponent<MudList<string>>().Instance;
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ListToggleSelectionTestAsync()
+        public async Task ListToggleSelection()
         {
             var comp = Context.Render<ListSelectionTest>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
             var list = comp.FindComponent<MudList<string>>().Instance;
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ListMultiSelectionInitialValuesTest()
+        public void ListMultiSelectionInitialValues()
         {
             var comp = Context.Render<ListMultiSelectionTest>(self => self.Add(x => x.SelectedValues, ["Milk", "Cafe Latte"]));
             var list = comp.FindComponent<MudList<string>>().Instance;
@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ListMultiSelectionBindingTest()
+        public async Task ListMultiSelectionBinding()
         {
             var comp = Context.Render<ListMultiSelectionBindingTest>();
             var list1 = comp.FindComponents<MudList<string>>().FirstOrDefault(x => x.Instance.Class == "list-1");
@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
         /// <para>This test starts with a pre-selected item (by value)</para>
         /// </summary>
         [Test]
-        public async Task ListWithPreSelectedValueTest()
+        public async Task ListWithPreSelectedValue()
         {
             var comp = Context.Render<ListSelectionInitialValueTest>();
             var list = comp.FindComponent<MudList<string>>().Instance;
@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Warning)]
         [TestCase(Color.Error)]
         [TestCase(Color.Dark)]
-        public void ListColorTest(Color color)
+        public void ListColor(Color color)
         {
             var comp = Context.Render<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
 
@@ -227,7 +227,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, false, 0)]
         [TestCase(true, false, 5)]
         [TestCase(false, true, 4)]
-        public void ListDenseInheritanceTest(bool dense, bool? innerListDense, int expectedDenseClassCount)
+        public void ListDenseInheritance(bool dense, bool? innerListDense, int expectedDenseClassCount)
         {
             var comp = Context.Render<ListDenseInheritanceTest>(x => x.Add(c => c.Dense, dense).Add(c => c.InnerListDense, innerListDense));
 
@@ -246,7 +246,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ListItemTabIndexTest()
+        public void ListItemTabIndex()
         {
             var comp = Context.Render<ListItemTabIndexTest>();
             comp.FindAll("div")[1].GetAttribute("tabindex").Should().Be("-1");
@@ -259,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, null, false)]
         [TestCase(false, true, true)]
         [TestCase(false, false, false)]
-        public void SettingGuttersOnList_Should_OverrideGuttersOnItemsWithoutGuttersSettingTest(bool listGutters, bool? itemGutters, bool resultingGutters)
+        public void SettingGuttersOnList_Should_OverrideGuttersOnItemsWithoutGuttersSetting(bool listGutters, bool? itemGutters, bool resultingGutters)
         {
             var comp = Context.Render<ListItemGuttersTest>(self => self
                 .Add(x => x.ListGutters, listGutters)

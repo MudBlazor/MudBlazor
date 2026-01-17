@@ -1170,7 +1170,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DateRangePicker_MaxSelectableDateTest()
+        public async Task DateRangePicker_MaxSelectableDate()
         {
             var comp = Context.Render<MudDateRangePicker>();
 
@@ -1189,7 +1189,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DateRangePicker_BlurAsync()
+        public async Task DateRangePicker_Blur()
         {
             var comp = Context.Render<MudDateRangePicker>(parameters => parameters
                     .Add(picker => picker.ReadOnly, false)

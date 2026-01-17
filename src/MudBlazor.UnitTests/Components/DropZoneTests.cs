@@ -1250,7 +1250,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DropZone_IsOriginTest()
+        public async Task DropZone_IsOrigin()
         {
             var comp = Context.Render<DropzoneBasicTest>();
 
@@ -1270,7 +1270,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DropZone_GetTransactionOriginZoneIdentifierTest()
+        public async Task DropZone_GetTransactionOriginZoneIdentifier()
         {
             var comp = Context.Render<DropzoneBasicTest>();
 

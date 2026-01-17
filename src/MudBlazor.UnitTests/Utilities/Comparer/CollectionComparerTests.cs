@@ -8,7 +8,7 @@ namespace MudBlazor.UnitTests.Utilities.Comparer;
 public class CollectionComparerTests
 {
     [Test]
-    public void EqualsTest()
+    public void Equals()
     {
         var comparer = new CollectionComparer<int>();
 
@@ -33,7 +33,7 @@ public class CollectionComparerTests
     }
 
     [Test]
-    public void GetHashCodeTest()
+    public void GetHashCode()
     {
         var comparer = CollectionComparer<int>.Default;
         // check equality
@@ -52,7 +52,7 @@ public class CollectionComparerTests
     }
 
     [Test]
-    public void EqualsWithCustomComparerTest()
+    public void EqualsWithCustomComparer()
     {
         var comparer = new CollectionComparer<string>(new LowercaseEqualityComparer());
 
@@ -75,7 +75,7 @@ public class CollectionComparerTests
     }
 
     [Test]
-    public void GetHashCodeWithCustomComparerTest()
+    public void GetHashCodeWithCustomComparer()
     {
         var comparer = new CollectionComparer<string>(new LowercaseEqualityComparer());
 

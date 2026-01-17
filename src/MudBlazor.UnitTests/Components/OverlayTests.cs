@@ -392,7 +392,7 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    public async Task Overlay_StartClosedTest()
+    public async Task Overlay_StartClosed()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>(MockBehavior.Loose);
 
