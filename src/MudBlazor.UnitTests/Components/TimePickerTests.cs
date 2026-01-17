@@ -26,6 +26,7 @@ namespace MudBlazor.UnitTests.Components
             // click to to open menu
             await comp.Find("input").ClickAsync();
             // now its open
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             return comp;
         }
