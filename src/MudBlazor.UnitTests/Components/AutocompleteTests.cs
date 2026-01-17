@@ -1,4 +1,4 @@
-﻿// Copyright (c) mudblazor 2021
+// Copyright (c) mudblazor 2021
 // License MIT
 
 using System.Reflection;
@@ -1387,7 +1387,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ProgressIndicatorTemplate, fragment));
 
             comp.Markup.Should().NotContain("Loading...");
-           await  await comp.InvokeAsync(() => autocompletecomp.Find("input").InputAsync("Calif"));
+            await comp.InvokeAsync(() => autocompletecomp.Find("input").InputAsync("Calif"));
 
             // Test show
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
@@ -1415,7 +1415,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ProgressIndicatorInPopoverTemplate, fragment));
 
             comp.Markup.Should().NotContain("Loading...");
-           await  await comp.InvokeAsync(() => autocompleteComponent.Find("input").InputAsync("Calif"));
+           await comp.InvokeAsync(() => autocompleteComponent.Find("input").InputAsync("Calif"));
 
             // Test show
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
@@ -2338,3 +2338,4 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
+

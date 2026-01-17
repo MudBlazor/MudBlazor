@@ -757,7 +757,7 @@ public class RoseChartTests : BunitTest
 
         for (var i = 0; i < petals.Count; i++)
         {
-            var markup = await petals[i].ToMarkupAsync(new ToMarkEventArgs());
+            var markup = petals[i].OuterHtml;
             var expectedColor = customPalette[i];
             markup.Should().Contain($"stroke=\"{expectedColor}\"");
             markup.Should().Contain($"fill=\"{expectedColor}\"");
@@ -782,7 +782,7 @@ public class RoseChartTests : BunitTest
 
         for (var i = 0; i < petals.Count; i++)
         {
-            var markup = await petals[i].ToMarkupAsync(new ToMarkEventArgs());
+            var markup = petals[i].OuterHtml;
             var expectedColor = customPalette[i % customPalette.Length];
             markup.Should().Contain($"stroke=\"{expectedColor}\"");
             markup.Should().Contain($"fill=\"{expectedColor}\"");

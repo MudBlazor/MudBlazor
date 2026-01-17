@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
@@ -47,11 +47,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<NavGroupWithExpandedBindingTest>();
             GetExpandedState().Should().BeFalse();
 
-           await  await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(true));
+           await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(true));
 
             GetExpandedState().Should().BeTrue();
 
-           await  await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(false));
+           await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(false));
 
             GetExpandedState().Should().BeFalse();
             return;
@@ -60,3 +60,4 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
+

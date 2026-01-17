@@ -1112,9 +1112,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[7].Html().Trim().Should().Be("second");
 
             //open edit dialog
-            var openDialog = () => dataGrid.FindAll("tbody tr")[1].ClickAsync();
+            Func<Task> openDialog = () => dataGrid.FindAll("tbody tr")[1].ClickAsync();
 
-            openDialog.Should().Throw<NotSupportedException>("STJ doesn't support abstract classes without polymorphic type discriminators.");
+            await openDialog.Should().ThrowAsync<NotSupportedException>("STJ doesn't support abstract classes without polymorphic type discriminators.");
         }
 
         /// <summary>
@@ -3165,7 +3165,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridColReorderRowFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColReorderRowFiltersTest.Model>>();
 
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
                 // Should have 4 entries, 2 headers and an extra
                 dataGrid.FindAll("tr").Count.Should().Be(7);
@@ -3181,7 +3181,7 @@ namespace MudBlazor.UnitTests.Components
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
 
-                dataGrid.Instance.ClearFiltersAsync();
+                await dataGrid.Instance.ClearFiltersAsync();
                 await nameFilter().InputAsync("a");
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
@@ -3332,7 +3332,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridHierarchyColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
                 var buttons = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon");
                 await buttons[10].ClickAsync();
@@ -3484,7 +3484,7 @@ namespace MudBlazor.UnitTests.Components
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
 
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 await columnHamburger[2].ClickAsync();
@@ -3500,7 +3500,7 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
             });
 
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
                 var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 await columnsButton.ClickAsync();
@@ -3513,7 +3513,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             // Wait for switches, icons and buttons to appear
-            await comp.WaitForAssertionAsync(() =>
+            await comp.WaitForAssertionAsync(async () =>
             {
                 var switches = comp.FindComponents<MudSwitch<bool>>();
                 switches.Count.Should().Be(6);
@@ -3968,7 +3968,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridColumnFilterRowPropertyClearTest()
+        public async Task DataGridColumnFilterRowPropertyClearTest()
         {
             var comp = Context.Render<DataGridColumnFilterRowPropertyTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterRowPropertyTest.Model>>();
@@ -3979,15 +3979,15 @@ namespace MudBlazor.UnitTests.Components
 
             IReadOnlyList<IElement> ClearButtons() => dataGrid.FindAll(".align-self-center");
             ClearButtons().Should().HaveCount(5);
-            ClearAllFiltersOneByOneAsync();
+            await ClearAllFiltersOneByOneAsync();
 
             var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
             inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear buttons should reset all filters");
 
-            var action = ClearAllFiltersOneByOneAsync;
+            Func<Task> action = ClearAllFiltersOneByOneAsync;
 
             // We had regressions here before https://github.com/MudBlazor/MudBlazor/issues/10034
-            action.Should().NotThrow("We click clear again to make sure that no exception appear when there are no filters left.");
+            await action.Should().NotThrowAsync("We click clear again to make sure that no exception appear when there are no filters left.");
 
             async Task ClearAllFiltersOneByOneAsync()
             {

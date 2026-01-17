@@ -788,7 +788,7 @@ namespace MudBlazor.UnitTests.Components
                 var clicked = false;
 
                 // Click the action button if one was found.
-                await _provider.InvokeAsync(() =>
+                await _provider.InvokeAsync(async () =>
                 {
                     if (_provider.FindAll(".mud-snackbar-action-button").Count == 1)
                     {
@@ -834,7 +834,7 @@ namespace MudBlazor.UnitTests.Components
                 var clicked = false;
 
                 // Click the snackbar if one was found.
-                await _provider.InvokeAsync(() =>
+                await _provider.InvokeAsync(async () =>
                 {
                     if (_provider.FindAll(".mud-snackbar").Count == 1)
                     {

@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.AddSection(section2, false);
             comp.Instance.AddSection(section3, false);
 
-            comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
+            await comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
 
             for (var i = 0; i < 3; i++)
             {

@@ -131,7 +131,7 @@ namespace MudBlazor.UnitTests.Components
             GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
             // click Irish on list2
-            Select(list2, "Irish Coffee");
+            await Select(list2, "Irish Coffee");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O, Irish Coffee");
             GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
             GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(true);
@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
             GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(true);
             GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
             // click off water on list2
-            Select(list2, "Sparkling Water");
+            await Select(list2, "Sparkling Water");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Irish Coffee");
             GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
             GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(false);

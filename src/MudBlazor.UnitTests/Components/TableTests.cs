@@ -671,7 +671,10 @@ namespace MudBlazor.UnitTests.Components
 
             table.SelectedItems.Count.Should().Be(3);
 
-            await foreach (var cbx in checkboxes) cbx.ChangeAsync(false);
+            foreach (var cbx in checkboxes)
+            {
+                await cbx.ChangeAsync(false);
+            }
             table.SelectedItems.Count.Should().Be(0);
         }
 
@@ -682,7 +685,10 @@ namespace MudBlazor.UnitTests.Components
             var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
-            await foreach (var row in rows) row.ClickAsync();
+            foreach (var row in rows)
+            {
+                await row.ClickAsync();
+            }
             table.SelectedItems.Count.Should().Be(0);
         }
 
