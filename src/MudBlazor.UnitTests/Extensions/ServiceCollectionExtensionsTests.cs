@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -75,7 +75,6 @@ public class ServiceCollectionExtensionsTests
         snackBarService.Should().NotBeNull();
         actualOptions.Should().BeSameAs(expectedOptions);
     }
-
 
     [Test]
     public void AddMudBlazorResizeListener_ShouldRegisterServices()

@@ -8,8 +8,6 @@ using MudBlazor.State.Builder;
 
 namespace MudBlazor.Benchmarks;
 
-#nullable enable
-
 /// <summary>
 /// A synthetic container that simulates Blazor component lifecycle for ParameterState benchmarking.
 /// This does NOT depend on the Blazor runtime and manually drives lifecycle phases.

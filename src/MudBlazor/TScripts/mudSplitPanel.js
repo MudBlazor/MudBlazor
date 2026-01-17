@@ -75,17 +75,26 @@ class MudSplitPanel {
         }
     }
 
-    resetSizes() {
+    resetSizes(firstPanelSize = null) {
         this.firstPanel.style.width = "100%";
         this.secondPanel.style.width = "100%";
         this.firstPanel.style.height = "100%";
         this.secondPanel.style.height = "100%";
 
-        if (this.firstPanelInitialSize !== null) {
-            this._setPanelSizes(this.firstPanelInitialSize, this._getContainerSize());
+        const firstPanelSizeNew = firstPanelSize !== null ? firstPanelSize : this.firstPanelInitialSize;
+        if (firstPanelSizeNew !== null) {
+            this._setPanelSizes(firstPanelSizeNew, this._getContainerSize());
         } else {
             this.divider.ariaValueNow = "50";
         }
+    }
+
+    getDividerPosition() {
+        return this.horizontal ? this.firstPanel.clientHeight : this.firstPanel.clientWidth;
+    }
+
+    setDividerPosition(offset) {
+        this.resetSizes(offset);
     }
 
     _getContainerSize() {
@@ -234,8 +243,16 @@ window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minP
     window.splitPanels[id].update(horizontal, resetOnDoubleClick, minPanelSize, panelGap);
 };
 
-window.mudSplitPanel_resetSizes = function (id) {
+window.mudSplitPanel_resetDividerPosition = function (id) {
     window.splitPanels[id].resetSizes();
+};
+
+window.mudSplitPanel_getDividerPosition = function (id) {
+    return window.splitPanels[id].getDividerPosition();
+};
+
+window.mudSplitPanel_setDividerPosition = function (id, offset) {
+    window.splitPanels[id].setDividerPosition(offset);
 };
 
 window.mudSplitPanel_destroy = function (id) {

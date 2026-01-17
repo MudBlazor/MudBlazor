@@ -1,4 +1,4 @@
-<MudPopoverProvider />
+﻿<MudPopoverProvider />
 
 <MudMenu Label="Button Standart" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" PopoverClass="menu-popover-class">
     <MudMenuItem Class="test-class">1</MudMenuItem>
@@ -26,7 +26,7 @@
 
 <MudMenu FullWidth="true" PopoverClass="menu-popover-class">
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">Activator Content Standart</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@context.ToggleAsync">Activator Content Standard</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Class="test-class">1</MudMenuItem>
@@ -37,7 +37,9 @@
 
 <MudMenu ActivationEvent="MouseEvent.RightClick" FullWidth="true" PopoverClass="menu-popover-class">
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">Activator Content Right Click</MudButton>
+        <div @oncontextmenu="@context.ToggleAsync" @oncontextmenu:preventDefault="true" style="display: inline-block">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Activator Content Right Click</MudButton>
+        </div>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Class="test-class">1</MudMenuItem>

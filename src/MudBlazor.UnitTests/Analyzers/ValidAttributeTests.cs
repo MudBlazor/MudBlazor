@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -29,7 +29,6 @@ public class ValidAttributeTests : BunitTest
 
     private IEnumerable<Diagnostic> NoAttributesDiagnostics { get; set; } = null!;
     private IEnumerable<Diagnostic> AnyAttributesDiagnostics { get; set; } = null!;
-
 
     private ExpectedDiagnostic IllegalAttributeOffsetXOnMudAutocomplete { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
         new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(63, 12), new LinePosition(63, 62)),

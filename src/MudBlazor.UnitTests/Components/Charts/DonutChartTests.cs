@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
@@ -23,7 +23,6 @@ namespace MudBlazor.UnitTests.Charts
         {
             "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
         };
-
 
         private readonly string[] _customPalette =
         {
@@ -204,7 +203,6 @@ namespace MudBlazor.UnitTests.Charts
             var series4 = "[stroke='#FF9100']";
 
             string[] series = [series1, series2, series3, series4];
-
 
             // Initially, all segments should be visible and their checkboxes checked
             for (var i = 0; i < chartLabels.Length; i++)

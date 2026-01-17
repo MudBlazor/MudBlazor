@@ -7,10 +7,11 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a form input for boolean values or selecting multiple items in a list.
+    /// A form input for boolean values or selecting multiple items in a list. Use checkboxes (instead of switches or radio buttons) if multiple options can be selected from a list.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
     /// <seealso cref="MudRadio{T}"/>
+    /// <seealso cref="MudSwitch{T}"/>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         private readonly string _elementId = Identifier.Create("checkbox");
@@ -29,12 +30,12 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToStringFast(true)}")
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
-            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
             .AddClass($"mud-disabled", GetDisabledState())
@@ -140,7 +141,7 @@ namespace MudBlazor
             if (TriState && typeof(T) == typeof(bool?))
             {
                 // The cycle is forced with the following steps: true, false, indeterminate, true, false, indeterminate...
-                var boolValue = (bool?)(object?)ReadValue();
+                var boolValue = (bool?)(object?)ReadValue;
                 if (!boolValue.HasValue)
                 {
                     return SetBoolValueAsync(true, true);

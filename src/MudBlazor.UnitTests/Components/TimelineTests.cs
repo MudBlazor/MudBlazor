@@ -4,8 +4,8 @@
 
 using AngleSharp.Css.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Timeline;
 using NUnit.Framework;
 
@@ -109,7 +109,6 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.TimelineOrientation, orientation);
                 p.Add(x => x.TimelinePosition, position);
             });
-
 
             timeline.Nodes.Should().ContainSingle();
             timeline.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();

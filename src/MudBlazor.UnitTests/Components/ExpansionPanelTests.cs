@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.ExpansionPanel;
 using NUnit.Framework;
@@ -14,15 +14,15 @@ namespace MudBlazor.UnitTests.Components
         [OneTimeSetUp]
         public void Init()
         {
-            AssertionOptions.FormattingOptions.MaxDepth = 100;
-            AssertionOptions.FormattingOptions.MaxLines = 5000;
+            AssertionConfiguration.Current.Formatting.MaxDepth = 100;
+            AssertionConfiguration.Current.Formatting.MaxLines = 5000;
         }
 
         [OneTimeTearDown]
         public void Cleanup()
         {
-            AssertionOptions.FormattingOptions.MaxDepth = 5;
-            AssertionOptions.FormattingOptions.MaxLines = 100;
+            AssertionConfiguration.Current.Formatting.MaxDepth = 5;
+            AssertionConfiguration.Current.Formatting.MaxLines = 100;
         }
 
         /// <summary>

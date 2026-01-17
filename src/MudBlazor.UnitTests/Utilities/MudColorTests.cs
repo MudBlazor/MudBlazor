@@ -5,7 +5,7 @@
 using System.Buffers.Binary;
 using System.Globalization;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -616,7 +616,6 @@ namespace MudBlazor.UnitTests.Utilities
                 color.ToString(MudColorOutputFormats.Hex).Should().Be(expectedValue);
             }
         }
-
 
         [Test]
         public void ToStringFormat()

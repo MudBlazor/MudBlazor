@@ -3,14 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Reflection;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Bunit;
 using Bunit.Rendering;
-using FluentAssertions;
-using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -592,10 +593,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, secondItem));
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.Instance.GetState(x => x.SelectedItem).Should().BeNull();
-
-            // nothing should happen as the "select all" shouldn't do anything in single selection mode
-            dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
         }
 
         [Test]
@@ -1253,7 +1250,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<DataGridEditComplexPropertyExpressionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditComplexPropertyExpressionTest.Item>>();
-
 
             dataGrid.Render();
 
@@ -3177,16 +3173,16 @@ namespace MudBlazor.UnitTests.Components
                 var switchButton = dataGrid.Find("button.switch-button");
                 switchButton.Click();
 
-                var filterHeaders = dataGrid.FindAll("input");
-                var ageFilter = filterHeaders[0];
-                var nameFilter = filterHeaders[1];
+                var filterHeaders = () => dataGrid.FindAll("input");
+                var ageFilter = () => filterHeaders()[0];
+                var nameFilter = () => filterHeaders()[1];
 
-                ageFilter.Input(27);
+                ageFilter().Input(27);
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
 
                 dataGrid.Instance.ClearFiltersAsync();
-                nameFilter.Input("a");
+                nameFilter().Input("a");
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
             });
@@ -3215,17 +3211,17 @@ namespace MudBlazor.UnitTests.Components
                 await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
 
                 var switchButton = dataGrid.Find("button.switch-button");
-                switchButton.Click();
+                await switchButton.ClickAsync();
 
-                var filterHeaders = dataGrid.FindAll("input");
-                var ageFilter = filterHeaders[0];
-                var nameFilter = filterHeaders[1];
+                var filterHeaders = () => dataGrid.FindAll("input");
+                var ageFilter = () => filterHeaders()[0];
+                var nameFilter = () => filterHeaders()[1];
 
-                ageFilter.Input(27);
+                ageFilter().Input(27);
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
 
-                nameFilter.Input("a");
+                nameFilter().Input("a");
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
             });
@@ -3574,36 +3570,36 @@ namespace MudBlazor.UnitTests.Components
             var switches = comp.FindComponents<MudSwitch<bool>>();
             switches.Count.Should().Be(6);
 
-            switches[0].Instance.ReadValue().Should().BeFalse();
-            switches[1].Instance.ReadValue().Should().BeTrue();
-            switches[2].Instance.ReadValue().Should().BeFalse();
-            switches[3].Instance.ReadValue().Should().BeFalse();
-            switches[4].Instance.ReadValue().Should().BeFalse();
-            switches[0].Instance.ReadValue().Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeFalse();
+            switches[1].Instance.ReadValue.Should().BeTrue();
+            switches[2].Instance.ReadValue.Should().BeFalse();
+            switches[3].Instance.ReadValue.Should().BeFalse();
+            switches[4].Instance.ReadValue.Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeFalse();
 
             var buttons = comp.FindComponents<MudButton>();
 
             // this is the hide all button
             buttons[0].Find("button").Click();
             //all hideable columns should be hidden;
-            switches[0].Instance.ReadValue().Should().BeTrue();
-            switches[1].Instance.ReadValue().Should().BeTrue();
-            switches[2].Instance.ReadValue().Should().BeTrue();
-            switches[3].Instance.ReadValue().Should().BeFalse();
-            switches[4].Instance.ReadValue().Should().BeFalse();
-            switches[5].Instance.ReadValue().Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeTrue();
+            switches[1].Instance.ReadValue.Should().BeTrue();
+            switches[2].Instance.ReadValue.Should().BeTrue();
+            switches[3].Instance.ReadValue.Should().BeFalse();
+            switches[4].Instance.ReadValue.Should().BeFalse();
+            switches[5].Instance.ReadValue.Should().BeFalse();
 
             // 6 columns, 3 hidden (+ already collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(4);
 
             // this is the show all button
             buttons[1].Find("button").Click();
-            switches[0].Instance.ReadValue().Should().BeFalse();
-            switches[1].Instance.ReadValue().Should().BeFalse();
-            switches[2].Instance.ReadValue().Should().BeFalse();
-            switches[3].Instance.ReadValue().Should().BeFalse();
-            switches[4].Instance.ReadValue().Should().BeFalse();
-            switches[5].Instance.ReadValue().Should().BeFalse();
+            switches[0].Instance.ReadValue.Should().BeFalse();
+            switches[1].Instance.ReadValue.Should().BeFalse();
+            switches[2].Instance.ReadValue.Should().BeFalse();
+            switches[3].Instance.ReadValue.Should().BeFalse();
+            switches[4].Instance.ReadValue.Should().BeFalse();
+            switches[5].Instance.ReadValue.Should().BeFalse();
 
             // 6 columns, 0 hidden (1 permanently collapsed)
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
@@ -4548,7 +4544,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 3);
 
-
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
             await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortBy, x => x.Name));
             dataGrid.Render();
@@ -4625,7 +4620,6 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1);
-
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
@@ -4756,7 +4750,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterRow)
                 .Add(x => x.SortMode, SortMode.None));
 
-
             // Assert that the `column-options` span is present but empty
             var columnOptionsSpan = comp.Find(".column-options");
             columnOptionsSpan.Should().NotBeNull();
@@ -4791,28 +4784,28 @@ namespace MudBlazor.UnitTests.Components
             var rowCheckbox = dataGrid.FindAll("td input");
             var selectAllCheckboxes = dataGrid.FindComponents<MudCheckBox<bool?>>();
 
-            selectAllCheckboxes[0].Instance.ReadValue().Should().BeFalse();
-            selectAllCheckboxes[1].Instance.ReadValue().Should().BeFalse();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeFalse();
 
             rowCheckbox[0].Change(true);
 
-            selectAllCheckboxes[0].Instance.ReadValue().Should().BeNull();
-            selectAllCheckboxes[1].Instance.ReadValue().Should().BeNull();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeNull();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeNull();
 
             rowCheckbox[1].Change(true);
 
-            selectAllCheckboxes[0].Instance.ReadValue().Should().BeTrue();
-            selectAllCheckboxes[1].Instance.ReadValue().Should().BeTrue();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeTrue();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeTrue();
 
             rowCheckbox[1].Change(false);
 
-            selectAllCheckboxes[0].Instance.ReadValue().Should().BeNull();
-            selectAllCheckboxes[1].Instance.ReadValue().Should().BeNull();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeNull();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeNull();
 
             rowCheckbox[0].Change(false);
 
-            selectAllCheckboxes[0].Instance.ReadValue().Should().BeFalse();
-            selectAllCheckboxes[1].Instance.ReadValue().Should().BeFalse();
+            selectAllCheckboxes[0].Instance.ReadValue.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.ReadValue.Should().BeFalse();
         }
 
         [Test]
@@ -5318,6 +5311,223 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance._openHierarchies.First().Should().Be(item);
         }
 
+        public class TestDataItem
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public bool ShouldBeDisabled { get; set; }
+        }
+
+        private static RenderFragment SelectColumnWithFunc => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.DisabledFunc), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(2);
+            builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+        };
+
+        private static RenderFragment SelectColumnNoFunc => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(1);
+            builder.AddAttribute(2, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+        };
+
+        [Test]
+        public void SelectColumn_RowCheckbox_ShouldBeDisabled_WhenDisabledFuncReturnsTrue()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1", ShouldBeDisabled = true } };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            // Find the checkbox input element for the row
+            var checkbox = comp.Find("td.mud-table-cell .mud-checkbox input");
+            checkbox.Should().NotBeNull();
+            checkbox.HasAttribute("disabled").Should().BeTrue();
+        }
+
+        [Test]
+        public void SelectColumn_RowCheckbox_ShouldBeEnabled_WhenDisabledFuncReturnsFalse()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1", ShouldBeDisabled = false } };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            var checkbox = comp.Find("td.mud-table-cell .mud-checkbox input");
+            checkbox.Should().NotBeNull();
+            checkbox.HasAttribute("disabled").Should().BeFalse();
+        }
+
+        [Test]
+        public void SelectColumn_RowCheckbox_ShouldBeEnabled_WhenNoDisabledFuncIsProvided()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1" } };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            var checkbox = comp.Find("td.mud-table-cell .mud-checkbox input");
+            checkbox.Should().NotBeNull();
+            checkbox.HasAttribute("disabled").Should().BeFalse();
+        }
+
+        [Test]
+        public void SelectColumn_HeaderCheckbox_ShouldNotRender_WhenMultiSelectionIsFalse()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1" } };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, false) // Explicitly set MultiSelection to false
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            // Check if the header checkbox is rendered
+            var headerCheckbox = comp.FindAll("th.mud-table-cell .mud-checkbox input");
+            headerCheckbox.Should().BeEmpty();
+        }
+
+        [Test]
+        public void SelectColumn_HeaderCheckbox_ShouldRender_WhenMultiSelectionIsTrue()
+        {
+            var items = new List<TestDataItem> { new TestDataItem { Id = 1, Name = "Item 1" } };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true) // Explicitly set MultiSelection to true
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            var headerCheckbox = comp.Find("th.mud-table-cell .mud-checkbox input");
+            headerCheckbox.Should().NotBeNull();
+        }
+
+        [Test]
+        public void SelectOnRowClick_IgnoresDisabledRows()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new TestDataItem { Id = 2, Name = "Disabled Item 1", ShouldBeDisabled = true },
+                new TestDataItem { Id = 3, Name = "Enabled Item 2", ShouldBeDisabled = false }
+            };
+            Func<TestDataItem, bool> disabledFunc = item => item.ShouldBeDisabled;
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.SelectOnRowClick, true)
+                .Add(p => p.MultiSelection, true) // Enable multi-selection to check SelectedItems
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            // Simulate click on the disabled row (row index 1 for "Disabled Item 1")
+            var rows = comp.FindAll("tbody tr");
+            rows[1].Click(); // Click on the row of "Disabled Item 1"
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[1]); // Disabled item should not be selected
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty(); // Or be the previously selected item if any, but not items[1]
+
+            // Simulate click on an enabled row (row index 0 for "Enabled Item 1")
+            rows = comp.FindAll("tbody tr");
+            rows[0].Click(); // Click on the row of "Enabled Item 1"
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+
+            // Further check: click another enabled item to ensure multi-selection works for enabled items
+            // and that the disabled item is still not selected.
+            rows = comp.FindAll("tbody tr");
+            rows[2].Click(); // Click on the row of "Enabled Item 2"
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[2]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[1]);
+        }
+
+        [Test]
+        public async Task SelectAll_IgnoresDisabledRows()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new TestDataItem { Id = 2, Name = "Disabled Item 1", ShouldBeDisabled = true },
+                new TestDataItem { Id = 3, Name = "Enabled Item 2", ShouldBeDisabled = false },
+                new TestDataItem { Id = 4, Name = "Disabled Item 2", ShouldBeDisabled = true }
+            };
+            Func<TestDataItem, bool> disabledFunc = item => item.ShouldBeDisabled;
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]); // Enabled Item 1
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[1]); // Disabled Item 1
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[2]); // Enabled Item 2
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[3]); // Disabled Item 2
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task SelectAll_WithNoDisabledFunc_StillWorks()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Item 1" },
+                new TestDataItem { Id = 2, Name = "Item 2" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[1]);
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task SelectAll_WithDisabledFunc_ReturningAllFalse_StillWorks()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Item 1", ShouldBeDisabled = false },
+                new TestDataItem { Id = 2, Name = "Item 2", ShouldBeDisabled = false }
+            };
+            Func<TestDataItem, bool> disabledFunc = item => false; // All items are effectively enabled
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[1]);
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
+
         [Test]
         public void DataGridRowDetailInitiallyExpandedMultipleTest()
         {
@@ -5507,7 +5717,6 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
             var testComponent = comp.Instance;
 
-
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
             testComponent.ToggledEvents.Clear();
 
@@ -5568,5 +5777,387 @@ namespace MudBlazor.UnitTests.Components
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
         }
+
+        #region Selection Cleanup Tests (ObservableCollection)
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            var firstItem = testComponent.Items.First();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+            });
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldUpdateWhenMultipleItemsRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+
+            var firstItem = testComponent.Items.First();
+            var secondItem = testComponent.Items.Skip(1).First();
+
+            await comp.InvokeAsync(() =>
+            {
+                testComponent.RemoveItem(firstItem);
+                testComponent.RemoveItem(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().NotContain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(2));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldClearWhenCollectionCleared()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+
+            await comp.InvokeAsync(() => testComponent.ClearItems());
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItem_ShouldUpdateWhenItemRemoved()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var firstItem = testComponent.Items.First();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+            });
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItem.Should().BeNull());
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldNotAffectNonSelectedItems()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var firstItem = testComponent.Items.First();
+            var secondItem = testComponent.Items.Skip(1).First();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().Contain(secondItem);
+            });
+
+            var thirdItem = testComponent.Items.Skip(2).First();
+            await comp.InvokeAsync(() => testComponent.RemoveItem(thirdItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().Contain(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItem_ShouldNotReferenceRemovedItem_WhenMultipleItemsSelectedAndOneRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var firstItem = testComponent.Items.First();
+            var secondItem = testComponent.Items.Skip(1).First();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(2));
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(secondItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+            });
+
+            // SelectedItem must never reference a removed item.
+            // It should either be null or point to an item still in the Items collection.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var selectedItem = dataGrid.Instance.SelectedItem;
+                if (selectedItem != null)
+                {
+                    testComponent.Items.Should().Contain(selectedItem,
+                        "SelectedItem must reference an item still in the collection");
+                }
+            });
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldKeepRemainingSelectionsWhenOneRemoved()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Select 3 items (not using SelectAll)
+            var firstItem = testComponent.Items.ElementAt(0);
+            var secondItem = testComponent.Items.ElementAt(1);
+            var thirdItem = testComponent.Items.ElementAt(2);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, thirdItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(3));
+
+            await comp.InvokeAsync(() => testComponent.RemoveItem(secondItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.SelectedItems.Should().Contain(thirdItem);
+                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
+        }
+
+        #endregion
+
+        #region Selection Cleanup Tests (List)
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldUpdateWhenItemRemovedFromList()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            var firstItem = testComponent.Items.First();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+            });
+
+            // Remove item by reassigning the Items list (not ObservableCollection)
+            await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldClearWhenListCleared()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+
+            // Clear by reassigning to empty list
+            await comp.InvokeAsync(() => testComponent.ClearItems());
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DataGrid_SelectedItem_ShouldUpdateWhenItemRemovedFromList()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var firstItem = testComponent.Items.First();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+            });
+
+            // Remove by reassigning filtered list
+            await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
+
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItem.Should().BeNull());
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+        }
+
+        #endregion
+
+        #region Hierarchy Cleanup Tests (ObservableCollection)
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenExpandedItemRemovedFromObservableCollection()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            var iraItem = testComponent.Items.First(x => x.Name == "Ira");
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().Contain(iraItem));
+
+            // Remove the expanded item
+            await comp.InvokeAsync(() => testComponent.RemoveItem(iraItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().NotContain(iraItem));
+        }
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenManuallyExpandedItemRemovedFromObservableCollection()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            var samItem = testComponent.Items.First(x => x.Name == "Sam");
+
+            // Manually expand Sam
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleHierarchyVisibilityAsync(samItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().Contain(samItem));
+
+            // Remove Sam
+            await comp.InvokeAsync(() => testComponent.RemoveItem(samItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().NotContain(samItem));
+        }
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenObservableCollectionCleared()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().BeGreaterThan(0));
+
+            // Clear all items
+            await comp.InvokeAsync(() => testComponent.ClearItems());
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+        }
+
+        #endregion
+
+        #region Hierarchy Cleanup Tests (List)
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenExpandedItemRemovedFromList()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            var iraItem = testComponent.Items.First(x => x.Name == "Ira");
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().Contain(iraItem));
+
+            // Remove the expanded item by reassigning the list
+            await comp.InvokeAsync(() => testComponent.RemoveItem(iraItem));
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Should().NotContain(iraItem));
+        }
+
+        [Test]
+        public async Task DataGrid_OpenHierarchies_ShouldClearWhenListCleared()
+        {
+            var comp = Context.Render<DataGridHierarchyCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            // Ira should be initially expanded
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().BeGreaterThan(0));
+
+            // Clear all items by reassigning to empty list
+            await comp.InvokeAsync(() => testComponent.ClearItems());
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+        }
+
+        #endregion
     }
 }

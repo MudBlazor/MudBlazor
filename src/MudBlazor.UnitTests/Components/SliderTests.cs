@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Slider;
 using NUnit.Framework;
@@ -51,7 +51,6 @@ namespace MudBlazor.UnitTests.Components
             IElement Slider() => comp.Find(".mud-slider");
             Slider().ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}" });
         }
-
 
         [Test]
         public void CheckVerticalClass()
@@ -388,17 +387,17 @@ namespace MudBlazor.UnitTests.Components
 
             IElement Input() => comp.Find(".mud-slider-input");
             IElement Filling() => comp.Find(".mud-slider-filled");
-            var eventArgs = new ChangeEventArgs { Value = "180" };
+            var value = "180";
 
             if (immediate == false)
             {
-                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().InputAsync(eventArgs));
-                await Input().ChangeAsync(eventArgs);
+                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().InputAsync(value));
+                await Input().ChangeAsync(value);
             }
             else
             {
-                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().ChangeAsync(eventArgs));
-                await Input().InputAsync(eventArgs);
+                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().ChangeAsync(value));
+                await Input().InputAsync(value);
             }
 
             Filling().GetAttribute("style").Should().Be($"width:80%;");

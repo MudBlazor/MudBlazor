@@ -89,11 +89,15 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment<HeaderContext<T>>? HeaderTemplate { get; set; }
 
+        public virtual RenderFragment<HeaderContext<T>>? GetHeaderTemplate() => HeaderTemplate;
+
         /// <summary>
         /// The template used to display this column's value cells.
         /// </summary>
         [Parameter]
         public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
+
+        public virtual RenderFragment<CellContext<T>>? GetCellTemplate() => CellTemplate;
 
         /// <summary>
         /// The template used to display this column's footer.
@@ -101,17 +105,23 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment<FooterContext<T>>? FooterTemplate { get; set; }
 
+        public virtual RenderFragment<FooterContext<T>>? GetFooterTemplate() => FooterTemplate;
+
         /// <summary>
         /// The template used to display this column's grouping.
         /// </summary>
         [Parameter]
         public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
 
+        public virtual RenderFragment<GroupDefinition<T>>? GetGroupTemplate() => GroupTemplate;
+
         /// <summary>
         /// The template used to display this column's aggregate.
         /// </summary>
         [Parameter]
         public RenderFragment<IEnumerable<T>>? AggregateTemplate { get; set; }
+
+        public virtual RenderFragment<IEnumerable<T>>? GetAggregateTemplate() => AggregateTemplate;
 
         /// <summary>
         /// The function which groups values in this column.
@@ -362,7 +372,6 @@ namespace MudBlazor
         /// The unique identifier for this column.
         /// </summary>
         public string? Identifier { get; set; }
-
 
         private CultureInfo? _culture;
 
@@ -746,12 +755,9 @@ namespace MudBlazor
                 DataGrid.RemoveColumn(this);
         }
 
-
         #region Abstract Members
 
-#nullable enable
         protected internal virtual LambdaExpression? PropertyExpression { get; }
-#nullable disable
 
         protected internal virtual Func<T, bool> GetFilterExpression()
         {
@@ -763,9 +769,7 @@ namespace MudBlazor
         /// </summary>
         public virtual string PropertyName { get; }
 
-#nullable enable
         protected internal virtual string? ContentFormat { get; }
-#nullable disable
 
         protected internal abstract object CellContent(T item);
 

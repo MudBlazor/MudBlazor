@@ -28,35 +28,35 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IMask _mask = new PatternMask("** **-** **");
-        private string _elementId = Identifier.Create("mask");
+        private readonly string _elementId = Identifier.Create("mask");
 
         protected string Classname =>
             new CssBuilder("mud-input")
-                .AddClass($"mud-input-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
-                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass($"mud-input-{Variant.ToStringFast(true)}")
+                .AddClass($"mud-input-{Variant.ToStringFast(true)}-with-label", !string.IsNullOrEmpty(Label))
+                .AddClass($"mud-input-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
+                .AddClass($"mud-input-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
                 .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
                 .AddClass("mud-shrink", () => !string.IsNullOrEmpty(ReadText) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
-                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
+                .AddClass($"mud-typography-{Typo.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-input-slot")
                 .AddClass("mud-input-root")
-                .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass($"mud-input-root-{Variant.ToStringFast(true)}")
+                .AddClass($"mud-input-root-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
                 .AddClass(Class)
                 .Build();
 
         protected string AdornmentClassname =>
             new CssBuilder()
-                .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-adornment-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .AddClass(Class)
@@ -94,7 +94,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Typically set to common masks such as <see cref="PatternMask"/>, <see cref="MultiMask"/>, <see cref="RegexMask"/>, and <see cref="BlockMask"/>.
-        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.AutoGrow"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
+        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.Sizing"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
@@ -134,11 +134,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
-
-        public MudMask()
-        {
-            TextUpdateSuppression = false;
-        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -195,10 +190,8 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected internal async Task OnInputAsync(ChangeEventArgs e)
+        protected internal async Task OnInputAsync(string? inputValue)
         {
-            var inputValue = e.Value?.ToString();
-
             if (inputValue == null)
                 return;
 
@@ -273,7 +266,7 @@ namespace MudBlazor
                 if (Clearable)
                     UpdateClearable();
                 var v = ConvertGet(cleanText);
-                await WriteValueAsync(v);
+                await SetValueAsync(v);
                 await ValueChanged.InvokeAsync(v);
                 await SetCaretPositionAsync(caret, selection);
             }
@@ -296,7 +289,7 @@ namespace MudBlazor
             // allow this only via changes from the outside
             if (_updating)
                 return;
-            var text = ConvertSet(ReadValue());
+            var text = ConvertSet(ReadValue);
             var cleanText = Mask.GetCleanText();
             if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
@@ -328,7 +321,7 @@ namespace MudBlazor
             await UpdateAsync();
         }
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         private string GetCounterText() => Counter switch
         {
@@ -379,10 +372,9 @@ namespace MudBlazor
             return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
-        internal void OnCopy()
-            => CopySelectionToClipboard();
+        internal Task OnCopyAsync() => CopySelectionToClipboard();
 
-        internal async void OnPaste(string? text)
+        internal async Task OnPasteAsync(string? text)
         {
             if (text == null || GetReadOnlyState())
                 return;
@@ -470,12 +462,12 @@ namespace MudBlazor
             _mask = other;
         }
 
-        private async void OnCut(ClipboardEventArgs obj)
+        private async Task OnCutAsync(ClipboardEventArgs obj)
         {
             if (GetReadOnlyState())
                 return;
 
-            CopySelectionToClipboard();
+            await CopySelectionToClipboard();
             if (_selection != null)
                 Mask.Delete();
             await UpdateAsync();
@@ -499,10 +491,12 @@ namespace MudBlazor
             }
         }
 
+        private async void OnPaste(string e) => await OnPasteAsync(e);
+
         /// <summary>
         /// Copies the currently selected text (or the entire text if nothing is selected) to the clipboard.
         /// </summary>
-        private void CopySelectionToClipboard()
+        private async Task CopySelectionToClipboard()
         {
             var text = ReadText;
             if (Mask.Selection != null)
@@ -510,7 +504,7 @@ namespace MudBlazor
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
 
-            JsApiService.CopyToClipboardAsync(text ?? string.Empty);
+            await JsApiService.CopyToClipboardAsync(text ?? string.Empty);
         }
 
         [GeneratedRegex(@"^.$")]

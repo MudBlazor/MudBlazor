@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using NUnit.Framework;
 
@@ -161,7 +161,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
         }
-
 
         [Test]
         public void ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
@@ -736,7 +735,6 @@ namespace MudBlazor.UnitTests.Components
             var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
             text.Should().Be("Name:John");
         }
-
 
         [Test]
         public async Task DataGrid_MultilevelGrouping_ExpandSpecificNestedGroup()

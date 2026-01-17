@@ -9,7 +9,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A component which prevents the keyboard focus from cycling out of its child content.
+    /// Prevents the keyboard focus from cycling out of its child content. Typically used within dropdown selectors and modal dialogs.
     /// </summary>
     /// <remarks>
     /// Typically used within dialogs and other overlays.

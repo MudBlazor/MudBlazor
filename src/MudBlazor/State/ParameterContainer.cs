@@ -85,12 +85,11 @@ internal class ParameterContainer : IParameterContainer
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
     /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
-    public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
         if (Count == 0)
         {
-            await baseSetParametersAsync(parameters);
-            return;
+            return baseSetParametersAsync(parameters);
         }
 
         VerifyOnAuto();
@@ -98,20 +97,28 @@ internal class ParameterContainer : IParameterContainer
         // Fast path: if no parameters have change handlers, skip handler detection entirely
         if (GetHandlerCount() == 0)
         {
-            await baseSetParametersAsync(parameters);
-            return;
+            return baseSetParametersAsync(parameters);
+
         }
 
-        var parametersHandlerShouldFire = CollectChangedHandlers(parameters);
-
-        await baseSetParametersAsync(parameters);
-
-        await ParameterChangeHandlerUtility.InvokeHandlersAsync(parametersHandlerShouldFire);
+        // IMPORTANT: Do not inline the async implementation here.
+        // Avoid async state machine allocation on the common path by returning the Task directly.
+        // The async state machine is only used when parameter change handlers must be invoked.
+        return SetParametersWithHandlersAsync(baseSetParametersAsync, parameters);
     }
 
-    private List<IParameterStateInvocationSnapshot>? CollectChangedHandlers(ParameterView parameters)
+    private async Task SetParametersWithHandlersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    {
+        var handlerCollection = CollectChangedHandlers(parameters);
+
+        await baseSetParametersAsync(parameters).ConfigureAwait(false);
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection).ConfigureAwait(false);
+    }
+
+    private ParameterChangeHandlerUtility.HandlerCollection? CollectChangedHandlers(ParameterView parameters)
     {
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
+        List<ParameterStateValue>? parameterStateValues = null;
 
         foreach (var scopeContainer in _parameterScopeContainers)
         {
@@ -120,12 +127,13 @@ internal class ParameterContainer : IParameterContainer
                 if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
                 {
                     parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
-                    ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot());
+                    parameterStateValues ??= new List<ParameterStateValue>();
+                    ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot(), parameterStateValues);
                 }
             }
         }
 
-        return parametersHandlerShouldFire;
+        return ParameterChangeHandlerUtility.CreateHandlerCollection(parametersHandlerShouldFire, parameterStateValues, parameters);
     }
 
     /// <inheritdoc/>

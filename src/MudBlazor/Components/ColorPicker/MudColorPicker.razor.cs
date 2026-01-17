@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
@@ -51,13 +50,11 @@ namespace MudBlazor
             "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
         };
 
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
+
         public MudColorPicker()
         {
-            Converter = new DefaultConverter<MudColor>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
             AdornmentIcon = Icons.Material.Outlined.Palette;
             ShowToolbar = false;
 
@@ -131,7 +128,6 @@ namespace MudBlazor
             { 4, ((x) => x, x => 0, x => 255, "bg") },
             { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
         };
-
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -356,8 +352,9 @@ namespace MudBlazor
 
         private void SetThrottle(int interval)
         {
+            _throttleDispatcher?.Dispose();
             _throttleDispatcher = interval > 0
-                ? new ThrottleDispatcher(interval)
+                ? new ThrottleDispatcher(interval, TimeProvider)
                 : null;
         }
 
@@ -397,6 +394,16 @@ namespace MudBlazor
         public Task ChangeViewAsync(ColorPickerView value)
         {
             return _colorPickerViewState.SetValueAsync(value);
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<MudColor?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<MudColor>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         private async Task SetColorAsync(MudColor? newColor, bool forceUpdate = false)
@@ -451,9 +458,9 @@ namespace MudBlazor
 
         protected override Task WriteTextAsync(string? value) => SetInputStringAsync(value);
 
-        protected internal override MudColor? ReadValue() => _valueState.Value;
+        protected internal override MudColor? ReadValue => _valueState.Value;
 
-        protected override Task WriteValueAsync(MudColor? value) => SetColorAsync(value);
+        protected override Task SetValueAsync(MudColor? value) => SetColorAsync(value);
 
         protected override Task StringValueChangedAsync(string? value) => SetInputStringAsync(value);
 

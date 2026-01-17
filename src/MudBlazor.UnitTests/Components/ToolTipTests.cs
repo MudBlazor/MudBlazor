@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Tooltip;
@@ -116,7 +116,6 @@ namespace MudBlazor.UnitTests.Components
             popoverNode.Id.Should().StartWith("popover-");
 
             var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
-
 
             //no content for the popover node
             popoverContentNode.Children.Should().BeEmpty();
@@ -322,7 +321,6 @@ namespace MudBlazor.UnitTests.Components
 
             tooltipComp.Style.Should().Contain("background-color").And.Contain("orangered");
         }
-
 
         [Test]
         public void Tooltip_Disabled_Default_False()

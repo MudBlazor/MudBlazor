@@ -23,13 +23,16 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           prompt-path: .github/AutoTriage.prompt
+          model-fast: '' # skip fast pass
+          model-pro: gemini-3-pro-preview
+          model-pro-temperature: 1.0
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: triage-artifacts-pr-${{ github.event.pull_request.number }}
           path: |

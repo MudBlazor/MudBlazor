@@ -17,6 +17,7 @@ namespace MudBlazor
 
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
+               .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
                .AddClass(Class)
                .Build();
 
@@ -69,7 +70,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Typically set to common masks such as <see cref="PatternMask"/>, <see cref="MultiMask"/>, <see cref="RegexMask"/>, and <see cref="BlockMask"/>.
-        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.AutoGrow"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
+        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.Sizing"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
@@ -80,17 +81,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Stretches this input vertically to accommodate the <see cref="MudBaseInput{T}.Text"/> value.
+        /// Defines the resizing behavior of this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <see cref="InputSizing.Fixed"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
-        public bool AutoGrow { get; set; }
+        public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="AutoGrow"/> is <c>true</c>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
@@ -188,10 +189,10 @@ namespace MudBlazor
             }
 
             await _maskReference.Clear();
-            _maskReference.OnPaste(text);
+            await _maskReference.OnPasteAsync(text);
         }
 
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             if (HasMask)
             {
@@ -201,7 +202,7 @@ namespace MudBlazor
                 value = ConvertGet(textValue);
             }
 
-            return base.SetValueAsync(value, updateText, force);
+            return base.SetValueAndUpdateTextAsync(value, updateText, force);
         }
 
         protected override Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
@@ -215,7 +216,7 @@ namespace MudBlazor
             return base.SetTextAndUpdateValueAsync(text, updateValue);
         }
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         private bool ShowClearButton()
         {

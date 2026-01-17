@@ -2,7 +2,7 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -110,7 +110,6 @@ namespace UtilityTests
                             .AddClass("item-four")
                             .AddClass("item-five", when: HasFive)
                             .Build();
-
 
             // Assert
             classToRender.Should().Be("item-one item-three item-four");

@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
 using Bunit.Rendering;
-using FluentAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -575,11 +575,14 @@ public class ParameterStateUsageTests : BunitTest
     public async Task ParameterStateDependencyParameter()
     {
         var comp = Context.Render<ParameterStateDependencyCompTest>();
+        var child1 = comp.FindComponent<ParameterStateDependencyComp1>();
         var child2 = comp.FindComponent<ParameterStateDependencyComp2>();
-        IElement ButtonOnlyValue() => comp.Find("#btnValue");
-        IElement ButtonOnlyText() => comp.Find("#btnText");
+        IElement ButtonSetValueNullText() => comp.Find("#btnValue");
+        IElement ButtonSetTextValueNull() => comp.Find("#btnText");
         IElement ButtonAllSame() => comp.Find("#btnAllSame");
         IElement ButtonAllDiff() => comp.Find("#btnAllDiff");
+        IElement ButtonValueOnly() => comp.Find("#btnValueOnly");
+        IElement ButtonTextOnly() => comp.Find("#btnTextOnly");
 
         IElement CurrentValue1() => comp.Find(".current-value1");
         IElement CurrentText1() => comp.Find(".current-text1");
@@ -591,33 +594,29 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: null");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: null");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: null");
+        child1.Instance.ParameterStateValues.Count.Should().Be(0);
         child2.Instance.TextChanges.Count.Should().Be(0);
         child2.Instance.ValueChanges.Count.Should().Be(0);
 
-        // Change only Value
-        await ButtonOnlyValue().ClickAsync();
+        // Change Value, Text null
+        await ButtonSetValueNullText().ClickAsync();
         CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #fcefe5");
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #fcefe5");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #fcefe5");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #fcefe5");
+        child1.Instance.ParameterStateValues.Count.Should().Be(2);
         child2.Instance.TextChanges.Count.Should().Be(1);
         child2.Instance.ValueChanges.Count.Should().Be(1);
-        child2.Instance.TextChanges[0].Value!.Should().Be("#fcefe5");
-        child2.Instance.ValueChanges[0].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#fcefe5");
 
-        // Change only Text
-        await ButtonOnlyText().ClickAsync();
+        // Change Text, Value null
+        await ButtonSetTextValueNull().ClickAsync();
         CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #5fa9e2");
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #5fa9e2");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #5fa9e2");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #5fa9e2");
+        child1.Instance.ParameterStateValues.Count.Should().Be(5);
         child2.Instance.TextChanges.Count.Should().Be(4);
         child2.Instance.ValueChanges.Count.Should().Be(3);
-        child2.Instance.TextChanges[1].Value!.Should().Be("#5fa9e2");
-        child2.Instance.TextChanges[2].Value.Should().BeNull();
-        child2.Instance.TextChanges[3].Value!.Should().Be("#5fa9e2");
-        child2.Instance.ValueChanges[1].Value.Should().BeNull();
-        child2.Instance.ValueChanges[2].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#5fa9e2");
 
         // Change all same
         await ButtonAllSame().ClickAsync();
@@ -625,10 +624,9 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #9b3f33");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #9b3f33");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #9b3f33");
+        child1.Instance.ParameterStateValues.Count.Should().Be(7);
         child2.Instance.TextChanges.Count.Should().Be(5);
         child2.Instance.ValueChanges.Count.Should().Be(4);
-        child2.Instance.TextChanges[4].Value!.Should().Be("#9b3f33");
-        child2.Instance.ValueChanges[3].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#9b3f33");
 
         // Change all different
         await ButtonAllDiff().ClickAsync();
@@ -636,10 +634,76 @@ public class ParameterStateUsageTests : BunitTest
         CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #30102a");
         CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #30102a");
         CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #30102a");
+        child1.Instance.ParameterStateValues.Count.Should().Be(10);
         child2.Instance.TextChanges.Count.Should().Be(7);
         child2.Instance.ValueChanges.Count.Should().Be(5);
+
+        // Change Value only
+        await ButtonValueOnly().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #1abc65");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #1abc65");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #1abc65");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #1abc65");
+        child1.Instance.ParameterStateValues.Count.Should().Be(12);
+        child2.Instance.TextChanges.Count.Should().Be(8);
+        child2.Instance.ValueChanges.Count.Should().Be(6);
+
+        // Change Text only
+        await ButtonTextOnly().ClickAsync();
+        CurrentValue1().InnerHtml.Trimmed().Should().Be("Value1: #d5dbe3");
+        CurrentText1().InnerHtml.Trimmed().Should().Be("Text1: #d5dbe3");
+        CurrentValue2().InnerHtml.Trimmed().Should().Be("Value2: #1abc65", "Non shared handles can't handle this case.");
+        CurrentText2().InnerHtml.Trimmed().Should().Be("Text2: #1abc65", "Non shared handles can't handle this case.");
+        child1.Instance.ParameterStateValues.Count.Should().Be(14);
+        child2.Instance.TextChanges.Count.Should().Be(10);
+        child2.Instance.ValueChanges.Count.Should().Be(6);
+
+        // Change History of child2
+        // ButtonSetValueNullText
+        child2.Instance.TextChanges[0].Value!.Should().Be("#fcefe5");
+        child2.Instance.ValueChanges[0].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#fcefe5");
+
+        // ButtonSetTextValueNull
+        child2.Instance.TextChanges[1].Value!.Should().Be("#5fa9e2");
+        child2.Instance.TextChanges[2].Value.Should().BeNull();
+        child2.Instance.TextChanges[3].Value!.Should().Be("#5fa9e2");
+        child2.Instance.ValueChanges[1].Value.Should().BeNull();
+        child2.Instance.ValueChanges[2].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#5fa9e2");
+
+        // ButtonAllSame
+        child2.Instance.TextChanges[4].Value!.Should().Be("#9b3f33");
+        child2.Instance.ValueChanges[3].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#9b3f33");
+
+        // ButtonAllDiff
         child2.Instance.TextChanges[5].Value!.Should().Be("#662f18");
         child2.Instance.TextChanges[6].Value!.Should().Be("#30102a");
         child2.Instance.ValueChanges[4].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#30102a");
+
+        // Change History of child1
+        // ButtonSetValueNullText
+        child1.Instance.ParameterStateValues[0].Should().Be("Value: null -> rgba(252,239,229,1)");
+        child1.Instance.ParameterStateValues[1].Should().Be("Text: null -> #fcefe5");
+
+        // ButtonSetTextValueNull
+        child1.Instance.ParameterStateValues[2].Should().Be("Text: #fcefe5 -> #5fa9e2");
+        child1.Instance.ParameterStateValues[3].Should().Be("Value: rgba(252,239,229,1) -> null");
+        child1.Instance.ParameterStateValues[4].Should().Be("Value: null -> rgba(95,169,226,1)");
+
+        // ButtonAllSame
+        child1.Instance.ParameterStateValues[5].Should().Be("Text: #5fa9e2 -> #9b3f33");
+        child1.Instance.ParameterStateValues[6].Should().Be("Value: rgba(95,169,226,1) -> rgba(155,63,51,1)");
+
+        // ButtonAllDiff
+        child1.Instance.ParameterStateValues[7].Should().Be("Text: #9b3f33 -> #662f18");
+        child1.Instance.ParameterStateValues[8].Should().Be("Value: rgba(155,63,51,1) -> rgba(48,16,42,1)");
+        child1.Instance.ParameterStateValues[9].Should().Be("Text: #662f18 -> #30102a");
+
+        // ButtonValueOnly
+        child1.Instance.ParameterStateValues[10].Should().Be("Value: rgba(48,16,42,1) -> rgba(26,188,101,1)");
+        child1.Instance.ParameterStateValues[11].Should().Be("Text: #30102a -> #1abc65");
+
+        // ButtonTextOnly
+        child1.Instance.ParameterStateValues[12].Should().Be("Text: #1abc65 -> #d5dbe3");
+        child1.Instance.ParameterStateValues[13].Should().Be("Value: rgba(26,188,101,1) -> rgba(213,219,227,1)");
     }
 }

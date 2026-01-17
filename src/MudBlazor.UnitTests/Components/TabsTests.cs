@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
@@ -168,7 +168,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
         }
-
 
         [Test]
         public async Task TabHeaderClassPropagated()
@@ -597,7 +596,6 @@ namespace MudBlazor.UnitTests.Components
             // scroll buttons are never disabled when width is too low due to tab centering
             scrollButtons[1].Instance.Disabled.Should().BeFalse();
         }
-
 
         [Test]
         public async Task BackButtonAfterResizing_Without_AlwaysShowScrollButtons()
@@ -1650,7 +1648,6 @@ namespace MudBlazor.UnitTests.Components
             });
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Three");
         }
-
 
         /// <summary>
         /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 

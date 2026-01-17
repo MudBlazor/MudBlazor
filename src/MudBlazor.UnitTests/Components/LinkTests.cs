@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Link;
@@ -90,6 +90,31 @@ public class LinkTests : BunitTest
         {
             calls.Should().Be(1);
         }
+    }
+
+    [Test]
+    public void Icons_RenderInMarkup()
+    {
+        var comp = Context.Render<MudLink>(parameters => parameters
+            .Add(p => p.StartIcon, Icons.Material.Filled.Home)
+            .Add(p => p.EndIcon, Icons.Material.Filled.OpenInNew)
+            .AddChildContent("Link Text"));
+
+        comp.Find(".mud-link-icon-start").Should().NotBeNull();
+        comp.Find(".mud-link-icon-end").Should().NotBeNull();
+        comp.Markup.Should().Contain("Link Text");
+    }
+
+    [Test]
+    public void Icons_CustomClass()
+    {
+        var comp = Context.Render<MudLink>(parameters => parameters
+            .Add(p => p.StartIcon, Icons.Material.Filled.Home)
+            .Add(p => p.IconClass, "custom-icon-class"));
+
+        var icon = comp.FindComponent<MudIcon>();
+        icon.Instance.Class.Should().Contain("custom-icon-class");
+        icon.Instance.Class.Should().Contain("mud-link-icon-start");
     }
 
     [Test]

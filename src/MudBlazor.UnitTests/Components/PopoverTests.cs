@@ -1,6 +1,6 @@
 ﻿using System;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
@@ -40,7 +40,6 @@ namespace MudBlazor.UnitTests.Components
         //        .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
         //        .Verifiable();
 
-
         //    var comp = Context.Render<MudBadge>(p =>
         //    {
         //        p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
@@ -78,7 +77,6 @@ namespace MudBlazor.UnitTests.Components
         //    mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.IsAny<CancellationToken>(), It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
         //        .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
         //        .Verifiable();
-
 
         //    var comp = Context.Render<MudBadge>(p =>
         //    {

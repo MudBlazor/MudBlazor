@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq.Expressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
 
@@ -382,7 +382,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
 
             h1.Equals(h2).Should().BeFalse();
         }
-
 
         [Test(Description = "VisitIndex")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test14()

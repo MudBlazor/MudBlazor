@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+#nullable enable
 namespace MudBlazor
 {
     [ExcludeFromCodeCoverage]
     internal static class Num
     {
-        public static T To<T>(double d)
+        public static T? To<T>(double? d)
         {
             if (typeof(T) == typeof(sbyte) && d >= sbyte.MinValue && sbyte.MaxValue >= d)
                 return (T)(object)Convert.ToSByte(d);
@@ -27,7 +28,7 @@ namespace MudBlazor
                 return (T)(object)Convert.ToSingle(d);
             if (typeof(T) == typeof(double) && d >= double.MinValue && double.MaxValue >= d)
                 return (T)(object)Convert.ToDouble(d);
-            if (typeof(T) == typeof(decimal) && (decimal)d >= decimal.MinValue && decimal.MaxValue >= (decimal)d)
+            if (typeof(T) == typeof(decimal) && (decimal?)d >= decimal.MinValue && decimal.MaxValue >= (decimal?)d)
                 return (T)(object)Convert.ToDecimal(d);
             if (typeof(T) == typeof(sbyte?) && d >= sbyte.MinValue && sbyte.MaxValue >= d)
                 return (T)(object)Convert.ToSByte(d);
@@ -49,56 +50,56 @@ namespace MudBlazor
                 return (T)(object)Convert.ToSingle(d);
             if (typeof(T) == typeof(double?) && d >= double.MinValue && double.MaxValue >= d)
                 return (T)(object)Convert.ToDouble(d);
-            if (typeof(T) == typeof(decimal?) && (decimal)d >= decimal.MinValue && decimal.MaxValue >= (decimal)d)
+            if (typeof(T) == typeof(decimal?) && (decimal?)d >= decimal.MinValue && decimal.MaxValue >= (decimal?)d)
                 return (T)(object)Convert.ToDecimal(d);
             return default;
         }
-        public static double From<T>(T v)
+        public static double? From<T>(T? v)
         {
             if (typeof(T) == typeof(sbyte))
-                return Convert.ToDouble((sbyte)(object)v);
+                return Convert.ToDouble((sbyte?)(object?)v);
             if (typeof(T) == typeof(byte))
-                return Convert.ToDouble((byte)(object)v);
+                return Convert.ToDouble((byte?)(object?)v);
             if (typeof(T) == typeof(short))
-                return Convert.ToDouble((short)(object)v);
+                return Convert.ToDouble((short?)(object?)v);
             if (typeof(T) == typeof(ushort))
-                return Convert.ToDouble((ushort)(object)v);
+                return Convert.ToDouble((ushort?)(object?)v);
             if (typeof(T) == typeof(int))
-                return Convert.ToDouble((int)(object)v);
+                return Convert.ToDouble((int?)(object?)v);
             if (typeof(T) == typeof(uint))
-                return Convert.ToDouble((uint)(object)v);
+                return Convert.ToDouble((uint?)(object?)v);
             if (typeof(T) == typeof(long))
-                return Convert.ToDouble((long)(object)v);
+                return Convert.ToDouble((long?)(object?)v);
             if (typeof(T) == typeof(ulong))
-                return Convert.ToDouble((ulong)(object)v);
+                return Convert.ToDouble((ulong?)(object?)v);
             if (typeof(T) == typeof(float))
-                return Convert.ToDouble((float)(object)v);
+                return Convert.ToDouble((float?)(object?)v);
             if (typeof(T) == typeof(double))
-                return Convert.ToDouble((double)(object)v);
+                return Convert.ToDouble((double?)(object?)v);
             if (typeof(T) == typeof(decimal))
-                return Convert.ToDouble((decimal)(object)v);
+                return Convert.ToDouble((decimal?)(object?)v);
             if (typeof(T) == typeof(sbyte?))
-                return Convert.ToDouble((sbyte?)(object)v);
+                return Convert.ToDouble((sbyte?)(object?)v);
             if (typeof(T) == typeof(byte?))
-                return Convert.ToDouble((byte?)(object)v);
+                return Convert.ToDouble((byte?)(object?)v);
             if (typeof(T) == typeof(short?))
-                return Convert.ToDouble((short?)(object)v);
+                return Convert.ToDouble((short?)(object?)v);
             if (typeof(T) == typeof(ushort?))
-                return Convert.ToDouble((ushort?)(object)v);
+                return Convert.ToDouble((ushort?)(object?)v);
             if (typeof(T) == typeof(int?))
-                return Convert.ToDouble((int?)(object)v);
+                return Convert.ToDouble((int?)(object?)v);
             if (typeof(T) == typeof(uint?))
-                return Convert.ToDouble((uint?)(object)v);
+                return Convert.ToDouble((uint?)(object?)v);
             if (typeof(T) == typeof(long?))
-                return Convert.ToDouble((long?)(object)v);
+                return Convert.ToDouble((long?)(object?)v);
             if (typeof(T) == typeof(ulong?))
-                return Convert.ToDouble((ulong?)(object)v);
+                return Convert.ToDouble((ulong?)(object?)v);
             if (typeof(T) == typeof(float?))
-                return Convert.ToDouble((float?)(object)v);
+                return Convert.ToDouble((float?)(object?)v);
             if (typeof(T) == typeof(double?))
-                return Convert.ToDouble((double?)(object)v);
+                return Convert.ToDouble((double?)(object?)v);
             if (typeof(T) == typeof(decimal?))
-                return Convert.ToDouble((decimal?)(object)v);
+                return Convert.ToDouble((decimal?)(object?)v);
             return default;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using AngleSharp.Css.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -293,7 +293,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
-
         [Test]
         public async Task ResponsiveClosed_ResizeMultiple_CheckStates()
         {
@@ -576,7 +575,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
         }
 
-
         [Test, Combinatorial]
         public void NonResponsiveKeepInitialOpen_AllBreakpoints(
             [Values(
@@ -620,7 +618,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-drawer-overlay").Count.Should().Be(expectedToggledDrawerCount);
             comp.Instance.Drawer.Open.Should().Be(!initialState);
         }
-
 
         [Test]
         public void DrawerPersistentTop_HeightTest()

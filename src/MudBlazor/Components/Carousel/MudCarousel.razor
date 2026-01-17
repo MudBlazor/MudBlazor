@@ -45,7 +45,7 @@
             }
 
             @*Bullets*@
-            <div class="@($"flex-grow-1 align-self-{ConvertPosition(BulletsPosition).ToDescriptionString()}")" style="z-index:3">
+            <div class="@($"flex-grow-1 align-self-{ConvertPosition(BulletsPosition).ToStringFast(true)}")" style="z-index:3">
                 @if (ShowBullets)
                 {
                     <div class="d-flex justify-center">

@@ -37,15 +37,17 @@ else if (Column != null && !Column.HiddenState.Value)
 
     internal RenderFragment TableHeader()
     {
+        var headerTemplate = Column.GetHeaderTemplate();
+
         return
         @<text>
         <span class="column-header">
             @if (sortable)
             {
                 <span class="@SortHeaderClass" @onclick="SortChangedAsync">
-                    @if (Column.HeaderTemplate != null)
+                    @if (headerTemplate != null)
                     {
-                        @Column.HeaderTemplate(Column.headerContext)
+                        @headerTemplate(Column.headerContext);
                     }
                     else if (IncludeHierarchyToggle)
                     {
@@ -59,9 +61,9 @@ else if (Column != null && !Column.HiddenState.Value)
             }
             else
             { 
-                @if (Column.HeaderTemplate != null)
+                @if (headerTemplate != null)
                 {
-                    @Column.HeaderTemplate(Column.headerContext)
+                    @headerTemplate(Column.headerContext);
                 }
                 else if (IncludeHierarchyToggle)
                 {

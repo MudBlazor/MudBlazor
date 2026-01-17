@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -294,7 +294,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FileUploadDisabledTest>();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeFalse();
-
 
             await comp.SetParametersAndRenderAsync(parameters =>
                 parameters.Add(x => x.Disabled,

@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
@@ -283,7 +283,7 @@ namespace MudBlazor.UnitTests.Charts
             );
 
             var chartElement = comp.Find(".mud-chart");
-            var expectedClass = $"mud-chart-legend-{position.ToDescriptionString()}";
+            var expectedClass = $"mud-chart-legend-{position.ToStringFast(true)}";
             chartElement.ClassList.Should().Contain(expectedClass);
         }
 
@@ -839,7 +839,6 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll("g.mud-charts-gridlines-xaxis-lines").Should().NotBeEmpty();
         }
 
-
         [Test]
         public async Task BarChartExampleData()
         {
@@ -858,7 +857,6 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
-
 
             comp.Instance.ChartSeries.Should().NotBeEmpty();
 
@@ -885,7 +883,6 @@ namespace MudBlazor.UnitTests.Charts
             }
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(3 * 9, because: "3 series with 9 data points each");
-
 
             comp.Markup.Should()
                 .Contain("d=\"M 44 320 L 44 235.2143\"");

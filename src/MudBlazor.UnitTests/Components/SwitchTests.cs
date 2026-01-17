@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Switch;
 using MudBlazor.UnitTests.Utilities;
@@ -16,29 +16,29 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudSwitch<bool>>();
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(false));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(false));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(false));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue().Should().Be(true));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
         }
 
         [Test]
@@ -59,13 +59,13 @@ namespace MudBlazor.UnitTests.Components
 
             var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
-            box.ReadValue().Should().Be(false);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
+            box.ReadValue.Should().Be(false);
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToStringFast(true)}-text", $"hover:mud-{uncheckedcolor.ToStringFast(true)}-hover" });
 
             // click and check if it has new color
             comp.Find("input").Change(true);
-            box.ReadValue().Should().Be(true);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+            box.ReadValue.Should().Be(true);
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToStringFast(true)}-text", $"hover:mud-{color.ToStringFast(true)}-hover" });
         }
 
         [Test]
@@ -134,7 +134,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
         }
-
 
         [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()

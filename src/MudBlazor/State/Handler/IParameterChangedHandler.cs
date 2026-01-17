@@ -15,6 +15,7 @@ public interface IParameterChangedHandler<T>
     /// Handles parameter changes asynchronously.
     /// </summary>
     /// <param name="parameterChangedEventArgs">The <see cref="ParameterChangedEventArgs{T}"/> containing the information about the last and current values of a parameter.</param>
+    /// <param name="context">The parameter changed context containing parameter view and state values.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs);
+    Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs, ParameterChangedContext context);
 }

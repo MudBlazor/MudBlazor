@@ -4,6 +4,7 @@
 @Render
 
 @code{
+#nullable enable
 
     protected override RenderFragment InputContent=>
         @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
@@ -35,6 +36,7 @@
                                   PlaceholderEnd="@PlaceholderEnd"
                                   SeparatorIcon="@SeparatorIcon"
                                   Clearable="@(Clearable && !GetReadOnlyState())"
+                                  ClearIcon="@ClearIcon"
                                   Underline="@Underline"
                                   ShrinkLabel="@ShrinkLabel"
                                   InputId="@InputId" />

@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Extensions;
 using NUnit.Framework;
 
@@ -88,7 +88,7 @@ public class DateTimeExtensionTests
         const DayOfWeek FirstDayOfWeek = DayOfWeek.Monday;
 
         // Act
-        var result = dateTime.StartOfWeek(FirstDayOfWeek);
+        var result = dateTime.StartOfWeek(FirstDayOfWeek, CultureInfo.CurrentCulture);
 
         // Assert
         result.Should().Be(new DateTime(2023, 10, 2)); // Monday
@@ -102,7 +102,7 @@ public class DateTimeExtensionTests
         const DayOfWeek FirstDayOfWeek = DayOfWeek.Monday;
 
         // Act
-        var result = dateTime.StartOfWeek(FirstDayOfWeek);
+        var result = dateTime.StartOfWeek(FirstDayOfWeek, CultureInfo.CurrentCulture);
 
         // Assert
         result.Should().Be(new DateTime(2023, 10, 2)); // Monday
@@ -116,7 +116,7 @@ public class DateTimeExtensionTests
         const DayOfWeek FirstDayOfWeek = DayOfWeek.Monday;
 
         // Act
-        var result = dateTime.StartOfWeek(FirstDayOfWeek);
+        var result = dateTime.StartOfWeek(FirstDayOfWeek, CultureInfo.CurrentCulture);
 
         // Assert
         result.Should().Be(new DateTime(1, 1, 1)); // Monday

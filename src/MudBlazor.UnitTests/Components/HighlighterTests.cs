@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using MudBlazor.Components.Highlighter;
 using MudBlazor.UnitTests.TestComponents.Highlighter;
 using NUnit.Framework;
@@ -133,7 +133,6 @@ namespace MudBlazor.UnitTests.Components
             var resultNull = GetHtmlAwareFragments(null, "any", null, out var outRegex, false, false);
             resultNull.Should().BeEmpty();
             outRegex.Should().Be(string.Empty);
-
 
             // Test with empty text
             var resultEmpty = GetHtmlAwareFragments(string.Empty, "any", null, out outRegex, false, false);

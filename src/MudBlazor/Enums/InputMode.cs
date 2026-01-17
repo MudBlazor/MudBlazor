@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
@@ -11,6 +12,7 @@ namespace MudBlazor;
 /// Not supported by safari. Use Pattern to achieve special mobile keyboards in safari.
 /// https://developer.mozilla.org/docs/Web/HTML/Global_attributes/inputmode
 /// </summary>
+[EnumExtensions]
 public enum InputMode
 {
     /// <summary>

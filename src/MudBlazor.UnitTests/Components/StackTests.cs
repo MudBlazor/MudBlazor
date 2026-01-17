@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -220,7 +220,6 @@ namespace MudBlazor.UnitTests.Components
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"align-{expectedClass}", "gap-3" });
         }
 
-
         [Test]
         [TestCase(StretchItems.Start, "start")]
         [TestCase(StretchItems.End, "end")]
@@ -257,6 +256,4 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-
-
 
