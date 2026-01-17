@@ -29,8 +29,8 @@ dotnet clean <project.csproj>
 # Build
 dotnet build <project.csproj> -c Release --nologo
 
-# Test (ALWAYS use --filter and --no-build)
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo
+# Test
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo --blame-hang --blame-hang-timeout 60s
 ```
 
 ### Formatting (REQUIRED)
