@@ -1279,13 +1279,13 @@ namespace MudBlazor.UnitTests.Components
             closeButton().Should().NotBeNull();
             var button = comp.Find("#show_messagebox_btn");
             // Open nested message box
-            await button.ClickAsync();
+            button.Click();
 
             var messageBox = () => comp.Find("div.mud-message-box");
 
             // close message box by clicking on yes button.
             messageBox().Should().NotBeNull();
-            await comp.FindAll(".mud-dialog-actions button")[1].ClickAsync();
+            comp.FindAll(".mud-dialog-actions button")[1].Click();
             messageBox.Should().Throw<ElementNotFoundException>();
 
             // Close button should still be visible
@@ -1318,7 +1318,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp1 = Context.Render<InlineDialogTitleRefreshTest>();
 
-            await comp1.Find("button").ClickAsync();
+            comp1.Find("button").Click();
 
             var dialog = comp.Find("div.mud-dialog");
 
