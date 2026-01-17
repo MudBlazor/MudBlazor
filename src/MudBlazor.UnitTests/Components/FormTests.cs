@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using AngleSharp.Dom;
@@ -1905,7 +1905,7 @@ namespace MudBlazor.UnitTests.Components
         /// 
         /// </summary>
         [Test]
-        public async Task FormComponentTest_ErrorTextTwoWayBindingAsync()
+        public void FormComponentTest_ErrorTextTwoWayBinding()
         {
             var comp = Context.Render<FormWithErrorTextTwoWayBindingTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -1917,13 +1917,13 @@ namespace MudBlazor.UnitTests.Components
             textField.GetState(x => x.ErrorText).Should().Be("Default value not changed by binding");
 
             // call validation on the textfield: now the error text should be null and the bound property aswell
-            await comp.InvokeAsync(() => textField.ValidateAsync());
+            textField.ValidateAsync();
             textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             comp.Instance.BoundErrorText.Should().BeNullOrEmpty();
 
             // empty the input text and call validation: now the error text and the bound property should be the validation error message.
-            await textInput.ChangeAsync("");
-            await comp.InvokeAsync(() => textField.ValidateAsync());
+            textInput.Change("");
+            textField.ValidateAsync();
             textField.GetState(x => x.ErrorText).Should().Be("EmptyOrWhitespace!");
             comp.Instance.BoundErrorText.Should().Be("EmptyOrWhitespace!");
             comp.Markup.Should().Contain("EmptyOrWhitespace!");

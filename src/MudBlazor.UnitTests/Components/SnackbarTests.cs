@@ -718,12 +718,12 @@ namespace MudBlazor.UnitTests.Components
             // Force it out of the show transition.
 
             primary.State.SnackbarState.Should().Be(SnackbarState.Showing);
-            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
 
             // Ensure that leaving with the pointer does not trigger a hide transition by itself, like if the timer was not properly utilized.
 
-            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
             await Task.Delay(primary.State.Options.VisibleStateDuration / 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
