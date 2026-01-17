@@ -1,4 +1,4 @@
-// Copyright (c) mudblazor 2021
+﻿// Copyright (c) mudblazor 2021
 // License MIT
 
 using System.Reflection;
@@ -631,7 +631,7 @@ namespace MudBlazor.UnitTests.Components
 
             //insert "Calif"
             await comp.Find("input").InputAsync("Calif");
-            
+
             // Wait for it to be open (meaning search finished)
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
@@ -1415,7 +1415,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ProgressIndicatorInPopoverTemplate, fragment));
 
             comp.Markup.Should().NotContain("Loading...");
-           await autocompleteComponent.Find("input").InputAsync("Calif");
+            await autocompleteComponent.Find("input").InputAsync("Calif");
 
             // Test show
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
