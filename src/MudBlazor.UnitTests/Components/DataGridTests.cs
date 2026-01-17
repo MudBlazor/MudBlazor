@@ -1112,7 +1112,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[7].Html().Trim().Should().Be("second");
 
             //open edit dialog
-            await var openDialog = () => dataGrid.FindAll("tbody tr")[1].ClickAsync();
+            var openDialog = () => dataGrid.FindAll("tbody tr")[1].ClickAsync();
 
             openDialog.Should().Throw<NotSupportedException>("STJ doesn't support abstract classes without polymorphic type discriminators.");
         }
@@ -3646,13 +3646,13 @@ namespace MudBlazor.UnitTests.Components
         //    popover.Instance.Open.Should().BeFalse("Should start as closed");
 
         //    var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
-        await //    columnsButton.ClickAsync();
+        //    await columnsButton.ClickAsync();
 
         //    popover.Instance.Open.Should().BeTrue("Should be open once clicked");
         //    var listItems = popoverProvider.FindComponents<MudListItem>();
         //    listItems.Count.Should().Be(1);
         //    var clickablePopover = listItems[0].Find(".mud-menu-item");
-        await //    clickablePopover.ClickAsync();
+        //    await clickablePopover.ClickAsync();
 
         //    // at this point, the column picker should be open
         //    var switches = dataGrid.FindComponents<MudSwitch<bool>>();
@@ -3663,14 +3663,14 @@ namespace MudBlazor.UnitTests.Components
 
         //    var buttons = dataGrid.FindComponents<MudButton>();
         //    // this is the hide all button
-        await //    buttons[0].Find("button").ClickAsync();
+        //    await buttons[0].Find("button").ClickAsync();
         //    switches[0].Instance.Checked.Should().BeTrue();
         //    switches[1].Instance.Checked.Should().BeTrue();
         //    // 2 columns, 2 hidden
         //    dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(0);
 
         //    // this is the show all button
-        await //    buttons[1].Find("button").ClickAsync();
+        //    await buttons[1].Find("button").ClickAsync();
         //    switches[0].Instance.Checked.Should().BeFalse();
         //    switches[1].Instance.Checked.Should().BeFalse();
         //    // 2 columns, 0 hidden

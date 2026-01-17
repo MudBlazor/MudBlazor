@@ -1086,7 +1086,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            await var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1094,7 +1094,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
-            select("tasks.json");
+            await select("tasks.json");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(true);
             isExpanded("launch.json").Should().Be(false);
@@ -1111,7 +1111,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
             // here images itself must not be expanded, only its parent
-            select("images");
+            await select("images");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1126,7 +1126,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            await var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1134,7 +1134,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
-            select("tasks.json");
+            await select("tasks.json");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
             isExpanded("launch.json").Should().Be(false);
@@ -1151,7 +1151,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
             // here images itself must not be expanded, only its parent
-            select("logo.png");
+            await select("logo.png");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1305,8 +1305,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewHeterogeneous>();
             var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
-            await var act = () => l2.ClickAsync();
-            act.Should().NotThrow();
+            var act = () => l2.ClickAsync();
+            await act.Should().NotThrowAsync();
         }
     }
 }

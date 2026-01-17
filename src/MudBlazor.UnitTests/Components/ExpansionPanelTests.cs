@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             //click in the three headers
             //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             //{
-            await //    header.ClickAsync();
+            //    await header.ClickAsync();
             //}
 
             //Only one panel should be expanded

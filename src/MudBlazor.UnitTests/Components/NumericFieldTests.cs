@@ -297,8 +297,8 @@ namespace MudBlazor.UnitTests.Components
         //{
         //    var comp = ctx.RenderComponent<MudNumericField<int?>>(parameters => parameters.Add(p => p.Required, true));
         //    var numericField = comp.Instance;
-        await //    comp.Find("input").ChangeAsync("A");
-        await //    comp.Find("input").BlurAsync();
+        //    await comp.Find("input").ChangeAsync("A");
+        //    await comp.Find("input").BlurAsync();
         //    numericField.ReadValue.Should().BeNull();
         //    numericField.HasErrors.Should().Be(true);
         //    numericField.GetState(x => x.ErrorText).Should().Be("Not a valid number");

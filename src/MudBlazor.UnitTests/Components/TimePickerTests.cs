@@ -9,7 +9,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TimePickerTests : BunitTest
     {
-        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleTimePickerTest>> parameterBuilder = null)
+        public async Task<IRenderedComponent<SimpleTimePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleTimePickerTest>> parameterBuilder = null)
         {
             IRenderedComponent<SimpleTimePickerTest> comp;
             if (parameterBuilder is null)
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_ClickOutside_CheckClosedAsync()
         {
-            var comp = OpenPicker();
+            var comp = await OpenPicker();
             // clicking outside to close
             await comp.Find("div.mud-overlay").ClickAsync();
             // should not be open any more
@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Change_24hrsTo12Hours_CheckHours()
         {
-            var comp = OpenPicker();
+            var comp = await OpenPicker();
             var picker = comp.Instance;
             var underlyingPicker = comp.FindComponent<MudTimePicker>();
             // count hours
@@ -90,9 +90,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToHours_CheckMinutesHidden()
+        public async Task OpenToHours_CheckMinutesHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHoursAsync()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
             // Are minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click on the minutes input
@@ -115,33 +115,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToMinutes_CheckHoursHidden()
+        public async Task OpenToMinutes_CheckHoursHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Minutes));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Minutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeMinutes_CheckHoursHidden()
+        public async Task TimeEditModeMinutes_CheckHoursHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyMinutes));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyMinutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeHours_CheckMinutesHidden()
+        public async Task TimeEditModeHours_CheckMinutesHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyHours));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyHours));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeNormal_CheckMinutesHidden()
+        public async Task TimeEditModeNormal_CheckMinutesHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.Normal));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.Normal));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChangeToMinutes_FromHours_CheckHoursHiddenAsync()
         {
-            var comp = OpenPicker();
+            var comp = await OpenPicker();
             // click on the minutes input
             await comp.FindAll("button.mud-timepicker-button")[1].ClickAsync();
             // Are minutes displayed

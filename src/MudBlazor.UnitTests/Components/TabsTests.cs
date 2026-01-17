@@ -15,9 +15,10 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TabsTests : BunitTest
     {
-        public override void SetupAsync()
+        [SetUp]
+        public override void Setup()
         {
-            await base.SetupAsync(new SetEventArgs());
+            base.Setup();
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), new MockResizeObserverFactory()));
         }
 

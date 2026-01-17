@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ListMultiSelectionBindingTest()
+        public async Task ListMultiSelectionBindingTest()
         {
             var comp = Context.Render<ListMultiSelectionBindingTest>();
             var list1 = comp.FindComponents<MudList<string>>().FirstOrDefault(x => x.Instance.Class == "list-1");
@@ -112,10 +112,11 @@ namespace MudBlazor.UnitTests.Components
             list1.FindComponents<MudListItem<string>>().Count.Should().Be(8);
             var GetCheckBox = (IRenderedComponent<MudList<string>> list, string text) => list.FindComponents<MudListItem<string>>()
                         .FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
-            var Select = (IRenderedComponent<MudList<string>> list, string text) => list.FindComponents<MudListItem<string>>()
-                        await .FirstOrDefault(x => x.Instance.Text == text)?.Find("div.mud-list-item").ClickAsync();
+            var Select = async (IRenderedComponent<MudList<string>> list, string text) =>
+                        await list.FindComponents<MudListItem<string>>()
+                        .FirstOrDefault(x => x.Instance.Text == text).Find("div.mud-list-item").ClickAsync();
             // click water on list1
-            Select(list1, "Sparkling Water");
+            await Select(list1, "Sparkling Water");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O");
             GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
             GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(true);
