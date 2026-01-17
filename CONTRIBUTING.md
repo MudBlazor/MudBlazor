@@ -26,6 +26,7 @@
     - [Example of a bad code](#example-of-a-bad-code-1)
     - [Example of a good code](#example-of-a-good-code-1)
   - [Unit Testing and Continuous Integration](#unit-testing-and-continuous-integration)
+    - [Test naming conventions](#test-naming-conventions)
     - [How not to break stuff](#how-not-to-break-stuff)
     - [Make your code break-safe](#make-your-code-break-safe)
     - [How to write a unit test?](#how-to-write-a-unit-test)
@@ -339,6 +340,12 @@ In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `Calend
 We strive for complete test coverage to keep stuff from breaking and
 deliver a rock-solid library. For every component that has C# logic we 
 require a bUnit test that checks its logic.
+
+### Test naming conventions
+
+- Do not use `Test` or `Async` suffixes in test method names (e.g., `Toggle_OpenAsync` -> `Toggle_Open`)
+- Do not embed `Test_` in the middle of names (e.g., `AlertTest_Click` -> `Alert_Click`)
+- No trailing underscores or double underscores in test method names (e.g., `BarChart_CanHideSeries_` -> `BarChart_CanHideSeries`)
 
 ### How not to break stuff
 

@@ -88,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ToggleGroup_ToggleSelection()
+        public async Task ToggleGroup_ToggleSelection_InterceptedValue()
         {
             var comp = Context.Render<ToggleGroupToggleSelectionTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();

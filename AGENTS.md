@@ -94,6 +94,11 @@ await input.BlurAsync();  // Will fail
 - Test components: `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`
 - Tests: `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
 
+### Test Naming
+- Remove `Test`/`Async` suffixes from test method names (e.g., `Toggle_OpenAsync` -> `Toggle_Open`)
+- Avoid embedding `Test_` in the middle of names (e.g., `AlertTest_Click` -> `Alert_Click`)
+- No trailing underscores or double underscores in test method names (e.g., `BarChart_CanHideSeries_` -> `BarChart_CanHideSeries`)
+
 ## Blazor Component Patterns
 
 ### ParameterState Pattern (REQUIRED)
