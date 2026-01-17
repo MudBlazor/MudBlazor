@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test horizontal timeline inside vertical timeline.
         /// </summary>
         [Test]
-        public async Task HorizontalTimelineInsideVerticalTimeline_()
+        public async Task HorizontalTimelineInsideVerticalTimeline()
         {
             var comp = Context.Render<HorizontalTimelineInsideVerticalTimelineTest>();
             // select elements needed for the test

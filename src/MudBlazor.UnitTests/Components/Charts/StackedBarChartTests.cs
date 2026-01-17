@@ -958,7 +958,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public async Task StackedBarChart_CanHideSeries_()
+        public async Task StackedBarChart_CanHideSeries()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {

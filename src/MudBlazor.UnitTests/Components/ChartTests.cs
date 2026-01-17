@@ -648,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task HeatmapChart_CanHideSeries_()
+        public async Task HeatmapChart_CanHideSeries()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {

@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         };
 
         [Test]
-        public void AggregateDefinition_Cache_Returns_SameObject_()
+        public void AggregateDefinition_Cache_Returns_SameObject()
         {
             Expression<Func<AccountingModel, decimal?>> propertyExpression1 = model => model.Salary;
             Expression<Func<AccountingModel, decimal?>> propertyExpression2 = model => model.Salary;
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Cache_Returns_DifferentObject_()
+        public void AggregateDefinition_Cache_Returns_DifferentObject()
         {
             Expression<Func<AccountingModel, decimal?>> propertyExpression1 = model => model.Salary;
             Expression<Func<AccountingModel, decimal?>> propertyExpression2 = model => model.Id;
@@ -68,7 +68,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Decimal_NullList_()
+        public void AggregateDefinition_Decimal_NullList()
         {
             Expression<Func<AccountingModel, decimal>> propertyExpression = model => model.Salary;
 
@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Decimal_EmptyList_()
+        public void AggregateDefinition_Decimal_EmptyList()
         {
             Expression<Func<AccountingModel, decimal>> propertyExpression = model => model.Salary;
 
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Decimal_NullExpression_()
+        public void AggregateDefinition_Decimal_NullExpression()
         {
             var aggregateDefinitionAverage = new AggregateDefinition<AccountingModel>();
             var value = aggregateDefinitionAverage.GetValue(null, _accountingModels);
@@ -99,7 +99,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Decimal_()
+        public void AggregateDefinition_Decimal()
         {
             Expression<Func<AccountingModel, decimal>> propertyExpression = model => model.Salary;
 
@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_NullableDecimal_()
+        public void AggregateDefinition_NullableDecimal()
         {
             Expression<Func<AccountingNullableModel, decimal?>> propertyExpression = model => model.Salary;
 
@@ -159,7 +159,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Integer_()
+        public void AggregateDefinition_Integer()
         {
             Expression<Func<AccountingModel, int>> propertyExpression = model => model.Position;
 
@@ -190,7 +190,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_NullableInteger_()
+        public void AggregateDefinition_NullableInteger()
         {
             Expression<Func<AccountingNullableModel, int?>> propertyExpression = model => model.Position;
 
@@ -221,7 +221,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Long_()
+        public void AggregateDefinition_Long()
         {
             Expression<Func<AccountingModel, long>> propertyExpression = model => model.Id;
 
@@ -252,7 +252,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_NullableLong_()
+        public void AggregateDefinition_NullableLong()
         {
             Expression<Func<AccountingNullableModel, long?>> propertyExpression = model => model.Id;
 
@@ -283,7 +283,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_NumberFormat_()
+        public void AggregateDefinition_NumberFormat()
         {
             Expression<Func<AccountingNullableModel, decimal?>> propertyExpression = model => model.Salary;
 
@@ -313,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_Custom_()
+        public void AggregateDefinition_Custom()
         {
             var aggregateDefinitionAverage = new AggregateDefinition<AccountingModel>
             {
@@ -333,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AggregateDefinition_InvalidType_()
+        public void AggregateDefinition_InvalidType()
         {
             Expression<Func<AccountingModel, decimal>> propertyExpression = model => model.Salary;
 
@@ -348,7 +348,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test(Description = "This is to ensure that we do not return same cached compiled expression and get same results after passing different expression")]
-        public void AggregateDefinition_ReuseDefinition_With_Different_Expressions_()
+        public void AggregateDefinition_ReuseDefinition_With_Different_Expressions()
         {
             Expression<Func<AccountingModel, long>> propertyExpressionId = model => model.Id;
             Expression<Func<AccountingModel, decimal>> propertyExpressionSalary = model => model.Salary;

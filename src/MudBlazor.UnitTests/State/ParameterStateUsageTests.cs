@@ -191,7 +191,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task Child_TwoWayBinding_()
+    public async Task Child_TwoWayBinding()
     {
         var expanded = false;
 
@@ -251,7 +251,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task Child_EventCallBackOnly_()
+    public async Task Child_EventCallBackOnly()
     {
         var callBackEvents = new List<bool>();
         Action<bool> expandedCallBack = value => { callBackEvents.Add(value); };
@@ -304,7 +304,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task Parent_TwoWayBinding_()
+    public async Task Parent_TwoWayBinding()
     {
         var comp = Context.Render<ParameterStateParentBindingTestComp>();
 
@@ -508,7 +508,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task ParentChild_IsChildOriginatedChange_()
+    public async Task ParentChild_IsChildOriginatedChange()
     {
         var comp = Context.Render<ParameterStateChildParentTestComp>();
         IElement ButtonParent() => comp.Find("#parentBtn");

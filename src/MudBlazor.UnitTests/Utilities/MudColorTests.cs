@@ -907,7 +907,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void HslEquals_Null_()
+        public void HslEquals_Null()
         {
             // Arrange
             MudColor color = new(120, 0.5, 0.4, 1);
@@ -923,7 +923,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(120, 0.5, 0.4, 1, 121, 0.5, 0.4, 1, false)] // Hue differs
         [TestCase(120, 0.5, 0.4, 1, 120, 0.51, 0.4, 1, false)] // Saturation differs
         [TestCase(120, 0.5, 0.4, 1, 120, 0.5, 0.41, 1, false)] // Lightness differs
-        public void HslEquals_(double h1, double s1, double l1, double a1, double h2, double s2, double l2, double a2, bool expected)
+        public void HslEquals(double h1, double s1, double l1, double a1, double h2, double s2, double l2, double a2, bool expected)
         {
             // Arrange
             MudColor first = new(h1, s1, l1, a1);
@@ -937,7 +937,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void RgbaEquals_Null_()
+        public void RgbaEquals_Null()
         {
             // Arrange
             MudColor color = new(10, 20, 30, 255);
@@ -955,7 +955,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(10, 20, 30, 255, 10, 21, 30, 255, false)] // Green differs
         [TestCase(10, 20, 30, 255, 11, 20, 30, 255, false)] // Red differs
         [TestCase(10, 20, 30, 255, 10, 20, 30, 255, true)]  // All equal
-        public void RgbaEquals_(byte r1, byte g1, byte b1, byte a1, byte r2, byte g2, byte b2, byte a2, bool expected)
+        public void RgbaEquals(byte r1, byte g1, byte b1, byte a1, byte r2, byte g2, byte b2, byte a2, bool expected)
         {
             // Arrange
             MudColor first = new(r1, g1, b1, a1);

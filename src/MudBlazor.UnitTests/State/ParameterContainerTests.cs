@@ -189,7 +189,7 @@ public class ParameterContainerTests
     }
 
     [Test(Description = "https://github.com/MudBlazor/MudBlazor/pull/12023")]
-    public async Task ParameterState_Snapshot_()
+    public async Task ParameterState_Snapshot()
     {
         var tcs1 = new TaskCompletionSource();
         var tcs2 = new TaskCompletionSource();

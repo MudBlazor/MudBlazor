@@ -424,7 +424,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerStaticWithPickerActionsDayClick_()
+        public async Task DatePickerStaticWithPickerActionsDayClick()
         {
             var comp = Context.Render<DatePickerStaticTest>();
             var picker = comp.FindComponent<MudDatePicker>();

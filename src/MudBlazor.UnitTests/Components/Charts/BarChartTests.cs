@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public async Task BarChart_CanHideSeries_()
+        public async Task BarChart_CanHideSeries()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {

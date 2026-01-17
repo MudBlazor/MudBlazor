@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that invalid T values are logged using the provided ILogger
         /// </summary>
         [Test]
-        public void InvalidTLogWarning_()
+        public void InvalidTLogWarning()
         {
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName) as MockLogger;

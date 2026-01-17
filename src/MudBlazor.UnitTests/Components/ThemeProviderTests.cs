@@ -338,7 +338,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("host")]
         [TestCase(":root")]
         [TestCase(":host")]
-        public void PseudoCssScope_(string scope)
+        public void PseudoCssScope(string scope)
         {
             var mudTheme = new MudTheme
             {
@@ -364,7 +364,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void PseudoCssRootColor_()
+        public void PseudoCssRootColor()
         {
             const string Scope = ":root";
             var mudTheme = new MudTheme

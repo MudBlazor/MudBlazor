@@ -173,7 +173,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public async Task RoseChart_CanHideSeries_()
+    public async Task RoseChart_CanHideSeries()
     {
         var chartData = new double[] { 10, 20, 30, 40 };
         string[] chartLabels = { "Petal 1", "Petal 2", "Petal 3", "Petal 4" };

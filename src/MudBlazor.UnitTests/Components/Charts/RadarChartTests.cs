@@ -232,7 +232,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public async Task RadarChart_CanHideSeries_()
+    public async Task RadarChart_CanHideSeries()
     {
         var chartSeries = new List<ChartSeries<double>>()
         {

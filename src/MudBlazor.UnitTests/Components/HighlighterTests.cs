@@ -339,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check nulls
         /// </summary>
         [Test]
-        public void MudHighlighter_Nulls_()
+        public void MudHighlighter_Nulls()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, null)

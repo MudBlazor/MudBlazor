@@ -471,7 +471,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextField_ClearButton_TabIndex_()
+        public void TextField_ClearButton_TabIndex()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(parameter => parameter.Clearable, true)
