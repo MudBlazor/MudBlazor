@@ -29,11 +29,11 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Value, null)
                 .Add(x => x.TriState, true));
             comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
-            comp.Find("input").Change(false);
+            await comp.Find("input").ChangeAsync(false);
             comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
-            comp.Find("input").Change("");
+            await comp.Find("input").ChangeAsync("");
             comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
         }
 
@@ -50,9 +50,9 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             box.ReadValue.Should().Be(false);
             // click and check if it has toggled
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
-            comp.Find("input").Change(false);
+            await comp.Find("input").ChangeAsync(false);
             box.ReadValue.Should().Be(false);
         }
 
@@ -68,9 +68,9 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             box.ReadValue.Should().Be(true);
             // click and check if it has toggled
-            comp.Find("input").Change(false);
+            await comp.Find("input").ChangeAsync(false);
             box.ReadValue.Should().Be(false);
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
         }
 
@@ -87,19 +87,19 @@ namespace MudBlazor.UnitTests.Components
             boxes[0].Instance.ReadValue.Should().Be(true);
             boxes[1].Instance.ReadValue.Should().Be(true);
             // click and check if it has toggled
-            comp.FindAll("input")[0].Change(false);
+            await comp.FindAll("input")[0].ChangeAsync(false);
             boxes[0].Instance.ReadValue.Should().Be(false);
             boxes[1].Instance.ReadValue.Should().Be(false);
 
-            comp.FindAll("input")[0].Change(true);
+            await comp.FindAll("input")[0].ChangeAsync(true);
             boxes[0].Instance.ReadValue.Should().Be(true);
             boxes[1].Instance.ReadValue.Should().Be(true);
 
-            comp.FindAll("input")[1].Change(false);
+            await comp.FindAll("input")[1].ChangeAsync(false);
             boxes[0].Instance.ReadValue.Should().Be(false);
             boxes[1].Instance.ReadValue.Should().Be(false);
 
-            comp.FindAll("input")[1].Change(true);
+            await comp.FindAll("input")[1].ChangeAsync(true);
             boxes[0].Instance.ReadValue.Should().Be(true);
             boxes[1].Instance.ReadValue.Should().Be(true);
         }
@@ -138,15 +138,15 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             box.ReadValue.Should().BeNull();
             // click and check if it has toggled
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
-            comp.Find("input").Change(false);
+            await comp.Find("input").ChangeAsync(false);
             box.ReadValue.Should().Be(false);
             // click and check if this is the indeterminate value
-            comp.Find("input").Change(false);
+            await comp.Find("input").ChangeAsync(false);
             box.ReadValue.Should().BeNull();
             // click and check if this is the true value
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
         }
 
@@ -162,10 +162,10 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(0);
             var checkbox = comp.FindComponent<MudCheckBox<bool>>();
             // click the checkbox to make the form valid
-            checkbox.Find("input").Change(true);
+            await checkbox.Find("input").ChangeAsync(true);
             form.IsValid.Should().BeTrue();
             // click the checkbox to make the form invalid again because the checkbox is required
-            checkbox.Find("input").Change(false);
+            await checkbox.Find("input").ChangeAsync(false);
             checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
             checkbox.Markup.Should().Contain("You must agree");
             checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must agree");
@@ -173,7 +173,7 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("You must agree");
             // click the checkbox to make the form valid again
-            checkbox.Find("input").Change(true);
+            await checkbox.Find("input").ChangeAsync(true);
             form.IsValid.Should().BeTrue();
             checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
             checkbox.Instance.GetState(x => x.ErrorText).Should().Be(null);
@@ -201,21 +201,21 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must select a value");
 
             // state: true, form should be valid
-            checkbox.Find("input").Change(true);
+            await checkbox.Find("input").ChangeAsync(true);
             await comp.InvokeAsync(() => form.Validate());
             form.IsValid.Should().BeTrue();
             checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
             checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // state: false, form should be valid
-            checkbox.Find("input").Change(false);
+            await checkbox.Find("input").ChangeAsync(false);
             await comp.InvokeAsync(() => form.Validate());
             form.IsValid.Should().BeTrue();
             checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
             checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // state: null, form should be invalid again
-            checkbox.Find("input").Change(null);
+            await checkbox.Find("input").ChangeAsync(null);
             await comp.InvokeAsync(() => form.Validate());
             form.IsValid.Should().BeFalse();
             checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
@@ -231,9 +231,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<CheckBoxesBindAgainstArrayTest>();
             comp.FindAll("p")[^1].TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
-            comp.FindAll("input")[0].Change(false);
+            await comp.FindAll("input")[0].ChangeAsync(false);
             comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=False, C=True, D=False, E=True");
-            comp.FindAll("input")[1].Change(true);
+            await comp.FindAll("input")[1].ChangeAsync(true);
             comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=True, C=True, D=False, E=True");
         }
 
@@ -367,7 +367,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToStringFast(true)}-text", $"hover:mud-{uncheckedcolor.ToStringFast(true)}-hover" });
 
             // click and check if it has new color
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
             comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToStringFast(true)}-text", $"hover:mud-{color.ToStringFast(true)}-hover" });
         }

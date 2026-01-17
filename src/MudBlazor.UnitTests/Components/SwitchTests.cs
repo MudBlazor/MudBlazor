@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToStringFast(true)}-text", $"hover:mud-{uncheckedcolor.ToStringFast(true)}-hover" });
 
             // click and check if it has new color
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToStringFast(true)}-text", $"hover:mud-{color.ToStringFast(true)}-hover" });
         }

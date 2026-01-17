@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on chip
-            chip.Click();
+            await chip.ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClick");
@@ -144,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on close button
-            comp.Find("button.mud-chip-close-button").Click();
+            await comp.Find("button.mud-chip-close-button").ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");

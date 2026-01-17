@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             // click to to open menu
-            comp.Find("input").Click();
+            await comp.Find("input").ClickAsync();
             // now its open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             return comp;
@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
             picker.ReadValue.Should().Be(new TimeSpan(637940935730000000));
             picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
 
-            comp.Find(".mud-input-clear-button").Click(); //clear the input
+            await comp.Find(".mud-input-clear-button").ClickAsync(); //clear the input
 
             picker.Text.Should().Be(""); //ensure the text and time are reset. Note this is an empty string rather than null due to how the reset works internally
             picker.ReadValue.Should().Be(null);
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // clicking outside to close
-            comp.Find("div.mud-overlay").Click();
+            await comp.Find("div.mud-overlay").ClickAsync();
             // should not be open any more
             // should not be open any more
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
@@ -104,12 +104,12 @@ namespace MudBlazor.UnitTests.Components
             // Are minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click on the minutes input
-            comp.FindAll("button.mud-timepicker-button")[1].Click();
+            await comp.FindAll("button.mud-timepicker-button")[1].ClickAsync();
             // clicking outside to close
-            comp.Find("div.mud-overlay").Click();
+            await comp.Find("div.mud-overlay").ClickAsync();
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            comp.FindAll("input")[0].Click();
+            await comp.FindAll("input")[0].ClickAsync();
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -151,7 +151,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // click on the minutes input
-            comp.FindAll("button.mud-timepicker-button")[1].Click();
+            await comp.FindAll("button.mud-timepicker-button")[1].ClickAsync();
             // Are minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -163,32 +163,32 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
 
             // valid time
-            comp.Find("input").Change("23:02");
+            await comp.Find("input").ChangeAsync("23:02");
             picker.TimeIntermediate.Should().Be(new TimeSpan(23, 2, 0));
             picker.ConversionError.Should().BeFalse();
             picker.ConversionErrorMessage.Should().BeNull();
             // empty string equals null TimeSpan?
-            comp.Find("input").Change("");
+            await comp.Find("input").ChangeAsync("");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeFalse();
             picker.ConversionErrorMessage.Should().BeNull();
             // invalid time (format, AmPm)
-            comp.Find("input").Change("09:o6 AM");
+            await comp.Find("input").ChangeAsync("09:o6 AM");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
             // invalid time (overflow, AmPm)
-            comp.Find("input").Change("13:45 AM");
+            await comp.Find("input").ChangeAsync("13:45 AM");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
             // invalid time (format)
-            comp.Find("input").Change("2o:32");
+            await comp.Find("input").ChangeAsync("2o:32");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
             // invalid time (overflow)
-            comp.Find("input").Change("25:06");
+            await comp.Find("input").ChangeAsync("25:06");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");

@@ -81,13 +81,13 @@ src/
 ```csharp
 // GOOD
 var comp = ctx.RenderComponent<MudTextField<string>>();
-comp.Find("input").Change("Garfield");  // Query each time
-comp.Find("input").Blur();
+await comp.Find("input").ChangeAsync("Garfield");  // Query each time
+await comp.Find("input").BlurAsync();
 
 // BAD
 var input = comp.Find("input");  // Becomes stale
-input.Change("Garfield");
-input.Blur();  // Will fail
+await input.ChangeAsync("Garfield");
+await input.BlurAsync();  // Will fail
 ```
 
 ### Test Organization

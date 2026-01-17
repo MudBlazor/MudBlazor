@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-nav-group-disabled");
             comp.Markup.Should().NotContain("mud-expanded");
 
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
 
             comp.Markup.Should().Contain("mud-nav-group-disabled");
         }
@@ -47,11 +47,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<NavGroupWithExpandedBindingTest>();
             GetExpandedState().Should().BeFalse();
 
-            await comp.InvokeAsync(() => comp.Find("#navgroup-switch").Change(true));
+           await  await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(true));
 
             GetExpandedState().Should().BeTrue();
 
-            await comp.InvokeAsync(() => comp.Find("#navgroup-switch").Change(false));
+           await  await comp.InvokeAsync(() => comp.Find("#navgroup-switch").ChangeAsync(false));
 
             GetExpandedState().Should().BeFalse();
             return;

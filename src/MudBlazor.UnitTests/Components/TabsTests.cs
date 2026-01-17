@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
     {
         public override void Setup()
         {
-            base.Setup();
+            await base.SetupAsync(new SetEventArgs());
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), new MockResizeObserverFactory()));
         }
 
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Tabs.Panels.Should().NotBeNull().And.BeEmpty();
 
             // add a panel
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().NotBeEmpty();
             comp.FindAll("div.mud-tab").Count.Should().Be(1);
             comp.FindAll("p.mud-typography").Count.Should().Be(1);
@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudTabPanel>().First().Instance.Should().Be(comp.Instance.Tabs.Panels[0]);
 
             // add another
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("div.mud-tab").Count.Should().Be(2);
 
             comp.Instance.Tabs.Panels.Should().NotBeNull().And.HaveCount(2);
@@ -50,10 +50,10 @@ namespace MudBlazor.UnitTests.Components
             // we are now on tab 0
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Tab 0");
             // switch to tab1
-            comp.FindAll("div.mud-tab")[1].Click();
+            await comp.FindAll("div.mud-tab")[1].ClickAsync();
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Tab 1");
             // remove tab1
-            comp.FindAll("button")[1].Click();
+            await comp.FindAll("button")[1].ClickAsync();
             comp.FindAll("div.mud-tab").Count.Should().Be(1);
             comp.FindAll("p.mud-typography").Count.Should().Be(1);
 
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
             // we should be on tab0 again
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Tab 0");
             // remove another
-            comp.FindAll("button")[1].Click();
+            await comp.FindAll("button")[1].ClickAsync();
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
             comp.FindAll("div.mud-tab").Should().BeEmpty();
 
@@ -87,12 +87,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none;");
             comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
             // click first button and show button click counters
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=0");
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
             // switch to the second tab:
-            comp.FindAll("div.mud-tab")[1].Click();
+            await comp.FindAll("div.mud-tab")[1].ClickAsync();
             // none of the panels should have had a render pass with firstRender==true, so this must be as before:
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // second panel should be displayed
@@ -100,13 +100,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
             // click second button twice and show button click counters. the click of the first button should still be evident
-            comp.FindAll("button")[1].Click();
-            comp.FindAll("button")[1].Click();
+            await comp.FindAll("button")[1].ClickAsync();
+            await comp.FindAll("button")[1].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
             // switch to the third tab:
-            comp.FindAll("div.mud-tab")[2].Click();
+            await comp.FindAll("div.mud-tab")[2].ClickAsync();
             // second panel should be displayed
             comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none;");
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none;");
@@ -116,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // switch back to the first tab:
-            comp.FindAll("div.mud-tab")[0].Click();
+            await comp.FindAll("div.mud-tab")[0].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
@@ -143,28 +143,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(1);
             // click first button and show button click counters
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             // switch to the second tab:
-            comp.FindAll("div.mud-tab")[1].Click();
+            await comp.FindAll("div.mud-tab")[1].ClickAsync();
             // first and second panel were rendered once with firstRender==true:
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
             // only one panel should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(1);
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
             // click the button twice
-            comp.FindAll("button")[0].Click();
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=2");
             // switch to the third tab:
-            comp.FindAll("div.mud-tab")[2].Click();
+            await comp.FindAll("div.mud-tab")[2].ClickAsync();
             // second panel should be displayed
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 3=0");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // switch back to the first tab:
-            comp.FindAll("div.mud-tab")[0].Click();
+            await comp.FindAll("div.mud-tab")[0].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
         }
@@ -427,7 +427,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (var i = 0; i < 2; i++)
             {
-                scrollButtons.Last().Find("button").Click();
+                await scrollButtons.Last().Find("button").ClickAsync();
                 expectedTranslation += observer.PanelSize * 2;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
@@ -463,7 +463,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (var i = 0; i < 2; i++)
             {
-                scrollButtons.First().Find("button").Click(); // prev click
+                await scrollButtons.First().Find("button").ClickAsync(); // prev click
                 expectedTranslation -= observer.PanelSize * 2; // scroll one page back (2 tabs)
                 var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
@@ -523,7 +523,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
             var expectedTranslation = 0.0;
-            scrollButtons[0].Find("button").Click();
+            await scrollButtons[0].Find("button").ClickAsync();
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -553,7 +553,7 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
-            scrollButtons[0].Find("button").Click();
+            await scrollButtons[0].Find("button").ClickAsync();
             var expectedTranslation = 25.0; // 25 px centers the first tab
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
@@ -584,7 +584,7 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons[1].Instance.Disabled.Should().BeFalse();
 
-            scrollButtons[1].Find("button").Click();
+            await scrollButtons[1].Find("button").ClickAsync();
             var expectedTranslation = 500.0;
 
             var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
@@ -1187,13 +1187,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TabsWithMenuInHeader>();
 
             //open the menu
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
 
             // make sure the menu is rendered
             _ = comp.Find(".my-menu-item-1");
 
             //click the overlay to force a close
-            comp.Find(".mud-overlay").Click();
+            await comp.Find(".mud-overlay").ClickAsync();
 
             //no menu item should be visible anymore
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
@@ -1524,7 +1524,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-tabs-scroll-button").Should().BeEmpty();
             // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
-            cbox.Change(true);
+            await cbox.ChangeAsync(true);
             comp.Render();
             // drop container
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
@@ -1559,12 +1559,12 @@ namespace MudBlazor.UnitTests.Components
             // no scroll bar should show
             comp.FindAll(".mud-tabs-scroll-button").Should().BeEmpty();
             // clicking a tab should activate it and update the class
-            divs[2].Click(); // activate Three
+            await divs[2].ClickAsync(); // activate Three
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             await comp.WaitForAssertionAsync(() => divs[2].ClassList.Contains("mud-tab-active").Should().BeTrue());
             // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
-            cbox.Change(true);
+            await cbox.ChangeAsync(true);
             await comp.SetParametersAndRenderAsync(p => p.Add(p => p.ActiveTabClass, "test-active"));
             // drop container
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
@@ -1575,7 +1575,7 @@ namespace MudBlazor.UnitTests.Components
             divs[1].InnerHtml.Should().Be("Two");
             divs[2].InnerHtml.Should().Be("Three");
             divs[3].InnerHtml.Should().Be("Four");
-            divs[3].Click();
+            await divs[3].ClickAsync();
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             await comp.WaitForAssertionAsync(() => divs[3].ClassList.Contains("mud-tab-active").Should().BeTrue());
             await comp.WaitForAssertionAsync(() => divs[3].ClassList.Contains("test-active").Should().BeTrue());
@@ -1827,7 +1827,7 @@ namespace MudBlazor.UnitTests.Components
 
             var menuItems = comp.FindComponents<MudMenuItem>();
             menuItems.Count.Should().Be(3);
-            menuItems[2].Find(".mud-menu-item").Click();
+            await menuItems[2].Find(".mud-menu-item").ClickAsync();
 
             comp.FindAll("div.mud-tab").Count
                 .Should().Be(1);
@@ -1836,7 +1836,7 @@ namespace MudBlazor.UnitTests.Components
             tabs = comp.FindAll("div.mud-tab");
             await tabs[0].TriggerEventAsync("oncontextmenu", default);
 
-            comp.FindComponents<MudMenuItem>()[1].Find(".mud-menu-item").Click();
+            await comp.FindComponents<MudMenuItem>()[1].Find(".mud-menu-item").ClickAsync();
 
             comp.FindAll("div.mud-tab").Count
                 .Should().Be(0);

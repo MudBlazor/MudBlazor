@@ -28,19 +28,19 @@ namespace MudBlazor.UnitTests.Components
             MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via button
-            Button().Click();
+            await Button().ClickAsync();
             MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via button
-            Button().Click();
+            await Button().ClickAsync();
             MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via switch
-            MudSwitch().Find("input").Change(false);
+            await MudSwitch().Find("input").ChangeAsync(false);
             MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via switch
-            MudSwitch().Find("input").Change(true);
+            await MudSwitch().Find("input").ChangeAsync(true);
             MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
         }
     }

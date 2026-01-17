@@ -37,10 +37,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ToggledChanged, (toggleValue) => boundValue = toggleValue)
             );
 
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
             boundValue.Should().BeTrue();
 
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
             boundValue.Should().BeFalse();
         }
 
@@ -51,10 +51,10 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("button").GetAttribute("aria-pressed").Should().Be("false");
 
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
             comp.Find("button").GetAttribute("aria-pressed").Should().Be("true");
 
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
             comp.Find("button").GetAttribute("aria-pressed").Should().Be("false");
         }
 
@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
             comp1.Instance.Toggled.Should().BeFalse();
             comp2.Instance.Toggled.Should().BeFalse();
             // click first button
-            comp1.Find("button").Click();
+            await comp1.Find("button").ClickAsync();
             // make sure both buttons state changed
             comp1.Instance.Toggled.Should().BeTrue();
             comp2.Instance.Toggled.Should().BeTrue();
@@ -88,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
             button.HasAttribute("disabled").Should().BeTrue();
 
             // Try to toggle the button
-            button.Click();
+            await button.ClickAsync();
 
             // Verify that the toggled state has not changed
             comp.Instance.Toggled.Should().BeFalse();
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetIcon().Should().Be(expectedIcon);
 
             // Toggle state
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
 
             // Check toggled state
             comp.Instance.GetIcon().Should().Be(expectedToggledIcon);
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetSize().Should().Be(expectedSize);
 
             // Toggle state
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
 
             // Check toggled state
             comp.Instance.GetSize().Should().Be(expectedToggledSize);
@@ -145,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetColor().Should().Be(expectedColor);
 
             // Toggle state
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
 
             // Check toggled state
             comp.Instance.GetColor().Should().Be(expectedToggledColor);
@@ -164,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetVariant().Should().Be(expectedVariant);
 
             // Toggle state
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
 
             // Check toggled state
             comp.Instance.GetVariant().Should().Be(expectedToggledVariant);

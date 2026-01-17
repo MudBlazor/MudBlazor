@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
     {
         public override void Setup()
         {
-            base.Setup();
+            await base.SetupAsync(new SetEventArgs());
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), new MockResizeObserverFactory()));
         }
 
@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SimpleDynamicTabsInteractionTest>();
 
             var addButton = comp.Find(".my-add-icon-class");
-            addButton.Click();
+            await addButton.ClickAsync();
 
             await Task.Delay(5);
             comp.Instance.AddClickCounter.Should().Be(1);
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 3; i++)
             {
                 var closeButton = comp.FindAll(".my-close-icon-class")[i];
-                closeButton.Click();
+                await closeButton.ClickAsync();
 
                 await Task.Delay(5);
 

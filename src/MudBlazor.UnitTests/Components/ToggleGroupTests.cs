@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
 
             toggleFirst.Instance.Value.Should().BeNull();
             toggleSecond.Instance.Value.Should().BeNull();
-            ToggleItem().Click();
+            await ToggleItem().ClickAsync();
             toggleFirst.Instance.Value.Should().Be("Item Two");
             toggleSecond.Instance.Value.Should().Be("Item Two");
         }
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
 
             toggleFirst.Instance.Value.Should().BeNull();
             toggleSecond.Instance.Value.Should().BeNull();
-            ToggleItem().Click();
+            await ToggleItem().ClickAsync();
             toggleFirst.Instance.Value.Should().Be("Item Two");
             toggleSecond.Instance.Value.Should().Be("Item Two");
         }
@@ -59,13 +59,13 @@ namespace MudBlazor.UnitTests.Components
 
             group1.Instance.Values.Should().BeNull();
             group2.Instance.Values.Should().BeNull();
-            ToggleItemSecond().Click();
+            await ToggleItemSecond().ClickAsync();
             group1.Instance.Values.Should().Contain("Item Two");
             group2.Instance.Values.Should().Contain("Item Two");
-            ToggleItemThird().Click();
+            await ToggleItemThird().ClickAsync();
             group1.Instance.Values.Should().BeEquivalentTo("Item Two", "Item Three");
             group2.Instance.Values.Should().Contain("Item Three");
-            ToggleItemSecond().Click();
+            await ToggleItemSecond().ClickAsync();
             group1.Instance.Values.Should().BeEquivalentTo("Item Three");
             group2.Instance.Values.Should().Contain("Item Three");
         }
@@ -80,10 +80,10 @@ namespace MudBlazor.UnitTests.Components
             toggleFirst.Instance.Value.Should().Be("Item Two");
             toggleSecond.Instance.Values.Should().BeEquivalentTo("Item One", "Item Three");
 
-            comp.Find("#set-single-value").Click();
+            await comp.Find("#set-single-value").ClickAsync();
             toggleFirst.Instance.Value.Should().Be("Item One");
 
-            comp.Find("#set-multi-value").Click();
+            await comp.Find("#set-multi-value").ClickAsync();
             toggleSecond.Instance.Values.Should().BeEquivalentTo("Item Two", "Item Three");
         }
 
@@ -95,9 +95,9 @@ namespace MudBlazor.UnitTests.Components
             IElement ToggleItem() => comp.FindAll(".mud-toggle-item").GetItemByIndex(0);
 
             toggle.Instance.Value.Should().BeNull();
-            ToggleItem().Click();
+            await ToggleItem().ClickAsync();
             toggle.Instance.Value.Should().Be("Item One");
-            ToggleItem().Click();
+            await ToggleItem().ClickAsync();
             toggle.Instance.Value.Should().BeNull();
         }
 
@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
             IElement Button() => comp.Find("#remove_btn");
 
             toggleGroup.GetItems().Count().Should().Be(8);
-            Button().Click();
+            await Button().ClickAsync();
             toggleGroup.GetItems().Count().Should().Be(7);
         }
 
@@ -312,14 +312,14 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < items.Count; i++)
             {
                 // Act
-                comp.FindAll(".mud-toggle-item").GetItemByIndex(i).Click();
+                await comp.FindAll(".mud-toggle-item").GetItemByIndex(i).ClickAsync();
                 // Assert
                 var currentItem = items[i];
                 currentItem.Selected.Should().BeTrue();
                 items.Except([currentItem]).All(x => !x.Selected).Should().BeTrue();
                 if (selMode == SelectionMode.ToggleSelection)
                 {
-                    comp.FindAll(".mud-toggle-item").GetItemByIndex(i).Click();
+                    await comp.FindAll(".mud-toggle-item").GetItemByIndex(i).ClickAsync();
                     currentItem.Selected.Should().BeFalse();
                 }
             }
@@ -529,24 +529,24 @@ namespace MudBlazor.UnitTests.Components
             failureStatus.ClassList.Should().NotContain("mud-checked");
 
             // change to yes
-            GetYesButton().Click();
+            await GetYesButton().ClickAsync();
             await comp.WaitForAssertionAsync(() => GetYesButton().ClassList.Should().Contain("mud-toggle-item-selected"));
             GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected");
             GetMaybeButton().ClassList.Should().NotContain("mud-toggle-item-selected");
             comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Accepted);
 
             // change to maybe
-            GetMaybeButton().Click();
+            await GetMaybeButton().ClickAsync();
             await comp.WaitForAssertionAsync(() => GetYesButton().ClassList.Should().NotContain("mud-toggle-item-selected"));
             GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected");
             GetMaybeButton().ClassList.Should().Contain("mud-toggle-item-selected");
             comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Maybe);
 
             // simulate failure where it saves last success
-            failure.Click();
+            await failure.ClickAsync();
 
             // click yes with failure enabled to simulate no change
-            GetYesButton().Click();
+            await GetYesButton().ClickAsync();
             // check value has not changed, should still be maybe
             await comp.WaitForAssertionAsync(() => comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Maybe, "Value should not have changed form Maybe"));
             // check selected has not changed, should still be maybe

@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            navgroup.Click();
+            await navgroup.ClickAsync();
 
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
@@ -83,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
             expanded.Should().BeFalse();
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            navgroup.Click();
+            await navgroup.ClickAsync();
 
             expanded = comp.Instance.Expanded;
             expanded.Should().BeTrue();

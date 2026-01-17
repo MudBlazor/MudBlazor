@@ -414,7 +414,7 @@ public class OverlayTests : BunitTest
         var comp = Context.Render<OverlayScrollLockedTest>();
         // click the button opening dialog
         var button = comp.Find("button");
-        button.Click();
+        await button.ClickAsync();
         // verify dialog is open
         await comp.WaitForAssertionAsync(() => dialog.FindComponent<MudOverlay>().Should().NotBeNull());
 

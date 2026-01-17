@@ -77,10 +77,10 @@ namespace MudBlazor.UnitTests.Charts
             legend.Should().NotBeNull(because: "we have a legend");
             legend.FindAll(LEGEND_CSS_SELECTOR).Should().HaveCount(chartSeries.Count, because: "the number series should match the legend item count");
             // click second item of legend (because SelectedIndex starts with 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1, because: "second legend item was clicked");
             // click first item of legend (to check, if get's back to 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0, because: "first legend item was clicked");
 
             if (chartSeries.Count <= 3)

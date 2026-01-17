@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
     {
         public override void Setup()
         {
-            base.Setup();
+            await base.SetupAsync(new SetEventArgs());
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), new MockScrollSpyFactory()));
 
         }
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 3; i++)
             {
                 var navLinks = comp.FindComponents<MudNavLink>();
-                navLinks[i].Find(".mud-nav-link").Click();
+                await navLinks[i].Find(".mud-nav-link").ClickAsync();
 
                 comp.Instance.ActiveSection.Should().Be(sections[i]);
                 navLinks = comp.FindComponents<MudNavLink>();

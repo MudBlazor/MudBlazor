@@ -27,26 +27,26 @@ namespace MudBlazor.UnitTests.Components
             Inputs().Count.Should().Be(5);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
-            RatingItemsSpans()[2].Click();
+            await RatingItemsSpans()[2].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(3);
 
             // click 4th rating item
-            RatingItemsSpans()[3].Click();
+            await RatingItemsSpans()[3].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(4);
 
             // click 5th rating item
-            RatingItemsSpans()[4].Click();
+            await RatingItemsSpans()[4].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(5);
 
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
@@ -64,27 +64,27 @@ namespace MudBlazor.UnitTests.Components
             RatingItemsSpans().Count.Should().Be(5);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
         }
 
@@ -118,23 +118,23 @@ namespace MudBlazor.UnitTests.Components
             RatingItemsSpans().Count.Should().Be(5);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
-            RatingItemsSpans()[2].Click();
+            await RatingItemsSpans()[2].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 4th rating item
-            RatingItemsSpans()[3].Click();
+            await RatingItemsSpans()[3].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 5th rating item
-            RatingItemsSpans()[4].Click();
+            await RatingItemsSpans()[4].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
             SvgColors()[4].ClassName.Should().Contain("mud-tertiary-text");
 
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             SvgColors()[0].ClassName.Should().Contain("mud-primary-text");
@@ -205,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
 
             RatingItemsSpans()[2].PointerOut();
 
-            RatingItemsSpans()[4].Click();
+            await RatingItemsSpans()[4].ClickAsync();
             RatingItemsSpans()[1].PointerOver();
             comp.Instance.HoveredValue.Should().Be(2);
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(5);

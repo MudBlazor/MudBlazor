@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
 
-            comp.Find(".mud-switch-input").Change(true);
+            await comp.Find(".mud-switch-input").ChangeAsync(true);
 
             bar.Markup.Should().Contain("contextual-app-bar").And.Contain("mud-theme-tertiary");
         }
@@ -99,7 +99,7 @@ namespace MudBlazor.UnitTests.Components
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
 
-            comp.Find(".mud-switch-input").Change(true);
+            await comp.Find(".mud-switch-input").ChangeAsync(true);
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
         }

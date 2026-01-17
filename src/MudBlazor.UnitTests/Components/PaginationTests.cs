@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < numberOfClicks; i++)
             {
                 var button = FindControlButton(comp, controlButton);
-                button.Click();
+                await button.ClickAsync();
             }
 
             //Expected values
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<PaginationButtonTest>();
 
             //Click control button
-            FindControlButton(comp, controlButton).Click();
+            await FindControlButton(comp, controlButton).ClickAsync();
 
             //Expected values
             comp.Find("#mud-pagination-test-button-clicked").TextContent.Should()
@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(initiallySelectedPage - 1); });
 
             //Click on the page button, +2 because of the first two control buttons
-            comp.FindAll(".mud-pagination-item button")[clickIndexPage + 2].Click();
+            await comp.FindAll(".mud-pagination-item button")[clickIndexPage + 2].ClickAsync();
 
             //Expected values
             pagination.GetState(x => x.Selected).Should().Be(expectedSelectedPage);
@@ -238,8 +238,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<PaginationCountTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
-            comp.Find(".mud-pagination-test-middle-count input").Change(middleCount.ToString());
-            comp.Find(".mud-pagination-test-boundary-count input").Change(boundaryCount.ToString());
+            await comp.Find(".mud-pagination-test-middle-count input").ChangeAsync(middleCount.ToString());
+            await comp.Find(".mud-pagination-test-boundary-count input").ChangeAsync(boundaryCount.ToString());
 
             //Expected values
             pagination.GetState(x => x.MiddleCount).Should().Be(Math.Max(1, middleCount));
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (var i = 1; i <= count; i++)
             {
-                comp.Find(".mud-pagination-test-count input").Change(i.ToString());
+                await comp.Find(".mud-pagination-test-count input").ChangeAsync(i.ToString());
                 var buttons = comp.FindAll(".mud-pagination-item");
                 //Expected values
                 buttons.Count.Should().Be(i);
@@ -284,9 +284,9 @@ namespace MudBlazor.UnitTests.Components
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //set count variables
-            comp.Find(".mud-pagination-test-count input").Change(count.ToString());
-            comp.Find(".mud-pagination-test-middle-count input").Change(middleCount.ToString());
-            comp.Find(".mud-pagination-test-boundary-count input").Change(boundaryCount.ToString());
+            await comp.Find(".mud-pagination-test-count input").ChangeAsync(count.ToString());
+            await comp.Find(".mud-pagination-test-middle-count input").ChangeAsync(middleCount.ToString());
+            await comp.Find(".mud-pagination-test-boundary-count input").ChangeAsync(boundaryCount.ToString());
 
             //navigate to the specified page
             await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(selectedPage - 1); });

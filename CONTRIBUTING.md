@@ -385,8 +385,8 @@ In the Test make sure to instantiate the razor file you just prepared above.
    
    // wrong - this will fail:
    var textField = comp.Find("input");
-   textField.Change("Garfield");
-   textField.Blur();
+   await textField.ChangeAsync("Garfield");
+   await textField.BlurAsync();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 
@@ -396,8 +396,8 @@ As soon as you interact with html elements they are potentially re-rendered, and
    var comp = ctx.RenderComponent<MudTextField<string>>();
    
    // correct   
-   comp.Find("input").Change("Garfield");
-   comp.Find("input").Blur();
+   await comp.Find("input").ChangeAsync("Garfield");
+   await comp.Find("input").BlurAsync();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 

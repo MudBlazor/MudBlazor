@@ -563,7 +563,7 @@ namespace MudBlazor.UnitTests.Charts
             // The ChartTooltip component should be present
             var bar = comp.Find("path.mud-chart-bar");
 
-            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+            await bar.TriggerEventAsync("onmouseover", new MouseEventArgs());
 
             var tooltip = comp.Find("g.svg-tooltip");
             tooltip.Should().NotBeNull();
@@ -598,7 +598,7 @@ namespace MudBlazor.UnitTests.Charts
             legendItems.Should().HaveCount(2);
 
             // Click the second legend item (index 1)
-            legendItems[1].Click();
+            await legendItems[1].ClickAsync();
             await comp.WaitForAssertionAsync(() => selectedIndex.Should().Be(1));
             eventFiredCount.Should().Be(1);
 
@@ -606,7 +606,7 @@ namespace MudBlazor.UnitTests.Charts
 
             // Click the first legend item (index 0)
             legendItems = comp.FindAll("div.mud-chart-legend-item");
-            legendItems[0].Click();
+            await legendItems[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => selectedIndex.Should().Be(0));
             eventFiredCount.Should().Be(2);
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0);
@@ -693,7 +693,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var bar = comp.Find("path.mud-chart-bar");
 
-            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+            await bar.TriggerEventAsync("onmouseover", new MouseEventArgs());
 
             var customContent = comp.Find("div.custom-tooltip-content");
             customContent.Should().NotBeNull();
@@ -722,7 +722,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var bar = comp.Find("path.mud-chart-bar");
 
-            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+            await bar.TriggerEventAsync("onmouseover", new MouseEventArgs());
 
             _tooltipPositionFuncCalled.Should().BeTrue();
 
@@ -870,10 +870,10 @@ namespace MudBlazor.UnitTests.Charts
             legend.Should().NotBeNull(because: "we have a legend");
             legend.FindAll(LEGEND_CSS_SELECTOR).Should().HaveCount(chartSeries.Count, because: "the number series should match the legend item count");
             // click second item of legend (because SelectedIndex starts with 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1, because: "second legend item was clicked");
             // click first item of legend (to check, if get's back to 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0, because: "first legend item was clicked");
 
             if (chartSeries.Count <= 3)
@@ -995,21 +995,21 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(0, "Series 3 should have no bar segments visible initially");
 
             // Hide Series 1
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(false));
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
             chartSeries[0].Visible.Should().BeFalse("Series 1 Visible property should be false after hiding");
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(0, "Series 1 bar segments should be hidden");
 
             // Show Series 1 again
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            await comp.InvokeAsync(() => seriesCheckboxes[0].ChangeAsync(true));
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after re-showing");
             chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true after re-showing");
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bar segments should be visible again");
 
             // Hide Series 2
-            comp.InvokeAsync(() => seriesCheckboxes[1].Change(false));
+            await comp.InvokeAsync(() => seriesCheckboxes[1].ChangeAsync(false));
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
             chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false after hiding");
@@ -1017,7 +1017,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bar segments should remain visible");
 
             // Show Series 3
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            await comp.InvokeAsync(() => seriesCheckboxes[2].ChangeAsync(true));
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true after showing");

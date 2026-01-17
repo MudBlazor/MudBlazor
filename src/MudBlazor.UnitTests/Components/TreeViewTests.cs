@@ -16,11 +16,11 @@ namespace MudBlazor.UnitTests.Components
         public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
         {
             var comp = Context.Render<DisabledTreeViewTest>(parameters => parameters.Add(x => x.Disabled, true));
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
         }
 
@@ -28,16 +28,16 @@ namespace MudBlazor.UnitTests.Components
         public void TreeView_ClickWhileActive_DoesChangeSelection()
         {
             var comp = Context.Render<DisabledTreeViewTest>(self => self.Add(x => x.Disabled, false));
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
             GetSelectedValue().Should().NotBeNullOrWhiteSpace();
             GetSelectedValue().Should().Be("content");
 
             // To reset
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             GetSelectedValue().Should().NotBeNull();
         }
 
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
 
             // select another value on tree2 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -85,7 +85,7 @@ namespace MudBlazor.UnitTests.Components
 
             // in single selection clicking the same item twice won't de-select it!
             // select same value on tree1 and check selection has NOT changed
-            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
 
             // select another value on tree2 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -131,7 +131,7 @@ namespace MudBlazor.UnitTests.Components
 
             // in toggle selection clicking the same item twice will de-select it!
             // select same value on tree1 and check selection has been removed
-            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().BeNullOrWhiteSpace();
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
@@ -173,7 +173,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
 
             // remove a value on tree2 and check selection has changed on both trees
-            comp.Find(".tree2 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
@@ -196,21 +196,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1.2");
 
             // select another value on tree1 and check parent is not selected
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1.1, item1.2");
 
             // manually selecting a parent should still work
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
 
             // removing selection of a child will keep the parent selected
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
@@ -438,7 +438,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -451,7 +451,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
 
             // select another value on tree2 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -489,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
@@ -502,7 +502,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
 
             // remove a value on tree2 and check selection has changed on both trees
-            comp.Find(".tree2 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
@@ -542,11 +542,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewTest1>();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
         }
 
@@ -555,19 +555,19 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
             comp.Instance.SubItemSelected.Should().BeFalse();
             comp.Instance.Item1Selected.Should().BeFalse();
             // double-click on expand button should not influence selection
-            comp.Find("button.mud-treeview-item-expand-button").DoubleClick();
+            await comp.Find("button.mud-treeview-item-expand-button").DoubleClickAsync();
             comp.Instance.SubItemSelected.Should().BeFalse();
             comp.Instance.Item1Selected.Should().BeFalse();
-            comp.Find("input.mud-checkbox-input").Change(true);
+            await comp.Find("input.mud-checkbox-input").ChangeAsync(true);
             comp.Instance.SubItemSelected.Should().BeTrue();
             comp.Instance.Item1Selected.Should().BeTrue();
             // double-click on expand button should not influence selection
-            comp.Find("button.mud-treeview-item-expand-button").DoubleClick();
+            await comp.Find("button.mud-treeview-item-expand-button").DoubleClickAsync();
             comp.Instance.SubItemSelected.Should().BeTrue();
             comp.Instance.Item1Selected.Should().BeTrue();
         }
@@ -577,13 +577,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewTest2>();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
         }
 
@@ -592,13 +592,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
             comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
-            comp.Find("input.mud-checkbox-input").Change(true);
+            await comp.Find("input.mud-checkbox-input").ChangeAsync(true);
             comp.Instance.SubItemSelected.Should().BeTrue();
             comp.Instance.Item1Selected.Should().BeTrue();
-            comp.FindAll("input.mud-checkbox-input")[2].Change(false);
+            await comp.FindAll("input.mud-checkbox-input")[2].ChangeAsync(false);
             comp.Instance.SubItemSelected.Should().BeFalse();
             comp.Instance.Item1Selected.Should().BeFalse(); // <-- selecting child updates parent in multi-selection mode
         }
@@ -608,11 +608,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll(".mud-checkbox-true").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll(".mud-checkbox-true").Count.Should().Be(4); // item1 + entire sub-tree checked
-            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeTrue();
             comp.FindAll(".mud-checkbox-true").Count.Should().Be(10);  // + item2 + entire sub-tree checked
@@ -623,11 +623,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewTest7>();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
-            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
             comp.Instance.Item1Selected.Should().BeFalse();
             comp.Instance.Item2Selected.Should().BeTrue();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
@@ -638,11 +638,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeFalse();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
@@ -662,14 +662,14 @@ namespace MudBlazor.UnitTests.Components
             string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
                 .Be("All Mail|Categories|Social|Updates|Trash");
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(5);
-            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(5); // <-- nothing loaded as it's not expandable
-            comp.FindAll("div.mud-treeview-item-content")[0].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[0].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(6); // <- loaded one more from server
-            comp.FindAll("div.mud-treeview-item-content")[3].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[3].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(7); // <- loaded another one from server
             // now loading a child of a server loaded item
-            comp.FindAll("div.mud-treeview-item-content")[1].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[1].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8); // <- loaded another one from server
             string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
                 .Be("All Mail|Loaded 1|Loaded 3|Categories|Social|Loaded 2|Updates|Trash");
@@ -699,10 +699,10 @@ namespace MudBlazor.UnitTests.Components
             treeviewItem!.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
             comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(2);
             // expand first tree
-            comp.Find("div.mud-treeview-item-arrow button").Click();
+            await comp.Find("div.mud-treeview-item-arrow button").ClickAsync();
             comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
             // collapse first tree again
-            comp.Find("div.mud-treeview-item-arrow button").Click();
+            await comp.Find("div.mud-treeview-item-arrow button").ClickAsync();
             treeviewItem.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
             // reload first tree in collapsed state
             var reloadTask = Task.CompletedTask;
@@ -770,11 +770,11 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
             itemExpanded.Should().BeTrue();
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
             itemExpanded.Should().BeFalse();
         }
@@ -789,7 +789,7 @@ namespace MudBlazor.UnitTests.Components
 
             await tree.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValueChanged, new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             selectedItem.Should().Be("content");
         }
 
@@ -837,7 +837,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
 
             // Test reloading the treeview item.
-            comp.FindAll("button.mud-treeview-item-arrow-expand")[2].Click();
+            await comp.FindAll("button.mud-treeview-item-arrow-expand")[2].ClickAsync();
             comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item four");
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item five");
 
@@ -988,7 +988,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(false);
 
             // select logo.png via tree item
-            comp.Find(".item-logo .mud-treeview-item-content").Click();
+            await comp.Find(".item-logo .mud-treeview-item-content").ClickAsync();
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -1011,7 +1011,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
 
             // expand config via tree item
-            comp.Find(".item-config .mud-treeview-item-arrow button").Click();
+            await comp.Find(".item-config .mud-treeview-item-arrow button").ClickAsync();
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -1034,7 +1034,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
 
             // collapse config via switch
-            comp.Find(".switch-config input").Change(false);
+            await comp.Find(".switch-config input").ChangeAsync(false);
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -1057,7 +1057,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
 
             // select launch.json via checkbox
-            comp.Find(".checkbox-launch input").Change(true);
+            await comp.Find(".checkbox-launch input").ChangeAsync(true);
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -1086,7 +1086,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").Click();
+            await var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1102,7 +1102,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // reset all to collapsed and check
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1126,7 +1126,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").Click();
+            await var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1142,7 +1142,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // reset all to collapsed and check
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1172,14 +1172,14 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.expand-all").Click();
+            await comp.Find("button.expand-all").ClickAsync();
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(true);
             isExpanded("launch.json").Should().Be(false);
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(true);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1200,14 +1200,14 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.expand-all").Click();
+            await comp.Find("button.expand-all").ClickAsync();
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
             isExpanded("launch.json").Should().Be(false);
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(true);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1247,12 +1247,12 @@ namespace MudBlazor.UnitTests.Components
                 .Instance
                 .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
 
-            parentItemContent.Click();
+            await parentItemContent.ClickAsync();
 
             GetSelectedValue().Should().Be("content");
 
             GetItemExpandedValue().Should().Be(false);
-            parentItemButton.Click();
+            await parentItemButton.ClickAsync();
             GetItemExpandedValue().Should().Be(true);
         }
 
@@ -1270,11 +1270,11 @@ namespace MudBlazor.UnitTests.Components
                 .Instance
                 .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
 
-            parentItemContent.Click();
+            await parentItemContent.ClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             GetItemExpandedValue().Should().Be(false);
-            parentItemButton.Click();
+            await parentItemButton.ClickAsync();
             GetItemExpandedValue().Should().Be(true);
         }
 
@@ -1292,11 +1292,11 @@ namespace MudBlazor.UnitTests.Components
                 .Instance
                 .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
 
-            parentItemContent.Click();
+            await parentItemContent.ClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             GetItemExpandedValue().Should().Be(false);
-            parentItemButton.Click();
+            await parentItemButton.ClickAsync();
             GetItemExpandedValue().Should().Be(false);
         }
 
@@ -1305,7 +1305,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TreeViewHeterogeneous>();
             var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
-            var act = () => l2.Click();
+            await var act = () => l2.ClickAsync();
             act.Should().NotThrow();
         }
     }
