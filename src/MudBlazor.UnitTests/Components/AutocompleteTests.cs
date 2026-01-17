@@ -134,9 +134,8 @@ namespace MudBlazor.UnitTests.Components
             await autocompleteComp.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.Text, "Alabama"));
             await Task.Delay(500);
             comp.Instance.MustBeShown = false;
-            await Task.Delay(500);
             comp.Render();
-            await Task.Delay(500);
+            await Task.Delay(1000);
             comp.Instance.HasBeenDisposed.Should().Be(true);
         }
 
@@ -631,18 +630,21 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompleteComponent.Instance;
 
             //insert "Calif"
-            await autocompleteComponent.Find("input").InputAsync("Calif");
-            await Task.Delay(100);
+            await comp.Find("input").InputAsync("Calif");
+            
+            // Wait for it to be open (meaning search finished)
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+
             var args = new KeyboardEventArgs { Key = "Enter" };
 
             //press Enter key
-            autocompleteComponent.Find("input").KeyUp(args);
+            await comp.Find("input").KeyUpAsync(args);
 
             //The value of the input should be California
-            await comp.WaitForAssertionAsync(() => autocompleteComponent.Find("input").GetAttribute("value").Should().Be("California"));
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("California"));
 
             //and the autocomplete it's closed
-            autocomplete.Open.Should().BeFalse();
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
         }
 
         /// <summary>
@@ -654,9 +656,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<AutocompleteSetParametersInitialization>();
             // select elements needed for the test
-            await Task.Delay(100);
-            var autocompleteComponent = comp.FindComponent<MudAutocomplete<ExternalList>>();
-            autocompleteComponent.Find("input").GetAttribute("value").Should().Be("One");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("One"));
         }
 
         /// <summary>

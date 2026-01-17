@@ -1423,9 +1423,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableServerSideDataTest7>();
             var table = comp.FindComponent<MudTable<int>>();
             table.Instance.Dispose();
-            await Task.Delay(2000);
-            var tds = comp.FindAll("td");
-            tds.Count.Should().Be(0);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("td").Count.Should().Be(0));
         }
 
         /// <summary>

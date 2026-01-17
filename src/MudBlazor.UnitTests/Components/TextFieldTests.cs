@@ -153,7 +153,6 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(100);
             textField.ReadValue.Should().BeNull();
             //More than 200 ms had elapsed, so Value should be updated
-            await Task.Delay(150);
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
         }
 
@@ -178,7 +177,6 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             // Wait for the debounce to complete
-            await Task.Delay(250);
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Test Value"));
         }
 
