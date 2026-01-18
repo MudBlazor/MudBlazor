@@ -7,49 +7,20 @@ using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-using System.Threading;
 
 namespace MudBlazor.UnitTests.Docs.Generated
 {
     [TestFixture]
     public partial class ApiDocsTests
     {
-        private static readonly AsyncLocal<Bunit.BunitContext> CtxHolder = new();
+        private Bunit.BunitContext _ctx;
 
-        private Bunit.BunitContext ctx
-        {
-            get => CtxHolder.Value ?? throw new InvalidOperationException("Bunit context has not been initialized for this test.");
-            set => CtxHolder.Value = value;
-        }
+        private Bunit.BunitContext Ctx => _ctx ?? throw new InvalidOperationException("Bunit context has not been initialized for this test.");
 
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.BunitContext();
-            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
-            ctx.Services.AddSingleton(TimeProvider.System);
-            ctx.Services.AddSingleton<IDialogService>(new DialogService());
-            ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
-            ctx.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());
-            ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
-            ctx.Services.AddTransient<IScrollListenerFactory, MockScrollListenerFactory>();
-            ctx.Services.AddTransient<IJsApiService, MockJsApiService>();
-            ctx.Services.AddTransient<IDocsJsApiService, MockDocsJsApiService>();
-            ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
-            ctx.Services.AddTransient<IScrollSpyFactory, MockScrollSpyFactory>();
-            ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
-            ctx.Services.AddTransient<IEventListener, MockEventListener>();
-            ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
-            ctx.Services.AddSingleton<IMenuService, MenuService>();
-            ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();
-            ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
-            ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
-            ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
-            ctx.Services.AddScoped<IPointerEventsNoneService, MockPointerEventsNoneService>();
-            ctx.Services.AddTransient<InternalMudLocalizer>();
-            ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
-            ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
-            ctx.Services.AddScoped(sp => new HttpClient());
+            _ctx = CreateContext();
         }
 
         // This shows how to test a docs page with incremental rendering.
@@ -57,9 +28,9 @@ namespace MudBlazor.UnitTests.Docs.Generated
         [Test]
         public async Task AlertPage_Test()
         {
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
-            var comp = ctx.Render<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
-            await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
+            Ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
+            var comp = Ctx.Render<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
+            await Ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
         }
 
         /// <summary>
@@ -68,9 +39,9 @@ namespace MudBlazor.UnitTests.Docs.Generated
         [Test]
         public async Task MudAlert_API_Test_Example()
         {
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
-            var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, "MudAlert"));
-            await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
+            Ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
+            var comp = Ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, "MudAlert"));
+            await Ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
             comp.Markup.Should().NotContain("Sorry, the type").And.NotContain("could not be found");
             var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));
             exampleLink.Should().NotBeNull();
@@ -79,14 +50,44 @@ namespace MudBlazor.UnitTests.Docs.Generated
         [TearDown]
         public async Task TearDown()
         {
-            var currentCtx = CtxHolder.Value;
-            if (currentCtx is null)
+            var currentCtx = _ctx;
+            if (currentCtx == null)
             {
                 return;
             }
 
-            CtxHolder.Value = null;
+            _ctx = null;
             await currentCtx.DisposeAsync();
+        }
+
+        private static Bunit.BunitContext CreateContext()
+        {
+            var context = new Bunit.BunitContext();
+            context.JSInterop.Mode = JSRuntimeMode.Loose;
+            context.Services.AddSingleton(TimeProvider.System);
+            context.Services.AddSingleton<IDialogService>(new DialogService());
+            context.Services.AddSingleton<ISnackbar, SnackbarService>();
+            context.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());
+            context.Services.AddTransient<IScrollManager, MockScrollManager>();
+            context.Services.AddTransient<IScrollListenerFactory, MockScrollListenerFactory>();
+            context.Services.AddTransient<IJsApiService, MockJsApiService>();
+            context.Services.AddTransient<IDocsJsApiService, MockDocsJsApiService>();
+            context.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
+            context.Services.AddTransient<IScrollSpyFactory, MockScrollSpyFactory>();
+            context.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
+            context.Services.AddTransient<IEventListener, MockEventListener>();
+            context.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
+            context.Services.AddSingleton<IMenuService, MenuService>();
+            context.Services.AddSingleton<IPopoverService, MockPopoverService>();
+            context.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
+            context.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
+            context.Services.AddScoped<IRenderQueueService, RenderQueueService>();
+            context.Services.AddScoped<IPointerEventsNoneService, MockPointerEventsNoneService>();
+            context.Services.AddTransient<InternalMudLocalizer>();
+            context.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
+            context.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
+            context.Services.AddScoped(sp => new HttpClient());
+            return context;
         }
     }
 }
