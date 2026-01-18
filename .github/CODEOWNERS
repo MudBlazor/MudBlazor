@@ -1,0 +1,17 @@
+/* @danielchalmers
+/.github/ @danielchalmers
+/AGENTS.md @danielchalmers
+/.editorconfig @danielchalmers @ScarletKuro
+/src/MudBlazor/Components/Autocomplete/ @danielchalmers
+/src/MudBlazor/Components/Menu/ @danielchalmers
+/src/MudBlazor.Docs/Pages/Components/Autocomplete/ @danielchalmers
+/src/MudBlazor.Docs/Pages/Components/Menu/ @danielchalmers
+/src/MudBlazor.UnitTests.Viewer/TestComponents/Autocomplete/ @danielchalmers
+/src/MudBlazor.UnitTests.Viewer/TestComponents/Menu/ @danielchalmers
+/src/MudBlazor.UnitTests/Components/AutocompleteTests.cs @danielchalmers
+/src/MudBlazor.UnitTests/Components/MenuTests.cs @danielchalmers
+/src/MudBlazor/TScripts/mudInputSizing.js @danielchalmers
+/src/MudBlazor/Services/MudGlobal.cs @danielchalmers
+/src/MudBlazor/Converters/ @ScarletKuro
+/src/MudBlazor/State/ @ScarletKuro
+/src/MudBlazor/TScripts/mudPopover.js @versile2
