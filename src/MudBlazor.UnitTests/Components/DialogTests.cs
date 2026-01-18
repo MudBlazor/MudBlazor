@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing lifecycle of dialogs in dialogprovider
         /// </summary>
         [Test]
-        public async Task LifecycleTest()
+        public async Task Lifecycle()
         {
             var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
@@ -42,7 +42,7 @@ namespace MudBlazor.UnitTests.Components
         /// Opening and closing a simple dialog
         /// </summary>
         [Test]
-        public async Task SimpleTest()
+        public async Task Simple()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         /// </para>
         /// </summary>
         [Test]
-        public async Task InlineDialogTest()
+        public async Task InlineDialog()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/8746
         /// </summary>
         [Test]
-        public async Task InlineDialogShowMethodTest()
+        public async Task InlineDialogShowMethod()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -200,7 +200,7 @@ namespace MudBlazor.UnitTests.Components
         /// Nested dialogs should not appear unless manually shown
         /// </summary>
         [Test]
-        public async Task NestedInlineDialogTest()
+        public async Task NestedInlineDialog()
         {
             var provider = Context.Render<MudDialogProvider>();
             provider.Markup.Trim().Should().BeEmpty();
@@ -238,14 +238,14 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
-            comp1.Find("button").Click();
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
-            comp.WaitForElement("div.mud-overlay").Click();
+            await comp1.InvokeAsync(() => comp1.Find("button").Click());
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-dialog-container").Count.Should().Be(1));
+            await comp.InvokeAsync(() => comp.WaitForElement("div.mud-overlay").Click());
             await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
-            comp1.Find("button").Click();
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
+            await comp1.InvokeAsync(() => comp1.Find("button").Click());
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-dialog-container").Count.Should().Be(1),
                 TimeSpan.FromSeconds(5));
-            comp.WaitForElement("div.mud-overlay").Click();
+            await comp.InvokeAsync(() => comp.WaitForElement("div.mud-overlay").Click());
             await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
@@ -494,7 +494,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/4871
         /// </summary>
         [Test]
-        public async Task InlineDialogBug4871Test()
+        public async Task InlineDialogBug4871()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -543,7 +543,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing lifecycle of dialogs in dialogprovider
         /// </summary>
         [Test]
-        public async Task AsyncLifecycleTest()
+        public async Task AsyncLifecycle()
         {
             var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
@@ -584,7 +584,7 @@ namespace MudBlazor.UnitTests.Components
         /// Opening and closing a simple dialog
         /// </summary>
         [Test]
-        public async Task AsyncSimpleTest()
+        public async Task AsyncSimple()
         {
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -885,7 +885,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ShowAsyncRenderCompleteTest()
+        public async Task ShowAsyncRenderComplete()
         {
             var comp = Context.Render<MudDialogProvider>();
 
@@ -1296,7 +1296,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures dialog will only be shown once
         /// </summary>
         [Test]
-        public async Task DuplicateDialogTest()
+        public async Task DuplicateDialog()
         {
             var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();

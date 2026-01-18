@@ -29,8 +29,8 @@ dotnet clean <project.csproj>
 # Build
 dotnet build <project.csproj> -c Release --nologo
 
-# Test (ALWAYS use --filter and --no-build)
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo
+# Test
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo --blame-hang --blame-hang-timeout 60s
 ```
 
 ### Formatting (REQUIRED)
@@ -81,18 +81,23 @@ src/
 ```csharp
 // GOOD
 var comp = ctx.RenderComponent<MudTextField<string>>();
-comp.Find("input").Change("Garfield");  // Query each time
-comp.Find("input").Blur();
+await comp.Find("input").ChangeAsync("Garfield");  // Query each time
+await comp.Find("input").BlurAsync();
 
 // BAD
 var input = comp.Find("input");  // Becomes stale
-input.Change("Garfield");
-input.Blur();  // Will fail
+await input.ChangeAsync("Garfield");
+await input.BlurAsync();  // Will fail
 ```
 
 ### Test Organization
 - Test components: `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`
 - Tests: `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
+
+### Test Naming
+- Remove `Test`/`Async` suffixes from test method names (e.g., `Toggle_OpenAsync` -> `Toggle_Open`)
+- Avoid embedding `Test_` in the middle of names (e.g., `AlertTest_Click` -> `Alert_Click`)
+- No trailing underscores or double underscores in test method names (e.g., `BarChart_CanHideSeries_` -> `BarChart_CanHideSeries`)
 
 ## Blazor Component Patterns
 

@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Extensions
         [TestCase(typeof(Adornment), new[] { "None", "Start", "End" })]
         [TestCase(typeof(Adornment?), new[] { "None", "Start", "End" })]
         [TestCase(typeof(string), new string[0])]
-        public void GetSafeEnumValues_Test(Type type, string[] expectedNames)
+        public void GetSafeEnumValues(Type type, string[] expectedNames)
         {
             var values = EnumExtensions.GetSafeEnumValues(type);
             var stringValues = values.Select(x => x.ToString());

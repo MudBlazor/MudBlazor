@@ -10,13 +10,17 @@ namespace MudBlazor;
 /// </summary>
 public interface IScrollListenerFactory
 {
+    /// <inheritdoc cref="Create(string?, int)"/>
+    IScrollListener Create(string? selector);
+
     /// <summary>
     /// Creates a new instance of <see cref="IScrollListener"/> for the specified selector.
     /// </summary>
     /// <param name="selector">The CSS selector for the element to listen for scroll events.</param>
+    /// <param name="reportRateMs">The rate at which the <see cref="IScrollListener"/> will report scroll position changes (in milliseconds). Defaults to <c>10</c>.</param>
     /// <remarks>
-    /// If you are creating this <see cref="IScrollListener"/> instance yourself using this factory, then you need to manually call <see cref="ScrollListener.Dispose"/>; otherwise, you will get a memory leak.
+    /// If you are creating this <see cref="IScrollListener"/> instance yourself using this factory, then you need to manually call <see cref="ScrollListener.DisposeAsync"/>; otherwise, you will get a memory leak.
     /// </remarks>
     /// <returns>A new instance of <see cref="IScrollListener"/>.</returns>
-    IScrollListener Create(string? selector);
+    IScrollListener Create(string? selector, int reportRateMs);
 }

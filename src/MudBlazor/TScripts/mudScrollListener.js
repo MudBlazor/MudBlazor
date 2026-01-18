@@ -1,87 +1,94 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿"use strict";
 
-//Functions related to scroll events
+// noinspection JSUnusedGlobalSymbols
+/** This is the companion class for the MudBlazor.ScrollListener. */
 class MudScrollListener {
-
     constructor() {
-        this.throttleScrollHandlerId = -1;
-        //needed as variable to remove the event listeners
-        this.handlerRef = null;
+        this.EVENT_TYPE = "scroll";
+        this.throttleScrollHandlerIds = Object.create(null);
+        this.scrollHandlerRefs = Object.create(null);
+        this.targetElements = Object.create(null);
     }
 
-    // subscribe to throttled scroll event
-    listenForScroll(dotnetReference, selector) {
-        //if selector is null, attach to document
-        let element = selector
-            ? document.querySelector(selector)
-            : document;
+    listenForScroll(dotnetReference, listenerId, selector, reportRateMs) {
+        if (this.targetElements[listenerId]) {
+            this.cancelListener(listenerId);
+        }
 
-        this.handlerRef = this.throttleScrollHandler.bind(this, dotnetReference);
-        // add the event listener
-        element.addEventListener(
-            'scroll',
-            this.handlerRef,
-            false
+        this.targetElements[listenerId] = this._getElementBySelector(selector);
+        this.scrollHandlerRefs[listenerId] = this.throttleScrollHandler.bind(this, dotnetReference, listenerId, reportRateMs);
+        this.targetElements[listenerId].addEventListener(this.EVENT_TYPE, this.scrollHandlerRefs[listenerId], {passive: true});
+    }
+
+    _getElementBySelector(selector) {
+        const element = selector ? document.querySelector(selector) : document;
+        if (!element && selector) {
+            console.error(`[MudBlazor] MudScrollListener._getElementBySelector: Element not found: ${selector}`);
+            return null;
+        }
+
+        return element;
+    }
+
+    throttleScrollHandler(dotnetReference, listenerId, reportRateMs) {
+        clearTimeout(this.throttleScrollHandlerIds[listenerId]);
+
+        this.throttleScrollHandlerIds[listenerId] = window.setTimeout(
+            this.scrollHandler.bind(this, dotnetReference, listenerId),
+            reportRateMs
         );
     }
 
-    // fire the event just once each 100 ms, **it's hardcoded**
-    throttleScrollHandler(dotnetReference, event) {
-        clearTimeout(this.throttleScrollHandlerId);
-
-        this.throttleScrollHandlerId = window.setTimeout(
-            this.scrollHandler.bind(this, dotnetReference, event),
-            100
-        );
-    }
-
-    // when scroll event is fired, pass this information to
-    // the RaiseOnScroll C# method of the ScrollListener
-    // We pass the scroll coordinates of the element and
-    // the boundingClientRect of the first child, because
-    // scrollTop of body is always 0. With this information,
-    // we can trigger C# events on different scroll situations
-    scrollHandler(dotnetReference, event) {
+    scrollHandler(dotnetReference, listenerId) {
         try {
-            let element = event.target;
+            const scrollData = this._getCurrentScrollPosition(this.targetElements[listenerId]);
 
-            // determine if the target is the document
-            const isDocument = element === document;
-            const scrollSource = isDocument ? (document.scrollingElement || document.documentElement || document.body) : element;
-
-            //data to pass
-            let scrollTop = scrollSource.scrollTop || 0;
-            let scrollHeight = scrollSource.scrollHeight || 0;
-            let scrollWidth = scrollSource.scrollWidth || 0;
-            let scrollLeft = scrollSource.scrollLeft || 0;
-            let nodeName = element.nodeName;
-
-            //data to pass
-            let firstChild = element.firstElementChild;
-            let firstChildBoundingClientRect = firstChild.getBoundingClientRect();
-            //invoke C# method
-            dotnetReference.invokeMethodAsync('RaiseOnScroll', {
-                firstChildBoundingClientRect,
-                scrollLeft,
-                scrollTop,
-                scrollHeight,
-                scrollWidth,
-                nodeName,
-            });
+            // noinspection JSUnresolvedReference
+            dotnetReference.invokeMethodAsync('RaiseOnScroll', scrollData);
         } catch (error) {
-            console.error('[MudBlazor] Error in scrollHandler:', { error });
+            console.error('[MudBlazor] MudScrollListener.scrollHandler:', {error});
         }
     }
 
-    //remove event listener
-    cancelListener(selector) {
-        let element = selector
-            ? document.querySelector(selector)
-            : document;
-
-        element.removeEventListener('scroll', this.handlerRef);
+    getCurrentScrollPosition(selector) {
+        const element = this._getElementBySelector(selector);
+        return this._getCurrentScrollPosition(element);
     }
-};
-window.mudScrollListener = new MudScrollListener();
+
+    _getCurrentScrollPosition(element) {
+        if (!element) return null;
+
+        const isDocument = element === document;
+        const scrollSource = isDocument
+            ? (document.scrollingElement || document.documentElement || document.body)
+            : element;
+
+        return {
+            firstChildBoundingClientRect: element.firstElementChild ? element.firstElementChild.getBoundingClientRect() : null,
+            scrollLeft: scrollSource.scrollLeft || 0,
+            scrollTop: scrollSource.scrollTop || 0,
+            scrollHeight: scrollSource.scrollHeight || 0,
+            scrollWidth: scrollSource.scrollWidth || 0,
+            clientHeight: isDocument ? window.innerHeight : (scrollSource.clientHeight || 0),
+            clientWidth: isDocument ? window.innerWidth : (scrollSource.clientWidth || 0),
+            nodeName: element.nodeName,
+        };
+    }
+
+    cancelListener(listenerId) {
+        if (this.throttleScrollHandlerIds[listenerId]) {
+            clearTimeout(this.throttleScrollHandlerIds[listenerId]);
+            delete this.throttleScrollHandlerIds[listenerId];
+        }
+
+        if (this.scrollHandlerRefs[listenerId]) {
+            this.targetElements[listenerId].removeEventListener(this.EVENT_TYPE, this.scrollHandlerRefs[listenerId]);
+            delete this.targetElements[listenerId];
+            delete this.scrollHandlerRefs[listenerId];
+        }
+    }
+}
+
+if (!window.mudScrollListener) {
+    window.mudScrollListener = new MudScrollListener();
+}

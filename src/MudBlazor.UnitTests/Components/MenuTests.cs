@@ -16,6 +16,20 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MenuTests : BunitTest
     {
+        private int _originalHoverDelay;
+
+        [SetUp]
+        public void StoreMenuDefaults()
+        {
+            _originalHoverDelay = MudGlobal.MenuDefaults.HoverDelay;
+        }
+
+        [TearDown]
+        public void RestoreMenuDefaults()
+        {
+            MudGlobal.MenuDefaults.HoverDelay = _originalHoverDelay;
+        }
+
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -24,30 +38,30 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MenuTest1>();
             var menu = comp.FindComponent<MudMenu>();
 
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
 
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
 
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
 
             //Disabled item's click ot touch should not close popover
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
 
             var menuItems = comp.FindComponents<MudMenuItem>();
             await menuItems[2].SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
 
-            comp.FindAll("a.mud-menu-item")[1].Click();
+            await comp.FindAll("a.mud-menu-item")[1].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new TouchEventArgs()));
@@ -60,10 +74,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task OpenMenu_ClickSecondItem_CheckClosed()
         {
             var comp = Context.Render<MenuTest1>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("a.mud-menu-item")[0].Click();
+            await comp.FindAll("a.mud-menu-item")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
         }
 
@@ -71,28 +85,28 @@ namespace MudBlazor.UnitTests.Components
         public async Task OpenMenu_ClickThirdItem_CheckClosed()
         {
             var comp = Context.Render<MenuTest1>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("a.mud-menu-item")[1].Click();
+            await comp.FindAll("a.mud-menu-item")[1].ClickAsync();
             await comp.WaitForAssertionAsync(() => { comp.FindAll("div.mud-popover-open").Count.Should().Be(0); });
         }
 
         [Test]
-        public void OpenMenu_ClickClassItem_CheckClass()
+        public async Task OpenMenu_ClickClassItem_CheckClass()
         {
             var comp = Context.Render<MenuTest1>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("div.mud-menu-item.test-class").Count.Should().Be(1);
         }
 
         [Test]
-        public void OpenMenu_CheckClass()
+        public async Task OpenMenu_CheckClass()
         {
             var comp = Context.Render<MenuTest1>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.Find("div.mud-popover").ClassList.Should().Contain("menu-popover-class");
         }
 
@@ -156,12 +170,12 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
 
             // Clicking the button should close the menu.
-            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
+            await comp.Find("button.mud-button-root").ClickAsync();
             // Check that the component is closed
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
 
             // Clicking the button again should open the menu indefinitely.
-            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
+            await comp.Find("button.mud-button-root").ClickAsync();
             comp.WaitForState(() => comp.FindComponent<MudPopover>().Instance.Open);
 
             // Leaving the menu should no longer close it.
@@ -178,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Clicking the button should now close the menu.
-            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
+            await comp.Find("button.mud-button-root").ClickAsync();
             // Check that the component is closed
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
         }
@@ -193,14 +207,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Default_Disabled_CheckDisabled()
+        public async Task Default_Disabled_CheckDisabled()
         {
             var comp = Context.Render<MenuTest1>(x =>
                 x.Add(p => p.DisableMenu, true)
             );
 
             var button = comp.Find("button.mud-button-root");
-            button.Click();
+            await button.ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 
@@ -242,15 +256,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuTest_LeftAndRightClick_CheckClosed()
+        public async Task Menu_LeftAndRightClick_CheckClosed()
         {
             //Standart button menu -- left click
             var comp = Context.Render<MenuTestVariants>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[0].Click(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
@@ -259,16 +273,16 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
-            comp.FindAll("button.mud-button-root")[1].Click();
+            await comp.FindAll("button.mud-button-root")[1].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             //Icon button menu -- left click
-            comp.FindAll("button.mud-button-root")[2].Click();
+            await comp.FindAll("button.mud-button-root")[2].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[2].Click(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
@@ -277,16 +291,16 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
-            comp.FindAll("button.mud-button-root")[3].Click();
+            await comp.FindAll("button.mud-button-root")[3].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             //Activator content menu -- left click
-            comp.FindAll("button.mud-button-root")[4].Click();
+            await comp.FindAll("button.mud-button-root")[4].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[4].Click(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
@@ -300,9 +314,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[0].Click();
+            await comp.FindAll("div.mud-menu-item")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
-            comp.FindAll("button.mud-button-root")[5].Click();
+            await comp.FindAll("button.mud-button-root")[5].ClickAsync();
             await comp.WaitForAssertionAsync(() =>
             {
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
@@ -314,7 +328,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MenuItemIconTest>();
 
-            comp.Find(".mud-menu-button-activator").Click();
+            await comp.Find(".mud-menu-button-activator").ClickAsync();
             await comp.WaitForElementAsync("div.mud-popover-open");
 
             comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-medium").Count.Should().Be(3);
@@ -325,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MenuItemIconTest>();
 
-            comp.Find(".mud-menu-button-activator").Click();
+            await comp.Find(".mud-menu-button-activator").ClickAsync();
             await comp.WaitForElementAsync("div.mud-popover-open");
 
             comp.FindAll("div.mud-menu-item").Count.Should().Be(3);
@@ -353,13 +367,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenMenu_CloseMenuOnClick_CheckStillOpen()
+        public async Task OpenMenu_CloseMenuOnClick_CheckStillOpen()
         {
             var comp = Context.Render<MenuTest1>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
-            comp.FindAll("div.mud-menu-item")[1].Click();
+            await comp.FindAll("div.mud-menu-item")[1].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
         }
 
@@ -386,14 +400,14 @@ namespace MudBlazor.UnitTests.Components
         public async Task ItemsWithHrefShouldRenderAsAnchor()
         {
             var comp = Context.Render<MenuHrefTest>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(3);
             comp.FindAll("a.mud-menu-item")[0].Attributes["href"].TextContent.Should().Be("https://www.test.com/1");
             comp.FindAll("a.mud-menu-item")[1].Attributes["href"].TextContent.Should().Be("https://www.test.com/2");
-            comp.FindAll("a.mud-menu-item")[2].Click(); // disabled
+            await comp.FindAll("a.mud-menu-item")[2].ClickAsync(); // disabled
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
-            comp.FindAll("a.mud-menu-item")[1].Click(); // enabled
+            await comp.FindAll("a.mud-menu-item")[1].ClickAsync(); // enabled
             await comp.WaitForAssertionAsync(() =>
             {
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
@@ -505,7 +519,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Open.Should().BeFalse();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "No popovers should be visible.");
 
-            comp.Find("button.mud-button-root").Click();
+            await comp.Find("button.mud-button-root").ClickAsync();
             await comp.WaitForAssertionAsync(() =>
             {
                 menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button should open the menu.");
@@ -513,7 +527,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
             });
 
-            SwitchElement().Change(false);
+            await SwitchElement().ChangeAsync(false);
             await comp.WaitForAssertionAsync(() =>
             {
                 menu.Instance.GetState(x => x.Open).Should().BeFalse("Manually setting Open to false should close the menu.");
@@ -521,7 +535,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should disappear after closing.");
             });
 
-            comp.Find("button.mud-button-root").Click();
+            await comp.Find("button.mud-button-root").ClickAsync();
             await comp.WaitForAssertionAsync(() =>
             {
                 menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
@@ -529,7 +543,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should reappear after reopening.");
             });
 
-            SwitchElement().Change(true);
+            await SwitchElement().ChangeAsync(true);
             await comp.WaitForAssertionAsync(() =>
             {
                 menu.Instance.GetState(x => x.Open).Should().BeTrue("Setting Open to true again should not change the state.");
@@ -537,7 +551,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover count should remain the same.");
             });
 
-            comp.Find("button.mud-button-root").Click();
+            await comp.Find("button.mud-button-root").ClickAsync();
             await comp.WaitForAssertionAsync(() =>
             {
                 menu.Instance.GetState(x => x.Open).Should().BeFalse("Clicking the button should close the menu.");
@@ -545,7 +559,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should no longer be visible.");
             });
 
-            comp.Find("button.mud-button-root").Click();
+            await comp.Find("button.mud-button-root").ClickAsync();
             await comp.WaitForAssertionAsync(() =>
             {
                 menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
@@ -555,7 +569,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ActivatorClass()
+        public async Task ActivatorClass()
         {
             var comp = Context.Render<MenuActivatorsTest>();
 
@@ -565,7 +579,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".mud-menu")[2].FirstElementChild.ClassName.Should().Contain("mud-menu-activator");
 
-            comp.FindAll(".mud-menu")[3].FirstElementChild.Click();
+            await comp.FindAll(".mud-menu")[3].FirstElementChild.ClickAsync();
 
             comp.Find(".mud-popover-open .mud-menu-list .mud-menu-item.mud-menu-sub-menu-activator").Should().NotBeNull();
         }
@@ -585,16 +599,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenNestedMenu()
+        public async Task OpenNestedMenu()
         {
             var comp = Context.Render<MenuWithNestingTest>();
 
             // Open the first menu.
-            comp.Find("button:contains('1')").Click();
+            await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
 
             // Click the nested menu item to open the nested menu.
-            comp.Find("div.mud-menu-item:contains('1.3')").Click();
+            await comp.Find("div.mud-menu-item:contains('1.3')").ClickAsync();
 
             // Ensure both the main menu and the nested menu are open
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2);
@@ -606,15 +620,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MenuWithNestingTest>();
 
             // Open the first menu.
-            comp.Find("button:contains('1')").Click();
+            await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
 
             // Click the nested menu item to open the nested menu.
-            comp.Find("div.mud-menu-item:contains('1.3')").Click();
+            await comp.Find("div.mud-menu-item:contains('1.3')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2);
 
             // Click a non-nested menu item inside the nested menu.
-            comp.Find("div.mud-menu-item:contains('2.2')").Click();
+            await comp.Find("div.mud-menu-item:contains('2.2')").ClickAsync();
 
             // Ensure all popovers are closed.
             await comp.WaitForAssertionAsync(() =>
@@ -624,7 +638,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuContext_Should_ToggleMenu_Via_ToggleMenuAsync()
+        public async Task MenuContext_Should_ToggleMenu_Via_ToggleMenu()
         {
             // Arrange - Create a menu and test the MenuContext operations directly
             var comp = Context.Render<MudMenu>(parameters => parameters
@@ -684,7 +698,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MenuWithNestingTest>();
 
             // Open the main menu first
-            comp.Find("button:contains('1')").Click();
+            await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
             // 1. Test SHOW debounce behavior
@@ -727,7 +741,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MenuWithNestingTest>();
 
             // Open the main menu first
-            comp.Find("button:contains('1')").Click();
+            await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
             // Open first level submenu
@@ -766,7 +780,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MenuWithNestingTest>();
 
             // Open the main menu first
-            comp.Find("button:contains('1')").Click();
+            await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
             var menuItem = comp.Find("div.mud-menu:contains('1.3')");

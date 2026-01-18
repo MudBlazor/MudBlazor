@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that invalid T values are logged using the provided ILogger
         /// </summary>
         [Test]
-        public void InvalidTLogWarning_Test()
+        public void InvalidTLogWarning()
         {
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         /// Checks the FileUpload CSS classes
         /// </summary>
         [Test]
-        public void FileUpload_CSSTest()
+        public void FileUpload_CSS()
         {
             var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.Class, "outer-test")
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures the underlying input receives the multiple attribute
         /// </summary>
         [Test]
-        public void FileUpload_MultipleTest()
+        public void FileUpload_Multiple()
         {
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
 
@@ -94,7 +94,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures the underlying input receives the accept attribute
         /// </summary>
         [Test]
-        public void FileUpload_AcceptTest()
+        public void FileUpload_Accept()
         {
             var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.Accept, ".png, .jpg"));
@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the OnFilesChangedEvent
         /// </summary>
         [Test]
-        public async Task FileUpload_OnFilesChangedTest()
+        public async Task FileUpload_OnFilesChanged()
         {
             var fileContent = InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt");
 
@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the FileValueChanged event bound to a form
         /// </summary>
         [Test]
-        public async Task FileUpload_FileValueChangedTest()
+        public async Task FileUpload_FileValueChanged()
         {
             InputFileContent[] fileContent =
             {
@@ -214,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the FileValueChanged event bound to a form with validation
         /// </summary>
         [Test]
-        public async Task FileUpload_ValidationTest()
+        public async Task FileUpload_Validation()
         {
             InputFileContent[] fileContent =
             {
@@ -265,7 +265,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that more than 10 files can be uploaded
         /// </summary>
         [Test]
-        public void FileUpload_MaximumFileCountTest()
+        public void FileUpload_MaximumFileCount()
         {
             List<InputFileContent> Files = new();
             for (var i = 0; i < 11; i++)
@@ -289,7 +289,7 @@ namespace MudBlazor.UnitTests.Components
         /// Makes sure the file upload is disabled
         /// </summary>
         [Test]
-        public async Task FileUploadDisabledTest()
+        public async Task FileUploadDisabled()
         {
             var comp = Context.Render<FileUploadDisabledTest>();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
@@ -310,7 +310,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void FileUploadAppendMultipleTest(bool appendMultiple)
+        public void FileUploadAppendMultiple(bool appendMultiple)
         {
             var comp = Context.Render<FileUploadAppendMultipleTest>(p =>
                 p.Add(x => x.AppendMultipleFiles, appendMultiple));
