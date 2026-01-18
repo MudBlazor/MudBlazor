@@ -771,7 +771,7 @@ namespace MudBlazor
 
         protected internal string? ReadText => _textState.Value;
 
-        protected Task SetTextAsync(string? text) => _textState.SetValueAsync(text);
+        public virtual Task SetTextAsync(string? text) => _textState.SetValueAsync(text);
 
         protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {
