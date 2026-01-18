@@ -293,9 +293,9 @@ public partial class TestsForApiPages
         cb.AddLine("public async Task ApiPage_Renders(string typeName, bool hasExampleLink)");
         cb.AddLine("{");
         cb.IndentLevel++;
-        cb.AddLine(@"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", $""https://localhost:2112/components/{typeName}""));");
-        cb.AddLine(@"var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, typeName));");
-        cb.AddLine(@"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
+        cb.AddLine(@"_ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", $""https://localhost:2112/components/{typeName}""));");
+        cb.AddLine(@"var comp = _ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, typeName));");
+        cb.AddLine(@"await _ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
         cb.AddLine(@"comp.Markup.Should().NotContain($""Sorry, the type {typeName} was not found"");");
         cb.AddLine("if (hasExampleLink)");
         cb.AddLine("{");
@@ -319,9 +319,9 @@ public partial class TestsForApiPages
         cb.AddLine("public async Task LegacyApiPage_Renders(string component)");
         cb.AddLine("{");
         cb.IndentLevel++;
-        cb.AddLine(@"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", $""https://localhost:2112/components/api/{component}""));");
-        cb.AddLine(@"var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, component));");
-        cb.AddLine(@"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
+        cb.AddLine(@"_ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", $""https://localhost:2112/components/api/{component}""));");
+        cb.AddLine(@"var comp = _ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, component));");
+        cb.AddLine(@"await _ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
         cb.AddLine(@"comp.Markup.Should().NotContain($""Sorry, the type {component} was not found"");");
         cb.IndentLevel--;
         cb.AddLine("}");

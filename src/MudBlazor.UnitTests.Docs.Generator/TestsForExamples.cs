@@ -42,7 +42,7 @@ public class TestsForExamples
             cb.AddLine("public void Example_Renders(string componentName, System.Type componentType)");
             cb.AddLine("{");
             cb.IndentLevel++;
-            cb.AddLine("ctx.Render(builder =>");
+            cb.AddLine("_ctx.Render(builder =>");
             cb.AddLine("{");
             cb.IndentLevel++;
             cb.AddLine("builder.OpenComponent(0, componentType);");
