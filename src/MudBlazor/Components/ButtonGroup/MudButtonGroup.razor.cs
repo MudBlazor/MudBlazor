@@ -13,9 +13,9 @@ namespace MudBlazor
     {
         protected string Classname => new CssBuilder("mud-button-group-root")
             .AddClass($"mud-button-group-override-styles", OverrideStyles)
-            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-button-group-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-button-group-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
+            .AddClass($"mud-button-group-{Variant.ToStringFast(true)}-size-{Size.ToStringFast(true)}")
             .AddClass("mud-button-group-vertical", Vertical)
             .AddClass("mud-button-group-horizontal", !Vertical)
             .AddClass("mud-button-group-disable-elevation", !DropShadow)

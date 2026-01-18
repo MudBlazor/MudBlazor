@@ -203,7 +203,7 @@ namespace MudBlazor.UnitTests.Services
         }
 
         [Test]
-        public async Task DisposeAsync()
+        public async Task Dispose()
         {
             var eventName = "onMyCustomEvent";
             var throttleInterval = 20;

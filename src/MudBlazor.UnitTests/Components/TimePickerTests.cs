@@ -9,7 +9,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TimePickerTests : BunitTest
     {
-        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleTimePickerTest>> parameterBuilder = null)
+        public async Task<IRenderedComponent<SimpleTimePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleTimePickerTest>> parameterBuilder = null)
         {
             IRenderedComponent<SimpleTimePickerTest> comp;
             if (parameterBuilder is null)
@@ -24,8 +24,9 @@ namespace MudBlazor.UnitTests.Components
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             // click to to open menu
-            comp.Find("input").Click();
+            await comp.Find("input").ClickAsync();
             // now its open
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             return comp;
         }
@@ -53,18 +54,18 @@ namespace MudBlazor.UnitTests.Components
             picker.ReadValue.Should().Be(new TimeSpan(637940935730000000));
             picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
 
-            comp.Find(".mud-input-clear-button").Click(); //clear the input
+            await comp.Find(".mud-input-clear-button").ClickAsync(); //clear the input
 
             picker.Text.Should().Be(""); //ensure the text and time are reset. Note this is an empty string rather than null due to how the reset works internally
             picker.ReadValue.Should().Be(null);
         }
 
         [Test]
-        public void Open_ClickOutside_CheckClosed()
+        public async Task Open_ClickOutside_CheckClosed()
         {
-            var comp = OpenPicker();
+            var comp = await OpenPicker();
             // clicking outside to close
-            comp.Find("div.mud-overlay").Click();
+            await comp.Find("div.mud-overlay").ClickAsync();
             // should not be open any more
             // should not be open any more
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
@@ -73,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Change_24hrsTo12Hours_CheckHours()
         {
-            var comp = OpenPicker();
+            var comp = await OpenPicker();
             var picker = comp.Instance;
             var underlyingPicker = comp.FindComponent<MudTimePicker>();
             // count hours
@@ -90,105 +91,105 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToHours_CheckMinutesHidden()
+        public async Task OpenToHours_CheckMinutesHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHours()
+        public async Task OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHours()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));
             // Are minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click on the minutes input
-            comp.FindAll("button.mud-timepicker-button")[1].Click();
+            await comp.FindAll("button.mud-timepicker-button")[1].ClickAsync();
             // clicking outside to close
-            comp.Find("div.mud-overlay").Click();
+            await comp.Find("div.mud-overlay").ClickAsync();
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            comp.FindAll("input")[0].Click();
+            await comp.FindAll("input")[0].ClickAsync();
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void OpenToMinutes_CheckHoursHidden()
+        public async Task OpenToMinutes_CheckHoursHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Minutes));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Minutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeMinutes_CheckHoursHidden()
+        public async Task TimeEditModeMinutes_CheckHoursHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyMinutes));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyMinutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeHours_CheckMinutesHidden()
+        public async Task TimeEditModeHours_CheckMinutesHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyHours));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.OnlyHours));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeNormal_CheckMinutesHidden()
+        public async Task TimeEditModeNormal_CheckMinutesHidden()
         {
-            var comp = OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.Normal));
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.TimeEditMode, TimeEditMode.Normal));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void ChangeToMinutes_FromHours_CheckHoursHidden()
+        public async Task ChangeToMinutes_FromHours_CheckHoursHidden()
         {
-            var comp = OpenPicker();
+            var comp = await OpenPicker();
             // click on the minutes input
-            comp.FindAll("button.mud-timepicker-button")[1].Click();
+            await comp.FindAll("button.mud-timepicker-button")[1].ClickAsync();
             // Are minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void InputStringValues_CheckParsing()
+        public async Task InputStringValues_CheckParsing()
         {
             var comp = Context.Render<MudTimePicker>();
             var picker = comp.Instance;
 
             // valid time
-            comp.Find("input").Change("23:02");
+            await comp.Find("input").ChangeAsync("23:02");
             picker.TimeIntermediate.Should().Be(new TimeSpan(23, 2, 0));
             picker.ConversionError.Should().BeFalse();
             picker.ConversionErrorMessage.Should().BeNull();
             // empty string equals null TimeSpan?
-            comp.Find("input").Change("");
+            await comp.Find("input").ChangeAsync("");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeFalse();
             picker.ConversionErrorMessage.Should().BeNull();
             // invalid time (format, AmPm)
-            comp.Find("input").Change("09:o6 AM");
+            await comp.Find("input").ChangeAsync("09:o6 AM");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
             // invalid time (overflow, AmPm)
-            comp.Find("input").Change("13:45 AM");
+            await comp.Find("input").ChangeAsync("13:45 AM");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
             // invalid time (format)
-            comp.Find("input").Change("2o:32");
+            await comp.Find("input").ChangeAsync("2o:32");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
             // invalid time (overflow)
-            comp.Find("input").Change("25:06");
+            await comp.Find("input").ChangeAsync("25:06");
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
@@ -208,7 +209,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TimePickerTest_KeyboardNavigation()
+        public async Task TimePicker_KeyboardNavigation()
         {
             var comp = Context.Render<SimpleTimePickerTest>();
             var timePickerComponent = comp.FindComponent<MudTimePicker>();

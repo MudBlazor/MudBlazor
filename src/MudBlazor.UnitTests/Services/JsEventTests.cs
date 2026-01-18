@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Services
     public class JsEventTests
     {
         [Test]
-        public async Task NoSubscriptionWithoutConnectTest()
+        public async Task NoSubscriptionWithoutConnect()
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
             Assert.Throws<InvalidOperationException>(() => jsevent.Paste += x => Console.WriteLine(x));
@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Services
         }
 
         [Test]
-        public async Task EventSubscriptionTest()
+        public async Task EventSubscription()
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
             await jsevent.Connect("asdf", new JsEventOptions { });

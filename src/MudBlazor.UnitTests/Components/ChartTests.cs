@@ -21,46 +21,46 @@ namespace MudBlazor.UnitTests.Components
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public void PieChartSelectionTest()
+        public async Task PieChartSelection()
         {
             var comp = Context.Render<PieChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-serie")[0].Click();
+            await comp.FindAll("path.mud-chart-serie")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("path.mud-chart-serie")[3].Click();
+            await comp.FindAll("path.mud-chart-serie")[3].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
         [Test]
-        public void DonutChartSelectionTest()
+        public async Task DonutChartSelection()
         {
             var comp = Context.Render<DonutChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-serie")[0].Click();
+            await comp.FindAll("path.mud-chart-serie")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("path.mud-chart-serie")[3].Click();
+            await comp.FindAll("path.mud-chart-serie")[3].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
         [Test]
-        public void LineChartSelectionTest()
+        public async Task LineChartSelection()
         {
             var comp = Context.Render<LineChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-line")[0].Click();
+            await comp.FindAll("path.mud-chart-line")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("path.mud-chart-line")[1].Click();
+            await comp.FindAll("path.mud-chart-line")[1].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
 
         [Test]
-        public void BarChartSelectionTest()
+        public async Task BarChartSelection()
         {
             var comp = Context.Render<BarChartSelectionTest>();
             // print the generated html
@@ -71,13 +71,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("tspan").InnerHtml.Trim().Should().Be("40");
 
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-bar")[0].Click();
+            await comp.FindAll("path.mud-chart-bar")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
 
             comp.FindAll("path.mud-chart-bar")[10].MouseOver();
             comp.Find("tspan").InnerHtml.Trim().Should().Be("24");
 
-            comp.FindAll("path.mud-chart-bar")[10].Click();
+            await comp.FindAll("path.mud-chart-bar")[10].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
 
@@ -648,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void HeatmapChart_CanHideSeries_Test()
+        public async Task HeatmapChart_CanHideSeries()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -679,28 +679,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
 
             // Hide Sensor Alpha series
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Sensor Alpha checkbox should be unchecked after hiding");
             chartSeries[0].Visible.Should().BeFalse("Sensor Alpha Visible property should be false after hiding");
             comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
 
             // Show Sensor Alpha series again
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Sensor Alpha checkbox should be checked after re-showing");
             chartSeries[0].Visible.Should().BeTrue("Sensor Alpha Visible property should be true after re-showing");
             comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
 
             // Show Sensor Gamma series (initially hidden)
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Sensor Gamma checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Sensor Gamma Visible property should be true after showing");
             comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
 
             // Hide Sensor Gamma series again
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+            await seriesCheckboxes[2].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be unchecked after hiding again");
             chartSeries[2].Visible.Should().BeFalse("Sensor Gamma Visible property should be false after hiding again");
@@ -721,7 +721,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test, TestCaseSource(nameof(YAxisFuncs))]
         [SetCulture("en-US")]
-        public void YAxisToStringFuncTest(YAxisTestCase testCase)
+        public void YAxisToStringFunc(YAxisTestCase testCase)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)

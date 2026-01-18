@@ -13,9 +13,9 @@ public partial class MudLink : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-typography mud-link")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text")
-            .AddClass($"mud-link-underline-{Underline.ToDescriptionString()}")
-            .AddClass($"mud-typography-{Typo.ToDescriptionString()}", Typo != Typo.inherit)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text")
+            .AddClass($"mud-link-underline-{Underline.ToStringFast(true)}")
+            .AddClass($"mud-typography-{Typo.ToStringFast(true)}", Typo != Typo.inherit)
             // When Href is empty, link's hover cursor is text "I beam" even when OnClick has a delegate.
             // To change this for more expected look change hover cursor to a pointer:
             .AddClass("cursor-pointer", Href == default && OnClick.HasDelegate && !Disabled)

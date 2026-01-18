@@ -34,8 +34,8 @@ namespace MudBlazor
                 .AddClass("mud-list-item-gutters", GetGutters())
                 .AddClass("mud-list-item-clickable", GetClickable())
                 .AddClass("mud-ripple", Ripple && GetClickable())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToStringFast(true)}-text", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-{MudList?.Color.ToStringFast(true)}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();

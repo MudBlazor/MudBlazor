@@ -29,38 +29,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NavLink_CheckOnClickEvent()
+        public async Task NavLink_CheckOnClickEvent()
         {
             var clicked = false;
             var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.OnClick, (MouseEventArgs args) => { clicked = true; }));
             // print the generated html
             comp.FindAll("a").Should().BeEmpty();
-            comp.Find(".mud-nav-link").Click();
+            await comp.Find(".mud-nav-link").ClickAsync();
             clicked.Should().BeTrue();
         }
 
         [Test]
-        public void NavLink_Active()
+        public async Task NavLink_Active()
         {
             const string activeClass = "Custom__nav_active_css";
             var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.ActiveClass, activeClass));
-            comp.Find(".mud-nav-link").Click();
+            await comp.Find(".mud-nav-link").ClickAsync();
             comp.Markup.Should().Contain(activeClass);
         }
 
         [Test]
-        public void NavLink_Enabled_CheckNavigation()
+        public async Task NavLink_Enabled_CheckNavigation()
         {
             var comp = Context.Render<NavLinkDisabledTest>(parameters => parameters.Add(x => x.Disabled, false));
-            comp.Find("a").Click();
+            await comp.Find("a").ClickAsync();
             comp.Instance.IsNavigated.Should().BeTrue();
         }
 
         [Test]
-        public void NavLink_Disabled_CheckNoNavigation()
+        public async Task NavLink_Disabled_CheckNoNavigation()
         {
             var comp = Context.Render<NavLinkDisabledTest>(parameters => parameters.Add(x => x.Disabled, true));
-            comp.Find("a").Click();
+            await comp.Find("a").ClickAsync();
             comp.Instance.IsNavigated.Should().BeFalse();
         }
 
