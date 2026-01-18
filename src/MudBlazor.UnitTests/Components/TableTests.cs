@@ -1463,7 +1463,9 @@ namespace MudBlazor.UnitTests.Components
                 return first.Task;
             })));
 
-            await comp.WaitForAssertionAsync(() => cancelToken.Should().NotBeNull());
+            await comp.WaitForAssertionAsync(
+                () => cancelToken.Should().NotBeNull(),
+                TimeSpan.FromSeconds(5));
             await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange a table refresh

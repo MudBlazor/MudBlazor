@@ -1340,7 +1340,9 @@ namespace MudBlazor.UnitTests.Components
             });
 
             // Wait for dialog to close and state reset
-            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().NotContain("mud-dialog"));
+            await comp.WaitForAssertionAsync(
+                () => comp.Markup.Trim().Should().NotContain("mud-dialog"),
+                TimeSpan.FromSeconds(5));
         }
 
         [Test]

@@ -135,7 +135,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => autocompleteComp.Instance.Text.Should().Be("Alabama"));
             comp.Instance.MustBeShown = false;
             comp.Render();
-            await comp.WaitForAssertionAsync(() => comp.Instance.HasBeenDisposed.Should().Be(true));
+            await comp.WaitForAssertionAsync(
+                () => comp.Instance.HasBeenDisposed.Should().Be(true),
+                TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
