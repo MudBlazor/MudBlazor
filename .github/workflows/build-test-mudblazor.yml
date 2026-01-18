@@ -65,10 +65,10 @@ jobs:
           path: ${{ env.NUGET_PACKAGES }}
 
       - name: Setup .NET
-        uses: fast-actions/setup-dotnet@v1.0.0
+        uses: fast-actions/setup-dotnet@v1
         with:
-          dotnet-sdk: 10.x.x
-          dotnet-aspnetcore: |
+          sdk-version: 10.x.x
+          aspnetcore-version: |
             9.x.x
             8.x.x
 
