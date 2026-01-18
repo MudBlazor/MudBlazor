@@ -1,7 +1,6 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System.Diagnostics;
 using static System.String;
 
 namespace MudBlazor
@@ -9,7 +8,10 @@ namespace MudBlazor
 #nullable enable
     internal class SnackBarMessageState
     {
-        private readonly Stopwatch _transitionStopwatch;
+        private readonly TimeProvider _timeProvider;
+        private TimeSpan _transitionElapsed;
+        private long _transitionStartTimestamp;
+        private bool _transitionRunning;
         private string AnimationId { get; }
         public bool UserHasInteracted { get; set; }
         public SnackbarOptions Options { get; }
@@ -21,7 +23,7 @@ namespace MudBlazor
             Options = options;
             AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
-            _transitionStopwatch = timeProvider.CreateStopwatch();
+            _timeProvider = timeProvider;
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
 
@@ -105,19 +107,37 @@ namespace MudBlazor
 
         public void RestartTransitionTimer()
         {
-            _transitionStopwatch.Restart();
+            _transitionElapsed = TimeSpan.Zero;
+            _transitionStartTimestamp = _timeProvider.GetTimestamp();
+            _transitionRunning = true;
         }
 
         public void StopTransitionTimer()
         {
-            _transitionStopwatch.Stop();
+            if (!_transitionRunning)
+            {
+                return;
+            }
+
+            _transitionElapsed += GetElapsedSinceStart();
+            _transitionRunning = false;
         }
 
         private int RemainingTransitionMilliseconds(int transitionDuration)
         {
-            var duration = transitionDuration - (int)_transitionStopwatch.ElapsedMilliseconds;
+            var duration = transitionDuration - (int)ElapsedTransition.TotalMilliseconds;
 
             return duration >= 0 ? duration : 0;
+        }
+
+        private TimeSpan ElapsedTransition => _transitionRunning
+            ? _transitionElapsed + GetElapsedSinceStart()
+            : _transitionElapsed;
+
+        private TimeSpan GetElapsedSinceStart()
+        {
+            var delta = _timeProvider.GetTimestamp() - _transitionStartTimestamp;
+            return TimeSpan.FromSeconds((double)delta / _timeProvider.TimestampFrequency);
         }
     }
 }
