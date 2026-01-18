@@ -453,7 +453,7 @@ namespace MudBlazor
                         {
                             await SubmitAsync();
                             await CloseAsync();
-                            _inputReference?.SetText(Text);
+                            _inputReference?.SetTextAsync(Text);
                         }
                     }
 
@@ -481,7 +481,7 @@ namespace MudBlazor
                     break;
                 default:
                     await SubmitAsync();
-                    _inputReference?.SetText(Text);
+                    _inputReference?.SetTextAsync(Text);
                     await CloseAsync();
                     break;
             }

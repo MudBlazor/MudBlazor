@@ -602,7 +602,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             textfield.ReadValue.Should().Be(17);
             textfield.ReadText.Should().Be("17");
-            await comp.InvokeAsync(async () => await textfield.Clear());
+            await comp.InvokeAsync(async () => await textfield.ClearAsync());
             textfield.ReadValue.Should().Be(0);
             textfield.ReadText.Should().Be(null);
         }
@@ -615,7 +615,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             textfield.ReadValue.Should().Be("Viva la ignorancia");
             textfield.ReadText.Should().Be("Viva la ignorancia");
-            await comp.InvokeAsync(async () => await textfield.Clear());
+            await comp.InvokeAsync(async () => await textfield.ClearAsync());
             textfield.ReadValue.Should().Be(null);
             textfield.ReadText.Should().Be(null);
         }

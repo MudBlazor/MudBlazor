@@ -171,7 +171,7 @@ namespace MudBlazor
         /// <summary>
         /// Clears the <see cref="MudBaseInput{T}.Text"/> and sets <see cref="MudBaseInput{T}.Value"/> to <c>default(T)</c>.
         /// </summary>
-        public Task Clear()
+        public Task ClearAsync()
         {
             if (!HasMask)
             {
@@ -185,7 +185,7 @@ namespace MudBlazor
         /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
         /// <param name="text">The new text value to use.</param>
-        public async Task SetText(string? text)
+        public new async Task SetTextAsync(string? text)
         {
             if (!HasMask)
             {
@@ -279,7 +279,7 @@ namespace MudBlazor
             return Clearable && !GetDisabledState();
         }
 
-        private Task OnMaskedValueChanged(string s) => SetTextAndUpdateValueAsync(s);
+        private Task OnMaskedValueChangedAsync(string s) => SetTextAndUpdateValueAsync(s);
 
         private string GetCounterText() => Counter switch
         {
@@ -288,7 +288,7 @@ namespace MudBlazor
             _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
-        protected async Task HandleContainerClick()
+        protected async Task HandleContainerClickAsync()
         {
             if (!_isFocused && IsJSRuntimeAvailable && InputReference != null)
             {

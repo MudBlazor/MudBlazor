@@ -1559,7 +1559,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task FieldChangedEventShouldTrigger()
         {
             var comp = Context.Render<FormFieldChangedTest>();
-            var formsComp = comp.FindComponents<MudForm>();
 
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var numeric = comp.FindComponent<MudNumericField<int>>().Instance;
@@ -1569,8 +1568,8 @@ namespace MudBlazor.UnitTests.Components
 
             //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
 
-            await comp.InvokeAsync(() => textField.SetText("new value"));
-            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value");
+            await comp.InvokeAsync(() => textField.SetTextAsync("new value"));
+            comp.Instance.FormFieldChangedEventArgs!.NewValue.Should().Be("new value");
             textField.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             numeric.Value.Should().Be(0);
