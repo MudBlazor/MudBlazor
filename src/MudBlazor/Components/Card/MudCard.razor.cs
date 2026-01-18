@@ -48,7 +48,7 @@ namespace MudBlazor
         public bool Outlined { get; set; }
 
         /// <summary>
-        /// Whether card contents (<see cref="MudCardHeader"/>, <see cref="MudCardContent"/> or <see cref="MudCardActions"/>) should use padding.
+        /// Adds visual padding to the content (<see cref="MudCardHeader"/>, <see cref="MudCardContent"/> or <see cref="MudCardActions"/>).
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
