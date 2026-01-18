@@ -19,6 +19,7 @@ using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetPara
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class AutocompleteTests : BunitTest
     {
         [Test]

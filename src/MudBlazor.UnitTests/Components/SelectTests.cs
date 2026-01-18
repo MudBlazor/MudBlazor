@@ -116,6 +116,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [NonParallelizable]
         public async Task Select_KeyDown_WhileClosed()
         {
             var comp = Context.Render<SelectFocusAndTypeTest>();

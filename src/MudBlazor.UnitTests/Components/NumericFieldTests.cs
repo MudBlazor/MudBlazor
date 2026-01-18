@@ -19,6 +19,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
