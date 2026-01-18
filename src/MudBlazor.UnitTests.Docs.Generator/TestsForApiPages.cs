@@ -189,7 +189,7 @@ public partial class TestsForApiPages
             cb.IndentLevel++;
             cb.AddLine("// These tests just check all the API pages to see if they throw any exceptions");
             cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
-            cb.AddLine("[Parallelizable(ParallelScope.Self)]");
+            cb.AddLine("[Parallelizable(ParallelScope.All)]");
             cb.AddLine("public partial class ApiDocsTests");
             cb.AddLine("{");
             cb.IndentLevel++;
@@ -250,6 +250,7 @@ public partial class TestsForApiPages
             cb.AddLine($"public async Task {type.Name.Replace("`", "")}_API_TestAsync()");
             cb.AddLine("{");
             cb.IndentLevel++;
+            cb.AddLine("await using var ctx = CreateContext();");
             // Create Api.razor with a type
             cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
             cb.AddLine(@$"var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, ""{type.Name}""));");
@@ -281,6 +282,7 @@ public partial class TestsForApiPages
             cb.AddLine($"public async Task {component.Replace("/", "_")}_Legacy_API_TestAsync()");
             cb.AddLine("{");
             cb.IndentLevel++;
+            cb.AddLine("await using var ctx = CreateContext();");
             // Create Api.razor with a type
             cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{url}""));");
             cb.AddLine(@$"var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, ""{component}""));");

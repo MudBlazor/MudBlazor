@@ -13,19 +13,12 @@ namespace MudBlazor.UnitTests.Docs.Generated
     [TestFixture]
     public partial class ApiDocsTests
     {
-        private BunitContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = CreateContext();
-        }
-
         // This shows how to test a docs page with incremental rendering.
         // We are not (yet) testing all docs pages (just the examples), but if we wanted to, this would be the way.
         [Test]
         public async Task AlertPage_Test()
         {
+            await using var ctx = CreateContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
             var comp = ctx.Render<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
@@ -37,25 +30,13 @@ namespace MudBlazor.UnitTests.Docs.Generated
         [Test]
         public async Task MudAlert_API_Test_Example()
         {
+            await using var ctx = CreateContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
             var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, "MudAlert"));
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
             comp.Markup.Should().NotContain("Sorry, the type").And.NotContain("could not be found");
             var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));
             exampleLink.Should().NotBeNull();
-        }
-
-        [TearDown]
-        public async Task TearDown()
-        {
-            var currentCtx = ctx;
-            if (currentCtx == null)
-            {
-                return;
-            }
-
-            ctx = null;
-            await currentCtx.DisposeAsync();
         }
 
         private static BunitContext CreateContext()
