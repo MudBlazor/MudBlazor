@@ -2,7 +2,7 @@
 .mud-progress-linear {
   position: relative;
 
-  &:not(.mud-progress-linear-transparent-background)::before {
+  &.mud-progress-linear-background::before {
     content: '';
     position: absolute;
     top: 0;

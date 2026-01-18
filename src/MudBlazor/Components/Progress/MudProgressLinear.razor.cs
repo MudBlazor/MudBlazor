@@ -29,7 +29,7 @@ namespace MudBlazor
                 .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
                 .AddClass($"mud-progress-linear-{Size.ToStringFast(true)}")
                 .AddClass($"mud-progress-linear-color-{Color.ToStringFast(true)}")
-                .AddClass("mud-progress-linear-transparent-background", TransparentBackground)
+                .AddClass("mud-progress-linear-background", ShowBackground)
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
                 .AddClass("mud-flip-x-rtl")
@@ -155,14 +155,14 @@ namespace MudBlazor
         public double BufferValue { get; set; }
 
         /// <summary>
-        /// Hides the background of the progress bar.
+        /// Shows a background of the progress bar where there is no value.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-        public bool TransparentBackground { get; set; }
+        public bool ShowBackground { get; set; } = true;
 
         public MudProgressLinear()
         {
