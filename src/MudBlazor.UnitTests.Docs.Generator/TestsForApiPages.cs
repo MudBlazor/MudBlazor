@@ -254,7 +254,7 @@ public partial class TestsForApiPages
             cb.AddLine(@$"var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, ""{type.Name}""));");
             cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
             // Make sure docs for the type were actually found
-            cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {type.Name} was not found"");");
+            cb.AddLine(@"comp.Find("".mud-breadcrumbs"");");
             // Should there be a link to the example page?
             if (TypesWithExamples.Exists(exampleType => exampleType.Name == type.Name))
             {
@@ -285,7 +285,7 @@ public partial class TestsForApiPages
             cb.AddLine(@$"var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, ""{component}""));");
             cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
             // Make sure docs for the type were actually found
-            cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {component} was not found"");");
+            cb.AddLine(@"comp.Find("".mud-breadcrumbs"");");
             cb.IndentLevel--;
             cb.AddLine("}");
         }

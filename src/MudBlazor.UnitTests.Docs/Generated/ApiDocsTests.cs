@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
             var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, "MudAlert"));
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
-            comp.Markup.Should().NotContain("Sorry, the type").And.NotContain("could not be found");
+            comp.Find(".mud-breadcrumbs");
             var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));
             exampleLink.Should().NotBeNull();
         }
