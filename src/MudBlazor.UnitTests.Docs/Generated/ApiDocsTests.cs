@@ -7,14 +7,20 @@ using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
+using System.Threading;
 
 namespace MudBlazor.UnitTests.Docs.Generated
 {
     [TestFixture]
-    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     public partial class ApiDocsTests
     {
-        private Bunit.BunitContext ctx;
+        private static readonly AsyncLocal<Bunit.BunitContext> CtxHolder = new();
+
+        private Bunit.BunitContext ctx
+        {
+            get => CtxHolder.Value ?? throw new InvalidOperationException("Bunit context has not been initialized for this test.");
+            set => CtxHolder.Value = value;
+        }
 
         [SetUp]
         public void Setup()
@@ -71,6 +77,16 @@ namespace MudBlazor.UnitTests.Docs.Generated
         }
 
         [TearDown]
-        public async Task TearDown() => await ctx.DisposeAsync();
+        public async Task TearDown()
+        {
+            var currentCtx = CtxHolder.Value;
+            if (currentCtx is null)
+            {
+                return;
+            }
+
+            CtxHolder.Value = null;
+            await currentCtx.DisposeAsync();
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Bunit;
+using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
@@ -10,10 +11,15 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Docs.Generated
 {
     [TestFixture]
-    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     public partial class ExampleDocsTests
     {
-        private BunitContext ctx;
+        private static readonly AsyncLocal<BunitContext> CtxHolder = new();
+
+        private BunitContext ctx
+        {
+            get => CtxHolder.Value ?? throw new InvalidOperationException("Bunit context has not been initialized for this test.");
+            set => CtxHolder.Value = value;
+        }
 
         [SetUp]
         public void Setup()
@@ -50,11 +56,21 @@ namespace MudBlazor.UnitTests.Docs.Generated
         [TearDown]
         public void TearDown()
         {
+            var currentCtx = CtxHolder.Value;
+            if (currentCtx is null)
+            {
+                return;
+            }
+
             try
             {
-                ctx.Dispose();
+                currentCtx.Dispose();
             }
             catch (Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
+            finally
+            {
+                CtxHolder.Value = null;
+            }
         }
     }
 }
