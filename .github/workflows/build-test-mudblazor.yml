@@ -68,6 +68,7 @@ jobs:
         uses: fast-actions/setup-dotnet@v1
         with:
           sdk-version: 10.x.x
+          # We need these runtimes for the tests
           aspnetcore-version: |
             9.x.x
             8.x.x
