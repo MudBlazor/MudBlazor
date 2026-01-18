@@ -45,7 +45,7 @@
                         }
                         else if (tempMonth == 0 && CurrentView == OpenTo.Month)
                         {
-                            var calendarYear = GetCalendarYear(PickerMonth ?? DateTime.Today);
+                            var calendarYear = GetCalendarYear(PickerMonth ?? GetToday());
 
                             <div class="mud-picker-calendar-header">
                                 <div class="mud-picker-calendar-header-switch">

@@ -137,7 +137,7 @@ namespace MudBlazor
 
         protected int GetClosingDelay() => ClosingDelay ?? (int)PopoverOptions.DatePickerClosingDelay.TotalMilliseconds;
 
-        protected DateTime GetToday() => TimeProvider.GetLocalNow().Date;
+        protected DateTime GetToday() => TimeProvider.GetLocalNow().LocalDateTime.Date;
 
         /// <summary>
         /// The number of months to display in the calendar.
@@ -763,7 +763,7 @@ namespace MudBlazor
 
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var today = TimeProvider.GetLocalNow().Date;
+            var today = GetToday();
 
             var year = FixYear ?? calendar.GetYear(today);
             var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);

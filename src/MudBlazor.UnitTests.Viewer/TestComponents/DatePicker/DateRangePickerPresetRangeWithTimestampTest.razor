@@ -1,4 +1,5 @@
-﻿<MudDateRangePicker PickerVariant="PickerVariant.Static" @bind-DateRange="DateTimeRange" />
+﻿@inject TimeProvider TimeProvider
+<MudDateRangePicker PickerVariant="PickerVariant.Static" @bind-DateRange="DateTimeRange" />
 
 @code {
     public static string __description__ = "DateTime range with a timestamp";
@@ -7,7 +8,8 @@
 
     protected override Task OnInitializedAsync()
     {
-        DateTimeRange = new DateRange(DateTime.Now.AddDays(1), DateTime.Now.AddDays(5));
+        var now = TimeProvider.GetLocalNow().LocalDateTime;
+        DateTimeRange = new DateRange(now.AddDays(1), now.AddDays(5));
 
         return base.OnInitializedAsync();
     }

@@ -1,10 +1,20 @@
-﻿<MudDateRangePicker @ref="PickerReference" PickerVariant="PickerVariant.Static" @bind-DateRange="DateRange" />
+﻿@inject TimeProvider TimeProvider
+<MudDateRangePicker @ref="PickerReference" PickerVariant="PickerVariant.Static" @bind-DateRange="DateRange" />
 
 @code {
     public static string __description__ = "DateTime range without a timestamp";
 
     [Parameter]
-    public DateRange? DateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).Date, DateTime.Now.Date);
+    public DateRange? DateRange { get; set; }
 
     public MudDateRangePicker? PickerReference;
+
+    protected override void OnInitialized()
+    {
+        if (DateRange is null)
+        {
+            var today = TimeProvider.GetLocalNow().LocalDateTime.Date;
+            DateRange = new DateRange(today.AddMonths(-1), today);
+        }
+    }
 }

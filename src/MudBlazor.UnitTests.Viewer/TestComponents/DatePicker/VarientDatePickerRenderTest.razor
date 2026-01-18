@@ -1,4 +1,5 @@
-﻿<MudStack Row>
+﻿@inject TimeProvider TimeProvider
+<MudStack Row>
     <MudDatePicker Label="dd.MM.yyyy" @bind-Date="_date" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" HelperText="Help Text" Variant="Variant.Text"/>
     <MudDatePicker Label="MM/dd/yyyy" @bind-Date="_date" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy" Placeholder="en-US Date" HelperText="Help Text" Variant="Variant.Filled" />
     <MudDatePicker Label="yyyy-MM-dd" @bind-Date="_date" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="ISO Date" HelperText="Help Text" Variant="Variant.Outlined" />
@@ -21,6 +22,13 @@
 </MudStack>
 
 @code {
-    private DateTime? _date = DateTime.Today;
-    private DateRange _dateRange = new DateRange(DateTime.Today.AddDays(1), DateTime.Today.AddDays(5));
+    private DateTime? _date;
+    private DateRange _dateRange = null!;
+
+    protected override void OnInitialized()
+    {
+        var today = TimeProvider.GetLocalNow().LocalDateTime.Date;
+        _date = today;
+        _dateRange = new DateRange(today.AddDays(1), today.AddDays(5));
+    }
 }

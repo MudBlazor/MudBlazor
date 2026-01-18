@@ -1,4 +1,5 @@
-﻿<MudPopoverProvider />
+﻿@inject TimeProvider TimeProvider
+<MudPopoverProvider />
 
 <MudDatePicker id="picker" @ref="_picker" Label="With action buttons" @bind-Date="_date">
     <PickerActions>
@@ -11,5 +12,10 @@
 @code {
     private MudDatePicker _picker = null!;
 
-    private DateTime? _date = DateTime.Today;
+    private DateTime? _date;
+
+    protected override void OnInitialized()
+    {
+        _date = TimeProvider.GetLocalNow().LocalDateTime.Date;
+    }
 }

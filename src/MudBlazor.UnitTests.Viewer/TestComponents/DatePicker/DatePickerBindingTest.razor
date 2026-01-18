@@ -1,13 +1,20 @@
-﻿<MudPopoverProvider />
+﻿@inject TimeProvider TimeProvider
+<MudPopoverProvider />
 
 <MudDatePicker Label="Date Picker" @bind-Date="ExpiresOn" />
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">Set Date</MudButton>
 
 @code {
-    public DateTime? ExpiresOn { get; set; } = DateTime.Now.Date;
+    public DateTime? ExpiresOn { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ExpiresOn = TimeProvider.GetLocalNow().LocalDateTime.Date;
+    }
 
     void ButtonOnClick()
     {
-        ExpiresOn = DateTime.Now.Date.AddMonths(10);
+        var today = TimeProvider.GetLocalNow().LocalDateTime.Date;
+        ExpiresOn = today.AddMonths(10);
     }
 }

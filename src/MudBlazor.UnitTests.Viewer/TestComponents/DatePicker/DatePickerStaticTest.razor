@@ -1,4 +1,5 @@
-﻿<MudPopoverProvider />
+﻿@inject TimeProvider TimeProvider
+<MudPopoverProvider />
 
 <MudDatePicker id="picker" @ref="PickerReference" Label="With action buttons" PickerVariant="PickerVariant.Static" @bind-Date="Date">
     <PickerActions>
@@ -10,7 +11,15 @@
 
 @code {
     [Parameter]
-    public DateTime? Date { get; set; } = DateTime.Today.Subtract(TimeSpan.FromDays(60));
+    public DateTime? Date { get; set; }
 
     public MudDatePicker PickerReference { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        if (Date is null)
+        {
+            Date = TimeProvider.GetLocalNow().LocalDateTime.Date.AddDays(-60);
+        }
+    }
 }
