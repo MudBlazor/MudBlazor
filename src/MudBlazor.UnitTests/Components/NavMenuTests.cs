@@ -56,14 +56,14 @@ namespace MudBlazor.UnitTests.Components
         /// And even so, he changes when clicked
         /// </summary>
         [Test]
-        public void One_Way_Bindable()
+        public async Task One_Way_Bindable()
         {
             var comp = Context.Render<NavMenuOneWay>();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            navgroup.Click();
+            await navgroup.ClickAsync();
 
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
         /// Initially is set to false and after clicking the navgroup should change to true
         /// </summary>
         [Test]
-        public void Two_Way_Bindable()
+        public async Task Two_Way_Bindable()
         {
             var comp = Context.Render<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("mud-expanded");
@@ -83,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
             expanded.Should().BeFalse();
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            navgroup.Click();
+            await navgroup.ClickAsync();
 
             expanded = comp.Instance.Expanded;
             expanded.Should().BeTrue();

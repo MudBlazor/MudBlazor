@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
-            comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].Click();
+            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
         }
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
-            comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].Click();
+            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
         }
@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Count.Should().Be(3);
 
             // close it manually
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("button").Should().BeEmpty();
 
             dialogResult?.Result.Data?.Should().BeNull();

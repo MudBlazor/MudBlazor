@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Utilities
         /// Verfies the standard log messages are logged correctly
         /// </summary>
         [Test]
-        public void LoggerIsCreatedTest()
+        public void LoggerIsCreated()
         {
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName) as MockLogger;

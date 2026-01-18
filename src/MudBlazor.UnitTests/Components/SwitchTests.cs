@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Components
     public class SwitchTest : BunitTest
     {
         [Test]
-        public async Task SwitchTest_KeyboardNavigation()
+        public async Task Switch_KeyboardNavigation()
         {
             var comp = Context.Render<MudSwitch<bool>>();
 
@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Warning, Color.Dark)]
         [TestCase(Color.Error, Color.Primary)]
         [TestCase(Color.Dark, Color.Primary)]
-        public void SwitchColorTest(Color color, Color uncheckedcolor)
+        public async Task SwitchColor(Color color, Color uncheckedcolor)
         {
             var comp = Context.Render<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
 
@@ -60,23 +60,23 @@ namespace MudBlazor.UnitTests.Components
             var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
             box.ReadValue.Should().Be(false);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToStringFast(true)}-text", $"hover:mud-{uncheckedcolor.ToStringFast(true)}-hover" });
 
             // click and check if it has new color
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToStringFast(true)}-text", $"hover:mud-{color.ToStringFast(true)}-hover" });
         }
 
         [Test]
-        public void SwitchDisabledTest()
+        public void SwitchDisabled()
         {
             var comp = Context.Render<SwitchWithLabelTest>();
             comp.FindAll("label.mud-switch")[3].ClassList.Should().Contain("mud-disabled"); // 4rd switch
         }
 
         [Test]
-        public void SwitchLabelPlacementTest()
+        public void SwitchLabelPlacement()
         {
             var comp = Context.Render<SwitchWithLabelTest>();
 
@@ -85,7 +85,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwitchLabelTest()
+        public void SwitchLabel()
         {
             var value = new DisplayNameLabelClass();
 

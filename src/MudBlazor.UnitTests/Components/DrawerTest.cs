@@ -56,17 +56,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TemporaryClosed_Open_CheckOpened_Close_CheckClosed()
+        public async Task TemporaryClosed_Open_CheckOpened_Close_CheckClosedAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerTest1>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Temporary));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(1);
             comp.FindAll(".mud-overlay-drawer").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-temporary").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(parameter => parameter.OverlayAutoClose, overlayAutoClose));
 
             // Open the drawer
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(1);
             comp.FindAll(".mud-overlay-drawer").Count.Should().Be(1);
@@ -109,112 +109,112 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TemporaryClosedWithoutOverlay_Open_CheckOverlay()
+        public async Task TemporaryClosedWithoutOverlay_Open_CheckOverlayAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerTest1>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Temporary)
                 .Add(x => x.Overlay, false));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
         [Test]
-        public void TemporaryClosedClipped_Open_CheckState()
+        public async Task TemporaryClosedClipped_Open_CheckStateAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerTest1>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Temporary)
                 .Add(x => x.ClipMode, DrawerClipMode.Always));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer-clipped-always").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-temporary").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
         [Test]
-        public void PersistentClosed_Open_CheckOpened_Close_CheckClosed()
+        public async Task PersistentClosed_Open_CheckOpened_Close_CheckClosedAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerTest1>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Persistent));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-persistent").Count.Should().Be(1);
             comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-persistent").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
         [Test]
-        public void PersistentClosedClipped_Open_CheckState()
+        public async Task PersistentClosedClipped_Open_CheckStateAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerTest1>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Persistent)
                 .Add(x => x.ClipMode, DrawerClipMode.Always));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer-clipped-always").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-persistent").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
         [Test]
-        public void MiniClosed_Open_CheckOpened_Close_CheckClosed()
+        public async Task MiniClosed_Open_CheckOpened_Close_CheckClosedAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerTest1>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Mini));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-mini").Count.Should().Be(1);
             comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-mini").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
         [Test]
-        public void MiniClosedClipped_Open_CheckState()
+        public async Task MiniClosedClipped_Open_CheckStateAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerTest1>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Mini)
                 .Add(x => x.ClipMode, DrawerClipMode.Always));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer-clipped-always").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-mini").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
         [Test]
-        public void ResponsiveClosed_Open_CheckOpened_Close_CheckClosed()
+        public async Task ResponsiveClosed_Open_CheckOpened_Close_CheckClosedAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerResponsiveTest>();
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
@@ -222,16 +222,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(Breakpoint.Xs)]
         [TestCase(Breakpoint.Sm)]
-        public void ResponsiveSmallClosed_Open_CheckOpenedAndOverlay(Breakpoint point)
+        public async Task ResponsiveSmallClosed_Open_CheckOpenedAndOverlayAsync(Breakpoint point)
         {
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(point));
             var comp = Context.Render<DrawerResponsiveTest>();
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll(".mud-drawer-overlay").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
@@ -249,18 +249,18 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Breakpoint.Xl)]
         [TestCase(Breakpoint.XlAndDown)]
         [TestCase(Breakpoint.XlAndUp)]
-        public void ResponsiveClosed_StartLargeScreen_SetBreakpoint_Open_CheckState(Breakpoint breakpoint)
+        public async Task ResponsiveClosed_StartLargeScreen_SetBreakpoint_Open_CheckStateAsync(Breakpoint breakpoint)
         {
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xl));
             var providerComp = Context.Render<MudPopoverProvider>();
             var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
                 .Add(x => x.Breakpoint, breakpoint));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll(".mud-drawer-overlay").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
@@ -278,17 +278,17 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Breakpoint.Xl)]
         [TestCase(Breakpoint.XlAndDown)]
         [TestCase(Breakpoint.XlAndUp)]
-        public void ResponsiveClosed_StartSmallScreen_SetBreakpoint_Open_CheckState(Breakpoint breakpoint)
+        public async Task ResponsiveClosed_StartSmallScreen_SetBreakpoint_Open_CheckStateAsync(Breakpoint breakpoint)
         {
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
             var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
                 .Add(x => x.Breakpoint, breakpoint));
 
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll(".mud-drawer-overlay").Count.Should().Be(breakpoint == Breakpoint.Xs ? 0 : 1);
             comp.Instance.Drawer.Open.Should().BeTrue();
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
@@ -302,7 +302,7 @@ namespace MudBlazor.UnitTests.Components
             var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance)!;
 
             // Open drawer
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
@@ -320,7 +320,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeTrue();
 
             // Close drawer
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.Instance.Drawer.Open.Should().BeFalse();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
 
@@ -328,7 +328,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 400, Width = 600 }, Breakpoint.Sm, subscription.JavaScriptListenerId));
 
             // Open drawer
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.Instance.Drawer.Open.Should().BeTrue();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll(".mud-drawer-overlay").Count.Should().Be(1);
@@ -353,7 +353,7 @@ namespace MudBlazor.UnitTests.Components
             var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance)!;
 
             // Open drawer
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
@@ -450,7 +450,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeTrue();
 
             // Close drawer manually to check if it opens again
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
 
             // Resize to small, drawer should be open
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 0, Width = 0 }, Breakpoint.Xs, subscription.JavaScriptListenerId));
@@ -528,7 +528,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeFalse();
 
             // Open drawer manually to check if it closes again
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
 
             // Resize to small, drawer should be closed
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 0, Width = 0 }, Breakpoint.Xs, subscription.JavaScriptListenerId));
@@ -562,7 +562,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DrawerContainer_RemoveDrawer_CheckStates()
+        public async Task DrawerContainer_RemoveDrawer_CheckStatesAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerContainerTest1>();
@@ -570,13 +570,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(1);
 
             // Remove drawer
-            comp.Find("#hide-drawer-button").Click();
+            await comp.Find("#hide-drawer-button").ClickAsync();
 
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
         }
 
         [Test, Combinatorial]
-        public void NonResponsiveKeepInitialOpen_AllBreakpoints(
+        public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
             [Values(
                 Breakpoint.None,
                 Breakpoint.Xs,
@@ -610,7 +610,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().Be(initialState);
 
             // Make sure that we can toggle the drawer without issues
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
 
             var expectedToggledDrawerCount = initialState ? 0 : 1;
 
@@ -637,7 +637,7 @@ namespace MudBlazor.UnitTests.Components
         /// This class is used to skip the initial CSS transition when the drawer first renders.
         /// </summary>
         [Test]
-        public void DrawerInTabs_ShouldRemoveInitialClassAfterFirstInteraction()
+        public async Task DrawerInTabs_ShouldRemoveInitialClassAfterFirstInteractionAsync()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerInTabsTest>();
@@ -646,11 +646,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
 
             // Open the drawer
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--open").Count.Should().Be(1);
 
             // Close the drawer
-            comp.Find("#toggle-drawer-button").Click();
+            await comp.Find("#toggle-drawer-button").ClickAsync();
             comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
 
             // Verify the drawer loses the initial class after first interaction

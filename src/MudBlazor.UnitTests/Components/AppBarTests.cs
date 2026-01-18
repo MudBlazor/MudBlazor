@@ -79,27 +79,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AppBarWithContextualSetTrue()
+        public async Task AppBarWithContextualSetTrue()
         {
             var comp = Context.Render<ContextualAppBarTest>();
             var bar = comp.FindComponent<MudAppBar>();
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
 
-            comp.Find(".mud-switch-input").Change(true);
+            await comp.Find(".mud-switch-input").ChangeAsync(true);
 
             bar.Markup.Should().Contain("contextual-app-bar").And.Contain("mud-theme-tertiary");
         }
 
         [Test]
-        public void AppBarWithContextualSetFalse()
+        public async Task AppBarWithContextualSetFalse()
         {
             var comp = Context.Render<ContextualAppBarTest>(parameters => parameters.Add(x => x.IsContextual, false));
             var bar = comp.FindComponent<MudAppBar>();
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
 
-            comp.Find(".mud-switch-input").Change(true);
+            await comp.Find(".mud-switch-input").ChangeAsync(true);
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
         }

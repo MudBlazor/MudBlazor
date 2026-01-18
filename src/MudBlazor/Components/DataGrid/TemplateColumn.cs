@@ -25,7 +25,7 @@ namespace MudBlazor
         protected internal override object? PropertyFunc(T item)
             => null;
 
-        protected internal override void SetProperty(object item, object value)
+        protected internal override void SetProperty(object? item, object? value)
         {
         }
 

@@ -31,10 +31,11 @@ namespace MudBlazor.Utilities.Throttle;
 internal sealed class ThrottleDispatcher : IDisposable
 {
     private readonly TimeSpan _interval;
+    private readonly TimeProvider _timeProvider;
     // TODO: Replace with System.Threading.Lock when targeting .NET 9+
     // ReSharper disable once ChangeFieldTypeToSystemThreadingLock
     private readonly object _lock = new();
-    private DateTime _lastExecutionStartTime = DateTime.MinValue;
+    private DateTimeOffset _lastExecutionStartTime = DateTimeOffset.MinValue;
     private Task? _currentTask;
     private bool _disposed;
 
@@ -54,13 +55,39 @@ internal sealed class ThrottleDispatcher : IDisposable
     /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations. Must be non-negative.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
     public ThrottleDispatcher(TimeSpan interval)
+        : this(interval, TimeProvider.System)
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The minimum interval in milliseconds between invocations. Must be non-negative.</param>
+    /// <param name="timeProvider">The time provider to use for time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public ThrottleDispatcher(int interval, TimeProvider timeProvider)
+        : this(TimeSpan.FromMilliseconds(interval), timeProvider)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ThrottleDispatcher"/> class with the specified interval and time provider.
+    /// </summary>
+    /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations. Must be non-negative.</param>
+    /// <param name="timeProvider">The time provider to use for time queries.</param>
+    /// <exception cref="ArgumentNullException">Thrown when TimeProvider is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval is negative.</exception>
+    public ThrottleDispatcher(TimeSpan interval, TimeProvider timeProvider)
+    {
+        ArgumentNullException.ThrowIfNull(timeProvider);
         if (interval < TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(nameof(interval), @"Interval must be non-negative.");
         }
 
         _interval = interval;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>
@@ -98,7 +125,7 @@ internal sealed class ThrottleDispatcher : IDisposable
                 return Task.CompletedTask;
             }
 
-            var now = DateTime.UtcNow;
+            var now = _timeProvider.GetUtcNow();
             var timeSinceLastExecution = now - _lastExecutionStartTime;
 
             // If we have a running task, and we're within the interval, return the same task

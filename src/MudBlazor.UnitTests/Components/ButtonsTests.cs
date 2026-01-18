@@ -371,7 +371,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MudToggleIconTest()
+        public async Task MudToggleIcon()
         {
             var comp = Context.Render<MudToggleIconButton>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudButtonSizesTest()
+        public void MudButtonSizes()
         {
             var comp = Context.Render<ButtonSizeIconSizeTest>();
 
@@ -394,7 +394,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudButtonIconSizesTest()
+        public void MudButtonIconSizes()
         {
             var comp = Context.Render<ButtonSizeIconSizeTest>();
 
@@ -426,7 +426,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures buttons inherit their disabled state
         /// </summary>
         [Test]
-        public async Task ButtonsNestedDisabledTest()
+        public async Task ButtonsNestedDisabled()
         {
             var comp = Context.Render<ButtonsNestedDisabledTest>();
 

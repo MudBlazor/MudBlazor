@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
     public class ToolBarTests : BunitTest
     {
         [Test]
-        public void ToolBarWrapContentTest()
+        public void ToolBarWrapContent()
         {
             var component = Context.Render<ToolBarWrapContentTest>();
             var mudToolBar = component.Find(".mud-toolbar");

@@ -53,11 +53,11 @@ namespace MudBlazor
                 .AddClass($"mud-drawer--open", _openState.Value)
                 .AddClass($"mud-drawer--closed", !_openState.Value)
                 .AddClass($"mud-drawer--initial", _initial)
-                .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
-                .AddClass($"mud-drawer-clipped-{ClipMode.ToDescriptionString()}")
-                .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+                .AddClass($"mud-drawer-{Breakpoint.ToStringFast(true)}")
+                .AddClass($"mud-drawer-clipped-{ClipMode.ToStringFast(true)}")
+                .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
                 .AddClass($"mud-elevation-{Elevation}")
-                .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-drawer-{Variant.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 
@@ -65,8 +65,8 @@ namespace MudBlazor
             new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer-overlay--open", _openState.Value)
-                .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
+                .AddClass($"mud-drawer-overlay-{Variant.ToStringFast(true)}")
+                .AddClass($"mud-drawer-overlay-{Breakpoint.ToStringFast(true)}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
                 .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
                 .AddClass($"mud-skip-overlay-section") // drawer overlay remains outside of Section
@@ -410,7 +410,7 @@ namespace MudBlazor
             {
                 Anchor.Start => RightToLeft ? "right" : "left",
                 Anchor.End => RightToLeft ? "left" : "right",
-                _ => Anchor.ToDescriptionString()
+                _ => Anchor.ToStringFast(true)
             };
         }
 

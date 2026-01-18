@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// The horizontal distribution of child items in a <see cref="MudStack"/> component.
 /// </summary>
+[EnumExtensions]
 public enum Justify
 {
     /// <summary>

@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Extensions
         [TestCase(typeof(Adornment), new[] { "None", "Start", "End" })]
         [TestCase(typeof(Adornment?), new[] { "None", "Start", "End" })]
         [TestCase(typeof(string), new string[0])]
-        public void GetSafeEnumValues_Test(Type type, string[] expectedNames)
+        public void GetSafeEnumValues(Type type, string[] expectedNames)
         {
             var values = EnumExtensions.GetSafeEnumValues(type);
             var stringValues = values.Select(x => x.ToString());
@@ -20,11 +20,11 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public void ToDescriptionStringNew()
+        public void ToStringFast_ShouldReturnLoweredStrings()
         {
-            Adornment.Start.ToDescriptionString().Should().Be("start");
-            Align.Inherit.ToDescriptionString().Should().Be("inherit");
-            Breakpoint.Sm.ToDescriptionString().Should().Be("sm");
+            Adornment.Start.ToStringFast(true).Should().Be("start");
+            Align.Inherit.ToStringFast(true).Should().Be("inherit");
+            Breakpoint.Sm.ToStringFast(true).Should().Be("sm");
         }
 
         [TestCase(Adornment.Start, Edge.Start)]
