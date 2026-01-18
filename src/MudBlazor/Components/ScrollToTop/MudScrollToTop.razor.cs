@@ -9,7 +9,7 @@ namespace MudBlazor
     /// <summary>
     /// A button to quickly return to the top of the page.
     /// </summary>
-    public partial class MudScrollToTop : IDisposable
+    public partial class MudScrollToTop : IAsyncDisposable
     {
         private IScrollListener? _scrollListener;
 
@@ -158,15 +158,22 @@ namespace MudBlazor
             await OnClick.InvokeAsync(args);
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
-        public void Dispose()
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
         {
-            if (_scrollListener == null) { return; }
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            if (_scrollListener == null)
+            {
+                return;
+            }
 
             _scrollListener.OnScroll -= ScrollListener_OnScroll;
-            _scrollListener.Dispose();
+            await _scrollListener.DisposeAsync();
         }
     }
 }

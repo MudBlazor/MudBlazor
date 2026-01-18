@@ -1084,7 +1084,7 @@ namespace MudBlazor
         {
             // The Text property of the control is updated
             var customText = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
-            await SetTextAsync(customText);
+            await SetTextCoreAsync(customText);
 
             // The comparison is made on the multiSelectionText variable
             if (_multiSelectionText != text)

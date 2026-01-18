@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task BadgeTest_Click()
+        public async Task Badge_Click()
         {
             var comp = Context.Render<BadgeClickTest>();
             var badge = comp.FindComponent<MudBadge>();

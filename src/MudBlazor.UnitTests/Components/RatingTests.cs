@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click should change selected value
         /// </summary>
         [Test]
-        public void RatingTest1()
+        public async Task RatingTest1()
         {
             var comp = Context.Render<MudRating>();
             // select elements needed for the test
@@ -27,26 +27,26 @@ namespace MudBlazor.UnitTests.Components
             Inputs().Count.Should().Be(5);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
-            RatingItemsSpans()[2].Click();
+            await RatingItemsSpans()[2].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(3);
 
             // click 4th rating item
-            RatingItemsSpans()[3].Click();
+            await RatingItemsSpans()[3].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(4);
 
             // click 5th rating item
-            RatingItemsSpans()[4].Click();
+            await RatingItemsSpans()[4].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(5);
 
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click already selected item should change selected value to 0
         /// </summary>
         [Test]
-        public void RatingTest2()
+        public async Task RatingTest2()
         {
             var comp = Context.Render<MudRating>();
             // select elements needed for the test
@@ -64,27 +64,27 @@ namespace MudBlazor.UnitTests.Components
             RatingItemsSpans().Count.Should().Be(5);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
         }
 
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click disabled component don't change SelectedValue
         /// </summary>
         [Test]
-        public void RatingTest4()
+        public async Task RatingTest4()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
                 .Add(p => p.Disabled, true)
@@ -118,23 +118,23 @@ namespace MudBlazor.UnitTests.Components
             RatingItemsSpans().Count.Should().Be(5);
 
             // click first rating item
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
-            RatingItemsSpans()[1].Click();
+            await RatingItemsSpans()[1].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
-            RatingItemsSpans()[2].Click();
+            await RatingItemsSpans()[2].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 4th rating item
-            RatingItemsSpans()[3].Click();
+            await RatingItemsSpans()[3].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 5th rating item
-            RatingItemsSpans()[4].Click();
+            await RatingItemsSpans()[4].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
         /// Initialized EmptyIconColor and FullIconColor by parameter should have the correct colors set.
         /// </summary>
         [Test]
-        public void RatingTestIconColors()
+        public async Task RatingTestIconColors()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
                 .Add(p => p.SelectedValue, 2)
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
             SvgColors()[4].ClassName.Should().Contain("mud-tertiary-text");
 
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
-            RatingItemsSpans()[0].Click();
+            await RatingItemsSpans()[0].ClickAsync();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             SvgColors()[0].ClassName.Should().Contain("mud-primary-text");
@@ -205,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
 
             RatingItemsSpans()[2].PointerOut();
 
-            RatingItemsSpans()[4].Click();
+            await RatingItemsSpans()[4].ClickAsync();
             RatingItemsSpans()[1].PointerOver();
             comp.Instance.HoveredValue.Should().Be(2);
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(5);
@@ -222,7 +222,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task RatingTest_KeyboardNavigation()
+        public async Task Rating_KeyboardNavigation()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
                 .Add(p => p.MaxValue, 12));

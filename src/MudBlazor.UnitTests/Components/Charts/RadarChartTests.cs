@@ -26,7 +26,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClick()
+    public async Task RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClick()
     {
         var seriesData = new double[] { 10, 20, 30 };
         var chartLabels = new[] { "A", "B", "C" };
@@ -46,7 +46,7 @@ public class RadarChartTests : BunitTest
         // Markers for "Other Series": indices 0, 1, 2 (but associated with series index 1)
 
         // Click on the second data marker of the first series (PointIndex 1, SeriesIndex 0)
-        dataMarkers[1].Click();
+        await dataMarkers[1].ClickAsync();
         comp.Instance.SelectedPointIndex.Should().Be(1);
         comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0);
 
@@ -54,7 +54,7 @@ public class RadarChartTests : BunitTest
 
         // Click on the first data marker of the second series (PointIndex 0, SeriesIndex 1)
         // Total markers = 3 (for series 1) + 3 (for series 2) = 6. So index 3 is first marker of 2nd series.
-        dataMarkers[3].Click();
+        await dataMarkers[3].ClickAsync();
         comp.Instance.SelectedPointIndex.Should().Be(0);
         comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1);
     }
@@ -191,7 +191,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Interaction_SelectedIndex()
+    public async Task RadarChart_Interaction_SelectedIndex()
     {
         var selectedIndex = -1;
         var comp = Context.Render<Radar<double>>(parameters => parameters
@@ -208,11 +208,11 @@ public class RadarChartTests : BunitTest
         );
 
         // Simulate click on the first series path (index 0)
-        comp.FindAll("path.mud-chart-serie").First().Click();
+        await comp.FindAll("path.mud-chart-serie").First().ClickAsync();
         selectedIndex.Should().Be(0);
 
         // Simulate click on the second series path (index 1)
-        comp.FindAll("path.mud-chart-serie").Last().Click();
+        await comp.FindAll("path.mud-chart-serie").Last().ClickAsync();
         selectedIndex.Should().Be(1);
     }
 
@@ -232,7 +232,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_CanHideSeries_Test()
+    public async Task RadarChart_CanHideSeries()
     {
         var chartSeries = new List<ChartSeries<double>>()
         {
@@ -270,21 +270,21 @@ public class RadarChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Series 3 path should initially be hidden");
 
         // Hide Series 1
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+        await seriesCheckboxes[0].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
         chartSeries[0].Visible.Should().BeFalse("Series 1 Visible property should be false");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Series 1 path should be hidden after unchecking");
 
         // Show Series 1 again
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+        await seriesCheckboxes[0].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after showing");
         chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Series 1 path should be visible again after re-checking");
 
         // Hide Series 2
-        comp.InvokeAsync(() => seriesCheckboxes[1].Change(false));
+        await seriesCheckboxes[1].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
         chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false");
@@ -292,7 +292,7 @@ public class RadarChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Series 1 path should still be visible"); // Ensure other series not affected
 
         // Show Series 3 (which was initially hidden)
-        comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+        await seriesCheckboxes[2].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
         chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true");
@@ -886,7 +886,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ShowDefaultTooltip_OnSeriesPathHover()
+    public async Task RadarChart_Should_ShowDefaultTooltip_OnSeriesPathHover()
     {
         var seriesName = "My Series";
         var seriesData = new double[] { 10, 20, 30 };
@@ -905,7 +905,7 @@ public class RadarChartTests : BunitTest
         seriesPath.Should().NotBeNull();
 
         // Simulate mouseover to trigger tooltip
-        seriesPath.TriggerEvent("onmouseover", new MouseEventArgs());
+        await seriesPath.TriggerEventAsync("onmouseover", new MouseEventArgs());
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull();
@@ -913,7 +913,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ShowCustomTooltip_WithTooltipTemplate()
+    public async Task RadarChart_Should_ShowCustomTooltip_WithTooltipTemplate()
     {
         Context.JSInterop.Mode = JSRuntimeMode.Loose;
         var seriesName = "Custom Series";
@@ -940,7 +940,7 @@ public class RadarChartTests : BunitTest
 
         var seriesPath = comp.Find("path.mud-chart-serie");
         seriesPath.Should().NotBeNull();
-        seriesPath.TriggerEvent("onmouseover", new MouseEventArgs());
+        await seriesPath.TriggerEventAsync("onmouseover", new MouseEventArgs());
 
         var tooltipContent = comp.Find("div.custom-tooltip-test");
         tooltipContent.Should().NotBeNull();
@@ -969,7 +969,7 @@ public class RadarChartTests : BunitTest
         dataMarkers.Count.Should().Be(seriesData.Length);
 
         var firstMarker = dataMarkers.First();
-        firstMarker.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstMarker.TriggerEventAsync("onmouseover", new MouseEventArgs());
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull();
@@ -992,7 +992,7 @@ public class RadarChartTests : BunitTest
         // Re-find marker and re-trigger hover after re-render
         dataMarkers = comp.FindAll("circle.mud-chart-series-point");
         firstMarker = dataMarkers.First();
-        firstMarker.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstMarker.TriggerEventAsync("onmouseover", new MouseEventArgs());
 
         var customTooltipContent = comp.Find("div.custom-tooltip-test");
         customTooltipContent.Should().NotBeNull();
@@ -1001,13 +1001,13 @@ public class RadarChartTests : BunitTest
         // Hover on the second marker
         dataMarkers = comp.FindAll("circle.mud-chart-series-point");
         var secondMarker = dataMarkers[1];
-        secondMarker.TriggerEvent("onmouseover", new MouseEventArgs());
+        await secondMarker.TriggerEventAsync("onmouseover", new MouseEventArgs());
         customTooltipContent = comp.Find("div.custom-tooltip-test"); // Re-find, content should update
         customTooltipContent.TextContent.Should().Be($"{seriesName}, Value: {seriesData[1]}");
     }
 
     [Test]
-    public void RadarChart_Should_HideTooltip_OnMouseOut()
+    public async Task RadarChart_Should_HideTooltip_OnMouseOut()
     {
         Context.JSInterop.Mode = JSRuntimeMode.Loose;
         var seriesName = "Hide Test Series";
@@ -1027,12 +1027,12 @@ public class RadarChartTests : BunitTest
         seriesPath.Should().NotBeNull();
 
         // Mouse over to show tooltip
-        seriesPath.TriggerEvent("onmouseover", new MouseEventArgs());
+        await seriesPath.TriggerEventAsync("onmouseover", new MouseEventArgs());
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull("Tooltip should be visible on mouseover.");
 
         // Mouse out to hide tooltip
-        seriesPath.TriggerEvent("onmouseout", new MouseEventArgs());
+        await seriesPath.TriggerEventAsync("onmouseout", new MouseEventArgs());
         comp.FindAll("g.svg-tooltip").Count.Should().Be(0, "Tooltip content should be removed or hidden on mouseout.");
     }
 

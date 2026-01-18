@@ -582,7 +582,7 @@ namespace MudBlazor
             var text = GetItemString(ReadValue);
             if (!string.IsNullOrWhiteSpace(text))
             {
-                await SetTextAsync(text);
+                await SetTextCoreAsync(text);
             }
         }
 
