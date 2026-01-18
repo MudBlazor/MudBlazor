@@ -33,10 +33,10 @@ jobs:
           path: ${{ env.NUGET_PACKAGES }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: fast-actions/setup-dotnet@v1.0.0
         with:
           # We only need the latest SDK for publishing
-          dotnet-version: 10.x
+          dotnet-sdk: 10.x.x
 
       - name: Restore dependencies
         working-directory: src/MudBlazor
