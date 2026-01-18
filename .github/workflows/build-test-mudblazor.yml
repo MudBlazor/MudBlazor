@@ -13,7 +13,6 @@ concurrency:
 
 env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-  GenerateDocsTests: true
 
 jobs:
   build-test:
