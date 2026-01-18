@@ -155,7 +155,7 @@ namespace MudBlazor
         public double BufferValue { get; set; }
 
         /// <summary>
-        /// Shows a background of the progress bar where there is no value.
+        /// Shows a background for the portion of the progress bar that has not yet been filled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
