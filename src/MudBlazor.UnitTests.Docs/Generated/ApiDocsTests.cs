@@ -11,6 +11,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Docs.Generated
 {
     [TestFixture]
+    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     public partial class ApiDocsTests
     {
         private Bunit.BunitContext ctx;
