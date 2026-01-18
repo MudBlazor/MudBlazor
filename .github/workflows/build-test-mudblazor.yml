@@ -13,6 +13,8 @@ concurrency:
 
 env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  # Docs test generation stays off locally; CI explicitly enables it.
+  DocsTestsEnabled: true
 
 jobs:
   build-test:
