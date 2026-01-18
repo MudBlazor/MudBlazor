@@ -17,6 +17,8 @@ namespace MudBlazor.UnitTests.Docs.Generated
 
         private Bunit.BunitContext Ctx => _ctx ?? throw new InvalidOperationException("Bunit context has not been initialized for this test.");
 
+        private Bunit.BunitContext ctx => Ctx;
+
         [SetUp]
         public void Setup()
         {
