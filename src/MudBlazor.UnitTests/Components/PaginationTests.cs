@@ -72,21 +72,21 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Tests the aria-labels for the page buttons. . . note the index's aren't sequential because there are elements of "..."
         /// </summary>
-        /// <param name="index">The index of the control button. first page button has index 2.</param>
+        /// <param name="pageNumber">The page number to select in the pagination.</param>
         /// <param name="label">The expected value in the aria-label.</param>
-        [TestCase(2, "Page 1")]
-        [TestCase(3, "Page 2")]
-        [TestCase(5, "Current page 6")]
-        [TestCase(7, "Page 10")]
-        [TestCase(8, "Page 11")]
+        /// <param name="isCurrent">Whether the page is the currently selected page.</param>
+        [TestCase(1, "Page 1", false)]
+        [TestCase(2, "Page 2", false)]
+        [TestCase(6, "Current page 6", true)]
+        [TestCase(10, "Page 10", false)]
+        [TestCase(11, "Page 11", false)]
         [Test]
-        public void PaginationPageButtonAriaLabel(int index, string label)
+        public void PaginationPageButtonAriaLabel(int pageNumber, string label, bool isCurrent)
         {
             var comp = Context.Render<PaginationButtonTest>();
-            var buttons = comp.FindAll(".mud-pagination-item button");
-            var button = buttons[index];
+            var button = FindPageButton(comp, pageNumber);
             button.Attributes.GetNamedItem("aria-label")?.Value.Should().Be(label);
-            if (index == 5)
+            if (isCurrent)
             {
                 button.Attributes.GetNamedItem("aria-current")?.Value.Should().Be("page");
             }
@@ -128,15 +128,15 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Tests the clicking on page buttons
         /// </summary>
-        /// <param name="clickIndexPage">The index of the clicked page button.</param>
+        /// <param name="pageNumber">The page number to click.</param>
         /// <param name="initiallySelectedPage">The initially selected page.</param>
         /// <param name="expectedSelectedPage">The expected selected page.</param>
-        [TestCase(0, 6, 1)]
-        [TestCase(6, 6, 11)]
-        [TestCase(5, 5, 6)]
-        [TestCase(2, 5, 3)]
+        [TestCase(1, 6, 1)]
+        [TestCase(11, 6, 11)]
+        [TestCase(6, 5, 6)]
+        [TestCase(3, 5, 3)]
         [Test]
-        public async Task PaginationPageButtonClick(int clickIndexPage, int initiallySelectedPage,
+        public async Task PaginationPageButtonClick(int pageNumber, int initiallySelectedPage,
             int expectedSelectedPage)
         {
             var comp = Context.Render<PaginationButtonTest>();
@@ -145,8 +145,8 @@ namespace MudBlazor.UnitTests.Components
             //navigate to the specified page
             await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(initiallySelectedPage - 1); });
 
-            //Click on the page button, +2 because of the first two control buttons
-            await comp.FindAll(".mud-pagination-item button")[clickIndexPage + 2].ClickAsync();
+            //Click on the page button
+            await FindPageButton(comp, pageNumber).ClickAsync();
 
             //Expected values
             pagination.GetState(x => x.Selected).Should().Be(expectedSelectedPage);
@@ -157,17 +157,16 @@ namespace MudBlazor.UnitTests.Components
         //returns the specified control button
         private static IElement FindControlButton(IRenderedComponent<IComponent> comp, Page controlButton)
         {
-            var buttons = comp.FindAll(".mud-pagination-item button");
-            var button = controlButton switch
+            var testId = controlButton switch
             {
-                Page.First => buttons[0],
-                Page.Previous => buttons[1],
-                Page.Next => buttons[^2],
-                Page.Last => buttons[^1],
+                Page.First => "mud-pagination-control-first",
+                Page.Previous => "mud-pagination-control-previous",
+                Page.Next => "mud-pagination-control-next",
+                Page.Last => "mud-pagination-control-last",
                 _ => throw new ArgumentOutOfRangeException(nameof(controlButton), controlButton,
                     @"This control button type is not supported!")
             };
-            return button;
+            return comp.Find($"[data-testid='{testId}']");
         }
 
         /// <summary>
@@ -319,7 +318,7 @@ namespace MudBlazor.UnitTests.Components
             pagination.ClassName.Should().Contain("mud-pagination-filled");
 
             //test if color is secondary
-            buttons[0].ClassName.Should().Contain("mud-button-filled-secondary");
+            FindPageButton(comp, 1).ClassName.Should().Contain("mud-button-filled-secondary");
 
             //test if items are rectangular
             foreach (var item in paginationItems)
@@ -341,6 +340,11 @@ namespace MudBlazor.UnitTests.Components
 
             //test if rtl is used
             pagination.ClassName.Should().Contain("mud-pagination-rtl");
+        }
+
+        private static IElement FindPageButton(IRenderedComponent<IComponent> comp, int pageNumber)
+        {
+            return comp.Find($"[data-testid='mud-pagination-page-{pageNumber}']");
         }
     }
 }

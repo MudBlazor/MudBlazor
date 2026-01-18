@@ -62,6 +62,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 - Choose `dev` as the target branch
 - All tests must pass, when you push, they will be executed on the CI server, and you'll receive a test report per email. But you can also execute them locally for quicker feedback.
 - You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future under changes from other contributors. For more information on testing, see the appropriate section below
+- For tests, avoid index-based DOM selection (for example, `FindAll(...)[0]`). Prefer stable selectors such as `data-testid`, IDs, or aria-labels so code review can focus on behavior instead of markup order.
 - If there are new changes in the main repo, you should either merge the main repo's (upstream) dev or rebase your branch onto it.
 - Before working on a large change, it is recommended to first open an issue to discuss it with others
 - If your Pull Request is still in progress, convert it to a draft Pull Request
@@ -409,6 +410,10 @@ As soon as you interact with html elements they are potentially re-rendered, and
 ```
 
 So never save html element references in a variable in a bUnit test. Note: you can save component references in variables just fine, so don't confuse that.
+
+#### Avoid index-based element selection in tests
+
+Avoid targeting elements by their position in the DOM (for example, `FindAll(".my-class")[2]` or `ElementAt(0)`). Prefer stable selectors such as `data-testid`, IDs, aria-labels, or text-based selectors so tests remain resilient to markup changes. If a stable selector is missing, add a `data-testid` attribute in the component markup used by the test.
 
 #### Always use InvokeAsync to set parameter values on a component
 
