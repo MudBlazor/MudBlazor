@@ -12,22 +12,18 @@ namespace MudBlazor.UnitTests.Docs.Generated
     [TestFixture]
     public partial class ExampleDocsTests
     {
-        private BunitContext _ctx;
-
-        private BunitContext Ctx => _ctx ?? throw new InvalidOperationException("Bunit context has not been initialized for this test.");
-
-        private BunitContext ctx => Ctx;
+        private BunitContext ctx;
 
         [SetUp]
         public void Setup()
         {
-            _ctx = CreateContext();
+            ctx = CreateContext();
         }
 
         [TearDown]
         public void TearDown()
         {
-            var currentCtx = _ctx;
+            var currentCtx = ctx;
             if (currentCtx == null)
             {
                 return;
@@ -40,7 +36,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             catch (Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
             finally
             {
-                _ctx = null;
+                ctx = null;
             }
         }
 
