@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Services;
 
+#nullable enable
 /// <summary>
 /// Provides functionality to subscribe to JavaScript events of any HTML element by its ID.
 /// </summary>

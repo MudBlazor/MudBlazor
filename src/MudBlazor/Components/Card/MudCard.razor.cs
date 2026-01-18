@@ -5,7 +5,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a block of content which can include a header, image, content, and actions.
+    /// Cards contain actions, text, or media like images or graphics. Keeping a card to a single subject keeps the design clean.
     /// </summary>
     /// <seealso cref="MudCardActions" />
     /// <seealso cref="MudCardContent" />
@@ -25,7 +25,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public int Elevation { set; get; } = MudGlobal.CardDefaults.Elevation;
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
         /// Disables rounded corners.
@@ -35,7 +35,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public bool Square { get; set; } = MudGlobal.CardDefaults.Square;
+        public bool Square { get; set; }
 
         /// <summary>
         /// Displays an outline.
@@ -45,7 +45,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public bool Outlined { get; set; } = MudGlobal.CardDefaults.Outlined;
+        public bool Outlined { get; set; }
 
         /// <summary>
         /// The content within this component.

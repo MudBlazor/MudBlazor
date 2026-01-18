@@ -29,9 +29,9 @@ namespace MudBlazor
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
         private MudInput<string> _elementReference = null!;
-        private string _elementId = Identifier.Create("numericField");
+        private readonly string _elementId = Identifier.Create("numericField");
 
-        private Comparer _comparer = new(CultureInfo.InvariantCulture);
+        private readonly Comparer _comparer = new(CultureInfo.InvariantCulture);
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -131,6 +131,18 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
+
+        // Defensive null check with object pattern: GetCulture() is annotated as non-null, but DataGrid may return null in certain cases.
+        // In typical scenarios it is not null, as MudFormComponent sets a default culture and other components do not override it with null.
+        // The annotation could be changed in the future, but doing so would introduce unnecessary null checks in other components.
+        private bool IsFormatted =>
+            Pattern is not null ||
+            GetFormat() is not null ||
+            // Edgy way to check if the MudComponentForm.Culture is provided explicitly and is a different one than the default CurrentUICulture && InvariantCulture.
+            // If not, then we override to InvariantCulture to avoid issues with <input type="number">.
+            GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture);
+
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
         public override ValueTask FocusAsync()
@@ -160,10 +172,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
-            return base.SetValueAsync(value, valueChanged || updateText, force);
+            return base.SetValueAndUpdateTextAsync(value, valueChanged || updateText, force);
         }
 
         /// <inheritdoc />
@@ -178,7 +190,7 @@ namespace MudBlazor
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
-                await SetValueAsync(value, true);
+                await SetValueAndUpdateTextAsync(value, true);
             return true; //Don't show errors
         }
 
@@ -210,33 +222,33 @@ namespace MudBlazor
                 var nextValue = GetNextValue(factor) ?? Num.To<T>(0);
 
                 // validate that the data type is a value type before we compare them
-                if (typeof(T).IsValueType && Value is not null)
+                if (typeof(T).IsValueType && ReadValue is not null)
                 {
-                    if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
+                    if (factor > 0 && _comparer.Compare(nextValue, ReadValue) < 0)
                         nextValue = Max;
-                    else if (factor < 0 && _comparer.Compare(nextValue, Value) > 0)
+                    else if (factor < 0 && _comparer.Compare(nextValue, ReadValue) > 0)
                         nextValue = Min;
                 }
 
-                await SetValueAsync(ConstrainBoundaries(nextValue).value);
-                await _elementReference.SetText(Text);
+                await SetValueAndUpdateTextAsync(ConstrainBoundaries(nextValue).value);
+                await _elementReference.SetText(ReadText);
             }
             catch (OverflowException)
             {
                 // if next value overflows the primitive type, lets set it to Min or Max depending on if factor is positive or negative
-                await SetValueAsync(factor > 0 ? Max : Min, true);
+                await SetValueAndUpdateTextAsync(factor > 0 ? Max : Min, true);
             }
         }
 
         private T? GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
+                return (T)(object)Convert.ToDecimal(FromDecimal(ReadValue) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
+                return (T)(object)Convert.ToInt64(FromInt64(ReadValue) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
-            return Num.To<T>(Num.From(Value) + (Num.From(Step) * factor));
+                return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
+            return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
         }
 
         /// <summary>
@@ -278,23 +290,41 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var options = new KeyInterceptorOptions(
-                    "mud-input-slot",
-                    [
-                        // prevent scrolling page, instead increment
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page, instead decrement
-                        new("ArrowDown", preventDown: "key+none"),
-                        // prevent dead keys like ^ ` ´ etc
-                        new("Dead", preventDown: "key+any"),
-                        // prevent input of all other characters except allowed, like [0-9.,-+]
-                        new($"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
-                    ]);
+                var keyOptions = new List<KeyOptions>
+                {
+                    // prevent scrolling page, instead increment
+                    new("ArrowUp", preventDown: "key+none"),
+                    // prevent scrolling page, instead decrement
+                    new("ArrowDown", preventDown: "key+none"),
+                     // prevent dead keys like ^ ` ´ etc
+                    new("Dead", preventDown: "key+any"),
+                };
+
+                if (Pattern != null)
+                {
+                    //prevent inputs that do not match the pattern
+                    keyOptions.Add(new($"/^(?!{Pattern.TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt"));
+                }
+
+                var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
 
             await base.OnAfterRenderAsync(firstRender);
+
+            if (!firstRender)
+            {
+                return;
+            }
+
+            // Overrides the browser's culture since <input type="number"> does not consider culture.
+            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used 
+            // with the corresponding attributes applied.
+            if (!IsFormatted)
+            {
+                await SetCultureAsync(CultureInfo.InvariantCulture);
+            }
         }
 
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
@@ -432,21 +462,21 @@ namespace MudBlazor
         /// The regular expression used to constrain values.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>[0-9,.\-]</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
+        /// Defaults to <c>null</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
         /// </remarks>
         [Parameter]
-        public override string? Pattern { get; set; } = @"[0-9,.\-]";
+        public override string? Pattern { get; set; } = null;
 
         private string GetCounterText() => Counter switch
         {
             null => string.Empty,
-            0 => string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}",
-            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+            0 => string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}",
+            _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
         private Task OnInputValueChanged(string text)
         {
-            return SetTextAsync(text);
+            return SetTextAndUpdateValueAsync(text);
         }
 
         //avoids the format to use scientific notation for large or small number in floating points types, while covering all options

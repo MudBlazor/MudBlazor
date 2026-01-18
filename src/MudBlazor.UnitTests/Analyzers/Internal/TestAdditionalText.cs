@@ -3,23 +3,19 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text;
-using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace MudBlazor.UnitTests.Analyzers.Internal
-{
+namespace MudBlazor.UnitTests.Analyzers.Internal;
 #nullable enable
-    public sealed class TestAdditionalText(string path, SourceText text) : AdditionalText
+public sealed class TestAdditionalText(string path, SourceText text) : AdditionalText
+{
+    public TestAdditionalText(string text = "", Encoding? encoding = null, string path = "dummy")
+        : this(path, SourceText.From(text, encoding))
     {
-        public TestAdditionalText(string text = "", Encoding? encoding = null, string path = "dummy")
-            : this(path, SourceText.From(text, encoding))
-        {
-        }
-
-        public override string Path { get; } = path;
-
-        public override SourceText GetText(CancellationToken cancellationToken = default) => text;
     }
-#nullable restore
+
+    public override string Path { get; } = path;
+
+    public override SourceText GetText(CancellationToken cancellationToken = default) => text;
 }

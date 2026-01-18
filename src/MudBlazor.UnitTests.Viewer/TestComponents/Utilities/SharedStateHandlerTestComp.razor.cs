@@ -60,27 +60,27 @@ public partial class SharedStateHandlerTestComp : MudComponentBase
     public int OpHandlerCallCount { get; private set; }
     public int XyzHandlerCallCount { get; private set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int A { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int B { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int C { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int O { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int P { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int X { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int Y { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int Z { get; set; }
 }

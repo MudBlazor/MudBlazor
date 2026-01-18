@@ -1,0 +1,120 @@
+@namespace MudBlazor.UnitTests.TestComponents.TextField
+@inject IDialogService DialogService
+
+<MudStack Spacing="2" Class="pa-4">
+    <MudText Typo="Typo.h6">TextField Sizing (Dialog)</MudText>
+
+    <MudText Typo="Typo.body2">
+        Opens a simple dialog containing a multiline MudTextField with different Sizing options.
+    </MudText>
+
+    <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAutoDialogAsync">
+            Open Auto Dialog
+        </MudButton>
+
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="OpenFixedDialogAsync">
+            Open Fixed Dialog
+        </MudButton>
+
+        @if (_lastResult is not null)
+        {
+            <MudText Color="Color.Success" Typo="Typo.subtitle2">Submitted</MudText>
+        }
+        else if (_lastCanceled)
+        {
+            <MudText Color="Color.Warning" Typo="Typo.subtitle2">Canceled</MudText>
+        }
+    </MudStack>
+
+    @if (_lastResult is not null)
+    {
+        <MudText Typo="Typo.subtitle2">Result</MudText>
+        <MudPaper Outlined Class="pa-3" Style="white-space: pre-wrap;">@_lastResult</MudPaper>
+    }
+</MudStack>
+
+@code {
+    private string? _lastResult;
+    private bool _lastCanceled;
+
+    private async Task OpenAutoDialogAsync()
+    {
+        _lastResult = null;
+        _lastCanceled = false;
+
+        var parameters = new DialogParameters<TextFieldAutoSizingDialog>
+        {
+            { x => x.Title, "Edit note (Auto)" },
+            { x => x.Placeholder, "What's on your mind?" },
+            { x => x.InitialText, "Line 1\nLine 2\nLine 3" },
+            { x => x.Lines, 8 },
+            { x => x.MaxLines, 16 }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Small
+        };
+
+        var dialog = await DialogService.ShowAsync<TextFieldAutoSizingDialog>("Edit note (Auto)", parameters, options);
+        await HandleDialogResult(dialog);
+    }
+
+    private async Task OpenFixedDialogAsync()
+    {
+        _lastResult = null;
+        _lastCanceled = false;
+
+        var parameters = new DialogParameters<TextFieldFixedSizingDialog>
+        {
+            { x => x.Title, "Edit note (Fixed)" },
+            { x => x.Placeholder, "What's on your mind?" },
+            { x => x.InitialText, "Line 1\nLine 2\nLine 3" },
+            { x => x.Lines, 8 }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Small
+        };
+
+        var dialog = await DialogService.ShowAsync<TextFieldFixedSizingDialog>("Edit note (Fixed)", parameters, options);
+        await HandleDialogResult(dialog);
+    }
+
+    private async Task HandleDialogResult(IDialogReference? dialog)
+    {
+        if (dialog is null)
+        {
+            _lastCanceled = true;
+            return;
+        }
+
+        var resultTask = dialog.Result;
+        if (resultTask is null)
+        {
+            _lastCanceled = true;
+            return;
+        }
+
+        var result = await resultTask;
+        if (result is null)
+        {
+            _lastCanceled = true;
+            return;
+        }
+
+        if (result.Canceled)
+        {
+            _lastCanceled = true;
+            return;
+        }
+
+        _lastResult = result.Data as string;
+    }
+}

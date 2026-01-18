@@ -1,5 +1,3 @@
 # MudBlazor Changelog
 
-## Please refer to github releases
-
-https://github.com/MudBlazor/MudBlazor/releases
+Find an up-to-date summary of changes from each version on the [Releases page](https://github.com/MudBlazor/MudBlazor/releases).

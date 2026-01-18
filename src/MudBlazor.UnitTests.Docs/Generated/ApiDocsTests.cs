@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Api;
@@ -13,12 +13,12 @@ namespace MudBlazor.UnitTests.Docs.Generated
     [TestFixture]
     public partial class ApiDocsTests
     {
-        private Bunit.TestContext ctx;
+        private Bunit.BunitContext ctx;
 
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.TestContext();
+            ctx = new Bunit.BunitContext();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton(TimeProvider.System);
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
@@ -38,6 +38,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddScoped<IPointerEventsNoneService, MockPointerEventsNoneService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
@@ -50,7 +51,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
         public async Task AlertPage_Test()
         {
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
-            var comp = ctx.RenderComponent<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
+            var comp = ctx.Render<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
         }
 
@@ -61,7 +62,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
         public async Task MudAlert_API_Test_Example()
         {
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
-            var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter("TypeName", "MudAlert"));
+            var comp = ctx.Render<Api>(parameters => parameters.Add(x => x.TypeName, "MudAlert"));
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
             comp.Markup.Should().NotContain("Sorry, the type").And.NotContain("could not be found");
             var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));
@@ -69,6 +70,6 @@ namespace MudBlazor.UnitTests.Docs.Generated
         }
 
         [TearDown]
-        public void TearDown() => ctx.Dispose();
+        public async Task TearDown() => await ctx.DisposeAsync();
     }
 }

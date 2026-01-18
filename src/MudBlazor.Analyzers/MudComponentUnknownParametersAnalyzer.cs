@@ -12,27 +12,23 @@ namespace MudBlazor.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class MudComponentUnknownParametersAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId1 = "MUD0001";
-        public const string DiagnosticId2 = "MUD0002";
+        public const string DiagnosticId = "MUD0002";
         public const string ClassNamePropertyKey = "ClassName";
 
-        // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Localizing%20Analyzers.md for more on localization
-        private static readonly LocalizableString _title = new LocalizableResourceString(nameof(Resources.MUD0001Title), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString _parameterMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0001MessageFormat), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _title = new LocalizableResourceString(nameof(Resources.MUD0002Title), Resources.ResourceManager, typeof(Resources));
         private static readonly LocalizableString _attributeMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0002MessageFormat), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString _description = new LocalizableResourceString(nameof(Resources.MUD0001Description), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableResourceString _url = new(nameof(Resources.MUD0001Url), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _description = new LocalizableResourceString(nameof(Resources.MUD0002Description), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableResourceString _url = new(nameof(Resources.HelpLinkUrl), Resources.ResourceManager, typeof(Resources));
 
         private const string Category = "Attributes/Parameters";
         public const string DebugAnalyzerProperty = "build_property.MudDebugAnalyzer";
         public const string AllowedAttributePatternProperty = "build_property.mudallowedattributepattern";
-        public const string IllegalParametersProperty = "build_property.mudillegalparameters";
+        public const string AllowedAttributeListProperty = "build_property.mudallowedattributelist";
 
-        public static readonly DiagnosticDescriptor ParameterDescriptor = new(DiagnosticId1, _title, _parameterMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
-        public static readonly DiagnosticDescriptor AttributeDescriptor = new(DiagnosticId2, _title, _attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
+        public static readonly DiagnosticDescriptor AttributeDescriptor = new(DiagnosticId, _title, _attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics = new[] { ParameterDescriptor, AttributeDescriptor }.ToImmutableArray();
+        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics = new[] { AttributeDescriptor }.ToImmutableArray();
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => _supportedDiagnostics;
 
@@ -45,7 +41,6 @@ namespace MudBlazor.Analyzers
             {
                 var global = ctx.Options.AnalyzerConfigOptionsProvider.GlobalOptions;
 
-
                 if (global.TryGetValue(DebugAnalyzerProperty, out var debugValue) &&
                     bool.TryParse(debugValue, out var shouldDebug) && shouldDebug)
                 {
@@ -53,23 +48,21 @@ namespace MudBlazor.Analyzers
                 }
 
                 if (!global.TryGetValue(AllowedAttributePatternProperty, out var allowPattern)
-                   || !Enum.TryParse<AllowedAttributePattern>(allowPattern, out var allowedAttributePattern))
+                   || !Enum.TryParse<AllowedAttributePattern>(allowPattern, true, out var allowedAttributePattern))
                 {
                     allowedAttributePattern = AllowedAttributePattern.LowerCase;
                 }
 
-                if (!global.TryGetValue(IllegalParametersProperty, out var deny)
-                    || !Enum.TryParse<IllegalParameters>(deny, out var illegalParameters))
-                {
-                    illegalParameters = IllegalParameters.V7IgnoreCase;
-                }
-
-                if (illegalParameters == IllegalParameters.Disabled && allowedAttributePattern == AllowedAttributePattern.Any)
+                if (allowedAttributePattern == AllowedAttributePattern.Any)
                     return;
 
-                var illegalParameterSet = new IllegalParameterSet(ctx.Compilation, illegalParameters);
+                if (!global.TryGetValue(AllowedAttributeListProperty, out var allowedAttributes)
+                    || string.IsNullOrEmpty(allowedAttributes))
+                {
+                    allowedAttributes = HTMLAttributes.DefaultAttributes;
+                }
 
-                var analyzerContext = new AnalyzerContext(ctx.Compilation, illegalParameterSet, allowedAttributePattern);
+                var analyzerContext = new AnalyzerContext(ctx.Compilation, allowedAttributePattern, allowedAttributes);
 
                 if (analyzerContext.IsValid)
                 {
@@ -83,16 +76,19 @@ namespace MudBlazor.Analyzers
         {
             private readonly IEqualityComparer<ISymbol?> _symbolComparer = new MetadataSymbolComparer();
             private readonly ConcurrentDictionary<ITypeSymbol, ComponentDescriptor> _componentDescriptors = new(SymbolEqualityComparer.Default);
-            private readonly IllegalParameterSet _illegalParameterSet;
             private readonly AllowedAttributePattern _allowedAttributePattern;
             private readonly INamedTypeSymbol? _componentBaseSymbol;
             private readonly INamedTypeSymbol? _parameterSymbol;
             private readonly INamedTypeSymbol? _renderTreeBuilderSymbol;
             private readonly INamedTypeSymbol? _mudComponentBaseType;
+            private readonly ImmutableHashSet<string> _allowedAttributes;
 
-            public AnalyzerContext(Compilation compilation, IllegalParameterSet illegalParameterSet, AllowedAttributePattern allowedAttributePattern)
+            public AnalyzerContext(Compilation compilation, AllowedAttributePattern allowedAttributePattern, string allowedAttributes)
             {
-                _illegalParameterSet = illegalParameterSet;
+                _allowedAttributes = allowedAttributePattern == AllowedAttributePattern.HTMLAttributes
+                    ? allowedAttributes.Split(',').ToImmutableHashSet()
+                    : ImmutableHashSet<string>.Empty;
+
                 _allowedAttributePattern = allowedAttributePattern;
                 _componentBaseSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase");
                 _parameterSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute");
@@ -116,7 +112,7 @@ namespace MudBlazor.Analyzers
                 }
             }
 
-            public void TraverseTree(OperationAnalysisContext context, IBlockOperation operations, string className)
+            private void TraverseTree(OperationAnalysisContext context, IBlockOperation operations, string className)
             {
                 ITypeSymbol? currentComponent = null;
                 ComponentDescriptor? currentComponentDescriptor = null;
@@ -149,10 +145,10 @@ namespace MudBlazor.Analyzers
                                 {
                                     if (targetMethod.Parameters.Length >= 2 && targetMethod.Parameters[1].Type.IsString())
                                     {
-                                        var pName = invocation.Arguments[1].Value.ConstantValue;
+                                        var aName = invocation.Arguments[1].Value.ConstantValue;
 
-                                        if (pName.HasValue && pName.Value is string parameterName)
-                                            ValidateAttribute(context, invocation, currentComponentDescriptor, currentComponent, parameterName, className);
+                                        if (aName.HasValue && aName.Value is string attributeName)
+                                            ValidateAttribute(context, invocation, currentComponentDescriptor, attributeName, className);
                                     }
                                 }
                             }
@@ -177,39 +173,45 @@ namespace MudBlazor.Analyzers
             }
 
             private void ValidateAttribute(OperationAnalysisContext context, IInvocationOperation invocation,
-                ComponentDescriptor? componentDescriptor, ITypeSymbol componentType, string parameterName, string className)
+                ComponentDescriptor? componentDescriptor, string attributeName, string className)
             {
-                if (componentDescriptor is null || componentDescriptor.Parameters.Contains(parameterName))
+                //check for existence of parameter (case insensitive)
+                if (componentDescriptor is null || componentDescriptor.Parameters.Contains(attributeName))
                     return;
-                else
-                {
-                    //check illegals first                    
-                    foreach (var illegalParam in _illegalParameterSet.Parameters)
-                    {
-                        if (componentType.IsOrInheritFrom(illegalParam.Key, _symbolComparer) && illegalParam.Value.Contains(parameterName, _illegalParameterSet.Comparer))
-                        {
-                            Report(ParameterDescriptor, context, invocation, parameterName, componentDescriptor, className, _illegalParameterSet.IllegalParameters.ToString());
-                            return;
-                        }
-                    }
 
-                    switch (_allowedAttributePattern)
-                    {
-                        case AllowedAttributePattern.LowerCase when char.IsLower(parameterName, 0):
-                            return;
-                        case AllowedAttributePattern.DataAndAria when (parameterName.StartsWith("data-", StringComparison.Ordinal) || parameterName.StartsWith("aria-", StringComparison.Ordinal)):
-                            return;
-                        case AllowedAttributePattern.Any:
-                            return;
-                        default:
-                            Report(AttributeDescriptor, context, invocation, parameterName, componentDescriptor, className, _allowedAttributePattern.ToString());
-                            return;
-                    }
+                switch (_allowedAttributePattern)
+                {
+                    //only checks first letter as hyphen - for example is classed as upper case
+                    case AllowedAttributePattern.LowerCase when char.IsLower(attributeName, 0):
+                    case AllowedAttributePattern.DataAndAria when ValidateAttributeList(attributeName):
+                    case AllowedAttributePattern.HTMLAttributes when ValidateAttributeList(attributeName):
+                    case AllowedAttributePattern.Any:
+                        return;
+                    default:
+                        Report(AttributeDescriptor, context, invocation, attributeName, componentDescriptor, className, _allowedAttributePattern.ToString());
+                        return;
                 }
             }
 
-            private void Report(DiagnosticDescriptor diagnosticDescriptor, OperationAnalysisContext context, IInvocationOperation invocation,
-                string parameterName, ComponentDescriptor componentDescriptor, string className, string pattern)
+            private bool ValidateAttributeList(string attributeName)
+            {
+                if (attributeName.StartsWith("data-", StringComparison.Ordinal))
+                    return true;
+
+                if (attributeName.StartsWith("aria-", StringComparison.Ordinal))
+                    return true;
+
+                if (attributeName.Equals("role", StringComparison.Ordinal))
+                    return true;
+
+                if (_allowedAttributes.Contains(attributeName, StringComparer.Ordinal))
+                    return true;
+
+                return false;
+            }
+
+            private static void Report(DiagnosticDescriptor diagnosticDescriptor, OperationAnalysisContext context, IInvocationOperation invocation,
+                string attributeName, ComponentDescriptor componentDescriptor, string className, string pattern)
             {
                 var location = invocation.Syntax.GetLocation();
                 var mappedLocation = location;
@@ -222,12 +224,16 @@ namespace MudBlazor.Analyzers
                 }
 
                 context.ReportDiagnostic(
-                 Diagnostic.Create(
-                    descriptor: diagnosticDescriptor,
-                    location: mappedLocation,
-                    additionalLocations: [location],
-                    properties: ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string?>(ClassNamePropertyKey, className) }),
-                    messageArgs: [parameterName, componentDescriptor.TagName, pattern, location.GetLineSpan().Span]));
+                    Diagnostic.Create(
+                        descriptor: diagnosticDescriptor,
+                        location: mappedLocation,
+                        additionalLocations: [location],
+                        properties: ImmutableDictionary.CreateRange(new[]
+                        {
+                            new KeyValuePair<string, string?>(ClassNamePropertyKey, className)
+                        }),
+                        messageArgs:
+                        [attributeName, componentDescriptor.TagName, pattern, location.GetLineSpan().Span]));
             }
 
         }

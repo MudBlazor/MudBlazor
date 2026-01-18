@@ -22,6 +22,8 @@ namespace MudBlazor
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
         internal ParameterState<bool> HiddenState { get; }
         internal ParameterState<bool> GroupingState { get; }
+        internal ParameterState<bool> _groupExpandedState;
+        internal ParameterState<int> _groupByOrderState;
 
         /// <summary>
         /// The data grid which owns this column.
@@ -79,35 +81,89 @@ namespace MudBlazor
         /// </remarks>
         [Parameter] public int HeaderColSpan { get; set; } = 1;
 
+#nullable enable
         /// <summary>
         /// The template used to display this column's header.
         /// </summary>
         [Parameter]
-        public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
+        public RenderFragment<HeaderContext<T>>? HeaderTemplate { get; set; }
+
+        public virtual RenderFragment<HeaderContext<T>>? GetHeaderTemplate() => HeaderTemplate;
 
         /// <summary>
         /// The template used to display this column's value cells.
         /// </summary>
         [Parameter]
-        public RenderFragment<CellContext<T>> CellTemplate { get; set; }
+        public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
+
+        public virtual RenderFragment<CellContext<T>>? GetCellTemplate() => CellTemplate;
 
         /// <summary>
         /// The template used to display this column's footer.
         /// </summary>
         [Parameter]
-        public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
+        public RenderFragment<FooterContext<T>>? FooterTemplate { get; set; }
+
+        public virtual RenderFragment<FooterContext<T>>? GetFooterTemplate() => FooterTemplate;
 
         /// <summary>
         /// The template used to display this column's grouping.
         /// </summary>
         [Parameter]
-        public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
+        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+
+        public virtual RenderFragment<GroupDefinition<T>>? GetGroupTemplate() => GroupTemplate;
+
+        /// <summary>
+        /// The template used to display this column's aggregate.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<IEnumerable<T>>? AggregateTemplate { get; set; }
+
+        public virtual RenderFragment<IEnumerable<T>>? GetAggregateTemplate() => AggregateTemplate;
+#nullable disable
 
         /// <summary>
         /// The function which groups values in this column.
         /// </summary>
         [Parameter]
         public Func<T, object> GroupBy { get; set; }
+
+        /// <summary>
+        /// The order in which values are grouped when there are more than one group
+        /// </summary>
+        /// <remarks>
+        /// Defaults to 0.
+        /// </remarks>
+        [Parameter, ParameterState]
+        public int GroupByOrder { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="GroupByOrder"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> GroupByOrderChanged { get; set; }
+
+        /// <summary>
+        /// Indents the column <c>48px</c> beyond its parent when grouped.
+        /// </summary>
+        [Parameter]
+        public bool GroupIndented { get; set; } = true;
+
+        /// <summary>
+        /// Whether groups created from this column are expanded. Toggling the value will Toggle all grouped rows of this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter, ParameterState]
+        public bool GroupExpanded { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="GroupExpanded"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> GroupExpandedChanged { get; set; }
 
         /// <summary>
         /// Requires a value to be set.
@@ -207,7 +263,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         public bool Hidden { get; set; }
 
         /// <summary>
@@ -273,7 +329,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates whether this column is currently grouped.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         public bool Grouping { get; set; }
 
         /// <summary>
@@ -316,7 +372,6 @@ namespace MudBlazor
         /// The unique identifier for this column.
         /// </summary>
         public string Identifier { get; set; }
-
 
         private CultureInfo _culture;
 
@@ -541,18 +596,19 @@ namespace MudBlazor
                 .WithParameter(() => Grouping)
                 .WithEventCallback(() => GroupingChanged)
                 .WithChangeHandler(OnGroupingParameterChangedAsync);
+            _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
+                .WithParameter(() => GroupExpanded)
+                .WithChangeHandler(OnGroupExpandedChangedAsync);
+            _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
+                .WithParameter(() => GroupByOrder)
+                .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 
-        private async Task OnGroupingParameterChangedAsync()
-        {
-            if (GroupingState.Value)
-            {
-                if (DataGrid is not null)
-                {
-                    await DataGrid.ChangedGrouping(this);
-                }
-            }
-        }
+        private void OnGroupingParameterChangedAsync() => DataGrid?.GroupItems();
+
+        private void OnGroupByOrderChangedAsync() => DataGrid?.GroupItems();
+
+        private void OnGroupExpandedChangedAsync() => DataGrid?.GroupItems();
 
         protected override void OnInitialized()
         {
@@ -646,11 +702,6 @@ namespace MudBlazor
         internal async Task SetGroupingAsync(bool group)
         {
             await GroupingState.SetValueAsync(group);
-
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping(this);
-            }
         }
 
         /// <summary>
@@ -697,7 +748,6 @@ namespace MudBlazor
             if (DataGrid != null)
                 DataGrid.RemoveColumn(this);
         }
-
 
         #region Abstract Members
 

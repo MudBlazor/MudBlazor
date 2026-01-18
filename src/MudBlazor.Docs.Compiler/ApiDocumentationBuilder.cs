@@ -5,10 +5,10 @@
 using System.Reflection;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
 /// <summary>
 /// Represents a generator of HTML documentation based on XML documentation files.
 /// </summary>
@@ -20,7 +20,7 @@ namespace MudBlazor.Docs.Compiler;
 /// <see cref="DocumentedEvent"/>, and <see cref="DocumentedField"/>, in a strongly typed manner. 
 /// </para>
 /// </remarks>
-public partial class ApiDocumentationBuilder
+public class ApiDocumentationBuilder
 {
     /// <summary>
     /// The reader for XML documentation.
@@ -156,6 +156,16 @@ public partial class ApiDocumentationBuilder
         return false;
     }
 
+    private static bool ImplementsConverterInterface(Type type)
+    {
+        if (!type.IsClass) return false;
+
+        return type
+            .GetInterfaces()
+            .Any(i => i.IsGenericType
+                      && i.GetGenericTypeDefinition() == typeof(IConverter<,>));
+    }
+
     /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
@@ -176,6 +186,22 @@ public partial class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
+        // Early exit: if ApiDocumentation.generated.cs exists and is newer than all input assemblies, skip generation
+        if (File.Exists(Paths.ApiDocumentationFilePath))
+        {
+            var outputLastWrite = File.GetLastWriteTimeUtc(Paths.ApiDocumentationFilePath);
+            var newestInputTime = Assemblies
+                .Select(a => File.GetLastWriteTimeUtc(a.Location))
+                .DefaultIfEmpty(DateTime.MinValue)
+                .Max();
+
+            if (outputLastWrite > newestInputTime)
+            {
+                Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date, skipping generation.");
+                return true;
+            }
+        }
+
         AddTypesToDocument();
         ResolveSeeAlsoLinks();
         FindDeclaringTypes();
@@ -203,6 +229,7 @@ public partial class ApiDocumentationBuilder
                     && !IsExcluded(type)
                     // ... which aren't interfaces
                     && !type.IsInterface
+                    && !ImplementsConverterInterface(type)
                     // ... which aren't source generators
                     && !type.Name.Contains("SourceGenerator")
                     // ... which aren't extension classes
@@ -692,7 +719,7 @@ public partial class ApiDocumentationBuilder
     public void ExportApiDocumentation()
     {
         // Sort everything by category
-        using var writer = new ApiDocumentationWriter(Paths.ApiDocumentationFilePath);
+        using var writer = new ApiDocumentationWriter();
         writer.WriteHeader();
         writer.WriteClassStart();
         writer.WriteConstructorStart();
@@ -708,6 +735,22 @@ public partial class ApiDocumentationBuilder
         writer.WriteSeeAlsoLinks(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
+        var currentCode = string.Empty;
+        if (File.Exists(Paths.ApiDocumentationFilePath))
+        {
+            currentCode = File.ReadAllText(Paths.ApiDocumentationFilePath);
+        }
+        if (currentCode != writer.ToString())
+        {
+            File.WriteAllText(Paths.ApiDocumentationFilePath, writer.ToString());
+            Console.WriteLine("ApiDocumentationBuilder: Updated ApiDocumentation.generated.cs");
+        }
+        else
+        {
+            // Touch the file to update its timestamp so future checks skip regeneration
+            File.SetLastWriteTimeUtc(Paths.ApiDocumentationFilePath, DateTime.UtcNow);
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged, touched timestamp.");
+        }
     }
 
     /// <summary>

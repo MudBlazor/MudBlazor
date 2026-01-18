@@ -25,11 +25,11 @@ internal sealed class ScrollManager : IScrollManager
 
     /// <inheritdoc />
     public ValueTask ScrollToAsync(string? id, int left, int top, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollIntoViewAsync(string? selector, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollToTopAsync(string? id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
@@ -37,7 +37,7 @@ internal sealed class ScrollManager : IScrollManager
 
     /// <inheritdoc />
     public ValueTask ScrollToBottomAsync(string id, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", id, behavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", id, behavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollToYearAsync(string elementId) =>
@@ -47,6 +47,8 @@ internal sealed class ScrollManager : IScrollManager
     public ValueTask ScrollToListItemAsync(string elementId) =>
         _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToListItem", elementId);
 
+    // lockScroll and unlockScroll use a counter system in javascript so we can lock/unlock without limit
+    // and maintain the proper lock. IF YOU CHANGE THIS, CHANGE THE JAVASCRIPT AS WELL
     /// <inheritdoc />
     public ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
         _jSRuntime.InvokeVoidAsync("mudScrollManager.lockScroll", selector, cssClass);
@@ -54,4 +56,8 @@ internal sealed class ScrollManager : IScrollManager
     /// <inheritdoc />
     public ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
         _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.unlockScroll", selector, cssClass);
+
+    /// <inheritdoc />
+    public ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
+        _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.scrollToVirtualizedItem", containerId, itemIndex, itemHeight, targetItemId, scrollBehavior.ToStringFast(true));
 }

@@ -1,7 +1,7 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using System;
+using AwesomeAssertions;
+using Bunit;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
 
@@ -15,9 +15,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var options = new PopoverOptions();
 
-            options.ContainerClass.Should().Be("mudblazor-main-content");
+            options.OverflowPadding.Should().Be(24);
+            options.ContainerClass.Should().Be("mud-popover-provider");
             options.FlipMargin.Should().Be(0);
             options.ThrowOnDuplicateProvider.Should().Be(true);
+            options.Delay.Should().Be(TimeSpan.Zero);
+            options.Duration.Should().Be(TimeSpan.FromMilliseconds(251));
         }
 
         //[Test]
@@ -37,8 +40,7 @@ namespace MudBlazor.UnitTests.Components
         //        .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
         //        .Verifiable();
 
-
-        //    var comp = Context.RenderComponent<MudBadge>(p =>
+        //    var comp = Context.Render<MudBadge>(p =>
         //    {
         //        p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
         //        p.Add(x => x.Tag, "my tag");
@@ -76,8 +78,7 @@ namespace MudBlazor.UnitTests.Components
         //        .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
         //        .Verifiable();
 
-
-        //    var comp = Context.RenderComponent<MudBadge>(p =>
+        //    var comp = Context.Render<MudBadge>(p =>
         //    {
         //        p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
         //        p.Add(x => x.Tag, "my tag");
@@ -111,15 +112,27 @@ namespace MudBlazor.UnitTests.Components
             popover.Fixed.Should().BeFalse();
             popover.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
-            popover.RelativeWidth.Should().BeNull();
-            popover.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
-            popover.Duration.Should().Be(251);
+            popover.RelativeWidth.Should().Be(DropdownWidth.Ignore);
+            popover.OverflowBehavior.Should().BeNull();
+            popover.Duration.Should().BeNull();
+        }
+
+        [Test]
+        public void MudPopover_DefaultStyles_UsePopoverOptions()
+        {
+            var comp = Context.Render<PopoverPropertyTest>();
+
+            var popoverElement = comp.Find(".test-popover-content").ParentElement;
+            var style = popoverElement.GetAttribute("style");
+
+            style.Should().Contain("transition-duration:251ms");
+            style.Should().Contain("transition-delay:0ms");
         }
 
         [Test]
         public async Task MudPopover_OpenAndClose()
         {
-            var comp = Context.RenderComponent<PopoverTest>();
+            var comp = Context.Render<PopoverTest>();
 
             //popup is close, so only the popover-content should be there
             var provider = comp.Find(".mud-popover-provider");
@@ -149,7 +162,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_MaxHeight()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.MaxHeight, 100));
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(x => x.MaxHeight, 100));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -159,7 +172,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_TransitionDuration()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.Duration, 100));
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(x => x.Duration, 100));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -169,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_Fixed()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
                 x => x.Fixed, true));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -180,7 +193,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_RelativeWidth()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
                 x => x.RelativeWidth, true));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -191,7 +204,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_Paper()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
                 x => x.Paper, true));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -202,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_PaperAndSqaure()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p =>
+            var comp = Context.Render<PopoverPropertyTest>(p =>
             {
                 p.Add(x => x.Paper, true);
                 p.Add(x => x.Square, true);
@@ -217,7 +230,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_Elevation()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p =>
+            var comp = Context.Render<PopoverPropertyTest>(p =>
             {
                 p.Add(x => x.Paper, true);
                 p.Add(x => x.Elevation, 10);
@@ -240,7 +253,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Origin.TopRight, "top-right")]
         public void MudPopover_Property_TransformOrigin(Origin transformOrigin, string expectedClass)
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
                 x => x.TransformOrigin, transformOrigin));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -260,7 +273,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Origin.TopRight, "top-right")]
         public void MudPopover_Property_AnchorOrigin(Origin anchorOrigin, string expectedClass)
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
                 x => x.AnchorOrigin, anchorOrigin));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -274,7 +287,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(OverflowBehavior.FlipAlways, "flip-always")]
         public void MudPopover_Property_OverflowBehavior(OverflowBehavior overflowBehavior, string expectedClass)
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
                 x => x.OverflowBehavior, overflowBehavior));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -285,7 +298,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_DropShadow_False_NoElevation()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+            var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
                 x => x.DropShadow, false));
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -296,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudPopover_WithDynamicContent()
         {
-            var comp = Context.RenderComponent<PopoverComplexContent>();
+            var comp = Context.Render<PopoverComplexContent>();
 
             var dynamicContentElement = comp.Find(".dynamic-content");
             dynamicContentElement.ChildNodes.Should().BeEmpty();
@@ -326,17 +339,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudPopoverProvider_RenderElementsBasedOnEnableState()
+        public async Task MudPopoverProvider_RenderElementsBasedOnEnableState()
         {
-            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, true));
+            var comp = Context.Render<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, true));
             comp.Find("#my-content").TextContent.Should().Be("Popover content");
 
             for (var i = 0; i < 3; i++)
             {
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, false));
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, false));
                 Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
 
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, true));
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, true));
                 comp.Find("#my-content").TextContent.Should().Be("Popover content");
             }
         }
@@ -344,11 +357,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopoverProvider_NoRenderWhenEnabledIsFalse()
         {
-            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, false));
+            var comp = Context.Render<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, false));
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
-        [TestCase(false)]
+        //[TestCase(false)] always blocks duplicate provider with latest change
         [TestCase(true)]
         public async Task MudPopoverProvider_ThrowOnDuplicate(bool throwOnDuplicateProvider)
         {
@@ -362,42 +375,15 @@ namespace MudBlazor.UnitTests.Components
 
             if (throwOnDuplicateProvider)
             {
-                var ex = Assert.Throws<InvalidOperationException>(() => Context.RenderComponent<PopoverDuplicationTest>());
+                var ex = Assert.Throws<InvalidOperationException>(() => Context.Render<PopoverDuplicationTest>());
                 ex.Message.Should().StartWith("Duplicate MudPopoverProvider detected");
             }
             else
             {
-                var comp = Context.RenderComponent<PopoverDuplicationTest>();
+                var comp = Context.Render<PopoverDuplicationTest>();
                 await comp.Instance.Open();
                 await comp.Instance.Close();
             }
-        }
-
-        [Test]
-        public void MudPopoverProvider_DropdownSettings_SetsDefaultValues()
-        {
-            var settings = new DropdownSettings();
-
-            settings.Fixed.Should().BeFalse();
-            settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
-        }
-
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void MudPopoverProvider_DropdownSettings_Fixed_CanBeSetCorrectly(bool fixedValue)
-        {
-            var settings = new DropdownSettings { Fixed = fixedValue };
-
-            settings.Fixed.Should().Be(fixedValue);
-        }
-
-        [Test]
-        public void MudPopoverProvider_DropdownSettings_OverflowBehavior_CanBeSetCorrectly()
-        {
-            var settings = new DropdownSettings { OverflowBehavior = OverflowBehavior.FlipAlways };
-
-            settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipAlways);
         }
     }
 }

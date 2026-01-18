@@ -5,7 +5,6 @@
 using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
 
-
 namespace MudBlazor.Docs.Services
 {
 #nullable enable
@@ -57,7 +56,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
-            .AddItem("Table", typeof(MudTableBase), typeof(MudTable<T>), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd), typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))
+            .AddItem("Table", typeof(MudTable<T>), typeof(MudTableBase), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd), typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))
             .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(Column<T>), typeof(FilterHeaderCell<T>), typeof(FooterCell<T>), typeof(HeaderCell<T>), typeof(HierarchyColumn<T>), typeof(MudDataGridPager<T>), typeof(TemplateColumn<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
@@ -79,6 +78,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
+            .AddItem("Split Panel", typeof(MudSplitPanel))
+            .AddItem("Hotkey", typeof(MudHotkey))
 
             //GROUPS
 
@@ -113,17 +114,22 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Icon Button", typeof(MudIconButton))
                 .AddItem("Toggle Icon Button", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
+                .AddItem("Button FAB Menu", typeof(MudFabMenu))
             )
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut Chart", typeof(Donut))
-                .AddItem("Line Chart", typeof(Line), typeof(Legend))
-                .AddItem("Pie Chart", typeof(Pie))
-                .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
-                .AddItem("Heat Map Chart", typeof(HeatMap))
-                .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart))
+                .AddItem("Donut Chart", typeof(Donut<T>), typeof(DonutChartOptions), typeof(Legend<T>))
+                .AddItem("Line Chart", typeof(Line<T>), typeof(LineChartOptions), typeof(Legend<T>))
+                .AddItem("Pie Chart", typeof(Pie<T>), typeof(PieChartOptions), typeof(Legend<T>))
+                .AddItem("Bar Chart", typeof(Bar<T>), typeof(BarChartOptions), typeof(Legend<T>))
+                .AddItem("Heat Map Chart", typeof(HeatMap<T>), typeof(HeatMapChartOptions), typeof(Legend<T>))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar<T>), typeof(StackedBarChartOptions), typeof(Legend<T>))
+                .AddItem("Time Series Chart", typeof(TimeSeries<T>), typeof(TimeSeriesChartOptions), typeof(Legend<T>))
+                .AddItem("Radar Chart", typeof(Radar<T>), typeof(RadarChartOptions), typeof(Legend<T>))
+                .AddItem("Rose Chart", typeof(Rose<T>), typeof(RoseChartOptions), typeof(Legend<T>))
+                .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
+                .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
             // this must be last!
             .GetComponentsSortedByName();
@@ -138,10 +144,13 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Elevation", Href = "features/elevation"},
                 new DocsLink {Title = "Converters", Href = "features/converters"},
                 new DocsLink {Title = "Icon Reference", Href = "features/icons"}, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
+                new DocsLink {Title = "Parameter State", Href = "features/parameterstate"},
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
                 new DocsLink {Title = "Localization", Href = "features/localization"},
-                new DocsLink {Title = "Analyzers", Href = "features/analyzers"}
+                new DocsLink {Title = "Analyzers", Href = "features/analyzers"},
+                new DocsLink {Title = "Services", Href = "features/services"},
+                new DocsLink {Title = "Chat (deprecated)", Href = "components/chat"}, // TODO: there is no component to reference so it's added under features instead so the page is still searchable. remove this in v10.
             }.OrderBy(x => x.Title);
 
         /// <summary>
@@ -332,7 +341,7 @@ namespace MudBlazor.Docs.Services
         public static MudComponent? GetExample(MudComponent parent, DocumentedType type)
         {
             // Does the name match the menu link?
-            if (parent.Link == type.Name)
+            if (parent.ComponentName == type.NameFriendly.Replace("<TData>", "<T>"))
             {
                 return parent;
             }

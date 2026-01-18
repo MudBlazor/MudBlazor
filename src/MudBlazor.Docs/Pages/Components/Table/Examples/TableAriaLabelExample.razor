@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTable T="string" Items="@_items" AriaLabel="Fruits table" Hover="true" Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Fruit</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Fruit">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private readonly string[] _items = new[] { "Apple", "Banana", "Cherry" };
+}

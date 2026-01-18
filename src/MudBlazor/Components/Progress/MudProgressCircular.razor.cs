@@ -11,7 +11,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A circle-shaped indicator of progress for an ongoing operation.
+    /// Informs users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. Shows either the length of a process or unspecified wait time.
     /// </summary>
     /// <seealso cref="MudProgressLinear"/>
     public partial class MudProgressCircular : MudComponentBase
@@ -19,11 +19,14 @@ namespace MudBlazor
         private int _svgValue;
         private readonly ParameterState<double> _valueState;
         private const int MagicNumber = 126; // weird, but required for the SVG to work
+        private string _viewBox = string.Empty;
+        private const double CircleRadius = 20.0;
+        private const double CircleCenter = 44.0;
 
         protected string Classname =>
             new CssBuilder("mud-progress-circular")
-                .AddClass($"mud-{Color.ToDescriptionString()}-text")
-                .AddClass($"mud-progress-{Size.ToDescriptionString()}")
+                .AddClass($"mud-{Color.ToStringFast(true)}-text")
+                .AddClass($"mud-progress-{Size.ToStringFast(true)}")
                 .AddClass("mud-progress-indeterminate", Indeterminate)
                 .AddClass("mud-progress-static", !Indeterminate)
                 .AddClass(Class)
@@ -33,6 +36,7 @@ namespace MudBlazor
             new CssBuilder("mud-progress-circular-circle")
                 .AddClass("mud-progress-indeterminate", Indeterminate)
                 .AddClass("mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-circular-circle-rounded", Rounded)
                 .Build();
 
         /// <summary>
@@ -66,6 +70,17 @@ namespace MudBlazor
         public bool Indeterminate { get; set; }
 
         /// <summary>
+        /// Displays a rounded border.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, the CSS <c>stroke-linecap</c> is set to <c>round</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Rounded { get; set; }
+
+        /// <summary>
         /// The lowest possible value.
         /// </summary>
         /// <remarks>
@@ -91,7 +106,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>False</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Value { get; set; }
 
@@ -104,6 +119,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
+
+        /// <summary>
+        /// RenderFragment for rendering custom content
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public RenderFragment? ChildContent { get; set; }
 
         public MudProgressCircular()
         {
@@ -125,6 +147,20 @@ namespace MudBlazor
         {
             base.OnInitialized();
             _svgValue = ToSvgValue(_valueState.Value);
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            var strokeWidth = Math.Max(0, StrokeWidth);
+            var viewBoxSize = (2 * CircleRadius) + strokeWidth;
+            var viewBoxMin = CircleCenter - (viewBoxSize / 2.0);
+
+            var size = ToS(viewBoxSize);
+            var min = ToS(viewBoxMin);
+
+            _viewBox = $"{min} {min} {size} {size}";
         }
 
         private int ToSvgValue(double value)

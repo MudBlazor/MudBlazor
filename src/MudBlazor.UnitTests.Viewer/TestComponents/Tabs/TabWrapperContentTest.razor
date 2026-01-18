@@ -1,0 +1,24 @@
+﻿<MudTabs EnableDragAndDrop="@EnableDragAndDrop">
+    <MudTabPanel Text="First">
+        <TabWrapperContent>
+            <div class="wrapper-class-content" style="background: #add8e6">
+                @context
+            </div>
+        </TabWrapperContent>
+        <ChildContent>
+            First Panel
+        </ChildContent>
+    </MudTabPanel>
+    <MudTabPanel Text="Second" ToolTip="Second Tooltip">
+        Second Panel
+    </MudTabPanel>
+</MudTabs>
+
+<MudSwitch @bind-Value="@EnableDragAndDrop" Label="Enable Drag and Drop" />
+
+@code {
+    public static string __description__ = "A test to ensure tab wrapper content is rendered with and without drag and drop.";
+
+    [Parameter]
+    public bool EnableDragAndDrop { get; set; }
+}

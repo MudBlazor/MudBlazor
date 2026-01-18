@@ -1,0 +1,42 @@
+﻿<MudButton OnClick="(() => _dialogOpen = true)" Variant="Variant.Filled" Color="Color.Primary">
+    Open simple dialog
+</MudButton>
+
+<p>
+
+
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet posuere quam. Praesent a risus efficitur, vestibulum velit et, tincidunt eros. Nunc ac tempor ligula. Nunc ac vehicula quam. Cras a volutpat nisl. Aenean egestas porttitor dui ut lobortis. Nulla in imperdiet erat, vitae pharetra elit. Sed a lectus quam. Vestibulum posuere sed enim at tincidunt. Mauris ut viverra quam. Proin mattis varius egestas. Aenean cursus arcu massa, non consequat felis cursus nec. Praesent blandit ligula vitae purus laoreet eleifend. Vivamus aliquam tortor vitae odio dignissim porta. Vestibulum ac velit metus. Aliquam ut orci auctor, scelerisque odio suscipit, efficitur ipsum.
+
+    Cras id posuere justo. Praesent tristique, libero a cursus mattis, lacus dui interdum urna, et tristique enim erat sed velit. Integer a laoreet quam. Proin purus arcu, suscipit id luctus at, commodo a risus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed ornare dolor in pellentesque consequat. Sed convallis porta ultrices. Fusce sed orci et ante pharetra porta eget ac neque. Praesent quis viverra ex, et mollis nulla. Aliquam metus diam, venenatis nec arcu aliquet, fringilla blandit massa.
+
+    Proin in sem eget augue consequat porta in eget risus. Phasellus ut turpis id nunc placerat mattis. Nam cursus iaculis cursus. Nunc ullamcorper euismod libero at semper. Aenean ac tempus ligula. Nam ultrices risus sed sollicitudin tincidunt. Nulla auctor neque bibendum eros elementum, ut interdum dui dapibus. Aliquam lacinia erat sem, id fringilla massa condimentum eu.
+
+    Quisque mattis bibendum commodo. Nunc laoreet dui in lectus tincidunt, quis vestibulum tortor ullamcorper. Proin laoreet vulputate accumsan. Sed bibendum ipsum id ligula ullamcorper tristique eu eleifend velit. Donec et eros nec magna mattis cursus non porttitor justo. Nulla eu mauris enim. Mauris semper ut magna nec venenatis.
+
+    Morbi eleifend velit id convallis viverra. Sed dapibus ornare eros vitae venenatis. Suspendisse potenti. Morbi gravida bibendum neque, et lacinia justo pharetra non. Aenean scelerisque, enim varius vestibulum auctor, metus ex bibendum magna, vel ullamcorper ligula nisl eu lacus. In pellentesque, nibh sit amet egestas euismod, tortor nisi aliquam augue, ullamcorper rhoncus lectus magna in massa. Duis nec dolor vel massa lacinia ullamcorper ut nec metus. Sed eu ligula vitae sapien convallis suscipit at at leo. Mauris justo mauris, accumsan nec sapien sed, tristique lobortis ante. Praesent malesuada dictum vestibulum. Integer ac sem vestibulum, tempor massa eget, condimentum nibh.
+</p>
+
+<style>
+    p {
+        font-size: 10rem;
+    }
+</style>
+
+<MudDialog Options="_options" @bind-Visible="_dialogOpen">
+    <TitleContent>
+        Dialog Title
+    </TitleContent>
+    <DialogContent>
+        Dialog Content
+        <MudOverlay Visible="false" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="(() => _dialogOpen = false)">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="(() => _dialogOpen = false)">OK</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _dialogOpen = false;
+    private DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
+}

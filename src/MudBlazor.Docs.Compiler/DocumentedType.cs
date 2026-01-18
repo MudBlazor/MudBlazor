@@ -6,7 +6,6 @@ using System.Diagnostics;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
 /// <summary>
 /// Represents documentation for a type.
 /// </summary>

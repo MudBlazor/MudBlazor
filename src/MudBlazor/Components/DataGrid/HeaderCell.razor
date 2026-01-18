@@ -32,19 +32,25 @@ else if (Column != null && !Column.HiddenState.Value)
     </th>
 }
 
-@code{
+@code {
 
     internal RenderFragment TableHeader()
     {
+        var headerTemplate = Column.GetHeaderTemplate();
+
         return
         @<text>
         <span class="column-header">
             @if (sortable)
             {
                 <span class="@SortHeaderClass" @onclick="SortChangedAsync">
-                    @if (Column.HeaderTemplate != null)
+                    @if (headerTemplate != null)
                     {
-                        @Column.HeaderTemplate(Column.headerContext)
+                        @headerTemplate(Column.headerContext);
+                    }
+                    else if (IncludeHierarchyToggle)
+                    {
+                        @HierarchyToggle
                     }
                     else 
                     {
@@ -54,9 +60,13 @@ else if (Column != null && !Column.HiddenState.Value)
             }
             else
             { 
-                @if (Column.HeaderTemplate != null)
+                @if (headerTemplate != null)
                 {
-                    @Column.HeaderTemplate(Column.headerContext)
+                    @headerTemplate(Column.headerContext);
+                }
+                else if (IncludeHierarchyToggle)
+                {
+                    @HierarchyToggle
                 }
                 else 
                 {
@@ -92,11 +102,11 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     if (hasFilter)
                     {
-                        <MudIconButton Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" OnClick="@OpenFilters" aria-label="@Localizer[LanguageResource.MudDataGrid_OpenFilters]"></MudIconButton>
+                        <MudIconButton Class="filter-button filtered" Icon="@DataGrid.FilterIconFilled" Size="@Size.Small" OnClick="@OpenFilters" aria-label="@Localizer[LanguageResource.MudDataGrid_OpenFilters]"></MudIconButton>
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilter" aria-label="@Localizer[LanguageResource.MudDataGrid_AddFilter]"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@DataGrid.FilterIconEmpty" Size="@Size.Small" OnClick="@AddFilter" aria-label="@Localizer[LanguageResource.MudDataGrid_AddFilter]"></MudIconButton>
                     }
                 }
 
@@ -133,8 +143,8 @@ else if (Column != null && !Column.HiddenState.Value)
         </span>
         @if (filterable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
         {
-        <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose />
-            <MudPopover Open="@_filtersMenuVisible" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup">
+            <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose />
+            <MudPopover UserAttributes="@DataGrid?.PositionAttributes" Open="@_filtersMenuVisible" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup mud-popover-position-override">
                 @if (Column.FilterTemplate != null)
                 {
                     @Column.FilterTemplate(Column.FilterContext) 
@@ -155,4 +165,13 @@ else if (Column != null && !Column.HiddenState.Value)
         }
         </text>;
     }
+
+    private RenderFragment HierarchyToggle =>
+        @<text>
+             <MudIconButton Icon="@GetGroupIcon()"
+                            Class="ma-n3 pa-1 mud-hierarchy-toggle-button"
+                            OnClick="@ToggleHierarchyAsync"
+                            aria-label="@(Expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseAllGroups] : @Localizer[LanguageResource.MudDataGrid_ExpandAllGroups])"/>
+         </text>;
+
 }

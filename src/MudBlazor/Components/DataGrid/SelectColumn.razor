@@ -1,28 +1,40 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
+@inherits TemplateColumn<T>
 @typeparam T
-
-<TemplateColumn T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
-                Hideable="Hideable" Hidden="Hidden" HiddenChanged="HiddenChanged"
-                Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled" FooterTemplate="@GetFooterTemplate()">
-    <HeaderTemplate>
-        @if (ShowInHeader)
-        {
-            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
-        }
-    </HeaderTemplate>
-    <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
-    </CellTemplate>
-</TemplateColumn>
 
 @code {
 #nullable enable
-    private RenderFragment<FooterContext<T>>? GetFooterTemplate()
-        => ShowInFooter ? FooterTemplate : null;
+    public RenderFragment<HeaderContext<T>>? GetSelectHeaderTemplate() => context =>
+    {
+        if (ShowInHeader && context.IsMultiSelection)
+        {
+            return @<MudCheckBox T="bool?"
+                                 Size="@Size"
+                                 Value="@context.IsAllSelected"
+                                 ValueChanged="@context.Actions.SetSelectAllAsync" />;
+        }
 
-    private RenderFragment<FooterContext<T>> FooterTemplate => context =>
-        @<MudCheckBox T="bool?"
+        return null;
+    };
+
+    public RenderFragment<CellContext<T>> GetSelectCellTemplate() => context =>
+        @<MudCheckBox T="bool"
                       Size="@Size"
-                      Value="@context.IsAllSelected"
-                      ValueChanged="@context.Actions.SetSelectAllAsync"/>;
+                      Value="@context.Selected"
+                      ValueChanged="@context.Actions.SetSelectedItemAsync"
+                      Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)" />;
+
+#nullable enable
+    private RenderFragment<FooterContext<T>>? GetSelectFooterTemplate() => context =>
+    {
+        if (ShowInFooter && context.IsMultiSelection)
+        {
+            return @<MudCheckBox T="bool?"
+                                 Size="@Size"
+                                 Value="@context.IsAllSelected"
+                                 ValueChanged="@context.Actions.SetSelectAllAsync" />;
+        }
+
+        return null;
+    };
 }

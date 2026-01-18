@@ -1,16 +1,21 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudScrollToTop : IDisposable
+
+    /// <summary>
+    /// A button to quickly return to the top of the page.
+    /// </summary>
+    public partial class MudScrollToTop : IAsyncDisposable
     {
         private IScrollListener? _scrollListener;
 
+        /// <summary>
+        /// The CSS classes applied to this component.
+        /// </summary>
         protected string Classname =>
             new CssBuilder("mud-scroll-to-top")
                 .AddClass("visible", Visible && string.IsNullOrWhiteSpace(VisibleCssClass))
@@ -26,59 +31,79 @@ namespace MudBlazor
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
 
+        /// <summary>
+        /// The content within this button.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The CSS selector to which the scroll event will be attached
+        /// The CSS selector to which the scroll event will be attached.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Behavior)]
         public string? Selector { get; set; }
 
         /// <summary>
-        /// If set to true, it starts Visible. If sets to false, it will become visible when the TopOffset amount of scrolled pixels is reached
+        /// Displays this button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>false</c>, this will become <c>true</c> once the user scrolls down the number of pixels in <see cref="TopOffset"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Behavior)]
         public bool Visible { get; set; }
 
         /// <summary>
-        /// CSS class for the Visible state. Here, apply some transitions and animations that will happen when the component becomes visible
+        /// The CSS classes applied when <see cref="Visible"/> becomes <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// This is typically set to transition and animation CSS classes.  Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Appearance)]
         public string? VisibleCssClass { get; set; }
 
         /// <summary>
-        /// CSS class for the Hidden state. Here, apply some transitions and animations that will happen when the component becomes invisible
+        /// The CSS classes applied when <see cref="Visible"/> becomes <c>false</c>.
         /// </summary>
+        /// <remarks>
+        /// This is typically set to transition and animation CSS classes.  Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Appearance)]
         public string? HiddenCssClass { get; set; }
 
         /// <summary>
-        /// The distance in pixels scrolled from the top of the selected element from which 
-        /// the component becomes visible
+        /// The number of pixels scrolled before the scroll-to-top button becomes visible.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>300</c> (300 pixels).
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Behavior)]
         public int TopOffset { get; set; } = 300;
 
         /// <summary>
-        /// Smooth or Auto
+        /// The scroll behavior when the scroll-to-top button is clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="ScrollBehavior.Smooth"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Behavior)]
         public ScrollBehavior ScrollBehavior { get; set; } = ScrollBehavior.Smooth;
 
         /// <summary>
-        /// Called when scroll event is fired
+        /// Occurs when the page is scrolled.
         /// </summary>
         [Parameter]
         public EventCallback<ScrollEventArgs> OnScroll { get; set; }
 
+        /// <summary>
+        /// Occurs when the scroll-to-top button is clicked.
+        /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -99,16 +124,16 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// event received when scroll in the selected element happens
+        /// Occurs when the selected element is scrolled.
         /// </summary>
-        /// <param name="sender">ScrollListener instance</param>
-        /// <param name="e">Information about the position of the scrolled element</param>
+        /// <param name="sender">The <see cref="ScrollListener"/> instance.</param>
+        /// <param name="e">Information about the position of the scrolled element.</param>
         private async void ScrollListener_OnScroll(object? sender, ScrollEventArgs e)
         {
             await OnScroll.InvokeAsync(e);
 
             var topOffset = e.NodeName == "#document"
-                ? e.FirstChildBoundingClientRect.Top * -1
+                ? e.FirstChildBoundingClientRect?.Top * -1
                 : e.ScrollTop;
 
             if (topOffset >= TopOffset && Visible != true)
@@ -133,15 +158,22 @@ namespace MudBlazor
             await OnClick.InvokeAsync(args);
         }
 
-        /// <summary>
-        /// Remove the event
-        /// </summary>
-        public void Dispose()
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
         {
-            if (_scrollListener == null) { return; }
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            if (_scrollListener == null)
+            {
+                return;
+            }
 
             _scrollListener.OnScroll -= ScrollListener_OnScroll;
-            _scrollListener.Dispose();
+            await _scrollListener.DisposeAsync();
         }
     }
 }

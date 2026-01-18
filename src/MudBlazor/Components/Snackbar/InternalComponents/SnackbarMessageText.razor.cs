@@ -10,7 +10,7 @@ namespace MudBlazor.Components.Snackbar.InternalComponents;
 public partial class SnackbarMessageText : ComponentBase
 {
     /// <summary>
-    /// Gets or sets the plain text message to be displayed.
+    /// Plain text message to be displayed.
     /// </summary>
     /// <remarks>
     /// This property is used to pass a plain string message. It does not support HTML or UI fragments.

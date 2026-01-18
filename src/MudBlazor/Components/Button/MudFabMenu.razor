@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor
+@inherits MudFab
+
+<div class="@Classname"
+     style="@Style"
+     @onmouseenter="@(() => OnMouseEnterLeaveAsync(true))"
+     @onmouseleave="@(() => OnMouseEnterLeaveAsync(false))"
+     @ontouchstart="@OnTouchStart"
+     @attributes="UserAttributes"
+     role="menu">
+    <div class="@ClassnameMenu" style="@MenuStyle" @onclick="@OnMenuClickAsync">
+        <CascadingValue Value="@this">
+            @ChildContent
+        </CascadingValue>
+    </div>
+    <MudFab Class="@ClassnameFab"
+            Style="@ButtonStyle"
+            Color="@Color"
+            Size="@Size"
+            StartIcon="@_startIcon"
+            EndIcon="@_endIcon"
+            IconColor="@IconColor"
+            IconSize="@IconSize"
+            Label="@Label"
+            OnClick="@OnMenuButtonClickAsync"
+            ButtonType="@ButtonType"
+            Href="@Href"
+            Target="@Target"
+            Disabled="@Disabled"
+            HtmlTag="@HtmlTag"
+            Rel="@Rel"
+            ClickPropagation="@ClickPropagation"
+            DropShadow="@DropShadow"
+            Ripple="@Ripple"/>
+</div>

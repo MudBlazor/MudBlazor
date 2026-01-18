@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -33,6 +33,91 @@ public class ObserverManagerTests
 
         // Assert
         construct.Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    public void TryGetSubscription_ReturnsTrueAndObserver_WhenObserverExists()
+    {
+        // Arrange
+        var id = 1;
+        var observer = "Observer1";
+        _observerManager.Subscribe(id, observer);
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeTrue();
+        retrievedObserver.Should().Be(observer);
+    }
+
+    [Test]
+    public void TryGetSubscription_ReturnsFalseAndDefault_WhenObserverDoesNotExist()
+    {
+        // Arrange
+        var id = 1;
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeFalse();
+        retrievedObserver.Should().BeNull();
+    }
+
+    [Test]
+    public void TryGetOrAddSubscription_ReturnsTrueAndUpdatesObserver_WhenObserverExists()
+    {
+        // Arrange
+        var id = 1;
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        _observerManager.Subscribe(id, observer1);
+
+        // Act
+        var result = _observerManager.TryGetOrAddSubscription(id, observer2, out var newObserver);
+
+        // Assert
+        result.Should().BeTrue();
+        newObserver.Should().Be(observer2);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer2);
+    }
+
+    [Test]
+    public void TryGetOrAddSubscription_ReturnsFalseAndAddsObserver_WhenObserverDoesNotExist()
+    {
+        // Arrange
+        var id = 1;
+        var observer = "Observer1";
+
+        // Act
+        var result = _observerManager.TryGetOrAddSubscription(id, observer, out var newObserver);
+
+        // Assert
+        result.Should().BeFalse();
+        newObserver.Should().Be(observer);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer);
+    }
+
+    [Test]
+    public void FindObserverIdentities_ReturnsMatchingIdentities()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var observer3 = "Observer3";
+
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+        _observerManager.Subscribe(3, observer3);
+
+        // Act
+        var result = _observerManager.FindObserverIdentities((_, observer) => observer.Contains('2')).ToList();
+
+        // Assert
+        result.Should().ContainSingle().Which.Should().Be(2);
     }
 
     [Test]
@@ -80,7 +165,54 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(0);
-        _observerManager.Observers.ContainsKey(id).Should().BeFalse();
+        _observerManager.IsSubscribed(id).Should().BeFalse();
+    }
+
+    [Test]
+    public async Task NotifyAsync_ById_CallsNotificationForObserver()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var list = new List<string>();
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+
+        Task NotificationAsync(string observer)
+        {
+            list.Add(observer);
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(1, NotificationAsync);
+
+        // Assert
+        list.Count.Should().Be(1);
+        list.Should().BeEquivalentTo(observer1);
+    }
+
+    [Test]
+    public async Task NotifyAsync_ById_DoesNotCallIfObserverMissing()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var list = new List<string>();
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+
+        Task NotificationAsync(string observer)
+        {
+            list.Add(observer);
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(3, NotificationAsync);
+
+        // Assert
+        list.Count.Should().Be(0);
     }
 
     [Test]
@@ -134,9 +266,41 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(2);
-        _observerManager.Observers.ContainsKey(1).Should().BeTrue();
-        _observerManager.Observers.ContainsKey(3).Should().BeTrue();
-        _observerManager.Observers.ContainsKey(2).Should().BeFalse();
+        _observerManager.IsSubscribed(1).Should().BeTrue();
+        _observerManager.IsSubscribed(3).Should().BeTrue();
+        _observerManager.IsSubscribed(2).Should().BeFalse();
+    }
+
+    [Test]
+    public async Task NotifyAsync_ById_RemovesDefunctObserver()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var observer3 = "Observer3";
+
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+        _observerManager.Subscribe(3, observer3);
+
+        Task NotificationAsync(string observer)
+        {
+            if (observer == observer2)
+            {
+                throw new Exception("Notification failed");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(2, NotificationAsync).ConfigureAwait(false);
+
+        // Assert
+        _observerManager.Count.Should().Be(2);
+        _observerManager.IsSubscribed(1).Should().BeTrue();
+        _observerManager.IsSubscribed(3).Should().BeTrue();
+        _observerManager.IsSubscribed(2).Should().BeFalse();
     }
 
     [Test]
@@ -227,7 +391,6 @@ public class ObserverManagerTests
         actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
-
     [Test]
     public void Unsubscribe_Subscribe_UpdateSubscribe_TraceLogEnabled_LogsDebugInformation()
     {
@@ -276,6 +439,35 @@ public class ObserverManagerTests
 
         // Act
         await observerManager.NotifyAsync(NotificationAsync, Predicate);
+
+        // Assert
+        loggerMock
+            .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.", LogLevel.Trace)
+            .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.", LogLevel.Trace);
+    }
+
+    [Test]
+    public async Task NotifyAsync_ById_DefunctObserver_LogsTraceInformation()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger>();
+        loggerMock.Setup(x => x.IsEnabled(LogLevel.Trace)).Returns(true);
+
+        var observerManager = new ObserverManager<int, string>(loggerMock.Object);
+
+        const int DefunctObserverId = 1;
+        const string DefunctObserver = "DefunctObserver";
+
+        observerManager.Subscribe(DefunctObserverId, DefunctObserver);
+
+        async Task NotificationAsync(string observer)
+        {
+            await Task.Delay(10); // Simulating some asynchronous operation
+            throw new Exception("Simulated exception");
+        }
+
+        // Act
+        await observerManager.NotifyAsync(DefunctObserverId, NotificationAsync);
 
         // Assert
         loggerMock

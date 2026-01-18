@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
@@ -71,5 +70,23 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public override bool? ShowColumnOptions { get; set; } = false;
+
+        /// <summary>
+        /// Sets the initial expansion state of this column if used as a Hierarchy Column.
+        /// </summary>
+        /// <remarks>
+        /// Used internally for Hierarchy Columns, toggling will have no effect.
+        /// </remarks>
+        [Parameter]
+        public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+        /// <summary>
+        /// Sets the function which determines whether buttons are disabled if used in a Hierarchy Column.
+        /// </summary>
+        /// <remarks>
+        /// Used internally for Hierarchy Columns, setting this will have no effect.
+        /// </remarks>
+        [Parameter]
+        public Func<T, bool> ButtonDisabledFunc { get; set; } = _ => false;
     }
 }

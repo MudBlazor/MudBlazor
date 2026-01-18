@@ -12,12 +12,12 @@ namespace MudBlazor.UnitTests.Docs.Generated
     [TestFixture]
     public partial class ExampleDocsTests
     {
-        private Bunit.TestContext ctx;
+        private BunitContext ctx;
 
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.TestContext();
+            ctx = new BunitContext();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton(TimeProvider.System);
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
@@ -35,9 +35,12 @@ namespace MudBlazor.UnitTests.Docs.Generated
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();
             ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddScoped<IPointerEventsNoneService, MockPointerEventsNoneService>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
+            ctx.Services.AddTransient<IScrollListener, ScrollListener>();
+            ctx.Services.AddTransient<IResizeObserver, ResizeObserver>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });

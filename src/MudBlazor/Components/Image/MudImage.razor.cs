@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -17,11 +18,20 @@ namespace MudBlazor;
 /// </remarks>
 public partial class MudImage : MudComponentBase
 {
+    private readonly ParameterState<string?> _srcState;
+
+    public MudImage()
+    {
+        using var registerScope = CreateRegisterScope();
+        _srcState = registerScope.RegisterParameter<string?>(nameof(Src))
+            .WithParameter(() => Src);
+    }
+
     protected string Classname =>
         new CssBuilder("mud-image")
             .AddClass("fluid", Fluid)
-            .AddClass($"object-{ObjectFit.ToDescriptionString()}")
-            .AddClass($"object-{ObjectPosition.ToDescriptionString()}")
+            .AddClass($"object-{ObjectFit.ToStringFast(true)}")
+            .AddClass($"object-{ObjectPosition.ToStringFast(true)}")
             .AddClass($"mud-elevation-{Elevation}", Elevation > 0)
             .AddClass(Class)
             .Build();
@@ -39,9 +49,16 @@ public partial class MudImage : MudComponentBase
     /// <summary>
     /// The path to the image.
     /// </summary>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.Image.Behavior)]
     public string? Src { get; set; }
+
+    /// <summary>
+    /// The fallback image path to use if <see cref="Src"/> fails to load.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Behavior)]
+    public string? FallbackSrc { get; set; }
 
     /// <summary>
     /// The alternate text for this image.
@@ -99,4 +116,17 @@ public partial class MudImage : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public ObjectPosition ObjectPosition { set; get; } = ObjectPosition.Center;
+
+    /// <summary>
+    /// Handles the image error event and sets the fallback image source.
+    /// </summary>
+    private Task OnErrorAsync()
+    {
+        if (!string.IsNullOrEmpty(FallbackSrc) && _srcState.Value != FallbackSrc)
+        {
+            return _srcState.SetValueAsync(FallbackSrc);
+        }
+
+        return Task.CompletedTask;
+    }
 }

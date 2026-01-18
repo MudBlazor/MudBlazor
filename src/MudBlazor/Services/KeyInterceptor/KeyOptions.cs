@@ -78,6 +78,11 @@ public class KeyOptions
     public string StopUp { get; init; } = "none";
 
     /// <summary>
+    /// Invoke event KeyDown on C# side only for the initial keydown event and not for the repeats.
+    /// </summary>
+    public bool IgnoreDownRepeats { get; init; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="KeyOptions"/> class.
     /// </summary>
     public KeyOptions()
@@ -94,6 +99,7 @@ public class KeyOptions
     /// <param name="preventUp">Configuration for preventDefault() on key up events.</param>
     /// <param name="stopDown">Configuration for stopPropagation() on key down events.</param>
     /// <param name="stopUp">Configuration for stopPropagation() on key up events.</param>
+    /// <param name="ignoreDownRepeats">Ignore keydown repeat events.</param>
     public KeyOptions(
         string? key,
         bool subscribeDown = false,
@@ -101,7 +107,8 @@ public class KeyOptions
         string preventDown = "none",
         string preventUp = "none",
         string stopDown = "none",
-        string stopUp = "none")
+        string stopUp = "none",
+        bool ignoreDownRepeats = false)
     {
         Key = key;
         PreventDown = preventDown;
@@ -110,5 +117,6 @@ public class KeyOptions
         SubscribeUp = subscribeUp;
         StopDown = stopDown;
         StopUp = stopUp;
+        IgnoreDownRepeats = ignoreDownRepeats;
     }
 }

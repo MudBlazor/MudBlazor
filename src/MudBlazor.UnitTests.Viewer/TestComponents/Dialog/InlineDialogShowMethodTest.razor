@@ -1,0 +1,18 @@
+﻿<MudButton OnClick="OpenDialogAsync" Class="open-dialog-button">
+    Open Dialog
+</MudButton>
+
+<MudDialog @ref="_dialog">
+    <DialogContent>
+        <p>The dialog's content is displayed.</p>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    private MudDialog _dialog = null!;
+
+    private async Task OpenDialogAsync()
+    {
+        await _dialog.ShowAsync();
+    }
+}

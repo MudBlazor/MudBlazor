@@ -1,0 +1,58 @@
+﻿<MudPopoverProvider />
+
+<MudText>@StatusMessage</MudText>
+
+<MudAutocomplete @ref="Autocomplete"
+                 @bind-Value="_value"
+                 @bind-Text="_text"
+                 Clearable
+                 SearchFunc="Search"
+                 OnClearButtonClick=@ClearClicked
+                 OpenChanged=@OpenChanged />
+
+@code
+{
+    public static string __description__ = "Clicking clear adornment must not increase Open and Close count";
+
+    private string? _value = "Virginia";
+    private string? _text = null;
+
+    private readonly string[] _states =
+    {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+        "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+        "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+        "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+        "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+        "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+        "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+        "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+        "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    };
+
+    private Task<IEnumerable<string?>> Search(string value, CancellationToken token)
+    {
+        var result = string.IsNullOrWhiteSpace(value) ? _states : _states.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult<IEnumerable<string?>>(result);
+    }
+
+    public MudAutocomplete<string> Autocomplete { get; private set; } = default!;
+
+    string StatusMessage { get { return $"State: Clear = {ClearCount} - Open = {OpenedCount} - Close = {ClosedCount} - Text = {_text ?? "null"}"; } }
+
+    public int ClosedCount { get; private set; }
+    public int OpenedCount { get; private set; }
+    public int ClearCount { get; private set; }
+
+    private void ClearClicked()
+    {
+        ClearCount++;
+    }
+
+    private void OpenChanged(bool opened)
+    {
+        if (opened) OpenedCount++;
+        else ClosedCount++;
+    }
+}
