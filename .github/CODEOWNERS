@@ -1,18 +1,29 @@
+# Core
 /* @danielchalmers
 /.github/ @danielchalmers
 /.editorconfig @danielchalmers @ScarletKuro
+
+# Components
 /src/MudBlazor/Components/Autocomplete/ @danielchalmers
 /src/MudBlazor/Components/Menu/ @danielchalmers
-/src/MudBlazor/TScripts/mudInputSizing.js @danielchalmers
-/src/MudBlazor/Services/MudGlobal.cs @danielchalmers
-/src/MudBlazor/Converters/ @ScarletKuro
-/src/MudBlazor/State/ @ScarletKuro
-/src/MudBlazor/TScripts/mudPopover.js @versile2
+
+# Services
 /src/MudBlazor/Services/Browser/ @ScarletKuro
 /src/MudBlazor/Services/KeyInterceptor/ @ScarletKuro
 /src/MudBlazor/Services/Localization/ @ScarletKuro
+/src/MudBlazor/Services/MudGlobal.cs @danielchalmers
 /src/MudBlazor/Services/Popover/ @ScarletKuro
-/src/MudBlazor/Utilities/ObserverManager/ @ScarletKuro
+
+# Utilities
+/src/MudBlazor/Utilities/Background/ @ScarletKuro
 /src/MudBlazor/Utilities/Clone/ @ScarletKuro
 /src/MudBlazor/Utilities/Converter/ @ScarletKuro
-/src/MudBlazor/Utilities/Background/ @ScarletKuro
+/src/MudBlazor/Utilities/ObserverManager/ @ScarletKuro
+
+# Core Logic
+/src/MudBlazor/Converters/ @ScarletKuro
+/src/MudBlazor/State/ @ScarletKuro
+
+# Scripts
+/src/MudBlazor/TScripts/mudInputSizing.js @danielchalmers
+/src/MudBlazor/TScripts/mudPopover.js @versile2
