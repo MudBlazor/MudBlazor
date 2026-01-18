@@ -16,14 +16,14 @@ class MudInput {
     }
 
     insertAtCurrentCaretPosition(element, text) {
-        const start = element.selectionStart ?? 0;
-        const end = element.selectionEnd ?? start;
+        const start = element.selectionStart !== null && element.selectionStart !== undefined ? element.selectionStart : 0;
+        const end = element.selectionEnd !== null && element.selectionEnd !== undefined ? element.selectionEnd : start;
 
         this._insertText(element, text, start, end);
     }
 
     insertAtPosition(element, text, position) {
-        const value = element.value ?? '';
+        const value = element.value !== null && element.value !== undefined ? element.value : '';
         const insertPos = this._clampPosition(position, value.length);
 
         this._insertText(element, text, insertPos, insertPos);
@@ -50,7 +50,7 @@ class MudInput {
     }
 
     _insertText(element, text, start, end) {
-        const value = element.value ?? '';
+        const value = element.value !== null && element.value !== undefined ? element.value : '';
         element.value = value.substring(0, start) + text + value.substring(end);
 
         const newCaretPos = start + text.length;
