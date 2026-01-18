@@ -180,7 +180,7 @@ namespace MudBlazor
         /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
         /// <param name="text">The new text value to use.</param>
-        public override async Task SetTextAsync(string? text)
+        public new async Task SetTextAsync(string? text)
         {
             if (!HasMask)
             {
