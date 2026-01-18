@@ -243,6 +243,7 @@ namespace MudBlazor
             {
                 // set initial sort
                 Debug.Assert(Column is not null);
+                Debug.Assert(Column.PropertyName is not null);
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc()));
             }
 
@@ -397,6 +398,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
 
             Debug.Assert(Column is not null);
+            Debug.Assert(Column.PropertyName is not null);
             if ((args.MetaKey || args.CtrlKey) && DataGrid.SortMode == SortMode.Multiple)
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else

@@ -284,13 +284,13 @@ namespace MudBlazor
         /// The comparison used for values in this column.
         /// </summary>
         [Parameter]
-        public IComparer<object>? Comparer { get; set; } = null;
+        public IComparer<object?>? Comparer { get; set; } = null;
 
         /// <summary>
         /// The function used to sort values in this column.
         /// </summary>
         [Parameter]
-        public Func<T, object> SortBy
+        public Func<T, object?> SortBy
         {
             get
             {
@@ -509,6 +509,7 @@ namespace MudBlazor
         {
             get
             {
+                Debug.Assert(PropertyType is not null);
                 return PropertyType;
             }
         }
@@ -558,7 +559,7 @@ namespace MudBlazor
         internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T>? HeaderCell { get; set; }
 
-        private Func<T, object>? _sortBy;
+        private Func<T, object?>? _sortBy;
         internal Func<T, object?>? groupBy;
 
         // These are set in OnInitialized() so they can't be null
@@ -624,7 +625,7 @@ namespace MudBlazor
 
                 if (invalidOperators.Length > 0)
                 {
-                    throw new ArgumentException($"Invalid filter operators for {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
+                    throw new ArgumentException($"Invalid filter operators for {PropertyType?.Name}: {string.Join(", ", invalidOperators)}");
                 }
             }
 
@@ -671,7 +672,7 @@ namespace MudBlazor
             }
         }
 
-        internal Func<T, object> GetLocalSortFunc()
+        internal Func<T, object?> GetLocalSortFunc()
         {
             if (_sortBy == null)
             {
@@ -767,17 +768,17 @@ namespace MudBlazor
         /// <summary>
         /// The name of the property used for sorting this column's values.
         /// </summary>
-        public virtual string PropertyName { get; }
+        public virtual string? PropertyName { get; }
 
         protected internal virtual string? ContentFormat { get; }
 
-        protected internal abstract object CellContent(T item);
+        protected internal abstract object? CellContent(T item);
 
-        protected internal abstract object PropertyFunc(T item);
+        protected internal abstract object? PropertyFunc(T item);
 
-        protected internal virtual Type PropertyType { get; }
+        protected internal virtual Type? PropertyType { get; }
 
-        protected internal abstract void SetProperty(object item, object value);
+        protected internal abstract void SetProperty(object? item, object? value);
 
         #endregion
     }
