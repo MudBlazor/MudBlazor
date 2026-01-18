@@ -34,7 +34,7 @@ namespace MudBlazor
         private readonly string _elementId = Identifier.Create("select");
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
-        private DateTime _lastSearchTime = DateTime.MinValue;
+        private DateTimeOffset _lastSearchTime = DateTimeOffset.MinValue;
         private readonly ParameterState<IEnumerable<T?>?> _selectedValuesState;
 
         public MudSelect()
@@ -90,6 +90,9 @@ namespace MudBlazor
 
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
@@ -173,7 +176,7 @@ namespace MudBlazor
 
         private MudSelectItem<T>? SelectItemBySearch(IEnumerable<MudSelectItem<T>> items, string inputChar)
         {
-            var now = DateTime.UtcNow;
+            var now = TimeProvider.GetUtcNow();
 
             if (now - _lastSearchTime > QuickSearchInterval)
             {
