@@ -12,14 +12,14 @@ namespace MudBlazor
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public partial class MudTextField<T> : MudDebouncedInput<T>
     {
-        private IMask? _mask = null;
-        private MudMask? _maskReference = null;
+        private IMask? _mask;
+        private MudMask? _maskReference;
 
         protected string Classname =>
-           new CssBuilder("mud-input-input-control")
-               .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
-               .AddClass(Class)
-               .Build();
+            new CssBuilder("mud-input-input-control")
+                .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// The reference to the underlying <see cref="MudInput{T}"/> component.
@@ -44,7 +44,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
@@ -166,7 +166,7 @@ namespace MudBlazor
         /// <summary>
         /// Clears the <see cref="MudBaseInput{T}.Text"/> and sets <see cref="MudBaseInput{T}.Value"/> to <c>default(T)</c>.
         /// </summary>
-        public Task Clear()
+        public Task ClearAsync()
         {
             if (!HasMask)
             {
@@ -180,7 +180,7 @@ namespace MudBlazor
         /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
         /// <param name="text">The new text value to use.</param>
-        public async Task SetText(string? text)
+        public new async Task SetTextAsync(string? text)
         {
             if (!HasMask)
             {
@@ -225,7 +225,7 @@ namespace MudBlazor
             return Clearable && !GetDisabledState();
         }
 
-        private Task OnMaskedValueChanged(string s) => SetTextAndUpdateValueAsync(s);
+        private Task OnMaskedValueChangedAsync(string s) => SetTextAndUpdateValueAsync(s);
 
         private string GetCounterText() => Counter switch
         {
@@ -234,7 +234,7 @@ namespace MudBlazor
             _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
-        protected async Task HandleContainerClick()
+        protected async Task HandleContainerClickAsync()
         {
             if (!_isFocused && IsJSRuntimeAvailable && InputReference != null)
             {
