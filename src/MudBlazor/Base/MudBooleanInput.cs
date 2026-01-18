@@ -167,7 +167,7 @@ namespace MudBlazor
 
         protected internal override T? ReadValue => _valueState.Value;
 
-        protected override Task SetValueAsync(T? value) => _valueState.SetValueAsync(value);
+        protected override Task SetValueCoreAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// A value is required, so if not checked we return ERROR.

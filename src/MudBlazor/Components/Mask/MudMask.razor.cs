@@ -266,7 +266,7 @@ namespace MudBlazor
                 if (Clearable)
                     UpdateClearable();
                 var v = ConvertGet(cleanText);
-                await SetValueAsync(v);
+                await SetValueCoreAsync(v);
                 await ValueChanged.InvokeAsync(v);
                 await SetCaretPositionAsync(caret, selection);
             }
