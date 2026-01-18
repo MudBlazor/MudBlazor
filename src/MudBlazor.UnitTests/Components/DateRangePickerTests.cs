@@ -927,24 +927,22 @@ namespace MudBlazor.UnitTests.Components
             openBtn.Count.Should().Be(1);
             var openBtnElement = openBtn[0].Find("button");
             await openBtnElement.TriggerEventAsync("onclick", new MouseEventArgs());
-            await Task.Delay(500);
             IElement DayButton(string dayNumber) =>
                 comp.FindAll("button")
                     .SingleOrDefault(x => x.GetStyle().GetPropertyValue("--day-id") == dayNumber);
+            await comp.WaitForAssertionAsync(() => DayButton("5").Should().NotBeNull());
             await DayButton("5").TriggerEventAsync("onclick", new MouseEventArgs());
-            await Task.Delay(200);
             await DayButton("7").TriggerEventAsync("onclick", new MouseEventArgs());
-            await Task.Delay(200);
 
             IReadOnlyList<IRenderedComponent<MudIconButton>> IconButtons(int index) =>
                 picker[index].FindComponents<MudIconButton>();
 
-            IconButtons(0).Count.Should().Be(2);
-            IconButtons(1).Count.Should().Be(2);
+            await comp.WaitForAssertionAsync(() => IconButtons(0).Count.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => IconButtons(1).Count.Should().Be(2));
             await IconButtons(0)[0].Find("button").ClickAsync();
             await IconButtons(1)[0].Find("button").ClickAsync();
-            IconButtons(0).Count.Should().Be(1);
-            IconButtons(1).Count.Should().Be(1);
+            await comp.WaitForAssertionAsync(() => IconButtons(0).Count.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => IconButtons(1).Count.Should().Be(1));
         }
 
         [Test]

@@ -157,8 +157,7 @@ namespace MudBlazor.UnitTests.Components
             var addButton = comp.Find(".my-add-icon-class");
             await addButton.ClickAsync();
 
-            await Task.Delay(5);
-            comp.Instance.AddClickCounter.Should().Be(1);
+            await comp.WaitForAssertionAsync(() => comp.Instance.AddClickCounter.Should().Be(1));
         }
 
         [Test]
@@ -171,9 +170,7 @@ namespace MudBlazor.UnitTests.Components
                 var closeButton = comp.FindAll(".my-close-icon-class")[i];
                 await closeButton.ClickAsync();
 
-                await Task.Delay(5);
-
-                comp.Instance.CloseClicked.Should().HaveCount(i + 1);
+                await comp.WaitForAssertionAsync(() => comp.Instance.CloseClicked.Should().HaveCount(i + 1));
             }
         }
     }

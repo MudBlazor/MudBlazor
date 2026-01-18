@@ -1304,8 +1304,7 @@ namespace MudBlazor.UnitTests.Components
             var comp1 = Context.Render<InlineDialogDuplicateTest>();
             // open the dialog
             comp1.Find("button").Click();
-            await Task.Delay(1000);
-            comp.FindComponents<MudDialog>().Count.Should().Be(1);
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudDialog>().Count.Should().Be(1));
         }
 
         [Test]
@@ -1327,22 +1326,21 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudProgressLinear>().Instance.Value.Should().Be(0); // Initial progress value - 0
 
             // Wait for mid-progress (simulate that loop is progressing)
-            await Task.Delay(1000);
-            //comp.Render();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dialog = comp.Find("div.mud-dialog");
+                dialog.TextContent.Should().Contain("Progress"); //change from "Initial state" to "Progress"
+            });
 
-            dialog = comp.Find("div.mud-dialog");
-            dialog.TextContent.Should().Contain("Progress"); //change from "Initial state" to "Progress"
-
-            var progressComponent = comp.FindComponent<MudProgressLinear>();
-            var progressValue = progressComponent.Instance.Value;
-            progressValue.Should().BeGreaterThan(0).And.BeLessThan(100);
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var progressComponent = comp.FindComponent<MudProgressLinear>();
+                var progressValue = progressComponent.Instance.Value;
+                progressValue.Should().BeGreaterThan(0).And.BeLessThan(100);
+            });
 
             // Wait for dialog to close and state reset
-            await Task.Delay(3000); // Ensure loop finishes
-            comp.Render();
-
-            // Assert the dialog is now hidden
-            comp.Markup.Trim().Should().NotContain("mud-dialog");
+            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().NotContain("mud-dialog"));
         }
 
         [Test]

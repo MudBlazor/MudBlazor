@@ -1190,9 +1190,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePaginationTest1()
         {
             var comp = Context.Render<TablePaginationTest1>();
-            await Task.Delay(200);
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
-            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
+                comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            });
         }
 
         /// <summary>
@@ -1461,11 +1463,7 @@ namespace MudBlazor.UnitTests.Components
                 return first.Task;
             })));
 
-            await Task.Delay(20);
-
-            // Test
-
-            // Make sure this first request was not canceled
+            await comp.WaitForAssertionAsync(() => cancelToken.Should().NotBeNull());
             await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange a table refresh
@@ -1477,11 +1475,6 @@ namespace MudBlazor.UnitTests.Components
                 return second.Task;
             })));
 
-            await Task.Delay(20);
-
-            // Test
-
-            // Make sure this second request DID cancel the first request's token
             await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
@@ -3074,4 +3067,3 @@ namespace MudBlazor.UnitTests.Components
 
     }
 }
-
