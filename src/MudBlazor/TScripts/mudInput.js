@@ -29,34 +29,22 @@ class MudInput {
         this._insertText(element, text, insertPos, insertPos);
     }
 
-    setTabSettings(element, enableTab, tabSpaces) {
-        // Remove existing listener if present
-        if (element._tabKeyHandler) {
-            element.removeEventListener('keydown', element._tabKeyHandler);
-            delete element._tabKeyHandler;
+    _insertText(element, text, start, end) {
+        element.focus();
+        element.setSelectionRange(start, end);
+
+        // Use execCommand to insert text (adds to undo stack)
+        // noinspection JSDeprecatedSymbols
+        if (!document.execCommand('insertText', false, text)) {
+            // Fallback for browsers that don't support execCommand
+            const value = element.value !== null && element.value !== undefined ? element.value : '';
+            element.value = value.substring(0, start) + text + value.substring(end);
+
+            const newCaretPos = start + text.length;
+            element.selectionStart = element.selectionEnd = newCaretPos;
         }
 
-        if (!enableTab) return;
-
-        // Create and store the handler
-        element._tabKeyHandler = (e) => {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                const spaces = ' '.repeat(Math.max(0, tabSpaces));
-                this.insertAtCurrentCaretPosition(element, spaces);
-            }
-        };
-        element.addEventListener('keydown', element._tabKeyHandler);
-    }
-
-    _insertText(element, text, start, end) {
-        const value = element.value !== null && element.value !== undefined ? element.value : '';
-        element.value = value.substring(0, start) + text + value.substring(end);
-
-        const newCaretPos = start + text.length;
-        element.selectionStart = element.selectionEnd = newCaretPos;
-
-        this._dispatchInputEvent(element);
+        element.dispatchEvent(new Event('input', {bubbles: true}));
     }
 
     _clampPosition(position, max) {

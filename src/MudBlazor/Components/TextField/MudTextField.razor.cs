@@ -105,44 +105,9 @@ namespace MudBlazor
         [Category(CategoryTypes.General.Behavior)]
         public int MaxLines { get; set; }
 
-        /// <summary>
-        /// Whether to insert <see cref="TabSpaces"/> spaces when the user presses tab instead of navigating to the next element.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool EnableTab { get; set; }
-
-        /// <summary>
-        /// How many spaces to insert when the user presses tab.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>4</c>.
-        /// Requires <see cref="EnableTab"/> to be <c>true</c>.
-        /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public int TabSpaces { get; set; } = 4;
-
         [MemberNotNullWhen(false, nameof(InputReference))]
         [MemberNotNullWhen(true, nameof(_mask), nameof(Mask), nameof(_maskReference))]
         private bool HasMask => _mask is not null;
-
-        private ParameterState<bool> _enableTabState;
-        private ParameterState<int> _tabSpacesState;
-
-        public MudTextField()
-        {
-            using var registerScope = CreateRegisterScope();
-            _enableTabState = registerScope.RegisterParameter<bool>(nameof(EnableTab))
-                .WithParameter(() => EnableTab)
-                .WithChangeHandler(OnTabSettingsChangedAsync);
-            _tabSpacesState = registerScope.RegisterParameter<int>(nameof(TabSpaces))
-                .WithParameter(() => TabSpaces)
-                .WithChangeHandler(OnTabSettingsChangedAsync);
-        }
 
         /// <inheritdoc />
         public override ValueTask FocusAsync()
@@ -328,18 +293,6 @@ namespace MudBlazor
             if (!_isFocused && IsJSRuntimeAvailable && InputReference != null)
             {
                 await InputReference.FocusAsync();
-            }
-        }
-
-        private async Task OnTabSettingsChangedAsync()
-        {
-            if (IsJSRuntimeAvailable && InputReference != null)
-            {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.setTabSettings",
-                    InputReference.ElementReference,
-                    _enableTabState.Value,
-                    _tabSpacesState.Value
-                );
             }
         }
     }
