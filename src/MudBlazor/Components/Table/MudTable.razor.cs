@@ -228,7 +228,7 @@ namespace MudBlazor
             get => _items;
             set
             {
-                if (Equals(_items, value))
+                if (ReferenceEquals(_items, value))
                 {
                     return;
                 }
@@ -439,7 +439,7 @@ namespace MudBlazor
             get => _comparer;
             set
             {
-                if (Equals(value, _comparer))
+                if (ReferenceEquals(value, _comparer))
                 {
                     return;
                 }
