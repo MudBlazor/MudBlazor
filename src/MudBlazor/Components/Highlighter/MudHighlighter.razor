@@ -57,7 +57,7 @@ else if (!string.IsNullOrEmpty(Text))
 }
 
 @code {
-    private string RenderAttributes(IDictionary<string, object> attributes)
+    private string RenderAttributes(IDictionary<string, object?> attributes)
     {
         if (attributes == null) return string.Empty;
 
