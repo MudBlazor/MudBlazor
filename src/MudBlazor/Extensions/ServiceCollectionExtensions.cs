@@ -415,6 +415,8 @@ namespace MudBlazor.Services
                     popoverOptions.OverflowBehavior = options.PopoverOptions.OverflowBehavior;
                     popoverOptions.Delay = options.PopoverOptions.Delay;
                     popoverOptions.Duration = options.PopoverOptions.Duration;
+                    popoverOptions.DatePickerClosingDelay = options.PopoverOptions.DatePickerClosingDelay;
+                    popoverOptions.TimePickerClosingDelay = options.PopoverOptions.TimePickerClosingDelay;
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()

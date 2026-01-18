@@ -30,6 +30,8 @@ namespace MudBlazor
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
 
+        protected PopoverOptions PopoverOptions => PopoverService.PopoverOptions;
+
         protected string PickerClassname =>
             new CssBuilder("mud-picker")
                 .AddClass("mud-picker-inline", PickerVariant != PickerVariant.Static)

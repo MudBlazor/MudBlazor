@@ -64,11 +64,11 @@ namespace MudBlazor
         /// The amount of time, in milliseconds, to wait before closing the picker.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>200</c>. The delay gives users a moment to see the selected time before the popover disappears.
+        /// Defaults to <see cref="PopoverOptions.TimePickerClosingDelay"/>. The delay gives users a moment to see the selected time before the popover disappears.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int ClosingDelay { get; set; } = 200;
+        public int? ClosingDelay { get; set; }
 
         /// <summary>
         /// Closes this picker when the value is set or cleared.
@@ -629,11 +629,13 @@ namespace MudBlazor
 
                 if (PickerVariant != PickerVariant.Static)
                 {
-                    await Task.Delay(ClosingDelay);
+                    await Task.Delay(GetClosingDelay());
                     await CloseAsync(false);
                 }
             }
         }
+
+        private int GetClosingDelay() => ClosingDelay ?? (int)PopoverOptions.TimePickerClosingDelay.TotalMilliseconds;
 
         protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
         {

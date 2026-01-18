@@ -7,6 +7,7 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
@@ -29,7 +30,9 @@ namespace MudBlazor.UnitTests.Components
             picker.MinDate.Should().Be(null);
             picker.OpenTo.Should().Be(OpenTo.Date);
             picker.FirstDayOfWeek.Should().Be(null);
-            picker.ClosingDelay.Should().Be(100);
+            picker.ClosingDelay.Should().BeNull();
+            Context.Services.GetRequiredService<IPopoverService>()
+                .PopoverOptions.DatePickerClosingDelay.Should().Be(TimeSpan.FromMilliseconds(100));
             picker.DisplayMonths.Should().Be(2);
             picker.MaxMonthColumns.Should().Be(null);
             picker.StartMonth.Should().Be(null);

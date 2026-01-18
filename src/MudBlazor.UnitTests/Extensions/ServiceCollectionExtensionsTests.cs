@@ -530,6 +530,8 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
             options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
             options.PopoverOptions.Duration = TimeSpan.FromSeconds(2);
+            options.PopoverOptions.DatePickerClosingDelay = TimeSpan.FromMilliseconds(150);
+            options.PopoverOptions.TimePickerClosingDelay = TimeSpan.FromMilliseconds(250);
 
             expectedOptions = options;
         });
@@ -598,6 +600,8 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
         actualPopoverOptions.Delay.Should().Be(expectedOptions.PopoverOptions.Delay);
         actualPopoverOptions.Duration.Should().Be(expectedOptions.PopoverOptions.Duration);
+        actualPopoverOptions.DatePickerClosingDelay.Should().Be(expectedOptions.PopoverOptions.DatePickerClosingDelay);
+        actualPopoverOptions.TimePickerClosingDelay.Should().Be(expectedOptions.PopoverOptions.TimePickerClosingDelay);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);

@@ -23,6 +23,18 @@ public class PopoverOptions
     public TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
 
     /// <summary>
+    /// Gets or sets the delay before closing a date picker after selection.
+    /// The default value is <c>100 milliseconds</c>.
+    /// </summary>
+    public TimeSpan DatePickerClosingDelay { get; set; } = TimeSpan.FromMilliseconds(100);
+
+    /// <summary>
+    /// Gets or sets the delay before closing a time picker after selection.
+    /// The default value is <c>200 milliseconds</c>.
+    /// </summary>
+    public TimeSpan TimePickerClosingDelay { get; set; } = TimeSpan.FromMilliseconds(200);
+
+    /// <summary>
     /// Gets or sets a value indicating whether to check for the presence of a popover provider <see cref="MudPopoverProvider"/>.
     /// The default value is <c>true</c>.
     /// </summary>

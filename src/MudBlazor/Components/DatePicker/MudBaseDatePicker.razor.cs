@@ -128,12 +128,16 @@ namespace MudBlazor
         /// The delay, in milliseconds, before closing the picker after a value is selected.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>100</c>.<br />
+        /// Defaults to <see cref="PopoverOptions.DatePickerClosingDelay"/>.<br />
         /// This delay helps the user see that a date has been selected before the popover disappears.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int ClosingDelay { get; set; } = 100;
+        public int? ClosingDelay { get; set; }
+
+        protected int GetClosingDelay() => ClosingDelay ?? (int)PopoverOptions.DatePickerClosingDelay.TotalMilliseconds;
+
+        protected DateTime GetToday() => TimeProvider.GetLocalNow().Date;
 
         /// <summary>
         /// The number of months to display in the calendar.
@@ -307,7 +311,7 @@ namespace MudBlazor
                 return calendar.MinSupportedDateTime;
             }
 
-            var baseDate = _picker_month ?? DateTime.Today.StartOfMonth(culture);
+            var baseDate = _picker_month ?? GetToday().StartOfMonth(culture);
 
             var year = FixYear ?? calendar.GetYear(baseDate);
             var startMonth = FixMonth ?? calendar.GetMonth(baseDate);
@@ -334,7 +338,7 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(culture);
+            var monthStartDate = _picker_month ?? GetToday().StartOfMonth(culture);
             return calendar.AddMonths(monthStartDate, month).EndOfMonth(culture);
         }
 
@@ -427,7 +431,7 @@ namespace MudBlazor
 
                 if (PickerVariant != PickerVariant.Static)
                 {
-                    await Task.Delay(ClosingDelay);
+                    await Task.Delay(GetClosingDelay());
                     await CloseAsync(false);
                 }
             }
@@ -646,7 +650,7 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (MinDate.HasValue)
                 return calendar.GetYear(MinDate.Value);
-            return calendar.GetYear(DateTime.Today) - 100;
+            return calendar.GetYear(GetToday()) - 100;
         }
 
         protected int GetMaxYear()
@@ -655,7 +659,7 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (MaxDate.HasValue)
                 return calendar.GetYear(MaxDate.Value);
-            return calendar.GetYear(DateTime.Today) + 100;
+            return calendar.GetYear(GetToday()) + 100;
         }
 
         private string? GetYearClasses(int year)
