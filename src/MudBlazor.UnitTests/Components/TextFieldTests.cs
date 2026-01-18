@@ -554,8 +554,7 @@ namespace MudBlazor.UnitTests.Components
         #region Custom ValidationAttribute
         public class CustomFailingValidationAttribute : ValidationAttribute
         {
-            protected override ValidationResult IsValid(object? value,
-                                                        ValidationContext validationContext)
+            protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
             {
                 return new ValidationResult(ErrorMessage);
             }
@@ -596,7 +595,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                     .Add(p => p.For, (Expression<Func<string>>)(() => (model as TestFailingModel2)!.Foo!))
 
-                //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
+            //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
             );
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
             comp.Instance.GetState(x => x.Error).Should().BeTrue();
@@ -607,8 +606,7 @@ namespace MudBlazor.UnitTests.Components
 
         public class CustomThrowingValidationAttribute : ValidationAttribute
         {
-            protected override ValidationResult IsValid(object? value,
-                                                        ValidationContext validationContext)
+            protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
             {
                 throw new Exception("This is a test exception");
             }
@@ -1665,25 +1663,21 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Verifies that a text field with various configurations renders the expected <c>aria-describedby</c> attribute.
         /// </summary>
-
         // no helpers, validates error id is present when error is present
         [TestCase(false, false, false, false)]
         [TestCase(false, false, false, true)]
         [TestCase(false, false, true, false)]
         [TestCase(false, false, true, true)]
-
         // with helper text, helper element should only be present when there is no error
         [TestCase(false, true, false, false)]
         [TestCase(false, true, false, true)]
         [TestCase(false, true, true, false)]
         [TestCase(false, true, true, true)]
-
         // with user helper id, helper id should always be present
         [TestCase(true, false, false, false)]
         [TestCase(true, false, false, true)]
         [TestCase(true, false, true, false)]
         [TestCase(true, false, true, true)]
-
         // with user helper id and helper text, should always favour user helper id
         [TestCase(true, true, false, false)]
         [TestCase(true, true, false, true)]
