@@ -80,6 +80,18 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Tab Behaviour">
+                <Description>
+                    Set <CodeInline>EnableTab</CodeInline> to <CodeInline>true</CodeInline> to insert spaces when the user presses the tab key. 
+                    You can control the amount of spaces via the <CodeInline>TabSpaces</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldTabExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldTabExample/>
+            </SectionContent>
+        </DocsPageSection>
+
     </SectionSubGroups>
 </DocsPageSection>
 
@@ -306,6 +318,17 @@
             </SectionHeader>
             <SectionContent Code="@nameof(TextFieldSelectRangeExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TextFieldSelectRangeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Text Insertion">
+                <Description>
+                    There are three functions which allow you to insert text: <CodeInline>GetCurrentCaretPositionAsync</CodeInline>, <CodeInline>InsertAtCurrentCaretPositionAsync</CodeInline> and <CodeInline>InsertAtAsync</CodeInline>. 
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldTextInsertionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldTextInsertionExample />
             </SectionContent>
         </DocsPageSection>
 
