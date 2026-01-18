@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -201,7 +200,7 @@ namespace MudBlazor
         /// Returns the current caret position.
         /// </summary>
         /// <remarks>
-        /// Returns the text length if called, and this field hasn't had been focused yet.
+        /// Returns the text length if called and this field hasn't been focused yet.
         /// Returns <c>-1</c> if called before this component has been rendered.
         /// </remarks>
         public async Task<int> GetCurrentCaretPositionAsync()
@@ -220,11 +219,17 @@ namespace MudBlazor
         /// <param name="text">The text to insert.</param>
         /// <param name="position">The position to insert the text at. Set to <c>0</c> to insert the text before and to <c>int.MaxValue</c> after the existing text.</param>
         /// <remarks>
-        /// If <c>position</c> is greater than the current text length, the text will be inserted at the end.
-        /// If <c>position</c> is less than <c>0</c>, the text will be inserted at the beginning.
+        /// If <c>position</c> is greater than the current text length, the text will be inserted at the end.<br/>
+        /// If <c>position</c> is less than <c>0</c>, the text will be inserted at the beginning.<br/>
+        /// Note that this function doesn't support <see cref="MudMask"/>.
         /// </remarks>
         public async Task InsertTextAsync(string text, int position = int.MaxValue)
         {
+            if (HasMask)
+            {
+                throw new InvalidOperationException("Cannot insert text into masked input.");
+            }
+
             if (IsJSRuntimeAvailable && InputReference != null)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.insertAtPosition", InputReference.ElementReference, text, position);
@@ -237,9 +242,15 @@ namespace MudBlazor
         /// <param name="text">The text to insert.</param>
         public async Task InsertTextAtCurrentCaretPositionAsync(string text)
         {
-            if (IsJSRuntimeAvailable && InputReference != null)
+            if (!HasMask && IsJSRuntimeAvailable && InputReference != null)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.insertAtCurrentCaretPosition", InputReference.ElementReference, text);
+                return;
+            }
+
+            if (HasMask)
+            {
+                await _maskReference.OnPasteAsync(text);
             }
         }
 

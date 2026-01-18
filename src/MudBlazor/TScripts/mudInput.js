@@ -53,10 +53,6 @@ class MudInput {
             ? max
             : Math.max(0, Math.min(pos, max));
     }
-
-    _dispatchInputEvent(element) {
-        element.dispatchEvent(new Event('input', {bubbles: true}));
-    }
 }
 
 window.mudInput = new MudInput();
