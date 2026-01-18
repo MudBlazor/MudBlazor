@@ -8,3 +8,11 @@
 /src/MudBlazor/Converters/ @ScarletKuro
 /src/MudBlazor/State/ @ScarletKuro
 /src/MudBlazor/TScripts/mudPopover.js @versile2
+/src/MudBlazor/Services/Browser/ @ScarletKuro
+/src/MudBlazor/Services/KeyInterceptor/ @ScarletKuro
+/src/MudBlazor/Services/Localization/ @ScarletKuro
+/src/MudBlazor/Services/Popover/ @ScarletKuro
+/src/MudBlazor/Utilities/ObserverManager/ @ScarletKuro
+/src/MudBlazor/Utilities/Clone/ @ScarletKuro
+/src/MudBlazor/Utilities/Converter/ @ScarletKuro
+/src/MudBlazor/Utilities/Background/ @ScarletKuro
