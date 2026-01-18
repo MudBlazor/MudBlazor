@@ -14,7 +14,7 @@
                                  ValueChanged="@context.Actions.SetSelectAllAsync" />;
         }
 
-        return null;
+        return null!;
     };
 
     public RenderFragment<CellContext<T>> GetSelectCellTemplate() => context =>
@@ -35,6 +35,6 @@
                                  ValueChanged="@context.Actions.SetSelectAllAsync" />;
         }
 
-        return null;
+        return null!;
     };
 }

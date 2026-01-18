@@ -157,7 +157,7 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     <MudGrid>
                         <MudItem xs="12">
-                            @DataGrid?.Filter(Column.FilterContext.FilterDefinition, Column)
+                            @DataGrid?.Filter(Column.FilterContext.FilterDefinition!, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
                             <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
