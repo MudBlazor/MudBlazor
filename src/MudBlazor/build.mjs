@@ -3,6 +3,8 @@
  *
  * Usage:
  *   bun run build.mjs
+ * Or if you don't have bun installed:
+ *   dotnet tool exec BunDotNet.Cli -- wrapper -- run build.mjs
  */
 
 import fs from "node:fs";
