@@ -6,11 +6,6 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 
-  <!--Outside Visual Studio SolutionDir is not available-->
-  <PropertyGroup>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
-  </PropertyGroup>
-
   <!--Analyzer Config-->
   <PropertyGroup>
     <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
@@ -18,19 +13,19 @@
   </PropertyGroup>
 
   <!--Execute the code generator-->
-  <Target Name="GenerateDocs" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="GenerateDocs" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs" Importance="high" />
-    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
+    <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
-  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="GenerateDocs">
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="GenerateDocs">
     <ItemGroup>
       <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
       <!--This avoids full recompile after adding generated files-->
-      <!--See https://github.com/dotnet/msbuild/issues/6401-->
+      <!--See https://github.com/dotnet/msbuild/issues/6401 -->
       <Compile Remove="Models\Snippets.generated.cs" />
       <Compile Include="Models\Snippets.generated.cs" />
       <Compile Remove="Models\Generated\ApiDocumentation.generated.cs" />
@@ -76,6 +71,7 @@
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
     <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
     <ProjectReference Include="../MudBlazor.Analyzers/MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <PropertyGroup>

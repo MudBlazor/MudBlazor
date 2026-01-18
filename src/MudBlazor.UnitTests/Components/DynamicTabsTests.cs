@@ -13,6 +13,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DynamicTabsTests : BunitTest
     {
+        [SetUp]
         public override void Setup()
         {
             base.Setup();
@@ -154,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SimpleDynamicTabsInteractionTest>();
 
             var addButton = comp.Find(".my-add-icon-class");
-            addButton.Click();
+            await addButton.ClickAsync();
 
             await Task.Delay(5);
             comp.Instance.AddClickCounter.Should().Be(1);
@@ -168,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 3; i++)
             {
                 var closeButton = comp.FindAll(".my-close-icon-class")[i];
-                closeButton.Click();
+                await closeButton.ClickAsync();
 
                 await Task.Delay(5);
 

@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Components;
 public class VirtualizeTests : BunitTest
 {
     [Test]
-    public void VirtualizeRenderTest()
+    public void VirtualizeRender()
     {
         var comp = Context.Render<VirtualizeTest>();
         var virtualize = comp.FindComponent<MudVirtualize<string>>();
@@ -20,7 +20,7 @@ public class VirtualizeTests : BunitTest
     }
 
     [Test]
-    public void VirtualizeNoRecordTest()
+    public void VirtualizeNoRecord()
     {
         var comp = Context.Render<VirtualizeNoRecordsContentTest>();
 

@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(typeof(int), false)]
         [TestCase(typeof(int?), false)]
         [TestCase(typeof(string), true)]
-        public void IsString_Test(Type type, bool expected)
+        public void IsString(Type type, bool expected)
         {
             var isString = TypeIdentifier.IsString(type);
             isString.Should().Be(expected);
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(typeof(uint?), true)]
         [TestCase(typeof(float?), true)]
         [TestCase(typeof(BigInteger?), true)]
-        public void IsNumber_Test(Type type, bool expected)
+        public void IsNumber(Type type, bool expected)
         {
             var isNumber = TypeIdentifier.IsNumber(type);
             isNumber.Should().Be(expected);
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(typeof(int?), false)]
         [TestCase(typeof(Adornment), true)]
         [TestCase(typeof(Adornment?), true)]
-        public void IsEnum_Test(Type type, bool expected)
+        public void IsEnum(Type type, bool expected)
         {
             var isEnum = TypeIdentifier.IsEnum(type);
             isEnum.Should().Be(expected);
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(typeof(int?), false)]
         [TestCase(typeof(DateTime), true)]
         [TestCase(typeof(DateTime?), true)]
-        public void IsDateTime_Test(Type type, bool expected)
+        public void IsDateTime(Type type, bool expected)
         {
             var isDateTime = TypeIdentifier.IsDateTime(type);
             isDateTime.Should().Be(expected);
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(typeof(int?), false)]
         [TestCase(typeof(bool), true)]
         [TestCase(typeof(bool?), true)]
-        public void IsBoolean_Test(Type type, bool expected)
+        public void IsBoolean(Type type, bool expected)
         {
             var isBoolean = TypeIdentifier.IsBoolean(type);
             isBoolean.Should().Be(expected);
@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(typeof(DateOnly?), true)]
         [TestCase(typeof(DateTime), false)]
         [TestCase(typeof(DateTime?), false)]
-        public void IsDateOnly_Test(Type type, bool expected)
+        public void IsDateOnly(Type type, bool expected)
         {
             var isDateOnly = TypeIdentifier.IsDateOnly(type);
             isDateOnly.Should().Be(expected);
@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(typeof(int?), false)]
         [TestCase(typeof(Guid), true)]
         [TestCase(typeof(Guid?), true)]
-        public void IsGuid_Test(Type type, bool expected)
+        public void IsGuid(Type type, bool expected)
         {
             var isGuid = TypeIdentifier.IsGuid(type);
             isGuid.Should().Be(expected);

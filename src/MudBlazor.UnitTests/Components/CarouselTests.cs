@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing some parameters
         /// </summary>
         [Test]
-        public async Task CarouselTest_RenderingOptions()
+        public async Task Carousel_RenderingOptions()
         {
             var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing autoCycle
         /// </summary>
         [Test]
-        public async Task CarouselTest_AutoCycle()
+        public async Task Carousel_AutoCycle()
         {
             var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing Transition With SelectedIndex
         /// </summary>
         [Test]
-        public void CarouselTest_SelectedIndexTransition()
+        public void Carousel_SelectedIndexTransition()
         {
             var comp = Context.Render<CarouselTest>();
 
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing when DisableSwipeGesture
         /// </summary>
         [Test]
-        public async Task CarouselTest_DisableSwipeGesture()
+        public async Task Carousel_DisableSwipeGesture()
         {
             var comp = Context.Render<MudCarousel<object>>();
 
@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public void CarouselTest_DataBinding()
+        public void Carousel_DataBinding()
         {
             var comp = Context.Render<CarouselBindingTest>();
             // print the generated html
@@ -290,7 +290,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing Bullet count after adding items
         /// </summary>
         [Test]
-        public async Task CarouselTest_AddBullets()
+        public async Task Carousel_AddBullets()
         {
             var comp = Context.Render<MudCarousel<object>>();
 

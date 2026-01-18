@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwitchesToFallbackSrcOnError()
+        public async Task SwitchesToFallbackSrcOnError()
         {
             var initialSrc = "primary-image.jpg";
             var fallbackSrc = "fallback-image.jpg";
@@ -106,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
             );
 
             // Trigger the `onerror` event
-            comp.Find("img").TriggerEvent("onerror", EventArgs.Empty);
+            await comp.Find("img").TriggerEventAsync("onerror", EventArgs.Empty);
 
             var img = comp.Find("img");
 
@@ -114,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void FallbackMissingOnError()
+        public async Task FallbackMissingOnError()
         {
             var initialSrc = "primary-image.jpg";
 
@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
             );
 
             // Trigger the `onerror` event
-            comp.Find("img").TriggerEvent("onerror", EventArgs.Empty);
+            await comp.Find("img").TriggerEventAsync("onerror", EventArgs.Empty);
 
             var img = comp.Find("img");
 

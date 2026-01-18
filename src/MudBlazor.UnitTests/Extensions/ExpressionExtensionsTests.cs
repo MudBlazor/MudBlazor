@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public void GetFullPathOfMemberTest()
+        public void GetFullPathOfMember()
         {
             var model = new TestClass();
 

@@ -57,14 +57,14 @@ namespace MudBlazor.UnitTests.Components
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]
-        public void MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
+        public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
         {
             var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
 
             //click in the three headers
             //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             //{
-            //    header.Click();
+            //    await header.ClickAsync();
             //}
 
             //Only one panel should be expanded
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should expand panel
         /// </summary>
         [Test]
-        public void MudExpansionPanel_IsInitiallyExpanded_Expands()
+        public async Task MudExpansionPanel_IsInitiallyExpanded_Expands()
         {
             var comp = Context.Render<ExpansionPanelStartExpandedTest>();
 
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
             panels.Count.Should().Be(1);
 
             var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First();
-            header.Click();
+            await header.ClickAsync();
 
             //we could close the panel
             panels = comp.FindAll(".mud-panel-expanded").ToList();
@@ -165,7 +165,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that ExpandAll method expands all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_ExpandAllAsync()
+        public async Task MudExpansionPanel_ExpandAll()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
@@ -190,7 +190,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAll method collapses all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllAsync()
+        public async Task MudExpansionPanel_CollapseAll()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAllExcept method collapses all panels except one.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllExceptAsync()
+        public async Task MudExpansionPanel_CollapseAllExcept()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
