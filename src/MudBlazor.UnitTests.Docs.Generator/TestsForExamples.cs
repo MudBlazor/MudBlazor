@@ -38,7 +38,6 @@ public class TestsForExamples
 
             // Generate single test method using TestCaseSource
             cb.AddLine("[Test]");
-            cb.AddLine("[Parallelizable(ParallelScope.All)]");
             cb.AddLine("[TestCaseSource(nameof(ExampleCases))]");
             cb.AddLine("public void Example_Renders(string componentName, System.Type componentType)");
             cb.AddLine("{");

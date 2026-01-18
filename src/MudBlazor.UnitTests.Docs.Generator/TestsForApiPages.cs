@@ -289,7 +289,6 @@ public partial class TestsForApiPages
     public void WritePublicTypeTest(CodeBuilder cb)
     {
         cb.AddLine("[Test]");
-        cb.AddLine("[Parallelizable(ParallelScope.All)]");
         cb.AddLine("[TestCaseSource(nameof(ApiCases))]");
         cb.AddLine("public async Task ApiPage_Renders(string typeName, bool hasExampleLink)");
         cb.AddLine("{");
@@ -316,7 +315,6 @@ public partial class TestsForApiPages
     public void WriteLegacyApiTest(CodeBuilder cb)
     {
         cb.AddLine("[Test]");
-        cb.AddLine("[Parallelizable(ParallelScope.All)]");
         cb.AddLine("[TestCaseSource(nameof(LegacyApiCases))]");
         cb.AddLine("public async Task LegacyApiPage_Renders(string component)");
         cb.AddLine("{");
