@@ -9,17 +9,19 @@ namespace MudBlazor
 #nullable enable
     internal class SnackBarMessageState
     {
+        private readonly Stopwatch _transitionStopwatch;
         private string AnimationId { get; }
         public bool UserHasInteracted { get; set; }
         public SnackbarOptions Options { get; }
         public SnackbarState SnackbarState { get; set; }
-        public Stopwatch Stopwatch { get; } = new Stopwatch();
 
-        public SnackBarMessageState(SnackbarOptions options)
+        public SnackBarMessageState(SnackbarOptions options, TimeProvider timeProvider)
         {
+            ArgumentNullException.ThrowIfNull(timeProvider);
             Options = options;
             AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
+            _transitionStopwatch = timeProvider.CreateStopwatch();
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
 
@@ -101,9 +103,19 @@ namespace MudBlazor
             }
         }
 
+        public void RestartTransitionTimer()
+        {
+            _transitionStopwatch.Restart();
+        }
+
+        public void StopTransitionTimer()
+        {
+            _transitionStopwatch.Stop();
+        }
+
         private int RemainingTransitionMilliseconds(int transitionDuration)
         {
-            var duration = transitionDuration - (int)Stopwatch.ElapsedMilliseconds;
+            var duration = transitionDuration - (int)_transitionStopwatch.ElapsedMilliseconds;
 
             return duration >= 0 ? duration : 0;
         }
