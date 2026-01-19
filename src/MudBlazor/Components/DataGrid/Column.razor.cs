@@ -31,7 +31,7 @@ namespace MudBlazor
         /// The data grid which owns this column.
         /// </summary>
         [CascadingParameter]
-        public required MudDataGrid<T> DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
 
