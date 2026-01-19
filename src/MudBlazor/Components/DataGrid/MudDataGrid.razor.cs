@@ -334,7 +334,7 @@ namespace MudBlazor
         /// Called when the EditMode is anything but Cell.
         /// </summary>
         [Parameter]
-        public Func<T, Task<DataGridEditFormCloseBehavior>> CommittedItemChangesBehavior { get; set; }
+        public Func<T, Task<DataGridEditFormCloseBehavior>>? CommittedItemChangesBehavior { get; set; }
 
         /// <summary>
         /// Occurs when a field changes in the edit dialog.
@@ -2015,6 +2015,10 @@ namespace MudBlazor
                 if (CommittedItemChangesBehavior != null)
                 {
                     var item = CloneStrategy.CloneObject(_editingItem);
+
+                    if (item == null)
+                        return;
+
                     var closeBehavior = await CommittedItemChangesBehavior(item);
 
                     if (closeBehavior == DataGridEditFormCloseBehavior.KeepOpen)
