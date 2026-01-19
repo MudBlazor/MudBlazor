@@ -11,4 +11,10 @@
     <!-- NetEscapades.EnumGenerators.Generators uses DescriptionAttribute to generate the enum values -->
     <EnumGenerator_EnumMetadataSource>DescriptionAttribute</EnumGenerator_EnumMetadataSource>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <BunVersion>1.3.6</BunVersion>
+    <BunDotNetVersion>1.1.0</BunDotNetVersion>
+    <BunWrapper>dotnet tool exec BunDotNet.Cli@$(BunDotNetVersion) --yes -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
+  </PropertyGroup>
 </Project>
