@@ -564,7 +564,7 @@ namespace MudBlazor
                 return;
             }
             await OnClickHandlerAsync(new MouseEventArgs());
-            
+
             StateHasChanged();
         }
     }
