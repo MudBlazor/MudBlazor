@@ -18,6 +18,7 @@ const scriptDirectory = path.dirname(scriptFilename);
 const jsInputDir = path.join(scriptDirectory, "TScripts");
 const jsOutputFile = path.join(scriptDirectory, "wwwroot/MudBlazor.min.js");
 const scssInput = path.join(scriptDirectory, "Styles/MudBlazor.scss");
+const scssInputDir = path.dirname(scssInput);
 const scssOutput = path.join(scriptDirectory, "wwwroot/MudBlazor.min.css");
 
 async function buildJS() {
@@ -74,5 +75,55 @@ function buildSCSS() {
   fs.writeFileSync(scssOutput, result.css);
 }
 
-await buildJS();
-buildSCSS();
+async function buildAll() {
+  await buildJS();
+  buildSCSS();
+}
+
+if (process.argv.includes("watch")) {
+  console.log("Initial build...");
+  try {
+    await buildAll();
+  } catch (e) {
+    console.error("Initial build failed:", e);
+  }
+
+  console.log("Watching for changes, press Ctrl+C to stop...");
+
+  const jsWatcher = fs.watch(
+    jsInputDir,
+    { recursive: true },
+    async (eventType, filename) => {
+      console.log(`JS file changed: ${eventType} ${filename}`);
+      try {
+        await buildJS();
+      } catch (e) {
+        console.error("JS build failed:", e);
+      }
+    },
+  );
+
+  const scssWatcher = fs.watch(
+    scssInputDir,
+    { recursive: true },
+    (eventType, filename) => {
+      if (filename.endsWith(".scss")) {
+        console.log(`SCSS file changed: ${eventType} ${filename}`);
+        try {
+          buildSCSS();
+        } catch (e) {
+          console.error("SCSS build failed:", e);
+        }
+      }
+    },
+  );
+
+  process.on("SIGINT", () => {
+    console.log("Stopping...");
+    jsWatcher.close();
+    scssWatcher.close();
+    process.exit(0);
+  });
+} else {
+  await buildAll();
+}
