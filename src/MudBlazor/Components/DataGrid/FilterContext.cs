@@ -29,7 +29,7 @@ namespace MudBlazor
         /// <summary>
         /// The items to filter.
         /// </summary>
-        public IEnumerable<T> Items => _dataGrid.Items;
+        public IEnumerable<T>? Items => _dataGrid.Items;
 
         /// <summary>
         /// The definitions of all filters in the grid.

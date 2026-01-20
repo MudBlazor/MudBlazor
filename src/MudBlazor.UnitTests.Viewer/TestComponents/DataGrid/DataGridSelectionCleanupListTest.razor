@@ -1,0 +1,53 @@
+﻿@* Test component for selection cleanup with regular List<T> *@
+
+<MudDataGrid Items="@Items" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+    <Columns>
+        <SelectColumn T="Model" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "SelectedItems should be cleaned up when Items is reassigned with a filtered List.";
+
+    public List<Model> Items { get; set; } =
+    [
+        new Model("Sam", 56),
+        new Model("Alicia", 54),
+        new Model("Ira", 27),
+        new Model("John", 32)
+    ];
+
+    public HashSet<Model> SelectedItems { get; set; } = [];
+
+    public void RemoveFirstItem()
+    {
+        if (Items.Count > 0)
+        {
+            var itemToRemove = Items[0];
+            Items = Items.Where(x => x != itemToRemove).ToList();
+            StateHasChanged();
+        }
+    }
+
+    public void RemoveItem(Model item)
+    {
+        Items = Items.Where(x => x != item).ToList();
+        StateHasChanged();
+    }
+
+    public void ClearItems()
+    {
+        Items = [];
+        StateHasChanged();
+    }
+
+    public void AddItem(Model item)
+    {
+        Items = Items.Append(item).ToList();
+        StateHasChanged();
+    }
+
+    public record Model(string Name, int Age);
+}

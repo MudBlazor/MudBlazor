@@ -1,0 +1,38 @@
+﻿
+<MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/11730" Target="_blank">MudBlazor/Issues/11730</MudLink>
+
+<MudLayout>
+    <MudAppBar Dense Elevation="1">
+        <MudIconButton id="NI_NavigationMenu_ID" Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />        
+        <MudText Typo="Typo.h5" Class="ml-3">Demo</MudText>
+        <MudSpacer />
+        <MudMenu Variant="Variant.Outlined" Icon="@Icons.Material.Filled.MoreVert" Color="Color.Secondary" 
+            AnchorOrigin="Origin.TopLeft" TransformOrigin="Origin.TopLeft" Dense Class="mt-1 ml-4">
+            <MudMenuItem Icon="@Icons.Material.Filled.ModeEditOutline">
+                One
+            </MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.ModeEditOutline">
+                Two
+            </MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.ModeEditOutline">
+                Three
+            </MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.ModeEditOutline">
+                Four
+            </MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.ModeEditOutline">
+                Five
+            </MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.ModeEditOutline">
+                Six
+            </MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.ModeEditOutline">
+                Seven
+            </MudMenuItem>
+        </MudMenu>
+    </MudAppBar>
+</MudLayout>
+
+@code {
+    public static string __description__ = "Test Popover Lists Max Height Functionality";
+}

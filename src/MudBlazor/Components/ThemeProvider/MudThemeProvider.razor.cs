@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.State;
@@ -11,7 +9,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-partial class MudThemeProvider : ComponentBaseWithState, IDisposable
+
+/// <summary>
+/// Provides a standard set of colors, shapes, sizes and shadows to a layout.
+/// </summary>
+/// <seealso cref="MudTheme"/>
+partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
@@ -25,7 +28,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
     private MudTheme? _theme;
     private readonly ParameterState<bool> _isDarkModeState;
-    private readonly ParameterState<bool> _observeSystemThemeChangeState;
+    private readonly ParameterState<Palette?> _currentPaletteState;
+    private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
     private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
     private event Func<bool, Task>? _darkLightModeChanged;
@@ -40,64 +44,105 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     public MudTheme? Theme { get; set; }
 
     /// <summary>
-    ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
+    /// Uses the browser default scrollbar instead of the MudBlazor scrollbar. 
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     public bool DefaultScrollbar { get; set; }
 
     /// <summary>
-    /// Sets a value indicating whether to observe changes in the system theme preference.
-    /// Default is <c>true</c>.
+    /// Detects when the system theme has changed between Light Mode and Dark Mode.
     /// </summary>
-    [Parameter]
-    public bool ObserveSystemThemeChange { get; set; } = true;
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// When <c>true</c>, the theme will automatically change to Light Mode or Dark Mode as the system theme changes.
+    /// </remarks>
+    [Parameter, ParameterState]
+    public bool ObserveSystemDarkModeChange { get; set; } = true;
 
     /// <summary>
-    /// The active palette of the theme.
+    /// Uses darker colors for all MudBlazor components.
     /// </summary>
-    [Parameter]
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// When this value changes, <see cref="IsDarkModeChanged"/> occurs.
+    /// </remarks>
+    [Parameter, ParameterState]
     public bool IsDarkMode { get; set; }
 
     /// <summary>
-    /// Invoked when the dark mode changes.
+    /// Occurs when <see cref="IsDarkMode"/> has changed.
     /// </summary>
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
-    [DynamicDependency(nameof(SystemPreferenceChanged))]
+    /// <summary>
+    /// Gets the currently active palette based on the <see cref="IsDarkMode"/> setting.
+    /// </summary>
+    /// <remarks>
+    /// Returns <see cref="MudTheme.PaletteDark"/> when <see cref="IsDarkMode"/> is <c>true</c>; otherwise, returns <see cref="MudTheme.PaletteLight"/>.
+    /// When this value changes, <see cref="CurrentPaletteChanged"/> occurs.
+    /// </remarks>
+    [Parameter, ParameterState]
+    public Palette? CurrentPalette { get; set; }
+
+    /// <summary>
+    /// Occurs when <see cref="CurrentPalette"/> has changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<Palette?> CurrentPaletteChanged { get; set; }
+
+    [DynamicDependency(nameof(SystemDarkModeChangedAsync))]
     public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
             .WithEventCallback(() => IsDarkModeChanged);
-        _observeSystemThemeChangeState = registerScope
-            .RegisterParameter<bool>(nameof(ObserveSystemThemeChange))
-            .WithParameter(() => ObserveSystemThemeChange)
-            .WithChangeHandler(OnObserveSystemThemeChangeChanged);
+        _observeSystemDarkModeChangeState = registerScope.RegisterParameter<bool>(nameof(ObserveSystemDarkModeChange))
+            .WithParameter(() => ObserveSystemDarkModeChange)
+            .WithChangeHandler(OnObserveSystemDarkModeChangeChanged);
+        _currentPaletteState = registerScope.RegisterParameter<Palette?>(nameof(CurrentPalette))
+            .WithParameter(() => CurrentPalette)
+            .WithEventCallback(() => CurrentPaletteChanged);
         _lazyDotNetRef = new Lazy<DotNetObjectReference<MudThemeProvider>>(CreateDotNetObjectReference);
     }
 
     /// <summary>
-    /// Returns the dark mode preference of the user. True if dark mode is preferred.
+    /// Gets the browser's color preference.
     /// </summary>
-    /// <returns></returns>
-    public async Task<bool> GetSystemPreference()
+    /// <returns>
+    /// Returns <c>true</c> if the theme is Dark Mode; otherwise, <c>false</c>.
+    /// </returns>
+    public async Task<bool> GetSystemDarkModeAsync()
     {
         var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
 
         return value;
     }
 
-    public Task WatchSystemPreference(Func<bool, Task> functionOnChange)
+    /// <summary>
+    /// Calls a function when the system's color has changed.
+    /// </summary>
+    /// <param name="functionOnChange">The function to call when the system theme has changed.</param>
+    /// <remarks>
+    /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
+    /// </remarks>
+    public Task WatchSystemDarkModeAsync(Func<bool, Task> functionOnChange)
     {
         _darkLightModeChanged += functionOnChange;
 
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Occurs when the system's dark mode has changed.
+    /// </summary>
+    /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode; <c>false</c> is Light Mode.</param>
     [JSInvokable]
-    public async Task SystemPreferenceChanged(bool isDarkMode)
+    public async Task SystemDarkModeChangedAsync(bool isDarkMode)
     {
         await _isDarkModeState.SetValueAsync(isDarkMode);
         var handler = _darkLightModeChanged;
@@ -107,11 +152,12 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
+    // <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (_observeSystemThemeChangeState.Value && !_observing)
+            if (_observeSystemDarkModeChangeState.Value && !_observing)
             {
                 _observing = true;
                 await WatchDarkThemeMedia();
@@ -121,13 +167,15 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    // <inheritdoc />
     protected override void OnInitialized()
     {
         _theme = Theme ?? new MudTheme();
         base.OnInitialized();
     }
 
-    protected override void OnParametersSet()
+    // <inheritdoc />
+    protected override async Task OnParametersSetAsync()
     {
         if (Theme is not null)
         {
@@ -137,14 +185,20 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             }
         }
 
-        base.OnParametersSet();
+        await _currentPaletteState.SetValueAsync(GetCurrentPalette());
+
+        await base.OnParametersSetAsync();
     }
 
+    /// <summary>
+    /// Gets the CSS styles for this provider.
+    /// </summary>
+    /// <returns>A <c>style</c> HTML element containing this theme's styles.</returns>
     protected string BuildTheme()
     {
         _theme = Theme ?? new MudTheme();
         var theme = new StringBuilder();
-        theme.AppendLine("<style>");
+        theme.AppendLine("<style class='mud-theme-provider'>");
         theme.Append(_theme.PseudoCss.Scope);
         theme.AppendLine("{");
         GenerateTheme(theme);
@@ -154,14 +208,20 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return theme.ToString();
     }
 
+    /// <summary>
+    /// Gets the CSS styles for the browser scrollbar.
+    /// </summary>
+    /// <returns>A <c>style</c> HTML element containing the scrollbar's styles.</returns>
     protected static string BuildMudBlazorScrollbar()
     {
         var scrollbar = new StringBuilder();
+
         scrollbar.AppendLine("<style>");
         scrollbar.AppendLine("::-webkit-scrollbar {width: 8px;height: 8px;z-index: 1;}");
         scrollbar.AppendLine("::-webkit-scrollbar-track {background: transparent;}");
         scrollbar.AppendLine("::-webkit-scrollbar-thumb {background: #c4c4c4;border-radius: 1px;}");
         scrollbar.AppendLine("::-webkit-scrollbar-thumb:hover {background: #a6a6a6;}");
+
         //Firefox
         scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
         scrollbar.AppendLine("</style>");
@@ -169,6 +229,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return scrollbar.ToString();
     }
 
+    /// <summary>
+    /// Generates the CSS styles for the specified theme.
+    /// </summary>
+    /// <param name="theme">The theme to append to.</param>
+    /// <remarks>
+    /// Several CSS values for color, opacity, and elevation are appended based on the value of <see cref="IsDarkMode"/>.
+    /// </remarks>
     protected virtual void GenerateTheme(StringBuilder theme)
     {
         if (_theme is null)
@@ -248,8 +315,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Palette}-dark-hover: {palette.Dark.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
 
         theme.AppendLine($"--{Palette}-text-primary: {palette.TextPrimary};");
+        theme.AppendLine(
+            $"--{Palette}-text-primary-rgb: {palette.TextPrimary.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-text-secondary: {palette.TextSecondary};");
+        theme.AppendLine(
+            $"--{Palette}-text-secondary-rgb: {palette.TextSecondary.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-text-disabled: {palette.TextDisabled};");
+        theme.AppendLine(
+            $"--{Palette}-text-disabled-rgb: {palette.TextDisabled.ToString(MudColorOutputFormats.ColorElements)};");
 
         theme.AppendLine($"--{Palette}-action-default: {palette.ActionDefault};");
         theme.AppendLine(
@@ -259,6 +332,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Palette}-action-disabled-background: {palette.ActionDisabledBackground};");
 
         theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
+        theme.AppendLine($"--{Palette}-surface-rgb: {palette.Surface.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-background: {palette.Background};");
         theme.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
         theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
@@ -275,6 +349,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-table-hover: {palette.TableHover};");
 
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
+        theme.AppendLine(
+            $"--{Palette}-divider-rgb: {palette.Divider.ToString(MudColorOutputFormats.ColorElements)};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
         theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
@@ -287,6 +363,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
         theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
         theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
+
+        theme.AppendLine($"--{Palette}-border-opacity: {palette.BorderOpacity.ToString(CultureInfo.InvariantCulture)};");
 
         //Ripple
         theme.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
@@ -342,7 +420,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
         //Typography
         theme.AppendLine(
-            $"--{Typography}-default-family: '{string.Join("','", _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-default-family: {FormatFontFamily(_theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-default-size: {_theme.Typography.Default.FontSize};");
         theme.AppendLine($"--{Typography}-default-weight: {_theme.Typography.Default.FontWeight};");
         theme.AppendLine(
@@ -351,7 +429,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-default-text-transform: {_theme.Typography.Default.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-h1-family: '{string.Join("','", _theme.Typography.H1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-h1-family: {FormatFontFamily(_theme.Typography.H1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-h1-size: {_theme.Typography.H1.FontSize};");
         theme.AppendLine($"--{Typography}-h1-weight: {_theme.Typography.H1.FontWeight};");
         theme.AppendLine(
@@ -360,7 +438,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h1-text-transform: {_theme.Typography.H1.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-h2-family: '{string.Join("','", _theme.Typography.H2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-h2-family: {FormatFontFamily(_theme.Typography.H2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-h2-size: {_theme.Typography.H2.FontSize};");
         theme.AppendLine($"--{Typography}-h2-weight: {_theme.Typography.H2.FontWeight};");
         theme.AppendLine(
@@ -369,7 +447,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h2-text-transform: {_theme.Typography.H2.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-h3-family: '{string.Join("','", _theme.Typography.H3.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-h3-family: {FormatFontFamily(_theme.Typography.H3.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-h3-size: {_theme.Typography.H3.FontSize};");
         theme.AppendLine($"--{Typography}-h3-weight: {_theme.Typography.H3.FontWeight};");
         theme.AppendLine(
@@ -378,7 +456,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h3-text-transform: {_theme.Typography.H3.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-h4-family: '{string.Join("','", _theme.Typography.H4.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-h4-family: {FormatFontFamily(_theme.Typography.H4.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-h4-size: {_theme.Typography.H4.FontSize};");
         theme.AppendLine($"--{Typography}-h4-weight: {_theme.Typography.H4.FontWeight};");
         theme.AppendLine(
@@ -387,7 +465,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h4-text-transform: {_theme.Typography.H4.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-h5-family: '{string.Join("','", _theme.Typography.H5.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-h5-family: {FormatFontFamily(_theme.Typography.H5.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-h5-size: {_theme.Typography.H5.FontSize};");
         theme.AppendLine($"--{Typography}-h5-weight: {_theme.Typography.H5.FontWeight};");
         theme.AppendLine(
@@ -396,7 +474,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h5-text-transform: {_theme.Typography.H5.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-h6-family: '{string.Join("','", _theme.Typography.H6.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-h6-family: {FormatFontFamily(_theme.Typography.H6.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-h6-size: {_theme.Typography.H6.FontSize};");
         theme.AppendLine($"--{Typography}-h6-weight: {_theme.Typography.H6.FontWeight};");
         theme.AppendLine(
@@ -405,7 +483,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h6-text-transform: {_theme.Typography.H6.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-subtitle1-family: '{string.Join("','", _theme.Typography.Subtitle1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-subtitle1-family: {FormatFontFamily(_theme.Typography.Subtitle1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-subtitle1-size: {_theme.Typography.Subtitle1.FontSize};");
         theme.AppendLine($"--{Typography}-subtitle1-weight: {_theme.Typography.Subtitle1.FontWeight};");
         theme.AppendLine(
@@ -414,7 +492,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-subtitle1-text-transform: {_theme.Typography.Subtitle1.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-subtitle2-family: '{string.Join("','", _theme.Typography.Subtitle2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-subtitle2-family: {FormatFontFamily(_theme.Typography.Subtitle2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-subtitle2-size: {_theme.Typography.Subtitle2.FontSize};");
         theme.AppendLine($"--{Typography}-subtitle2-weight: {_theme.Typography.Subtitle2.FontWeight};");
         theme.AppendLine(
@@ -423,7 +501,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-subtitle2-text-transform: {_theme.Typography.Subtitle2.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-body1-family: '{string.Join("','", _theme.Typography.Body1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-body1-family: {FormatFontFamily(_theme.Typography.Body1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-body1-size: {_theme.Typography.Body1.FontSize};");
         theme.AppendLine($"--{Typography}-body1-weight: {_theme.Typography.Body1.FontWeight};");
         theme.AppendLine(
@@ -432,7 +510,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-body1-text-transform: {_theme.Typography.Body1.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-body2-family: '{string.Join("','", _theme.Typography.Body2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-body2-family: {FormatFontFamily(_theme.Typography.Body2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-body2-size: {_theme.Typography.Body2.FontSize};");
         theme.AppendLine($"--{Typography}-body2-weight: {_theme.Typography.Body2.FontWeight};");
         theme.AppendLine(
@@ -441,7 +519,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-body2-text-transform: {_theme.Typography.Body2.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-button-family: '{string.Join("','", _theme.Typography.Button.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-button-family: {FormatFontFamily(_theme.Typography.Button.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-button-size: {_theme.Typography.Button.FontSize};");
         theme.AppendLine($"--{Typography}-button-weight: {_theme.Typography.Button.FontWeight};");
         theme.AppendLine(
@@ -450,7 +528,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-button-text-transform: {_theme.Typography.Button.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-caption-family: '{string.Join("','", _theme.Typography.Caption.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-caption-family: {FormatFontFamily(_theme.Typography.Caption.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-caption-size: {_theme.Typography.Caption.FontSize};");
         theme.AppendLine($"--{Typography}-caption-weight: {_theme.Typography.Caption.FontWeight};");
         theme.AppendLine(
@@ -459,7 +537,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-caption-text-transform: {_theme.Typography.Caption.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-overline-family: '{string.Join("','", _theme.Typography.Overline.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+            $"--{Typography}-overline-family: {FormatFontFamily(_theme.Typography.Overline.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
         theme.AppendLine($"--{Typography}-overline-size: {_theme.Typography.Overline.FontSize};");
         theme.AppendLine($"--{Typography}-overline-weight: {_theme.Typography.Overline.FontWeight};");
         theme.AppendLine(
@@ -476,29 +554,52 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Zindex}-tooltip: {_theme.ZIndex.Tooltip};");
 
         // Native HTML control light/dark mode
-        theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
+        theme.AppendLine($"--mud-native-html-color-scheme: {(_isDarkModeState.Value ? "dark" : "light")};");
     }
 
-    public void Dispose()
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
     {
-        if (!_disposed)
-        {
-            _disposed = true;
-            _darkLightModeChanged = null;
-            if (_lazyDotNetRef.IsValueCreated)
-            {
-                _lazyDotNetRef.Value.Dispose();
-                // When .NET7 is dropped we can use async Dispose, but for now MAUI has bug https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968.
-                _ = StopWatchingDarkThemeMedia();
-            }
-        }
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 
-    private async Task OnObserveSystemThemeChangeChanged(ParameterChangedEventArgs<bool> arg)
+    /// <summary>
+    /// Releases managed resources associated with this object asynchronously.
+    /// </summary>
+    /// <returns>The task representing asynchronous execution of this method.</returns>
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        _darkLightModeChanged = null;
+
+        if (_lazyDotNetRef.IsValueCreated)
+        {
+            _lazyDotNetRef.Value.Dispose();
+        }
+
+        await StopWatchingDarkThemeMedia();
+    }
+
+    private Palette? GetCurrentPalette()
+    {
+        if (_theme is null)
+        {
+            return null;
+        }
+
+        return _isDarkModeState.Value ? _theme.PaletteDark : _theme.PaletteLight;
+    }
+
+    private async Task OnObserveSystemDarkModeChangeChanged(ParameterChangedEventArgs<bool> arg)
     {
         // The _observing flag prevents attempting to stop observation when it hasn't been started.
-        // For example, ObserveSystemThemeChange is true by default, and if it's set to false in the initial component setup 
-        // like <MudThemeProvider ObserveSystemThemeChange="false" />, the ChangeHandler of ParameterState will be invoked.
+        // For example, ObserveSystemDarkModeChange is true by default, and if it's set to false in the initial component setup 
+        // like <MudThemeProvider ObserveSystemDarkModeChange="false" />, the ChangeHandler of ParameterState will be invoked.
         // Therefore, it's not desirable to stop an observation that hasn't been started.
         if (arg.Value)
         {
@@ -523,4 +624,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     private ValueTask StopWatchingDarkThemeMedia() => JsRuntime.InvokeVoidAsyncIgnoreErrors("stopWatchingDarkThemeMedia");
 
     private DotNetObjectReference<MudThemeProvider> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
+
+    private static string FormatFontFamily(string[] fontFamilies)
+    {
+        return string.Join(", ", fontFamilies.Select(font => font.Contains(' ') ? $"'{font}'" : font));
+    }
 }

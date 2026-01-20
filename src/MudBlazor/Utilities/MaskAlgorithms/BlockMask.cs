@@ -7,19 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-/// <summary>
-/// A set of contiguous characters used to build a <see cref="BlockMask"/>.
-/// </summary>
-/// <remarks>
-/// Example: a mask character of <c>a</c>, <c>Min</c> of <c>2</c>, and <c>Max</c> of <c>3</c>, would allow <c>ABC</c> as a valid value.<br />
-/// Example: a mask character of <c>0</c>, <c>Min</c> of <c>5</c>, and <c>Max</c> of <c>7</c>, would allow <c>09123</c> as a valid value.<br />
-/// Example: a mask character of <c>*</c>, <c>Min</c> of <c>1</c>, and <c>Max</c> of <c>4</c>, would allow <c>B2A7</c> as a valid value.<br />
-/// </remarks>
-/// <param name="MaskChar">The mask character.</param>
-/// <param name="Min">The minimum required number of characters.</param>
-/// <param name="Max">The maximum allowed number of characters.</param>
-public record struct Block(char MaskChar, int Min = 1, int Max = 1);
-
+#nullable enable
 /// <summary>
 /// A mask consisting of contiguous sets of characters.
 /// </summary>
@@ -39,12 +27,12 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(params Block[] blocks) : base(null)
+    public BlockMask(params Block[] blocks)
     {
         if (blocks.Length == 0)
-            throw new ArgumentException("supply at least one block", nameof(blocks));
+            throw new ArgumentException(@"supply at least one block", nameof(blocks));
         Blocks = blocks;
-        Delimiters = "";
+        DelimiterCharacters = string.Empty;
     }
 
     /// <summary>
@@ -55,21 +43,21 @@ public class BlockMask : RegexMask
     /// <remarks>
     /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
     /// </remarks>
-    public BlockMask(string delimiters, params Block[] blocks) : this(blocks)
+    public BlockMask(string? delimiters, params Block[] blocks) : this(blocks)
     {
-        Delimiters = delimiters ?? "";
+        DelimiterCharacters = delimiters ?? string.Empty;
     }
 
     /// <summary>
     /// The sets of characters used to build this mask.
     /// </summary>
-    public Block[] Blocks { get; protected set; }
+    public Block[]? Blocks { get; protected set; }
 
     /// <inheritdoc />
     protected override void InitInternals()
     {
         base.InitInternals();
-        Blocks ??= Array.Empty<Block>();
+        Blocks ??= [];
         Mask = BuildRegex(Blocks);
         _regex = new Regex(Mask);
     }
@@ -98,7 +86,7 @@ public class BlockMask : RegexMask
             var block = blocks[i];
             AddRequiredCharacters(regexBuilder, block, ref openParenthesisCount);
             AddOptionalCharacters(regexBuilder, block, ref openParenthesisCount);
-            AddDelimiter(regexBuilder, i, blocks, ref openParenthesisCount);
+            AddDelimiterToRegex(regexBuilder, i, blocks, ref openParenthesisCount);
         }
 
         CloseOpenParentheses(regexBuilder, openParenthesisCount);
@@ -114,10 +102,9 @@ public class BlockMask : RegexMask
             regexBuilder.Append('(');
             openParenthesisCount++;
 
-            if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
-                regexBuilder.Append(maskDef.Regex);
-            else
-                regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
+            regexBuilder.Append(MaskDictionary.TryGetValue(block.MaskChar, out var maskDef)
+                ? maskDef.Regex
+                : Regex.Escape(block.MaskChar.ToString()));
         }
     }
 
@@ -131,10 +118,9 @@ public class BlockMask : RegexMask
                 regexBuilder.Append('(');
                 openParenthesisCount++;
 
-                if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
-                    regexBuilder.Append(maskDef.Regex);
-                else
-                    regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
+                regexBuilder.Append(MaskDictionary.TryGetValue(block.MaskChar, out var maskDef)
+                    ? maskDef.Regex
+                    : Regex.Escape(block.MaskChar.ToString()));
             }
 
             for (var i = block.Min; i < block.Max; i++)
@@ -146,15 +132,17 @@ public class BlockMask : RegexMask
     }
 
     // Helper method to add delimiter if there are more blocks to process
-    private void AddDelimiter(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
+    private void AddDelimiterToRegex(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
     {
-        if (_delimiters.Count > 0 && index < blocks.Length - 1)
+        if (Delimiters.Count > 0 && index < blocks.Length - 1)
         {
             regexBuilder.Append("([");
             openParenthesisCount++;
 
-            foreach (var delimiter in _delimiters)
+            foreach (var delimiter in Delimiters)
+            {
                 regexBuilder.Append(Regex.Escape(delimiter.ToString()));
+            }
 
             regexBuilder.Append(']');
         }
@@ -164,18 +152,20 @@ public class BlockMask : RegexMask
     private static void CloseOpenParentheses(StringBuilder regexBuilder, int openParenthesisCount)
     {
         for (var i = 0; i < openParenthesisCount; i++)
+        {
             regexBuilder.Append(")?");
+        }
     }
 
     /// <inheritdoc />
-    public override void UpdateFrom(IMask other)
+    public override void UpdateFrom(IMask? mask)
     {
-        base.UpdateFrom(other);
-        if (other is BlockMask o)
+        base.UpdateFrom(mask);
+        if (mask is BlockMask blockMask)
         {
-            Blocks = o.Blocks ?? Array.Empty<Block>();
-            Delimiters = o.Delimiters;
-            _initialized = false;
+            Blocks = blockMask.Blocks ?? [];
+            DelimiterCharacters = blockMask.DelimiterCharacters;
+            ForceReinitialize();
             Refresh();
         }
     }

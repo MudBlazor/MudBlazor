@@ -1,4 +1,4 @@
-.cookie-consent-container {
+.mud-cc-container {
   display: flex;
   justify-content: center;
   position: fixed;
@@ -9,26 +9,29 @@
   z-index: var(--mud-zindex-popover);
 }
 
-.cookie-consent {
+.mud-cc-content {
   display: flex;
   flex-direction: column;
-  padding: 1em;
-  gap: 0.5rem;
-  max-width: 48rem;
+  padding: 16px;
+  gap: 8px;
+  width: calc(100% - 64px);
+  max-width: 512px;
   pointer-events: all;
-  border-radius: 0.25rem;
+  border-radius: var(--mud-default-borderradius);
+  border-width: 1px;
+  border-color: var(--mud-palette-primary);
 }
 
-.cookie-consent-content {
+.mud-cc-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 16px;
 }
 
-.cookie-consent-actions {
+.mud-cc-actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
-  gap: 0.25rem;
+  gap: 8px;
 }

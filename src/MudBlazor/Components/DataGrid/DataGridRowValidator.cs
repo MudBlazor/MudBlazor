@@ -9,6 +9,7 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents the validation logic for a <see cref="MudDataGrid{T}"/> row.
     /// </summary>
@@ -44,7 +45,6 @@ namespace MudBlazor
 
         protected HashSet<string> _errors = new HashSet<string>();
 
-
         void IForm.FieldChanged(IFormComponent formControl, object newValue)
         {
             //implement in future for DataGrid
@@ -76,7 +76,7 @@ namespace MudBlazor
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                formControl.Validate();
+                formControl.ValidateAsync();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);

@@ -11,7 +11,8 @@
             var localIndex = i;
             <MudChip id=@($"chip-{localIndex + 1}")
                      T="string"
-                     Text="@_chips[localIndex]" />
+                     Text="@_chips[localIndex]"
+                     Color="Color.Primary" />
         }
     </MudChipSet>
     <MudButton id="add-chip-button"
@@ -19,6 +20,7 @@
                OnClick="@AddChip">
         Add chip
     </MudButton>
+    <MudText>Chips: @_chips.Count | Selected: @_selectedValues.Count</MudText>
 </MudStack>
 
 @code {

@@ -30,6 +30,7 @@
 
     .mud-tabs-panels {
       border-radius: var(--mud-default-borderradius);
+      flex-grow: 1;
     }
   }
 }
@@ -171,6 +172,10 @@
     margin-right: 8px;
     margin-inline-end: 8px;
     margin-inline-start: unset;
+  }
+
+  &.mud-tab-panel-hidden {
+    display: none;
   }
 }
 

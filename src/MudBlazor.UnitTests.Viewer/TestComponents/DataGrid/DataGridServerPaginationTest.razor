@@ -1,4 +1,4 @@
-﻿<MudDataGrid T="Model" ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))">
+﻿<MudDataGrid T="Model" ServerData="@(new Func<GridState<Model>, CancellationToken, Task<GridData<Model>>>(ServerReload))">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -27,7 +27,7 @@
         _data = data;
     }
 
-    private async Task<GridData<Model>> ServerReload(GridState<Model> state)
+    private async Task<GridData<Model>> ServerReload(GridState<Model> state, CancellationToken token)
     {
         var data = _data.OrderBySortDefinitions(state);
         data = data.Skip(state.Page * state.PageSize).Take(state.PageSize);

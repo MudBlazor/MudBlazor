@@ -1,0 +1,27 @@
+@using MudBlazor
+
+<MudTabs KeepPanelsAlive="true">
+    <MudTabPanel Text="Tab 1">
+        <MudDrawer @ref="@Drawer" @bind-Open="@_open" Variant="@Variant" Anchor="@Anchor">
+            <div>Drawer Content</div>
+        </MudDrawer>
+        <button id="toggle-drawer-button" @onclick="@ToggleDrawer">Toggle Drawer</button>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab 2">
+        <div>Tab 2 Content</div>
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    private bool _open;
+
+    public MudDrawer Drawer { get; private set; } = null!;
+
+    [Parameter]
+    public DrawerVariant Variant { get; set; } = DrawerVariant.Temporary;
+
+    [Parameter]
+    public Anchor Anchor { get; set; } = Anchor.End;
+
+    private void ToggleDrawer() => _open = !_open;
+}

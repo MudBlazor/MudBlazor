@@ -3,12 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Collapse;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -16,30 +14,34 @@ namespace MudBlazor.UnitTests.Components
     public class CollapseTests : BunitTest
     {
         [Test]
-        public void Collapse_TwoWayBinding_Test1()
+        public async Task Collapse_TwoWayBinding_Test1()
         {
-            var comp = Context.RenderComponent<CollapseBindingTest>();
+            var comp = Context.Render<CollapseBindingTest>();
+            var collapse = comp.FindComponent<MudCollapse>();
+
+            collapse.Markup.Should().Contain("mud-collapse-entered");
+
             IElement Button() => comp.Find("#outside_btn");
 
             IRenderedComponent<MudSwitch<bool>> MudSwitch() => comp.FindComponent<MudSwitch<bool>>();
             // Initial state is expanded
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via button
-            Button().Click();
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+            await Button().ClickAsync();
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via button
-            Button().Click();
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            await Button().ClickAsync();
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via switch
-            MudSwitch().Find("input").Change(false);
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+            await MudSwitch().Find("input").ChangeAsync(false);
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via switch
-            MudSwitch().Find("input").Change(true);
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            await MudSwitch().Find("input").ChangeAsync(true);
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
         }
     }
 }

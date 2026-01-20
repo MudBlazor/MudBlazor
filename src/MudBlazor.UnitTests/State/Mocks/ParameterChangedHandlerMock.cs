@@ -4,7 +4,6 @@
 
 using MudBlazor.State;
 
-
 namespace MudBlazor.UnitTests.State.Mocks;
 
 #nullable enable
@@ -14,7 +13,7 @@ internal class ParameterChangedHandlerMock<TArgs> : IParameterChangedHandler<TAr
 
     public IReadOnlyList<ParameterChangedEventArgs<TArgs>> Changes => _changes;
 
-    public Task HandleAsync(ParameterChangedEventArgs<TArgs> parameterChangedEventArgs)
+    public Task HandleAsync(ParameterChangedEventArgs<TArgs> parameterChangedEventArgs, ParameterChangedContext context)
     {
         _changes.Add(parameterChangedEventArgs);
 

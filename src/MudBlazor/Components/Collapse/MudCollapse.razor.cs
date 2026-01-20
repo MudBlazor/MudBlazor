@@ -6,7 +6,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a container for content which can be collapsed and expanded.
+    /// A container for content which can be collapsed and expanded.
     /// </summary>
     /// <seealso cref="MudExpansionPanels"/>
     /// <seealso cref="MudExpansionPanel"/>
@@ -75,6 +75,17 @@ namespace MudBlazor
                 .WithParameter(() => Expanded)
                 .WithEventCallback(() => ExpandedChanged)
                 .WithChangeHandler(OnExpandedParameterChangedAsync);
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+
+            if (firstRender && _expandedState.Value)
+            {
+                _state = CollapseState.Entered;
+                StateHasChanged();
+            }
         }
 
         private Task OnExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)

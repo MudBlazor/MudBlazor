@@ -10,7 +10,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// A surface for grouping other components.
+/// A surface for grouping other components, generally used for foregrounds and can be combined with Flex for layout.
 /// </summary>
 public partial class MudPaper : MudComponentBase
 {
@@ -41,17 +41,18 @@ public partial class MudPaper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public int Elevation { set; get; } = MudGlobal.PaperDefaults.Elevation;
+    public int Elevation { set; get; } = 1;
 
     /// <summary>
     /// Displays a square shape.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> is set to <c>0</c>.
+    /// Defaults to <c>false</c>.
+    /// When <c>true</c>, the <c>border-radius</c> is set to <c>0</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public bool Square { get; set; } = MudGlobal.PaperDefaults.Square;
+    public bool Square { get; set; }
 
     /// <summary>
     /// Displays an outline around this component.
@@ -61,7 +62,7 @@ public partial class MudPaper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public bool Outlined { get; set; } = MudGlobal.PaperDefaults.Outlined;
+    public bool Outlined { get; set; }
 
     /// <summary>
     /// The height of this component.

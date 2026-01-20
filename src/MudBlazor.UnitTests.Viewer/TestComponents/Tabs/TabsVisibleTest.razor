@@ -1,0 +1,18 @@
+﻿<MudTabs>
+    <MudTabPanel Text="Item One" />
+    <MudTabPanel Text="Item Two" Visible="@Visible" />
+    <MudTabPanel Text="Item Three" />
+</MudTabs>
+
+<MudText>Hide first item</MudText>
+
+<MudTabs>
+    <MudTabPanel Text="Item One" Visible="false" />
+    <MudTabPanel Text="Item Two" />
+    <MudTabPanel Text="Item Three" />
+</MudTabs>
+
+@code {
+    [Parameter]
+    public bool Visible { get; set; } = true;
+}

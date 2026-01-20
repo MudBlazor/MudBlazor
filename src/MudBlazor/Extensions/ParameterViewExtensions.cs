@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -23,7 +22,7 @@ namespace MudBlazor
         /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
         public static bool HasParameterChanged<T>(this ParameterView parameters, string parameterName, T parameterValue, IEqualityComparer<T>? comparer = null)
         {
-            return HasParameterChanged(parameters, parameterName, parameterValue, out _, comparer);
+            return parameters.HasParameterChanged(parameterName, parameterValue, out _, comparer);
         }
 
         /// <summary>

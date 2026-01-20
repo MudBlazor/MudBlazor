@@ -14,8 +14,8 @@
 else {
     <MudText>Nothing selected.</MudText>
 }
-<MudButton OnClick="SetNull">Set Null</MudButton>
-<MudButton OnClick="SetEmpty">Set Empty</MudButton>
+<MudButton id="set-null" OnClick="SetNull">Set Null</MudButton>
+<MudButton id="set-empty" OnClick="SetEmpty">Set Empty</MudButton>
 @code
 {
     private IReadOnlyCollection<string>? _selected;

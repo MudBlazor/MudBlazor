@@ -2,18 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MudBlazor.UnitTests.Components;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Logger;
 using NUnit.Framework;
 
@@ -26,12 +18,12 @@ namespace MudBlazor.UnitTests.Utilities
         /// Verfies the standard log messages are logged correctly
         /// </summary>
         [Test]
-        public void LoggerIsCreatedTest()
+        public void LoggerIsCreated()
         {
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
             Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
-            var comp = Context.RenderComponent<LoggerTest>();
+            var comp = Context.Render<LoggerTest>();
 
             var entries = logger.GetEntries();
             entries.Count.Should().Be(4);

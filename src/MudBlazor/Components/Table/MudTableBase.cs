@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -15,7 +13,6 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         private int _currentPage = 0;
-        private bool _isFirstRendered = false;
         internal int? _rowsPerPage;
         internal object? _editingItem = null;
         internal bool Editing => _editingItem != null;
@@ -42,11 +39,22 @@ namespace MudBlazor
 
         protected string HeadClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass)
+            .AddClass("mud-table-dense", Dense)
             .Build();
 
         protected string FootClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass)
             .Build();
+
+        /// <summary>
+        /// The aria-label for the HTML table element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to null. When set, renders as the table's <c>aria-label</c> attribute for accessibility.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.
@@ -104,6 +112,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// The CSS classes applied to all cells of the table.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string? CellClass { get; set; }
 
         /// <summary>
         /// Highlights rows when hovering over them.
@@ -232,7 +250,7 @@ namespace MudBlazor
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
                 CurrentPageChanged.InvokeAsync(_currentPage);
-                if (_isFirstRendered)
+                if (HasRendered)
                 {
                     InvokeServerLoadFunc();
                 }
@@ -286,7 +304,7 @@ namespace MudBlazor
         /// Displays a loading animation while <c>ServerData</c> executes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> is set.
+        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -296,7 +314,7 @@ namespace MudBlazor
         /// The color of the <see cref="MudProgressLinear"/> while <see cref="Loading"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> is set.
+        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -618,14 +636,6 @@ namespace MudBlazor
         /// </remarks>
         public abstract TableContext TableContext { get; }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                _isFirstRendered = true;
-
-            return base.OnAfterRenderAsync(firstRender);
-        }
-
         /// <summary>
         /// Changes the current page.
         /// </summary>
@@ -668,10 +678,17 @@ namespace MudBlazor
                 return;
             }
 
-            var currentPageHasChanged = _currentPage != 0;
+            var currentPageHasChanged = false;
+
+            // On intialization, don't reset CurrentPage
+            // https://github.com/MudBlazor/MudBlazor/issues/11727
+            if (_rowsPerPage.HasValue)
+            {
+                currentPageHasChanged = _currentPage != 0;
+                _currentPage = 0;
+            }
+
             _rowsPerPage = size;
-            _currentPage = 0;
-            StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 
             if (currentPageHasChanged)
@@ -679,10 +696,12 @@ namespace MudBlazor
                 CurrentPageChanged.InvokeAsync(_currentPage);
             }
 
-            if (_isFirstRendered)
+            if (HasRendered)
             {
                 InvokeServerLoadFunc();
             }
+
+            StateHasChanged();
         }
 
         protected abstract int NumPages { get; }
@@ -769,3 +788,4 @@ namespace MudBlazor
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }
 }
+

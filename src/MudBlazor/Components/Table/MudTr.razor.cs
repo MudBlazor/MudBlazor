@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -36,6 +35,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// Optional ID for the row, used for programmatic scrolling and focusing.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public string? RowId { get; set; }
 
         /// <summary>
         /// The data being displayed for this row.

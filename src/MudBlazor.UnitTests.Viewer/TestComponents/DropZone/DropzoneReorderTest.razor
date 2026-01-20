@@ -12,7 +12,14 @@
         }
     </ChildContent>
     <ItemRenderer>
-        <MudListItem T="string" Text="@context.Name" />
+        <MudPaper Class="pa-4 ma-4">
+            <MudStack Row>
+                <MudIconButton Ripple="true"
+                               Icon="@Icons.Material.Filled.DragIndicator"
+                               Size="Size.Small" />
+                <MudText>@context.Name</MudText>
+            </MudStack>
+        </MudPaper>
     </ItemRenderer>
 </MudDropContainer>
 

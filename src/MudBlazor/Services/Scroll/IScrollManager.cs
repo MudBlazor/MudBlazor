@@ -73,4 +73,17 @@ public interface IScrollManager
     /// <param name="scrollBehavior">The scroll behavior (e.g., smooth or auto). Defaults to auto.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     ValueTask ScrollToBottomAsync(string elementId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
+
+    /// <summary>
+    /// Scrolls a virtualized container to bring a specific item into view.
+    /// It first estimates the scroll position based on item index and height,
+    /// then attempts to adjust the scroll to ensure the specific item (by its ID) is as close to the 'nearest' edge as possible.
+    /// </summary>
+    /// <param name="containerId">The ID of the scrollable HTML element that contains the virtualized items.</param>
+    /// <param name="itemIndex">The index of the item to scroll to within the virtualized list.</param>
+    /// <param name="itemHeight">The estimated height of a single item in pixels. Used for the initial scroll positioning.</param>
+    /// <param name="targetItemId">The complete ID of the specific target HTML element (e.g., row) to bring into view. This allows for a precise final scroll adjustment after the initial estimated scroll.</param>
+    /// <param name="scrollBehavior">The desired scroll behavior (e.g., smooth, auto).</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
 }
