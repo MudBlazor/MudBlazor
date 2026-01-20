@@ -1,4 +1,4 @@
-﻿<MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" @bind-Files="Files">
+﻿<MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" MaxFileSize="@MaxFileSize" @bind-Files="Files">
     <SelectedTemplate>
         <div>
             Select Template
@@ -8,4 +8,7 @@
 
 @code {
     public IReadOnlyList<IBrowserFile>? Files { get; private set; }
+
+    [Parameter]
+    public long? MaxFileSize { get; set; }
 }

@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-column align-center gap-3">
+    <MudTabs>
+        <MudTabPanel Text="Item One" />
+        <MudTabPanel Text="Item Two" Visible="@_visible" />
+        <MudTabPanel Text="Item Three" />
+    </MudTabs>
+
+    <MudSwitch @bind-Value="_visible" Label="Tab Two Visible" Color="Color.Primary" />
+</div>
+
+@code {
+    private bool _visible = true;
+}

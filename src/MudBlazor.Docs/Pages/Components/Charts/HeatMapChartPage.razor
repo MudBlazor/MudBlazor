@@ -3,7 +3,7 @@
 @page "/components/chart-types/heatmapchart"
 
 <DocsPage>
-    <DocsPageHeader Title="HeatMap Chart" SubTitle="A chart that displays a HeatMap" Component="@nameof(MudBlazor.Charts.HeatMap)">
+    <DocsPageHeader Title="HeatMap Chart" SubTitle="A chart that displays a HeatMap" Component="@nameof(MudBlazor.Charts.HeatMap<T>)">
         <Description>
             <DocsPageSection>
                 <MudAlert Class="mt-4" Severity="Severity.Warning">
@@ -22,7 +22,7 @@
             <SectionHeader Title="Basic HeatMap">
                 <Description>
                     The basic HeatMap Chart will take from 1 to 5 colors and create a heat map based on the <CodeInline>ChartSeries</CodeInline> data you provide. Colors will be interpolated if more than 1.
-                    Colors can be provided via <CodeInline>ChartOptions</CodeInline> and XAxisLabels are provided via the <CodeInline>XAxisLabel</CodeInline> Option. These values will be used in order and if you wanted to skip a 
+                    Colors can be provided via <CodeInline>HeatMapChartOptions</CodeInline> and XAxisLabels are provided via the <CodeInline>ChartLabels</CodeInline>. These values will be used in order and if you wanted to skip a 
                     column just adding <CodeInline>string.Empty</CodeInline> would work.
                 </Description>
             </SectionHeader>
@@ -75,12 +75,26 @@
                     <CodeInline>MudHeatMapCell</CodeInline> allows you to customize many aspects of each individual heat map. 
                     <CodeInline>MudHeatMapCell</CodeInline> can be used to display beautiful and comprehensive Heat Map charts. 
                     You must set the Row and Column and all other values are optional. Any child content you add should either be sized appropriately by html or you should specify 
-                    the Width and Height of <CodeInline>MudHeatMapCell</CodeInline>. You can also override the Value and/or Color. Child Content can contain almost any type of html 
-                    element but if it's any type of image ensure to provide the Width and Height so it can be resized dynamically.
+                    the Width and Height of <CodeInline>MudHeatMapCell</CodeInline>. You can also override the Value and/or Color of the cell. Child Content can contain almost any type of html 
+                    element but if it's any type of image ensure to provide the Width and Height so it can be resized dynamically. The Value can still be retrieved from the series. 
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample6)" ShowCode="false" Block="true">
                 <HeatMapExample6 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Setting Minimum and Maximum Value">
+                <Description>
+                    By default the HeatMap will use the minimum and maximum values of the data as a subset of 0.0 to 1.0 in order to determine the color of each cell. You can override this by including
+                    at least one <CodeInline>MudHeatMapCell</CodeInline> with a <CodeInline>MinValue</CodeInline> and/or a <CodeInline>MaxValue</CodeInline> as integers. When using
+                    the override, if entered more than once only the last time the Min/Max value pair is set will be used. The maximum value set will be the minimum value to show the final color in the 
+                    series. 
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample7)" ShowCode="false" Block="true">
+                <HeatMapExample7 />
             </SectionContent>
         </DocsPageSection>
 

@@ -16,7 +16,7 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-avatar-group")
             .AddClass($"mud-avatar-group-outlined", Outlined)
-            .AddClass($"mud-avatar-group-outlined-{OutlineColor.ToDescriptionString()}", Outlined)
+            .AddClass($"mud-avatar-group-outlined-{OutlineColor.ToStringFast(true)}", Outlined)
             .AddClass(Class)
             .Build();
 
@@ -66,7 +66,8 @@ namespace MudBlazor
         /// Disables rounded corners when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> CSS style is set to <c>0</c>.
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, the <c>border-radius</c> CSS style is set to <c>0</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
@@ -76,7 +77,8 @@ namespace MudBlazor
         /// Shows rounded corners when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]

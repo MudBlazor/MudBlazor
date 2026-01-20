@@ -18,11 +18,11 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-navmenu")
-                .AddClass($"mud-navmenu-{Color.ToDescriptionString()}")
-                .AddClass($"mud-navmenu-margin-{Margin.ToDescriptionString()}")
+                .AddClass($"mud-navmenu-{Color.ToStringFast(true)}")
+                .AddClass($"mud-navmenu-margin-{Margin.ToStringFast(true)}")
                 .AddClass("mud-navmenu-dense", Dense)
                 .AddClass("mud-navmenu-rounded", Rounded)
-                .AddClass($"mud-navmenu-bordered mud-border-{Color.ToDescriptionString()}", Bordered)
+                .AddClass($"mud-navmenu-bordered mud-border-{Color.ToStringFast(true)}", Bordered)
                 .AddClass(Class)
                 .Build();
 
@@ -53,7 +53,7 @@ namespace MudBlazor
         /// Shows a rounded border for all <see cref="MudNavLink" /> items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c>.
         /// When <c>true</c>, the theme <c>border-radius</c> value will be used. 
         /// Only takes affect if <see cref="Bordered"/> is <c>true</c>.
         /// </remarks>

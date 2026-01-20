@@ -1,5 +1,8 @@
-﻿<MudNumericField id="num-field-id"
+﻿@using System.Globalization
+
+<MudNumericField id="num-field-id"
                  Step="0.1M"
+                 @bind-Value="Value"
                  Label="Numeric Input"
                  Variant="Variant.Outlined"
                  Margin="Margin.Dense"
@@ -13,4 +16,6 @@
 
     [Parameter]
     public bool UsePattern { get; set; }
+
+    public decimal Value { get; set; }
 }

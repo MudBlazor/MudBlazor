@@ -1,7 +1,5 @@
 ﻿<div class="d-flex align-center flex-grow-1 d-md-none">
-    <MudTooltip Text="Drawer">
-        <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" aria-label="Open drawer" />
-    </MudTooltip>
+    <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" aria-label="Toggle drawer" />
     <MudSpacer />
     <NavLink ActiveClass="d-flex align-center" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo" />
@@ -19,17 +17,14 @@
     </NavLink>
     <MudButton Href="/getting-started/installation" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.GettingStarted)">Get Started</MudButton>
     <MudButton Href="/docs/overview" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.Docs)">Docs</MudButton>
-    <MudButton Href="/mud/introduction" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Learn More</MudButton>
-    <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Products" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+    <MudButton Href="/mud/project/team" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Learn More</MudButton>
+    <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Projects" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
         <MudList T="string">
-            <MudListSubheader>
-                Products
-            </MudListSubheader>
-            <MudListItem Href="https://mudblazor.com/">
+            <MudListItem Href="/mud/introduction">
                 <div class="d-flex">
                     <MudText Color="Color.Primary">MudBlazor</MudText>
                 </div>
-                <MudText Typo="Typo.body2">Blazor component library</MudText>
+                <MudText Typo="Typo.body2">What is MudBlazor?</MudText>
             </MudListItem>
             <MudListItem Href="https://try.mudblazor.com/">
                 <div class="d-flex">
@@ -47,19 +42,27 @@
                 <div class="d-flex">
                     <MudText>Templates</MudText>
                 </div>
-                <MudText Typo="Typo.body2">Blazor templates loaded with MudBlazor</MudText>
+                <MudText Typo="Typo.body2">Blazor templates with MudBlazor</MudText>
             </MudListItem>
         </MudList>
         <MudList T="string" Class="relative">
-            <MudListSubheader>
-                Other
-            </MudListSubheader>
-            <MudOverlay Visible="true" LightBackground="true" Absolute="true" Class="docs-menu-overlay" />
-            <MudListItem>
-                <MudBadge Class="d-flex mr-16" Content="@_badgeTextSoon" Color="Color.Info" Overlap="true">
-                    <MudText>Mud</MudText><MudText Color="Color.Warning">Extensions</MudText>
-                </MudBadge>
-                <MudText Typo="Typo.body2">Official and Community Extensions</MudText>
+            <MudListItem Href="https://github.com/MudBlazor/MudBlazor.Icons">
+                <div class="d-flex">
+                    <MudText>Icon Pack</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Extra Material icons and symbols</MudText>
+            </MudListItem>
+            <MudListItem Href="https://github.com/MudBlazor/Translations">
+                <div class="d-flex">
+                    <MudText>Translations</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Support for additional locales</MudText>
+            </MudListItem>
+            <MudListItem Href="/mud/community/extensions">
+                <div class="d-flex">
+                    <MudText Color="Color.Warning">Extensions</MudText>
+                </div>                
+                <MudText Typo="Typo.body2">Community Extensions</MudText>
             </MudListItem>
         </MudList>
     </MudMenu>
@@ -90,7 +93,7 @@
 
 <MudDialog @bind-Visible="IsSearchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ContentClass="docs-mobile-dialog-search d-flex flex-column" DefaultFocus="DefaultFocus.FirstChild">
     <DialogContent>
-        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" DropdownSettings="@_dropdownBehavior"
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" PopoverFixed="@true"
                          AutoFocus="true" Placeholder="Search" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                          SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
                          ValueChanged="OnSearchResult" OpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">

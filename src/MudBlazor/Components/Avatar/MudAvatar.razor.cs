@@ -15,11 +15,11 @@ namespace MudBlazor
         protected MudAvatarGroup? AvatarGroup { get; set; }
 
         protected string Classname => new CssBuilder("mud-avatar")
-            .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
+            .AddClass($"mud-avatar-{Size.ToStringFast(true)}")
             .AddClass($"mud-avatar-rounded", Rounded)
             .AddClass($"mud-avatar-square", Square)
-            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+            .AddClass($"mud-avatar-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-avatar-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
             .AddClass($"mud-elevation-{Elevation.ToString()}")
             .AddClass(AvatarGroup?.GetAvatarSpacing() ?? new CssBuilder(), AvatarGroup != null)
             .AddClass(Class)
@@ -51,10 +51,11 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// Shows rounded corners.
+        /// Uses rounded corners instead of a circle.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
@@ -94,7 +95,7 @@ namespace MudBlazor
         /// The content within the avatar.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the avatar, but it is not required.
+        /// This property allows for custom content to displayed inside of the avatar, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Behavior)]

@@ -1,0 +1,14 @@
+﻿<MudPopoverProvider />
+
+<MudSelect @bind-Value="_value" Label="Select">
+    <MudSelectItem T="@(int?)" Value="@(null)">None</MudSelectItem>
+    <MudSelectItem T="@(int?)" Value="@(1)">One</MudSelectItem>
+    <MudSelectItem T="@(int?)" Value="@(2)">Two</MudSelectItem>
+</MudSelect>
+
+@code {
+    public static string __description__ =
+        "When the select has a null value, the text should be displayed, and the mud-shrink class should be applied.";
+
+    private int? _value;
+}

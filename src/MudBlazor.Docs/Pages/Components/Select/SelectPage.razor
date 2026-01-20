@@ -1,14 +1,7 @@
 ﻿@page "/components/select"
 
 <DocsPage>
-    <DocsPageHeader Title="Select" Component="@nameof(MudSelect<T>)" SubTitle="Select fields allow users to provide information from a list of options.">
-        <Description>
-            <MudAlert Class="mt-4" Severity="Severity.Warning">
-                Note: Blazor static rendering is not supported.
-                <MudLink Href="/getting-started/installation#manual-install-add-components" Target="_blank">See install guide for more info</MudLink>.
-            </MudAlert>
-        </Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Select" Component="@nameof(MudSelect<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -78,6 +71,37 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Dynamic Sizing">
+                <Description>
+                    The <CodeInline>MudSelect</CodeInline> component provides dynamic sizing capabilities through the <CodeInline>FullWidth</CodeInline> and <CodeInline>FitContent</CodeInline> parameters, allowing it to adapt to different layout needs:
+                    <MudStack>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                Default Behavior - <CodeInline>FullWidth=False</CodeInline>: The component expands to fill the available space within its container, adjusting dynamically based on its surroundings.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                Full-Width Mode - <CodeInline>FullWidth=True</CodeInline>: Forces the component to stretch and occupy 100% of its parent container’s width.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                Fit-Content Mode - <CodeInline>FitContent=True</CodeInline>: Instead of expanding, the component adjusts its width to fit only the necessary space required for its content.
+                            </div>
+                        </MudBadge>
+                    </MudStack>
+                    <MudAlert Class="mt-4" Severity="Severity.Info">
+                        Note: When using FitContent, the width of the select component can depend on the Placeholder, Label, Adornment, and Clearable properties.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SelectFitContentExample)">
+                <SelectFitContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Value presentation">
                 <Description>
                     Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
@@ -119,7 +143,7 @@
         <DocsPageSection>
             <SectionHeader Title="Placement">
                 <Description>
-                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>
+                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>.
                     To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline>. <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
                 </Description>
             </SectionHeader>
@@ -131,7 +155,7 @@
         <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
-                    <MudText>MudSelect accepts keys to keyboard navigation.</MudText>
+                    <MudText>MudSelect supports keyboard navigation.</MudText>
                     <br />
                     <MudText><CodeInline>Space</CodeInline> key to toggle dropdown open/close</MudText>
                     <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
@@ -142,7 +166,11 @@
                     <MudText><CodeInline>End</CodeInline> key to select/navigate last item</MudText>
                     <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to select item (MultiSelect only)</MudText>
                     <MudText><CodeInline>Ctrl+A</CodeInline> key to toggle select all/clear all items (MultiSelect only)</MudText>
-                    <MudText><CodeInline>Printable Characters</CodeInline> to set the first item in the list whose text starts with that character. Press again to select the next item with the same status.</MudText>
+                    <MudText><CodeInline>Printable Characters</CodeInline> to highlight the first item in the list whose text starts with that character. Press again to move to the next item with the same starting character.</MudText>
+                    <MudText>
+                        Set <CodeInline>SelectionOnEnter="true"</CodeInline> to move the visual highlight with arrow keys, requiring an
+                        <CodeInline>Enter</CodeInline> press to confirm the selection.
+                    </MudText>
                     <br />
                     <MudText>*Disabled items cannot be selected by keys.</MudText>
                 </Description>
@@ -154,4 +182,3 @@
 
     </DocsPageContent>
 </DocsPage>
-

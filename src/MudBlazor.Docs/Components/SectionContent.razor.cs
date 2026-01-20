@@ -20,6 +20,7 @@ public partial class SectionContent
 {
     [Inject] protected IJsApiService JsApiService { get; set; }
     [Inject] protected IDocsJsApiService DocsJsApiService { get; set; }
+    [Inject] protected ISnackbar SnackbarService { get; set; }
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
@@ -108,6 +109,7 @@ public partial class SectionContent
         var code = Snippets.GetCode(Code);
         code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
+        SnackbarService.Add("Copied to clipboard");
     }
 
     RenderFragment CodeComponent(string code) => builder =>
@@ -120,7 +122,7 @@ public partial class SectionContent
             {
                 var read = reader.ReadToEnd();
 
-                // Ensure the code uses spaces for identation regardless of the formatting within the source code.
+                // Ensure the code uses spaces for indentation regardless of the formatting within the source code.
                 read = read.Replace("\t", "    ");
 
                 if (!string.IsNullOrEmpty(HighLight))
@@ -161,7 +163,7 @@ public partial class SectionContent
             firstFile = Codes.FirstOrDefault().code;
         }
 
-        // We use a separator that wont be in code so we can send 2 files later
+        // We use a separator that won't be in code so we can send 2 files later
         var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(firstFile);
 
         // Add dialogs for dialog examples

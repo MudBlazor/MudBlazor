@@ -1,0 +1,31 @@
+﻿<MudPaper Height="500px" Style="overflow:hidden; position:relative;">
+    <MudDrawerContainer Class="mud-width-full">
+        <MudDrawer @bind-Open="@_open" Variant="@DrawerVariant.Persistent" Anchor="@Anchor" Height="@DrawerHeight">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Error">Dashboard</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalLibrary" IconColor="Color.Error">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People" IconColor="Color.Error">Community</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <div class="d-flex justify-center align-center mud-width-full mud-height-full" id="toggle-button-container">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@ToggleDrawer" id="toggle-drawer-button">Toggle Drawer</MudButton>
+        </div>
+    </MudDrawerContainer>
+</MudPaper>
+
+@code {
+    private bool _open = false;
+    [Parameter]
+    public MudDrawer Drawer { get; set; } = null!;
+
+    [Parameter]
+    public Anchor Anchor { get; set; } = Anchor.Top;
+
+    [Parameter]
+    public string DrawerHeight { get; set; } = "300px";
+
+    private void ToggleDrawer() => _open = !_open;
+}

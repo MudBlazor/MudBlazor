@@ -2,7 +2,7 @@
 
 <MudStack Row>
     <div class="pa-4 d-inline-block" style="width:125px;">
-        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" FullWidth Dense id="restricted-select" PopoverClass="restricted">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" Dense id="restricted-select" PopoverClass="restricted">
             @foreach (var value in _values)
             {
                 <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
@@ -11,7 +11,7 @@
     </div>
 
     <div class="pa-4 d-inline-block" style="width:125px;">
-        <MudSelect @bind-Value=_selected Variant="Variant.Outlined" Dense id="expanded-select" PopoverClass="expanded">
+        <MudSelect @bind-Value=_selected Variant="Variant.Outlined" RelativeWidth="DropdownWidth.Adaptive" Dense id="expanded-select" PopoverClass="expanded">
             @foreach (var value in _values)
             {
                 <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
@@ -22,7 +22,7 @@
 
 <MudStack>
     <div class="pa-4 d-inline-block" style="width:400px;">
-        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" FullWidth Dense id="select-fit-1" PopoverClass="fit1">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" Dense id="select-fit-1" PopoverClass="fit1">
             @foreach (var value in _values)
             {
                 <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
@@ -31,7 +31,16 @@
     </div>
 
     <div class="pa-4 d-inline-block" style="width:400px;">
-        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" Dense id="select-fit-2" PopoverClass="fit2">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" RelativeWidth="DropdownWidth.Adaptive" Dense id="select-fit-2" PopoverClass="fit2">
+            @foreach (var value in _values)
+            {
+                <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+
+    <div class="pa-4 d-inline-block" style="width:400px;">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" RelativeWidth="DropdownWidth.Ignore" Dense id="select-fit-2" PopoverClass="fit2">
             @foreach (var value in _values)
             {
                 <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
@@ -42,7 +51,7 @@
 
 @code {
     public static string __description__ =  @"Row 1 - limited size field - (1) Match parent & (2) Expanded |
-                                              Row 2 & 3 - Oversized field - (1) Match parent & (2) Match parent";
+                                              Row 2 & 3 & 4 - Oversized field - (1) Match parent & (2) Match parent & (3) Ignore parent";
 
     private string? _selected;
     private readonly string[] _values =

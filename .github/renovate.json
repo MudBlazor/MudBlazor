@@ -10,7 +10,22 @@
     "labels": [
         "dependency"
     ],
+    "minimumReleaseAge": "14 days",
+    "vulnerabilityAlerts": {
+        "enabled": true,
+        "labels": [
+            "triage needed"
+        ]
+    },
     "packageRules": [
+        {
+            "matchManagers": [
+                "github-actions"
+            ],
+            "reviewers": [
+                "danielchalmers"
+            ]
+        },
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
@@ -22,6 +37,45 @@
                 "Microsoft.CodeAnalysis.CSharp"
             ],
             "enabled": false
+        },
+        {
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp.Workspaces"
+            ],
+            "enabled": false
+        },
+        {
+            "matchManagers": [
+                "nuget"
+            ],
+            "matchUpdateTypes": [
+                "major"
+            ],
+            "draftPR": true
+        },
+        {
+            "matchFileNames": [
+                "src/MudBlazor/MudBlazor.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.AspNetCore**",
+                "Microsoft.Extensions**"
+            ],
+            "enabled": false
+        },
+        {
+            "matchFileNames": [
+                "src/**/MudBlazor.UnitTests*.csproj",
+                "src/**/MudBlazor.Docs*.csproj"
+            ],
+            "matchUpdateTypes": [
+                "patch",
+                "minor"
+            ],
+            "automerge": true
         }
     ]
 }

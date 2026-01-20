@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A component for collecting and displaying ratings.
+    /// Ratings provide insight regarding other's opinions and experiences with a product. Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.
     /// </summary>
     /// <seealso cref="MudRatingItem"/>
     public partial class MudRating : MudComponentBase
@@ -49,6 +49,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.
         /// </remarks>
+        [Obsolete("Prefer the RatingItemsClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string? RatingItemsStyle { get; set; }
@@ -175,7 +176,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Must be equal or less than <see cref="MaxValue"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Rating.Data)]
         public int SelectedValue { get; set; } = 0;
 

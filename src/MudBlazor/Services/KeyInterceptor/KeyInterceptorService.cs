@@ -54,17 +54,9 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
             return;
         }
 
-        if (!_observerManager.Observers.ContainsKey(observer.ElementId))
+        if (!_observerManager.TryGetOrAddSubscription(observer.ElementId, observer, out var newObserver))
         {
-            var isConnected = await _keyInterceptorInterop.Connect(_dotNetReferenceLazy.Value, observer.ElementId, options);
-            if (isConnected)
-            {
-                _observerManager.Subscribe(observer.ElementId, observer);
-            }
-        }
-        else
-        {
-            _observerManager.Subscribe(observer.ElementId, observer);
+            _ = await _keyInterceptorInterop.Connect(_dotNetReferenceLazy.Value, newObserver.ElementId, options);
         }
     }
 
@@ -121,12 +113,7 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
     /// This method is not exposed in the public API of the <see cref="IKeyInterceptorService"/> interface and is intended to be used internally.
     /// </remarks>
     [JSInvokable]
-    public Task OnKeyDown(string elementId, KeyboardEventArgs args)
-    {
-        return _observerManager.NotifyAsync(
-            observer => observer.NotifyOnKeyDownAsync(args),
-            predicate: (observerId, _) => observerId == elementId);
-    }
+    public Task OnKeyDown(string elementId, KeyboardEventArgs args) => _observerManager.NotifyAsync(elementId, observer => observer.NotifyOnKeyDownAsync(args));
 
     /// <summary>
     /// Notifies observers when a key up event occurs for the specified HTML element and fires this method.
@@ -139,12 +126,7 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
     /// This method is not exposed in the public API of the <see cref="IKeyInterceptorService"/> interface and is intended to be used internally.
     /// </remarks>
     [JSInvokable]
-    public Task OnKeyUp(string elementId, KeyboardEventArgs args)
-    {
-        return _observerManager.NotifyAsync(
-            observer => observer.NotifyOnKeyUpAsync(args),
-            predicate: (observerId, _) => observerId == elementId);
-    }
+    public Task OnKeyUp(string elementId, KeyboardEventArgs args) => _observerManager.NotifyAsync(elementId, observer => observer.NotifyOnKeyUpAsync(args));
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
@@ -158,9 +140,9 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
                 _dotNetReferenceLazy.Value.Dispose();
             }
 
-            foreach (var elementId in _observerManager.Observers.Keys)
+            foreach (var observer in _observerManager)
             {
-                await _keyInterceptorInterop.Disconnect(elementId);
+                await _keyInterceptorInterop.Disconnect(observer.ElementId);
             }
 
             _observerManager.Clear();

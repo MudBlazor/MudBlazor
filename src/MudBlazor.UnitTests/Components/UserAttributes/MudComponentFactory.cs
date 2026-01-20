@@ -2,20 +2,17 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using Bunit;
-using TestContext = Bunit.TestContext;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.UnitTests.UserAttributes
 {
     internal sealed class MudComponentFactory
     {
-        private readonly ConcurrentDictionary<Type, Func<TestContext, IRenderedFragment>> _customFactories = new();
+        private readonly ConcurrentDictionary<Type, Func<BunitContext, IRenderedComponent<IComponent>>> _customFactories = new();
 
         public MudComponentFactory()
         {
@@ -25,17 +22,17 @@ namespace MudBlazor.UnitTests.UserAttributes
                 .Add(x => x.Items, [new("text", "href")]));
 
             RegisterCustomFactoryFor<MudCarouselItem>((builder, testContext) => builder
-                .Add(x => x.Parent, testContext.RenderComponent<MudCarousel<string>>(attributes => attributes
+                .Add(x => x.Parent, testContext.Render<MudCarousel<string>>(attributes => attributes
                         .Add(x => x.SelectedIndex, 0))
                     .Instance));
 
             RegisterCustomFactoryFor<MudDialog>((builder, testContext) => builder
-                .AddCascadingValue(testContext.RenderComponent<MudDialogContainer>().Instance));
+                .AddCascadingValue(testContext.Render<MudDialogContainer>().Instance));
 
             RegisterCustomFactoryFor<MudElement>(builder => builder.Add(x => x.HtmlTag, "div"));
 
             RegisterCustomFactoryFor<MudMessageBox>((builder, testContext) => builder
-                .AddCascadingValue(testContext.RenderComponent<MudDialogContainer>().Instance));
+                .AddCascadingValue(testContext.Render<MudDialogContainer>().Instance));
 
             RegisterCustomFactoryFor<MudOverlay>(builder => builder.Add(x => x.Visible, true));
 
@@ -44,14 +41,14 @@ namespace MudBlazor.UnitTests.UserAttributes
                 .Add(x => x.HighlightedText, "Hello"));
 
             RegisterCustomFactoryFor<MudTabPanel>((builder, testContext) => builder
-                .AddCascadingValue(testContext.RenderComponent<MudTabs>(attributes => attributes
+                .AddCascadingValue(testContext.Render<MudTabs>(attributes => attributes
                         .Add(x => x.KeepPanelsAlive, true))
                     .Instance));
         }
 
         public Dictionary<string, object> UserAttributes { get; set; } = null;
 
-        public IRenderedFragment Create(Type componentType, TestContext testContext)
+        public IRenderedComponent<IComponent> Create(Type componentType, BunitContext testContext)
         {
             if (_customFactories.TryGetValue(componentType, out var factory))
                 return factory(testContext);
@@ -62,7 +59,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             return factory(testContext);
         }
 
-        private Func<TestContext, IRenderedFragment> BuildDefaultFactory(Type componentType)
+        private Func<BunitContext, IRenderedComponent<IComponent>> BuildDefaultFactory(Type componentType)
         {
             // Use string as generic type parameter for generic components
             if (componentType.IsGenericType)
@@ -85,23 +82,23 @@ namespace MudBlazor.UnitTests.UserAttributes
                 ?.MakeGenericMethod(componentType);
 
             return defaultFactoryMethod != null
-                ? testContext => defaultFactoryMethod.Invoke(this, new object[] { testContext }) as IRenderedFragment
+                ? testContext => defaultFactoryMethod.Invoke(this, [testContext]) as IRenderedComponent<IComponent>
                 : null;
         }
 
-        private IRenderedFragment DefaultFactory<TComponent>(TestContext testContext)
+        private IRenderedComponent<TComponent> DefaultFactory<TComponent>(BunitContext testContext)
             where TComponent : MudComponentBase
-            => testContext.RenderComponent<TComponent>(builder => ApplyAdditionalParameters(builder));
+            => testContext.Render<TComponent>(builder => ApplyAdditionalParameters(builder));
 
         private void RegisterCustomFactoryFor<TComponent>(Action<ComponentParameterCollectionBuilder<TComponent>> parameterBuilder)
             where TComponent : MudComponentBase
             => _customFactories.TryAdd(typeof(TComponent), testContext => testContext
-                .RenderComponent<TComponent>(builder => parameterBuilder(ApplyAdditionalParameters(builder))));
+                .Render<TComponent>(builder => parameterBuilder(ApplyAdditionalParameters(builder))));
 
-        private void RegisterCustomFactoryFor<TComponent>(Action<ComponentParameterCollectionBuilder<TComponent>, TestContext> parameterBuilder)
+        private void RegisterCustomFactoryFor<TComponent>(Action<ComponentParameterCollectionBuilder<TComponent>, BunitContext> parameterBuilder)
             where TComponent : MudComponentBase
             => _customFactories.TryAdd(typeof(TComponent), testContext => testContext
-                .RenderComponent<TComponent>(builder => parameterBuilder(ApplyAdditionalParameters(builder), testContext)));
+                .Render<TComponent>(builder => parameterBuilder(ApplyAdditionalParameters(builder), testContext)));
 
         private ComponentParameterCollectionBuilder<TComponent> ApplyAdditionalParameters<TComponent>(ComponentParameterCollectionBuilder<TComponent> builder)
             where TComponent : MudComponentBase

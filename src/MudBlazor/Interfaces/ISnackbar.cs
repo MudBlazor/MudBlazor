@@ -14,12 +14,12 @@ namespace MudBlazor;
 public interface ISnackbar : IDisposable
 {
     /// <summary>
-    /// Gets the collection of currently shown snackbars.
+    /// The collection of currently shown snackbars.
     /// </summary>
     IEnumerable<Snackbar> ShownSnackbars { get; }
 
     /// <summary>
-    /// Gets the global configuration for a snackbar.
+    /// The global configuration for each snackbar.
     /// </summary>
     SnackbarConfiguration Configuration { get; }
 
@@ -32,7 +32,7 @@ public interface ISnackbar : IDisposable
     /// Adds a new snackbar with the specified message.
     /// </summary>
     /// <param name="message">The message to display in the snackbar.</param>
-    /// <param name="severity">The severity of the snackbar message. Default is <see cref="Severity.Normal"/>.</param>
+    /// <param name="severity">The severity of the snackbar message. Defaults to <see cref="Severity.Normal"/>.</param>
     /// <param name="configure">Optional action to configure the <see cref="SnackbarOptions"/>.</param>
     /// <param name="key">An optional key to uniquely identify the snackbar. Default is the value of <paramref name="message"/>.</param>
     /// <returns>The created snackbar instance, or null if not created.</returns>

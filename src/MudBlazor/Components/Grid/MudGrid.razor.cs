@@ -10,7 +10,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// A component for organizing the layout of page content.
+/// A 12-point grid system for organizing content with responsive breakpoints for different screen sizes.
 /// </summary>
 /// <seealso cref="MudItem"/>
 public partial class MudGrid : MudComponentBase
@@ -18,21 +18,21 @@ public partial class MudGrid : MudComponentBase
     protected string Classname =>
         new CssBuilder("mud-grid")
             .AddClass($"mud-grid-spacing-xs-{Spacing.ToString()}")
-            .AddClass($"justify-{Justify.ToDescriptionString()}")
+            .AddClass($"justify-{Justify.ToStringFast(true)}")
             .AddClass(Class)
             .Build();
 
     /// <summary>
     /// The gap between items, measured in increments of <c>4px</c>.
-    /// <br/>
-    /// Maximum is 20.
     /// </summary>
     /// <remarks>
-    /// The increment was halved in v7, so the default is now 6 instead of 3.
+    /// <para>Defaults to 6.</para>
+    /// <para>Maximum is 20.</para>
+    /// <para>The increment was halved in v7, so the default is now 6 instead of 3.</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Grid.Behavior)]
-    public int Spacing { set; get; } = MudGlobal.GridDefaults.Spacing;
+    public int Spacing { set; get; } = 6;
 
     /// <summary>
     /// Defines the distribution of children along the main axis within a <see cref="MudStack"/> component.

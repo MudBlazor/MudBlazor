@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Class="mud-width-full mud-height-full" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 500px;">
+    <MudSplitPanel @ref="_splitPanel"
+                   Class="mud-width-full mud-height-full"
+                   Horizontal="_horizontal"
+                   ResetOnDoubleClick="_resetOnDoubleClick"
+                   Rounded="_rounded"
+                   Transparent="_transparent"
+                   Elevation="@(_elevation ? 1 : 0)">
+        <FirstPanel>
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mud-width-full mud-height-full">
+                <MudText Typo="Typo.h6">First Panel</MudText>
+            </MudStack>
+        </FirstPanel>
+        <SecondPanel>
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mud-width-full mud-height-full">
+                <MudText Typo="Typo.h6">Second Panel</MudText>
+            </MudStack>
+        </SecondPanel>
+    </MudSplitPanel>
+    <MudButtonGroup Variant="Variant.Filled">
+        <MudTooltip Text="Toggle orientation">
+            <MudToggleIconButton @bind-Toggled="_horizontal" Icon="@Icons.Material.Outlined.Pause" ToggledIcon="@Icons.Material.Outlined.DragHandle" ToggledColor="@Color.Info"/>
+        </MudTooltip>
+        <MudTooltip Text="Reset on double click">
+            <MudToggleIconButton @bind-Toggled="_resetOnDoubleClick" Icon="@Icons.Material.Outlined.RestartAlt" ToggledColor="@Color.Info"/>
+        </MudTooltip>
+        <MudTooltip Text="Rounded">
+            <MudToggleIconButton @bind-Toggled="_rounded" Icon="@Icons.Material.Outlined.RoundedCorner" ToggledColor="@Color.Info"/>
+        </MudTooltip>
+        <MudTooltip Text="Elevation">
+            <MudToggleIconButton @bind-Toggled="_elevation" Icon="@Icons.Material.Outlined.Landscape" ToggledColor="@Color.Info"/>
+        </MudTooltip>
+        <MudTooltip Text="Transparent">
+            <MudToggleIconButton @bind-Toggled="_transparent" Icon="@Icons.Material.Outlined.Visibility" ToggledColor="@Color.Info"/>
+        </MudTooltip>
+        <MudTooltip Text="Reset sizes">
+            <MudIconButton OnClick="@_splitPanel.ResetDividerPositionAsync" Icon="@Icons.Material.Outlined.Replay" Variant="Variant.Filled"/>
+        </MudTooltip>
+    </MudButtonGroup>
+</MudStack>
+
+@code {
+    private MudSplitPanel _splitPanel;
+    private bool _horizontal;
+    private bool _resetOnDoubleClick = true;
+    private bool _rounded = true;
+    private bool _elevation = true;
+    private bool _transparent;
+}

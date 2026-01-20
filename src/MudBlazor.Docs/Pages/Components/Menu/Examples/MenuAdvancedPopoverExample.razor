@@ -86,7 +86,7 @@
     {
         string align = "";
         string justify = "";
-        string[] pos = TransformOrigin.ToDescriptionString().Split("-");
+        string[] pos = TransformOrigin.ToStringFast(true).Split("-");
 
         if (pos[0] == "center")
         {
@@ -115,5 +115,4 @@
 
         return $"absolute mud-height-full mud-width-full d-flex ma-n3 {align} {justify}";
     }
-    
 }

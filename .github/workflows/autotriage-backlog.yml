@@ -1,0 +1,67 @@
+name: AutoTriage (Backlog)
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      issues:
+        description: 'Space-separated issue numbers'
+        required: false
+      enabled:
+        description: 'Enable writes (false = dry-run)'
+        type: boolean
+        required: false
+
+concurrency:
+  group: autotriage-backlog
+  cancel-in-progress: true
+
+jobs:
+  triage:
+    if: ${{ github.repository_owner == 'MudBlazor' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.MUDBOT_APP_ID }}
+          private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v6
+
+      - name: Cache triage DB
+        id: cache-db
+        uses: actions/cache@v5
+        with:
+          path: triage-db.json
+          key: ${{ runner.os }}-triage-db-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-triage-db-
+
+      - name: AutoTriage - triage backlog
+        uses: danielchalmers/AutoTriage@main
+        with:
+          issue-numbers: ${{ github.event.inputs.issues }}
+          prompt-path: .github/AutoTriage.prompt
+          enabled: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.enabled) }}
+          model-fast: gemini-2.5-flash
+          model-fast-temperature: 0.0
+          max-fast-runs: 40 # keep it low so we don't keep checking the same issues (for staleness, etc)
+          model-pro: gemini-3-flash-preview # use a cheaper model since we've already scanned the issues before
+          model-pro-temperature: 1.0
+          max-triages: 40
+          db-path: triage-db.json
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: triage-artifacts-${{ github.run_number }}
+          path: |
+            triage-db.json
+            artifacts/

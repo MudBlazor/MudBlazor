@@ -4,48 +4,50 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A customizable piece of text.
+/// </summary>
 public partial class MudText : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-typography")
-            .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
+            .AddClass($"mud-typography-{Typo.ToStringFast(true)}")
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default && Color != Color.Inherit)
             .AddClass("mud-typography-gutterbottom", GutterBottom)
-            .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
+            .AddClass($"mud-typography-align-{ConvertAlign(Align).ToStringFast(true)}", Align != Align.Inherit)
             .AddClass("d-inline", Inline)
             .AddClass(Class)
             .Build();
 
+    /// <summary>
+    /// Whether text is displayed right-to-left.
+    /// </summary>
     [CascadingParameter(Name = "RightToLeft")]
     public bool RightToLeft { get; set; }
 
     /// <summary>
-    /// Applies theme typography styles to the element.
+    /// The theme style of the text.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// The rendered HTML tag is determined by the theme unless <see cref="HtmlTag"/> is set.
-    /// The tag affects the display type and the applicability of properties like <see cref="Align"/> and <see cref="GutterBottom"/>.
-    /// </para>
-    /// Defaults to <see cref="Typo.body1"/> which uses the block-level <c>p</c> element.
+    /// Defaults to <see cref="Typo.body1"/>. Uses the theme HTML tag unless <see cref="HtmlTag"/> is set.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public Typo Typo { get; set; } = Typo.body1;
 
     /// <summary>
-    /// The <c>text-align</c> that will be used.
+    /// The horizontal alignment of this text.
     /// </summary>
     /// <remarks>
-    /// Has no effect on inline displays.
-    /// Defaults to <see cref="Align.Inherit"/>.
+    /// Defaults to <see cref="Align.Inherit"/>. Controls which <c>text-align</c> will be used. Has no effect on inline displays.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public Align Align { get; set; } = Align.Inherit;
 
     /// <summary>
-    /// The theme color of the component.
+    /// The color of this text.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Color.Inherit"/>.
@@ -58,18 +60,17 @@ public partial class MudText : MudComponentBase
     /// Adds a bottom margin.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// Has no effect on inline displays.
+    /// Defaults to <c>false</c>.  Has no effect on inline displays.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public bool GutterBottom { get; set; }
 
     /// <summary>
-    /// Adds the <c>d-inline</c> display class, allowing text to continue on the same line rather than starting a new line.
+    /// Whether this text continues on the same line.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>, meaning no display class will be added.
+    /// Defaults to <c>false</c>.  When <c>false</c>, text will start on a new line.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
@@ -83,16 +84,14 @@ public partial class MudText : MudComponentBase
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// The HTML element that will be rendered (Example: <c>span</c>, <c>p</c>, <c>h1</c>).
+    /// The HTML element used for this text.         that will be rendered (Example: <c>span</c>, <c>p</c>, <c>h1</c>).
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// This can be used to
+    /// Defaults to <c>null</c>, meaning the tag is automatically decided based on <see cref="Typo"/>.<br />
+    /// A custom tag such as <c>span</c>, <c>p</c>, <c>h1</c> can be used to
     /// <see href="https://developer.mozilla.org/docs/Web/HTML/Element#text_content">
-    /// specify the type of content for accessibility and SEO more accurately
-    /// </see>.
-    /// </para>
-    /// Defaults to <c>null</c>, meaning the tag be decided based on <see cref="Typo"/>.
+    /// specify the type of content for accessibility and SEO more accurately</see>.<br />
+    /// The tag affects the display type and the applicability of properties like <see cref="Align"/> and <see cref="GutterBottom"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]

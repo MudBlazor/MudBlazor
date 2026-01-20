@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -155,7 +155,6 @@ namespace MudBlazor.UnitTests.Services
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
-
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
@@ -190,7 +189,6 @@ namespace MudBlazor.UnitTests.Services
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
-
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
@@ -204,9 +202,8 @@ namespace MudBlazor.UnitTests.Services
             unsubscribeResult.Should().BeFalse();
         }
 
-
         [Test]
-        public async Task DisposeAsync()
+        public async Task Dispose()
         {
             var eventName = "onMyCustomEvent";
             var throttleInterval = 20;

@@ -2,10 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -32,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_GeneralStructure()
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.Fluid, true);
                 p.Add(x => x.Src, "https://myimgsource.com/image.png");
@@ -53,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
             img.GetAttribute("width").Should().Be("120");
             img.GetAttribute("style").Should().Be("background:gray");
 
-            img.ClassList.Should().BeEquivalentTo(new[] { "my-custom-class", "mud-elevation-25", "object-bottom", "object-cover", "mud-image", "fluid" });
+            img.ClassList.Should().BeEquivalentTo("my-custom-class", "mud-elevation-25", "object-bottom", "object-cover", "mud-image", "fluid");
         }
 
         [Test]
@@ -65,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_ObjectFitToClassMapping(ObjectFit fit, string expectedClass)
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.ObjectFit, fit);
             });
@@ -87,13 +85,49 @@ namespace MudBlazor.UnitTests.Components
         public void Image_ObjectPositionToClassMapping(ObjectPosition position, string expectedClass)
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.ObjectPosition, position);
             });
 
             var img = comp.Find("img");
-            img.ClassList.Should().Contain(new[] { "mud-image", $"object-{expectedClass}" });
+            img.ClassList.Should().Contain(["mud-image", $"object-{expectedClass}"]);
+        }
+
+        [Test]
+        public async Task SwitchesToFallbackSrcOnError()
+        {
+            var initialSrc = "primary-image.jpg";
+            var fallbackSrc = "fallback-image.jpg";
+
+            var comp = Context.Render<MudImage>(parameters => parameters
+                .Add(p => p.Src, initialSrc)
+                .Add(p => p.FallbackSrc, fallbackSrc)
+            );
+
+            // Trigger the `onerror` event
+            await comp.Find("img").TriggerEventAsync("onerror", EventArgs.Empty);
+
+            var img = comp.Find("img");
+
+            img.GetAttribute("src").Should().Be(fallbackSrc);
+        }
+
+        [Test]
+        public async Task FallbackMissingOnError()
+        {
+            var initialSrc = "primary-image.jpg";
+
+            var comp = Context.Render<MudImage>(parameters => parameters
+                .Add(p => p.Src, initialSrc)
+            );
+
+            // Trigger the `onerror` event
+            await comp.Find("img").TriggerEventAsync("onerror", EventArgs.Empty);
+
+            var img = comp.Find("img");
+
+            img.GetAttribute("src").Should().Be(initialSrc);
         }
     }
 }

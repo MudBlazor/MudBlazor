@@ -1,4 +1,4 @@
-﻿@keyframes mud-animation-fadein {
+@keyframes mud-animation-fadein {
   0% {
     opacity: 0;
   }
@@ -164,17 +164,17 @@
 @-webkit-keyframes mud-progress-linear-horizontal-keyframes-buffer {
   0% {
     opacity: 1;
-    background-position: 0 -23px;
+    background-position: 0 50%;
   }
 
   50% {
     opacity: 0;
-    background-position: 0 -23px;
+    background-position: 0 50%;
   }
 
   100% {
     opacity: 1;
-    background-position: -200px -23px;
+    background-position: -200px 50%;
   }
 }
 
@@ -224,17 +224,17 @@
 @-webkit-keyframes mud-progress-linear-vertical-keyframes-buffer {
   0% {
     opacity: 1;
-    background-position: -23px 0;
+    background-position: 50% 0;
   }
 
   50% {
     opacity: 0;
-    background-position: -23px 0;
+    background-position: 50% 0;
   }
 
   100% {
     opacity: 1;
-    background-position: -23px -200px;
+    background-position: 50% -200px;
   }
 }
 

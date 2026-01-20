@@ -1,6 +1,6 @@
 ﻿<MudDataGrid T="Model" Items="@_items" ShowMenuIcon="true" ColumnResizeMode="ResizeMode.Container" HorizontalScrollbar="true" Bordered="true">
     <Columns>
-        <PropertyColumn Property="x => x.Column1" StickyLeft="true" />
+        <PropertyColumn Property="x => x.Column1" StickyLeft="@_stickyColumns" />
         <PropertyColumn Property="x => x.Column2" />
         <PropertyColumn Property="x => x.Column3" />
         <PropertyColumn Property="x => x.Column4" />
@@ -23,16 +23,20 @@
         <PropertyColumn Property="x => x.Column21" />
         <PropertyColumn Property="x => x.Column22" />
         <PropertyColumn Property="x => x.Column23" />
-        <PropertyColumn Property="x => x.Column24" StickyRight="true" />
+        <PropertyColumn Property="x => x.Column24" StickyRight="@_stickyColumns" />
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Model" PageSizeOptions="@(new int[] {5, 10, 20})" />
     </PagerContent>
 </MudDataGrid>
+<MudStack Row>
+    <MudSwitch Color="Color.Primary" @bind-Value="_stickyColumns">Sticky Columns</MudSwitch>
+</MudStack>
 
 @code {
     public static string __description__ = "Columns 5 & 15 Resizable=true | Columns 10 & 20 Resizable=false | All others null (resizable by default)";
 
+    private bool _stickyColumns = true;
     private readonly IEnumerable<Model> _items = new List<Model>
     {
         new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",

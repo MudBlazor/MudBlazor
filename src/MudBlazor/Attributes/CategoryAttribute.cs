@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using MudBlazor.Charts;
 namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
@@ -19,7 +18,7 @@ namespace MudBlazor
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("The category name cannot be null nor empty.");
-            if (!categoryOrder.ContainsKey(name))
+            if (!_categoryOrder.ContainsKey(name))
                 throw new ArgumentException($"The given category name '{name}' isn't in the categoryOrder field.");
             Name = name;
         }
@@ -28,10 +27,10 @@ namespace MudBlazor
         public string Name { get; }
 
         /// <summary> The order of the category - the greater the number the lower the category will be displayed in the API documentation. </summary>
-        public int Order => categoryOrder[Name];
+        public int Order => _categoryOrder[Name];
 
         // Possible categories of component properties and the order in which they are displayed in the API documentation.
-        private static readonly Dictionary<string, int> categoryOrder = new()
+        private static readonly Dictionary<string, int> _categoryOrder = new()
         {
             ["Data"] = 0, // general category
             ["Validation"] = 1, // general category
@@ -151,7 +150,7 @@ namespace MudBlazor
             public const string PickerAppearance = "Picker appearance";
         }
 
-        /// <summary>Used in all charts, that is in <see cref="MudCategoryChartBase"/> and all components inheriting from it.</summary>
+        /// <summary>Used in <see cref="MudChartBase{T, TOptions}"/> and all components inheriting from it.</summary>
         public static class Chart
         {
             public const string Behavior = "Behavior";
@@ -227,12 +226,6 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
-        public static class Chat
-        {
-            public const string Behavior = "Behavior";
-            public const string Appearance = "Appearance";
-        }
-
         public static class Chip
         {
             public const string Behavior = "Behavior";
@@ -249,6 +242,22 @@ namespace MudBlazor
         public static class Container
         {
             public const string Behavior = "Behavior";
+        }
+
+        public static class DataGrid
+        {
+            public const string Data = "Data";
+            public const string Behavior = "Behavior";
+            public const string Header = "Header";
+            public const string Rows = "Rows";
+            public const string Footer = "Footer";
+            public const string Filtering = "Filtering";
+            public const string Grouping = "Grouping";
+            public const string Sorting = "Sorting";
+            public const string Pagination = "Pagination";
+            public const string Selecting = "Selecting";
+            public const string Editing = "Editing";
+            public const string Appearance = "Appearance";
         }
 
         public static class Dialog
@@ -484,6 +493,12 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class SplitPanel
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class SwipeArea
         {
             public const string Behavior = "Behavior";
@@ -548,6 +563,12 @@ namespace MudBlazor
         }
 
         public static class Text
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class Hotkey
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
