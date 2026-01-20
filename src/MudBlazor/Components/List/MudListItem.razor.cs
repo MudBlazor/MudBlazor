@@ -380,7 +380,7 @@ namespace MudBlazor
                 var options = new KeyInterceptorOptions(
                     "mud-list-item", true,
                     [
-                        // prevent scrolling page, toggle open/close
+                        // capture tab
                         new("Tab", preventDown: "key+none"),
                         // for our users
                         new("/./", subscribeDown: true, subscribeUp: true)
@@ -564,7 +564,7 @@ namespace MudBlazor
                 return;
             }
             await OnClickHandlerAsync(new MouseEventArgs());
-            
+
             StateHasChanged();
         }
     }
