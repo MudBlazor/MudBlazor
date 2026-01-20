@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -23,6 +24,9 @@ namespace MudBlazor
         internal string ItemId = Identifier.Create("list-item-");
 
         private ElementReference _elementReference = new();
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudListItem()
         {
@@ -115,6 +119,18 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public bool ForceLoad { get; set; }
+
+        /// <summary>
+        /// Occurs when a key has been pressed down.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+
+        /// <summary>
+        /// Occurs when a pressed key has been released.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         /// <summary>
         /// Prevents this list item from being clicked.
@@ -343,20 +359,57 @@ namespace MudBlazor
         /// </summary>
         internal async Task OnFocusAsync()
         {
-            if (GetDisabled())
+            if (GetDisabled() || GetReadOnly() || TopLevelList is null)
             {
                 return;
             }
-            if (TopLevelList is not null && GetReadOnly() == false)
+            if (SelectionMode == SelectionMode.SingleSelection)
             {
-                if (SelectionMode == SelectionMode.SingleSelection)
-                {
-                    await TopLevelList.SetSelectedValueAsync(GetValue());
-                }
-                await _elementReference.FocusAsync(false);
-                MudList?.SetFocusedItem(GetValue());
-                StateHasChanged();
+                await TopLevelList.SetSelectedValueAsync(GetValue());
             }
+            await _elementReference.FocusAsync(false);
+            MudList?.SetFocusedItem(GetValue());
+            StateHasChanged();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            // setup key interceptor    
+            if (firstRender)
+            {
+                var options = new KeyInterceptorOptions(
+                    "mud-list-item", true,
+                    [
+                        // prevent scrolling page, toggle open/close
+                        new("Tab", preventDown: "key+none"),
+                        // for our users
+                        new("/./", subscribeDown: true, subscribeUp: true)
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(FieldId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+            }
+            base.OnAfterRender(firstRender);
+        }
+
+        private async Task HandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (GetDisabled() || GetReadOnly())
+                return;
+
+            switch (args.Key)
+            {
+                case "Tab":
+                    await OnFocusAsync();
+                    break;
+                default:
+                    await OnKeyDown.InvokeAsync(args);
+                    break;
+            }
+        }
+
+        private Task HandleKeyUpAsync(KeyboardEventArgs args)
+        {
+            return OnKeyUp.InvokeAsync(args);
         }
 
         internal void SetSelected(bool selected)
@@ -485,7 +538,8 @@ namespace MudBlazor
         {
             if (MudList is null)
             {
-                return "-1";
+                //defaults to 1, since GetAriaPosInSet must be greater than 0
+                return "1";
             }
 
             return MudList.GetItemCount().ToString();
@@ -495,7 +549,8 @@ namespace MudBlazor
         {
             if (MudList is null)
             {
-                return "-1";
+                //respect the size limit
+                return "1";
             }
 
             var index = MudList.GetIndexOfItemById(ItemId);
@@ -504,11 +559,13 @@ namespace MudBlazor
 
         internal async Task OnItemClickAsync()
         {
-            if (GetDisabled())
+            if (GetDisabled() || GetReadOnly())
             {
                 return;
             }
             await OnClickHandlerAsync(new MouseEventArgs());
+            
+            StateHasChanged();
         }
     }
 }

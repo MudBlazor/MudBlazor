@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
@@ -23,7 +24,6 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        private string _elementId = Identifier.Create("list");
         private string? _activeItemId;
 
         public MudList()
@@ -283,7 +283,7 @@ namespace MudBlazor
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+                await KeyInterceptorService.SubscribeAsync(FieldId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
             base.OnAfterRender(firstRender);
             if (firstRender && TopLevelList == this)
@@ -551,7 +551,6 @@ namespace MudBlazor
                     continue;
                 item = itemList[index];
                 await item.OnFocusAsync();
-                _activeItemId = item.ItemId;
                 break;
             }
         }
