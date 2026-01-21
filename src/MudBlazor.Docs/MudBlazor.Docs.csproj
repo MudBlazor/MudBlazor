@@ -74,20 +74,22 @@
     <ProjectReference Include="../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MudBlazor.SassCompiler" Version="2.0.7">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-
   <!--Dont Include in build output-->
   <ItemGroup>
-    <Content Remove="compilerconfig.json" />
-    <Content Remove="sasscompiler.json" />
+    <Content Remove="build.mjs" />
   </ItemGroup>
+
+  <!-- Only rebuild web assets if any of the source files have changed -->
+  <ItemGroup>
+    <ScssAssetInputs Include="Styles/**/*.scss" />
+  </ItemGroup>
+    <Target
+      Name="BuildWebAssets"
+      Inputs="@(ScssAssetInputs)"
+      Outputs="wwwroot/MudBlazorDocs.min.css"
+      BeforeTargets="BeforeBuild"
+    >
+    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
 
 </Project>
