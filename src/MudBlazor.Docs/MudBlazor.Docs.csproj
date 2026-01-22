@@ -87,7 +87,7 @@
       Name="BuildWebAssets"
       Inputs="@(ScssAssetInputs)"
       Outputs="wwwroot/MudBlazorDocs.min.css"
-      BeforeTargets="PrepareForBuild">
+      BeforeTargets="BeforeBuild">
       <Message Importance="High" Text="Building web assets SCSS for MudBlazor.Docs" />
       <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
