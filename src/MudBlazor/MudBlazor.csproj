@@ -105,26 +105,21 @@
   <Target Name="BuildWebAssets"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
-          BeforeTargets="DispatchToInnerBuilds;ResolveProjectStaticWebAssets"
-          Condition=" '$(DesignTimeBuild)' != 'true' ">
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true' AND '$(DesignTimeBuild)' != 'true'">
+
     <Message Importance="High" Text="Building web assets JS/SCSS for MudBlazor" />
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
-    
+
     <ItemGroup>
-      <_GeneratedAssets Include="wwwroot/MudBlazor.min.js" />
-      <_GeneratedAssets Include="wwwroot/MudBlazor.min.css" />
+      <Content Include="wwwroot/MudBlazor.min.js"
+               CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="wwwroot/MudBlazor.min.css"
+               CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <None Remove="@(_GeneratedAssets)" />
-      <!-- Add as Content but don't pack them - they'll be packed via static web assets -->
-      <_NewGeneratedAssets Include="@(_GeneratedAssets)" Exclude="@(Content)" />
-      <Content Include="@(_NewGeneratedAssets)">
-        <Pack>false</Pack>
-      </Content>
-      <FileWrites Include="@(_GeneratedAssets)" />
-    </ItemGroup>
+
   </Target>
+
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
