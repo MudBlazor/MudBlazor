@@ -117,19 +117,13 @@
     
     <ItemGroup>
       <None Remove="@(_GeneratedAssets)" />
-      <!-- Fix to only include files that were newly generated as to not have duplicate Content items. -->
+            <!-- Fix to only include files that were newly generated as to not have duplicate Content items. -->
       <_NewGeneratedAssets Include="@(_GeneratedAssets)" Exclude="@(Content)" />
       <Content Include="@(_NewGeneratedAssets)" />
       <FileWrites Include="@(_GeneratedAssets)" />
     </ItemGroup>
   </Target>
-  
-  
-  
-  
-  
-  
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     <ProjectReference Include="..\MudBlazor.Analyzers.CodeFixes\MudBlazor.Analyzers.CodeFixes.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
