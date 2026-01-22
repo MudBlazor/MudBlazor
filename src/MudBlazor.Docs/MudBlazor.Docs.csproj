@@ -94,12 +94,6 @@
 
     <Message Importance="High" Text="Building web assets SCSS for MudBlazor.Docs" />
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
-
-    <ItemGroup>
-      <Content Include="wwwroot/MudBlazorDocs.min.css"
-               CopyToOutputDirectory="PreserveNewest" />
-    </ItemGroup>
-
   </Target>
 
 
