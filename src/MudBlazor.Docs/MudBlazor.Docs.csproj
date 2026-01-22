@@ -82,6 +82,7 @@
   <!-- Only rebuild web assets if any of the source files have changed -->
   <ItemGroup>
     <ScssAssetInputs Include="Styles/**/*.scss" />
+    <None Include="wwwroot/MudBlazorDocs.min.css" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
   <Target Name="BuildWebAssets"
           Inputs="@(ScssAssetInputs)"
