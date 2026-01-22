@@ -99,17 +99,32 @@
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
-    <None Include="wwwroot/MudBlazor.min.js" CopyToOutputDirectory="PreserveNewest"/>
-    <None Include="wwwroot/MudBlazor.min.css" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
   <Target Name="BuildWebAssets"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
-          BeforeTargets="PrepareForBuild"
+          BeforeTargets="BeforeBuild;ResolveStaticWebAssetsInputs;ComputeFilesToPublish;GetCopyToOutputDirectoryItems"
           Condition=" '$(TargetFramework)' == 'net10.0' ">
     <Message Importance="High" Text="Building web assets JS/SCSS for MudBlazor" />
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <!-- Add generated files to Content so they're included in static web assets -->
+  <Target Name="IncludeGeneratedWebAssets" 
+          AfterTargets="BuildWebAssets" 
+          BeforeTargets="AssignTargetPaths;ResolveStaticWebAssetsInputs"
+          Condition=" '$(TargetFramework)' == 'net10.0' ">
+    <ItemGroup>
+      <Content Include="wwwroot/MudBlazor.min.js" Condition="Exists('wwwroot/MudBlazor.min.js')">
+        <Link>wwwroot/MudBlazor.min.js</Link>
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Content>
+      <Content Include="wwwroot/MudBlazor.min.css" Condition="Exists('wwwroot/MudBlazor.min.css')">
+        <Link>wwwroot/MudBlazor.min.css</Link>
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
   </Target>
   
   <ItemGroup>
