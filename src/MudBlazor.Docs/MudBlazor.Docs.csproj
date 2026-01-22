@@ -83,13 +83,12 @@
   <ItemGroup>
     <ScssAssetInputs Include="Styles/**/*.scss" />
   </ItemGroup>
-    <Target
-      Name="BuildWebAssets"
-      Inputs="@(ScssAssetInputs)"
-      Outputs="wwwroot/MudBlazorDocs.min.css"
-      BeforeTargets="BeforeBuild">
-      <Message Importance="High" Text="Building web assets SCSS for MudBlazor.Docs" />
-      <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  <Target Name="BuildWebAssets"
+          Inputs="@(ScssAssetInputs)"
+          Outputs="wwwroot/MudBlazorDocs.min.css"
+          BeforeTargets="PrepareForBuild">
+    <Message Importance="High" Text="Building web assets SCSS for MudBlazor.Docs" />
+    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
 </Project>
