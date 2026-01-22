@@ -99,33 +99,36 @@
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
+    <UpToDateCheckInput Include="@(WebAssetInputs)" />
   </ItemGroup>
 
   <Target Name="BuildWebAssets"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
-          BeforeTargets="BeforeBuild;ResolveStaticWebAssetsInputs;ComputeFilesToPublish;GetCopyToOutputDirectoryItems"
-          Condition=" '$(TargetFramework)' == 'net10.0' ">
+          BeforeTargets="Build;ResolveProjectStaticWebAssets"
+          Condition=" '$(TargetFramework)' == '' OR '$(TargetFramework)' == 'net10.0' AND '$(DesignTimeBuild)' != 'true' ">
     <Message Importance="High" Text="Building web assets JS/SCSS for MudBlazor" />
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
-  </Target>
-
-  <!-- Add generated files to Content so they're included in static web assets -->
-  <Target Name="IncludeGeneratedWebAssets" 
-          AfterTargets="BuildWebAssets" 
-          BeforeTargets="AssignTargetPaths;ResolveStaticWebAssetsInputs"
-          Condition=" '$(TargetFramework)' == 'net10.0' ">
+    
     <ItemGroup>
-      <Content Include="wwwroot/MudBlazor.min.js" Condition="Exists('wwwroot/MudBlazor.min.js')">
-        <Link>wwwroot/MudBlazor.min.js</Link>
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </Content>
-      <Content Include="wwwroot/MudBlazor.min.css" Condition="Exists('wwwroot/MudBlazor.min.css')">
-        <Link>wwwroot/MudBlazor.min.css</Link>
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </Content>
+      <_GeneratedAssets Include="wwwroot/MudBlazor.min.js" />
+      <_GeneratedAssets Include="wwwroot/MudBlazor.min.css" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <None Remove="@(_GeneratedAssets)" />
+      <!-- Fix to only include files that were newly generated as to not have duplicate Content items. -->
+      <_NewGeneratedAssets Include="@(_GeneratedAssets)" Exclude="@(Content)" />
+      <Content Include="@(_NewGeneratedAssets)" />
+      <FileWrites Include="@(_GeneratedAssets)" />
     </ItemGroup>
   </Target>
+  
+  
+  
+  
+  
+  
   
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
