@@ -108,8 +108,6 @@
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
 
     <ItemGroup>
-      <Content Include="wwwroot/MudBlazor.min.js"
-               CopyToOutputDirectory="PreserveNewest" />
       <Content Include="wwwroot/MudBlazorDocs.min.css"
                CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
