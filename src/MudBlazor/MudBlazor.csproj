@@ -104,7 +104,8 @@
   <Target Name="BuildWebAssets"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
-          BeforeTargets="BeforeBuild">
+          BeforeTargets="BeforeBuild"
+          Condition=" '$(TargetFramework)' == 'net10.0' ">
     <Message Importance="High" Text="Building web assets JS/SCSS for MudBlazor" />
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
