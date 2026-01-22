@@ -99,7 +99,6 @@
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
-    <UpToDateCheckInput Include="@(WebAssetInputs)" />
   </ItemGroup>
 
   <Target Name="BuildWebAssets"
