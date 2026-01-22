@@ -99,8 +99,6 @@
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
-    <None Include="wwwroot/MudBlazor.min.js" CopyToOutputDirectory="PreserveNewest"/>
-    <None Include="wwwroot/MudBlazor.min.css" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
   <Target Name="BuildWebAssets"
@@ -110,6 +108,10 @@
           Condition=" '$(TargetFramework)' == 'net10.0' ">
     <Message Importance="High" Text="Building web assets JS/SCSS for MudBlazor" />
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <ItemGroup>
+      <None Include="wwwroot/MudBlazor.min.js" CopyToOutputDirectory="PreserveNewest"/>
+      <None Include="wwwroot/MudBlazor.min.css" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
   </Target>
   
   <ItemGroup>

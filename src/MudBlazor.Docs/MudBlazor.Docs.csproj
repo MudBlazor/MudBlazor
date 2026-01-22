@@ -82,7 +82,6 @@
   <!-- Only rebuild web assets if any of the source files have changed -->
   <ItemGroup>
     <ScssAssetInputs Include="Styles/**/*.scss" />
-    <None Include="wwwroot/MudBlazorDocs.min.css" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
   <Target Name="BuildWebAssets"
           Inputs="@(ScssAssetInputs)"
@@ -90,6 +89,9 @@
           BeforeTargets="PrepareForBuild">
     <Message Importance="High" Text="Building web assets SCSS for MudBlazor.Docs" />
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <ItemGroup>
+      <None Include="wwwroot/MudBlazorDocs.min.css" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
   </Target>
 
 </Project>
