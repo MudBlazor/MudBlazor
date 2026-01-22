@@ -2,5 +2,6 @@
   "dependencies": {
     "sass": "^1.97.2",
     "terser": "^5.44.1"
-  }
+  },
+  "trustedDependencies": ["terser", "sass"]
 }
