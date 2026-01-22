@@ -103,22 +103,34 @@
   </ItemGroup>
 
   <Target Name="BuildWebAssets"
-          Inputs="@(WebAssetInputs)"
-          Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
-          BeforeTargets="ResolveProjectStaticWebAssets;PrepareForPack"
-          Condition=" '$(DesignTimeBuild)' != 'true' ">
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(WebAssetsBuilt)' != 'true'">
 
-    <Message Importance="High" Text="Building web assets JS/SCSS for MudBlazor" />
-    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <PropertyGroup>
+      <WebAssetsBuilt>true</WebAssetsBuilt>
+    </PropertyGroup>
+
+    <Message Importance="High"
+             Text="Building MudBlazor web assets (inner build, TFM: $(TargetFramework))" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+  <Target Name="RegisterGeneratedAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'">
 
     <ItemGroup>
-      <Content Include="wwwroot/MudBlazor.min.js"
-               CopyToOutputDirectory="PreserveNewest" />
-      <Content Include="wwwroot/MudBlazor.min.css"
-               CopyToOutputDirectory="PreserveNewest" />
+      <_NewAssets Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
+                  Exclude="@(Content)" />
+      <Content Include="@(_NewAssets)" />
     </ItemGroup>
 
   </Target>
+
 
 
   <ItemGroup>
