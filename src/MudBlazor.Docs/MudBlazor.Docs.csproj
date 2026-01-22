@@ -91,4 +91,30 @@
     <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
+  <!-- Only rebuild web assets if any of the source files have changed -->
+  <ItemGroup>
+    <ScssAssetInputs Include="Styles/**/*.scss" />
+    <WebAssetInputs Include="@(ScssAssetInputs)" />
+    <UpToDateCheckInput Include="@(WebAssetInputs)" />
+  </ItemGroup>
+
+  <Target Name="BuildWebAssets"
+          Inputs="@(WebAssetInputs)"
+          Outputs="wwwroot/MudBlazorDocs.min.css"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition=" ('$(TargetFramework)' == '' OR '$(TargetFramework)' == 'net10.0') AND '$(DesignTimeBuild)' != 'true' ">
+
+    <Message Importance="High" Text="Building web assets SCSS for MudBlazor.Docs" />
+    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <ItemGroup>
+      <Content Include="wwwroot/MudBlazor.min.js"
+               CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="wwwroot/MudBlazorDocs.min.css"
+               CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+  </Target>
+
+
 </Project>
