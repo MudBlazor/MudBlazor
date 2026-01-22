@@ -87,13 +87,32 @@
   </ItemGroup>
 
   <Target Name="BuildWebAssets"
-          Inputs="@(WebAssetInputs)"
-          Outputs="wwwroot/MudBlazorDocs.min.css"
-          BeforeTargets="ResolveProjectStaticWebAssets;PrepareForPack"
-          Condition=" '$(DesignTimeBuild)' != 'true' ">
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(WebAssetsBuilt)' != 'true'">
 
-    <Message Importance="High" Text="Building web assets SCSS for MudBlazor.Docs" />
-    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <PropertyGroup>
+      <WebAssetsBuilt>true</WebAssetsBuilt>
+    </PropertyGroup>
+
+    <Message Importance="High"
+             Text="Building MudBlazor.Docs web assets (inner build, TFM: $(TargetFramework))" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+  <Target Name="RegisterGeneratedAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'">
+
+    <ItemGroup>
+      <_NewAssets Include="wwwroot/MudBlazorDocs.min.css"
+                  Exclude="@(Content)" />
+      <Content Include="@(_NewAssets)" />
+    </ItemGroup>
+
   </Target>
 
 
