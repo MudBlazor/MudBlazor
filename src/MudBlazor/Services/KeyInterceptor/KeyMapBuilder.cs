@@ -25,6 +25,15 @@ public sealed class KeyMapBuilder
     }
 
     /// <summary>
+    /// Maps multiple keys to a single action on key down that receives the keyboard event args.
+    /// </summary>
+    public KeyMapBuilder OnKeyDownAny(IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new MultiKeyCommandWithArgs(KeyEventKind.Down, keys, action));
+        return this;
+    }
+
+    /// <summary>
     /// Maps multiple keys to a single action on key up.
     /// </summary>
     public KeyMapBuilder OnKeyUpAny(IEnumerable<string> keys, Func<Task> action)
@@ -34,8 +43,20 @@ public sealed class KeyMapBuilder
     }
 
     /// <summary>
+    /// Maps multiple keys to a single action on key up that receives the keyboard event args.
+    /// </summary>
+    public KeyMapBuilder OnKeyUpAny(IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new MultiKeyCommandWithArgs(KeyEventKind.Up, keys, action));
+        return this;
+    }
+
+    /// <summary>
     /// Maps a single key to an action on key down, with optional condition.
     /// </summary>
+    /// <param name="key">The key to handle.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <param name="when">Optional condition that must be true for the command to execute.</param>
     public KeyMapBuilder OnKeyDown(string key, Func<Task> action, Func<bool>? when = null)
     {
         IKeyCommand command = new SimpleKeyCommand(KeyEventKind.Down, key, action);
@@ -50,11 +71,55 @@ public sealed class KeyMapBuilder
     }
 
     /// <summary>
+    /// Maps a single key to an action on key down that receives the keyboard event args.
+    /// Use this when you need access to modifier keys or other event details.
+    /// </summary>
+    /// <param name="key">The key to handle.</param>
+    /// <param name="action">The action to execute, receiving KeyboardEventArgs.</param>
+    /// <param name="when">Optional condition that must be true for the command to execute.</param>
+    public KeyMapBuilder OnKeyDown(string key, Func<KeyboardEventArgs, Task> action, Func<bool>? when = null)
+    {
+        IKeyCommand command = new KeyCommandWithArgs(KeyEventKind.Down, key, action);
+
+        if (when is not null)
+        {
+            command = new ConditionalCommand(command, when);
+        }
+
+        _commands.Add(command);
+        return this;
+    }
+
+    /// <summary>
     /// Maps a single key to an action on key up, with optional condition.
     /// </summary>
+    /// <param name="key">The key to handle.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <param name="when">Optional condition that must be true for the command to execute.</param>
     public KeyMapBuilder OnKeyUp(string key, Func<Task> action, Func<bool>? when = null)
     {
         IKeyCommand command = new SimpleKeyCommand(KeyEventKind.Up, key, action);
+
+        if (when is not null)
+        {
+            command = new ConditionalCommand(command, when);
+        }
+
+        _commands.Add(command);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Maps a single key to an action on key up that receives the keyboard event args.
+    /// Use this when you need access to modifier keys or other event details.
+    /// </summary>
+    /// <param name="key">The key to handle.</param>
+    /// <param name="action">The action to execute, receiving KeyboardEventArgs.</param>
+    /// <param name="when">Optional condition that must be true for the command to execute.</param>
+    public KeyMapBuilder OnKeyUp(string key, Func<KeyboardEventArgs, Task> action, Func<bool>? when = null)
+    {
+        IKeyCommand command = new KeyCommandWithArgs(KeyEventKind.Up, key, action);
 
         if (when is not null)
         {
@@ -117,6 +182,17 @@ public sealed class KeyMapBuilder
             => action();
     }
 
+    private sealed class KeyCommandWithArgs(KeyEventKind kind, string key, Func<KeyboardEventArgs, Task> action) : IKeyCommand
+    {
+        public KeyEventKind Kind { get; } = kind;
+
+        public bool CanExecute(KeyboardEventArgs args)
+            => args.Key == key;
+
+        public Task ExecuteAsync(KeyboardEventArgs args)
+            => action(args);
+    }
+
     private sealed class MultiKeyCommand(KeyEventKind kind, IEnumerable<string> keys, Func<Task> action)
         : IKeyCommand
     {
@@ -129,6 +205,20 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action();
+    }
+
+    private sealed class MultiKeyCommandWithArgs(KeyEventKind kind, IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
+        : IKeyCommand
+    {
+        private readonly HashSet<string> _keys = keys.ToHashSet();
+
+        public KeyEventKind Kind { get; } = kind;
+
+        public bool CanExecute(KeyboardEventArgs args)
+            => _keys.Contains(args.Key);
+
+        public Task ExecuteAsync(KeyboardEventArgs args)
+            => action(args);
     }
 
     private sealed class ConditionalCommand(IKeyCommand inner, Func<bool> condition) : IKeyCommand
