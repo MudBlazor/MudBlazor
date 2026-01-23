@@ -83,45 +83,9 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ThumbIconColor { get; set; } = Color.Default;
 
-        /// <summary>
-        /// Occurs when a key is pressed.
-        /// </summary>
-        /// <param name="obj">Information about which key was pressed.</param>
-        /// <remarks>
-        /// Supported keys are:<br />
-        /// <c>ArrowLeft</c> or <c>Delete</c> to uncheck the switch.<br />
-        /// <c>ArrowRight</c>, <c>Enter</c>, or <c>NumpadEnter</c> to check the switch.<br />
-        /// <c>Space</c> to toggle the selected value.
-        /// </remarks>
-        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
-        {
-            if (GetDisabledState() || GetReadOnlyState())
-            {
-                return;
-            }
+        protected internal Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
-            switch (obj.Key)
-            {
-                case "ArrowLeft" or "Delete":
-                    await SetBoolValueAsync(false, true);
-                    break;
-                case "ArrowRight" or "Enter" or "NumpadEnter":
-                    await SetBoolValueAsync(true, true);
-                    break;
-                case " ":
-                    switch (BoolValue)
-                    {
-                        case true:
-                            await SetBoolValueAsync(false, true);
-                            break;
-                        default:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                    }
-
-                    break;
-            }
-        }
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
 
         /// <inheritdoc />
         protected override void OnInitialized()
@@ -149,7 +113,11 @@ namespace MudBlazor
                         new(" ", preventDown: "key+none", preventUp: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDownAny(["ArrowLeft", "Delete"], () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAny(["ArrowRight", "Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDown(" ", () => SetBoolValueAsync(!BoolValue, true))));
             }
 
             await base.OnAfterRenderAsync(firstRender);
