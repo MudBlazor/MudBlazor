@@ -7,15 +7,15 @@ namespace MudBlazor;
 /// <summary>
 /// Defines how the data grid edit form behaves after an edit operation.
 /// </summary>
-public enum DataGridEditFormCloseBehavior
+public enum DataGridEditFormAction
 {
     /// <summary>
-    /// Close the edit form after <see cref="MudDataGrid{T}.CommittedItemChangesBehavior"/> has completed.
+    /// Close the edit form after <see cref="MudDataGrid{T}.CommittedItemChanges"/> has completed.
     /// </summary>
     Close,
 
     /// <summary>
-    /// Keep the edit form open after <see cref="MudDataGrid{T}.CommittedItemChangesBehavior"/> has completed.
+    /// Keep the edit form open after <see cref="MudDataGrid{T}.CommittedItemChanges"/> has completed.
     /// </summary>
     KeepOpen
 }

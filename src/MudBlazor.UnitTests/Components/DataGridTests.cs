@@ -1051,8 +1051,8 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(-12, false)]
         public async Task DataGridChangesBehaviorTest(int age, bool shouldClose)
         {
-            var comp = Context.Render<DataGridFormEditChangesBehaviorTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditChangesBehaviorTest.Model>>();
+            var comp = Context.Render<DataGridEditFormActionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditFormActionTest.Model>>();
 
             //verify values before opening dialog
             dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
@@ -1249,7 +1249,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
-            dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CommittedItemChanges.Should().NotBeNull();
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
             dataGrid.Instance.CanceledEditingItem.HasDelegate.Should().Be(true);
             dataGrid.Instance.CanceledEditingItem.Should().Be(dataGrid.Instance.CanceledEditingItem);

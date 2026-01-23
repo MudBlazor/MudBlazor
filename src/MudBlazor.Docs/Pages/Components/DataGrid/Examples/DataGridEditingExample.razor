@@ -122,7 +122,7 @@
         _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    private void CommittedItemChanges(Element item)
+    private Task<DataGridEditFormAction> CommittedItemChanges(Element item)
     {
         // update code for the backing data here
         if (item.Number == 0) // new item
@@ -141,5 +141,6 @@
             }            
         }   
         _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        return Task.FromResult(DataGridEditFormAction.Close);
     }
 }

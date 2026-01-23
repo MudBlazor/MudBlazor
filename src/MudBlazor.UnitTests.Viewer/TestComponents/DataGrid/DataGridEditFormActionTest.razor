@@ -2,7 +2,7 @@
 
 <MudDataGrid T="Model" Items="@_items" ReadOnly="false"
              EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick"
-             CommittedItemChangesBehavior="CommittedItemChangesAsync">
+             CommittedItemChanges="CommittedItemChangesAsync">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -10,7 +10,7 @@
 </MudDataGrid>
 
 @code {
-    public static string __description__ = "A test viewer for visibility testing of CommittedItemChangesBehavior";
+    public static string __description__ = "A test viewer for visibility testing of CommittedItemChanges";
 
     private readonly List<Model> _items = new List<Model>
     {
@@ -25,14 +25,14 @@
         public required int Age { get; set; }
     }
 
-    private async Task<DataGridEditFormCloseBehavior> CommittedItemChangesAsync(Model item)
+    private async Task<DataGridEditFormAction> CommittedItemChangesAsync(Model item)
     {
         // Simulate server call.
         await Task.Delay(5);
 
         if (item.Age < 0)
-            return DataGridEditFormCloseBehavior.KeepOpen;
+            return DataGridEditFormAction.KeepOpen;
 
-        return DataGridEditFormCloseBehavior.Close;
+        return DataGridEditFormAction.Close;
     }
 }
