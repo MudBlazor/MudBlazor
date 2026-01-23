@@ -135,26 +135,44 @@ namespace MudBlazor
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .OnKeyDown("Escape", HandleEscapeAsync)
+                    .OnKeyDown("/./", HandleKeyDownCallbackAsync)
+                    .OnKeyUp("/./", HandleKeyUpCallbackAsync));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
+        private Task HandleEscapeAsync()
         {
-            switch (args.Key)
+            if (GetCloseOnEscapeKey())
             {
-                case "Escape":
-                    if (GetCloseOnEscapeKey())
-                    {
-                        ((IMudDialogInstance)this).Cancel();
-                    }
-                    break;
+                ((IMudDialogInstance)this).Cancel();
             }
+            return Task.CompletedTask;
+        }
+
+        private async Task HandleKeyDownCallbackAsync(KeyboardEventArgs args)
+        {
+            // Don't invoke callback for Escape - it's handled separately
+            if (args.Key == "Escape")
+                return;
+
             if (_dialog is not null && _dialog.OnKeyDown.HasDelegate)
             {
                 await _dialog.OnKeyDown.InvokeAsync(args);
                 // Note: we need to force a render here because the user will expect this blazor standard functionality.
+                // Since the event originates from KeyInterceptor it will not cause a render automatically.
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        private async Task HandleKeyUpCallbackAsync(KeyboardEventArgs args)
+        {
+            if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
+            {
+                await _dialog.OnKeyUp.InvokeAsync(args);
+                // note: we need to force a render here because the user will expect this blazor standard functionality
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
                 await InvokeAsync(StateHasChanged);
             }
@@ -166,15 +184,24 @@ namespace MudBlazor
                 await RefocusDialogAsync();
         }
 
+        internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, args);
+            
+            // Fallback for direct test calls before subscription
+            if (args.Key == "Escape")
+            {
+                await HandleEscapeAsync();
+            }
+            await HandleKeyDownCallbackAsync(args);
+        }
+
         internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
         {
-            if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
-            {
-                await _dialog.OnKeyUp.InvokeAsync(args);
-                // note: we need to force a render here because the user will expect this blazor standard functionality
-                // Since the event originates from KeyInterceptor it will not cause a render automatically.
-                await InvokeAsync(StateHasChanged);
-            }
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Up, args);
+            
+            // Fallback for direct test calls before subscription
+            await HandleKeyUpCallbackAsync(args);
         }
 
         private bool GetHideHeader()
