@@ -14,7 +14,7 @@ public enum KeyEventKind
     /// Represents a key down event.
     /// </summary>
     Down,
-    
+
     /// <summary>
     /// Represents a key up event.
     /// </summary>

@@ -149,12 +149,12 @@ public sealed class KeyMapBuilder
     {
         var scopedBuilder = new KeyMapBuilder();
         configure(scopedBuilder);
-        
+
         foreach (var command in scopedBuilder._commands)
         {
             _commands.Add(new ConditionalCommand(command, condition));
         }
-        
+
         return this;
     }
 

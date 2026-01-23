@@ -665,7 +665,7 @@ namespace MudBlazor
             }
         }
 
-        protected internal virtual Task OnHandleKeyDownAsync(KeyboardEventArgs args) 
+        protected internal virtual Task OnHandleKeyDownAsync(KeyboardEventArgs args)
             => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, args);
 
         private async Task OnClickAsync(MouseEventArgs args)

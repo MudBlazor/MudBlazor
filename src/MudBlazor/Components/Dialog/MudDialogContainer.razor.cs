@@ -187,7 +187,7 @@ namespace MudBlazor
         internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
         {
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, args);
-            
+
             // Fallback for direct test calls before subscription
             if (args.Key == "Escape")
             {
@@ -199,7 +199,7 @@ namespace MudBlazor
         internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
         {
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Up, args);
-            
+
             // Fallback for direct test calls before subscription
             await HandleKeyUpCallbackAsync(args);
         }
