@@ -5872,7 +5872,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeNull());
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEmpty());
             await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
         }
 
@@ -6048,7 +6048,7 @@ namespace MudBlazor.UnitTests.Components
             // Remove by reassigning filtered list
             await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeNull());
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEmpty());
             await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
         }
 
