@@ -27,7 +27,6 @@ namespace MudBlazor
         private MudForm? _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
-        private IEnumerable<T>? _items;
         internal bool _groupInitialExpanded = true;
         internal MudVirtualize<IndexBag<T>>? _mudVirtualize;
         private bool _isFirstRendered = false;
@@ -67,6 +66,10 @@ namespace MudBlazor
             Selection = new HashSet<T>(Comparer);
             SelectedItems = Selection;
             using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<IEnumerable<T>?>(nameof(Items))
+                .WithParameter(() => Items)
+                .WithChangeHandler(OnItemsChangedAsync);
+
             _selectedItemState = registerScope.RegisterParameter<T?>(nameof(SelectedItem))
                 .WithParameter(() => SelectedItem)
                 .WithEventCallback(() => SelectedItemChanged)
@@ -752,29 +755,8 @@ namespace MudBlazor
         /// <remarks>
         /// One row will be displayed per item.  Use the <see cref="ServerData"/> function instead of this property to get data on demand.
         /// </remarks>
-        [Parameter]
-        public IEnumerable<T>? Items
-        {
-            get => _items;
-            set
-            {
-                if (_items == value)
-                    return;
-
-                _items = value;
-
-                // Always clean up stale selections when Items is reassigned.
-                // For INotifyCollectionChanged (e.g., ObservableCollection), the event handler
-                // additionally handles incremental changes (add/remove without reassigning).
-                CleanupStaleSelections();
-                CleanupStaleHierarchyExpansions();
-
-                OnPagerStateChanged();
-                SetupGrouping();
-                ApplyInitialExpansionForItems(_items);
-                SetupCollectionChangeTracking();
-            }
-        }
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
+        public IEnumerable<T>? Items { get; set; }
 
         private void OnPagerStateChanged()
         {
@@ -790,7 +772,7 @@ namespace MudBlazor
 
         private void SetupCollectionChangeTracking()
         {
-            if (_items is INotifyCollectionChanged changed)
+            if (Items is INotifyCollectionChanged changed)
             {
                 changed.CollectionChanged += (s, e) =>
                 {
@@ -865,32 +847,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Synchronous version of CleanupStaleSelectionsAsync for use in property setters.
-        /// </summary>
-        private void CleanupStaleSelections()
-        {
-            if (Selection.Count == 0 && _selectedItemState.Value is null)
-                return;
-
-            var currentItems = BuildCurrentItemsSet();
-            var (selectionChanged, selectedItemChanged) = PruneSelectionAndSelectedItem(currentItems);
-
-            if (!selectionChanged && !selectedItemChanged)
-                return;
-
-            // Fire and forget with proper exception handling
-            if (selectedItemChanged)
-            {
-                InvokeAsync(() => _selectedItemState.SetValueAsync(default)).CatchAndLog();
-            }
-
-            if (selectionChanged)
-            {
-                InvokeAsync(FireSelectionChangedEventsAsync).CatchAndLog();
-            }
-        }
-
         private void CleanupStaleHierarchyExpansions()
         {
             if (_openHierarchies.Count == 0 && _initialExpansions.Count == 0)
@@ -905,7 +861,7 @@ namespace MudBlazor
         /// </summary>
         private HashSet<T> BuildCurrentItemsSet()
         {
-            return _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+            return Items is not null ? new HashSet<T>(Items, Comparer) : new HashSet<T>(Comparer);
         }
 
         /// <summary>
@@ -1547,6 +1503,20 @@ namespace MudBlazor
                 await ClearCurrentSortings();
         }
 
+        private async Task OnItemsChangedAsync(ParameterChangedEventArgs<IEnumerable<T>?> args)
+        {
+            // Always clean up stale selections when Items is reassigned.
+            // For INotifyCollectionChanged (e.g., ObservableCollection), the event handler
+            // additionally handles incremental changes (add/remove without reassigning).
+            await CleanupStaleSelectionsAsync();
+            CleanupStaleHierarchyExpansions();
+
+            OnPagerStateChanged();
+            SetupGrouping();
+            ApplyInitialExpansionForItems(args.Value);
+            SetupCollectionChangeTracking();
+        }
+
         private async Task OnSelectedItemChangedAsync(ParameterChangedEventArgs<T?> args)
         {
             if (args.Value is null)
@@ -1712,9 +1682,9 @@ namespace MudBlazor
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
                     _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
                     // Apply expansion now if items or _serverData.Items is already set
-                    if (_items is not null)
+                    if (Items is not null)
                     {
-                        ApplyInitialExpansionForItems(_items);
+                        ApplyInitialExpansionForItems(Items);
                     }
                     else if (_serverData?.Items?.Any() == true)
                     {
@@ -1881,7 +1851,7 @@ namespace MudBlazor
 
             await _selectedItemsState.SetValueAsync(Selection);
             // manually invoke due to ParameterState not seeing state change with HashSet
-            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
+            await InvokeAsync(() => SelectedItemsChanged.InvokeAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
@@ -1927,9 +1897,9 @@ namespace MudBlazor
                 Selection.UnionWith(itemsToSelect);
             }
 
-            await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
+            await InvokeAsync(() => _selectedItemsState.SetValueAsync(Selection));
             // manually invoke due to ParameterState not seeing state change with HashSet
-            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
+            await InvokeAsync(() => SelectedItemsChanged.InvokeAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
