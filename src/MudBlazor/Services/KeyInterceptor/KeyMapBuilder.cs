@@ -173,52 +173,190 @@ public sealed class KeyMapBuilder
 
     private sealed class SimpleKeyCommand(KeyEventKind kind, string key, Func<Task> action) : IKeyCommand
     {
+        private readonly System.Text.RegularExpressions.Regex? _regex = ParseRegex(key);
+        
         public KeyEventKind Kind { get; } = kind;
 
         public bool CanExecute(KeyboardEventArgs args)
-            => args.Key == key;
+            => _regex?.IsMatch(args.Key) ?? args.Key == key;
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action();
+            
+        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        {
+            // Check if key is a regex pattern like "/pattern/"
+            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
+            {
+                try
+                {
+                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
+                }
+                catch
+                {
+                    // Invalid regex, fall back to literal matching
+                    return null;
+                }
+            }
+            return null;
+        }
     }
 
     private sealed class KeyCommandWithArgs(KeyEventKind kind, string key, Func<KeyboardEventArgs, Task> action) : IKeyCommand
     {
+        private readonly System.Text.RegularExpressions.Regex? _regex = ParseRegex(key);
+        
         public KeyEventKind Kind { get; } = kind;
 
         public bool CanExecute(KeyboardEventArgs args)
-            => args.Key == key;
+            => _regex?.IsMatch(args.Key) ?? args.Key == key;
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action(args);
+            
+        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        {
+            // Check if key is a regex pattern like "/pattern/"
+            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
+            {
+                try
+                {
+                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
+                }
+                catch
+                {
+                    // Invalid regex, fall back to literal matching
+                    return null;
+                }
+            }
+            return null;
+        }
     }
 
-    private sealed class MultiKeyCommand(KeyEventKind kind, IEnumerable<string> keys, Func<Task> action)
-        : IKeyCommand
+    private sealed class MultiKeyCommand : IKeyCommand
     {
-        private readonly HashSet<string> _keys = keys.ToHashSet();
+        private readonly HashSet<string> _keys = [];
+        private readonly List<System.Text.RegularExpressions.Regex> _regexes = [];
+        private readonly Func<Task> _action;
 
-        public KeyEventKind Kind { get; } = kind;
+        public KeyEventKind Kind { get; }
+
+        public MultiKeyCommand(KeyEventKind kind, IEnumerable<string> keys, Func<Task> action)
+        {
+            Kind = kind;
+            _action = action;
+            
+            foreach (var key in keys)
+            {
+                var regex = ParseRegex(key);
+                if (regex != null)
+                {
+                    _regexes.Add(regex);
+                }
+                else
+                {
+                    _keys.Add(key);
+                }
+            }
+        }
 
         public bool CanExecute(KeyboardEventArgs args)
-            => _keys.Contains(args.Key);
+        {
+            if (_keys.Contains(args.Key))
+                return true;
+                
+            foreach (var regex in _regexes)
+            {
+                if (regex.IsMatch(args.Key))
+                    return true;
+            }
+            
+            return false;
+        }
 
         public Task ExecuteAsync(KeyboardEventArgs args)
-            => action();
+            => _action();
+            
+        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        {
+            // Check if key is a regex pattern like "/pattern/"
+            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
+            {
+                try
+                {
+                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
+                }
+                catch
+                {
+                    // Invalid regex, fall back to literal matching
+                    return null;
+                }
+            }
+            return null;
+        }
     }
 
-    private sealed class MultiKeyCommandWithArgs(KeyEventKind kind, IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
-        : IKeyCommand
+    private sealed class MultiKeyCommandWithArgs : IKeyCommand
     {
-        private readonly HashSet<string> _keys = keys.ToHashSet();
+        private readonly HashSet<string> _keys = [];
+        private readonly List<System.Text.RegularExpressions.Regex> _regexes = [];
+        private readonly Func<KeyboardEventArgs, Task> _action;
 
-        public KeyEventKind Kind { get; } = kind;
+        public KeyEventKind Kind { get; }
+
+        public MultiKeyCommandWithArgs(KeyEventKind kind, IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
+        {
+            Kind = kind;
+            _action = action;
+            
+            foreach (var key in keys)
+            {
+                var regex = ParseRegex(key);
+                if (regex != null)
+                {
+                    _regexes.Add(regex);
+                }
+                else
+                {
+                    _keys.Add(key);
+                }
+            }
+        }
 
         public bool CanExecute(KeyboardEventArgs args)
-            => _keys.Contains(args.Key);
+        {
+            if (_keys.Contains(args.Key))
+                return true;
+                
+            foreach (var regex in _regexes)
+            {
+                if (regex.IsMatch(args.Key))
+                    return true;
+            }
+            
+            return false;
+        }
 
         public Task ExecuteAsync(KeyboardEventArgs args)
-            => action(args);
+            => _action(args);
+            
+        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        {
+            // Check if key is a regex pattern like "/pattern/"
+            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
+            {
+                try
+                {
+                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
+                }
+                catch
+                {
+                    // Invalid regex, fall back to literal matching
+                    return null;
+                }
+            }
+            return null;
+        }
     }
 
     private sealed class ConditionalCommand(IKeyCommand inner, Func<bool> condition) : IKeyCommand
