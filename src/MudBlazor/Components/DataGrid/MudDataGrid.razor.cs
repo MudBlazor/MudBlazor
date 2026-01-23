@@ -64,7 +64,7 @@ namespace MudBlazor
         public MudDataGrid()
         {
             Selection = new HashSet<T>(Comparer);
-            SelectedItems = Selection;
+            SelectedItems = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<IEnumerable<T>?>(nameof(Items))
                 .WithParameter(() => Items)
