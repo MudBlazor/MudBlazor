@@ -3,6 +3,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -14,8 +15,26 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DialogTests : BunitTest
     {
+        private static KeyInterceptorService GetKeyInterceptorService()
+        {
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var keyInterceptorService = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
+
+            return keyInterceptorService;
+        }
+
+        private KeyInterceptorService AddKeyInterceptorService()
+        {
+            var service = GetKeyInterceptorService();
+
+            Context.Services.AddScoped<IKeyInterceptorService>(_ => service);
+
+            return service;
+        }
+
+
         /// <summary>
-        /// Testing lifecycle of dialogs in dialogprovider
+        /// Testing lifecycle of dialogs in DialogProvider
         /// </summary>
         [Test]
         public async Task Lifecycle()
@@ -448,6 +467,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogKeyboardEvents()
         {
+            var keyInterceptorService = AddKeyInterceptorService();
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
@@ -455,15 +475,19 @@ namespace MudBlazor.UnitTests.Components
             IDialogReference dialogReference = null;
             //dialog with clickable backdrop
             await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = true }));
+            //var container = comp.FindComponent<MudDialogContainer>();
             dialogReference.Should().NotBe(null);
             var dialog1 = ((DialogOkCancel)dialogReference.Dialog)!;
-            var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
+            var dialogInstance = dialog1.MudDialog.GetDialogContainer();
             dialog1.LastKeyDown.Should().Be(null);
             dialog1.LastKeyUp.Should().Be(null);
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialogInstance1.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            
+            //await keyInterceptorService.OnKeyDown(dialogInstance._elementId, new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             dialog1.LastKeyDown.Key.Should().Be("Enter");
-            await comp.InvokeAsync(() => dialogInstance1.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keyup", }));
+            //await keyInterceptorService.OnKeyUp(dialogInstance._elementId, new KeyboardEventArgs() { Key = "Backspace", Type = "keyup", });
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keyup", }));
             dialog1.LastKeyUp.Key.Should().Be("Backspace");
             comp.Markup.Trim().Should().NotBeEmpty();
         }

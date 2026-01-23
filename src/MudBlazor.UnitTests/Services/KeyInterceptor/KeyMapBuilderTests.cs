@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Services.KeyInterceptor;
 public class KeyMapBuilderTests
 {
     [Test]
-    public void Build_EmptyBuilder_ReturnsNullObservers()
+    public void Build_EmptyBuilder_ReturnsEmptyObservers()
     {
         // Arrange
         var builder = KeyMapBuilder.Create();
@@ -23,8 +23,10 @@ public class KeyMapBuilderTests
         var (keyDown, keyUp) = builder.Build();
 
         // Assert
-        keyDown.Should().BeNull();
-        keyUp.Should().BeNull();
+        var typeKeyUpIgnore = KeyObserver.KeyUpIgnore().GetType();
+        var typeKeyDownIgnore =  KeyObserver.KeyDownIgnore().GetType();
+        keyDown.Should().BeOfType(typeKeyDownIgnore);
+        keyUp.Should().BeOfType(typeKeyUpIgnore);
     }
 
     [Test]

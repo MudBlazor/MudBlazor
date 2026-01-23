@@ -29,7 +29,7 @@ namespace MudBlazor
         private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
-        private readonly string _elementId = Identifier.Create("dialog");
+        internal readonly string _elementId = Identifier.Create("dialog");
 
         public MudDialogContainer()
         {
