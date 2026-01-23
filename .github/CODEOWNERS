@@ -10,6 +10,7 @@
 /src/MudBlazor/Components/Select/ @versile2
 /src/MudBlazor/Components/Overlay/ @versile2
 /src/MudBlazor/Components/Popover/ @versile2
+/src/MudBlazor/Components/Tooltip/ @versile2
 
 # Styles
 /src/MudBlazor/Styles/core/ @danielchalmers
