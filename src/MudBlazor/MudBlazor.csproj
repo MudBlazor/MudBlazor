@@ -107,7 +107,6 @@
     <_IsFirstTfm Condition="'$(TargetFramework)' == 'net10.0'">true</_IsFirstTfm>
   </PropertyGroup>
 
-  <!--
   <Target Name="BuildWebAssets"
           BeforeTargets="DispatchToInnerBuilds"
           Condition="'$(IsCrossTargetingBuild)' == 'true'"
@@ -148,7 +147,6 @@
     </ItemGroup>
 
   </Target>
-  -->
 
 
 
