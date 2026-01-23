@@ -482,7 +482,7 @@ namespace MudBlazor.UnitTests.Components
             dialog1.LastKeyDown.Should().Be(null);
             dialog1.LastKeyUp.Should().Be(null);
             comp.Markup.Trim().Should().NotBeEmpty();
-            
+
             //await keyInterceptorService.OnKeyDown(dialogInstance._elementId, new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             dialog1.LastKeyDown.Key.Should().Be("Enter");

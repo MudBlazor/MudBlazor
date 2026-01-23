@@ -24,7 +24,7 @@ public class KeyMapBuilderTests
 
         // Assert
         var typeKeyUpIgnore = KeyObserver.KeyUpIgnore().GetType();
-        var typeKeyDownIgnore =  KeyObserver.KeyDownIgnore().GetType();
+        var typeKeyDownIgnore = KeyObserver.KeyDownIgnore().GetType();
         keyDown.Should().BeOfType(typeKeyDownIgnore);
         keyUp.Should().BeOfType(typeKeyUpIgnore);
     }
