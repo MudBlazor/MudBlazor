@@ -5938,7 +5938,7 @@ namespace MudBlazor.UnitTests.Components
             // It should either be null or point to an item still in the Items collection.
             await comp.WaitForAssertionAsync(() =>
             {
-                var selectedItem = dataGrid.Instance.SelectedItem;
+                var selectedItem = dataGrid.Instance.GetState(x => x.SelectedItem);
                 if (selectedItem != null)
                 {
                     testComponent.Items.Should().Contain(selectedItem,
