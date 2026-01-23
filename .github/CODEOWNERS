@@ -4,8 +4,13 @@
 /.editorconfig @danielchalmers @ScarletKuro
 
 # Components
-/src/MudBlazor/Components/Autocomplete/ @danielchalmers
 /src/MudBlazor/Components/Menu/ @danielchalmers
+
+# Styles
+/src/MudBlazor/Styles/core/ @danielchalmers
+/src/MudBlazor/Styles/utilities/ @danielchalmers
+/src/MudBlazor/Styles/abstracts/ @danielchalmers
+/src/MudBlazor/Styles/MudBlazor.scss @danielchalmers
 
 # Services & Utilities
 /src/MudBlazor/Services/Browser/ @ScarletKuro
