@@ -15,6 +15,32 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
+      - name: Restore dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - uses: xt0rted/dotnet-format-problem-matcher@v1
+
+      - name: dotnet format
+        working-directory: src
+        run: dotnet format --no-restore --verify-no-changes
+
   build-test:
     runs-on: ubuntu-latest
     steps:

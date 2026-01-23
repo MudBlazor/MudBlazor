@@ -553,18 +553,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridSelectionComparerTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionComparerTest.Person>>();
 
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             // click the first row
             await dataGrid.FindAll("td")[1].ClickAsync();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.IdComparer>();
 
             //select a chip
             var chipSet = comp.FindComponent<MudChipSet<string>>();
 
             await chipSet.FindAll(".mud-chip")[2].ClickAsync();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1); //only 1 item is set
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1); //only 1 item is set
             dataGrid.FindAll("input[type=checkbox]").Where(checkbox => checkbox.IsChecked()).ToArray().Length.Should().Be(2); //two items are checked
             dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.RoleComparer>();
         }
@@ -601,29 +601,29 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridMultiSelectionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
 
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             await dataGrid.FindAll("input")[0].ChangeAsync(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(4);
 
             // deselect an item programmatically
-            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.GetState(x => x.SelectedItems).First()));
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(3);
 
             // select an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.Items.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(4);
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             // select all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(4);
 
             // deselect from the footer
             await dataGrid.Find("tfoot input").ChangeAsync(false);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
         }
 
         [Test]
@@ -641,7 +641,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all four rows shown by default");
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0, because: "no selected items by default");
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0, because: "no selected items by default");
 
             var twoBFilter = new FilterDefinition<DataGridMultiSelectionTest.Item>
             {
@@ -657,13 +657,13 @@ namespace MudBlazor.UnitTests.Components
 
             // select-all
             await dataGrid.FindAll("input[type=checkbox]")[0].ChangeAsync(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected");
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected");
 
             await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
             dataGrid.Render();
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied");
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "selection should not have changed when filter disapplied");
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2, because: "selection should not have changed when filter disapplied");
             dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
             dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
 
@@ -680,29 +680,29 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridServerMultiSelectionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerMultiSelectionTest.Item>>();
 
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             await dataGrid.FindAll("input")[0].ChangeAsync(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(3);
 
             // deselect an item programmatically
-            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.GetState(x => x.SelectedItems).First()));
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
 
             // select an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.ServerItems.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(3);
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(3);
 
             // deselect from the footer
             await dataGrid.Find("tfoot input").ChangeAsync(false);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
         }
 
         [Test]
@@ -715,7 +715,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count() + 2);
 
             //test that changing header sets all items selected
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             await dataGrid.FindAll("input.mud-checkbox-input")[0].ChangeAsync(true);
             comp.Render();
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(dataGrid.Instance.Items.Count());
@@ -5789,20 +5789,20 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             var firstItem = testComponent.Items.First();
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
             });
 
             await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
             await comp.WaitForAssertionAsync(() =>
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
         }
@@ -5815,7 +5815,7 @@ namespace MudBlazor.UnitTests.Components
             var testComponent = comp.Instance;
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(4));
 
             var firstItem = testComponent.Items.First();
             var secondItem = testComponent.Items.Skip(1).First();
@@ -5828,9 +5828,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
-                dataGrid.Instance.SelectedItems.Should().NotContain(firstItem);
-                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().NotContain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().NotContain(secondItem);
             });
 
             await comp.WaitForAssertionAsync(() =>
@@ -5845,11 +5845,11 @@ namespace MudBlazor.UnitTests.Components
             var testComponent = comp.Instance;
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(4));
 
             await comp.InvokeAsync(() => testComponent.ClearItems());
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
             await comp.WaitForAssertionAsync(() =>
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(0));
         }
@@ -5866,14 +5866,14 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
             });
 
             await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItem.Should().BeNull());
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEmpty());
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
         }
 
         [Test]
@@ -5891,9 +5891,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
-                dataGrid.Instance.SelectedItems.Should().Contain(secondItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(secondItem);
             });
 
             var thirdItem = testComponent.Items.Skip(2).First();
@@ -5901,9 +5901,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
-                dataGrid.Instance.SelectedItems.Should().Contain(secondItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(secondItem);
             });
 
             await comp.WaitForAssertionAsync(() =>
@@ -5923,22 +5923,22 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(2));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2));
 
             await comp.InvokeAsync(() => testComponent.RemoveItem(secondItem));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
-                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().NotContain(secondItem);
             });
 
             // SelectedItem must never reference a removed item.
             // It should either be null or point to an item still in the Items collection.
             await comp.WaitForAssertionAsync(() =>
             {
-                var selectedItem = dataGrid.Instance.SelectedItem;
+                var selectedItem = dataGrid.Instance.GetState(x => x.SelectedItem);
                 if (selectedItem != null)
                 {
                     testComponent.Items.Should().Contain(selectedItem,
@@ -5963,16 +5963,16 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, thirdItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(3));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(3));
 
             await comp.InvokeAsync(() => testComponent.RemoveItem(secondItem));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(2);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
-                dataGrid.Instance.SelectedItems.Should().Contain(thirdItem);
-                dataGrid.Instance.SelectedItems.Should().NotContain(secondItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(thirdItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().NotContain(secondItem);
             });
 
             await comp.WaitForAssertionAsync(() =>
@@ -5992,21 +5992,21 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             var firstItem = testComponent.Items.First();
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
             });
 
             // Remove item by reassigning the Items list (not ObservableCollection)
             await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
             await comp.WaitForAssertionAsync(() =>
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
         }
@@ -6019,12 +6019,12 @@ namespace MudBlazor.UnitTests.Components
             var testComponent = comp.Instance;
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(4));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(4));
 
             // Clear by reassigning to empty list
             await comp.InvokeAsync(() => testComponent.ClearItems());
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
             await comp.WaitForAssertionAsync(() =>
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(0));
         }
@@ -6041,15 +6041,15 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-                dataGrid.Instance.SelectedItems.Should().Contain(firstItem);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Should().Contain(firstItem);
             });
 
             // Remove by reassigning filtered list
             await comp.InvokeAsync(() => testComponent.RemoveItem(firstItem));
 
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItem.Should().BeNull());
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance.SelectedItems.Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEmpty());
+            await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
         }
 
         #endregion

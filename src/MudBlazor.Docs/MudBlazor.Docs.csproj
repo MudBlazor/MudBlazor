@@ -82,14 +82,38 @@
   <!-- Only rebuild web assets if any of the source files have changed -->
   <ItemGroup>
     <ScssAssetInputs Include="Styles/**/*.scss" />
+    <WebAssetInputs Include="@(ScssAssetInputs)" />
+    <UpToDateCheckInput Include="@(WebAssetInputs)" />
   </ItemGroup>
-    <Target
-      Name="BuildWebAssets"
-      Inputs="@(ScssAssetInputs)"
-      Outputs="wwwroot/MudBlazorDocs.min.css"
-      BeforeTargets="BeforeBuild"
-    >
-    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+  <Target Name="BuildWebAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(WebAssetsBuilt)' != 'true'">
+
+    <PropertyGroup>
+      <WebAssetsBuilt>true</WebAssetsBuilt>
+    </PropertyGroup>
+
+    <Message Importance="High"
+             Text="Building MudBlazor.Docs web assets (inner build, TFM: $(TargetFramework))" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
+  <Target Name="RegisterGeneratedAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'">
+
+    <ItemGroup>
+      <_NewAssets Include="wwwroot/MudBlazorDocs.min.css"
+                  Exclude="@(Content)" />
+      <Content Include="@(_NewAssets)" />
+    </ItemGroup>
+
+  </Target>
+
 
 </Project>

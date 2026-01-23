@@ -94,21 +94,62 @@
     <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
   </ItemGroup>
 
-  <!-- Only rebuild web assets if any of the source files have changed -->
   <ItemGroup>
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
+    <UpToDateCheckInput Include="@(WebAssetInputs)" />
   </ItemGroup>
-    <Target
-      Name="BuildWebAssets"
-      Inputs="@(WebAssetInputs)"
-      Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
-      BeforeTargets="DispatchToInnerBuilds"
-    >
-    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+  <PropertyGroup>
+    <!-- Check if we're the first TFM when building directly (no outer build) -->
+    <_IsFirstTfm>false</_IsFirstTfm>
+    <_IsFirstTfm Condition="'$(TargetFramework)' == 'net10.0'">true</_IsFirstTfm>
+  </PropertyGroup>
+
+  <Target Name="BuildWebAssets"
+          BeforeTargets="DispatchToInnerBuilds"
+          Condition="'$(IsCrossTargetingBuild)' == 'true'"
+          Inputs="@(WebAssetInputs)"
+          Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
+
+    <Message Importance="High"
+             Text="Building MudBlazor web assets (outer build)" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
-  
+
+  <Target Name="BuildWebAssetsInner"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(_IsFirstTfm)' == 'true'"
+          Inputs="@(WebAssetInputs)"
+          Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
+
+    <Message Importance="High"
+             Text="Building MudBlazor web assets (inner build, TFM: $(TargetFramework))" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <Target Name="RegisterGeneratedAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'">
+
+    <ItemGroup>
+      <_NewAssets Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
+                  Exclude="@(Content)" />
+      <Content Include="@(_NewAssets)" />
+    </ItemGroup>
+
+  </Target>
+
+
+
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     <ProjectReference Include="..\MudBlazor.Analyzers.CodeFixes\MudBlazor.Analyzers.CodeFixes.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
