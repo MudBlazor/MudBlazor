@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -29,7 +29,7 @@ public class KeyMapBuilderRegexTests
         var (keyDown, _) = builder.Build();
 
         // Act & Assert - Test multiple different keys
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "A" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "A" });
         executionCount.Should().Be(1);
 
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "B" });
@@ -57,7 +57,7 @@ public class KeyMapBuilderRegexTests
         var (keyDown, _) = builder.Build();
 
         // Act & Assert - Test letters (should match)
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "a" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "a" });
         executionCount.Should().Be(1);
 
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "z" });
@@ -87,7 +87,7 @@ public class KeyMapBuilderRegexTests
         var (keyDown, _) = builder.Build();
 
         // Act & Assert
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
         executionCount.Should().Be(1);
 
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
@@ -115,7 +115,7 @@ public class KeyMapBuilderRegexTests
         var (keyDown, _) = builder.Build();
 
         // Act & Assert - Test regex match (digits)
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "1" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "1" });
         executionCount.Should().Be(1);
 
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "9" });
@@ -148,7 +148,7 @@ public class KeyMapBuilderRegexTests
         var (keyDown, _) = builder.Build();
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "TestKey" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "TestKey" });
 
         // Assert
         capturedKey.Should().Be("TestKey");
@@ -195,7 +195,7 @@ public class KeyMapBuilderRegexTests
         var (keyDown, _) = builder.Build();
 
         // Act & Assert - When condition is true
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "A" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "A" });
         executionCount.Should().Be(1);
 
         // When condition is false
@@ -226,7 +226,7 @@ public class KeyMapBuilderRegexTests
         var (keyDown, _) = builder.Build();
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "a" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "a" });
 
         // Assert - Only first matching command should execute (early exit)
         firstExecuted.Should().BeTrue();

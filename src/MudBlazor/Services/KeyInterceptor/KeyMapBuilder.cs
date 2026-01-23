@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.Services;
@@ -173,7 +174,7 @@ public sealed class KeyMapBuilder
 
     private sealed class SimpleKeyCommand(KeyEventKind kind, string key, Func<Task> action) : IKeyCommand
     {
-        private readonly System.Text.RegularExpressions.Regex? _regex = ParseRegex(key);
+        private readonly Regex? _regex = ParseRegex(key);
         
         public KeyEventKind Kind { get; } = kind;
 
@@ -183,14 +184,14 @@ public sealed class KeyMapBuilder
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action();
             
-        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
             if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
             {
                 try
                 {
-                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
+                    return new Regex(key.Substring(1, key.Length - 2));
                 }
                 catch
                 {
@@ -204,7 +205,7 @@ public sealed class KeyMapBuilder
 
     private sealed class KeyCommandWithArgs(KeyEventKind kind, string key, Func<KeyboardEventArgs, Task> action) : IKeyCommand
     {
-        private readonly System.Text.RegularExpressions.Regex? _regex = ParseRegex(key);
+        private readonly Regex? _regex = ParseRegex(key);
         
         public KeyEventKind Kind { get; } = kind;
 
@@ -214,14 +215,14 @@ public sealed class KeyMapBuilder
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action(args);
             
-        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
             if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
             {
                 try
                 {
-                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
+                    return new Regex(key.Substring(1, key.Length - 2));
                 }
                 catch
                 {
@@ -236,7 +237,7 @@ public sealed class KeyMapBuilder
     private sealed class MultiKeyCommand : IKeyCommand
     {
         private readonly HashSet<string> _keys = [];
-        private readonly List<System.Text.RegularExpressions.Regex> _regexes = [];
+        private readonly List<Regex> _regexes = [];
         private readonly Func<Task> _action;
 
         public KeyEventKind Kind { get; }
@@ -277,14 +278,14 @@ public sealed class KeyMapBuilder
         public Task ExecuteAsync(KeyboardEventArgs args)
             => _action();
             
-        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
             if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
             {
                 try
                 {
-                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
+                    return new Regex(key.Substring(1, key.Length - 2));
                 }
                 catch
                 {
@@ -299,7 +300,7 @@ public sealed class KeyMapBuilder
     private sealed class MultiKeyCommandWithArgs : IKeyCommand
     {
         private readonly HashSet<string> _keys = [];
-        private readonly List<System.Text.RegularExpressions.Regex> _regexes = [];
+        private readonly List<Regex> _regexes = [];
         private readonly Func<KeyboardEventArgs, Task> _action;
 
         public KeyEventKind Kind { get; }
@@ -340,7 +341,7 @@ public sealed class KeyMapBuilder
         public Task ExecuteAsync(KeyboardEventArgs args)
             => _action(args);
             
-        private static System.Text.RegularExpressions.Regex? ParseRegex(string key)
+        private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
             if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
