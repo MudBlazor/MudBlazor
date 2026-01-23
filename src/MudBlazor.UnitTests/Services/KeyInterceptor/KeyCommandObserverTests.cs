@@ -29,7 +29,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeTrue();
@@ -51,7 +51,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Escape" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeFalse();
@@ -73,7 +73,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyUp!.NotifyOnKeyUpAsync(args);
+        await keyUp.NotifyOnKeyUpAsync(args);
 
         // Assert
         executed.Should().BeTrue();
@@ -101,7 +101,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         downExecuted.Should().BeTrue();
@@ -130,7 +130,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyUp!.NotifyOnKeyUpAsync(args);
+        await keyUp.NotifyOnKeyUpAsync(args);
 
         // Assert
         downExecuted.Should().BeFalse(); // Should not execute KeyDown command
@@ -159,7 +159,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         firstExecuted.Should().BeTrue();
@@ -191,7 +191,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         firstExecuted.Should().BeFalse(); // Condition1 is false
@@ -209,7 +209,7 @@ public class KeyCommandObserverTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act & Assert - should not throw
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
     }
 
     [Test]
@@ -242,14 +242,14 @@ public class KeyCommandObserverTests
         var (keyDown, keyUp) = builder.Build();
 
         // Act - trigger one down event
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Key50" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Key50" });
 
         // Assert - should only check down commands (not iterate through up commands)
         downCount.Should().Be(1);
         upCount.Should().Be(0);
 
         // Act - trigger one up event
-        await keyUp!.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Key50" });
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Key50" });
 
         // Assert
         downCount.Should().Be(1); // Still 1

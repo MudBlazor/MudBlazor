@@ -43,7 +43,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeTrue();
@@ -65,7 +65,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Escape" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeFalse();
@@ -88,7 +88,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeTrue();
@@ -111,7 +111,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeFalse();
@@ -132,7 +132,7 @@ public class KeyMapBuilderTests
         var (keyDown, _) = builder.Build();
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "NumpadEnter" });
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Space" });
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }); // Should not execute
@@ -158,7 +158,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeTrue();
@@ -181,7 +181,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         executed.Should().BeFalse();
@@ -217,7 +217,7 @@ public class KeyMapBuilderTests
         var (keyDown, _) = builder.Build();
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Space" });
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
 
@@ -251,7 +251,7 @@ public class KeyMapBuilderTests
         var (keyDown, _) = builder.Build();
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Space" });
 
         // Assert
@@ -275,7 +275,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyUp!.NotifyOnKeyUpAsync(args);
+        await keyUp.NotifyOnKeyUpAsync(args);
 
         // Assert
         executed.Should().BeTrue();
@@ -303,8 +303,8 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
-        await keyUp!.NotifyOnKeyUpAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
+        await keyUp.NotifyOnKeyUpAsync(args);
 
         // Assert
         downExecuted.Should().BeTrue();
@@ -323,11 +323,11 @@ public class KeyMapBuilderTests
                 return Task.CompletedTask;
             });
 
-        var (keyDown, keyUp) = builder.Build();
+        var (_, keyUp) = builder.Build();
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyUp!.NotifyOnKeyUpAsync(args); // Should not execute the keydown command
+        await keyUp.NotifyOnKeyUpAsync(args); // Should not execute the keydown command
 
         // Assert
         executed.Should().BeFalse();
@@ -355,7 +355,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
 
         // Assert
         firstExecuted.Should().BeTrue();
@@ -381,7 +381,7 @@ public class KeyMapBuilderTests
         var args = new KeyboardEventArgs { Key = "Enter" };
 
         // Act - condition true
-        await keyDown!.NotifyOnKeyDownAsync(args);
+        await keyDown.NotifyOnKeyDownAsync(args);
         var executedWhenTrue = executed;
 
         // Change condition

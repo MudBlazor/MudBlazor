@@ -158,11 +158,11 @@ public sealed class KeyMapBuilder
         return this;
     }
 
-    public (IKeyDownObserver?, IKeyUpObserver?) Build()
+    public (IKeyDownObserver, IKeyUpObserver) Build()
     {
         if (_commands.Count == 0)
         {
-            return (null, null);
+            return (KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
         }
 
         var observer = new KeyCommandObserver(_commands);
