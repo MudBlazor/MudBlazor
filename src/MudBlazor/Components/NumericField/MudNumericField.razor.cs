@@ -308,7 +308,10 @@ namespace MudBlazor
 
                 var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("ArrowUp", Increment)
+                        .OnKeyDown("ArrowDown", Decrement)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -327,25 +330,15 @@ namespace MudBlazor
             }
         }
 
-        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-
-            switch (obj.Key)
-            {
-                case "ArrowUp":
-                    await Increment();
-                    break;
-                case "ArrowDown":
-                    await Decrement();
-                    break;
-            }
-
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
             await OnKeyDown.InvokeAsync(obj);
         }
 
-        protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
+        protected internal Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
