@@ -646,7 +646,27 @@ namespace MudBlazor
                     new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
+        }
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
+        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, args);
+            
+            // Handle Backspace with modifiers - requires KeyboardEventArgs
+            if (!CanHandleKeys())
+                return;
+                
+            if (args.Key == "Backspace" && args.CtrlKey && args.ShiftKey)
+            {
+                await ClearAsync();
+                await SetValueCoreAsync(default);
+                await ResetAsync();
+            }
         }
 
         private async Task OnClickAsync(MouseEventArgs args)
@@ -726,28 +746,6 @@ namespace MudBlazor
         {
             Text = value;
             return Task.CompletedTask;
-        }
-
-        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
-        {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-            switch (args.Key)
-            {
-                case "Backspace":
-                    if (args.CtrlKey && args.ShiftKey)
-                    {
-                        await ClearAsync();
-                        await SetValueCoreAsync(default);
-                        await ResetAsync();
-                    }
-
-                    break;
-                case "Escape":
-                case "Tab":
-                    await CloseAsync(false);
-                    break;
-            }
         }
 
         /// <inheritdoc />
