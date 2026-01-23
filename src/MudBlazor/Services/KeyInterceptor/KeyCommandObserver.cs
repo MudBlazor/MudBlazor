@@ -7,21 +7,52 @@ using Microsoft.AspNetCore.Components.Web;
 namespace MudBlazor.Services;
 
 #nullable enable
-internal class KeyCommandObserver(IReadOnlyList<IKeyCommand> commands) :
+/// <summary>
+/// Efficiently dispatches keyboard events to registered commands.
+/// Uses early-exit pattern for optimal performance.
+/// </summary>
+internal sealed class KeyCommandObserver :
     IKeyDownObserver,
     IKeyUpObserver
 {
-    public Task NotifyOnKeyDownAsync(KeyboardEventArgs args)
-        => DispatchAsync(KeyEventKind.Down, args);
+    private readonly IReadOnlyList<IKeyCommand> _downCommands;
+    private readonly IReadOnlyList<IKeyCommand> _upCommands;
 
-    public Task NotifyOnKeyUpAsync(KeyboardEventArgs args)
-        => DispatchAsync(KeyEventKind.Up, args);
-
-    private Task DispatchAsync(KeyEventKind kind, KeyboardEventArgs args)
+    public KeyCommandObserver(IReadOnlyList<IKeyCommand> commands)
     {
+        // Split commands by kind at construction time for faster dispatch
+        var downCommands = new List<IKeyCommand>();
+        var upCommands = new List<IKeyCommand>();
+
         foreach (var command in commands)
         {
-            if (command.Kind == kind && command.CanExecute(args))
+            if (command.Kind == KeyEventKind.Down)
+            {
+                downCommands.Add(command);
+            }
+            else
+            {
+                upCommands.Add(command);
+            }
+        }
+
+        _downCommands = downCommands;
+        _upCommands = upCommands;
+    }
+
+    public Task NotifyOnKeyDownAsync(KeyboardEventArgs args)
+        => DispatchAsync(_downCommands, args);
+
+    public Task NotifyOnKeyUpAsync(KeyboardEventArgs args)
+        => DispatchAsync(_upCommands, args);
+
+    private static Task DispatchAsync(IReadOnlyList<IKeyCommand> commands, KeyboardEventArgs args)
+    {
+        // Early exit for performance - avoid unnecessary iterations
+        for (var i = 0; i < commands.Count; i++)
+        {
+            var command = commands[i];
+            if (command.CanExecute(args))
             {
                 return command.ExecuteAsync(args);
             }

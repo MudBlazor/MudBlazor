@@ -7,22 +7,35 @@ using Microsoft.AspNetCore.Components.Web;
 namespace MudBlazor.Services;
 
 #nullable enable
+/// <summary>
+/// A fluent builder for creating declarative key command mappings.
+/// Supports conditional execution and efficient command dispatching.
+/// </summary>
 public sealed class KeyMapBuilder
 {
     private readonly List<IKeyCommand> _commands = [];
 
+    /// <summary>
+    /// Maps multiple keys to a single action on key down.
+    /// </summary>
     public KeyMapBuilder OnKeyDownAny(IEnumerable<string> keys, Func<Task> action)
     {
         _commands.Add(new MultiKeyCommand(KeyEventKind.Down, keys, action));
         return this;
     }
 
+    /// <summary>
+    /// Maps multiple keys to a single action on key up.
+    /// </summary>
     public KeyMapBuilder OnKeyUpAny(IEnumerable<string> keys, Func<Task> action)
     {
         _commands.Add(new MultiKeyCommand(KeyEventKind.Up, keys, action));
         return this;
     }
 
+    /// <summary>
+    /// Maps a single key to an action on key down, with optional condition.
+    /// </summary>
     public KeyMapBuilder OnKeyDown(string key, Func<Task> action, Func<bool>? when = null)
     {
         IKeyCommand command = new SimpleKeyCommand(KeyEventKind.Down, key, action);
@@ -36,6 +49,9 @@ public sealed class KeyMapBuilder
         return this;
     }
 
+    /// <summary>
+    /// Maps a single key to an action on key up, with optional condition.
+    /// </summary>
     public KeyMapBuilder OnKeyUp(string key, Func<Task> action, Func<bool>? when = null)
     {
         IKeyCommand command = new SimpleKeyCommand(KeyEventKind.Up, key, action);
@@ -50,12 +66,30 @@ public sealed class KeyMapBuilder
         return this;
     }
 
+    /// <summary>
+    /// Maps multiple keys to an action on key down with a shared condition.
+    /// More efficient than calling OnKeyDown multiple times with the same condition.
+    /// </summary>
     public KeyMapBuilder OnKeyDownAny(IEnumerable<string> keys, Func<Task> action, Func<bool> when)
     {
-        foreach (var key in keys)
+        _commands.Add(new ConditionalCommand(new MultiKeyCommand(KeyEventKind.Down, keys, action), when));
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a conditional scope where all commands share the same condition.
+    /// This is more efficient than adding the condition to each command individually.
+    /// </summary>
+    public KeyMapBuilder When(Func<bool> condition, Action<KeyMapBuilder> configure)
+    {
+        var scopedBuilder = new KeyMapBuilder();
+        configure(scopedBuilder);
+        
+        foreach (var command in scopedBuilder._commands)
         {
-            OnKeyDown(key, action, when);
+            _commands.Add(new ConditionalCommand(command, condition));
         }
+        
         return this;
     }
 

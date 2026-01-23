@@ -188,10 +188,11 @@ namespace MudBlazor
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
-                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true), when: CanHandleKeys)
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true), when: CanHandleKeys)
-                        .OnKeyDown("Backspace", HandleBackspaceAsync, when: CanHandleKeys)
-                        .OnKeyDown(" ", HandleSpaceAsync, when: CanHandleKeys));
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDown("Backspace", HandleBackspaceAsync)
+                        .OnKeyDown(" ", HandleSpaceAsync)));
             }
             await base.OnAfterRenderAsync(firstRender);
         }

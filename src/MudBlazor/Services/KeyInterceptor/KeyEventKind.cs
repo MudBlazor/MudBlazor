@@ -5,8 +5,18 @@
 namespace MudBlazor.Services;
 
 #nullable enable
+/// <summary>
+/// Specifies the type of keyboard event.
+/// </summary>
 public enum KeyEventKind
 {
+    /// <summary>
+    /// Represents a key down event.
+    /// </summary>
     Down,
+    
+    /// <summary>
+    /// Represents a key up event.
+    /// </summary>
     Up
 }
