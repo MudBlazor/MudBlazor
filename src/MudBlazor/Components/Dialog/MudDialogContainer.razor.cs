@@ -137,8 +137,8 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
                     .OnKeyDown("Escape", HandleEscapeAsync)
-                    .OnKeyDown("/./", HandleKeyDownCallbackAsync)
-                    .OnKeyUp("/./", HandleKeyUpCallbackAsync));
+                    .OnKeyDown("/./", HandleAnyKeyDownAsync)
+                    .OnKeyUp("/./", HandleAnyKeyUpAsync));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -152,7 +152,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private async Task HandleKeyDownCallbackAsync(KeyboardEventArgs args)
+        private async Task HandleAnyKeyDownAsync(KeyboardEventArgs args)
         {
             // Don't invoke callback for Escape - it's handled separately
             if (args.Key == "Escape")
@@ -167,7 +167,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task HandleKeyUpCallbackAsync(KeyboardEventArgs args)
+        private async Task HandleAnyKeyUpAsync(KeyboardEventArgs args)
         {
             if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
             {
@@ -182,26 +182,6 @@ namespace MudBlazor
         {
             if (args.Button > 0)
                 await RefocusDialogAsync();
-        }
-
-        internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
-        {
-            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, args);
-
-            // Fallback for direct test calls before subscription
-            if (args.Key == "Escape")
-            {
-                await HandleEscapeAsync();
-            }
-            await HandleKeyDownCallbackAsync(args);
-        }
-
-        internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
-        {
-            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Up, args);
-
-            // Fallback for direct test calls before subscription
-            await HandleKeyUpCallbackAsync(args);
         }
 
         private bool GetHideHeader()

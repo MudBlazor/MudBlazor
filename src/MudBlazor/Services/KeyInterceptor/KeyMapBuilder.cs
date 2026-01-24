@@ -175,7 +175,7 @@ public sealed class KeyMapBuilder
     private sealed class SimpleKeyCommand(KeyEventKind kind, string key, Func<Task> action) : IKeyCommand
     {
         private readonly Regex? _regex = ParseRegex(key);
-        
+
         public KeyEventKind Kind { get; } = kind;
 
         public bool CanExecute(KeyboardEventArgs args)
@@ -183,7 +183,7 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action();
-            
+
         private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
@@ -206,7 +206,7 @@ public sealed class KeyMapBuilder
     private sealed class KeyCommandWithArgs(KeyEventKind kind, string key, Func<KeyboardEventArgs, Task> action) : IKeyCommand
     {
         private readonly Regex? _regex = ParseRegex(key);
-        
+
         public KeyEventKind Kind { get; } = kind;
 
         public bool CanExecute(KeyboardEventArgs args)
@@ -214,7 +214,7 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action(args);
-            
+
         private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
@@ -246,7 +246,7 @@ public sealed class KeyMapBuilder
         {
             Kind = kind;
             _action = action;
-            
+
             foreach (var key in keys)
             {
                 var regex = ParseRegex(key);
@@ -265,19 +265,19 @@ public sealed class KeyMapBuilder
         {
             if (_keys.Contains(args.Key))
                 return true;
-                
+
             foreach (var regex in _regexes)
             {
                 if (regex.IsMatch(args.Key))
                     return true;
             }
-            
+
             return false;
         }
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => _action();
-            
+
         private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
@@ -309,7 +309,7 @@ public sealed class KeyMapBuilder
         {
             Kind = kind;
             _action = action;
-            
+
             foreach (var key in keys)
             {
                 var regex = ParseRegex(key);
@@ -328,19 +328,19 @@ public sealed class KeyMapBuilder
         {
             if (_keys.Contains(args.Key))
                 return true;
-                
+
             foreach (var regex in _regexes)
             {
                 if (regex.IsMatch(args.Key))
                     return true;
             }
-            
+
             return false;
         }
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => _action(args);
-            
+
         private static Regex? ParseRegex(string key)
         {
             // Check if key is a regex pattern like "/pattern/"
