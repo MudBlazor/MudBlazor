@@ -15,7 +15,7 @@ namespace MudBlazor
     /// <seealso cref="MudRadio{T}"/>
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
-        private string _elementId = Identifier.Create("switch");
+        internal string ElementId { get; } = Identifier.Create("switch");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -83,10 +83,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ThumbIconColor { get; set; } = Color.Default;
 
-        protected internal Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
-
-        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
-
         /// <inheritdoc />
         protected override void OnInitialized()
         {
@@ -113,7 +109,7 @@ namespace MudBlazor
                         new(" ", preventDown: "key+none", preventUp: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
                         .OnKeyDownAny(["ArrowLeft", "Delete"], () => SetBoolValueAsync(false, true))
                         .OnKeyDownAny(["ArrowRight", "Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
@@ -123,6 +119,10 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, obj);
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
@@ -130,7 +130,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
     }
