@@ -181,10 +181,23 @@ public sealed class KeyMapBuilder
     }
 
     /// <summary>
-    /// Registers a hook that will be called for every key down event before any other commands are processed.
+    /// Registers a hook that will be called for every key down event, allowing subsequent commands to also execute.
+    /// Unlike regular commands which stop the command chain after execution, hooks do not stop the chain.
     /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
-    /// The hook receives the KeyboardEventArgs and can perform any necessary processing.
     /// </summary>
+    /// <remarks>
+    /// <para><strong>Important:</strong> Hooks execute in the order they are declared in the builder. For hooks to execute before specific key commands, declare them first using <c>.HookKeyDown()</c> before calling <c>.OnKeyDown()</c> or other command methods.</para>
+    /// <para><strong>Example usage:</strong></para>
+    /// <code>
+    /// await KeyInterceptorService.SubscribeAsync(elementId, options, keys => keys
+    ///     .HookKeyDown(OnHandleKeyDownAsync)  // Hook executes first for ALL keys
+    ///     .When(CanHandleKeys, builder => builder
+    ///         .OnKeyDown("Backspace", HandleBackspaceAsync)  // Then specific key handlers
+    ///         .OnKeyDownAny(["Escape", "Tab"], CloseAsync)));
+    /// </code>
+    /// <para>The hook receives the KeyboardEventArgs and can perform any necessary processing (e.g., calling a virtual method that derived classes can override). The hook will execute for every key down event, regardless of whether any specific key commands match.</para>
+    /// <para>If a hook is placed inside a <c>When()</c> scope, it will still respect the condition - it won't execute unconditionally.</para>
+    /// </remarks>
     /// <param name="hook">The method to call on every key down event.</param>
     /// <returns>The builder for chaining.</returns>
     public KeyMapBuilder HookKeyDown(Func<KeyboardEventArgs, Task> hook)
@@ -194,10 +207,23 @@ public sealed class KeyMapBuilder
     }
 
     /// <summary>
-    /// Registers a hook that will be called for every key up event before any other commands are processed.
+    /// Registers a hook that will be called for every key up event, allowing subsequent commands to also execute.
+    /// Unlike regular commands which stop the command chain after execution, hooks do not stop the chain.
     /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
-    /// The hook receives the KeyboardEventArgs and can perform any necessary processing.
     /// </summary>
+    /// <remarks>
+    /// <para><strong>Important:</strong> Hooks execute in the order they are declared in the builder. For hooks to execute before specific key commands, declare them first using <c>.HookKeyUp()</c> before calling <c>.OnKeyUp()</c> or other command methods.</para>
+    /// <para><strong>Example usage:</strong></para>
+    /// <code>
+    /// await KeyInterceptorService.SubscribeAsync(elementId, options, keys => keys
+    ///     .HookKeyUp(OnHandleKeyUpAsync)  // Hook executes first for ALL keys
+    ///     .When(CanHandleKeys, builder => builder
+    ///         .OnKeyUp("Enter", HandleEnterAsync)  // Then specific key handlers
+    ///         .OnKeyUpAny(["Escape", "Tab"], CloseAsync)));
+    /// </code>
+    /// <para>The hook receives the KeyboardEventArgs and can perform any necessary processing (e.g., calling a virtual method that derived classes can override). The hook will execute for every key up event, regardless of whether any specific key commands match.</para>
+    /// <para>If a hook is placed inside a <c>When()</c> scope, it will still respect the condition - it won't execute unconditionally.</para>
+    /// </remarks>
     /// <param name="hook">The method to call on every key up event.</param>
     /// <returns>The builder for chaining.</returns>
     public KeyMapBuilder HookKeyUp(Func<KeyboardEventArgs, Task> hook)
@@ -355,7 +381,8 @@ public sealed class KeyMapBuilder
     {
         public KeyEventKind Kind => inner.Kind;
 
-        public bool IsHook => false;
+        // Preserve hook status from inner command
+        public bool IsHook => inner.IsHook;
 
         public bool CanExecute(KeyboardEventArgs args)
             => condition() && inner.CanExecute(args);
@@ -367,6 +394,9 @@ public sealed class KeyMapBuilder
     /// <summary>
     /// A hook command that always executes for its Kind, regardless of the key pressed.
     /// Used to maintain virtual method override patterns.
+    /// Unlike regular commands, hooks do not stop the command chain after execution,
+    /// allowing subsequent commands to also process the same key event.
+    /// Hooks execute in declaration order - declare them before other commands to ensure they run first.
     /// </summary>
     private sealed class HookCommand(KeyEventKind kind, Func<KeyboardEventArgs, Task> hook) : IKeyCommand
     {
