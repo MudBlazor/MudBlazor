@@ -435,7 +435,7 @@ namespace MudBlazor.UnitTests.Components
             var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance1._elementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance1.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().BeEmpty();
             //dialog with disabled backdrop click
             await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
@@ -443,7 +443,7 @@ namespace MudBlazor.UnitTests.Components
             var dialog2 = (DialogOkCancel)dialogReference.Dialog!;
             var dialogInstance2 = dialog2.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance2._elementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance2.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
 
@@ -465,9 +465,9 @@ namespace MudBlazor.UnitTests.Components
             dialog1.LastKeyUp.Should().Be(null);
             comp.Markup.Trim().Should().NotBeEmpty();
 
-            await comp.InvokeAsync(async () => await keyInterceptorService.OnKeyDown(dialogInstance._elementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(async () => await keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             dialog1.LastKeyDown.Key.Should().Be("Enter");
-            await comp.InvokeAsync(async () => await keyInterceptorService.OnKeyUp(dialogInstance._elementId, new KeyboardEventArgs { Key = "Backspace", Type = "keyup", }));
+            await comp.InvokeAsync(async () => await keyInterceptorService.OnKeyUp(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Backspace", Type = "keyup", }));
             dialog1.LastKeyUp.Key.Should().Be("Backspace");
             comp.Markup.Trim().Should().NotBeEmpty();
         }
@@ -832,7 +832,7 @@ namespace MudBlazor.UnitTests.Components
             var dialog1 = (DialogOkCancel)dialogReference.Dialog!;
             var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance1._elementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance1.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().BeEmpty();
             //dialog with disabled backdrop click
             dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
@@ -842,7 +842,7 @@ namespace MudBlazor.UnitTests.Components
             var dialog2 = (DialogOkCancel)dialogReference.Dialog!;
             var dialogInstance2 = dialog2.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance2._elementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance2.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
 

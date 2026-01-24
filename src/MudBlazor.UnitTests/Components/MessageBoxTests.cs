@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance._elementId, new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Count.Should().Be(3);
 
@@ -242,7 +242,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance._elementId, new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 
@@ -312,7 +312,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance._elementId, new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs() { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 

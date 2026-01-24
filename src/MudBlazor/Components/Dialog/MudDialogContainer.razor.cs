@@ -29,7 +29,8 @@ namespace MudBlazor
         private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
-        internal readonly string _elementId = Identifier.Create("dialog");
+
+        internal string ElementId { get; } = Identifier.Create("dialog");
 
         public MudDialogContainer()
         {
@@ -135,7 +136,7 @@ namespace MudBlazor
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
                     .OnKeyDown("Escape", HandleEscapeAsync)
                     .OnKeyDown("/./", HandleAnyKeyDownAsync)
                     .OnKeyUp("/./", HandleAnyKeyUpAsync));
@@ -309,7 +310,7 @@ namespace MudBlazor
             _disposed = true;
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
 
@@ -321,7 +322,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        string IMudDialogInstance.ElementId => _elementId;
+        string IMudDialogInstance.ElementId => ElementId;
 
         /// <inheritdoc />
         string? IMudDialogInstance.Title => _titleState.Value;
