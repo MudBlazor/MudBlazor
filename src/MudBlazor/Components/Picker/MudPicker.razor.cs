@@ -21,8 +21,9 @@ namespace MudBlazor
         private string? _text;
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
-        private bool _keyInterceptorObserving = false;
-        private readonly string _elementId = Identifier.Create("picker");
+        private bool _keyInterceptorObserving;
+
+        internal string ElementId { get; } = Identifier.Create("picker");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -646,7 +647,7 @@ namespace MudBlazor
                     new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
                 .When(CanHandleKeys, builder => builder
                     .OnKeyDown("Backspace", HandleBackspaceAsync)
                     .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
@@ -666,7 +667,7 @@ namespace MudBlazor
         }
 
         protected internal virtual Task OnHandleKeyDownAsync(KeyboardEventArgs args)
-            => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, args);
+            => KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, args);
 
         private async Task OnClickAsync(MouseEventArgs args)
         {
@@ -718,7 +719,7 @@ namespace MudBlazor
             }
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
 
         protected virtual async Task OnClosedAsync()
@@ -726,7 +727,7 @@ namespace MudBlazor
             await OnPickerClosedAsync();
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "none"));
         }
 
         protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
@@ -754,7 +755,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
     }

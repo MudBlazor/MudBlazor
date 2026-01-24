@@ -434,7 +434,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool CanHandleKeys() => !GetDisabled() && !GetReadOnly();
 
-    protected internal Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_chipContainerId, KeyEventKind.Down, obj);
+    protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_chipContainerId, KeyEventKind.Down, obj);
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)
     {
