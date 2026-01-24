@@ -33,7 +33,7 @@ dotnet build <project.csproj> -c Release --nologo
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo --blame-hang --blame-hang-timeout 60s
 ```
 
-Use `dotnet build /p:SkipBunCompile=true` (or set `SKIP_BUN_COMPILE=true`) to skip Bun’s JS/SCSS compilation and speed up builds for C#-only iterations and bUnit testing. Only use this when `.js` and `.scss` inputs are unchanged (bUnit doesn't depend on CSS/JS), and avoid it for full/prod builds or when testing styling/visual changes.
+Use `dotnet build /p:SkipBunCompile=true` to skip Bun's JS/SCSS compilation and speed up builds for C#-only iterations or bUnit testing. Only use this when `.js` and `.scss` inputs are unchanged (bUnit doesn't depend on CSS/JS), and avoid it for full/prod builds or when testing styling/visual changes.
 
 ### Formatting (REQUIRED)
 
