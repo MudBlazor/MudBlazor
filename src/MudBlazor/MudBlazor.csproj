@@ -139,7 +139,8 @@
   <Target Name="RegisterGeneratedAssets"
           BeforeTargets="ResolveProjectStaticWebAssets"
           Condition="'$(IsCrossTargetingBuild)' != 'true'
-                AND '$(DesignTimeBuild)' != 'true'">
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(SkipBunCompile)' != 'true'">
 
     <ItemGroup>
       <_NewAssets Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
