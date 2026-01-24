@@ -180,6 +180,32 @@ public sealed class KeyMapBuilder
         return this;
     }
 
+    /// <summary>
+    /// Registers a hook that will be called for every key down event before any other commands are processed.
+    /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
+    /// The hook receives the KeyboardEventArgs and can perform any necessary processing.
+    /// </summary>
+    /// <param name="hook">The method to call on every key down event.</param>
+    /// <returns>The builder for chaining.</returns>
+    public KeyMapBuilder HookKeyDown(Func<KeyboardEventArgs, Task> hook)
+    {
+        _commands.Add(new HookCommand(KeyEventKind.Down, hook));
+        return this;
+    }
+
+    /// <summary>
+    /// Registers a hook that will be called for every key up event before any other commands are processed.
+    /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
+    /// The hook receives the KeyboardEventArgs and can perform any necessary processing.
+    /// </summary>
+    /// <param name="hook">The method to call on every key up event.</param>
+    /// <returns>The builder for chaining.</returns>
+    public KeyMapBuilder HookKeyUp(Func<KeyboardEventArgs, Task> hook)
+    {
+        _commands.Add(new HookCommand(KeyEventKind.Up, hook));
+        return this;
+    }
+
     public (IKeyDownObserver, IKeyUpObserver) Build()
     {
         if (_commands.Count == 0)
@@ -318,5 +344,23 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => inner.ExecuteAsync(args);
+    }
+
+    /// <summary>
+    /// A hook command that always executes for its Kind, regardless of the key pressed.
+    /// Used to maintain virtual method override patterns.
+    /// </summary>
+    private sealed class HookCommand(KeyEventKind kind, Func<KeyboardEventArgs, Task> hook) : IKeyCommand
+    {
+        public KeyEventKind Kind { get; } = kind;
+
+        // Mark this as a hook so dispatcher knows not to stop the chain
+        public bool IsHook => true;
+
+        // Hook always executes for any key
+        public bool CanExecute(KeyboardEventArgs args) => true;
+
+        public Task ExecuteAsync(KeyboardEventArgs args)
+            => hook(args);
     }
 }

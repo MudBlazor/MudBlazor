@@ -18,6 +18,11 @@ public interface IKeyCommand
     KeyEventKind Kind { get; }
 
     /// <summary>
+    /// Gets whether this command is a hook that should always execute without stopping the command chain.
+    /// </summary>
+    bool IsHook => false;
+
+    /// <summary>
     /// Determines whether this command can be executed for the given keyboard event.
     /// </summary>
     /// <param name="args">The keyboard event arguments.</param>

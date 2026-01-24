@@ -46,18 +46,24 @@ internal sealed class KeyCommandObserver :
     public Task NotifyOnKeyUpAsync(KeyboardEventArgs args)
         => DispatchAsync(_upCommands, args);
 
-    private static Task DispatchAsync(IReadOnlyList<IKeyCommand> commands, KeyboardEventArgs args)
+    private static async Task DispatchAsync(IReadOnlyList<IKeyCommand> commands, KeyboardEventArgs args)
     {
-        // Early exit for performance - avoid unnecessary iterations
+        // Execute all hooks first (hooks always return true for CanExecute)
+        // Then find and execute the first non-hook command that matches
         for (var i = 0; i < commands.Count; i++)
         {
             var command = commands[i];
             if (command.CanExecute(args))
             {
-                return command.ExecuteAsync(args);
+                await command.ExecuteAsync(args);
+                
+                // If this is not a hook, stop processing (early-exit pattern)
+                if (!command.IsHook)
+                {
+                    return;
+                }
+                // If it's a hook, continue to the next command
             }
         }
-
-        return Task.CompletedTask;
     }
 }

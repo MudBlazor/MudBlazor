@@ -648,26 +648,31 @@ namespace MudBlazor
                 ]);
 
             await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
-                .When(CanHandleKeys, builder => builder
-                    .OnKeyDown("Backspace", HandleBackspaceAsync)
-                    .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
+                .HookKeyDown(OnHandleKeyDownAsync));
         }
 
-        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
-
-        private async Task HandleBackspaceAsync(KeyboardEventArgs args)
+        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
-            // Ctrl+Shift+Backspace clears the value
-            if (args.CtrlKey && args.ShiftKey)
+            if (GetDisabledState() || GetReadOnlyState())
+                return;
+
+            // Handle keys directly (derived classes override this and call base)
+            switch (args.Key)
             {
-                await ClearAsync();
-                await SetValueCoreAsync(default);
-                await ResetAsync();
+                case "Backspace":
+                    if (args.CtrlKey && args.ShiftKey)
+                    {
+                        await ClearAsync();
+                        await SetValueCoreAsync(default);
+                        await ResetAsync();
+                    }
+                    break;
+                case "Escape":
+                case "Tab":
+                    await CloseAsync(false);
+                    break;
             }
         }
-
-        protected internal virtual Task OnHandleKeyDownAsync(KeyboardEventArgs args)
-            => KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, args);
 
         private async Task OnClickAsync(MouseEventArgs args)
         {
