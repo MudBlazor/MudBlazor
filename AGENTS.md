@@ -29,12 +29,11 @@ dotnet clean <project.csproj>
 # Build
 dotnet build <project.csproj> -c Release --nologo
 
-# Skip Bun compilation (faster for C# changes; CSS/JS doesn't affect bUnit tests)
-dotnet build <project.csproj> /p:SkipBunCompile=true
-
 # Test
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo --blame-hang --blame-hang-timeout 60s
 ```
+
+Use `/p:SkipBunCompile=true` on `dotnet build` to bypass Bun compilation and accelerate C# builds during logic-only iterations or bUnit testing. Only apply this optimization when JavaScript (`.js`) and SCSS (`.scss`) files are unchanged.
 
 ### Formatting (REQUIRED)
 
