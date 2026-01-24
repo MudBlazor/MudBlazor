@@ -56,7 +56,7 @@ internal sealed class KeyCommandObserver :
             if (command.CanExecute(args))
             {
                 await command.ExecuteAsync(args);
-                
+
                 // If this is not a hook, stop processing (early-exit pattern)
                 if (!command.IsHook)
                 {
