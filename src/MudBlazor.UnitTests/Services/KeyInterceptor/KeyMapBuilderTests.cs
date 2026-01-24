@@ -396,4 +396,208 @@ public class KeyMapBuilderTests
         executedWhenTrue.Should().BeTrue();
         executedWhenFalse.Should().BeFalse();
     }
+
+    [Test]
+    public async Task OnKeyDown_WithKeyboardEventArgs_ExecutesActionWithArgs()
+    {
+        // Arrange
+        KeyboardEventArgs? receivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyDown("Enter", args =>
+            {
+                receivedArgs = args;
+                return Task.CompletedTask;
+            });
+
+        var (keyDown, _) = builder.Build();
+        var expectedArgs = new KeyboardEventArgs { Key = "Enter", CtrlKey = true, ShiftKey = true };
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(expectedArgs);
+
+        // Assert
+        receivedArgs.Should().NotBeNull();
+        receivedArgs!.Key.Should().Be("Enter");
+        receivedArgs.CtrlKey.Should().BeTrue();
+        receivedArgs.ShiftKey.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task OnKeyDown_WithKeyboardEventArgsAndCondition_ExecutesWhenConditionTrue()
+    {
+        // Arrange
+        var condition = true;
+        KeyboardEventArgs? receivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyDown("Enter", args =>
+            {
+                receivedArgs = args;
+                return Task.CompletedTask;
+            }, when: () => condition);
+
+        var (keyDown, _) = builder.Build();
+        var expectedArgs = new KeyboardEventArgs { Key = "Enter", AltKey = true };
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(expectedArgs);
+
+        // Assert
+        receivedArgs.Should().NotBeNull();
+        receivedArgs!.Key.Should().Be("Enter");
+        receivedArgs.AltKey.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task OnKeyDown_WithKeyboardEventArgsAndCondition_DoesNotExecuteWhenConditionFalse()
+    {
+        // Arrange
+        var condition = false;
+        KeyboardEventArgs? receivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyDown("Enter", args =>
+            {
+                receivedArgs = args;
+                return Task.CompletedTask;
+            }, when: () => condition);
+
+        var (keyDown, _) = builder.Build();
+        var expectedArgs = new KeyboardEventArgs { Key = "Enter" };
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(expectedArgs);
+
+        // Assert
+        receivedArgs.Should().BeNull();
+    }
+
+    [Test]
+    public async Task OnKeyDownAny_WithKeyboardEventArgs_ExecutesForAnyKey()
+    {
+        // Arrange
+        var executedCount = 0;
+        KeyboardEventArgs? lastReceivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyDownAny(["Enter", "NumpadEnter", "Space"], args =>
+            {
+                executedCount++;
+                lastReceivedArgs = args;
+                return Task.CompletedTask;
+            });
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter", CtrlKey = true });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "NumpadEnter", ShiftKey = true });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Space", AltKey = true });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }); // Should not execute
+
+        // Assert
+        executedCount.Should().Be(3);
+        lastReceivedArgs.Should().NotBeNull();
+        lastReceivedArgs!.Key.Should().Be("Space");
+        lastReceivedArgs.AltKey.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task OnKeyUp_WithKeyboardEventArgs_ExecutesActionWithArgs()
+    {
+        // Arrange
+        KeyboardEventArgs? receivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyUp("Enter", args =>
+            {
+                receivedArgs = args;
+                return Task.CompletedTask;
+            });
+
+        var (_, keyUp) = builder.Build();
+        var expectedArgs = new KeyboardEventArgs { Key = "Enter", CtrlKey = true, MetaKey = true };
+
+        // Act
+        await keyUp.NotifyOnKeyUpAsync(expectedArgs);
+
+        // Assert
+        receivedArgs.Should().NotBeNull();
+        receivedArgs!.Key.Should().Be("Enter");
+        receivedArgs.CtrlKey.Should().BeTrue();
+        receivedArgs.MetaKey.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task OnKeyUp_WithKeyboardEventArgsAndCondition_ExecutesWhenConditionTrue()
+    {
+        // Arrange
+        var condition = true;
+        KeyboardEventArgs? receivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyUp("Escape", args =>
+            {
+                receivedArgs = args;
+                return Task.CompletedTask;
+            }, when: () => condition);
+
+        var (_, keyUp) = builder.Build();
+        var expectedArgs = new KeyboardEventArgs { Key = "Escape", ShiftKey = true };
+
+        // Act
+        await keyUp.NotifyOnKeyUpAsync(expectedArgs);
+
+        // Assert
+        receivedArgs.Should().NotBeNull();
+        receivedArgs!.Key.Should().Be("Escape");
+        receivedArgs.ShiftKey.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task OnKeyUp_WithKeyboardEventArgsAndCondition_DoesNotExecuteWhenConditionFalse()
+    {
+        // Arrange
+        var condition = false;
+        KeyboardEventArgs? receivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyUp("Escape", args =>
+            {
+                receivedArgs = args;
+                return Task.CompletedTask;
+            }, when: () => condition);
+
+        var (_, keyUp) = builder.Build();
+        var expectedArgs = new KeyboardEventArgs { Key = "Escape" };
+
+        // Act
+        await keyUp.NotifyOnKeyUpAsync(expectedArgs);
+
+        // Assert
+        receivedArgs.Should().BeNull();
+    }
+
+    [Test]
+    public async Task OnKeyUpAny_WithKeyboardEventArgs_ExecutesForAnyKey()
+    {
+        // Arrange
+        var executedCount = 0;
+        KeyboardEventArgs? lastReceivedArgs = null;
+        var builder = KeyMapBuilder.Create()
+            .OnKeyUpAny(["Escape", "Tab", "F1"], args =>
+            {
+                executedCount++;
+                lastReceivedArgs = args;
+                return Task.CompletedTask;
+            });
+
+        var (_, keyUp) = builder.Build();
+
+        // Act
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Escape", CtrlKey = true });
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Tab", ShiftKey = true });
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "F1", AltKey = true });
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Enter" }); // Should not execute
+
+        // Assert
+        executedCount.Should().Be(3);
+        lastReceivedArgs.Should().NotBeNull();
+        lastReceivedArgs!.Key.Should().Be("F1");
+        lastReceivedArgs.AltKey.Should().BeTrue();
+    }
 }
