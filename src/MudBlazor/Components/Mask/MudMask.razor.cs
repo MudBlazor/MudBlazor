@@ -28,7 +28,8 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IMask _mask = new PatternMask("** **-** **");
-        private readonly string _elementId = Identifier.Create("mask");
+
+        internal string ElementId { get; } = Identifier.Create("mask");
 
         protected string Classname =>
             new CssBuilder("mud-input")
@@ -148,7 +149,7 @@ namespace MudBlazor
             {
                 _jsEvent = JsEventFactory.Create();
 
-                await _jsEvent.Connect(_elementId,
+                await _jsEvent.Connect(ElementId,
                     new JsEventOptions
                     {
                         //EnableLogging = true,
@@ -182,7 +183,7 @@ namespace MudBlazor
                         new("Delete", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDown);
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keyDown: HandleKeyDown);
             }
 
             if (_isFocused && Mask.Selection == null)
@@ -480,7 +481,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
                 if (_jsEvent is not null)
                 {
                     _jsEvent.CaretPositionChanged -= OnCaretPositionChanged;
