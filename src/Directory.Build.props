@@ -17,8 +17,4 @@
     <BunDotNetVersion>1.2.0</BunDotNetVersion>
     <BunWrapper>dotnet tool exec BunDotNet.Cli@$(BunDotNetVersion) --yes -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <SkipBunCompile Condition="'$(SkipBunCompile)' == ''">false</SkipBunCompile>
-  </PropertyGroup>
 </Project>
