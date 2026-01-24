@@ -221,9 +221,11 @@ public sealed class KeyMapBuilder
 
     private sealed class SimpleKeyCommand(KeyEventKind kind, string key, Func<Task> action) : IKeyCommand
     {
-        private readonly Regex? _regex = KeyMapBuilder.ParseRegexPattern(key);
+        private readonly Regex? _regex = ParseRegexPattern(key);
 
         public KeyEventKind Kind { get; } = kind;
+
+        public bool IsHook => false;
 
         public bool CanExecute(KeyboardEventArgs args)
             => _regex?.IsMatch(args.Key) ?? args.Key == key;
@@ -234,9 +236,11 @@ public sealed class KeyMapBuilder
 
     private sealed class KeyCommandWithArgs(KeyEventKind kind, string key, Func<KeyboardEventArgs, Task> action) : IKeyCommand
     {
-        private readonly Regex? _regex = KeyMapBuilder.ParseRegexPattern(key);
+        private readonly Regex? _regex = ParseRegexPattern(key);
 
         public KeyEventKind Kind { get; } = kind;
+
+        public bool IsHook => false;
 
         public bool CanExecute(KeyboardEventArgs args)
             => _regex?.IsMatch(args.Key) ?? args.Key == key;
@@ -253,6 +257,8 @@ public sealed class KeyMapBuilder
 
         public KeyEventKind Kind { get; }
 
+        public bool IsHook => false;
+
         public MultiKeyCommand(KeyEventKind kind, IEnumerable<string> keys, Func<Task> action)
         {
             Kind = kind;
@@ -260,8 +266,8 @@ public sealed class KeyMapBuilder
 
             foreach (var key in keys)
             {
-                var regex = KeyMapBuilder.ParseRegexPattern(key);
-                if (regex != null)
+                var regex = ParseRegexPattern(key);
+                if (regex is not null)
                 {
                     _regexes.Add(regex);
                 }
@@ -275,12 +281,16 @@ public sealed class KeyMapBuilder
         public bool CanExecute(KeyboardEventArgs args)
         {
             if (_keys.Contains(args.Key))
+            {
                 return true;
+            }
 
             foreach (var regex in _regexes)
             {
                 if (regex.IsMatch(args.Key))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -298,6 +308,8 @@ public sealed class KeyMapBuilder
 
         public KeyEventKind Kind { get; }
 
+        public bool IsHook => false;
+
         public MultiKeyCommandWithArgs(KeyEventKind kind, IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
         {
             Kind = kind;
@@ -305,7 +317,7 @@ public sealed class KeyMapBuilder
 
             foreach (var key in keys)
             {
-                var regex = KeyMapBuilder.ParseRegexPattern(key);
+                var regex = ParseRegexPattern(key);
                 if (regex != null)
                 {
                     _regexes.Add(regex);
@@ -320,12 +332,16 @@ public sealed class KeyMapBuilder
         public bool CanExecute(KeyboardEventArgs args)
         {
             if (_keys.Contains(args.Key))
+            {
                 return true;
+            }
 
             foreach (var regex in _regexes)
             {
                 if (regex.IsMatch(args.Key))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -338,6 +354,8 @@ public sealed class KeyMapBuilder
     private sealed class ConditionalCommand(IKeyCommand inner, Func<bool> condition) : IKeyCommand
     {
         public KeyEventKind Kind => inner.Kind;
+
+        public bool IsHook => false;
 
         public bool CanExecute(KeyboardEventArgs args)
             => condition() && inner.CanExecute(args);
@@ -360,7 +378,6 @@ public sealed class KeyMapBuilder
         // Hook always executes for any key
         public bool CanExecute(KeyboardEventArgs args) => true;
 
-        public Task ExecuteAsync(KeyboardEventArgs args)
-            => hook(args);
+        public Task ExecuteAsync(KeyboardEventArgs args) => hook(args);
     }
 }

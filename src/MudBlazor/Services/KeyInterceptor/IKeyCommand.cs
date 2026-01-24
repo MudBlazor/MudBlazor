@@ -20,7 +20,7 @@ public interface IKeyCommand
     /// <summary>
     /// Gets whether this command is a hook that should always execute without stopping the command chain.
     /// </summary>
-    bool IsHook => false;
+    bool IsHook { get; }
 
     /// <summary>
     /// Determines whether this command can be executed for the given keyboard event.
