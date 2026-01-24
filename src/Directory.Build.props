@@ -17,4 +17,13 @@
     <BunDotNetVersion>1.2.0</BunDotNetVersion>
     <BunWrapper>dotnet tool exec BunDotNet.Cli@$(BunDotNetVersion) --yes -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Skip Bun compilation of JS/SCSS files. Can be overridden via:
+         - Command line: dotnet build /p:SkipBunCompile=true
+         - Environment variable: SKIP_BUN_COMPILE=true
+    -->
+    <SkipBunCompile Condition="'$(SkipBunCompile)' == '' AND '$(SKIP_BUN_COMPILE)' != ''">$(SKIP_BUN_COMPILE)</SkipBunCompile>
+    <SkipBunCompile Condition="'$(SkipBunCompile)' == ''">false</SkipBunCompile>
+  </PropertyGroup>
 </Project>

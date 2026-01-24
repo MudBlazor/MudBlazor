@@ -109,7 +109,7 @@
 
   <Target Name="BuildWebAssets"
           BeforeTargets="DispatchToInnerBuilds"
-          Condition="'$(IsCrossTargetingBuild)' == 'true'"
+          Condition="'$(IsCrossTargetingBuild)' == 'true' AND '$(SkipBunCompile)' != 'true'"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
 
@@ -124,7 +124,8 @@
           BeforeTargets="ResolveProjectStaticWebAssets"
           Condition="'$(IsCrossTargetingBuild)' != 'true'
                 AND '$(DesignTimeBuild)' != 'true'
-                AND '$(_IsFirstTfm)' == 'true'"
+                AND '$(_IsFirstTfm)' == 'true'
+                AND '$(SkipBunCompile)' != 'true'"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
 
