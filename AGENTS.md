@@ -29,43 +29,11 @@ dotnet clean <project.csproj>
 # Build
 dotnet build <project.csproj> -c Release --nologo
 
+# Skip Bun compilation (faster for C# changes; CSS/JS doesn't affect bUnit tests)
+dotnet build <project.csproj> /p:SkipBunCompile=true
+
 # Test
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButton" --no-build -c Release --nologo --blame-hang --blame-hang-timeout 60s
-```
-
-### Fast Build for Testing (Skip Bun Compilation)
-
-When working on C# code changes that don't affect JavaScript or SCSS files, you can **significantly speed up builds** by skipping the Bun compilation step. This is especially useful during iterative testing workflows.
-
-**Important: CSS/JS changes don't affect bUnit tests**, so you can safely skip Bun compilation when running tests on C# logic changes.
-
-**Use SkipBunCompile when:**
-- Making C# component logic changes
-- Running bUnit tests (CSS/JS doesn't affect them)
-- Debugging non-UI related code
-- Iterating quickly during development
-
-**DON'T use SkipBunCompile when:**
-- Modifying `.scss` files in `src/MudBlazor/Styles/`
-- Changing `.js` files in `src/MudBlazor/TScripts/`
-- Building for production/release
-- Testing visual/styling changes in the browser
-
-```bash
-# Method 1: Command-line parameter (per-build basis)
-dotnet build src/MudBlazor/MudBlazor.csproj /p:SkipBunCompile=true
-dotnet build src/MudBlazor.Docs/MudBlazor.Docs.csproj /p:SkipBunCompile=true
-
-# Method 2: Environment variable (persistent for session)
-export SKIP_BUN_COMPILE=true
-dotnet build src/MudBlazor/MudBlazor.csproj
-
-# Method 3: Add to launchSettings.json for consistent dev environment
-# Add to environmentVariables section: "SKIP_BUN_COMPILE": "true"
-
-# Fast test workflow example (CSS/JS not needed for bUnit tests)
-dotnet build src/MudBlazor/MudBlazor.csproj /p:SkipBunCompile=true --no-restore
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build --filter "FullyQualifiedName~MyComponent"
 ```
 
 ### Formatting (REQUIRED)

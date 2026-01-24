@@ -19,11 +19,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Skip Bun compilation of JS/SCSS files. Can be overridden via:
-         - Command line: dotnet build /p:SkipBunCompile=true
-         - Environment variable: SKIP_BUN_COMPILE=true
-    -->
-    <SkipBunCompile Condition="'$(SkipBunCompile)' == '' AND '$(SKIP_BUN_COMPILE)' != ''">$(SKIP_BUN_COMPILE)</SkipBunCompile>
+    <!-- Skip Bun compilation of JS/SCSS files. Can be overridden via command line: dotnet build /p:SkipBunCompile=true -->
     <SkipBunCompile Condition="'$(SkipBunCompile)' == ''">false</SkipBunCompile>
   </PropertyGroup>
 </Project>
