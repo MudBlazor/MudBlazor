@@ -13,32 +13,34 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Switch_KeyboardNavigation()
         {
-            var comp = Context.Render<MudSwitch<bool>>();
+            var comp = Context.Render<MudSwitchBasicTest>();
+            var switchInstance = comp.FindComponent<MudSwitch<bool>>().Instance;
+            var mudSwitch = ()=> comp.Find("#switch");
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "Delete", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "NumpadEnter", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => mudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
         }
 
         [Test]
