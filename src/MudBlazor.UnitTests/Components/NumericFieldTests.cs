@@ -351,20 +351,20 @@ namespace MudBlazor.UnitTests.Components
             var numericField = comp.Instance;
             numericField.ReadValue.Should().Be(1234.56);
             numericField.ReadText.Should().Be("1234.56");
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
-            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keyup", });
             await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1235.56));
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
-            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keyup", });
             await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false });
-            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "c", Type = "keyup", CtrlKey = false });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "c", Type = "keyup", CtrlKey = false });
             await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
-            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "a", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "a", Type = "keyup", });
             await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
-            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
         }
 
