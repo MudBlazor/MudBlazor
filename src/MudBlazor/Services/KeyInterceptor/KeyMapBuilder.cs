@@ -17,6 +17,27 @@ public sealed class KeyMapBuilder
     private readonly List<IKeyCommand> _commands = [];
 
     /// <summary>
+    /// Helper to parse regex patterns from key strings.
+    /// </summary>
+    private static Regex? ParseRegexPattern(string key)
+    {
+        // Check if key is a regex pattern like "/pattern/"
+        if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
+        {
+            try
+            {
+                return new Regex(key.Substring(1, key.Length - 2));
+            }
+            catch
+            {
+                // Invalid regex, fall back to literal matching
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
     /// Maps multiple keys to a single action on key down.
     /// </summary>
     public KeyMapBuilder OnKeyDownAny(IEnumerable<string> keys, Func<Task> action)
@@ -174,7 +195,7 @@ public sealed class KeyMapBuilder
 
     private sealed class SimpleKeyCommand(KeyEventKind kind, string key, Func<Task> action) : IKeyCommand
     {
-        private readonly Regex? _regex = ParseRegex(key);
+        private readonly Regex? _regex = KeyMapBuilder.ParseRegexPattern(key);
 
         public KeyEventKind Kind { get; } = kind;
 
@@ -183,29 +204,11 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action();
-
-        private static Regex? ParseRegex(string key)
-        {
-            // Check if key is a regex pattern like "/pattern/"
-            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
-            {
-                try
-                {
-                    return new Regex(key.Substring(1, key.Length - 2));
-                }
-                catch
-                {
-                    // Invalid regex, fall back to literal matching
-                    return null;
-                }
-            }
-            return null;
-        }
     }
 
     private sealed class KeyCommandWithArgs(KeyEventKind kind, string key, Func<KeyboardEventArgs, Task> action) : IKeyCommand
     {
-        private readonly Regex? _regex = ParseRegex(key);
+        private readonly Regex? _regex = KeyMapBuilder.ParseRegexPattern(key);
 
         public KeyEventKind Kind { get; } = kind;
 
@@ -214,24 +217,6 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action(args);
-
-        private static Regex? ParseRegex(string key)
-        {
-            // Check if key is a regex pattern like "/pattern/"
-            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
-            {
-                try
-                {
-                    return new Regex(key.Substring(1, key.Length - 2));
-                }
-                catch
-                {
-                    // Invalid regex, fall back to literal matching
-                    return null;
-                }
-            }
-            return null;
-        }
     }
 
     private sealed class MultiKeyCommand : IKeyCommand
@@ -249,7 +234,7 @@ public sealed class KeyMapBuilder
 
             foreach (var key in keys)
             {
-                var regex = ParseRegex(key);
+                var regex = KeyMapBuilder.ParseRegexPattern(key);
                 if (regex != null)
                 {
                     _regexes.Add(regex);
@@ -277,24 +262,6 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => _action();
-
-        private static Regex? ParseRegex(string key)
-        {
-            // Check if key is a regex pattern like "/pattern/"
-            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
-            {
-                try
-                {
-                    return new Regex(key.Substring(1, key.Length - 2));
-                }
-                catch
-                {
-                    // Invalid regex, fall back to literal matching
-                    return null;
-                }
-            }
-            return null;
-        }
     }
 
     private sealed class MultiKeyCommandWithArgs : IKeyCommand
@@ -312,7 +279,7 @@ public sealed class KeyMapBuilder
 
             foreach (var key in keys)
             {
-                var regex = ParseRegex(key);
+                var regex = KeyMapBuilder.ParseRegexPattern(key);
                 if (regex != null)
                 {
                     _regexes.Add(regex);
@@ -340,24 +307,6 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => _action(args);
-
-        private static Regex? ParseRegex(string key)
-        {
-            // Check if key is a regex pattern like "/pattern/"
-            if (key.Length > 2 && key.StartsWith('/') && key.EndsWith('/'))
-            {
-                try
-                {
-                    return new System.Text.RegularExpressions.Regex(key.Substring(1, key.Length - 2));
-                }
-                catch
-                {
-                    // Invalid regex, fall back to literal matching
-                    return null;
-                }
-            }
-            return null;
-        }
     }
 
     private sealed class ConditionalCommand(IKeyCommand inner, Func<bool> condition) : IKeyCommand

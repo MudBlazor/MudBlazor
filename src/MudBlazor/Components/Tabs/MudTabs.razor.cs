@@ -1292,6 +1292,9 @@ namespace MudBlazor
 
         private async Task HandleKeyInterceptorAsync(KeyboardEventArgs e)
         {
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, e);
+            
+            // Also handle through old mechanism for compatibility
             var focusedPanel = ActivePanel;
             if (focusedPanel != null)
             {
