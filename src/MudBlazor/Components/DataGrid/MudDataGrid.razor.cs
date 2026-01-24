@@ -325,7 +325,7 @@ namespace MudBlazor
         /// Called when the user saves changes to an item.
         /// </summary>
         /// <remarks>
-        /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>, returned value controlls whether the edit form remains open.
+        /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>, returned value controls whether the edit form remains open.
         /// </remarks>
         [Parameter]
         public Func<T, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
@@ -1980,7 +1980,7 @@ namespace MudBlazor
         {
             // Here, we need to validate at the cellular level...
             if (CommittedItemChanges != null)
-                await CommittedItemChanges(item);
+                _ = await CommittedItemChanges(item); // ignore return value in cell edit mode
         }
 
         /// <summary>

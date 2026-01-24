@@ -82,7 +82,9 @@
                     (popup form) or <CodeInline>DataGridEditMode.Cell</CodeInline> (Excel-style inline editing).
                     <br /><br />
                     Changes call <CodeInline>CommittedItemChanges</CodeInline> and update the data source <CodeInline>Items</CodeInline>. 
-                    Allows keeping the edit menu open based on the return value (Molar mass >= 0 for this example). To disable 
+                    The <CodeInline>CommittedItemChanges</CodeInline> callback can return <CodeInline>DataGridEditFormAction.KeepOpen</CodeInline> 
+                    to keep the edit form open (for example, when validation fails), or <CodeInline>DataGridEditFormAction.Close</CodeInline> to close it. 
+                    In this example, the form stays open when Molar mass is negative. To disable
                     editing for a column, set <CodeInline>Editable</CodeInline> to <CodeInline>false</CodeInline>. To make a field optional, set 
                     <CodeInline>Required</CodeInline> to <CodeInline>false</CodeInline>.
                     <br /><br />
