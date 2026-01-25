@@ -30,12 +30,12 @@ else if (Column != null && !Column.HiddenState.Value)
         @if (resizable)
         {
             <div @ref="_resizerElement"
-                 @onpointerdown="@OnResizerPointerDown" 
+                 @onpointerdown="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerDown)" 
                  @onpointerdown:stopPropagation="true"
-                 @onpointermove="@OnResizerPointerMove" 
-                 @onpointerup="@OnResizerPointerUp"
-                 @onpointerover="@OnResizerPointerOver" 
-                 @onpointerleave="@OnResizerPointerLeave"
+                 @onpointermove="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerMove)" 
+                 @onpointerup="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerUp)"
+                 @onpointerover="@OnResizerPointerOver"
+                 @onpointerleave="this.AsNonRenderingEventHandler(OnResizerPointerLeave)"
                  class="@ResizerClass" style="@ResizerStyle" />
         }
     </th>
