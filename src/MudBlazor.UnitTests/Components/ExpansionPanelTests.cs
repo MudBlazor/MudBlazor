@@ -12,14 +12,14 @@ namespace MudBlazor.UnitTests.Components
     {
 
         [OneTimeSetUp]
-        public void Init()
+        public static void Init()
         {
             AssertionConfiguration.Current.Formatting.MaxDepth = 100;
             AssertionConfiguration.Current.Formatting.MaxLines = 5000;
         }
 
         [OneTimeTearDown]
-        public void Cleanup()
+        public static void Cleanup()
         {
             AssertionConfiguration.Current.Formatting.MaxDepth = 5;
             AssertionConfiguration.Current.Formatting.MaxLines = 100;
@@ -317,7 +317,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Tests that buttons and other interactive content within a collapsed expansion panel 
         /// are properly hidden from accessibility tools and keyboard navigation by being placed 
-        /// in a container with the hidden attribute.
+        /// in a container with the visibility:hidden attribute.
         /// </summary>
         [Test]
         public void MudExpansionPanel_Button_IsInHiddenContainer_When_Panel_Collapsed()
@@ -327,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
             var hiddenParent = button
                 .GetAncestors()
                 .OfType<IElement>()
-                .FirstOrDefault(e => e.HasAttribute("hidden"));
+                .FirstOrDefault(e => e.ClassList.Contains("invisible"));
 
             hiddenParent.Should().NotBeNull("button should not be accessible when the panel is collapsed");
         }
@@ -368,8 +368,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-panel-expanded");
             comp.Find("button").Should().NotBeNull();
 
-            var contentDiv = comp.Find(".mud-expand-panel-content");
-            contentDiv.HasAttribute("hidden").Should().BeTrue();
+            var contentDiv = comp.Find(".mud-collapse-container");
+            contentDiv.ClassList.Contains("invisible").Should().BeTrue();
         }
 
         /// <summary>

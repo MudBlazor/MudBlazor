@@ -23,6 +23,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class TextFieldTests : BunitTest
     {
         /// <summary>

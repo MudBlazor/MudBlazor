@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
@@ -15,6 +16,7 @@ using MudBlazor.Utilities.Clone;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents a sortable, filterable data grid with multiselection and pagination.
     /// </summary>
@@ -22,33 +24,32 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
-        private MudForm _editForm;
+        private MudForm? _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
-        private IEnumerable<T> _items;
         internal bool _groupInitialExpanded = true;
-        internal MudVirtualize<IndexBag<T>> _mudVirtualize;
+        internal MudVirtualize<IndexBag<T>>? _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
         internal HashSet<T> _openHierarchies = [];
         private readonly HashSet<T> _initialExpansions = [];
-        private Func<T, bool> _initialExpandedFunc = null;
-        private Func<T, bool> _buttonDisabledFunc = null;
+        private Func<T, bool>? _initialExpandedFunc = null;
+        private Func<T, bool>? _buttonDisabledFunc = null;
         private string _columnsPanelSearch = string.Empty;
-        private MudDropContainer<Column<T>> _dropContainer;
-        private MudDropContainer<Column<T>> _columnsPanelDropContainer;
+        private MudDropContainer<Column<T>>? _dropContainer;
+        private MudDropContainer<Column<T>>? _columnsPanelDropContainer;
         private PropertyInfo[] _properties = typeof(T).GetProperties();
-        private CancellationTokenSource _serverDataCancellationTokenSource;
-        private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        internal GroupDefinition<T> _groupDefinition;
+        private CancellationTokenSource? _serverDataCancellationTokenSource;
+        private IEnumerable<T>? _currentRenderFilteredItemsCache = null;
+        internal GroupDefinition<T>? _groupDefinition;
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         internal (double Top, double Left) _openPosition = (0, 0);
 
-        private readonly ParameterState<T> _selectedItemState;
-        private readonly ParameterState<HashSet<T>> _selectedItemsState;
+        private readonly ParameterState<T?> _selectedItemState;
+        private readonly ParameterState<HashSet<T>?> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
 
         /// <summary>
@@ -63,14 +64,18 @@ namespace MudBlazor
         public MudDataGrid()
         {
             Selection = new HashSet<T>(Comparer);
-            SelectedItems = Selection;
+            SelectedItems = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
-            _selectedItemState = registerScope.RegisterParameter<T>(nameof(SelectedItem))
+            registerScope.RegisterParameter<IEnumerable<T>?>(nameof(Items))
+                .WithParameter(() => Items)
+                .WithChangeHandler(OnItemsChangedAsync);
+
+            _selectedItemState = registerScope.RegisterParameter<T?>(nameof(SelectedItem))
                 .WithParameter(() => SelectedItem)
                 .WithEventCallback(() => SelectedItemChanged)
                 .WithChangeHandler(OnSelectedItemChangedAsync);
 
-            _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
+            _selectedItemsState = registerScope.RegisterParameter<HashSet<T>?>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged)
                 .WithChangeHandler(OnSelectedItemsChanged);
@@ -179,16 +184,14 @@ namespace MudBlazor
             }
         }
 
-        internal SortDirection GetColumnSortDirection(string columnName)
+        internal SortDirection GetColumnSortDirection(string? columnName)
         {
             if (columnName == null)
             {
                 return SortDirection.None;
             }
 
-            var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
-
-            if (ok)
+            if (SortDefinitions.TryGetValue(columnName, out var sortDefinition))
             {
                 return sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending;
             }
@@ -216,9 +219,10 @@ namespace MudBlazor
 
         private Task ItemUpdatedAsync(MudItemDropInfo<Column<T>> dropItem)
         {
+            Debug.Assert(dropItem.Item is not null);
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
-            var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item.PropertyName);
+            var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
             var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
@@ -226,6 +230,9 @@ namespace MudBlazor
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
                 Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+
+                Debug.Assert(dragAndDropSource.HeaderCell is not null);
+                Debug.Assert(dragAndDropDestination.HeaderCell is not null);
 
                 // swap source / destination
                 var dest = dragAndDropDestination.HeaderCell.Width;
@@ -244,12 +251,12 @@ namespace MudBlazor
         /// </summary>
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
 
-        internal T _editingItem;
+        internal T? _editingItem;
 
         //internal int editingItemHash;
-        internal T _editingSourceItem;
+        internal T? _editingSourceItem;
 
-        internal T _previousEditingItem;
+        internal T? _previousEditingItem;
         internal bool _isEditFormOpen;
 
         // converters
@@ -257,16 +264,16 @@ namespace MudBlazor
 
         #region Notify Children Delegates
 
-        internal Action<Dictionary<string, SortDefinition<T>>, HashSet<string>> SortChangedEvent { get; set; }
-        internal Action<HashSet<T>> SelectedItemsChangedEvent { get; set; }
-        internal Action<bool> SelectedAllItemsChangedEvent { get; set; }
-        internal Action StartedEditingItemEvent { get; set; }
-        internal Action EditingCanceledEvent { get; set; }
+        internal Action<Dictionary<string, SortDefinition<T>>, HashSet<string>?>? SortChangedEvent { get; set; }
+        internal Action<HashSet<T>>? SelectedItemsChangedEvent { get; set; }
+        internal Action<bool>? SelectedAllItemsChangedEvent { get; set; }
+        internal Action? StartedEditingItemEvent { get; set; }
+        internal Action? EditingCanceledEvent { get; set; }
 
         /// <summary>
         /// Occurs when the pager state has changed.
         /// </summary>
-        public Action PagerStateHasChangedEvent { get; set; }
+        public Action? PagerStateHasChangedEvent { get; set; }
 
         #endregion
 
@@ -279,7 +286,7 @@ namespace MudBlazor
         /// This typically occurs when a row has been clicked.
         /// </remarks>
         [Parameter]
-        public EventCallback<T> SelectedItemChanged { get; set; }
+        public EventCallback<T?> SelectedItemChanged { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="SelectedItems"/> have changed.
@@ -288,7 +295,7 @@ namespace MudBlazor
         /// This typically occurs when one or more rows have been clicked when <see cref="MultiSelection"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
-        public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+        public EventCallback<HashSet<T>?> SelectedItemsChanged { get; set; }
 
         /// <summary>
         /// Occurs when a row has been clicked.
@@ -508,7 +515,7 @@ namespace MudBlazor
         /// </para>
         /// </remarks>
         [Parameter]
-        public RenderFragment ColGroup { get; set; }
+        public RenderFragment? ColGroup { get; set; }
 
         /// <summary>
         /// Uses compact padding.
@@ -604,7 +611,7 @@ namespace MudBlazor
         /// The template used to display each filter.
         /// </summary>
         [Parameter]
-        public RenderFragment<MudDataGrid<T>> FilterTemplate { get; set; }
+        public RenderFragment<MudDataGrid<T>>? FilterTemplate { get; set; }
 
         /// <summary>
         /// The filter definitions for all columns.
@@ -639,7 +646,7 @@ namespace MudBlazor
         /// in a data grid row while the actual data is being fetched from the server.
         /// </summary>
         [Parameter]
-        public RenderFragment RowLoadingContent { get; set; }
+        public RenderFragment? RowLoadingContent { get; set; }
 
         /// <summary>
         /// The number of additional items rendered outside the visible region when <see cref="Virtualize"/> is <c>true</c>.
@@ -663,7 +670,7 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.  Note that some CSS settings are overridden by other styles, such as those from <see cref="MudTd"/>.
         /// </remarks>
         [Parameter]
-        public string RowClass { get; set; }
+        public string? RowClass { get; set; }
 
         /// <summary>
         /// The CSS styles applied to each row.
@@ -672,7 +679,7 @@ namespace MudBlazor
         /// Some CSS settings are overridden by other styles, such as those from <see cref="MudTd"/>.
         /// </remarks>
         [Parameter]
-        public string RowStyle { get; set; }
+        public string? RowStyle { get; set; }
 
         /// <summary>
         /// The function which calculates CSS classes for each row.
@@ -681,7 +688,7 @@ namespace MudBlazor
         /// The function passes the current item and row index as parameters.
         /// </remarks>
         [Parameter]
-        public Func<T, int, string> RowClassFunc { get; set; }
+        public Func<T, int, string>? RowClassFunc { get; set; }
 
         /// <summary>
         /// The function which calculates CSS styles for each row.
@@ -689,7 +696,7 @@ namespace MudBlazor
         /// <remarks>
         /// The function passes the current item and row index as parameters.
         /// </remarks>
-        [Parameter] public Func<T, int, string> RowStyleFunc { get; set; }
+        [Parameter] public Func<T, int, string>? RowStyleFunc { get; set; }
 
         /// <summary>
         /// Allows selection of more than one row.
@@ -731,7 +738,7 @@ namespace MudBlazor
         /// Any options applied to the edit dialog when <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>.
         /// </summary>
         [Parameter]
-        public DialogOptions EditDialogOptions { get; set; }
+        public DialogOptions? EditDialogOptions { get; set; }
 
         /// <summary>
         /// The technique used to copy items for editing.
@@ -748,29 +755,8 @@ namespace MudBlazor
         /// <remarks>
         /// One row will be displayed per item.  Use the <see cref="ServerData"/> function instead of this property to get data on demand.
         /// </remarks>
-        [Parameter]
-        public IEnumerable<T> Items
-        {
-            get => _items;
-            set
-            {
-                if (_items == value)
-                    return;
-
-                _items = value;
-
-                // Always clean up stale selections when Items is reassigned.
-                // For INotifyCollectionChanged (e.g., ObservableCollection), the event handler
-                // additionally handles incremental changes (add/remove without reassigning).
-                CleanupStaleSelections();
-                CleanupStaleHierarchyExpansions();
-
-                OnPagerStateChanged();
-                SetupGrouping();
-                ApplyInitialExpansionForItems(_items);
-                SetupCollectionChangeTracking();
-            }
-        }
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
+        public IEnumerable<T>? Items { get; set; }
 
         private void OnPagerStateChanged()
         {
@@ -786,7 +772,7 @@ namespace MudBlazor
 
         private void SetupCollectionChangeTracking()
         {
-            if (_items is INotifyCollectionChanged changed)
+            if (Items is INotifyCollectionChanged changed)
             {
                 changed.CollectionChanged += (s, e) =>
                 {
@@ -861,32 +847,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Synchronous version of CleanupStaleSelectionsAsync for use in property setters.
-        /// </summary>
-        private void CleanupStaleSelections()
-        {
-            if (Selection.Count == 0 && _selectedItemState.Value is null)
-                return;
-
-            var currentItems = BuildCurrentItemsSet();
-            var (selectionChanged, selectedItemChanged) = PruneSelectionAndSelectedItem(currentItems);
-
-            if (!selectionChanged && !selectedItemChanged)
-                return;
-
-            // Fire and forget with proper exception handling
-            if (selectedItemChanged)
-            {
-                InvokeAsync(() => _selectedItemState.SetValueAsync(default)).CatchAndLog();
-            }
-
-            if (selectionChanged)
-            {
-                InvokeAsync(FireSelectionChangedEventsAsync).CatchAndLog();
-            }
-        }
-
         private void CleanupStaleHierarchyExpansions()
         {
             if (_openHierarchies.Count == 0 && _initialExpansions.Count == 0)
@@ -901,7 +861,7 @@ namespace MudBlazor
         /// </summary>
         private HashSet<T> BuildCurrentItemsSet()
         {
-            return _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+            return Items is not null ? new HashSet<T>(Items, Comparer) : new HashSet<T>(Comparer);
         }
 
         /// <summary>
@@ -964,8 +924,8 @@ namespace MudBlazor
         /// </summary>
         private async Task FireSelectionChangedEventsAsync()
         {
-            await _selectedItemsState.SetValueAsync(Selection);
-            await SelectedItemsChanged.InvokeAsync(Selection);
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
             SelectedItemsChangedEvent?.Invoke(Selection);
         }
 
@@ -983,7 +943,7 @@ namespace MudBlazor
             }
         }
 
-        private void ApplyInitialExpansionForItems(IEnumerable<T> items)
+        private void ApplyInitialExpansionForItems(IEnumerable<T>? items)
         {
             if (_initialExpandedFunc is null || items is null)
                 return;
@@ -1028,7 +988,7 @@ namespace MudBlazor
         /// Any custom content to show in this grid's toolbar.
         /// </summary>
         [Parameter]
-        public RenderFragment ToolBarContent { get; set; }
+        public RenderFragment? ToolBarContent { get; set; }
 
         /// <summary>
         /// Shows a horizontal scrollbar.
@@ -1055,7 +1015,7 @@ namespace MudBlazor
         /// These classes are applied to the <c>thead</c> tag of the grid.  Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
-        public string HeaderClass { get; set; }
+        public string? HeaderClass { get; set; }
 
         /// <summary>
         /// The height of this grid.
@@ -1064,7 +1024,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  Values such as <c>30%</c> and <c>500px</c> are allowed.  When <c>null</c>, the grid will try to grow in height.  Must be set when <see cref="Virtualize"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
-        public string Height { get; set; }
+        public string? Height { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the grid footer.
@@ -1073,7 +1033,7 @@ namespace MudBlazor
         /// These classes are applied to the <c>tfoot</c> tag of the grid.  Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
-        public string FooterClass { get; set; }
+        public string? FooterClass { get; set; }
 
         /// <summary>
         /// The function which determines visibility of each item in this grid.
@@ -1082,19 +1042,19 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  This function is typically used to implement a custom search.
         /// </remarks>
         [Parameter]
-        public Func<T, bool> QuickFilter { get; set; } = null;
+        public Func<T, bool>? QuickFilter { get; set; } = null;
 
         /// <summary>
         /// Any custom content for this grid's header.
         /// </summary>
         [Parameter]
-        public RenderFragment Header { get; set; }
+        public RenderFragment? Header { get; set; }
 
         /// <summary>
         /// Any custom content for this grid's columns.
         /// </summary>
         [Parameter]
-        public RenderFragment Columns { get; set; }
+        public RenderFragment? Columns { get; set; }
 
         /// <summary>
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
@@ -1103,13 +1063,13 @@ namespace MudBlazor
         /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
         /// </remarks>
         [Parameter]
-        public CultureInfo Culture { get; set; }
+        public CultureInfo? Culture { get; set; }
 
         /// <summary>
         /// The content shown for each cell.
         /// </summary>
         [Parameter]
-        public RenderFragment<CellContext<T>> ChildRowContent { get; set; }
+        public RenderFragment<CellContext<T>>? ChildRowContent { get; set; }
 
         /// <summary>
         /// The custom renderer function for child row content.
@@ -1118,19 +1078,19 @@ namespace MudBlazor
         /// This provides an alternative to <see cref="ChildRowContent"/> with more control over the rendering.
         /// </remarks>
         [Parameter]
-        public RenderFragment<CellContext<T>> ChildRowRenderer { get; set; }
+        public RenderFragment<CellContext<T>>? ChildRowRenderer { get; set; }
 
         /// <summary>
         /// The content shown when there are no rows to display.
         /// </summary>
         [Parameter]
-        public RenderFragment NoRecordsContent { get; set; }
+        public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
         /// The content shown while <see cref="Loading"/> is <c>true</c>.
         /// </summary>
         [Parameter]
-        public RenderFragment LoadingContent { get; set; }
+        public RenderFragment? LoadingContent { get; set; }
 
         /// <summary>
         /// The content shown for pagination.
@@ -1139,7 +1099,7 @@ namespace MudBlazor
         /// A <see cref="MudTablePager"/> is typically added here to break up rows into multiple pages.
         /// </remarks>
         [Parameter]
-        public RenderFragment PagerContent { get; set; }
+        public RenderFragment? PagerContent { get; set; }
 
         /// <summary>
         /// The function which gets data for this grid.
@@ -1148,7 +1108,7 @@ namespace MudBlazor
         /// The function accepts a <see cref="GridState{T}"/> with current sorting, filtering, and pagination parameters.  Then, return a <see cref="GridData{T}"/> with a page of values, and the total (unpaginated) items set in <see cref="GridData{T}.TotalItems"/>.  When set, the <see cref="Items"/> property cannot be set.
         /// </remarks>
         [Parameter]
-        public Func<GridState<T>, CancellationToken, Task<GridData<T>>> ServerData { get; set; }
+        public Func<GridState<T>, CancellationToken, Task<GridData<T>>>? ServerData { get; set; }
 
         /// <summary>
         /// The function which gets data for this grid.
@@ -1160,7 +1120,7 @@ namespace MudBlazor
         /// but with loading data from the server as the scroll position changes.
         /// </remarks>
         [Parameter]
-        public Func<GridStateVirtualize<T>, CancellationToken, Task<GridData<T>>> VirtualizeServerData { get; set; }
+        public Func<GridStateVirtualize<T>, CancellationToken, Task<GridData<T>>>? VirtualizeServerData { get; set; }
 
         /// <summary>
         /// The number of rows displayed for each page.
@@ -1230,7 +1190,7 @@ namespace MudBlazor
         /// This property can be bound (<c>@bind-SelectedItems</c>) to initially select rows.  Use <see cref="SelectedItem"/> when <see cref="MultiSelection"/> is <c>false</c>.
         /// </remarks>
         [Parameter, ParameterState]
-        public HashSet<T> SelectedItems { get; set; }
+        public HashSet<T>? SelectedItems { get; set; }
 
         /// <summary>
         /// The currently selected row when <see cref="MultiSelection"/> is <c>false</c>.
@@ -1239,7 +1199,7 @@ namespace MudBlazor
         /// This property can be bound (<c>@bind-SelectedItem</c>) to initially select a row.  Use <see cref="SelectedItems"/> when <see cref="MultiSelection"/> is <c>true</c>.
         /// </remarks>
         [Parameter, ParameterState]
-        public T SelectedItem { get; set; }
+        public T? SelectedItem { get; set; }
 
         /// <summary>
         /// Allows grouping of columns in this grid.
@@ -1284,7 +1244,7 @@ namespace MudBlazor
         /// Applies when <see cref="Groupable"/> is <c>true</c>.  Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
-        public string GroupClass { get; set; }
+        public string? GroupClass { get; set; }
 
         /// <summary>
         /// The CSS styles applied to column groups.
@@ -1293,7 +1253,7 @@ namespace MudBlazor
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
-        public string GroupStyle { get; set; }
+        public string? GroupStyle { get; set; }
 
         /// <summary>
         /// The function which determines CSS classes for column groups.
@@ -1302,7 +1262,7 @@ namespace MudBlazor
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
-        public Func<GroupDefinition<T>, string> GroupClassFunc { get; set; }
+        public Func<GroupDefinition<T>, string>? GroupClassFunc { get; set; }
 
         /// <summary>
         /// The function which determines CSS styles for column groups.
@@ -1311,7 +1271,7 @@ namespace MudBlazor
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
-        public Func<GroupDefinition<T>, string> GroupStyleFunc { get; set; }
+        public Func<GroupDefinition<T>, string>? GroupStyleFunc { get; set; }
 
         /// <summary>
         /// Shows the settings icon in the grid header.
@@ -1336,16 +1296,14 @@ namespace MudBlazor
         /// Defaults to <c>null</c>. When set, this comparer will be used to determine if a row is selected.
         /// </remarks>
         [Parameter]
-        public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
+        public IEqualityComparer<T>? Comparer { get; set; } = EqualityComparer<T>.Default;
 
-#nullable enable
         /// <summary>
         /// The default template used to display column grouping for any column that is grouped.
         /// </summary>
         /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
         [Parameter]
         public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
-#nullable disable
 
         #endregion
 
@@ -1405,7 +1363,7 @@ namespace MudBlazor
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
         /// This property is used to populate items virtually from the server.
         /// </summary>
-        internal ItemsProviderDelegate<IndexBag<T>> VirtualItemsProvider { get; set; }
+        internal ItemsProviderDelegate<IndexBag<T>>? VirtualItemsProvider { get; set; }
 
         /// <summary>
         /// For unit testing the filtering cache mechanism.
@@ -1424,6 +1382,8 @@ namespace MudBlazor
                 var items = HasServerData
                     ? _serverData.Items
                     : Items;
+
+                items ??= Enumerable.Empty<T>();
 
                 // Quick filtering
                 if (QuickFilter != null)
@@ -1543,8 +1503,27 @@ namespace MudBlazor
                 await ClearCurrentSortings();
         }
 
-        private async Task OnSelectedItemChangedAsync(ParameterChangedEventArgs<T> args)
+        private async Task OnItemsChangedAsync(ParameterChangedEventArgs<IEnumerable<T>?> args)
         {
+            // Always clean up stale selections when Items is reassigned.
+            // For INotifyCollectionChanged (e.g., ObservableCollection), the event handler
+            // additionally handles incremental changes (add/remove without reassigning).
+            await CleanupStaleSelectionsAsync();
+            CleanupStaleHierarchyExpansions();
+
+            OnPagerStateChanged();
+            SetupGrouping();
+            ApplyInitialExpansionForItems(args.Value);
+            SetupCollectionChangeTracking();
+        }
+
+        private async Task OnSelectedItemChangedAsync(ParameterChangedEventArgs<T?> args)
+        {
+            if (args.Value is null)
+            {
+                return;
+            }
+
             if (!MultiSelection)
             {
                 Selection.Clear();
@@ -1556,20 +1535,21 @@ namespace MudBlazor
                 Selection.Add(args.Value);
             }
 
-            await _selectedItemsState.SetValueAsync(Selection);
-            // doesn't fire due to hashset reference not changing, so fire it manually
-            await SelectedItemsChanged.InvokeAsync(Selection);
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
         }
 
-        private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>> args)
+        private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>?> args)
         {
+            // Make defensive copy to avoid shared references between parent and child
             if (args.Value == null)
             {
                 Selection.Clear();
             }
             else
             {
-                Selection = args.Value;
+                Selection.Clear();
+                Selection.UnionWith(args.Value);
             }
         }
 
@@ -1642,6 +1622,7 @@ namespace MudBlazor
                     // Cancel any prior request
                     CancelServerDataToken();
 
+                    Debug.Assert(_serverDataCancellationTokenSource is not null);
                     _serverData = await VirtualizeServerData(state, _serverDataCancellationTokenSource.Token);
                     _currentRenderFilteredItemsCache = null;
 
@@ -1665,6 +1646,8 @@ namespace MudBlazor
                 // Cancel any prior request
                 CancelServerDataToken();
 
+                Debug.Assert(ServerData is not null);
+                Debug.Assert(_serverDataCancellationTokenSource is not null);
                 _serverData = await ServerData(state, _serverDataCancellationTokenSource.Token);
                 _currentRenderFilteredItemsCache = null;
 
@@ -1700,9 +1683,9 @@ namespace MudBlazor
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
                     _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
                     // Apply expansion now if items or _serverData.Items is already set
-                    if (_items is not null)
+                    if (Items is not null)
                     {
-                        ApplyInitialExpansionForItems(_items);
+                        ApplyInitialExpansionForItems(Items);
                     }
                     else if (_serverData?.Items?.Any() == true)
                     {
@@ -1816,7 +1799,7 @@ namespace MudBlazor
             if (!HasServerData) StateHasChanged();
         }
 
-        internal async Task RemoveFilterAsync(Guid id)
+        internal async Task RemoveFilterAsync(Guid? id)
         {
             var index = FilterDefinitions.FindIndex(x => x.Id == id);
             if (index == -1)
@@ -1832,6 +1815,7 @@ namespace MudBlazor
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
+            Debug.Assert(item is not null);
             var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
 
             if (selectColumn?.DisabledFunc?.Invoke(item) is true)
@@ -1866,9 +1850,8 @@ namespace MudBlazor
                 }
             }
 
-            await _selectedItemsState.SetValueAsync(Selection);
-            // manually invoke due to ParameterState not seeing state change with HashSet
-            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
@@ -1914,9 +1897,8 @@ namespace MudBlazor
                 Selection.UnionWith(itemsToSelect);
             }
 
-            await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
-            // manually invoke due to ParameterState not seeing state change with HashSet
-            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
@@ -1925,16 +1907,17 @@ namespace MudBlazor
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
         {
-            if (null == items || !items.Any())
+            if (!items.Any())
                 return items;
 
             if (null == SortDefinitions || 0 == SortDefinitions.Count)
                 return items;
 
-            IOrderedEnumerable<T> orderedEnumerable = null;
+            IOrderedEnumerable<T>? orderedEnumerable = null;
 
             foreach (var sortDefinition in SortDefinitions.Values.Where(sd => sd.SortFunc != null).OrderBy(sd => sd.Index))
             {
+                Debug.Assert(sortDefinition.SortFunc is not null);
                 if (null == orderedEnumerable)
                     orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
                         : items.OrderBy(item => sortDefinition.SortFunc(item), sortDefinition.Comparer);
@@ -1973,6 +1956,8 @@ namespace MudBlazor
         /// <returns></returns>
         internal async Task CommitItemChangesAsync()
         {
+            Debug.Assert(_editingItem is not null);
+            Debug.Assert(_editForm is not null);
             await _editForm.Validate();
             if (!_editForm.IsValid)
             {
@@ -2080,7 +2065,7 @@ namespace MudBlazor
         /// <param name="direction">The direction to sort results.</param>
         /// <param name="sortFunc">The function which sorts results.</param>
         /// <param name="comparer">The comparer used for custom comparisons.</param>
-        public async Task SetSortAsync(string field, SortDirection direction, Func<T, object> sortFunc, IComparer<object> comparer = null)
+        public async Task SetSortAsync(string field, SortDirection direction, Func<T, object?> sortFunc, IComparer<object?>? comparer = null)
         {
             var removedSortDefinitions = new HashSet<string>(SortDefinitions.Keys);
             SortDefinitions.Clear();
@@ -2104,7 +2089,7 @@ namespace MudBlazor
         /// <remarks>
         /// When the <see cref="SortMode"/> is <see cref="SortMode.Single"/>, this method replaces the sort column.  Otherwise, this sort is appended to any existing sort column.
         /// </remarks>
-        public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object> sortFunc, IComparer<object> comparer = null)
+        public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object?> sortFunc, IComparer<object?>? comparer = null)
         {
             // If SortMode is not multiple, use the default set approach and don't extend.
             if (SortMode != SortMode.Multiple)
@@ -2129,7 +2114,7 @@ namespace MudBlazor
         /// Removes a sort behavior from the list of sort behaviors.
         /// </summary>
         /// <param name="field">The name of the field to remove.</param>
-        public async Task RemoveSortAsync(string field)
+        public async Task RemoveSortAsync(string? field)
         {
             if (!string.IsNullOrWhiteSpace(field) && SortDefinitions.TryGetValue(field, out var definition))
             {
@@ -2151,7 +2136,7 @@ namespace MudBlazor
             await InvokeSortUpdates(SortDefinitions, removedSortDefinitions);
         }
 
-        private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string> removedSortDefinitions)
+        private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string>? removedSortDefinitions)
         {
             SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
 
@@ -2287,7 +2272,7 @@ namespace MudBlazor
         /// <summary>
         /// Shows a panel that lets you show, hide, filter, groupedColumns, sort and re-arrange columns.
         /// </summary>
-        public void ShowColumnsPanel(MouseEventArgs args = null)
+        public void ShowColumnsPanel(MouseEventArgs? args = null)
         {
             if (args != null)
             {
@@ -2309,6 +2294,7 @@ namespace MudBlazor
 
         private Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
         {
+            Debug.Assert(dropItem.Item is not null);
             RenderedColumns.Remove(dropItem.Item);
             RenderedColumns.Insert(dropItem.IndexInZone, dropItem.Item);
             DropContainerHasChanged();
@@ -2343,7 +2329,6 @@ namespace MudBlazor
             _dropContainer?.Refresh();
             _columnsPanelDropContainer?.Refresh();
         }
-#nullable enable
         /// <summary>
         /// Performs grouping of the current items.
         /// </summary>
@@ -2394,7 +2379,7 @@ namespace MudBlazor
                 StateHasChanged();
         }
 
-        private IEnumerable<IGrouping<object, T>> GroupItemsPage
+        private IEnumerable<IGrouping<object?, T>> GroupItemsPage
         {
             get
             {
@@ -2402,7 +2387,7 @@ namespace MudBlazor
             }
         }
 
-        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(GroupDefinition<T>? parent, IEnumerable<T>? sourceList)
+        internal IEnumerable<IGrouping<object?, T>> GetItemsOfGroup(GroupDefinition<T>? parent, IEnumerable<T>? sourceList)
         {
             if (parent is null || sourceList is null)
             {
@@ -2521,7 +2506,7 @@ namespace MudBlazor
         /// <param name="columnName">The name of the grouped column.</param>
         /// <param name="key">The group key identifying the specific group to expand or collapse.</param>
         /// <param name="expanded">Whether the group should be expanded (true) or collapsed (false).</param>
-        public void ToggleGroupExpand(string columnName, object? key, bool expanded)
+        public void ToggleGroupExpand(string? columnName, object? key, bool expanded)
         {
             var groupKey = new GroupKey(columnName, key);
 
@@ -2537,7 +2522,6 @@ namespace MudBlazor
             _groupInitialExpanded = false;
             StateHasChanged();
         }
-#nullable disable
 
         /// <summary>
         /// Expands all groups async.
@@ -2586,6 +2570,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllHierarchy()
         {
+            Debug.Assert(_buttonDisabledFunc is not null);
             var expandedItems = FilteredItems.Where(x => !_buttonDisabledFunc(x) && _openHierarchies.Add(x));
             foreach (var item in expandedItems)
             {
@@ -2599,6 +2584,7 @@ namespace MudBlazor
         /// </summary>
         public async Task CollapseAllHierarchy()
         {
+            Debug.Assert(_buttonDisabledFunc is not null);
             foreach (var openedHierarchy in _openHierarchies.Where(x => !_buttonDisabledFunc(x)).ToList())
             {
                 await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
@@ -2616,7 +2602,7 @@ namespace MudBlazor
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
             if (_expandSingleRowState.Value)
             {
-                foreach (var openedHierarchy in _openHierarchies.Where(x => !x.Equals(item)))
+                foreach (var openedHierarchy in _openHierarchies.Where(x => x != null && !x.Equals(item)))
                 {
                     await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
                 }
@@ -2642,11 +2628,12 @@ namespace MudBlazor
 
         #region Resize feature
 
-        [Inject] private IEventListenerFactory EventListenerFactory { get; set; }
+        [Inject]
+        private IEventListenerFactory EventListenerFactory { get; set; } = null!;
         internal bool IsResizing { get; set; }
 
         private ElementReference _gridElement;
-        private DataGridColumnResizeService<T> _resizeService;
+        private DataGridColumnResizeService<T>? _resizeService;
 
         internal DataGridColumnResizeService<T> ResizeService => _resizeService ??= new DataGridColumnResizeService<T>(this, EventListenerFactory);
 
@@ -2692,6 +2679,6 @@ namespace MudBlazor
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
-        internal record GroupKey(string Title, object ItemsKey);
+        internal record GroupKey(string? Title, object? ItemsKey);
     }
 }

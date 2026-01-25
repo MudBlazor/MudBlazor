@@ -1192,7 +1192,7 @@ namespace MudBlazor.UnitTests.Components
                 "mud-popover-open",
                 "mud-popover-top-left",
                 "mud-popover-anchor-bottom-left",
-                "mud-popover-overflow-flip-onopen",
+                "mud-popover-overflow-flip-always",
                 "mud-picker-popover",
                 "mud-elevation-8",
             ]);

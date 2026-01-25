@@ -1,0 +1,36 @@
+# Core
+/* @danielchalmers
+/.github/ @danielchalmers
+/.editorconfig @danielchalmers @ScarletKuro
+
+# Components
+/src/MudBlazor/Components/Menu/ @danielchalmers
+/src/MudBlazor/Components/Tabs/ @versile2
+/src/MudBlazor/Components/Autocomplete/ @versile2
+/src/MudBlazor/Components/Select/ @versile2
+/src/MudBlazor/Components/Overlay/ @versile2
+/src/MudBlazor/Components/Popover/ @versile2
+/src/MudBlazor/Components/Tooltip/ @versile2
+
+# Styles
+/src/MudBlazor/Styles/core/ @danielchalmers
+/src/MudBlazor/Styles/utilities/ @danielchalmers
+/src/MudBlazor/Styles/abstracts/ @danielchalmers
+/src/MudBlazor/Styles/MudBlazor.scss @danielchalmers
+
+# Services & Utilities
+/src/MudBlazor/Services/Browser/ @ScarletKuro
+/src/MudBlazor/Services/KeyInterceptor/ @ScarletKuro
+/src/MudBlazor/Services/Localization/ @ScarletKuro
+/src/MudBlazor/Services/MudGlobal.cs @danielchalmers
+/src/MudBlazor/Services/Popover/ @ScarletKuro
+/src/MudBlazor/Utilities/Background/ @ScarletKuro
+/src/MudBlazor/Utilities/Clone/ @ScarletKuro
+/src/MudBlazor/Utilities/Converter/ @ScarletKuro
+/src/MudBlazor/Utilities/ObserverManager/ @ScarletKuro
+/src/MudBlazor/Converters/ @ScarletKuro
+/src/MudBlazor/State/ @ScarletKuro
+
+# Scripts
+/src/MudBlazor/TScripts/mudInputSizing.js @danielchalmers
+/src/MudBlazor/TScripts/mudPopover.js @versile2

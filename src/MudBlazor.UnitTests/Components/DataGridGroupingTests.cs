@@ -610,8 +610,8 @@ namespace MudBlazor.UnitTests.Components
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
             // grouping is already setup make sure group definition is not null and it's first inner definition is not null
             await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
-            dataGrid.Instance._groupDefinition.InnerGroup.Should().NotBeNull();
-            dataGrid.Instance._groupDefinition.Grouping.Should().BeNullOrEmpty();
+            dataGrid.Instance._groupDefinition!.InnerGroup.Should().NotBeNull();
+            dataGrid.Instance._groupDefinition!.Grouping.Should().BeNullOrEmpty();
             // _groupDefinition is the definition for all the groups but isn't combined into the items until display so we need to 
             // check the final definitions from within the DataGridGroupRow            
 

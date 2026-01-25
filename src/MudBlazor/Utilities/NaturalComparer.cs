@@ -7,7 +7,7 @@ using System.Globalization;
 #nullable enable
 namespace MudBlazor.Utilities
 {
-    public class NaturalComparer : IComparer<object>
+    public class NaturalComparer : IComparer<object?>
     {
         public int Compare(object? x, object? y)
         {
