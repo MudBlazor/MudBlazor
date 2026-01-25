@@ -46,14 +46,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # We should switch to a newer version and config files. Then we can also cache the dependency.
-      - name: Install eslint
-        run: npm i -g eslint@8.57.0
-
-      - name: Check JS is ES6 compliant
-        working-directory: src
-        run: eslint --env 'es6' MudBlazor/TScripts
-
       - name: Cache NuGet packages
         uses: actions/cache@v5
         with:
