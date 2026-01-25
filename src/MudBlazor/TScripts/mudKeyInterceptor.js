@@ -69,7 +69,7 @@ class MudKeyInterceptor {
                 this.logger('[MudBlazor | KeyInterceptor] got invalid key options: ', keyOption);
                 continue;
             }
-            this.setKeyOption(keyOption)
+            this.setKeyOption(keyOption);
         }
         this.logger('[MudBlazor | KeyInterceptor] key options: ', this._keyOptions);
         if (this._regexOptions.size > 0)

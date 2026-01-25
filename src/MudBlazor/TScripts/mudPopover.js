@@ -776,7 +776,7 @@ window.mudpopoverHelper = {
             }
         }
     }
-}
+};
 
 class MudPopover {
 
@@ -1067,7 +1067,7 @@ class MudPopover {
 
         // compare this.contentObserver = observer to see if the container being observed still exists
         // will recreate if not, comment out this line if you want to see PopoverTwoLayoutsTest fail in the Viewer
-        this.observeMainContainer()
+        this.observeMainContainer();
 
         // this is the origin of the popover in the dom, it can be nested inside another popover's content
         // e.g. the filter popover for datagrid, this would be the inside of <td> where the mudpopover was placed

@@ -48,7 +48,7 @@ function serializeParameter(data, spec) {
                 continue;
             }
         } else {
-            currentMemberSpec = "*"
+            currentMemberSpec = "*";
         }
 
         if (typeof currentMember === 'object') {

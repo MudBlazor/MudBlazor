@@ -30,7 +30,7 @@ class MudJsEventFactory {
         if (!element)
             throw "[MudBlazor | JsEvent] no element found for id: " +elementId;
         if (!element.mudJsEvent)
-            throw "[MudBlazor | JsEvent] please connect before subscribing"
+            throw "[MudBlazor | JsEvent] please connect before subscribing";
         element.mudJsEvent.subscribe(eventName);
     }
 

@@ -18,7 +18,7 @@ window.mudInputSizing = {
             } else {
                 maxHeight = 0;
             }
-        }
+        };
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
         elem.adjustSizingHeight = function (didReflow = false) {
@@ -66,14 +66,14 @@ window.mudInputSizing = {
                 elem.style.textAlign = 'end'; // Change to something other than the default.
                 elem.adjustSizingHeight(true);
             }
-        }
+        };
 
         // Terminate sizing and restore the input element back to its original state.
         elem.restoreToInitialState = function () {
             elem.removeEventListener('input', elem.adjustSizingHeight);
             elem.style.overflowY = null;
             elem.style.height = null;
-        }
+        };
 
         // Adjust height when input happens.
         elem.addEventListener('input', elem.adjustSizingHeight);

@@ -54,7 +54,7 @@ class MudElementReference {
         if (element)
         {
             let previous = element['mudblazor_savedFocus'];
-            delete element['mudblazor_savedFocus']
+            delete element['mudblazor_savedFocus'];
             if (previous)
                 previous.focus();
         }

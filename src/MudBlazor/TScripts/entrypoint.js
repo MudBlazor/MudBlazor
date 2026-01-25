@@ -1,4 +1,4 @@
-import "./mudAAAlicense"
+import "./mudAAAlicense";
 import "./mudDragAndDrop";
 import "./mudElementReference";
 import "./mudFileUpload";

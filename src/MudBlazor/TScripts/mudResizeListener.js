@@ -143,4 +143,4 @@ window.mudResizeListenerFactory = {
             window.mudResizeListenerFactory.cancelListener(id);
         }
     }
-}
+};

@@ -44,7 +44,7 @@ class MudResizeObserver {
     constructor(dotNetRef, options) {
         this.logger = options.enableLogging ? console.log : (message) => { };
         this.options = options;
-        this._dotNetRef = dotNetRef
+        this._dotNetRef = dotNetRef;
 
         var delay = (this.options || {}).reportRate || 200;
 

@@ -13,6 +13,6 @@ export default defineConfig({
         //"no-unused-vars": "error",
         //"no-var": "error",
         //"prefer-const": "error",
-        //"semi": ["error", "always"],
+        "semi": ["error", "always"],
     },
 });

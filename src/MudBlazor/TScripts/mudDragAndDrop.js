@@ -22,7 +22,7 @@ window.mudDragAndDrop = {
     },
     getDropZoneIdentifierOnPosition: (x, y) => {
         const elems = document.elementsFromPoint(x, y);
-        const dropZones = elems.filter(e => e.classList.contains('mud-drop-zone'))
+        const dropZones = elems.filter(e => e.classList.contains('mud-drop-zone'));
         const dropZone = dropZones[0];
         if (dropZone) {
             return dropZone.getAttribute('identifier') || "";
@@ -34,7 +34,7 @@ window.mudDragAndDrop = {
 
         const elems = document.elementsFromPoint(x, y);
 
-        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != id)
+        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != id);
         const dropItem = dropItems[0];
         if (dropItem) {
             return dropItem.getAttribute('index') || "";
