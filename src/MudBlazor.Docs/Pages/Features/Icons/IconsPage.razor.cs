@@ -5,24 +5,15 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
-using MudBlazor.Interop;
 using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Pages.Features.Icons
 {
 #nullable enable
-    public partial class IconsPage : ComponentBase, IAsyncDisposable
+    public partial class IconsPage : ComponentBase
     {
-        private int _cardsPerRow;
         private bool _iconDrawerOpen;
-        private ElementReference _killZone;
         private List<MudIcons> _displayedIcons = new();
-        private const double IconCardWidth = 136.88; // single icon card width including margins
-        private const float IconCardHeight = 144; // single icon card height including margins
-        private IResizeObserver? _resizeObserver;
-
-        [Inject]
-        protected IResizeObserverFactory ResizeObserverFactory { get; set; } = null!;
 
         [Inject]
         protected IJsApiService JsApiService { get; set; } = null!;
@@ -57,19 +48,9 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         private string SearchText { get; set; } = string.Empty;
 
-        private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
-            ? GetVirtualizedIcons(_displayedIcons)
-            : GetVirtualizedIcons(_displayedIcons.Where(mudIcon => mudIcon.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
-
-        private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconList)
-        {
-            if (_cardsPerRow <= 0)
-            {
-                return new List<MudVirtualizedIcons>();
-            }
-
-            return iconList.Chunk(_cardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
-        }
+        private List<MudIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
+            ? _displayedIcons
+            : _displayedIcons.Where(mudIcon => mudIcon.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
 
         private readonly IconStorage _iconTypes = new()
         {
@@ -93,47 +74,6 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
             await LoadCustomIcons();
             await base.OnInitializedAsync();
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                _resizeObserver ??= ResizeObserverFactory.Create();
-                await _resizeObserver.Observe(_killZone);
-
-                _resizeObserver.OnResized += OnResized;
-
-                SetCardsPerRow();
-                StateHasChanged();
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (_resizeObserver is not null)
-            {
-                _resizeObserver.OnResized -= OnResized;
-                await _resizeObserver.DisposeAsync();
-            }
-        }
-
-        private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
-        {
-            SetCardsPerRow();
-            await InvokeAsync(StateHasChanged);
-        }
-
-        private void SetCardsPerRow()
-        {
-            if (_resizeObserver is null)
-            {
-                return;
-            }
-
-            _cardsPerRow = Convert.ToInt32(_resizeObserver.GetWidth(_killZone) / IconCardWidth);
         }
 
         private async Task<List<MudIcons>> LoadMaterialIcons(string type)
@@ -212,8 +152,6 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private void CloseIconDrawer() => _iconDrawerOpen = false;
 
         private async Task CopyTextToClipboard() => await JsApiService.CopyToClipboardAsync(IconCodeOutput);
-
-        private string GetKillZoneStyle() => "height:65vh;width:100%;position:sticky;top:0px;";
 
         private struct IconType
         {

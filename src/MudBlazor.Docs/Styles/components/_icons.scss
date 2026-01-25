@@ -1,4 +1,11 @@
 ﻿
+.docs-icons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
 .mud-icondrawer {
   .mud-typography-subtitle1 {
     font-weight: 500;
@@ -31,9 +38,7 @@
 .docs-icon-panel {
   height: 128px;
   width: 100%;
-  max-width: 112px;
   padding: 0px 6px;
-  margin: 16px 12px;
   display: flex;
   text-align: center;
   align-items: center;
