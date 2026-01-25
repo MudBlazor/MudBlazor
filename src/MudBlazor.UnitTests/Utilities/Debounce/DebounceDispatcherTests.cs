@@ -490,7 +490,7 @@ public class DebounceDispatcherTests
         await debounceDispatcher.UpdateIntervalAsync(100);
 
         // Start debounce with new interval
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        debounceDispatcher.DebounceAsync(TrackingAction).CatchAndLog();
 
         // Wait for the new shorter interval
         await Task.Delay(150);
@@ -513,7 +513,7 @@ public class DebounceDispatcherTests
         }
 
         // Act - Start debounce
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        debounceDispatcher.DebounceAsync(TrackingAction).CatchAndLog();
 
         // Update interval while debounce is pending (doesn't cancel the pending debounce)
         await Task.Delay(50);
@@ -579,7 +579,7 @@ public class DebounceDispatcherTests
         await debounceDispatcher.UpdateIntervalAsync(100);
 
         // Start debounce
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        debounceDispatcher.DebounceAsync(TrackingAction).CatchAndLog();
 
         // Wait for the final interval
         await Task.Delay(150);
@@ -672,7 +672,7 @@ public class DebounceDispatcherTests
         // Act - Update using TimeSpan
         await debounceDispatcher.UpdateIntervalAsync(TimeSpan.FromMilliseconds(100));
 
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        debounceDispatcher.DebounceAsync(TrackingAction).CatchAndLog();
         await Task.Delay(150);
 
         // Assert

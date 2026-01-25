@@ -1138,8 +1138,7 @@ namespace MudBlazor.UnitTests.Components
 
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            textField.ReadValue.Should().Be(currentText);
+            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be(currentText));
             textField.ReadText.Should().Be(currentText);
         }
 
@@ -1190,8 +1189,7 @@ namespace MudBlazor.UnitTests.Components
             // once debounce occurs, both value and text are reset because they define an invalid DateTime,
             // now with the new Format
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            textField.ReadValue.Should().Be(expectedFinalDateTime);
+            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be(expectedFinalDateTime));
             textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
         }
 

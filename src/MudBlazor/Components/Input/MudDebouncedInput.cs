@@ -73,7 +73,7 @@ namespace MudBlazor
             }
 
             // Debounce the update - use fire-and-forget pattern to match the old Timer implementation.
-            _ = _debouncer.DebounceAsync(OnDebouncedUpdate);
+            _debouncer.DebounceAsync(OnDebouncedUpdate).CatchAndLog();
             return Task.CompletedTask;
         }
 
