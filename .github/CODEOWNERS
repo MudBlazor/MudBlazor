@@ -5,6 +5,7 @@
 
 # Build Infrastructure
 /src/bun.lock @meenzen
+/src/eslint.config.ts @meenzen
 /src/package.json @meenzen
 /src/MudBlazor/build.mjs @meenzen
 /src/MudBlazor.Docs/build.mjs @meenzen
@@ -39,5 +40,6 @@
 /src/MudBlazor/State/ @ScarletKuro
 
 # Scripts
+/src/MudBlazor/TScripts/entrypoint.js @meenzen
 /src/MudBlazor/TScripts/mudInputSizing.js @danielchalmers
 /src/MudBlazor/TScripts/mudPopover.js @versile2
