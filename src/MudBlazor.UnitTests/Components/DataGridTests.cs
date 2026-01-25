@@ -4879,12 +4879,12 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // Mouse click down
-            var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
-            await resizer.PointerDownAsync(new PointerEventArgs { ClientX = 100, PointerId = 1, Detail = 1 });
+            var resizer = () => comp.FindAll(".mud-resizer").ElementAt(0);
+            await resizer().PointerDownAsync(new PointerEventArgs { ClientX = 100, PointerId = 1, Detail = 1 });
 
             // Simulate pointer move and release (simplified since we're using pointer events directly)
-            await resizer.PointerMoveAsync(new PointerEventArgs { ClientX = 90, PointerId = 1 });
-            await resizer.PointerUpAsync(new PointerEventArgs { ClientX = 90, PointerId = 1 });
+            await resizer().PointerMoveAsync(new PointerEventArgs { ClientX = 90, PointerId = 1 });
+            await resizer().PointerUpAsync(new PointerEventArgs { ClientX = 90, PointerId = 1 });
 
             // Assert
             comp.FindAll("th").Count.Should().Be(2, "Two columns are displayed");
