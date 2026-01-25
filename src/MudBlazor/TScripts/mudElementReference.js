@@ -24,7 +24,7 @@ class MudElementReference {
     focusFirst (element, skip = 0, min = 0) {
         if (element)
         {
-            let tabbables = getTabbableElements(element);
+            let tabbables = window.getTabbableElements(element);
             if (tabbables.length <= min)
                 element.focus();
             else
@@ -35,7 +35,7 @@ class MudElementReference {
     focusLast (element, skip = 0, min = 0) {
         if (element)
         {
-            let tabbables = getTabbableElements(element);
+            let tabbables = window.getTabbableElements(element);
             if (tabbables.length <= min)
                 element.focus();
             else

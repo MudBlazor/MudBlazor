@@ -18,7 +18,7 @@ window.getTabbableElements = (element) => {
 };
 
 //from: https://github.com/RemiBou/BrowserInterop
-window.serializeParameter = (data, spec) => {
+function serializeParameter(data, spec) {
     if (typeof data == "undefined" ||
         data === null) {
         return null;
@@ -57,7 +57,7 @@ window.serializeParameter = (data, spec) => {
                 for (let j = 0; j < currentMember.length; j++) {
                     const arrayItem = currentMember[j];
                     if (typeof arrayItem === 'object') {
-                        res[i].push(this.serializeParameter(arrayItem, currentMemberSpec));
+                        res[i].push(serializeParameter(arrayItem, currentMemberSpec));
                     } else {
                         res[i].push(arrayItem);
                     }
@@ -67,7 +67,7 @@ window.serializeParameter = (data, spec) => {
                 if (currentMember.length === 0) {
                     res[i] = [];
                 } else {
-                    res[i] = this.serializeParameter(currentMember, currentMemberSpec);
+                    res[i] = serializeParameter(currentMember, currentMemberSpec);
                 }
             }
 
@@ -84,7 +84,9 @@ window.serializeParameter = (data, spec) => {
     }
 
     return res;
-};
+}
+
+window.serializeParameter = serializeParameter;
 
 // mudGetSvgBBox is a helper function to get the size of an svgElement
 window.mudGetSvgBBox = (svgElement) => {
@@ -119,7 +121,9 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
                 dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
             }
             catch (error) {
-                this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                if (typeof window.logger === "function") {
+                    window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                }
             }
         } else {
             // Otherwise, schedule a notification after the remaining delay.
@@ -133,7 +137,9 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
                     dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
                 }
                 catch (error) {
-                    this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                    if (typeof window.logger === "function") {
+                        window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                    }
                 }
             }, debounceMillis - timeSinceLast);
         }

@@ -6,8 +6,8 @@ window.mudDragAndDrop = {
 
     initDropZone: (id) => {
         const elem = document.getElementById(id);
-        elem.addEventListener('dragover',() => event.preventDefault());
-        elem.addEventListener('dragstart', () => event.dataTransfer.setData('', event.target.id));
+        elem.addEventListener('dragover', (event) => event.preventDefault());
+        elem.addEventListener('dragstart', (event) => event.dataTransfer.setData('', event.target.id));
     },
     makeDropZonesNotRelative: () => {
         var firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
