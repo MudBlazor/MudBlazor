@@ -36,6 +36,7 @@ async function buildJS() {
     naming: {
       entry: path.basename(jsOutputFile),
     },
+    sourcemap: "linked",
   });
 }
 
