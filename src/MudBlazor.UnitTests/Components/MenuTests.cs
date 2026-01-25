@@ -149,54 +149,57 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-popover-open");
 
             // Pointer over to menu to open popover
-            await Menu().TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await Menu().PointerEnterAsync(new PointerEventArgs());
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
 
             // Popover open, captures pointer
-            await Menu().TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await Menu().PointerLeaveAsync(new PointerEventArgs());
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
 
             // Pointer moves to menu, still need to open
-            await Menu().TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await Menu().PointerEnterAsync(new PointerEventArgs());
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
         }
 
         [Test]
         public async Task MouseOver_Click_ShouldKeepMenuOpen()
         {
+            var hoverDelay = 200;
+            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
             var comp = Context.Render<MenuTestMouseOver>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
 
             // Enter opens the menu (after a delay).
             await comp.Find("div.mud-menu").PointerEnterAsync();
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Clicking the button should close the menu.
             await comp.Find("button.mud-button-root").ClickAsync();
             // Check that the component is closed
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
 
             // Clicking the button again should open the menu indefinitely.
             await comp.Find("button.mud-button-root").ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Leaving the menu should no longer close it.
             await comp.Find("div.mud-menu").PointerLeaveAsync();
-            await Task.Delay(MudGlobal.MenuDefaults.HoverDelay + 100);
-            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue());
+            await Task.Delay(hoverDelay + 100);
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Hover the list shouldn't change anything.
-            await comp.Find("[data-testid='menu-wrapper']").TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue());
+            await comp.Find("[data-testid='menu-wrapper']").PointerEnterAsync(new PointerEventArgs());
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Leave the list shouldn't change anything.
-            await comp.Find("[data-testid='menu-wrapper']").TriggerEventAsync("onpointerleave", new PointerEventArgs());
-            await Task.Delay(MudGlobal.MenuDefaults.HoverDelay + 100);
-            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue());
+            await comp.Find("[data-testid='menu-wrapper']").PointerLeaveAsync(new PointerEventArgs());
+            await Task.Delay(hoverDelay + 100);
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Clicking the button should now close the menu.
             await comp.Find("button.mud-button-root").ClickAsync();
             // Check that the component is closed
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
         }
 
         [Test]
@@ -312,7 +315,7 @@ namespace MudBlazor.UnitTests.Components
             var rightClickMenu = rightClickMenus.FirstOrDefault(m => m.QuerySelector("div[style*='inline-block']") != null);
             var userDiv = rightClickMenu?.QuerySelector("div[style*='inline-block']");
             userDiv.Should().NotBeNull("User's div with contextmenu handler should exist");
-            await userDiv!.TriggerEventAsync("oncontextmenu", new MouseEventArgs() { Button = 2 });
+            await userDiv!.ContextMenuAsync(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
@@ -824,8 +827,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find(".mud-menu-button-activator").ClickAsync(new MouseEventArgs());
 
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
 
             var last = comp.Instance.LastInvokedIndex;
             last.Should().Be(1);
@@ -859,13 +862,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Press ArrowDown x4 to move to index 3 with nested menu
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
 
             // Press ArrowRight opens submenu
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
 
             // Should now be 2 open menus: the root and the submenu
             comp.FindAll(".mud-popover-open").Count.Should().BeGreaterThan(1);
@@ -881,7 +884,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Press ArrowRight to go back to close menu
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
 
             // Ensure the menu hasn't closed
             comp.FindAll(".mud-popover-open").Count.Should().Be(1);
@@ -897,7 +900,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Press Arrow Left to close menu
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft" });
 
             // Ensure all popovers are closed
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
@@ -913,11 +916,11 @@ namespace MudBlazor.UnitTests.Components
 
             // Move focus to index 3 and open nested submenu
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
 
             // Ensure we now have more than one menu open
             var openBefore = comp.FindAll(".mud-popover-open");
@@ -925,7 +928,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Simulate ArrowLeft keypress inside the last opened (nested) menu
             var nestedMenu = comp.FindAll("div[data-testid='menu-wrapper']").Last();
-            await nestedMenu.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            await nestedMenu.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft" });
 
             // Assert the submenu was closed (back to just one open popover)
             var openAfter = comp.FindAll(".mud-popover-open");
@@ -942,10 +945,10 @@ namespace MudBlazor.UnitTests.Components
 
             // Arrow down to second item (index 1, a link)
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
 
             // Press Enter to enter menu item
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
 
             // Assert: menu should be closed
             comp.FindAll(".mud-popover-open").Should().BeEmpty();
@@ -961,13 +964,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Arrow into nested menu
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
 
             // Press Tab to tab menu item
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Tab" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "Tab" });
 
             // Assert: menu should be closed
             comp.FindAll(".mud-popover-open").Should().BeEmpty();
@@ -983,15 +986,15 @@ namespace MudBlazor.UnitTests.Components
 
             // Arrow into nested menu
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-            await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
 
             // Press Escape to close submenu
             var nestedWrapper = comp.FindAll("[data-testid='menu-wrapper']").Last();
-            await nestedWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Escape" });
+            await nestedWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
 
             // Only parent menu should remain
             comp.FindAll(".mud-popover-open").Count.Should().Be(1);
