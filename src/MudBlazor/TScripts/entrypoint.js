@@ -1,7 +1,6 @@
 import "./mudAAAlicense"
 import "./mudDragAndDrop";
 import "./mudElementReference";
-import "./mudEventManager";
 import "./mudFileUpload";
 import "./mudHelpers";
 import "./mudHotkeyListener";
@@ -10,6 +9,7 @@ import "./mudInputSizing";
 import "./mudJsEvent";
 import "./mudKeyInterceptor";
 import "./mudPointerEventsNone";
+import "./mudPointerCapture";
 import "./mudPopover";
 import "./mudResizeListener";
 import "./mudResizeObserver";
