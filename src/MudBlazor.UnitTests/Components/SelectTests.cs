@@ -838,11 +838,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
 
             // Click clear button
-            await comp.InvokeAsync(async () =>
-            {
-                var clearButton = comp.Find(".mud-input-clear-button");
-                await clearButton.ClickAsync();
-            });
+            var clearButton = comp.Find(".mud-input-clear-button");
+            await clearButton.ClickAsync();
 
             // Value cleared
             await comp.WaitForAssertionAsync(() =>
