@@ -42,6 +42,7 @@ function printTimings() {
     for (const timing of timings) {
         console.log(`  ${timing.step}: ${timing.ms} ms`);
     }
+    timings.length = 0;
 }
 
 async function buildJS() {
@@ -112,15 +113,16 @@ function buildSCSS() {
 }
 
 async function buildAll() {
+    await eslint();
     await buildJS();
     buildSCSS();
+    printTimings();
 }
 
 if (process.argv.includes("watch")) {
     console.log("Initial build...");
     try {
         await buildAll();
-        printTimings();
     } catch (e) {
         console.error("Initial build failed:", e);
     }
@@ -128,11 +130,12 @@ if (process.argv.includes("watch")) {
     console.log("Watching for changes, press Ctrl+C to stop...");
 
     const jsWatcher = fs.watch(
-        jsEntrypoint,
+        jsDirectory,
         { recursive: true },
         async (eventType, filename) => {
             console.log(`JS file changed: ${eventType} ${filename}`);
             try {
+                await eslint();
                 await buildJS();
                 printTimings();
             } catch (e) {
@@ -164,7 +167,5 @@ if (process.argv.includes("watch")) {
         process.exit(0);
     });
 } else {
-    await eslint();
     await buildAll();
-    printTimings();
 }
