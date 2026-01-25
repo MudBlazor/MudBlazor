@@ -26,7 +26,7 @@ namespace MudBlazor
         /// The <see cref="MudDataGrid{T}"/> containing this filter cell.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T>? DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         /// <summary>
         /// The column associated with this filter cell.

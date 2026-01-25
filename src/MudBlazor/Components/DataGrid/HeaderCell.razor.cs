@@ -30,7 +30,7 @@ namespace MudBlazor
         /// The <see cref="MudDataGrid{T}"/> which contains this header cell.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T>? DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         /// <summary>
         /// Displays the content right-to-left.

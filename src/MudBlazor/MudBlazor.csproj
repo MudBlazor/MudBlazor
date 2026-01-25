@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -109,7 +110,7 @@
 
   <Target Name="BuildWebAssets"
           BeforeTargets="DispatchToInnerBuilds"
-          Condition="'$(IsCrossTargetingBuild)' == 'true'"
+          Condition="'$(IsCrossTargetingBuild)' == 'true' AND '$(SkipBunCompile)' != 'true'"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
 
@@ -124,7 +125,8 @@
           BeforeTargets="ResolveProjectStaticWebAssets"
           Condition="'$(IsCrossTargetingBuild)' != 'true'
                 AND '$(DesignTimeBuild)' != 'true'
-                AND '$(_IsFirstTfm)' == 'true'"
+                AND '$(_IsFirstTfm)' == 'true'
+                AND '$(SkipBunCompile)' != 'true'"
           Inputs="@(WebAssetInputs)"
           Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
 
@@ -138,7 +140,8 @@
   <Target Name="RegisterGeneratedAssets"
           BeforeTargets="ResolveProjectStaticWebAssets"
           Condition="'$(IsCrossTargetingBuild)' != 'true'
-                AND '$(DesignTimeBuild)' != 'true'">
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(SkipBunCompile)' != 'true'">
 
     <ItemGroup>
       <_NewAssets Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"

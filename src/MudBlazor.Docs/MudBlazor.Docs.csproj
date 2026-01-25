@@ -90,7 +90,8 @@
           BeforeTargets="ResolveProjectStaticWebAssets"
           Condition="'$(IsCrossTargetingBuild)' != 'true'
                 AND '$(DesignTimeBuild)' != 'true'
-                AND '$(WebAssetsBuilt)' != 'true'">
+                AND '$(WebAssetsBuilt)' != 'true'
+                AND '$(SkipBunCompile)' != 'true'">
 
     <PropertyGroup>
       <WebAssetsBuilt>true</WebAssetsBuilt>
@@ -105,7 +106,8 @@
   <Target Name="RegisterGeneratedAssets"
           BeforeTargets="ResolveProjectStaticWebAssets"
           Condition="'$(IsCrossTargetingBuild)' != 'true'
-                AND '$(DesignTimeBuild)' != 'true'">
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(SkipBunCompile)' != 'true'">
 
     <ItemGroup>
       <_NewAssets Include="wwwroot/MudBlazorDocs.min.css"

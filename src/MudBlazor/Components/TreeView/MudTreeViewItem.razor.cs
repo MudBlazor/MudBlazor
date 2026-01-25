@@ -23,7 +23,7 @@ namespace MudBlazor
         private bool _isServerLoaded;
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
-        private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T?>>?> _itemsState;
+        private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
         private readonly IConverter<T?, string?> _converter = new DefaultConverter<T?>();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
@@ -37,7 +37,7 @@ namespace MudBlazor
                 .WithParameter(() => Selected)
                 .WithEventCallback(() => SelectedChanged)
                 .WithChangeHandler(OnSelectedParameterChangedAsync);
-            _itemsState = registerScope.RegisterParameter<IReadOnlyCollection<ITreeItemData<T?>>?>(nameof(Items))
+            _itemsState = registerScope.RegisterParameter<IReadOnlyCollection<ITreeItemData<T>>?>(nameof(Items))
                 .WithParameter(() => Items)
                 .WithEventCallback(() => ItemsChanged);
         }
@@ -215,13 +215,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<ITreeItemData<T?>>? Items { get; set; }
+        public IReadOnlyCollection<ITreeItemData<T>>? Items { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="Items"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<IReadOnlyCollection<ITreeItemData<T?>>?> ItemsChanged { get; set; }
+        public EventCallback<IReadOnlyCollection<ITreeItemData<T>>?> ItemsChanged { get; set; }
 
         /// <summary>
         /// Shows the children items underneath this item.
@@ -564,7 +564,7 @@ namespace MudBlazor
         {
             if (_itemsState.Value is not null)
             {
-                await _itemsState.SetValueAsync(Array.Empty<ITreeItemData<T?>>());
+                await _itemsState.SetValueAsync(Array.Empty<ITreeItemData<T>>());
             }
             await TryInvokeServerLoadFunc();
 

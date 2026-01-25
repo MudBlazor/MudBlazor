@@ -127,19 +127,19 @@
                                                                     </MudStack>
                                                                 }
 
-                                                                @if (context?.GroupingState.Value ?? false)
+                                                                @if (context.GroupingState.Value)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Ungroup] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumnAsync())"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Ungroup] Disabled="!context.groupable" OnClick="@(e => context.HeaderCell.UngroupColumnAsync())"></MudIconButton>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Group] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumnAsync())"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Group] Disabled="!context.groupable" OnClick="@(e => context.HeaderCell.GroupColumnAsync())"></MudIconButton>
                                                                 }
                                                                 <MudSwitch T="bool" Ripple="false" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Value="@context.HiddenState.Value" ValueChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
                                                                 <MudSpacer />
 
                                                                 <div>
-                                                                    <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context.HeaderCell.SortChangedAsync(e))"></MudIconButton>
                                                                     @if (context.DataGrid.SortMode == SortMode.Multiple)
                                                                     {
                                                                         if (context.SortIndex < 0)
@@ -209,7 +209,7 @@
                                     if (IsGrouped)
                                     {
                                         var groupItemsPage = GroupItemsPage;
-                                        var groupDefinitions = GetGroupDefinitions(_groupDefinition, groupItemsPage);
+                                        var groupDefinitions = GetGroupDefinitions(_groupDefinition!, groupItemsPage);
                                         if (!groupItemsPage.Any())
                                         {
                                             <tr>
@@ -284,7 +284,7 @@
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
                     {
-                        var cell = new Cell<T>(this, column, _editingItem);
+                        var cell = new Cell<T>(this, column, _editingItem!);
 
                         if (column.EditTemplate != null)
                         {
@@ -405,7 +405,7 @@
                      {
                          if (column.ContentFormat is not null)
                          {
-                             @(((IFormattable)cell._valueNumber)?.ToString(column.ContentFormat, column.Culture))
+                             @(((IFormattable?)cell._valueNumber)?.ToString(column.ContentFormat, column.Culture))
                          }
                          else
                          {
@@ -416,7 +416,7 @@
                      {
                          if (column.ContentFormat is not null)
                          {
-                             @(((IFormattable)cell.ComputedValue)?.ToString(column.ContentFormat, column.Culture))
+                             @(((IFormattable?)cell.ComputedValue)?.ToString(column.ContentFormat, column.Culture))
                          }
                          else
                          {
@@ -427,7 +427,7 @@
              </td>
          </text>;
 
-    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T> column) =>
+    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T>? column) =>
         @<text>
             @{
                 var filter = new Filter<T>(this, filterDefinition, column);
@@ -451,7 +451,7 @@
                     <MudItem xs="3">
                         <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Operator]" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-operator">
-                            @foreach (var fieldOperator in filterDefinition.Column.GetFilterOperators(fieldType))
+                            @foreach (var fieldOperator in filterDefinition.Column!.GetFilterOperators(fieldType))
                             {
                                 <MudSelectItem Value="@fieldOperator">@Localizer[FilterOperator.GetTranslationKeyByOperatorName(fieldOperator)]</MudSelectItem>
                             }
