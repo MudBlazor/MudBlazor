@@ -4885,13 +4885,13 @@ namespace MudBlazor.UnitTests.Components
             // Mouse move and release
             var resizeService = dgComp.Instance.ResizeService;
             var resizeServiceType = resizeService.GetType();
-            var eventListener = (EventListener)resizeServiceType
-                .GetField("_eventListener", BindingFlags.NonPublic | BindingFlags.Instance)!
-                .GetValue(resizeService);
+            var eventListenerService = (EventListenerService)resizeServiceType
+                .GetField("_eventListenerService", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService)!;
             var upEventId = (Guid)resizeServiceType
                 .GetField("_pointerUpSubscriptionId", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .GetValue(resizeService)!;
-            await comp.InvokeAsync(async () => await eventListener!.OnEventOccur(upEventId, """{"ClientX":-10}"""));
+            await comp.InvokeAsync(async () => await eventListenerService!.OnEventOccur(upEventId, """{"ClientX":-10}"""));
 
             // Assert
 
