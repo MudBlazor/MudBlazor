@@ -10,13 +10,13 @@ window.mudDragAndDrop = {
         elem.addEventListener('dragstart', (event) => event.dataTransfer.setData('', event.target.id));
     },
     makeDropZonesNotRelative: () => {
-        let firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
-        for (let dropItem of firstDropItems) {
+        const firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        for (const dropItem of firstDropItems) {
             dropItem.style.position = 'static';
         }
 
         const dropZones = document.getElementsByClassName('mud-drop-zone');
-        for (let dropZone of dropZones) {
+        for (const dropZone of dropZones) {
             dropZone.style.position = 'unset';
         }
     },
@@ -43,11 +43,11 @@ window.mudDragAndDrop = {
     },
     makeDropZonesRelative: () => {
         const dropZones = document.getElementsByClassName('mud-drop-zone');
-        for (let dropZone of dropZones) {
+        for (const dropZone of dropZones) {
             dropZone.style.position = 'relative';
         }
-        let firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
-        for (let dropItem of firstDropItems) {
+        const firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        for (const dropItem of firstDropItems) {
             dropItem.style.position = 'relative';
         }
     },
@@ -57,8 +57,8 @@ window.mudDragAndDrop = {
 
 
         // keep the ACCUMULATED dragged position in the data-x/data-y attributes
-        let tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
-        let ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
+        const tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
+        const ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
 
 
         // translate the element

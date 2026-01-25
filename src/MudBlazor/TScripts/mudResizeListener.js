@@ -41,7 +41,7 @@ class MudResizeListener {
 
     resizeHandler() {
         if (this.options.notifyOnBreakpointOnly) {
-            let bp = this.getBreakpoint(window.innerWidth);
+            const bp = this.getBreakpoint(window.innerWidth);
             if (bp == this.breakpoint) {
                 return;
             }
@@ -78,7 +78,7 @@ class MudResizeListener {
     }
 
     matchMedia(query) {
-        let m = window.matchMedia(query).matches;
+        const m = window.matchMedia(query).matches;
         return m;
     }
 
@@ -109,24 +109,24 @@ window.mudResizeListener = new MudResizeListener();
 window.mudResizeListenerFactory = {
     mapping: {},
     listenForResize: (dotnetRef, options, id) => {
-        let map = window.mudResizeListenerFactory.mapping;
+        const map = window.mudResizeListenerFactory.mapping;
         if (map[id]) {
             return;
         }
 
-        let listener = new MudResizeListener(id);
+        const listener = new MudResizeListener(id);
         listener.listenForResize(dotnetRef, options);
         map[id] = listener;
     },
 
     cancelListener: (id) => {
-        let map = window.mudResizeListenerFactory.mapping;
+        const map = window.mudResizeListenerFactory.mapping;
 
         if (!map[id]) {
             return;
         }
 
-        let listener = map[id];
+        const listener = map[id];
         listener.cancelListener();
         delete map[id];
     },
@@ -138,8 +138,8 @@ window.mudResizeListenerFactory = {
     },
 
     dispose() {
-        let map = window.mudResizeListenerFactory.mapping;
-        for (let id in map) {
+        const map = window.mudResizeListenerFactory.mapping;
+        for (const id in map) {
             window.mudResizeListenerFactory.cancelListener(id);
         }
     }

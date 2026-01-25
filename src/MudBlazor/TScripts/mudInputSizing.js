@@ -39,9 +39,9 @@ window.mudInputSizing = {
                 elem.style.textAlign = null;
             }
 
-            let minHeight = lineHeight * elem.rows + paddingTop;
+            const minHeight = lineHeight * elem.rows + paddingTop;
             let newHeight = Math.max(minHeight, elem.scrollHeight);
-            let initialOverflowY = elem.style.overflowY;
+            const initialOverflowY = elem.style.overflowY;
             if (maxHeight > 0 && newHeight > maxHeight) {
                 // Content height exceeds the max height so we'll see a scrollbar.
                 elem.style.overflowY = 'auto';

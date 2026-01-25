@@ -302,8 +302,8 @@ window.mudpopoverHelper = {
             let top = position.top; // Y-coordinate of the popover
             let offsetX = position.offsetX; // Horizontal offset of the popover
             let offsetY = position.offsetY; // Vertical offset of the popover
-            let anchorY = position.anchorY; // Y-coordinate of the opening anchor
-            let anchorX = position.anchorX; // X-coordinate of the opening anchor
+            const anchorY = position.anchorY; // Y-coordinate of the opening anchor
+            const anchorX = position.anchorX; // X-coordinate of the opening anchor
 
             // reset widths and allow them to be changed after initial creation
             popoverContentNode.style['max-width'] = 'none';
@@ -626,7 +626,7 @@ window.mudpopoverHelper = {
 
     // cycles through popovers to reposition those that are open, classSelector is passed on
     placePopoverByClassSelector: function (classSelector = null) {
-        let items = window.mudPopover.getAllObservedContainers();
+        const items = window.mudPopover.getAllObservedContainers();
         for (let i = 0; i < items.length; i++) {
             const popoverNode = document.getElementById('popover-' + items[i]);
             window.mudpopoverHelper.placePopover(popoverNode, classSelector);
@@ -825,7 +825,7 @@ class MudPopover {
         if (popoverNode && popoverNode.parentNode && popoverContentNode) {
             // add a resize observer to catch resize events 
             const resizeObserver = new ResizeObserver(entries => {
-                for (let entry of entries) {
+                for (const entry of entries) {
                     const target = entry.target;
                     for (const childNode of target.childNodes) {
                         if (childNode.id && childNode.id.startsWith('popover-')) {

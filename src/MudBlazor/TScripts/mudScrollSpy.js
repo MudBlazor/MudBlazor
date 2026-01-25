@@ -83,7 +83,7 @@ class MudScrollSpy {
 
     scrollToSection(sectionId) {
         if (sectionId) {
-            let element = document.getElementById(sectionId);
+            const element = document.getElementById(sectionId);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
             }

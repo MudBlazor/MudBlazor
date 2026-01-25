@@ -7,7 +7,7 @@ class MudJsEventFactory {
         //console.log('[MudBlazor | MudJsEventFactory] connect ', { dotNetRef, elementId, options });
         if (!elementId)
             throw "[MudBlazor | JsEvent] elementId: expected element id!";
-        let element = document.getElementById(elementId);
+        const element = document.getElementById(elementId);
         if (!element)
             throw "[MudBlazor | JsEvent] no element found for id: " + elementId;
         if (!element.mudJsEvent)
@@ -16,7 +16,7 @@ class MudJsEventFactory {
     }
 
     disconnect(elementId) {
-        let element = document.getElementById(elementId);
+        const element = document.getElementById(elementId);
         if (!element || !element.mudJsEvent)
             return;
         element.mudJsEvent.disconnect();
@@ -26,7 +26,7 @@ class MudJsEventFactory {
         //console.log('[MudBlazor | MudJsEventFactory] subscribe ', { elementId, eventName});
         if (!elementId)
             throw "[MudBlazor | JsEvent] elementId: expected element id!";
-        let element = document.getElementById(elementId);
+        const element = document.getElementById(elementId);
         if (!element)
             throw "[MudBlazor | JsEvent] no element found for id: " +elementId;
         if (!element.mudJsEvent)
@@ -35,7 +35,7 @@ class MudJsEventFactory {
     }
 
     unsubscribe(elementId, eventName) {
-        let element = document.getElementById(elementId);
+        const element = document.getElementById(elementId);
         if (!element || !element.mudJsEvent)
             return;
         element.mudJsEvent.unsubscribe(element, eventName);
@@ -63,7 +63,7 @@ class MudJsEvent {
             // don't do double registration
             return;
         }
-        let targetClass = this._options.targetClass;
+        const targetClass = this._options.targetClass;
         this.logger('[MudBlazor | JsEvent] Start observing DOM of element for changes to child with class ', { element, targetClass });
         this._element = element;
         this._observer = new MutationObserver(this.onDomChanged);
@@ -88,8 +88,8 @@ class MudJsEvent {
             //console.log("... already attached");
             return;
         }
-        let element = this._element;
-        let targetClass = this._options.targetClass;
+        const element = this._element;
+        const targetClass = this._options.targetClass;
         //this.logger('[MudBlazor | JsEvent] Subscribe event ' + eventName, { element, targetClass });
         this._subscribedEvents[eventName]=true;
         for (const child of element.getElementsByClassName(targetClass)) {
@@ -112,7 +112,7 @@ class MudJsEvent {
     attachHandlers(child) {
         child.mudJsEvent = this;
         //this.logger('[MudBlazor | JsEvent] attachHandlers ', this._subscribedEvents, child);
-        for (let eventName of Object.getOwnPropertyNames(this._subscribedEvents)) {
+        for (const eventName of Object.getOwnPropertyNames(this._subscribedEvents)) {
             if (!this._subscribedEvents[eventName])
                 continue;
             // note: multiple registration of the same event not possible due to the use of the same handler func
@@ -130,7 +130,7 @@ class MudJsEvent {
 
     detachHandlers(child) {
         this.logger('[MudBlazor | JsEvent] detaching handlers ', child);
-        for (let eventName of Object.getOwnPropertyNames(this._subscribedEvents)) {
+        for (const eventName of Object.getOwnPropertyNames(this._subscribedEvents)) {
             if (!this._subscribedEvents[eventName])
                 continue;
             child.removeEventListener(eventName, this.eventHandler);
@@ -139,9 +139,9 @@ class MudJsEvent {
     }
 
     onDomChanged(mutationsList, observer) {
-        let self = this.mudJsEvent; // func is invoked with this == _observer
+        const self = this.mudJsEvent; // func is invoked with this == _observer
         //self.logger('[MudBlazor | JsEvent] onDomChanged: ', { self });
-        let targetClass = self._options.targetClass;
+        const targetClass = self._options.targetClass;
         for (const mutation of mutationsList) {
             //self.logger('[MudBlazor | JsEvent] Subtree mutation: ', { mutation });
             for (const element of mutation.addedNodes) {
@@ -160,8 +160,8 @@ class MudJsEvent {
     }
 
     eventHandler(e) {
-        let self = this.mudJsEvent; // func is invoked with this == child
-        let eventName = e.type;
+        const self = this.mudJsEvent; // func is invoked with this == child
+        const eventName = e.type;
         self.logger('[MudBlazor | JsEvent] "' + eventName + '"', e);
         // call specific handler
         self["on" + eventName](self, e);
