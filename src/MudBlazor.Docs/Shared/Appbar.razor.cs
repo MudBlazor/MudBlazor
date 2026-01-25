@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Docs.Shared;
 
@@ -15,8 +16,11 @@ public partial class Appbar
     private bool _searchDialogOpen;
     private bool _searchDialogAutocompleteOpen;
     private int _searchDialogReturnedItemsCount;
-    private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
-    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
+    private MudAutocomplete<ApiLinkServiceEntry>? _searchBarAutocomplete;
+    private MudAutocomplete<ApiLinkServiceEntry>? _searchDialogAutocomplete;
+    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true, CloseOnEscapeKey = true };
+    private static readonly JsKeyModifier[] CtrlLeftKeyModifiers = [JsKeyModifier.ControlLeft];
+    private static readonly JsKeyModifier[] CtrlRightKeyModifiers = [JsKeyModifier.ControlRight];
 
     public bool IsSearchDialogOpen
     {
@@ -53,7 +57,15 @@ public partial class Appbar
 
         NavigationManager.NavigateTo(entry.Link);
         await Task.Delay(1000);
-        await _searchAutocomplete.ClearAsync();
+        if (_searchBarAutocomplete is not null)
+        {
+            await _searchBarAutocomplete.ClearAsync();
+        }
+
+        if (_searchDialogAutocomplete is not null)
+        {
+            await _searchDialogAutocomplete.ClearAsync();
+        }
     }
 
     private string GetActiveClass(DocsBasePage page)
@@ -73,4 +85,15 @@ public partial class Appbar
     }
 
     private void OpenSearchDialog() => IsSearchDialogOpen = true;
+
+    private async Task HandleSearchHotkeyAsync()
+    {
+        if (DisplaySearchBar && _searchBarAutocomplete is not null)
+        {
+            await _searchBarAutocomplete.FocusAsync();
+            return;
+        }
+
+        OpenSearchDialog();
+    }
 }
