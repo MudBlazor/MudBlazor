@@ -8,7 +8,7 @@ class MudKeyInterceptorFactory {
         //console.log('[MudBlazor | MudKeyInterceptorFactory] connect ', { dotNetRef, element, options });
         if (!elementId)
             throw "elementId: expected element id!";
-        var element = document.getElementById(elementId);
+        let element = document.getElementById(elementId);
         if (!element)
             throw "no element found for id: " + elementId;
         if (!element.mudKeyInterceptor)
@@ -17,14 +17,14 @@ class MudKeyInterceptorFactory {
     }
 
     updatekey(elementId, option) {
-        var element = document.getElementById(elementId);
+        let element = document.getElementById(elementId);
         if (!element || !element.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.updatekey(option);
     }
 
     disconnect(elementId) {
-        var element = document.getElementById(elementId);
+        let element = document.getElementById(elementId);
         if (!element || !element.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.disconnect();
@@ -52,7 +52,7 @@ class MudKeyInterceptor {
         }
         this._isConnected = true;
         this._element = element;
-        var targetClass = this._options.targetClass;
+        let targetClass = this._options.targetClass;
         // changes to the DOM subtree only require observation when targeting child elements for target class
         if (targetClass) {
             this.logger('[MudBlazor | KeyInterceptor] Start observing DOM of element for changes to child with class ', { element, targetClass });
@@ -93,7 +93,7 @@ class MudKeyInterceptor {
         else
             this._keyOptions[keyOption.key.toLowerCase()] = keyOption;
         // remove whitespace and enforce lowercase
-        var whitespace = new RegExp("\\s", "g");
+        let whitespace = new RegExp("\\s", "g");
         keyOption.preventDown = (keyOption.preventDown || "none").replace(whitespace, "").toLowerCase();
         keyOption.preventUp = (keyOption.preventUp || "none").replace(whitespace, "").toLowerCase();
         keyOption.stopDown = (keyOption.stopDown || "none").replace(whitespace, "").toLowerCase();
@@ -101,7 +101,7 @@ class MudKeyInterceptor {
     }
 
     updatekey(updatedOption) {        
-        var option = this._keyOptions[updatedOption.key.toLowerCase()];
+        let option = this._keyOptions[updatedOption.key.toLowerCase()];
         option || this.logger('[MudBlazor | KeyInterceptor] updating option failed: key not registered');
         this.setKeyOption(updatedOption);
         this.logger('[MudBlazor | KeyInterceptor] updated option ', { option, updatedOption });
@@ -140,9 +140,9 @@ class MudKeyInterceptor {
     }
 
     onDomChanged(mutationsList, observer) {
-        var self = this.mudKeyInterceptor; // func is invoked with this == _observer
+        let self = this.mudKeyInterceptor; // func is invoked with this == _observer
         //self.logger('[MudBlazor | KeyInterceptor] onDomChanged: ', { self });
-        var targetClass = self._options.targetClass;
+        let targetClass = self._options.targetClass;
         for (const mutation of mutationsList) {
             //self.logger('[MudBlazor | KeyInterceptor] Subtree mutation: ', { mutation });
             for (const element of mutation.addedNodes) {
@@ -161,33 +161,33 @@ class MudKeyInterceptor {
             return false;
         if (option === "any")
             return true;
-        var shift = args.shiftKey;
-        var ctrl = args.ctrlKey;
-        var alt = args.altKey;
-        var meta = args.metaKey;
-        var any = shift || ctrl || alt || meta;
+        let shift = args.shiftKey;
+        let ctrl = args.ctrlKey;
+        let alt = args.altKey;
+        let meta = args.metaKey;
+        let any = shift || ctrl || alt || meta;
         if (any && option === "key+any")
             return true;
         if (!any && option.includes("key+none"))
             return true;
         if (!any)
             return false;
-        var combi = `key${shift ? "+shift" : ""}${ctrl ? "+ctrl" : ""}${alt ? "+alt" : ""}${meta ? "+meta" : ""}`;
+        let combi = `key${shift ? "+shift" : ""}${ctrl ? "+ctrl" : ""}${alt ? "+alt" : ""}${meta ? "+meta" : ""}`;
         return option.includes(combi);
     }
 
     onKeyDown(args) {
-        var self = this.mudKeyInterceptor; // func is invoked with this == child
+        let self = this.mudKeyInterceptor; // func is invoked with this == child
         if (!args.key) {
             self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
             return;
         }
 
-        var key = args.key.toLowerCase();
+        let key = args.key.toLowerCase();
         self.logger('[MudBlazor | KeyInterceptor] down "' + key + '"', args);
-        var invoke = false;
+        let invoke = false;
         if (self._keyOptions.hasOwnProperty(key)) {
-            var keyOptions = self._keyOptions[key];
+            let keyOptions = self._keyOptions[key];
             self.logger('[MudBlazor | KeyInterceptor] options for "' + key + '"', keyOptions);
             self.processKeyDown(args, keyOptions);
             if (self.shouldInvokeKeyDown(args, keyOptions))
@@ -202,7 +202,7 @@ class MudKeyInterceptor {
             }
         }
         if (invoke) {
-            var eventArgs = self.toKeyboardEventArgs(args);
+            let eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keydown";
             self._dotNetRef.invokeMethodAsync('OnKeyDown', self._element.id, eventArgs);
         }
@@ -220,17 +220,17 @@ class MudKeyInterceptor {
     }
 
     onKeyUp(args) {
-        var self = this.mudKeyInterceptor; // func is invoked with this == child
+        let self = this.mudKeyInterceptor; // func is invoked with this == child
         if (!args.key) {
             self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
             return;
         }
 
-        var key = args.key.toLowerCase();
+        let key = args.key.toLowerCase();
         self.logger('[MudBlazor | KeyInterceptor] up "' + key + '"', args);
-        var invoke = false;
+        let invoke = false;
         if (self._keyOptions.hasOwnProperty(key)) {
-            var keyOptions = self._keyOptions[key];
+            let keyOptions = self._keyOptions[key];
             self.processKeyUp(args, keyOptions);
             if (keyOptions.subscribeUp)
                 invoke = true;
@@ -243,7 +243,7 @@ class MudKeyInterceptor {
             }
         }
         if (invoke) {
-            var eventArgs = self.toKeyboardEventArgs(args);
+            let eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keyup";
             self._dotNetRef.invokeMethodAsync('OnKeyUp', self._element.id, eventArgs);
         }

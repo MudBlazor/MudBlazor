@@ -186,7 +186,7 @@ window.mudpopoverHelper = {
     getPositionForFlippedPopver: function (inputArray, selector, boundingRect, selfRect) {
         const classList = [];
         const replacementsList = {};
-        for (var i = 0; i < inputArray.length; i++) {
+        for (let i = 0; i < inputArray.length; i++) {
             const item = inputArray[i];
             const replacements = window.mudpopoverHelper.flipClassReplacements[selector][item];
             if (replacements) {
@@ -626,7 +626,7 @@ window.mudpopoverHelper = {
 
     // cycles through popovers to reposition those that are open, classSelector is passed on
     placePopoverByClassSelector: function (classSelector = null) {
-        var items = window.mudPopover.getAllObservedContainers();
+        let items = window.mudPopover.getAllObservedContainers();
         for (let i = 0; i < items.length; i++) {
             const popoverNode = document.getElementById('popover-' + items[i]);
             window.mudpopoverHelper.placePopover(popoverNode, classSelector);

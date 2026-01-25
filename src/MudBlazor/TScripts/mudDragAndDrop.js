@@ -10,7 +10,7 @@ window.mudDragAndDrop = {
         elem.addEventListener('dragstart', (event) => event.dataTransfer.setData('', event.target.id));
     },
     makeDropZonesNotRelative: () => {
-        var firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        let firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
         for (let dropItem of firstDropItems) {
             dropItem.style.position = 'static';
         }
@@ -46,7 +46,7 @@ window.mudDragAndDrop = {
         for (let dropZone of dropZones) {
             dropZone.style.position = 'relative';
         }
-        var firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        let firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
         for (let dropItem of firstDropItems) {
             dropItem.style.position = 'relative';
         }
@@ -57,8 +57,8 @@ window.mudDragAndDrop = {
 
 
         // keep the ACCUMULATED dragged position in the data-x/data-y attributes
-        var tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
-        var ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
+        let tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
+        let ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
 
 
         // translate the element

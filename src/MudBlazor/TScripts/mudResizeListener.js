@@ -109,24 +109,24 @@ window.mudResizeListener = new MudResizeListener();
 window.mudResizeListenerFactory = {
     mapping: {},
     listenForResize: (dotnetRef, options, id) => {
-        var map = window.mudResizeListenerFactory.mapping;
+        let map = window.mudResizeListenerFactory.mapping;
         if (map[id]) {
             return;
         }
 
-        var listener = new MudResizeListener(id);
+        let listener = new MudResizeListener(id);
         listener.listenForResize(dotnetRef, options);
         map[id] = listener;
     },
 
     cancelListener: (id) => {
-        var map = window.mudResizeListenerFactory.mapping;
+        let map = window.mudResizeListenerFactory.mapping;
 
         if (!map[id]) {
             return;
         }
 
-        var listener = map[id];
+        let listener = map[id];
         listener.cancelListener();
         delete map[id];
     },
@@ -138,8 +138,8 @@ window.mudResizeListenerFactory = {
     },
 
     dispose() {
-        var map = window.mudResizeListenerFactory.mapping;
-        for (var id in map) {
+        let map = window.mudResizeListenerFactory.mapping;
+        for (let id in map) {
             window.mudResizeListenerFactory.cancelListener(id);
         }
     }

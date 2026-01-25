@@ -11,7 +11,7 @@ export default defineConfig({
         "no-debugger": "error",
         //"no-undef": "error",
         //"no-unused-vars": "error",
-        //"no-var": "error",
+        "no-var": "error",
         //"prefer-const": "error",
         "semi": ["error", "always"],
     },

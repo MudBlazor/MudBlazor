@@ -89,7 +89,7 @@ class MudElementReference {
     getBoundingClientRect(element) {
         if (!element) return;
 
-        var rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
+        let rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
 
         rect.scrollY = window.scrollY || document.documentElement.scrollTop;
         rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
