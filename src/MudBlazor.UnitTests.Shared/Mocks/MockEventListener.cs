@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.UnitTests.Shared.Mocks;
@@ -23,58 +24,70 @@ public class MockEventListenerService : IEventListenerService
         return ValueTask.CompletedTask;
     }
 
-    public Task<Guid> SubscribeAsync<T>(string eventName, string elementId, string projectionName, int throttleInterval, Func<object, Task> callback)
+    public Task SubscribeAsync(IEventListenerObserver observer, string eventName, string elementId, string? projectionName, int throttleInterval, Type eventType, string[] eventProperties)
     {
-        ArgumentNullException.ThrowIfNull(callback);
-
-        var id = Guid.NewGuid();
-        ElementIdMapper.Add(id, elementId);
-        Callbacks.Add(id, callback);
-        return Task.FromResult(id);
+        ElementIdMapper.Add(observer.SubscriptionId, elementId);
+        Callbacks.Add(observer.SubscriptionId, obj => observer.NotifyEventOccurredAsync(obj));
+        return Task.CompletedTask;
     }
 
-    public Task<Guid> SubscribeAsync<T>(string eventName, string elementId, string projectionName, int throttleInterval, Action<object> callback)
+    public Task SubscribeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(Guid subscriptionId, string eventName, string elementId, string? projectionName, int throttleInterval, Func<object, Task> callback)
     {
         ArgumentNullException.ThrowIfNull(callback);
 
-        return SubscribeAsync<T>(eventName, elementId, projectionName, throttleInterval, obj =>
+        ElementIdMapper.Add(subscriptionId, elementId);
+        Callbacks.Add(subscriptionId, callback);
+        return Task.CompletedTask;
+    }
+
+    public Task SubscribeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(Guid subscriptionId, string eventName, string elementId, string? projectionName, int throttleInterval, Action<object> callback)
+    {
+        ArgumentNullException.ThrowIfNull(callback);
+
+        return SubscribeAsync<T>(subscriptionId, eventName, elementId, projectionName, throttleInterval, obj =>
         {
             callback(obj);
             return Task.CompletedTask;
         });
     }
 
-    public Task<Guid> SubscribeGlobalAsync<T>(string eventName, int throttleInterval, Func<object, Task> callback)
+    public Task SubscribeGlobalAsync(IEventListenerObserver observer, string eventName, int throttleInterval, Type eventType, string[] eventProperties)
     {
-        ArgumentNullException.ThrowIfNull(callback);
-
-        var id = Guid.NewGuid();
-        ElementIdMapper.Add(id, "document");
-        Callbacks.Add(id, callback);
-        return Task.FromResult(id);
+        ElementIdMapper.Add(observer.SubscriptionId, "document");
+        Callbacks.Add(observer.SubscriptionId, obj => observer.NotifyEventOccurredAsync(obj));
+        return Task.CompletedTask;
     }
 
-    public Task<Guid> SubscribeGlobalAsync<T>(string eventName, int throttleInterval, Action<object> callback)
+    public Task SubscribeGlobalAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(Guid subscriptionId, string eventName, int throttleInterval, Func<object, Task> callback)
     {
         ArgumentNullException.ThrowIfNull(callback);
 
-        return SubscribeGlobalAsync<T>(eventName, throttleInterval, obj =>
+        ElementIdMapper.Add(subscriptionId, "document");
+        Callbacks.Add(subscriptionId, callback);
+        return Task.CompletedTask;
+    }
+
+    public Task SubscribeGlobalAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(Guid subscriptionId, string eventName, int throttleInterval, Action<object> callback)
+    {
+        ArgumentNullException.ThrowIfNull(callback);
+
+        return SubscribeGlobalAsync<T>(subscriptionId, eventName, throttleInterval, obj =>
         {
             callback(obj);
             return Task.CompletedTask;
         });
     }
 
-    public Task<bool> UnsubscribeAsync(Guid key)
+    public Task UnsubscribeAsync(IEventListenerObserver observer)
     {
-        var result = Callbacks.ContainsKey(key);
-        if (result)
-        {
-            Callbacks.Remove(key);
-            ElementIdMapper.Remove(key);
-        }
+        return UnsubscribeAsync(observer.SubscriptionId);
+    }
 
-        return Task.FromResult(result);
+    public Task UnsubscribeAsync(Guid subscriptionId)
+    {
+        Callbacks.Remove(subscriptionId);
+        ElementIdMapper.Remove(subscriptionId);
+        return Task.CompletedTask;
     }
 
     /// <summary>
