@@ -1,18 +1,20 @@
-﻿const darkThemeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+﻿const isDarkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+let themeProvider = null;
 
-window.darkModeChange = () => {
-    return darkThemeMediaQuery.matches;
-};
-
-function darkModeChangeListener(e) {
-    dotNetHelperTheme.invokeMethodAsync('SystemDarkModeChangedAsync', e.matches);
+function listener(e) {
+    console.assert(themeProvider != null, "themeProvider is null")
+    themeProvider.invokeMethodAsync('SystemDarkModeChangedAsync', e.matches);
 }
 
-function watchDarkThemeMedia(dotNetHelper) {
-    dotNetHelperTheme = dotNetHelper;
-    darkThemeMediaQuery.addEventListener('change', darkModeChangeListener);
-}
-
-function stopWatchingDarkThemeMedia() {
-    darkThemeMediaQuery.removeEventListener('change', darkModeChangeListener);
+window.mudThemeProvider = {
+    isDarkMode() {
+        return isDarkModeQuery.matches;
+    },
+    watchDarkMode(dotNetHelper) {
+        themeProvider = dotNetHelper;
+        isDarkModeQuery.addEventListener('change', listener);
+    },
+    stopWatchingDarkMode() {
+        isDarkModeQuery.removeEventListener('change', listener);
+    },
 }

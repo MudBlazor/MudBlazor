@@ -32,7 +32,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
     private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
-    private event Func<bool, Task>? _darkLightModeChanged;
+    private event Func<bool, Task>? DarkModeChanged;
 
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -118,22 +118,20 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     /// </returns>
     public async Task<bool> GetSystemDarkModeAsync()
     {
-        var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
-
+        var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "mudThemeProvider.isDarkMode");
         return value;
     }
 
     /// <summary>
     /// Calls a function when the system's color has changed.
     /// </summary>
-    /// <param name="functionOnChange">The function to call when the system theme has changed.</param>
+    /// <param name="onChange">The function to call when the system theme has changed.</param>
     /// <remarks>
     /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
     /// </remarks>
-    public Task WatchSystemDarkModeAsync(Func<bool, Task> functionOnChange)
+    public Task WatchSystemDarkModeAsync(Func<bool, Task> onChange)
     {
-        _darkLightModeChanged += functionOnChange;
-
+        DarkModeChanged += onChange;
         return Task.CompletedTask;
     }
 
@@ -145,7 +143,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     public async Task SystemDarkModeChangedAsync(bool isDarkMode)
     {
         await _isDarkModeState.SetValueAsync(isDarkMode);
-        var handler = _darkLightModeChanged;
+        var handler = DarkModeChanged;
         if (handler is not null)
         {
             await handler(isDarkMode);
@@ -160,7 +158,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
             if (_observeSystemDarkModeChangeState.Value && !_observing)
             {
                 _observing = true;
-                await WatchDarkThemeMedia();
+                await WatchDarkMode();
             }
         }
 
@@ -575,14 +573,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
 
         _disposed = true;
 
-        _darkLightModeChanged = null;
+        DarkModeChanged = null;
 
         if (_lazyDotNetRef.IsValueCreated)
         {
             _lazyDotNetRef.Value.Dispose();
         }
 
-        await StopWatchingDarkThemeMedia();
+        await StopWatchingDarkMode();
     }
 
     private Palette? GetCurrentPalette()
@@ -606,7 +604,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
             if (!_observing)
             {
                 _observing = true;
-                await WatchDarkThemeMedia();
+                await WatchDarkMode();
             }
         }
         else
@@ -614,14 +612,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
             if (_observing)
             {
                 _observing = false;
-                await StopWatchingDarkThemeMedia();
+                await StopWatchingDarkMode();
             }
         }
     }
 
-    private ValueTask WatchDarkThemeMedia() => JsRuntime.InvokeVoidAsyncIgnoreErrors("watchDarkThemeMedia", _lazyDotNetRef.Value);
+    private ValueTask WatchDarkMode() => JsRuntime.InvokeVoidAsyncIgnoreErrors("mudThemeProvider.watchDarkMode", _lazyDotNetRef.Value);
 
-    private ValueTask StopWatchingDarkThemeMedia() => JsRuntime.InvokeVoidAsyncIgnoreErrors("stopWatchingDarkThemeMedia");
+    private ValueTask StopWatchingDarkMode() => JsRuntime.InvokeVoidAsyncIgnoreErrors("mudThemeProvider.stopWatchingDarkMode");
 
     private DotNetObjectReference<MudThemeProvider> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
 
