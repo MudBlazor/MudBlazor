@@ -16,7 +16,7 @@ namespace MudBlazor
         private const string EventPointerUp = "pointerup";
 
         private readonly MudDataGrid<T> _dataGrid;
-        private readonly IEventListener _eventListener;
+        private readonly IEventListenerService _eventListenerService;
         private ResizeMode _resizeMode;
 
         private double _currentX;
@@ -27,10 +27,10 @@ namespace MudBlazor
         private Guid _pointerMoveSubscriptionId;
         private Guid _pointerUpSubscriptionId;
 
-        public DataGridColumnResizeService(MudDataGrid<T> dataGrid, IEventListenerFactory eventListenerFactory)
+        public DataGridColumnResizeService(MudDataGrid<T> dataGrid, IEventListenerService eventListenerService)
         {
             _dataGrid = dataGrid;
-            _eventListener = eventListenerFactory.Create();
+            _eventListenerService = eventListenerService;
         }
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX, IList<Column<T>> columns,
@@ -62,12 +62,20 @@ namespace MudBlazor
                 }
             }
 
-            _pointerMoveSubscriptionId =
-                await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerMove, 0,
-                    eventArgs => OnApplicationPointerMove(eventArgs, rightToLeft));
-            _pointerUpSubscriptionId =
-                await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerUp, 0,
-                    eventArgs => OnApplicationPointerUp(eventArgs, rightToLeft));
+            _pointerMoveSubscriptionId = Guid.NewGuid();
+            _pointerUpSubscriptionId = Guid.NewGuid();
+
+            await _eventListenerService.SubscribeGlobalAsync<PointerEventArgs>(
+                _pointerMoveSubscriptionId,
+                EventPointerMove,
+                0,
+                eventArgs => OnApplicationPointerMove(eventArgs, rightToLeft));
+
+            await _eventListenerService.SubscribeGlobalAsync<PointerEventArgs>(
+                _pointerUpSubscriptionId,
+                EventPointerUp,
+                0,
+                eventArgs => OnApplicationPointerUp(eventArgs, rightToLeft));
 
             _dataGrid.IsResizing = true;
             ((IMudStateHasChanged)_dataGrid).StateHasChanged();
@@ -97,13 +105,13 @@ namespace MudBlazor
         {
             if (_pointerMoveSubscriptionId != default)
             {
-                await _eventListener.Unsubscribe(_pointerMoveSubscriptionId);
+                await _eventListenerService.UnsubscribeAsync(_pointerMoveSubscriptionId);
                 _pointerMoveSubscriptionId = default;
             }
 
             if (_pointerUpSubscriptionId != default)
             {
-                await _eventListener.Unsubscribe(_pointerUpSubscriptionId);
+                await _eventListenerService.UnsubscribeAsync(_pointerUpSubscriptionId);
                 _pointerUpSubscriptionId = default;
             }
         }
@@ -177,6 +185,9 @@ namespace MudBlazor
             await columnToEnlarge.HeaderCell.UpdateColumnWidth(enlargedWidth, gridHeight, finish);
         }
 
-        public ValueTask DisposeAsync() => _eventListener.DisposeAsync();
+        public async ValueTask DisposeAsync()
+        {
+            await UnsubscribeApplicationEvents();
+        }
     }
 }

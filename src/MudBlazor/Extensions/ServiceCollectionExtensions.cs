@@ -224,13 +224,12 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds IEventListener as a transient instance.
+        /// Adds IEventListenerService as a scoped instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudEventManager(this IServiceCollection services)
         {
-            services.TryAddTransient<IEventListener, EventListener>();
-            services.TryAddScoped<IEventListenerFactory, EventListenerFactory>();
+            services.TryAddScoped<IEventListenerService, EventListenerService>();
 
             return services;
         }

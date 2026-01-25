@@ -2629,13 +2629,13 @@ namespace MudBlazor
         #region Resize feature
 
         [Inject]
-        private IEventListenerFactory EventListenerFactory { get; set; } = null!;
+        private IEventListenerService EventListenerService { get; set; } = null!;
         internal bool IsResizing { get; set; }
 
         private ElementReference _gridElement;
         private DataGridColumnResizeService<T>? _resizeService;
 
-        internal DataGridColumnResizeService<T> ResizeService => _resizeService ??= new DataGridColumnResizeService<T>(this, EventListenerFactory);
+        internal DataGridColumnResizeService<T> ResizeService => _resizeService ??= new DataGridColumnResizeService<T>(this, EventListenerService);
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
             => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode, RightToLeft);
