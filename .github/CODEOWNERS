@@ -43,3 +43,4 @@
 /src/MudBlazor/TScripts/entrypoint.js @meenzen
 /src/MudBlazor/TScripts/mudInputSizing.js @danielchalmers
 /src/MudBlazor/TScripts/mudPopover.js @versile2
+/src/MudBlazor/TScripts/mudThemeProvider.js @meenzen
