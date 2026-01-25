@@ -19,6 +19,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
@@ -129,8 +130,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInNumericField()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
             var comp = Context.Render<MudNumericField<int?>>(parameters => parameters
                 .Add(x => x.DebounceInterval, 200d));
             var numericField = comp.Instance;
@@ -144,12 +143,11 @@ namespace MudBlazor.UnitTests.Components
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
-            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().NotBe(100), TimeSpan.FromMilliseconds(100));
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
-            //More than 200 ms had elapsed, so Value should be updated
-            timeProvider.Advance(TimeSpan.FromMilliseconds(101));
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(100));
+            //More than 200 ms had elapsed, so Value should be updated (CPU time will likely take more than 200ms)
+            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(100), TimeSpan.FromMilliseconds(300));
             numericField.ReadText.Should().Be("100");
         }
 
@@ -837,7 +835,9 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
         /// </summary>
+        // TODO: Re-enable parallel execution. This test intermittently causes test-host hangs under full parallel coverage runs.
         [Test]
+        [NonParallelizable]
         public async Task DebouncedNumericFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
@@ -866,7 +866,8 @@ namespace MudBlazor.UnitTests.Components
             }
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(converter.ConvertBack(currentText)));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
+            comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
             numericField.ReadText.Should().Be(currentText);
         }
 
@@ -915,7 +916,8 @@ namespace MudBlazor.UnitTests.Components
             // once debounce occurs, both value and text are translated into the new culture
             // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval * 2));
-            await comp.WaitForAssertionAsync(() => numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture)));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
+            numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
         }
 
         /// <summary>

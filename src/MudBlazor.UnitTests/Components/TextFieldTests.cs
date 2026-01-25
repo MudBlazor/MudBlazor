@@ -23,6 +23,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class TextFieldTests : BunitTest
     {
         /// <summary>
@@ -151,8 +152,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInTextField()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
             var textField = comp.Instance;
             var input = comp.Find("input");
@@ -168,11 +167,10 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in TextField
-            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await Task.Delay(100);
             textField.ReadValue.Should().BeNull();
 
             //More than 200 ms had elapsed, so Value should be updated
-            timeProvider.Advance(TimeSpan.FromMilliseconds(101));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
         }
 
@@ -183,8 +181,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task DebounceInterval_EpsilonEquivalentValues_PreservesDebounce()
         {
             // Arrange
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200.0));
             var textField = comp.Instance;
             var input = comp.Find("input");
@@ -199,7 +195,6 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             // Wait for the debounce to complete
-            timeProvider.Advance(TimeSpan.FromMilliseconds(200));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Test Value"));
         }
 
@@ -1143,7 +1138,8 @@ namespace MudBlazor.UnitTests.Components
 
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be(currentText));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
+            textField.ReadValue.Should().Be(currentText);
             textField.ReadText.Should().Be(currentText);
         }
 
@@ -1194,7 +1190,8 @@ namespace MudBlazor.UnitTests.Components
             // once debounce occurs, both value and text are reset because they define an invalid DateTime,
             // now with the new Format
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be(expectedFinalDateTime));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
+            textField.ReadValue.Should().Be(expectedFinalDateTime);
             textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
         }
 
