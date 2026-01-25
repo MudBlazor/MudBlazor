@@ -75,6 +75,8 @@ src/
 - `src/Directory.Build.props` - MSBuild properties (warnings are errors)
 - `.github/workflows/build-test-mudblazor.yml` - CI/CD
 
+**JS bundling:** Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with the files in `src/MudBlazor/TScripts/` (excluding `entrypoint.js`). If a new file is added or removed, update the entrypoint imports to match.
+
 ## Component Rules
 
 - Parameters are auto-properties only; no logic in getters/setters. Use ParameterState registration and change handlers.
