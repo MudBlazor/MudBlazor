@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "sass": "^1.97.2",
-    "terser": "^5.44.1"
+    "eslint": "^9.39.2",
+    "sass": "^1.97.2"
   },
-  "trustedDependencies": ["terser", "sass"]
+  "trustedDependencies": ["sass"]
 }

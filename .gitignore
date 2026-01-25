@@ -378,6 +378,7 @@ FodyWeavers.xsd
 **/MudBlazor.js
 **/MudBlazor.min.js
 **/MudBlazor.min.js.gz
+**/MudBlazor.min.js.map
 **/MudBlazorDocs.min.css
 **/MudBlazorDocs.css
 **/MudBlazorDocs.min.css.map

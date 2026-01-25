@@ -3,6 +3,14 @@
 /.github/ @danielchalmers
 /.editorconfig @danielchalmers @ScarletKuro
 
+# Build Infrastructure
+/src/bun.lock @meenzen
+/src/eslint.config.ts @meenzen
+/src/package.json @meenzen
+/src/MudBlazor/build.mjs @meenzen
+/src/MudBlazor.Docs/build.mjs @meenzen
+/tools/watch.cs @meenzen
+
 # Components
 /src/MudBlazor/Components/Menu/ @danielchalmers
 /src/MudBlazor/Components/Tabs/ @versile2
@@ -32,5 +40,6 @@
 /src/MudBlazor/State/ @ScarletKuro
 
 # Scripts
+/src/MudBlazor/TScripts/entrypoint.js @meenzen
 /src/MudBlazor/TScripts/mudInputSizing.js @danielchalmers
 /src/MudBlazor/TScripts/mudPopover.js @versile2

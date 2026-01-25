@@ -64,6 +64,7 @@
     <ItemGroup>
       <FilesToClean Include="./TScripts/combined/MudBlazor.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.js" />
+      <FilesToClean Include="./wwwroot/MudBlazor.min.js.map" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.css" />
       <FilesToClean Include="./wwwroot/MudBlazor.css" />
       <FilesToClean Include="./wwwroot/css/MudBlazor.css" />
@@ -100,6 +101,7 @@
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
+    <WebAssetOutputs Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.js.map;wwwroot/MudBlazor.min.css" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -112,7 +114,7 @@
           BeforeTargets="DispatchToInnerBuilds"
           Condition="'$(IsCrossTargetingBuild)' == 'true' AND '$(SkipBunCompile)' != 'true'"
           Inputs="@(WebAssetInputs)"
-          Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
+          Outputs="@(WebAssetOutputs)">
 
     <Message Importance="High"
              Text="Building MudBlazor web assets (outer build)" />
@@ -128,7 +130,7 @@
                 AND '$(_IsFirstTfm)' == 'true'
                 AND '$(SkipBunCompile)' != 'true'"
           Inputs="@(WebAssetInputs)"
-          Outputs="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css">
+          Outputs="@(WebAssetOutputs)">
 
     <Message Importance="High"
              Text="Building MudBlazor web assets (inner build, TFM: $(TargetFramework))" />
@@ -144,7 +146,7 @@
                 AND '$(SkipBunCompile)' != 'true'">
 
     <ItemGroup>
-      <_NewAssets Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.css"
+      <_NewAssets Include="@(WebAssetOutputs)"
                   Exclude="@(Content)" />
       <Content Include="@(_NewAssets)" />
     </ItemGroup>
