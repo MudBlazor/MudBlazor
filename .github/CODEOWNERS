@@ -3,6 +3,13 @@
 /.github/ @danielchalmers
 /.editorconfig @danielchalmers @ScarletKuro
 
+# Build Infrastructure
+/src/bun.lock @meenzen
+/src/package.json @meenzen
+/src/MudBlazor/build.mjs @meenzen
+/src/MudBlazor.Docs/build.mjs @meenzen
+/tools/watch.cs @meenzen
+
 # Components
 /src/MudBlazor/Components/Menu/ @danielchalmers
 /src/MudBlazor/Components/Tabs/ @versile2
