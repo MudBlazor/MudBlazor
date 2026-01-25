@@ -26,7 +26,7 @@ namespace MudBlazor
         private ElementReference _headerElement;
         private ElementReference _resizerElement;
         private string _id = Identifier.Create();
-        
+
         // Resize state
         private double _resizeStartX;
         private double _resizeStartWidth;
@@ -335,17 +335,17 @@ namespace MudBlazor
             // Start resize using simplified approach
             _resizeStartX = args.ClientX;
             _resizeStartWidth = await GetCurrentCellWidth();
-            
+
             if (DataGrid.ColumnResizeMode == ResizeMode.Column && Column is not null)
             {
                 // Find next resizable column
                 var columns = DataGrid.RenderedColumns;
                 var currentIndex = columns.IndexOf(Column);
                 var nextIndex = currentIndex + (RightToLeft ? -1 : 1);
-                
+
                 _resizeNextColumn = columns.Skip(nextIndex)
                     .FirstOrDefault(c => (c.Resizable ?? true) && !c.HiddenState.Value);
-                
+
                 if (_resizeNextColumn?.HeaderCell is not null)
                 {
                     _resizeNextStartWidth = await _resizeNextColumn.HeaderCell.GetCurrentCellWidth();
@@ -355,13 +355,13 @@ namespace MudBlazor
                     return; // Cannot resize if no next column available
                 }
             }
-            
+
             _isResizing = true;
             DataGrid.IsResizing = true;
-            
+
             // Capture pointer to track movements even outside the element
             await JSRuntime.InvokeVoidAsyncIgnoreErrors("mudPointerCapture.capture", _resizerElement, args.PointerId);
-            
+
             await InvokeAsync(StateHasChanged);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
@@ -382,46 +382,46 @@ namespace MudBlazor
             if (!_isResizing)
                 _resizerHeight = null;
         }
-        
+
         private async Task OnResizerPointerMove(PointerEventArgs args)
         {
             if (!_isResizing)
                 return;
-                
+
             await HandleResize(args.ClientX, false);
         }
-        
+
         private async Task OnResizerPointerUp(PointerEventArgs args)
         {
             if (!_isResizing)
                 return;
-                
+
             await HandleResize(args.ClientX, true);
-            
+
             // Release pointer capture
             await JSRuntime.InvokeVoidAsyncIgnoreErrors("mudPointerCapture.release", _resizerElement, args.PointerId);
-            
+
             _isResizing = false;
             _resizeNextColumn = null;
-            
+
             Debug.Assert(DataGrid is not null);
             DataGrid.IsResizing = false;
             await InvokeAsync(StateHasChanged);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
-        
+
         private async Task HandleResize(double clientX, bool finish)
         {
             Debug.Assert(DataGrid is not null);
-            
+
             // Calculate delta
-            var deltaX = RightToLeft 
-                ? (_resizeStartX - clientX) 
+            var deltaX = RightToLeft
+                ? (_resizeStartX - clientX)
                 : (clientX - _resizeStartX);
-            
+
             var targetWidth = _resizeStartWidth + deltaX;
             var gridHeight = await DataGrid.GetActualHeight();
-            
+
             if (DataGrid.ColumnResizeMode == ResizeMode.Container)
             {
                 // Simple case: just resize this column
@@ -431,7 +431,7 @@ namespace MudBlazor
             {
                 // Column mode: resize both columns maintaining total width
                 var nextTargetWidth = _resizeNextStartWidth - deltaX;
-                
+
                 if (deltaX < 0)
                 {
                     // Shrinking current column
@@ -444,7 +444,7 @@ namespace MudBlazor
                 }
             }
         }
-        
+
         private static async Task ResizeColumns(HeaderCell<T> columnToShrink, HeaderCell<T> columnToEnlarge,
             double shrinkedWidth, double enlargedWidth, double gridHeight, bool finish)
         {
