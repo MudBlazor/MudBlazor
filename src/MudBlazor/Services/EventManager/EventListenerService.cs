@@ -224,7 +224,7 @@ internal sealed class EventListenerService : IEventListenerService
     private static (Type Type, string[] Properties) GetTypeInformation<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>()
     {
         var type = typeof(T);
-        var properties = type.GetProperties().Select(x => char.ToLower(x.Name[0]) + x.Name.Substring(1)).ToArray();
+        var properties = type.GetProperties().Select(x => char.ToLower(x.Name[0]) + x.Name[1..]).ToArray();
 
         return (type, properties);
     }

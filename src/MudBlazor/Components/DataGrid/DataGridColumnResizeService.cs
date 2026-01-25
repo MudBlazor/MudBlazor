@@ -18,6 +18,7 @@ namespace MudBlazor
         private readonly MudDataGrid<T> _dataGrid;
         private readonly IEventListenerService _eventListenerService;
         private ResizeMode _resizeMode;
+        private bool _disposed;
 
         private double _currentX;
         private double _startWidth;
@@ -187,7 +188,11 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            await UnsubscribeApplicationEvents();
+            if (!_disposed)
+            {
+                _disposed = true;
+                await UnsubscribeApplicationEvents();
+            }
         }
     }
 }
