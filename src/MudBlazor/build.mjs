@@ -5,6 +5,10 @@
  *   bun run build.mjs
  * Or if you don't have bun installed:
  *   dotnet tool exec BunDotNet.Cli -- wrapper -- run build.mjs
+ *
+ * Parameters:
+ *   watch: Watch for changes and rebuild on change.
+ *   fix: Apply ESLint fixes.
  */
 
 import fs from "node:fs";
@@ -72,11 +76,17 @@ async function eslint() {
     console.log("Linting JS files", jsDirectory);
     const timer = startTimer("eslint");
 
-    const eslint = new ESLint();
+    const fix = process.argv.includes("fix");
+    const eslint = new ESLint({ fix: fix });
     const results = await eslint.lintFiles([
         scriptFilename,
         path.join(jsDirectory, "**/*.js"),
     ]);
+
+    if (fix) {
+        await ESLint.outputFixes(results);
+    }
+
     const formatter = await eslint.loadFormatter("stylish");
     const resultText = formatter.format(results);
 
