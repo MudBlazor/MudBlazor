@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
             Func<Task> ButtonClicker = async () =>
             {
                 var button = await autocompleteComponent.WaitForElementAsync(".mud-button-root.mud-no-activator");
-                await autocompleteComponent.InvokeAsync(() => button.ClickAsync());
+                await autocompleteComponent.InvokeAsync(() => button.Click());
             };
 
             await ButtonClicker(); // open popover
