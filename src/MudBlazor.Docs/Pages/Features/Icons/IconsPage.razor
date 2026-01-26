@@ -1,4 +1,5 @@
 ﻿@page "/features/icons"
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <DocsPage>
     <DocsPageHeader Title="MudBlazor Icons" SubTitle="Over 1800 Material Design icons and a few custom ones." />
@@ -39,16 +40,15 @@
                 </MudItem>
             </MudGrid>
             
-            <div class="docs-icons-grid">
-                @foreach(var icon in SelectedIcons)
-                {
+            <div class="docs-icons-container">
+                <Virtualize Items="@SelectedIcons" Context="icon" OverscanCount="20">
                     <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
                         <MudIcon Icon="@icon.Code" Title="@icon.Name" />
                         <MudText Typo="Typo.caption">
                             @icon.Name
                         </MudText>
                     </button>
-                }
+                </Virtualize>
             </div>
         </DocsPageSection>
 

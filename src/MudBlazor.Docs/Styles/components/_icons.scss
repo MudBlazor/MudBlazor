@@ -1,9 +1,15 @@
 ﻿
-.docs-icons-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-  gap: 16px;
+.docs-icons-container {
+  height: 70vh;
+  overflow-y: auto;
   width: 100%;
+  
+  // Virtualize's inner container should use flex-wrap for responsive layout
+  > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
 }
 
 .mud-icondrawer {
@@ -37,7 +43,8 @@
 
 .docs-icon-panel {
   height: 128px;
-  width: 100%;
+  width: 112px;
+  flex-shrink: 0;
   padding: 0px 6px;
   display: flex;
   text-align: center;
