@@ -27,7 +27,6 @@ namespace MudBlazor
         private string? _multiSelectionText;
         private int _longestItemLength;
         private MudSelectItem<T>? _longestItem;
-        private bool _pendingHighlight;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = new HashSet<T?>();
         protected internal List<MudSelectItem<T>> _items = new();
@@ -519,23 +518,6 @@ namespace MudBlazor
                 StateHasChanged();
             }
             UpdateSelectAllChecked();
-            
-            // Handle pending highlight after items have rendered
-            if (_pendingHighlight)
-            {
-                _pendingHighlight = false;
-                if (MultiSelection)
-                {
-                    var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
-                    _activeItemId = firstNonDisabled?.ItemId;
-                }
-                else
-                {
-                    _valueLookup.TryGetValue(ReadValue, out var item);
-                    _activeItemId = item?.ItemId;
-                }
-                StateHasChanged();
-            }
         }
 
         /// <summary>
@@ -889,14 +871,27 @@ namespace MudBlazor
         /// <remarks>
         /// Has no effect if <c>Disabled</c> or <c>ReadOnly</c> is <c>true</c>.
         /// </remarks>
-        public async Task OpenMenu()
+        public Task OpenMenu()
         {
             if (GetDisabledState() || GetReadOnlyState())
-                return;
+                return Task.CompletedTask;
+            
+            // Set the active item BEFORE opening the menu
+            if (MultiSelection)
+            {
+                var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
+                _activeItemId = firstNonDisabled?.ItemId;
+            }
+            else
+            {
+                _valueLookup.TryGetValue(ReadValue, out var item);
+                _activeItemId = item?.ItemId;
+            }
+            
             _open = true;
-            _pendingHighlight = true;
             UpdateIcon();
             StateHasChanged();
+            
             //Scroll the active item on each opening
             if (_activeItemId != null)
             {
@@ -904,13 +899,14 @@ namespace MudBlazor
                 if (index > 0)
                 {
                     var item = _items[index];
-                    await ScrollToItemAsync(item);
+                    ScrollToItemAsync(item).CatchAndLog();
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
+            KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none")).CatchAndLog();
 
-            await OnOpen.InvokeAsync();
+            OnOpen.InvokeAsync().CatchAndLog();
+            return Task.CompletedTask;
         }
 
         /// <summary>
