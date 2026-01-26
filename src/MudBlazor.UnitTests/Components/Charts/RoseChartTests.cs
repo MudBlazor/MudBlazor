@@ -614,7 +614,7 @@ public class RoseChartTests : BunitTest
 
         tooltip.QuerySelector("text tspan").InnerHtml.Should().Be("A - 10");
 
-        await firstPetal.MouseOverAsync();
+        await firstPetal.MouseOutAsync();
         comp.FindAll("g.svg-tooltip").Should().BeEmpty();
     }
 

@@ -1032,7 +1032,7 @@ public class RadarChartTests : BunitTest
         tooltip.Should().NotBeNull("Tooltip should be visible on mouseover.");
 
         // Mouse out to hide tooltip
-        await seriesPath.MouseOverAsync();
+        await seriesPath.MouseOutAsync();
         comp.FindAll("g.svg-tooltip").Count.Should().Be(0, "Tooltip content should be removed or hidden on mouseout.");
     }
 
