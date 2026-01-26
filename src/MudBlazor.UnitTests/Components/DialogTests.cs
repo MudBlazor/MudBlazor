@@ -106,11 +106,11 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = Context.Render<TestInlineDialog>();
-            comp1.FindComponents<MudButton>().Count.Should().Be(1);
+            var inlineDialog = Context.Render<TestInlineDialog>();
+            inlineDialog.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
-            await comp1.Find("button").ClickAsync();
-            await comp1.WaitForAssertionAsync(() =>
+            await inlineDialog.Find("button").ClickAsync();
+            await inlineDialog.WaitForAssertionAsync(() =>
                 comp.Find("div.mud-dialog-container").Should().NotBe(null)
             );
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
@@ -132,13 +132,13 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
 
-            var comp1 = Context.Render<InlineDialogShowMethod>();
+            var inlineDialog = Context.Render<InlineDialogShowMethod>();
 
             comp.Markup.Should().NotContain("Here be dragons");
 
             // open the dialog
-            await comp1.Find(".open-dialog-button").ClickAsync();
-            await comp1.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
+            await inlineDialog.Find(".open-dialog-button").ClickAsync();
+            await inlineDialog.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
 
             comp.Markup.Should().Contain("Here be dragons");
 
@@ -238,11 +238,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
-            var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
+            var inlineDialog = Context.Render<InlineDialogIsVisibleStateTest>();
 
             async Task OpenDialogAsync()
             {
-                await comp1.Find("button").ClickAsync();
+                await inlineDialog.Find("button").ClickAsync();
                 await comp.WaitForAssertionAsync(
                     () => comp.FindAll("div.mud-dialog-container").Count.Should().Be(1));
             }
@@ -272,9 +272,9 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = Context.Render<TestInlineDialog>();
+            var inlineDialog = Context.Render<TestInlineDialog>();
             // open the dialog
-            await comp1.Find("button").ClickAsync();
+            await inlineDialog.Find("button").ClickAsync();
             // rate star
             await comp.Find("span.mud-rating-item").FirstElementChild.ClickAsync();
             // check if is still opened
@@ -512,11 +512,11 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = Context.Render<TestInlineDialog>();
-            comp1.FindComponents<MudButton>().Count.Should().Be(1);
+            var inlineDialog = Context.Render<TestInlineDialog>();
+            inlineDialog.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
-            await comp1.Find("button").ClickAsync();
-            await comp1.WaitForAssertionAsync(() =>
+            await inlineDialog.Find("button").ClickAsync();
+            await inlineDialog.WaitForAssertionAsync(() =>
                 comp.Find("div.mud-dialog-container").Should().NotBe(null)
             );
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
@@ -1312,9 +1312,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
-            var comp1 = Context.Render<InlineDialogDuplicateTest>();
+            var inlineDialog = Context.Render<InlineDialogDuplicateTest>();
             // open the dialog
-            await comp1.Find("button").ClickAsync();
+            await inlineDialog.Find("button").ClickAsync();
             await Task.Delay(1000);
             comp.FindComponents<MudDialog>().Count.Should().Be(1);
         }
@@ -1327,9 +1327,9 @@ namespace MudBlazor.UnitTests.Components
 
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            var comp1 = Context.Render<InlineDialogTitleRefreshTest>();
+            var inlineDialog = Context.Render<InlineDialogTitleRefreshTest>();
 
-            comp1.Find("button").Click();
+            inlineDialog.Find("button").Click();
 
             var dialog = comp.Find("div.mud-dialog");
 
