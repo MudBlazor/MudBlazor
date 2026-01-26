@@ -239,17 +239,25 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
             var comp1 = Context.Render<InlineDialogIsVisibleStateTest>();
-            await comp1.Find("button").ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-dialog-container").Count.Should().Be(1));
-            var overlay = await comp.WaitForElementAsync("div.mud-overlay");
-            await overlay.ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
-            await comp1.Find("button").ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-dialog-container").Count.Should().Be(1),
-                TimeSpan.FromSeconds(5));
-            overlay = await comp.WaitForElementAsync("div.mud-overlay");
-            await overlay.ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+
+            async Task OpenDialogAsync()
+            {
+                await comp1.Find("button").ClickAsync();
+                await comp.WaitForAssertionAsync(
+                    () => comp.FindAll("div.mud-dialog-container").Count.Should().Be(1));
+            }
+
+            async Task CloseDialogAsync()
+            {
+                var overlay = await comp.WaitForElementAsync("div.mud-overlay");
+                await overlay.ClickAsync();
+                await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty());
+            }
+
+            await OpenDialogAsync();
+            await CloseDialogAsync();
+            await OpenDialogAsync();
+            await CloseDialogAsync();
         }
 
         /// <summary>
