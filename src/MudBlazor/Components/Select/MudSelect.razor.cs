@@ -125,13 +125,13 @@ namespace MudBlazor
                         await SetValueAndUpdateTextAsync(item.Value, updateText: true);
                     }
 
-                    HighlightItem(item);
+                    await HighlightItem(item);
                     break;
                 }
 
                 // in multiselect mode don't select anything, just highlight.
                 // selecting is done by Enter
-                HighlightItem(item);
+                await HighlightItem(item);
                 break;
             }
             await _elementReference.SetText(ReadText);
@@ -218,7 +218,7 @@ namespace MudBlazor
                 await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             }
 
-            HighlightItem(item);
+            await HighlightItem(item);
             await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
@@ -235,11 +235,11 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAndUpdateTextAsync(item.Value, updateText: true);
-                HighlightItem(item);
+                await HighlightItem(item);
             }
             else
             {
-                HighlightItem(item);
+                await HighlightItem(item);
             }
             await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
@@ -816,7 +816,7 @@ namespace MudBlazor
                 _elementReference.SetText(ReadText).CatchAndLog();
             }
 
-            HighlightItemForValueAsync(value);
+            await HighlightItemForValueAsync(value);
             // Create a new HashSet to ensure ParameterState detects the change
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
@@ -825,14 +825,14 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
-        private async void HighlightItemForValueAsync(T? value)
+        private async Task HighlightItemForValueAsync(T? value)
         {
             await WaitForRender();
             _valueLookup.TryGetValue(value, out var item);
-            HighlightItem(item);
+            await HighlightItem(item);
         }
 
-        private async void HighlightItem(MudSelectItem<T>? item)
+        private async Task HighlightItem(MudSelectItem<T>? item)
         {
             _activeItemId = item?.ItemId;
             // we need to make sure we are just after a render here or else there will be race conditions
@@ -848,9 +848,9 @@ namespace MudBlazor
         {
             await WaitForRender();
             if (MultiSelection)
-                HighlightItem(_items.FirstOrDefault(x => !x.Disabled));
+                await HighlightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                HighlightItemForValueAsync(ReadValue);
+               await HighlightItemForValueAsync(ReadValue);
         }
 
         private void UpdateSelectAllChecked()
