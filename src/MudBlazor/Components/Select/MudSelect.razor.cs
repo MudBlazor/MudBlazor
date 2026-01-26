@@ -883,16 +883,7 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
             
             // Set the active item after the first render
-            if (MultiSelection)
-            {
-                var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
-                _activeItemId = firstNonDisabled?.ItemId;
-            }
-            else
-            {
-                _valueLookup.TryGetValue(ReadValue, out var item);
-                _activeItemId = item?.ItemId;
-            }
+            SetActiveItemId();
             
             // Trigger another render to propagate _activeItemId to MudList
             await InvokeAsync(StateHasChanged);
@@ -911,6 +902,20 @@ namespace MudBlazor
             await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
 
             await OnOpen.InvokeAsync();
+        }
+
+        private void SetActiveItemId()
+        {
+            if (MultiSelection)
+            {
+                var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
+                _activeItemId = firstNonDisabled?.ItemId;
+            }
+            else
+            {
+                _valueLookup.TryGetValue(ReadValue, out var item);
+                _activeItemId = item?.ItemId;
+            }
         }
 
         /// <summary>
