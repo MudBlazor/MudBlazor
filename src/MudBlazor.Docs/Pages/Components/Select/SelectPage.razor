@@ -67,6 +67,17 @@
                         <MultiSelectComplexExample />
                     </SectionContent>
                 </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Direct Enum Usage">
+                        <Description>
+                            You can directly plug in an existing enum. 
+                            The displayed text for the item can be customised by either providing a <CodeInline>[Display(Name = "...")]</CodeInline> attribute or using the <CodeInline>ToStringFunc</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="true" Code="@nameof(EnumSelectExample)">
+                        <EnumSelectExample />
+                    </SectionContent>
+                </DocsPageSection>
             </SectionSubGroups>
         </DocsPageSection>
 

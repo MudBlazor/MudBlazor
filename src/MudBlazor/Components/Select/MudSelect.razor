@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @typeparam T
 @inherits MudBaseInput<T>
 
@@ -113,6 +113,13 @@
                                              Class="mb-2" />
                                 <MudDivider />
                             }
+                            @if (EnumValues && IsEnumType())
+                            {
+                                @foreach (var enumValue in GetEnumValues())
+                                {
+                                    <MudSelectItem T="T" Value="@enumValue">@GetEnumDisplayString(enumValue)</MudSelectItem>
+                                }
+                            }
                             @ChildContent
                         </MudList>
                     </CascadingValue>
@@ -123,6 +130,13 @@
     @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
         <CascadingValue Name="HideContent" Value="true">
+            @if (EnumValues && IsEnumType())
+            {
+                @foreach (var enumValue in GetEnumValues())
+                {
+                    <MudSelectItem T="T" Value="@enumValue">@GetEnumDisplayString(enumValue)</MudSelectItem>
+                }
+            }
             @ChildContent
         </CascadingValue>
     </CascadingValue>

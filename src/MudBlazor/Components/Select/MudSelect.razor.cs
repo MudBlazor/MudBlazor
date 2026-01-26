@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -90,6 +90,9 @@ namespace MudBlazor
 
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
@@ -362,6 +365,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// Automatically generates <see cref="MudSelectItem{T}"/> elements for each value in an enum type.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c> and <c>T</c> is an enum type (or nullable enum),
+        /// items are automatically created for each enum value. Use <see cref="ToStringFunc"/> to customize display text.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool EnumValues { get; set; }
 
         /// <summary>
         /// The icon for opening the popover of items.
@@ -1393,6 +1407,43 @@ namespace MudBlazor
             if (MultiSelection)
                 return _selectedValues?.Any() ?? false;
             return base.HasValue(value);
+        }
+
+        /// <summary>
+        /// Returns whether <typeparamref name="T"/> is an enum type.
+        /// </summary>
+        private static bool IsEnumType()
+        {
+            var type = typeof(T);
+            return type.IsEnum || Nullable.GetUnderlyingType(type)?.IsEnum == true;
+        }
+
+        /// <summary>
+        /// Gets the enum values for type <typeparamref name="T"/>.
+        /// </summary>
+        private static IEnumerable<T> GetEnumValues()
+        {
+            var type = typeof(T);
+            var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+            return Enum.GetValues(underlyingType).Cast<T>();
+        }
+
+        /// <summary>
+        /// Converts an enum value to its display string using either the <see cref="ToStringFunc"/> (if it's not null) or the localizer.
+        /// </summary>
+        private string? GetEnumDisplayString(T? value)
+        {
+            if (ToStringFunc != null)
+            {
+                return ToStringFunc(value);
+            }
+
+            if (value is Enum enumValue)
+            {
+                return Localizer[enumValue];
+            }
+            
+            return value?.ToString();
         }
 
         /// <summary>
