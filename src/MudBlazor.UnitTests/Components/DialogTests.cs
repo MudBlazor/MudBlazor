@@ -137,19 +137,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("Here be dragons");
 
             // open the dialog
-            await inlineDialog.Find(".open-dialog-button").ClickAsync();
+            inlineDialog.Find(".open-dialog-button").Click();
             await inlineDialog.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
 
             comp.Markup.Should().Contain("Here be dragons");
 
             // close the dialog
-            await comp.Find(".close-dialog-button").ClickAsync();
+            comp.Find(".close-dialog-button").Click();
 
             // messagebox should have opened
             comp.Markup.Should().Contain("dialog was successfully closed");
 
             // close by click on ok button
-            await comp.Find(".mud-message-box button").ClickAsync();
+            comp.Find(".mud-message-box button").Click();
 
             await comp.WaitForAssertionAsync(() => comp.Markup.Trim().Should().BeEmpty(), timeout: TimeSpan.FromSeconds(5));
         }
