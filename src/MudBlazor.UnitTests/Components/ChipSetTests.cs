@@ -470,34 +470,34 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudChip<string>>().Should().HaveCount(2);
 
             // pressing a chip using Space or Enter should toggle their state
-            comp.Find("#chip-1").KeyDown(" ");
-            //comp.Find("#chip-2").KeyDown("Enter");
+            await comp.Find("#chip-1").KeyDownAsync(" ");
+            await //comp.Find("#chip-2").KeyDownAsync("Enter");
             await comp.Find("#chip-2").ClickAsync(); // https://github.com/MudBlazor/MudBlazor/pull/10488#issuecomment-2558409773
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(2);
 
             // pressing the Delete or Backspace keys should have no impact when the chips are not closable
-            comp.Find("#chip-1").KeyDown("Delete");
-            comp.Find("#chip-2").KeyDown("Backspace");
+            await comp.Find("#chip-1").KeyDownAsync("Delete");
+            await comp.Find("#chip-2").KeyDownAsync("Backspace");
             onCloseCount.Should().Be(0);
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(2);
 
             // re-pressing a chip with Space or Enter should un-toggle their state
-            comp.Find("#chip-1").KeyDown(" ");
-            //comp.Find("#chip-2").KeyDown("Enter");
+            await comp.Find("#chip-1").KeyDownAsync(" ");
+            await //comp.Find("#chip-2").KeyDownAsync("Enter");
             await comp.Find("#chip-2").ClickAsync(); // https://github.com/MudBlazor/MudBlazor/pull/10488#issuecomment-2558409773
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().BeNullOrEmpty();
 
             // toggle the chips again, then delete them (the chipset should no longer consider them part of its group, and remove them from selected values)
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.AreChipsClosable, true));
-            comp.Find("#chip-1").KeyDown(" ");
-            //comp.Find("#chip-2").KeyDown("Enter");
+            await comp.Find("#chip-1").KeyDownAsync(" ");
+            await //comp.Find("#chip-2").KeyDownAsync("Enter");
             await comp.Find("#chip-2").ClickAsync(); // https://github.com/MudBlazor/MudBlazor/pull/10488#issuecomment-2558409773
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(2);
 
             // pressing the Delete or Backspace keys should remove the chips from the chipset now that they are closable
-            comp.Find("#chip-1").KeyDown("Delete");
-            comp.Find("#chip-2").KeyDown("Backspace");
+            await comp.Find("#chip-1").KeyDownAsync("Delete");
+            await comp.Find("#chip-2").KeyDownAsync("Backspace");
             onCloseCount.Should().Be(2);
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().BeNullOrEmpty();
         }
@@ -519,13 +519,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudChip<string>>().Should().HaveCount(2);
 
             // pressing a chip using Space or Enter shouldn't toggle their state because the set is disabled
-            comp.Find("#chip-1").KeyDown(" ");
-            comp.Find("#chip-2").KeyDown("Enter");
+            await comp.Find("#chip-1").KeyDownAsync(" ");
+            await comp.Find("#chip-2").KeyDownAsync("Enter");
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
 
             // pressing the Delete or Backspace keys should have no impact either
-            comp.Find("#chip-1").KeyDown("Delete");
-            comp.Find("#chip-2").KeyDown("Backspace");
+            await comp.Find("#chip-1").KeyDownAsync("Delete");
+            await comp.Find("#chip-2").KeyDownAsync("Backspace");
             onCloseCount.Should().Be(0);
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
 
@@ -538,13 +538,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudChip<string>>().Should().HaveCount(2);
 
             // pressing a chip using Space or Enter shouldn't toggle their state because the set is readOnly
-            comp.Find("#chip-1").KeyDown(" ");
-            comp.Find("#chip-2").KeyDown("Enter");
+            await comp.Find("#chip-1").KeyDownAsync(" ");
+            await comp.Find("#chip-2").KeyDownAsync("Enter");
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
 
             // pressing the Delete or Backspace keys should have no impact either
-            comp.Find("#chip-1").KeyDown("Delete");
-            comp.Find("#chip-2").KeyDown("Backspace");
+            await comp.Find("#chip-1").KeyDownAsync("Delete");
+            await comp.Find("#chip-2").KeyDownAsync("Backspace");
             onCloseCount.Should().Be(0);
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
         }

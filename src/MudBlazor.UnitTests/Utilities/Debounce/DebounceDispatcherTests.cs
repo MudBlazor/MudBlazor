@@ -376,7 +376,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public void DebounceAsync_NullAction_ThrowsArgumentNullException()
+    public async Task DebounceAsync_NullAction_ThrowsArgumentNullException()
     {
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100);
@@ -527,7 +527,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public void UpdateInterval_NegativeInterval_ThrowsArgumentOutOfRangeException()
+    public async Task UpdateInterval_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100);

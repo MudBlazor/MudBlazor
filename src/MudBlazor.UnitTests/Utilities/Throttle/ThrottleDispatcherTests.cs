@@ -252,7 +252,7 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_Dispose_DoesNotCancelRunningAction()
+    public async Task ThrottleAsync_Dispose_DoesNotCancelRunningAction()
     {
         // Arrange
         var dispatcher = new ThrottleDispatcher(100);
@@ -295,7 +295,7 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_DisposeDuringLock_HandlesGracefully()
+    public async Task ThrottleAsync_DisposeDuringLock_HandlesGracefully()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);
@@ -334,7 +334,7 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_NullAction_ThrowsArgumentNullException()
+    public async Task ThrottleAsync_NullAction_ThrowsArgumentNullException()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);

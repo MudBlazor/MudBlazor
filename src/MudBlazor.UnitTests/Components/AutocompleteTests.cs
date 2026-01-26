@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
             Func<Task> ButtonClicker = async () =>
             {
                 var button = await autocompleteComponent.WaitForElementAsync(".mud-button-root.mud-no-activator");
-                await autocompleteComponent.InvokeAsync(() => button.Click());
+                await autocompleteComponent.InvokeAsync(() => button.ClickAsync());
             };
 
             await ButtonClicker(); // open popover
@@ -435,7 +435,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            comp.Find("input").KeyUp("Enter");
+            await comp.Find("input").KeyUpAsync("Enter");
 
             // Assert : CoercedValue enabled, so value is set on key enter pressed
 
@@ -472,7 +472,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            comp.Find("input").KeyUp("Enter");
+            await comp.Find("input").KeyUpAsync("Enter");
 
             // Assert : CoercedValue disabled, so value is not set on key enter pressed
 
@@ -516,7 +516,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be("Austria");
 
             // now trigger the coercion by call MudInput.BlurAsync
-            autocompleteComponent.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" });
             autocomplete.ReadValue.Should().Be("Alabama");
             autocomplete.ReadText.Should().Be("Alabama");
         }
@@ -540,7 +540,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be(null);
 
             // now trigger the coercion by call MudInput.BlurAsync
-            autocompleteComponent.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" });
             autocomplete.ReadValue.Should().Be(null);
             autocomplete.ReadText.Should().Be(expected: null);
         }
@@ -774,7 +774,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
             // Let's call blur on the input and confirm that it closed
-            autocompleteComponent.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" });
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
             // Tab closes the drop-down and does not select the selected value (California)
@@ -799,7 +799,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
-            autocompleteComponent.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" });
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
             // Tab closes the drop-down and selects the selected value (California)
@@ -1119,7 +1119,7 @@ namespace MudBlazor.UnitTests.Components
             await component.WaitForAssertionAsync(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(4));
 
             // select the highlighted value
-            component.Find(TagNames.Input).KeyUp(Key.Enter);
+            await component.Find(TagNames.Input).KeyUpAsync(Key.Enter);
 
             // Arkansas should be selected value
             autocompleteInstance.Value.Should().Be(arkansasString);
@@ -1599,8 +1599,8 @@ namespace MudBlazor.UnitTests.Components
 
             result.Should().BeEmpty();
             //Act
-            autocompleteComponent.Find("input").KeyDown("a");
-            autocompleteComponent.Find("input").KeyUp("a");
+            await autocompleteComponent.Find("input").KeyDownAsync("a");
+            await autocompleteComponent.Find("input").KeyUpAsync("a");
             //Assert
             result.Count.Should().Be(2);
         }

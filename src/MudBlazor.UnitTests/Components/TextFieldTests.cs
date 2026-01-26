@@ -705,7 +705,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync("Vat of acid");
 
             // this will make the input focused!
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             textfield.ReadValue.Should().Be("Vat of acid");
             textfield.ReadText.Should().Be("Vat of acid");
 
@@ -1122,7 +1122,7 @@ namespace MudBlazor.UnitTests.Components
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
 
             // trigger delayed re-render
-            await comp.InvokeAsync(() => comp.Find("#re-render-button").Click());
+            await comp.InvokeAsync(() => comp.Find("#re-render-button").ClickAsync());
 
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
