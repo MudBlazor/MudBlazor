@@ -12,8 +12,9 @@ namespace MudBlazor
     /// <seealso cref="MudSelect{T}"/>
     public partial class MudSelectItem<T> : MudComponentBase, IDisposable
     {
-        private IMudSelect? _parent;
-        private IMudShadowSelect? _shadowParent;
+        private IMudSelect? _previousParent;
+        private IMudShadowSelect? _previousShadowParent;
+        private bool _parametersInitialized;
 
         private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
@@ -25,38 +26,33 @@ namespace MudBlazor
         /// The <see cref="MudSelect{T}"/> hosting this item.
         /// </summary>
         [CascadingParameter]
-        internal IMudSelect? IMudSelect
-        {
-            get => _parent;
-            set
-            {
-                _parent = value;
-                if (_parent == null)
-                    return;
-                _parent.CheckGenericTypeMatch(this);
-                if (MudSelect == null)
-                    return;
-                var selected = MudSelect.Add(this);
-                if (_parent.MultiSelection)
-                {
-                    MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
-                    InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.GetState(x => x.SelectedValues)));
-                }
-                else
-                {
-                    Selected = selected;
-                }
-            }
-        }
+        internal IMudSelect? IMudSelect { get; set; }
 
         [CascadingParameter]
-        internal IMudShadowSelect? IMudShadowSelect
+        internal IMudShadowSelect? IMudShadowSelect { get; set; }
+
+        /// <inheritdoc />
+        public override async Task SetParametersAsync(ParameterView parameters)
         {
-            get => _shadowParent;
-            set
+            var oldParent = _previousParent;
+            var oldShadowParent = _previousShadowParent;
+
+            await base.SetParametersAsync(parameters);
+
+            // Check if this is initial setup or if parents changed
+            var parentsChanged = !ReferenceEquals(oldParent, IMudSelect) || !ReferenceEquals(oldShadowParent, IMudShadowSelect);
+
+            if (!_parametersInitialized || parentsChanged)
             {
-                _shadowParent = value;
-                ((MudSelect<T>?)_shadowParent)?.RegisterShadowItem(this);
+                if (parentsChanged && _parametersInitialized)
+                {
+                    // Unregister from old parents if this is a parent change (not initial setup)
+                    UnregisterFromPreviousParents(oldParent, oldShadowParent);
+                }
+
+                // Register with new/current parents
+                RegisterWithParents();
+                _parametersInitialized = true;
             }
         }
 
@@ -154,6 +150,54 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        private void RegisterWithParents()
+        {
+            // Register with IMudSelect
+            if (IMudSelect != null)
+            {
+                IMudSelect.CheckGenericTypeMatch(this);
+                if (MudSelect != null)
+                {
+                    var selected = MudSelect.Add(this);
+                    if (IMudSelect.MultiSelection)
+                    {
+                        MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
+                        InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.GetState(x => x.SelectedValues)));
+                    }
+                    else
+                    {
+                        Selected = selected;
+                    }
+                }
+            }
+
+            // Register with IMudShadowSelect
+            ((MudSelect<T>?)IMudShadowSelect)?.RegisterShadowItem(this);
+
+            // Track current parents
+            _previousParent = IMudSelect;
+            _previousShadowParent = IMudShadowSelect;
+        }
+
+        private void UnregisterFromPreviousParents(IMudSelect? oldParent, IMudShadowSelect? oldShadowParent)
+        {
+            // Unregister from previous IMudSelect
+            if (oldParent != null)
+            {
+                var previousMudSelect = (MudSelect<T>?)oldParent;
+                if (previousMudSelect != null && oldParent.MultiSelection)
+                {
+                    previousMudSelect.SelectionChangedFromOutside -= OnUpdateSelectionStateFromOutside;
+                }
+                previousMudSelect?.Remove(this);
+            }
+
+            // Note: We intentionally don't unregister shadow items here because when components re-render,
+            // new instances are created before old ones are disposed. Since _shadowLookup is keyed by Value,
+            // if we unregister during disposal, we would remove the new item's entry that was just added.
+            // The parent MudSelect will clean up the _shadowLookup when it's disposed or when entries are replaced.
+        }
+
         /// <summary>
         /// Releases resources used by this component.
         /// </summary>
@@ -161,8 +205,7 @@ namespace MudBlazor
         {
             try
             {
-                MudSelect?.Remove(this);
-                ((MudSelect<T>?)_shadowParent)?.UnregisterShadowItem(this);
+                UnregisterFromPreviousParents(_previousParent, _previousShadowParent);
             }
             catch (Exception)
             {
