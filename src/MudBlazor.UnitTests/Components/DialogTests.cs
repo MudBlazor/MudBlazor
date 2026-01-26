@@ -1329,14 +1329,20 @@ namespace MudBlazor.UnitTests.Components
 
             var comp1 = Context.Render<InlineDialogTitleRefreshTest>();
 
-            await comp1.Find("button").ClickAsync();
+            comp1.Find("button").Click();
 
-            var dialog = await comp.WaitForElementAsync("div.mud-dialog");
+            var dialog = comp.Find("div.mud-dialog");
+
+            dialog.Should().NotBeNull();
             dialog.TextContent.Trim().Should().Be("Initial state"); // Initial title
             comp.FindComponent<MudProgressLinear>().Instance.Value.Should().Be(0); // Initial progress value - 0
 
             // Wait for mid-progress (simulate that loop is progressing)
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog").TextContent.Should().Contain("Progress"));
+            await Task.Delay(1000);
+            //comp.Render();
+
+            dialog = comp.Find("div.mud-dialog");
+            dialog.TextContent.Should().Contain("Progress"); //change from "Initial state" to "Progress"
 
             var progressComponent = comp.FindComponent<MudProgressLinear>();
             var progressValue = progressComponent.Instance.Value;
