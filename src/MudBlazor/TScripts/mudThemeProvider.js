@@ -2,7 +2,7 @@
 let themeProvider = null;
 
 function listener(e) {
-    console.assert(themeProvider != null, "themeProvider is null")
+    console.assert(themeProvider != null, "themeProvider is null");
     themeProvider.invokeMethodAsync('SystemDarkModeChangedAsync', e.matches);
 }
 
@@ -17,4 +17,4 @@ window.mudThemeProvider = {
     stopWatchingDarkMode() {
         isDarkModeQuery.removeEventListener('change', listener);
     },
-}
+};
