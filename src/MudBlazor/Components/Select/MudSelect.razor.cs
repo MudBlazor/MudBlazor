@@ -524,15 +524,18 @@ namespace MudBlazor
             if (_needsHighlightAfterRender)
             {
                 _needsHighlightAfterRender = false;
-                if (MultiSelection)
+                InvokeAsync(async () =>
                 {
-                    var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
-                    HighlightItemAsync(firstNonDisabled).CatchAndLog();
-                }
-                else
-                {
-                    HighlightItemForValueAsync(ReadValue).CatchAndLog();
-                }
+                    if (MultiSelection)
+                    {
+                        var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
+                        await HighlightItemAsync(firstNonDisabled);
+                    }
+                    else
+                    {
+                        await HighlightItemForValueAsync(ReadValue);
+                    }
+                });
             }
         }
 
