@@ -1432,7 +1432,7 @@ namespace MudBlazor
         private bool ShouldUseEnumValues()
         {
             if (ChildContent != null) return false;
-            
+
             var type = typeof(T);
             return type.IsEnum || Nullable.GetUnderlyingType(type)?.IsEnum == true;
         }
