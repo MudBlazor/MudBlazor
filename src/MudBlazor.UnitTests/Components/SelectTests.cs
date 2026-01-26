@@ -210,12 +210,12 @@ namespace MudBlazor.UnitTests.Components
             var inputs = comp.FindAll("input");
             inputs.Count.Should().Be(3);
             inputs[1].GetAttribute("value").Should().Be("Value2");
-            await inputs[1].TriggerEventAsync("onmousedown", new MouseEventArgs());
+            await inputs[1].MouseDownAsync(new MouseEventArgs());
             await Task.Delay(500);
             var listItems = comp.FindAll(".mud-list-item");
             foreach (var listItem in listItems)
             {
-                await listItem.TriggerEventAsync("onclick", new MouseEventArgs());
+                await listItem.ClickAsync(new MouseEventArgs());
             }
 
             inputs = comp.FindAll("input");
