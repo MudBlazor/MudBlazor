@@ -41,6 +41,7 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+
             // Set default value to ensure ParameterState never holds null
             SelectedValues = new HashSet<T?>();
             using var registerScope = CreateRegisterScope();
@@ -106,6 +107,7 @@ namespace MudBlazor
             if (direction < 0 && index < 0)
                 index = 0;
             MudSelectItem<T>? item = null;
+
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
             for (var i = 0; i < _items.Count; i++)
             {
@@ -137,6 +139,7 @@ namespace MudBlazor
                 HighlightItem(item);
                 break;
             }
+
             await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
@@ -217,6 +220,7 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+
                 // Update ParameterState to keep SelectedValues in sync
                 await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             }
@@ -244,6 +248,7 @@ namespace MudBlazor
             {
                 HighlightItem(item);
             }
+
             await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
@@ -498,6 +503,7 @@ namespace MudBlazor
             {
                 FieldChanged(_selectedValues);
             }
+
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
         }
@@ -532,6 +538,7 @@ namespace MudBlazor
                 // which supply the RenderFragment. So in this case, a second render is necessary
                 StateHasChanged();
             }
+
             UpdateSelectAllChecked();
             lock (this)
             {
@@ -553,6 +560,7 @@ namespace MudBlazor
                 _renderComplete = new TaskCompletionSource();
                 t = _renderComplete.Task;
             }
+
             StateHasChanged();
             return t;
         }
@@ -652,11 +660,13 @@ namespace MudBlazor
                 if (EqualityComparer<T?>.Default.Equals(item.Value, ReadValue) && !MultiSelection)
                     result = true;
             }
+
             UpdateSelectAllChecked();
             if (result.HasValue == false)
             {
                 result = item.Value?.Equals(ReadValue);
             }
+
             return result == true;
         }
 
@@ -775,6 +785,7 @@ namespace MudBlazor
                     await CloseMenu();
                 return;
             }
+
             await SelectOption(_items[index].Value);
         }
 
@@ -831,6 +842,7 @@ namespace MudBlazor
             }
 
             HighlightItemForValueAsync(value);
+
             // Create a new HashSet to ensure ParameterState detects the change
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
@@ -849,8 +861,10 @@ namespace MudBlazor
         private async void HighlightItem(MudSelectItem<T>? item)
         {
             _activeItemId = item?.ItemId;
+
             // we need to make sure we are just after a render here or else there will be race conditions
             await WaitForRender();
+
             // Note: this is a hack, but I found no other way to make the list highlight the currently highlighted item
             // without the delay it always shows the previously highlighted item because the popup items don't exist yet
             // they are only registered after they are rendered, so we need to render again!
@@ -923,6 +937,7 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await HighlightSelectedValue();
+
             //Scroll the active item on each opening
             if (_activeItemId != null)
             {
@@ -933,6 +948,7 @@ namespace MudBlazor
                     await ScrollToItemAsync(item);
                 }
             }
+
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
 
@@ -989,8 +1005,10 @@ namespace MudBlazor
                     [
                         // prevent scrolling page, toggle open/close
                         new(" ", preventDown: "key+none"),
+
                         // prevent scrolling page, instead highlight previous item
                         new("ArrowUp", preventDown: "key+none"),
+
                         // prevent scrolling page, instead highlight next item
                         new("ArrowDown", preventDown: "key+none"),
                         new("Home", preventDown: "key+none"),
@@ -998,10 +1016,13 @@ namespace MudBlazor
                         new("Escape"),
                         new("Enter", preventDown: "key+none"),
                         new("NumpadEnter", preventDown: "key+none"),
+
                         // select all items instead of all page text
                         new("a", preventDown: "key+ctrl"),
+
                         // select all items instead of all page text
                         new("A", preventDown: "key+ctrl"),
+
                         // for our users
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
@@ -1092,9 +1113,10 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
-        protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
-            List<string?>? selectedConvertedValues = null,
-            Func<List<string?>?, string>? multiSelectionTextFunc = null)
+        protected async Task SetCustomizedTextAsync(string text,
+                                                    bool updateValue = true,
+                                                    List<string?>? selectedConvertedValues = null,
+                                                    Func<List<string?>?, string>? multiSelectionTextFunc = null)
         {
             // The Text property of the control is updated
             var customText = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
@@ -1166,6 +1188,7 @@ namespace MudBlazor
                 await FocusAsync();
                 return;
             }
+
             switch (obj.Key)
             {
                 case "Tab":
@@ -1245,14 +1268,17 @@ namespace MudBlazor
                         if (MultiSelection)
                         {
                             await SelectAllClickAsync();
+
                             //If we didn't add delay, it won't work.
                             await WaitForRender();
                             await Task.Delay(1);
                             StateHasChanged();
+
                             //It only works when selecting all, not render unselect all.
                             //UpdateSelectAllChecked();
                         }
                     }
+
                     break;
             }
 
@@ -1302,6 +1328,7 @@ namespace MudBlazor
                 _selectAllChecked = false;
             else
                 _selectAllChecked = true;
+
             // Define the items selection
             if (_selectAllChecked.Value)
                 await SelectAllItems();
@@ -1325,6 +1352,7 @@ namespace MudBlazor
             {
                 await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
             }
+
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
@@ -1442,7 +1470,7 @@ namespace MudBlazor
             {
                 return Localizer[enumValue];
             }
-            
+
             return value?.ToString();
         }
 
