@@ -27,6 +27,7 @@ namespace MudBlazor
         private string? _multiSelectionText;
         private int _longestItemLength;
         private MudSelectItem<T>? _longestItem;
+        private bool _needsHighlightAfterRender;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = new HashSet<T?>();
         protected internal List<MudSelectItem<T>> _items = new();
@@ -518,6 +519,21 @@ namespace MudBlazor
                 StateHasChanged();
             }
             UpdateSelectAllChecked();
+            
+            // Highlight after items are fully rendered
+            if (_needsHighlightAfterRender)
+            {
+                _needsHighlightAfterRender = false;
+                if (MultiSelection)
+                {
+                    var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
+                    HighlightItemAsync(firstNonDisabled).CatchAndLog();
+                }
+                else
+                {
+                    HighlightItemForValueAsync(ReadValue).CatchAndLog();
+                }
+            }
         }
 
         /// <summary>
@@ -771,6 +787,9 @@ namespace MudBlazor
             else
             {
                 // single selection
+                // Highlight the item BEFORE closing so the next open shows it highlighted
+                await HighlightItemForValueAsync(value);
+                
                 // CloseMenu(true) doesn't close popover in BSS
                 await CloseMenu(false);
 
@@ -793,7 +812,12 @@ namespace MudBlazor
                 _elementReference.SetText(ReadText).CatchAndLog();
             }
 
-            await HighlightItemForValueAsync(value);
+            // For multi-selection, highlight after value is set
+            if (MultiSelection)
+            {
+                await HighlightItemForValueAsync(value);
+            }
+            
             // Create a new HashSet to ensure ParameterState detects the change
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
@@ -808,11 +832,10 @@ namespace MudBlazor
             await HighlightItemAsync(item);
         }
 
-        private Task HighlightItemAsync(MudSelectItem<T>? item)
+        private async Task HighlightItemAsync(MudSelectItem<T>? item)
         {
             _activeItemId = item?.ItemId;
-            StateHasChanged();
-            return Task.CompletedTask;
+            await InvokeAsync(StateHasChanged);
         }
 
         private Task HighlightSelectedValueAsync()
@@ -877,16 +900,9 @@ namespace MudBlazor
                 return;
             
             _open = true;
+            _needsHighlightAfterRender = true;
             UpdateIcon();
-            
-            // Trigger the first render to open the menu and render items
-            await InvokeAsync(StateHasChanged);
-            
-            // Set the active item after the first render
-            SetActiveItemId();
-            
-            // Trigger another render to propagate _activeItemId to MudList
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
             
             //Scroll the active item on each opening
             if (_activeItemId != null)
@@ -902,20 +918,6 @@ namespace MudBlazor
             await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
 
             await OnOpen.InvokeAsync();
-        }
-
-        private void SetActiveItemId()
-        {
-            if (MultiSelection)
-            {
-                var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
-                _activeItemId = firstNonDisabled?.ItemId;
-            }
-            else
-            {
-                _valueLookup.TryGetValue(ReadValue, out var item);
-                _activeItemId = item?.ItemId;
-            }
         }
 
         /// <summary>
