@@ -515,14 +515,14 @@ namespace MudBlazor.UnitTests.Components
             var inlineDialog = Context.Render<TestInlineDialog>();
             inlineDialog.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
-            await inlineDialog.Find("button").ClickAsync();
+            inlineDialog.Find("button").Click();
             await inlineDialog.WaitForAssertionAsync(() =>
                 comp.Find("div.mud-dialog-container").Should().NotBe(null)
             );
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
             // close by click on ok button
-            await comp.FindAll("button").Last().ClickAsync();
+            comp.FindAll("button").Last().Click();
             await comp.WaitForAssertionAsync(() => comp.FindComponent<MudMessageBox>());
             var messageBox = comp.FindComponent<MudMessageBox>();
             messageBox.Should().NotBeNull();
