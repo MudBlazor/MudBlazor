@@ -1,15 +1,11 @@
 ﻿
-.docs-icons-container {
-  height: 70vh;
-  overflow-y: auto;
+.docs-icons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 16px;
   width: 100%;
-  
-  // Virtualize's inner container should use flex-wrap for responsive layout
-  > div {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .mud-icondrawer {
@@ -43,8 +39,7 @@
 
 .docs-icon-panel {
   height: 128px;
-  width: 112px;
-  flex-shrink: 0;
+  width: 100%;
   padding: 0px 6px;
   display: flex;
   text-align: center;
@@ -54,6 +49,7 @@
   border-radius: var(--mud-default-borderradius);
   transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1);
   user-select: none;
+  content-visibility: auto;
 
   &:focus {
     outline: 2px solid var(--mud-palette-primary);
