@@ -308,9 +308,9 @@ namespace MudBlazor.UnitTests.Components
             var header = comp.Find(".mud-expand-panel-header");
 
             comp.Markup.Should().NotContain("mud-panel-expanded");
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             comp.Markup.Should().Contain("mud-panel-expanded");
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = " " });
             comp.Markup.Should().NotContain("mud-panel-expanded");
         }
 
@@ -346,11 +346,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-panel-expanded");
 
             // Try to expand with Enter key - should be ignored
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             comp.Markup.Should().NotContain("mud-panel-expanded");
 
             // Try to expand with Space key - should be ignored
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = " " });
             comp.Markup.Should().NotContain("mud-panel-expanded");
         }
 
