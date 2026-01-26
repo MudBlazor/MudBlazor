@@ -762,7 +762,7 @@ namespace MudBlazor
                 // single selection
                 // Highlight the item BEFORE closing so the next open shows it highlighted
                 await HighlightItemForValueAsync(value);
-                
+
                 // CloseMenu(true) doesn't close popover in BSS
                 await CloseMenu(false);
 
@@ -790,7 +790,7 @@ namespace MudBlazor
             {
                 await HighlightItemForValueAsync(value);
             }
-            
+
             // Create a new HashSet to ensure ParameterState detects the change
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
@@ -871,12 +871,12 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            
+
             _open = true;
             _needsHighlightAfterRender = true;
             UpdateIcon();
             StateHasChanged();
-            
+
             //Scroll the active item on each opening
             if (_activeItemId != null)
             {
