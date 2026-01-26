@@ -372,17 +372,6 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Automatically generates <see cref="MudSelectItem{T}"/> elements for each value in an enum type.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c> and <c>T</c> is an enum type (or nullable enum),
-        /// items are automatically created for each enum value. Use <see cref="ToStringFunc"/> to customize display text.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool EnumValues { get; set; }
-
-        /// <summary>
         /// The icon for opening the popover of items.
         /// </summary>
         /// <remarks>
@@ -1438,10 +1427,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Returns whether <typeparamref name="T"/> is an enum type.
+        /// Returns whether <typeparamref name="T"/> is an enum type and <see cref="ChildContent"/> is null.
         /// </summary>
-        private static bool IsEnumType()
+        private bool ShouldUseEnumValues()
         {
+            if (ChildContent != null) return false;
+            
             var type = typeof(T);
             return type.IsEnum || Nullable.GetUnderlyingType(type)?.IsEnum == true;
         }

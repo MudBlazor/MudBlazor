@@ -3,16 +3,13 @@
 
 <MudSelect T="SomeEnum" Label="Enum Select"
            @bind-Value="@_selectedValue"
-           EnumValues="true"
            HelperText="@($"Selected {_selectedValue}")"/>
 <MudSelect T="SomeEnum?" Label="Enum Select Nullable"
            @bind-Value="@_selectedValueNullable"
-           EnumValues="true"
            Clearable="true"
            HelperText="@($"Selected {(_selectedValueNullable?.ToString() ?? "None")}")"/>
 <MudSelect T="SomeEnum" Label="Enum Select Custom Display"
            @bind-Value="@_selectedValueDisplay"
-           EnumValues="true"
            HelperText="@($"Selected {_selectedValueDisplay}")"
            ToStringFunc="@(e => $"{e} Modified")"/>
 

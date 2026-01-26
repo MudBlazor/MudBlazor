@@ -70,8 +70,9 @@
                 <DocsPageSection>
                     <SectionHeader Title="Direct Enum Usage">
                         <Description>
-                            You can directly plug in an existing enum. 
+                            <CodeInline>MudSelect</CodeInline> can automatically generate select items for each value in an enum type.
                             The displayed text for the item can be customised by either providing a <CodeInline>[Display(Name = "...")]</CodeInline> attribute or using the <CodeInline>ToStringFunc</CodeInline>.
+                            Note that no items are automatically generated if a child content is provided.
                         </Description>
                     </SectionHeader>
                     <SectionContent ShowCode="true" Code="@nameof(EnumSelectExample)">

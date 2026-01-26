@@ -113,9 +113,9 @@
                                              Class="mb-2" />
                                 <MudDivider />
                             }
-                            @if (EnumValues && IsEnumType())
+                            @if (ShouldUseEnumValues())
                             {
-                                @foreach (var enumValue in GetEnumValues())
+                                foreach (var enumValue in GetEnumValues())
                                 {
                                     <MudSelectItem T="T" Value="@enumValue">@GetEnumDisplayString(enumValue)</MudSelectItem>
                                 }
@@ -130,9 +130,9 @@
     @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
         <CascadingValue Name="HideContent" Value="true">
-            @if (EnumValues && IsEnumType())
+            @if (ShouldUseEnumValues())
             {
-                @foreach (var enumValue in GetEnumValues())
+                foreach (var enumValue in GetEnumValues())
                 {
                     <MudSelectItem T="T" Value="@enumValue">@GetEnumDisplayString(enumValue)</MudSelectItem>
                 }
