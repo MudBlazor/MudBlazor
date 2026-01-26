@@ -435,7 +435,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            await comp.Find("input").KeyUpAsync("Enter");
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
 
             // Assert : CoercedValue enabled, so value is set on key enter pressed
 
@@ -472,7 +472,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
 
-            await comp.Find("input").KeyUpAsync("Enter");
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
 
             // Assert : CoercedValue disabled, so value is not set on key enter pressed
 
@@ -1599,8 +1599,8 @@ namespace MudBlazor.UnitTests.Components
 
             result.Should().BeEmpty();
             //Act
-            await autocompleteComponent.Find("input").KeyDownAsync("a");
-            await autocompleteComponent.Find("input").KeyUpAsync("a");
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "a" });
             //Assert
             result.Count.Should().Be(2);
         }

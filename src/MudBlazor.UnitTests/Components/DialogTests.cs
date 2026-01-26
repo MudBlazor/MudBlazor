@@ -161,7 +161,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/11789
         /// </remarks>
         [Test]
-        public void InlineDialog_OpenCancelOpen()
+        public async Task InlineDialog_OpenCancelOpen()
         {
             // Arrange
 

@@ -1963,7 +1963,7 @@ namespace MudBlazor.UnitTests.Components
         /// CheckBox should be validated like every other form component when ticked using keyboard
         /// </summary>
         [Test]
-        public void FormWithCheckBox_When_CheckBoxTickedUsingKeyboard()
+        public async Task FormWithCheckBox_When_CheckBoxTickedUsingKeyboard()
         {
             var comp = Context.Render<FormWithCheckBoxTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -2032,4 +2032,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-

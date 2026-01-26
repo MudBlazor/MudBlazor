@@ -1272,7 +1272,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridOnContextMenuClickWhenIsGrouped()
+        public async Task DataGridOnContextMenuClickWhenIsGrouped()
         {
             var comp = Context.Render<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();

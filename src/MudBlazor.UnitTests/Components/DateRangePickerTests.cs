@@ -333,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             await comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")
-                await [3].ClickAsync();
+                [3].ClickAsync();
             await comp
                 .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
             await comp
