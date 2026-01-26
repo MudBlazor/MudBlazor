@@ -27,7 +27,7 @@ namespace MudBlazor
         private string? _multiSelectionText;
         private int _longestItemLength;
         private MudSelectItem<T>? _longestItem;
-        private TaskCompletionSource? _renderComplete;
+        private bool _pendingHighlight;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = new HashSet<T?>();
         protected internal List<MudSelectItem<T>> _items = new();
@@ -519,28 +519,23 @@ namespace MudBlazor
                 StateHasChanged();
             }
             UpdateSelectAllChecked();
-            lock (this)
+            
+            // Handle pending highlight after items have rendered
+            if (_pendingHighlight)
             {
-                if (_renderComplete != null)
+                _pendingHighlight = false;
+                if (MultiSelection)
                 {
-                    _renderComplete.TrySetResult();
-                    _renderComplete = null;
+                    var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
+                    _activeItemId = firstNonDisabled?.ItemId;
                 }
+                else
+                {
+                    _valueLookup.TryGetValue(ReadValue, out var item);
+                    _activeItemId = item?.ItemId;
+                }
+                StateHasChanged();
             }
-        }
-
-        private Task WaitForRender()
-        {
-            Task? t;
-            lock (this)
-            {
-                if (_renderComplete != null)
-                    return _renderComplete.Task;
-                _renderComplete = new TaskCompletionSource();
-                t = _renderComplete.Task;
-            }
-            StateHasChanged();
-            return t;
         }
 
         /// <summary>
@@ -827,30 +822,23 @@ namespace MudBlazor
 
         private async Task HighlightItemForValueAsync(T? value)
         {
-            await WaitForRender();
             _valueLookup.TryGetValue(value, out var item);
             await HighlightItemAsync(item);
         }
 
-        private async Task HighlightItemAsync(MudSelectItem<T>? item)
+        private Task HighlightItemAsync(MudSelectItem<T>? item)
         {
             _activeItemId = item?.ItemId;
-            // we need to make sure we are just after a render here or else there will be race conditions
-            await WaitForRender();
-            // Note: this is a hack, but I found no other way to make the list highlight the currently highlighted item
-            // without the delay it always shows the previously highlighted item because the popup items don't exist yet
-            // they are only registered after they are rendered, so we need to render again!
-            await Task.Delay(1);
             StateHasChanged();
+            return Task.CompletedTask;
         }
 
-        private async Task HighlightSelectedValueAsync()
+        private Task HighlightSelectedValueAsync()
         {
-            await WaitForRender();
             if (MultiSelection)
-                await HighlightItemAsync(_items.FirstOrDefault(x => !x.Disabled));
+                return HighlightItemAsync(_items.FirstOrDefault(x => !x.Disabled));
             else
-                await HighlightItemForValueAsync(ReadValue);
+                return HighlightItemForValueAsync(ReadValue);
         }
 
         private void UpdateSelectAllChecked()
@@ -906,9 +894,9 @@ namespace MudBlazor
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             _open = true;
+            _pendingHighlight = true;
             UpdateIcon();
             StateHasChanged();
-            await HighlightSelectedValueAsync();
             //Scroll the active item on each opening
             if (_activeItemId != null)
             {
@@ -1231,12 +1219,7 @@ namespace MudBlazor
                         if (MultiSelection)
                         {
                             await SelectAllClickAsync();
-                            //If we didn't add delay, it won't work.
-                            await WaitForRender();
-                            await Task.Delay(1);
                             StateHasChanged();
-                            //It only works when selecting all, not render unselect all.
-                            //UpdateSelectAllChecked();
                         }
                     }
                     break;
