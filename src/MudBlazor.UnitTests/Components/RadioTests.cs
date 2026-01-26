@@ -2,6 +2,7 @@
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -388,6 +389,18 @@ namespace MudBlazor.UnitTests.Components
             create(readOnly = true, disabled = false).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = false, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = true, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+        }
+
+        [Test]
+        public void RadioLabel()
+        {
+            var value = new DisplayNameLabelClass();
+
+            var comp = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean));
+            comp.Instance.Label.Should().Be("Boolean LabelAttribute"); //label should be set by the attribute
+
+            var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
+            comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }
 }
