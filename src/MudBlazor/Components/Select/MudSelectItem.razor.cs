@@ -40,7 +40,9 @@ namespace MudBlazor
             await base.SetParametersAsync(parameters);
 
             // Check if this is initial setup or if parents changed
-            var parentsChanged = !ReferenceEquals(oldParent, IMudSelect) || !ReferenceEquals(oldShadowParent, IMudShadowSelect);
+            var mudSelectChanged = !ReferenceEquals(oldParent, IMudSelect);
+            var shadowSelectChanged = !ReferenceEquals(oldShadowParent, IMudShadowSelect);
+            var parentsChanged = mudSelectChanged || shadowSelectChanged;
 
             if (!_parametersInitialized || parentsChanged)
             {
@@ -182,15 +184,19 @@ namespace MudBlazor
         private void UnregisterFromPreviousParents(IMudSelect? oldParent, IMudShadowSelect? oldShadowParent)
         {
             // Unregister from previous IMudSelect
-            if (oldParent != null)
+            if (oldParent == null)
+                return;
+
+            var previousMudSelect = (MudSelect<T>?)oldParent;
+            if (previousMudSelect == null)
+                return;
+
+            if (oldParent.MultiSelection)
             {
-                var previousMudSelect = (MudSelect<T>?)oldParent;
-                if (previousMudSelect != null && oldParent.MultiSelection)
-                {
-                    previousMudSelect.SelectionChangedFromOutside -= OnUpdateSelectionStateFromOutside;
-                }
-                previousMudSelect?.Remove(this);
+                previousMudSelect.SelectionChangedFromOutside -= OnUpdateSelectionStateFromOutside;
             }
+
+            previousMudSelect.Remove(this);
 
             // Note: We intentionally don't unregister shadow items here because when components re-render,
             // new instances are created before old ones are disposed. Since _shadowLookup is keyed by Value,
