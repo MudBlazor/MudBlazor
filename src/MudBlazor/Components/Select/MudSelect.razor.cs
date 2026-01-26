@@ -850,7 +850,7 @@ namespace MudBlazor
             if (MultiSelection)
                 await HighlightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-               await HighlightItemForValueAsync(ReadValue);
+                await HighlightItemForValueAsync(ReadValue);
         }
 
         private void UpdateSelectAllChecked()
