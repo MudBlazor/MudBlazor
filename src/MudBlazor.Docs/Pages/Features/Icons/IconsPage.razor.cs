@@ -14,6 +14,8 @@ namespace MudBlazor.Docs.Pages.Features.Icons
     {
         private bool _iconDrawerOpen;
         private List<MudIcons> _displayedIcons = new();
+        private const float IconCardHeight = 144; // single icon card height including margins
+        private const int IconsPerRow = 50; // Large number - CSS will wrap based on container width
 
         [Inject]
         protected IJsApiService JsApiService { get; set; } = null!;
@@ -48,9 +50,14 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         private string SearchText { get; set; } = string.Empty;
 
-        private List<MudIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
-            ? _displayedIcons
-            : _displayedIcons.Where(mudIcon => mudIcon.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+        private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
+            ? GetVirtualizedIcons(_displayedIcons)
+            : GetVirtualizedIcons(_displayedIcons.Where(mudIcon => mudIcon.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
+
+        private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconList)
+        {
+            return iconList.Chunk(IconsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
+        }
 
         private readonly IconStorage _iconTypes = new()
         {

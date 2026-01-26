@@ -1,11 +1,15 @@
 ﻿
-.docs-icons-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+.docs-icons-container {
+  height: 70vh;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.docs-icons-row {
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   width: 100%;
-  max-height: 70vh;
-  overflow-y: auto;
 }
 
 .mud-icondrawer {
@@ -39,7 +43,8 @@
 
 .docs-icon-panel {
   height: 128px;
-  width: 100%;
+  width: 112px;
+  flex-shrink: 0;
   padding: 0px 6px;
   display: flex;
   text-align: center;
@@ -49,7 +54,6 @@
   border-radius: var(--mud-default-borderradius);
   transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1);
   user-select: none;
-  content-visibility: auto;
 
   &:focus {
     outline: 2px solid var(--mud-palette-primary);
