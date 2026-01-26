@@ -1376,23 +1376,5 @@ namespace MudBlazor
                 return _selectedValues?.Any() ?? false;
             return base.HasValue(value);
         }
-
-        /// <summary>
-        /// Forces the <see cref="SelectedValuesChanged"/> event to occur.
-        /// </summary>
-        public override async Task ForceUpdate()
-        {
-            await base.ForceUpdate();
-            if (MultiSelection == false)
-            {
-                await _selectedValuesState.SetValueAsync(new HashSet<T?>(Comparer) { ReadValue });
-            }
-            else
-            {
-                var newValues = new HashSet<T?>(_selectedValues, Comparer);
-                await _selectedValuesState.SetValueAsync(newValues);
-                FieldChanged(newValues);
-            }
-        }
     }
 }

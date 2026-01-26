@@ -1307,32 +1307,6 @@ namespace MudBlazor.UnitTests.Components
             sut.Instance.Items.Should().HaveCountGreaterThanOrEqualTo(4);
         }
 
-        [Test]
-        public async Task Select_ValueChangeEventCount()
-        {
-            var comp = Context.Render<SelectEventCountTest>(x =>
-            {
-                x.Add(c => c.MultiSelection, false);
-            });
-            var select = comp.FindComponent<MudSelect<string>>();
-
-            comp.Instance.ValueChangeCount.Should().Be(0);
-            comp.Instance.ValuesChangeCount.Should().Be(0);
-
-            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "1")));
-            await comp.InvokeAsync(() => select.Instance.ForceUpdate());
-            await comp.WaitForAssertionAsync(() => comp.Instance.ValueChangeCount.Should().Be(1));
-            comp.Instance.ValuesChangeCount.Should().Be(1);
-            select.Instance.ReadValue.Should().Be("1");
-
-            // Changing value programmatically without ForceUpdate should change value, but should not fire change events
-            // Its by design, so this part can be change if design changes
-            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "2")));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ValueChangeCount.Should().Be(1));
-            comp.Instance.ValuesChangeCount.Should().Be(1);
-            select.Instance.ReadValue.Should().Be("2");
-        }
-
         /// <summary>
         /// When MultiSelection and Required are True with no selected values, required validation should fail.
         /// </summary>
