@@ -871,12 +871,18 @@ namespace MudBlazor
         /// <remarks>
         /// Has no effect if <c>Disabled</c> or <c>ReadOnly</c> is <c>true</c>.
         /// </remarks>
-        public Task OpenMenu()
+        public async Task OpenMenu()
         {
             if (GetDisabledState() || GetReadOnlyState())
-                return Task.CompletedTask;
+                return;
             
-            // Set the active item BEFORE opening the menu
+            _open = true;
+            UpdateIcon();
+            
+            // Trigger the first render to open the menu and render items
+            await InvokeAsync(StateHasChanged);
+            
+            // Set the active item after the first render
             if (MultiSelection)
             {
                 var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
@@ -888,9 +894,8 @@ namespace MudBlazor
                 _activeItemId = item?.ItemId;
             }
             
-            _open = true;
-            UpdateIcon();
-            StateHasChanged();
+            // Trigger another render to propagate _activeItemId to MudList
+            await InvokeAsync(StateHasChanged);
             
             //Scroll the active item on each opening
             if (_activeItemId != null)
@@ -899,14 +904,13 @@ namespace MudBlazor
                 if (index > 0)
                 {
                     var item = _items[index];
-                    ScrollToItemAsync(item).CatchAndLog();
+                    await ScrollToItemAsync(item);
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none")).CatchAndLog();
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
 
-            OnOpen.InvokeAsync().CatchAndLog();
-            return Task.CompletedTask;
+            await OnOpen.InvokeAsync();
         }
 
         /// <summary>
