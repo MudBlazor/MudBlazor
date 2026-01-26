@@ -390,7 +390,7 @@ namespace MudBlazor.UnitTests.Components
             create(readOnly = false, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = true, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
         }
-        
+
         [Test]
         public void RadioLabel()
         {

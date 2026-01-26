@@ -191,7 +191,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            
+
             if (Label is null && For is not null)
             {
                 Label = For.GetLabelString();
