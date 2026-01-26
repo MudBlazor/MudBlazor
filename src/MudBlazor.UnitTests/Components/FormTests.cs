@@ -649,14 +649,14 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
 
-            await comp.InvokeAsync(() => comp.Find("input").ClickAsync());
+            await comp.Find("input").ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             // open color collection view
-            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").ClickAsync());
+            await comp.Find("div.mud-picker-color-dot-current").ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
 
             // set valid color
-            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().ClickAsync());
+            await comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
@@ -664,11 +664,11 @@ namespace MudBlazor.UnitTests.Components
             colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
-            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").ClickAsync());
+            await comp.Find("div.mud-picker-color-dot-current").ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
 
             // set invalid color
-            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().ClickAsync());
+            await comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
@@ -781,8 +781,8 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             await comp.Find("input").ClickAsync();
             // clicking day buttons to select a date range
-            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync());
-            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).ClickAsync());
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).ClickAsync();
             // wait for picker to close
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
 
@@ -1004,7 +1004,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
-            await comp.InvokeAsync(() => comp.Find("button#clear-button").ClickAsync());
+            await comp.Find("button#clear-button").ClickAsync();
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required
