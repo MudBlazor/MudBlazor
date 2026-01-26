@@ -124,17 +124,6 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            if (Label is null && For is not null)
-            {
-                Label = For.GetLabelString();
-            }
-        }
-
-        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)

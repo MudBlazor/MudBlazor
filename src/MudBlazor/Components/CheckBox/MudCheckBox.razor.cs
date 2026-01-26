@@ -202,10 +202,6 @@ namespace MudBlazor
         {
             base.OnInitialized();
 
-            if (Label is null && For is not null)
-            {
-                Label = For.GetLabelString();
-            }
             // if Aria Label has a value add aria-labeled by
             if (!string.IsNullOrWhiteSpace(AriaLabel))
             {
