@@ -1,0 +1,41 @@
+﻿@using MudBlazor.Utilities
+
+<MudHotkey Key="Key" KeyModifiers="KeyModifiers" OnHotkeyPressed="OnHotKey" HideChildContentOnRepress="HideChildContentOnRepress" Disabled="Disabled" PreventEventPropagation="PreventEventPropagation">
+    @if (ChildContent == null)
+    {
+        <div id="hotkey-child">
+            Child Content
+        </div>
+    }
+    else
+    {
+        @ChildContent
+    }
+</MudHotkey>
+
+@code {
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public bool HideChildContentOnRepress { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public JsKey Key { get; set; } = JsKey.KeyA;
+
+    [Parameter]
+    public IEnumerable<JsKeyModifier> KeyModifiers { get; set; } = [JsKeyModifier.ControlLeft];
+    
+    [Parameter]
+    public bool PreventEventPropagation { get; set; } = true;
+    
+    public int PressedCount { get; private set; }
+
+    private void OnHotKey()
+    {
+        PressedCount++;
+    }
+}

@@ -27,12 +27,18 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     public required IGrouping<object?, T> Grouping { get; set; }
 
     /// <summary>
+    /// List of keys representing the path of this group across all grouping levels.
+    /// Each item in the list corresponds to a grouping level.
+    /// </summary>
+    public required GroupKeyPath KeyPath { get; init; }
+
+    /// <summary>
     /// The function which selects items for this group.
     /// </summary>
     /// <remarks>
     /// Typically used during a LINQ <c>GroupBy()</c> call to group items.
     /// </remarks>
-    public Func<T, object> Selector { get; set; } = default!;
+    public Func<T, object?>? Selector { get; set; } = default!;
 
     /// <summary>
     /// Expands this group.
@@ -50,7 +56,7 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     /// <summary>
     /// The title of the grouped column
     /// </summary>
-    public string Title { get; set; } = string.Empty;
+    public string? Title { get; set; } = string.Empty;
 
     /// <summary>
     /// The group definition within this definition.

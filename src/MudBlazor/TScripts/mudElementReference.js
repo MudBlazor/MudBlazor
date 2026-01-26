@@ -24,7 +24,7 @@ class MudElementReference {
     focusFirst (element, skip = 0, min = 0) {
         if (element)
         {
-            let tabbables = getTabbableElements(element);
+            const tabbables = window.getTabbableElements(element);
             if (tabbables.length <= min)
                 element.focus();
             else
@@ -35,7 +35,7 @@ class MudElementReference {
     focusLast (element, skip = 0, min = 0) {
         if (element)
         {
-            let tabbables = getTabbableElements(element);
+            const tabbables = window.getTabbableElements(element);
             if (tabbables.length <= min)
                 element.focus();
             else
@@ -53,8 +53,8 @@ class MudElementReference {
     restoreFocus (element) {
         if (element)
         {
-            let previous = element['mudblazor_savedFocus'];
-            delete element['mudblazor_savedFocus']
+            const previous = element['mudblazor_savedFocus'];
+            delete element['mudblazor_savedFocus'];
             if (previous)
                 previous.focus();
         }
@@ -64,7 +64,7 @@ class MudElementReference {
         if (element)
         {
             if (element.createTextRange) {
-                let selRange = element.createTextRange();
+                const selRange = element.createTextRange();
                 selRange.collapse(true);
                 selRange.moveStart('character', pos1);
                 selRange.moveEnd('character', pos2);
@@ -89,7 +89,7 @@ class MudElementReference {
     getBoundingClientRect(element) {
         if (!element) return;
 
-        var rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
+        const rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
 
         rect.scrollY = window.scrollY || document.documentElement.scrollTop;
         rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
@@ -112,7 +112,7 @@ class MudElementReference {
     }
 
     addDefaultPreventingHandler(element, eventName) {
-        let listener = function (e) {
+        const listener = function (e) {
             // Only prevent default if not already prevented
             if (!e.defaultPrevented) {
                 e.preventDefault();
@@ -129,10 +129,10 @@ class MudElementReference {
     }
 
     addDefaultPreventingHandlers(element, eventNames) {
-        let listeners = [];
+        const listeners = [];
 
         for (const eventName of eventNames) {
-            let listenerId = this.addDefaultPreventingHandler(element, eventName);
+            const listenerId = this.addDefaultPreventingHandler(element, eventName);
             listeners.push(listenerId);
         }
 

@@ -1,4 +1,4 @@
-﻿﻿@using System.Globalization;
+﻿@using System.Globalization;
 
 <MudPopoverProvider></MudPopoverProvider>
 
@@ -17,7 +17,9 @@
                    MinDate="@MinDate"
                    MaxDate="@MaxDate"
                    AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
-                   Culture="@(new CultureInfo("en-US"))" />
+                   Culture="@(new CultureInfo("en-US"))"
+                   InputId="@InputId"
+                   FirstDayOfWeek="@FirstDayOfWeek" />
 }
 else
 {
@@ -33,7 +35,9 @@ else
                    MinDate="@MinDate"
                    MaxDate="@MaxDate"
                    AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
-                   Culture="@(new CultureInfo("en-US"))" />
+                   Culture="@(new CultureInfo("en-US"))"
+                   InputId="@InputId"
+                   FirstDayOfWeek="@FirstDayOfWeek"/>
 }
 
 @code {
@@ -74,6 +78,12 @@ else
 
     [Parameter]
     public DateTime? Date { get; set; }
+
+    [Parameter]
+    public string? InputId { get; set; }
+
+    [Parameter]
+    public DayOfWeek? FirstDayOfWeek { get; set; }
 
     private async Task HandleDateChanged(DateTime? input)
     {

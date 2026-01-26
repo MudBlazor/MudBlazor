@@ -58,12 +58,12 @@
 .mud-avatar-outlined {
   color: var(--mud-palette-text-primary);
   background-color: unset;
-  border: 1px solid rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
+  border: 1px solid rgba(var(--mud-palette-text-primary-rgb), var(--mud-palette-border-opacity));
 
   @each $color in $mud-palette-colors {
     &.mud-avatar-outlined-#{$color} {
       color: var(--mud-palette-#{$color});
-      border: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
+      border: 1px solid rgba(var(--mud-palette-#{$color}-rgb), var(--mud-palette-border-opacity));
     }
   }
 }

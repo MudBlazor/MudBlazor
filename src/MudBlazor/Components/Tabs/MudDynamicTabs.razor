@@ -5,6 +5,10 @@
 
 @Render
 
+@{
+#pragma warning disable CS0618 // Type or member is obsolete
+}
+
 @code {
 #nullable enable
     /// <inheritdoc />
@@ -29,7 +33,8 @@
                         <MudIconButton Icon="@CloseTabIcon"
                                        Class="@CloseIconClass"
                                        Style="@CloseIconStyle"
-                                       OnClick="() => CloseTab.InvokeAsync(context)"/>
+                                       OnClick="() => CloseTab.InvokeAsync(context)"
+                                       @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"/>
                     </MudTooltip>
                 }
                 else
@@ -37,7 +42,8 @@
                     <MudIconButton Icon="@CloseTabIcon"
                                    Class="@CloseIconClass"
                                    Style="@CloseIconStyle"
-                                   OnClick="() => CloseTab.InvokeAsync(context)"/>
+                                   OnClick="() => CloseTab.InvokeAsync(context)"
+                                   @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"/>
                 }
             }
         </MudRender>;

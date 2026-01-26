@@ -5,7 +5,7 @@
 using System.Buffers.Binary;
 using System.Globalization;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -617,7 +617,6 @@ namespace MudBlazor.UnitTests.Utilities
             }
         }
 
-
         [Test]
         public void ToStringFormat()
         {
@@ -773,6 +772,24 @@ namespace MudBlazor.UnitTests.Utilities
 #pragma warning disable CS1718 // Comparison made to same variable
 
         [Test]
+        public void Equals_ShouldProduceColorsThatEqualExpectedList()
+        {
+            // Arrange & Act
+            var generatedColors = MudColor.GenerateTintShadePalette("#E53935");
+            var colors = new List<MudColor>
+            {
+                new("#ED7A78"),
+                new("#E95653"),
+                new("#E53935"),
+                new("#D91F1C"),
+                new("#B51A17")
+            };
+
+            // Assert
+            generatedColors.Should().BeEquivalentTo(colors, options => options.WithStrictOrdering());
+        }
+
+        [Test]
         public void Equals_SameType()
         {
             // Arrange
@@ -871,18 +888,26 @@ namespace MudBlazor.UnitTests.Utilities
             var color2 = new MudColor(245, 0.35, 0.95, 1);
 
             // Act
-            var equals = color1.Equals(color2);
+            var equals1 = color1.Equals(color2);
+            var equals2 = color1.Equals(color2, MudColorComparison.Rgba);
+            var equals3 = color1.Equals(color2, MudColorComparison.Hsl);
+            var equals4 = color1.Equals(color2, MudColorComparison.RgbaAndHsl);
+            var equals5 = color1.Equals(color2, (MudColorComparison)(-1));
             var hslEquals = color1.HslEquals(color2);
             var rgbaEquals = color1.RgbaEquals(color2);
 
             // Assert
-            equals.Should().BeFalse();
+            equals1.Should().BeTrue();
+            equals2.Should().BeTrue();
+            equals3.Should().BeFalse();
+            equals4.Should().BeFalse();
+            equals5.Should().BeTrue();
             hslEquals.Should().BeFalse();
             rgbaEquals.Should().BeTrue();
         }
 
         [Test]
-        public void HslEquals_Null_Test()
+        public void HslEquals_Null()
         {
             // Arrange
             MudColor color = new(120, 0.5, 0.4, 1);
@@ -898,7 +923,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(120, 0.5, 0.4, 1, 121, 0.5, 0.4, 1, false)] // Hue differs
         [TestCase(120, 0.5, 0.4, 1, 120, 0.51, 0.4, 1, false)] // Saturation differs
         [TestCase(120, 0.5, 0.4, 1, 120, 0.5, 0.41, 1, false)] // Lightness differs
-        public void HslEquals_Test(double h1, double s1, double l1, double a1, double h2, double s2, double l2, double a2, bool expected)
+        public void HslEquals(double h1, double s1, double l1, double a1, double h2, double s2, double l2, double a2, bool expected)
         {
             // Arrange
             MudColor first = new(h1, s1, l1, a1);
@@ -912,7 +937,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void RgbaEquals_Null_Test()
+        public void RgbaEquals_Null()
         {
             // Arrange
             MudColor color = new(10, 20, 30, 255);
@@ -930,7 +955,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(10, 20, 30, 255, 10, 21, 30, 255, false)] // Green differs
         [TestCase(10, 20, 30, 255, 11, 20, 30, 255, false)] // Red differs
         [TestCase(10, 20, 30, 255, 10, 20, 30, 255, true)]  // All equal
-        public void RgbaEquals_Test(byte r1, byte g1, byte b1, byte a1, byte r2, byte g2, byte b2, byte a2, bool expected)
+        public void RgbaEquals(byte r1, byte g1, byte b1, byte a1, byte r2, byte g2, byte b2, byte a2, bool expected)
         {
             // Arrange
             MudColor first = new(r1, g1, b1, a1);
@@ -982,7 +1007,7 @@ namespace MudBlazor.UnitTests.Utilities
             var getHashCodeEquals = color1.GetHashCode() == color2.GetHashCode();
 
             // Assert
-            getHashCodeEquals.Should().BeFalse();
+            getHashCodeEquals.Should().BeTrue();
         }
 
         [Test]
@@ -1034,7 +1059,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
         [TestCase("#8296f0ff", 130, 150, 240, 255)]
         [TestCase("#475863", 71, 88, 99, 255)]
-        public void ParseTest(string value, byte r, byte g, byte b, byte a)
+        public void Parse(string value, byte r, byte g, byte b, byte a)
         {
             // Arrange
             var expected = new MudColor(r, g, b, a);
@@ -1050,7 +1075,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgba(130,150,240,0.52,50)")]
         [TestCase("rgb(71,88,99,63)")]
         [TestCase("#8296f0ffff")]
-        public void ParseIncorrectFormatTest(string value)
+        public void ParseIncorrectFormat(string value)
         {
             // Act & Arrange
             var act = () => MudColor.Parse(value);
@@ -1064,7 +1089,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
         [TestCase("#8296f0ff", 130, 150, 240, 255)]
         [TestCase("#475863", 71, 88, 99, 255)]
-        public void TryParseTest(string value, byte r, byte g, byte b, byte a)
+        public void TryParse(string value, byte r, byte g, byte b, byte a)
         {
             // Arrange
             var expected = new MudColor(r, g, b, a);
@@ -1083,7 +1108,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("#8296f0ffff")]
         [TestCase("")]
         [TestCase(null)]
-        public void TryParseIncorrectFormatTest(string value)
+        public void TryParseIncorrectFormat(string value)
         {
             // Act
             var success = MudColor.TryParse(value, out var result);
@@ -1094,7 +1119,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void DeconstructTest()
+        public void Deconstruct()
         {
             // Arrange
             var mudColor = new MudColor(255, 128, 64, 192);
@@ -1114,7 +1139,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void ExplicitMudColorToStringCastTest()
+        public void ExplicitMudColorToStringCast()
         {
             // Arrange
             var mudColor1 = new MudColor(71, 88, 99, 1);

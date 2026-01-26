@@ -1,4 +1,30 @@
 ﻿@namespace MudBlazor.Charts
-@inherits MudCategoryChartBase
 
-<Pie UserAttributes="@UserAttributes" InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels" CircleDonutRatio="0.25"></Pie>
+@inherits MudRadialChartBase<T, DonutChartOptions>
+
+@typeparam T
+
+<div @attributes="UserAttributes" class="@Classname">
+    <BaseRadialChart T="T"
+                     TChartOptions="DonutChartOptions"
+                     ElementRefChanged="SetElementReference"
+                     Width="@Width"
+                     Height="@Height"
+                     Paths="@_paths"
+                     Radius="@Radius"
+                     ChartClass="mud-chart-donut"
+                     ChartSeries="@ChartSeries"
+                     ChartLabels="@ChartLabels"
+                     ChartOptions="@ChartOptions"
+                     CustomGraphics="@CustomGraphics"
+                     HoveredSegment="@_hoveredSegment"
+                     UserAttributes="@UserAttributes"
+                     TooltipTemplate="@TooltipTemplate"
+                     TooltipPositionFunc="@TooltipPositionFunc"
+                     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+                     OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
+                     OnMouseOut="() => OnSegmentMouseOut()" />
+
+    <Legend T="T" Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+</div>

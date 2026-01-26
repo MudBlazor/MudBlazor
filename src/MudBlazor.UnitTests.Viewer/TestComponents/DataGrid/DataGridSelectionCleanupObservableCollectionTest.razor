@@ -1,0 +1,49 @@
+﻿@* Test component for selection cleanup with ObservableCollection *@
+@using System.Collections.ObjectModel
+
+<MudDataGrid Items="@Items" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+    <Columns>
+        <SelectColumn T="Model" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "SelectedItems should be cleaned up when items are removed from an ObservableCollection.";
+
+    public ObservableCollection<Model> Items { get; set; } =
+    [
+        new Model("Sam", 56),
+        new Model("Alicia", 54),
+        new Model("Ira", 27),
+        new Model("John", 32)
+    ];
+
+    public HashSet<Model> SelectedItems { get; set; } = [];
+
+    public void RemoveFirstItem()
+    {
+        if (Items.Count > 0)
+        {
+            Items.RemoveAt(0);
+        }
+    }
+
+    public void RemoveItem(Model item)
+    {
+        Items.Remove(item);
+    }
+
+    public void ClearItems()
+    {
+        Items.Clear();
+    }
+
+    public void AddItem(Model item)
+    {
+        Items.Add(item);
+    }
+
+    public record Model(string Name, int Age);
+}

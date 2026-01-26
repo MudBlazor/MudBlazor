@@ -19,9 +19,9 @@ namespace MudBlazor
     public partial class MudButton : MudBaseButton, IDisposable
     {
         protected string Classname => new CssBuilder("mud-button-root mud-button")
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}-size-{Size.ToStringFast(true)}")
             .AddClass($"mud-width-full", GetRealFullWith())
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
@@ -29,17 +29,17 @@ namespace MudBlazor
             .Build();
 
         protected string StartIconClass => new CssBuilder("mud-button-icon-start")
-            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
+            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToStringFast(true)}")
             .AddClass(IconClass)
             .Build();
 
         protected string EndIconClass => new CssBuilder("mud-button-icon-end")
-            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
+            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToStringFast(true)}")
             .AddClass(IconClass)
             .Build();
 
         /// <summary>
-        /// The buton group which owns this button.
+        /// The button group which owns this button.
         /// </summary>
         [CascadingParameter]
         private MudButtonGroup? ButtonGroup { get; set; }
@@ -98,11 +98,11 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the button.
@@ -119,11 +119,11 @@ namespace MudBlazor
         /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
+        /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// Expands the button to 100% of the container width.
@@ -173,7 +173,7 @@ namespace MudBlazor
                 return true;
             }
             // If the button is in a group, the group is stretched and none button is explicitly stretched,
-            // then the button need to be streched
+            // then the button need to be stretched
             // See https://github.com/MudBlazor/MudBlazor/issues/9710
             return ButtonGroup != null && ButtonGroup.FullWidth && ButtonGroup.NoneButtonIsStreched();
         }

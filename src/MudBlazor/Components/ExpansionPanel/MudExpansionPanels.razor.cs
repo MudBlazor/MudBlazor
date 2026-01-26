@@ -24,11 +24,10 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
+        public bool Square { get; set; }
 
         /// <summary>
         /// Allows multiple panels to be expanded at the same time.

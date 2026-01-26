@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 #nullable enable
 namespace MudBlazor
@@ -58,6 +59,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>""</c>.
         /// </remarks>
+        [Obsolete("Prefer the AddIconClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string AddIconStyle { get; set; } = string.Empty;
@@ -78,6 +80,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>""</c>.
         /// </remarks>
+        [Obsolete("Prefer the CloseIconClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string CloseIconStyle { get; set; } = string.Empty;
@@ -103,5 +106,18 @@ namespace MudBlazor
         public string CloseIconToolTip { get; set; } = string.Empty;
 
         protected override string InternalClassName { get; } = "mud-dynamic-tabs";
+
+        protected override async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
+        {
+            await base.HandleTabKeyDownAsync(e, panel);
+
+            if ((e.Key == "Delete" || e.Key == "Backspace") && panel.ShowCloseIcon)
+            {
+                if (CloseTab.HasDelegate)
+                {
+                    await CloseTab.InvokeAsync(panel);
+                }
+            }
+        }
     }
 }

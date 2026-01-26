@@ -1,0 +1,48 @@
+﻿<MudTable @ref="TableInstance" T="Item" Items="Items" GroupBy="@_groupDefinition">
+    <GroupHeaderTemplate>
+        <MudTh>@context.Key</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTh>@context.Label</MudTh>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public MudTable<Item>? TableInstance { get; private set; }
+
+    public List<Item>? Items { get; set; } = [
+        new Item { Group = "G1", Nested = "N1", Label = "A" },
+        new Item { Group = "G1", Nested = "N1", Label = "B" },
+        new Item { Group = "G1", Nested = "N2", Label = "C" },
+        new Item { Group = "G2", Nested = "N1", Label = "D" },
+        new Item { Group = "G2", Nested = "N1", Label = "E" },
+        new Item { Group = "G2", Nested = "N2", Label = "F" },
+        new Item { Group = "G3", Nested = "N1", Label = "G" },
+        new Item { Group = "G3", Nested = "N1", Label = "H" },
+        new Item { Group = "G3", Nested = "N2", Label = "I" }
+    ];
+
+    private TableGroupDefinition<Item> _groupDefinition = new() {
+        Indentation = false,
+        Expandable = true,
+        IsInitiallyExpanded = false,
+        Selector = e => e.Group,
+        InnerGroup = new TableGroupDefinition<Item> {
+            Indentation = false,
+            Expandable = true,
+            IsInitiallyExpanded = false,
+            Selector = e => e.Group + " > " + e.Nested,
+        }
+    };
+
+    public class Item
+    {
+        public required string Label { get; set; }
+
+        public required string Group { get; set; }
+
+        public required string Nested { get; set; }
+
+        public override string ToString() => $"({Group} > {Nested}) {Label}";
+    }
+}

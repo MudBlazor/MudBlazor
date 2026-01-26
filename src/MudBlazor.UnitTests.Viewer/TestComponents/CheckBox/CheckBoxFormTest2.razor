@@ -1,0 +1,9 @@
+﻿<MudForm ValidationDelay="0">
+    <MudCheckBox T="bool?" Required="true" RequiredError="You must select a value" TriState="true">
+        Do you agree that MudBlazor is awesome
+    </MudCheckBox>
+</MudForm>
+
+@code {
+    public static string __description__ = "A required tristate checkbox must have a value of true or false, but not null.";
+}

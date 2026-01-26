@@ -20,7 +20,8 @@ namespace MudBlazor
         internal double? _valueNumber;
         internal Enum? _valueEnum;
         internal bool? _valueBool;
-        internal DateTime? _valueDate;
+        internal DateTime? _valueDateOnlyForPicker;
+        internal DateTime? _valueDateTimeForPicker;
         internal TimeSpan? _valueTime;
         internal Guid? _valueGuid;
 
@@ -46,8 +47,12 @@ namespace MudBlazor
             else if (fieldType.IsDateTime)
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
-                _valueDate = _filterDefinition.Value == null ? null : dateTime;
+                _valueDateTimeForPicker = _filterDefinition.Value == null ? null : dateTime;
                 _valueTime = _filterDefinition.Value == null ? null : dateTime.TimeOfDay;
+            }
+            else if (fieldType.IsDateOnly)
+            {
+                _valueDateOnlyForPicker = ((DateOnly?)_filterDefinition.Value)?.ToDateTime(TimeOnly.MinValue);
             }
             else if (fieldType.IsGuid)
                 _valueGuid = _filterDefinition.Value as Guid?;
@@ -97,7 +102,7 @@ namespace MudBlazor
 
         internal void DateValueChanged(DateTime? value)
         {
-            _valueDate = value;
+            _valueDateTimeForPicker = value;
 
             if (value is not null)
             {
@@ -121,9 +126,9 @@ namespace MudBlazor
         {
             _valueTime = value;
 
-            if (_valueDate is not null)
+            if (_valueDateTimeForPicker is not null)
             {
-                var date = _valueDate.Value.Date;
+                var date = _valueDateTimeForPicker.Value.Date;
 
                 // get the time component and add it to the date.
                 if (_valueTime is not null)
@@ -133,6 +138,20 @@ namespace MudBlazor
 
                 _filterDefinition.Value = date;
             }
+
+            _dataGrid.GroupItems();
+        }
+
+        internal void DateOnlyValueChanged(DateTime? value)
+        {
+            _valueDateOnlyForPicker = value;
+
+            if (value is not null)
+            {
+                _filterDefinition.Value = DateOnly.FromDateTime(value.Value);
+            }
+            else
+                _filterDefinition.Value = null;
 
             _dataGrid.GroupItems();
         }

@@ -23,21 +23,23 @@
                   @ref="_elementReference"
                   @attributes="UserAttributes"
                   id="@InputElementId"
-                  type="@InputType.ToDescriptionString()"
-                  value="@Text"
+                  type="@InputType.ToStringFast(true)"
                   placeholder="@Placeholder"
                   disabled=@GetDisabledState()
                   readonly="@GetReadOnlyState()"
                   @onblur="@OnBlurredAsync"
                   @onfocus="OnFocused"
-                  @oncut="OnCut"
-                  @oncopy="OnCopy"
-                  inputmode="@InputMode.ToDescriptionString()"
+                  @oncut="OnCutAsync"
+                  @oncopy="OnCopyAsync"
+                  @bind:get="@ReadText"
+                  @bind:set="@OnInputAsync"
+                  @bind:event="oninput"
+                  inputmode="@InputMode.ToStringFast(true)"
                   aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@Error.ToString().ToLowerInvariant()"
+                  aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
-            @Text
+            @ReadText
         </textarea>
     }
     else
@@ -46,18 +48,20 @@
                @ref="_elementReference"
                @attributes="UserAttributes"
                id="@InputElementId"
-               type="@InputType.ToDescriptionString()"
-               value="@Text"
+               type="@InputType.ToStringFast(true)"
                placeholder="@Placeholder"
                disabled=@GetDisabledState()
                readonly="@GetReadOnlyState()"
                @onblur="@OnBlurredAsync"
                @onfocus="OnFocused"
-               @oncut="OnCut"
-               @oncopy="OnCopy"
-               inputmode="@InputMode.ToDescriptionString()"
+               @oncut="OnCutAsync"
+               @oncopy="OnCopyAsync"
+               @bind:get="@ReadText"
+               @bind:set="@OnInputAsync"
+               @bind:event="oninput"
+               inputmode="@InputMode.ToStringFast(true)"
                aria-describedby="@GetAriaDescribedByString()"
-               aria-invalid="@Error.ToString().ToLowerInvariant()"
+               aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
     }

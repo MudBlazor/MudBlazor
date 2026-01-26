@@ -1,10 +1,12 @@
 ﻿#nullable enable
+using System.Diagnostics.CodeAnalysis;
+
 namespace MudBlazor
 {
     /// <summary>
     /// Represents an arbitrary SVG path.
     /// </summary>
-    internal class SvgPath
+    public class SvgPath : IEquatable<SvgPath>
     {
         /// <summary>
         /// The position of this path within a list.
@@ -35,5 +37,34 @@ namespace MudBlazor
         /// The label Y position for on hover.
         /// </summary>
         public double LabelY { get; set; }
+
+        ///<inheritdoc />
+        public virtual bool Equals(SvgPath? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return Index == other.Index &&
+                   string.Equals(Data, other.Data) &&
+                   string.Equals(LabelXValue, other.LabelXValue) &&
+                   string.Equals(LabelYValue, other.LabelYValue) &&
+                   LabelX.Equals(other.LabelX) &&
+                   LabelY.Equals(other.LabelY);
+        }
+
+        ///<inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as SvgPath);
+        }
+
+        ///<inheritdoc />
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Index, Data, LabelXValue, LabelYValue, LabelX, LabelY);
+        }
     }
 }

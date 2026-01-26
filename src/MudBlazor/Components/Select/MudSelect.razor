@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @typeparam T
 @inherits MudBaseInput<T>
 
@@ -14,7 +14,7 @@
                          Class="@Classname"
                          Style="@Style"
                          Error="@HasErrors"
-                         ErrorId="@ErrorId"
+                         ErrorId="@ErrorIdState.Value"
                          ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
@@ -29,13 +29,12 @@
                           Label="@Label"
                           Variant="@Variant"
                           Typo="@Typo"
-                          TextUpdateSuppression="false"
-                          Value="@(Strict && !IsValueInList ? null : Text)"
+                          Value="@(Strict && !IsValueInList ? null : ReadText)"
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="true"
-                          Error="@Error"
-                          ErrorId="@ErrorId"
+                          Error="@ErrorState.Value"
+                          ErrorId="@ErrorIdState.Value"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
                           AdornmentText="@AdornmentText"
@@ -50,7 +49,7 @@
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes"
                           OnBlur="@OnBlurAsync"
-                          ShrinkLabel="@ShrinkLabel"
+                          ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
                           Required="@Required">
                     @if (CanRenderValue)
@@ -62,7 +61,7 @@
                 {
                     <MudStack Class="@FillerClassname" Spacing="1" Row>
                         @{
-                            var value = _longestItem is { Value: not null } ? ToStringFunc ?.Invoke(_longestItem.Value) ?? Converter.Set(_longestItem.Value) : string.Empty;
+                            var value = _longestItem is { Value: not null } ? ToStringFunc ?.Invoke(_longestItem.Value) ?? ConvertSet(_longestItem.Value) : string.Empty;
                             var useLabel = Label is not null && Placeholder is null && !ShrinkLabel
                                         && (Adornment != Adornment.Start || (AdornmentIcon is null && AdornmentText is null));
 
@@ -96,8 +95,7 @@
                             Class="@PopoverClass"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            Fixed="@DropdownSettings.Fixed"
-                            OverflowBehavior="@DropdownSettings.OverflowBehavior"
+                            Fixed="@PopoverFixed"
                             RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
@@ -139,6 +137,6 @@ feature relies on pointerdown event resulting in the same order of events.
 <MudOverlay Visible="_open"
             @onpointerdown="@(() => CloseMenu(false))"
             LockScroll="@LockScroll"
-            AutoClose="@(!Modal)"
-            Modal="@Modal"
+            AutoClose="@(!GetModal())"
+            Modal="@GetModal()"
             OnClosed="@(() => CloseMenu(false))"/>

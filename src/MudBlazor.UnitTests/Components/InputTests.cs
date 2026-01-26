@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -9,17 +9,26 @@ namespace MudBlazor.UnitTests.Components;
 public class InputTests : BunitTest
 {
     [Test]
-    public void ReadOnlyShouldNotHaveClearButton()
+    public async Task ReadOnlyShouldNotHaveClearButton()
     {
-        var comp = Context.RenderComponent<MudInput<string>>(p => p
+        var comp = Context.Render<MudInput<string>>(p => p
             .Add(x => x.Text, "some value")
             .Add(x => x.Clearable, true)
             .Add(x => x.ReadOnly, false));
 
         comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
-        comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+        await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
         comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
     }
-#nullable disable
+
+    [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
+    [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
+    public void InputSizingHasClass(InputSizing sizing, string expectedClass)
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(p => p.Sizing, sizing));
+
+        comp.Find("div.mud-input").ClassList.Should().Contain(expectedClass);
+    }
 }

@@ -194,12 +194,12 @@
         }
     }
 
-    private async Task<GridData<USState>> ServerReload(GridState<USState> state)
+    private async Task<GridData<USState>> ServerReload(GridState<USState> state, CancellationToken token)
     {
         // call API
         var data = GetAllStates(_searchString, state.SortDefinitions);
         // simulate some wait time
-        await Task.Delay(150);
+        await Task.Delay(150, token);
 
         var totalItems = data.Count;        
         var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();

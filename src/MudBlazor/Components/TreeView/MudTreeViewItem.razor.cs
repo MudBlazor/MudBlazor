@@ -4,6 +4,7 @@ using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
@@ -22,8 +23,8 @@ namespace MudBlazor
         private bool _isServerLoaded;
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
-        private readonly ParameterState<IReadOnlyCollection<TreeItemData<T?>>?> _itemsState;
-        private Converter<T> _converter = new DefaultConverter<T>();
+        private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
+        private readonly IConverter<T?, string?> _converter = new DefaultConverter<T?>();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
         public MudTreeViewItem()
@@ -36,7 +37,7 @@ namespace MudBlazor
                 .WithParameter(() => Selected)
                 .WithEventCallback(() => SelectedChanged)
                 .WithChangeHandler(OnSelectedParameterChangedAsync);
-            _itemsState = registerScope.RegisterParameter<IReadOnlyCollection<TreeItemData<T?>>?>(nameof(Items))
+            _itemsState = registerScope.RegisterParameter<IReadOnlyCollection<ITreeItemData<T>>?>(nameof(Items))
                 .WithParameter(() => Items)
                 .WithEventCallback(() => ItemsChanged);
         }
@@ -212,15 +213,15 @@ namespace MudBlazor
         /// <summary>
         /// The child items underneath this item.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<TreeItemData<T?>>? Items { get; set; }
+        public IReadOnlyCollection<ITreeItemData<T>>? Items { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="Items"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<IReadOnlyCollection<TreeItemData<T?>>?> ItemsChanged { get; set; }
+        public EventCallback<IReadOnlyCollection<ITreeItemData<T>>?> ItemsChanged { get; set; }
 
         /// <summary>
         /// Shows the children items underneath this item.
@@ -228,7 +229,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Expanding)]
         public bool Expanded { get; set; }
 
@@ -244,7 +245,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. Can be set alongside other items if <see cref="MudTreeView{T}.SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool Selected { get; set; }
 
@@ -373,10 +374,10 @@ namespace MudBlazor
 
         private bool AreChildrenVisible() => _itemsState.Value is null || _itemsState.Value.Any(i => i.Visible);
 
-        private IReadOnlyCollection<TreeItemData<T>> GetItems()
+        private IReadOnlyCollection<ITreeItemData<T>> GetItems()
         {
             if (_itemsState.Value == null)
-                return Array.Empty<TreeItemData<T>>();
+                return Array.Empty<ITreeItemData<T>>();
             return _itemsState.Value!;
         }
 
@@ -389,7 +390,7 @@ namespace MudBlazor
             return Value;
         }
 
-        private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Set(Value) : Text;
+        private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Convert(Value) : Text;
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
 
@@ -563,7 +564,7 @@ namespace MudBlazor
         {
             if (_itemsState.Value is not null)
             {
-                await _itemsState.SetValueAsync(Array.Empty<TreeItemData<T?>>());
+                await _itemsState.SetValueAsync(Array.Empty<ITreeItemData<T>>());
             }
             await TryInvokeServerLoadFunc();
 

@@ -1,19 +1,15 @@
-﻿
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Snackbar;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class SnackbarTests : BunitTest
     {
         private IRenderedComponent<MudSnackbarProvider> _provider;
@@ -23,26 +19,19 @@ namespace MudBlazor.UnitTests.Components
         public void SnackbarSetUp()
         {
             _service = Context.Services.GetService<ISnackbar>();
-            _provider = Context.RenderComponent<MudSnackbarProvider>();
+            _provider = Context.Render<MudSnackbarProvider>();
             _provider.Find("#mud-snackbar-container").InnerHtml.Trimmed().Should().BeEmpty();
         }
 
         [TearDown]
-        public void SnackbarTearDown()
+        public async Task SnackbarTearDown()
         {
-            // Force close all snackbars directly from their class.
-            // We used to simulate clicking the close button but this is quicker because it skips transitions.
-            // We keep checking instead of using a cached list because new snackbars could be spawned from the close event.
-            while (_service.ShownSnackbars.Any())
-            {
-                _service.ShownSnackbars.First().ForceClose();
-            }
-
-            _provider.WaitForAssertion(() => _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
+            await _provider.InvokeAsync(() => _service.Clear());
+            _service.ShownSnackbars.Should().BeEmpty();
         }
 
         [Test]
-        public async Task SimpleTest()
+        public async Task Simple()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
             _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
@@ -98,24 +87,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TestWithRenderFragmentLiteral()
+        public async Task TestWithRenderFragmentLiteral()
         {
-            var testComponent = Context.RenderComponent<SnackbarRenderFragmentMessageTest>();
+            var testComponent = Context.Render<SnackbarRenderFragmentMessageTest>();
 
-            testComponent.Find("button").Click();
-            _provider.WaitForAssertion(() =>
+            await testComponent.Find("button").ClickAsync();
+            await _provider.WaitForAssertionAsync(() =>
                 _provider.Find("div.mud-snackbar-content-message").Should().NotBe(null)
             );
             _provider.Find("div.mud-snackbar-content-message").TrimmedText().Replace(" ", "").Should().Be("Here'saregularitem\nHere'sabolditem\nHere'sanitalicizeditem");
         }
 
         [Test]
-        public void TestWithCustomComponent()
+        public async Task TestWithCustomComponent()
         {
-            var testComponent = Context.RenderComponent<SnackbarCustomComponentMessageTest>();
+            var testComponent = Context.Render<SnackbarCustomComponentMessageTest>();
 
-            testComponent.Find("button").Click();
-            _provider.WaitForAssertion(() =>
+            await testComponent.Find("button").ClickAsync();
+            await _provider.WaitForAssertionAsync(() =>
                 _provider.Find("div.mud-snackbar-content-message").Should().NotBe(null)
             );
             _provider.Find("div.mud-snackbar-content-message .mud-chip").Should().NotBe(null);
@@ -239,13 +228,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SnackbarIconConfigurationTest()
+        public async Task SnackbarIconConfiguration()
         {
-            var testComponent = Context.RenderComponent<SnackbarIconConfiguationTest>();
+            var testComponent = Context.Render<SnackbarIconConfiguationTest>();
 
-            testComponent.Find("button").Click();
+            await testComponent.Find("button").ClickAsync();
 
-            _provider.WaitForAssertion(() =>
+            await _provider.WaitForAssertionAsync(() =>
                 _provider.Find("div.mud-snackbar-content-message").Should().NotBe(null)
             );
 
@@ -255,14 +244,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task IconTest()
+        public async Task Icon()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
             _provider.Find("#mud-snackbar-container .mud-snackbar .mud-snackbar-icon").InnerHtml.Trim().Should().NotBeEmpty();
         }
 
         [Test]
-        public async Task HideIconTest()
+        public async Task HideIcon()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
             var hasIcon = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
@@ -270,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CustomIconTest()
+        public async Task CustomIcon()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.IconColor = Color.Tertiary; config.IconSize = Size.Large; }));
 
@@ -280,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CustomIconDefaultValuesTest()
+        public async Task CustomIconDefaultValues()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success));
 
@@ -316,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DisposeTest()
+        public async Task Dispose()
         {
             // shoot out a snackbar
             Snackbar snackbar = null;
@@ -381,7 +370,7 @@ namespace MudBlazor.UnitTests.Components
             primary.Should().NotBeNull();
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            _provider.Find(".mud-snackbar-close-button").Click();
+            await _provider.Find(".mud-snackbar-close-button").ClickAsync();
 
             // Test that the hide transition from clicking the close button will be forcibly ended, skipping the max value duration.
             primary.ForceClose();
@@ -420,7 +409,9 @@ namespace MudBlazor.UnitTests.Components
 
             primary.PauseTransitions(false);
 
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(
+                () => _provider.FindAll(".mud-snackbar").Count.Should().Be(0),
+                TimeSpan.FromSeconds(2));
         }
 
         [Test]
@@ -441,10 +432,10 @@ namespace MudBlazor.UnitTests.Components
             // Test that clicking the snackbar will trigger onclick to close despite pointer over and touch start pausing it.
 
             _provider.Find(".mud-snackbar").TouchStart();
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
-            _provider.Find(".mud-snackbar").Click();
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").ClickAsync();
 
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -464,10 +455,10 @@ namespace MudBlazor.UnitTests.Components
 
             // Test that clicking the close button will actually close the snackbar even with the pointer over.
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
-            _provider.FindAll(".mud-snackbar-close-button").Single().Click();
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await _provider.FindAll(".mud-snackbar-close-button").Single().ClickAsync();
 
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -492,10 +483,10 @@ namespace MudBlazor.UnitTests.Components
 
             counter.Should().Be(0);
 
-            _provider.FindAll(".mud-snackbar-close-button").Single().Click();
+            await _provider.FindAll(".mud-snackbar-close-button").Single().ClickAsync();
 
             counter.Should().Be(1);
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -517,10 +508,60 @@ namespace MudBlazor.UnitTests.Components
 
             // Test that clicking the action button will actually close the snackbar even with the pointer over.
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
-            _provider.Find(".mud-snackbar-action-button").Click();
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar-action-button").ClickAsync();
 
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task ActionRequiresInteractionByDefault()
+        {
+            Snackbar snackbar = null;
+
+            await _provider.InvokeAsync(() =>
+                snackbar = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 0;
+                    c.HideTransitionDuration = 0;
+                    c.VisibleStateDuration = 10;
+                    c.Action = "Close";
+                    c.OnClick = _ => Task.CompletedTask;
+                })
+            );
+
+            snackbar.Should().NotBeNull();
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            await Task.Delay(200);
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            await _provider.Find(".mud-snackbar-action-button").ClickAsync();
+
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task ActionAllowsAutoDismissWhenDisabled()
+        {
+            Snackbar snackbar = null;
+
+            await _provider.InvokeAsync(() =>
+                snackbar = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 0;
+                    c.HideTransitionDuration = 0;
+                    c.VisibleStateDuration = 0;
+                    c.Action = "Close";
+                    c.RequireInteraction = false;
+                })
+            );
+
+            snackbar.Should().NotBeNull();
+            snackbar.State.Options.RequiresInteraction.Should().BeFalse();
+
+            await _provider.WaitForAssertionAsync(() => _service.ShownSnackbars.Should().BeEmpty());
         }
 
         [Test]
@@ -540,11 +581,11 @@ namespace MudBlazor.UnitTests.Components
 
             // Test that the hide transition from clicking the close button cannot be stopped by hovering back over the snackbar.
 
-            _provider.Find(".mud-snackbar-close-button").Click();
+            await _provider.Find(".mud-snackbar-close-button").ClickAsync();
             _provider.Find(".mud-snackbar").TouchStart();
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -568,15 +609,15 @@ namespace MudBlazor.UnitTests.Components
 
             // Test that the snackbar will stay visible.
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
             await Task.Delay(primary.State.Options.VisibleStateDuration * 2);
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerleave", new PointerEventArgs());
 
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -609,7 +650,7 @@ namespace MudBlazor.UnitTests.Components
 
             _provider.Find(".mud-snackbar").TouchEnd();
 
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -634,7 +675,7 @@ namespace MudBlazor.UnitTests.Components
             // Interrupting show transition should instantly go to visible state.
 
             primary.State.SnackbarState.Should().Be(SnackbarState.Showing);
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
 
             // Pointer is still over and the state should still be visible.
@@ -643,17 +684,17 @@ namespace MudBlazor.UnitTests.Components
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
             // Leave pointer and let the hide transition that's been pending start.
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerleave", new PointerEventArgs());
             await Task.Delay(primary.State.Options.HideTransitionDuration / 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Hiding);
 
             // Re-enter halfway through hide transition.
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
 
             // Finally make the pointer leave and let it hide.
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -711,13 +752,13 @@ namespace MudBlazor.UnitTests.Components
             // Prove that the pointer entering the snackbar does not restart the duration from zero.
 
             await Task.Delay(60); // 60% through the visible duration.
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
-            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await _provider.Find(".mud-snackbar").TriggerEventAsync("onpointerleave", new PointerEventArgs());
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TouchEnd();
 
             // It should close within another 60ms if it's behaving correctly; If the duration was reset this assertion will fail.
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0), TimeSpan.FromMilliseconds(60));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0), TimeSpan.FromMilliseconds(60));
         }
 
         [Test]
@@ -748,11 +789,11 @@ namespace MudBlazor.UnitTests.Components
                 var clicked = false;
 
                 // Click the action button if one was found.
-                await _provider.InvokeAsync(() =>
+                await _provider.InvokeAsync(async () =>
                 {
                     if (_provider.FindAll(".mud-snackbar-action-button").Count == 1)
                     {
-                        _provider.Find(".mud-snackbar-action-button").Click();
+                        await _provider.Find(".mud-snackbar-action-button").ClickAsync();
                         clicked = true;
                     }
                 });
@@ -794,11 +835,11 @@ namespace MudBlazor.UnitTests.Components
                 var clicked = false;
 
                 // Click the snackbar if one was found.
-                await _provider.InvokeAsync(() =>
+                await _provider.InvokeAsync(async () =>
                 {
                     if (_provider.FindAll(".mud-snackbar").Count == 1)
                     {
-                        _provider.Find(".mud-snackbar").Click();
+                        await _provider.Find(".mud-snackbar").ClickAsync();
                         clicked = true;
                     }
                 });
@@ -811,6 +852,56 @@ namespace MudBlazor.UnitTests.Components
 
             // Only one click should have been successful and multiple clicks should have been attempted.
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
+        }
+
+        [Test]
+        public async Task SnackbarShouldNotRenderIconWhenGlobalHideIconIsTrue()
+        {
+            // Arrange: set global via configuration
+            _service.Configuration.HideIcon = true;
+
+            // Act
+            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Success));
+
+            // Assert: Snackbar is rendered, but no icon element
+            await _provider.WaitForAssertionAsync(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task SnackbarShouldRenderIconWhenPerSnackbarOverrideIsFalse()
+        {
+            // Arrange: globally hide icons
+            _service.Configuration.HideIcon = true;
+
+            // Act: override for this one snackbar
+            await _provider.InvokeAsync(() =>
+                _service.Add("Hello world", Severity.Success, opts => opts.HideIcon = false)
+            );
+
+            // Assert: Snackbar is rendered and icon appears due to per-snackbar override
+            await _provider.WaitForAssertionAsync(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task SnackbarShouldRenderIconByDefault()
+        {
+            // Arrange: globally hide icons
+            _service.Configuration.HideIcon = false;
+
+            // Act
+            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Info));
+
+            // Assert: Snackbar is rendered and icon appears as default
+            await _provider.WaitForAssertionAsync(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
         }
     }
 }

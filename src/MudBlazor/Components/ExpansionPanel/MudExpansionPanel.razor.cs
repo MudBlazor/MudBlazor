@@ -1,6 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -35,6 +34,7 @@ namespace MudBlazor
 
         protected string HeaderClassname =>
             new CssBuilder("mud-expand-panel-header")
+                .AddClass("mud-expand-panel-header-gutters", Gutters && Parent?.Gutters != false)
                 .AddClass(HeaderClass)
                 .Build();
 
@@ -155,7 +155,14 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Indicates whether the next panel is currently expanded.
+        /// When true, the content remains in the DOM even when the panel is collapsed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool KeepContentAlive { get; set; } = true;
+
+        /// <summary>
+        /// The next panel is currently expanded.
         /// </summary>
         public bool NextPanelExpanded { get; set; }
 
@@ -251,6 +258,19 @@ namespace MudBlazor
             if (disposing)
             {
                 Parent?.RemovePanel(this);
+            }
+        }
+
+        private async Task HandleKeyDownAsync(KeyboardEventArgs e)
+        {
+            if (Disabled)
+            {
+                return;
+            }
+
+            if (e.Key == "Enter" || e.Key == " ")
+            {
+                await ToggleExpansionAsync();
             }
         }
     }

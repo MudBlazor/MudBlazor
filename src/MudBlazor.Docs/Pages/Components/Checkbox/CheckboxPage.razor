@@ -1,11 +1,7 @@
 ﻿@page "/components/checkbox"
 
 <DocsPage>
-    <DocsPageHeader Title="Check Box" Component="@nameof(MudCheckBox<T>)">
-        <Description>
-            Use checkboxes (instead of switches or radio buttons) if multiple options can be selected from a list.
-        </Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Check Box" Component="@nameof(MudCheckBox<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -66,6 +62,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Aria">
+                <Description>
+                    The checkbox uses a <CodeInline Tag>label</CodeInline> element that wraps the input, which by default assigns any text provided via 
+                    the <CodeInline>Label</CodeInline> property as the accessible name for the checkbox. If this behavior doesn't suit your layout or 
+                    accessibility needs, you can use the <CodeInline>AriaLabel</CodeInline> property to explicitly set the accessible name. This overrides 
+                    the default labeling behavior and works independently of the <CodeInline>Label</CodeInline> or <CodeInline>ChildContent</CodeInline> properties.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxAriaExample)">
+                <CheckboxAriaExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Indeterminate State">
                 <Description>
                     When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.
@@ -74,7 +84,8 @@
                     <br />
                     Indeterminate, True, False, True, False...
                     <br />
-                    It is not possible to obtain the Indeterminate state again. Except by resetting the value to <CodeInline>Null</CodeInline>. Or, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
+                    It is not possible to obtain the Indeterminate state again unless you reset the value to <CodeInline>Null</CodeInline>.
+                    Alternatively, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(CheckboxIndeterminateExample)">
@@ -102,7 +113,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="ReadOnly Mode">
-                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the checkbox control stop listening to user input.</Description>
+                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> stops the checkbox control from listening to user input.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(CheckboxReadOnlyExample)" ShowCode="false" Block="true">
                 <CheckboxReadOnlyExample />
@@ -112,12 +123,12 @@
         <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
-                    <MudText>MudCheckBox accepts keys to keyboard navigation.</MudText>
+                    <MudText>MudCheckBox supports keyboard navigation.</MudText>
                     <br />
-                    <MudText><CodeInline>Space</CodeInline> key to toggle state true/false/(if TriState is true) indeterminate</MudText>
-                    <MudText><CodeInline>Delete</CodeInline> key to set UnChecked</MudText>
-                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to set Checked</MudText>
-                    <MudText><CodeInline>Backspace</CodeInline> key to set indeterminate (only TriState is true)</MudText>
+                    <MudText><CodeInline>Space</CodeInline> key to toggle between true/false/(when TriState is true) indeterminate</MudText>
+                    <MudText><CodeInline>Delete</CodeInline> key to set unchecked</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to set checked</MudText>
+                    <MudText><CodeInline>Backspace</CodeInline> key to set indeterminate (only when TriState is true)</MudText>
                     <MudText>*Disabled or ReadOnly checkboxes cannot be changed by keys.</MudText>
                 </Description>
             </SectionHeader>

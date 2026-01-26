@@ -92,9 +92,9 @@ namespace MudBlazor
         /// <summary>
         /// Transitions the snackbar to the specified state.
         /// </summary>
-        /// <param name="state">The state to transition to</param>
-        /// <param name="animate">Whether the transition should be animated or instant</param>
-        /// <param name="cancellable">Whether the transition, if animated, can be cancelled</param>
+        /// <param name="state">The state to transition to.</param>
+        /// <param name="animate">The transition should be animated or instant.</param>
+        /// <param name="cancellable">The transition, if animated, can be cancelled.</param>
         private void TransitionTo(SnackbarState state, bool animate = true, bool cancellable = true)
         {
             // A new non-cancellable transition takes priority and will force a resume.
@@ -121,7 +121,7 @@ namespace MudBlazor
                     TransitionTo(SnackbarState.Visible);
                 }
             }
-            else if (state.IsVisible() && !options.RequireInteraction)
+            else if (state.IsVisible() && !options.RequiresInteraction)
             {
                 if (!animate || !StartTimer(options.VisibleStateDuration))
                 {

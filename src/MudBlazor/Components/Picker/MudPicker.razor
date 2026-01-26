@@ -13,7 +13,8 @@
                        Style="@Style"
                        Label="@Label"
                        Mask="@_mask"
-                       @bind-Value="@Text"
+                       @bind-Value:get="@ReadText"
+                       @bind-Value:set="@WriteTextAsync"
                        Immediate="@(ImmediateText && Editable)"
                        Placeholder="@Placeholder"
                        HelperText="@HelperText"
@@ -31,12 +32,14 @@
                        Margin="@Margin"
                        Required="@Required"
                        RequiredError="@RequiredError"
-                       Error="@Error"
-                       ErrorText="@ErrorText"
+                       Error="@ErrorState.Value"
+                       ErrorText="@ErrorTextState.Value"
                        Clearable="@(Clearable && !GetReadOnlyState())"
+                       ClearIcon="@ClearIcon"
                        OnClearButtonClick="@(async () => await ClearAsync())"
-                       TextUpdateSuppression="@(Editable && !GetReadOnlyState())"
                        ShrinkLabel="@ShrinkLabel"
+                       KeyDownPreventDefault="Open"
+                       InputId="@InputId"
                        @onclick="OnClickAsync" />;
 
 #nullable enable
@@ -61,7 +64,7 @@
                 }
                 @if (PickerVariant == PickerVariant.Inline)
                 {
-                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="@(OverflowBehavior)" RelativeWidth="@(RelativeWidth)" Paper="false">
+                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" RelativeWidth="@(RelativeWidth)" Paper="false">
                         <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
                             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                                 <div class="@PickerContainerClassname">
@@ -121,7 +124,7 @@
             {
                 <MudOverlay Visible="@Open"
                             AutoClose
-                            Modal="@Modal"
+                            Modal="@GetModal()"
                             OnClosed="CloseOverlayAsync"
                             LockScroll="false"/>
             }

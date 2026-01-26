@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -43,7 +43,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCreatePopoverAsync()
+    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCreatePopover()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -62,7 +62,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldConnectAutomaticallyAfterDestroyPopoverAsync()
+    public async Task IsInitialized_ShouldConnectAutomaticallyAfterDestroyPopover()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -80,7 +80,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldConnectAutomaticallyAfterUpdatePopoverAsync()
+    public async Task IsInitialized_ShouldConnectAutomaticallyAfterUpdatePopover()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -98,7 +98,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCountProvidersAsync()
+    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCountProviders()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -613,7 +613,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task DisposeAsync_ShouldCancelDetachRangeAsync()
+    public async Task DisposeAsync_ShouldCancelDetachRange()
     {
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();

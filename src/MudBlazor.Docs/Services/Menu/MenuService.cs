@@ -5,7 +5,6 @@
 using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
 
-
 namespace MudBlazor.Docs.Services
 {
 #nullable enable
@@ -49,7 +48,6 @@ namespace MudBlazor.Docs.Services
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
-            .AddItem("Chat", typeof(MudChat), typeof(MudChatHeader), typeof(MudChatBubble), typeof(MudChatFooter))
             .AddItem("Divider", typeof(MudDivider))
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Image", typeof(MudImage))
@@ -80,6 +78,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
+            .AddItem("Split Panel", typeof(MudSplitPanel))
+            .AddItem("Hotkey", typeof(MudHotkey))
 
             //GROUPS
 
@@ -114,17 +114,22 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Icon Button", typeof(MudIconButton))
                 .AddItem("Toggle Icon Button", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
+                .AddItem("Button FAB Menu", typeof(MudFabMenu))
             )
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut Chart", typeof(Donut))
-                .AddItem("Line Chart", typeof(Line), typeof(Legend))
-                .AddItem("Pie Chart", typeof(Pie))
-                .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
-                .AddItem("Heat Map Chart", typeof(HeatMap))
-                .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart))
+                .AddItem("Donut Chart", typeof(Donut<T>), typeof(DonutChartOptions), typeof(Legend<T>))
+                .AddItem("Line Chart", typeof(Line<T>), typeof(LineChartOptions), typeof(Legend<T>))
+                .AddItem("Pie Chart", typeof(Pie<T>), typeof(PieChartOptions), typeof(Legend<T>))
+                .AddItem("Bar Chart", typeof(Bar<T>), typeof(BarChartOptions), typeof(Legend<T>))
+                .AddItem("Heat Map Chart", typeof(HeatMap<T>), typeof(HeatMapChartOptions), typeof(Legend<T>))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar<T>), typeof(StackedBarChartOptions), typeof(Legend<T>))
+                .AddItem("Time Series Chart", typeof(TimeSeries<T>), typeof(TimeSeriesChartOptions), typeof(Legend<T>))
+                .AddItem("Radar Chart", typeof(Radar<T>), typeof(RadarChartOptions), typeof(Legend<T>))
+                .AddItem("Rose Chart", typeof(Rose<T>), typeof(RoseChartOptions), typeof(Legend<T>))
+                .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
+                .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
             // this must be last!
             .GetComponentsSortedByName();
@@ -143,7 +148,9 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
                 new DocsLink {Title = "Localization", Href = "features/localization"},
-                new DocsLink {Title = "Analyzers", Href = "features/analyzers"}
+                new DocsLink {Title = "Analyzers", Href = "features/analyzers"},
+                new DocsLink {Title = "Services", Href = "features/services"},
+                new DocsLink {Title = "Chat (deprecated)", Href = "components/chat"}, // TODO: there is no component to reference so it's added under features instead so the page is still searchable. remove this in v10.
             }.OrderBy(x => x.Title);
 
         /// <summary>

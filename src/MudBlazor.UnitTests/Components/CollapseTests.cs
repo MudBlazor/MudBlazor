@@ -3,10 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using Bunit.Web.AngleSharp;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Collapse;
 using NUnit.Framework;
 
@@ -16,9 +14,9 @@ namespace MudBlazor.UnitTests.Components
     public class CollapseTests : BunitTest
     {
         [Test]
-        public void Collapse_TwoWayBinding_Test1()
+        public async Task Collapse_TwoWayBinding_Test1()
         {
-            var comp = Context.RenderComponent<CollapseBindingTest>();
+            var comp = Context.Render<CollapseBindingTest>();
             var collapse = comp.FindComponent<MudCollapse>();
 
             collapse.Markup.Should().Contain("mud-collapse-entered");
@@ -30,19 +28,19 @@ namespace MudBlazor.UnitTests.Components
             MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via button
-            Button().Click();
+            await Button().ClickAsync();
             MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via button
-            Button().Click();
+            await Button().ClickAsync();
             MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via switch
-            MudSwitch().Find("input").Change(false);
+            await MudSwitch().Find("input").ChangeAsync(false);
             MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via switch
-            MudSwitch().Find("input").Change(true);
+            await MudSwitch().Find("input").ChangeAsync(true);
             MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
         }
     }

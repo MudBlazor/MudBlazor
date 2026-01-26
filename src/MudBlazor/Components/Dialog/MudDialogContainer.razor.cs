@@ -26,6 +26,7 @@ namespace MudBlazor
     {
         private bool _disposed;
         private MudDialog? _dialog;
+        private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
         private readonly string _elementId = Identifier.Create("dialog");
@@ -57,14 +58,14 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to the options in the <see cref="MudDialog"/> or options passed during <see cref="DialogService.ShowAsync(Type)"/> methods.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Misc)] // Behavior and Appearance
         public DialogOptions Options { get; set; } = DialogOptions.Default;
 
         /// <summary>
         /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Behavior)]
         public string? Title { get; set; }
 
@@ -159,6 +160,12 @@ namespace MudBlazor
             }
         }
 
+        private async Task OnMouseUpAsync(MouseEventArgs args)
+        {
+            if (args.Button > 0)
+                await RefocusDialogAsync();
+        }
+
         internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
         {
             if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
@@ -217,15 +224,28 @@ namespace MudBlazor
         private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
             if (!GetBackdropClick())
-                return;
-
-            if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
             {
-                ((IMudDialogInstance)this).Cancel();
+                await RefocusDialogAsync();
                 return;
             }
 
-            await _dialog.OnBackdropClick.InvokeAsync(args);
+            if (_dialog is not null && _dialog.OnBackdropClick.HasDelegate)
+            {
+                await _dialog.OnBackdropClick.InvokeAsync(args);
+                await RefocusDialogAsync();
+            }
+            else
+            {
+                ((IMudDialogInstance)this).Cancel();
+            }
+        }
+
+        private async Task RefocusDialogAsync()
+        {
+            if (GetCloseOnEscapeKey() && !_disposed)
+            {
+                await _dialogContainerReference.FocusAsync();
+            }
         }
 
         private string GetPosition()
@@ -244,7 +264,7 @@ namespace MudBlazor
             {
                 position = DialogPosition.Center;
             }
-            return $"mud-dialog-{position.ToDescriptionString()}";
+            return $"mud-dialog-{position.ToStringFast(true)}";
         }
 
         private string GetMaxWidth()
@@ -263,7 +283,7 @@ namespace MudBlazor
             {
                 maxWidth = MaxWidth.Small;
             }
-            return $"mud-dialog-width-{maxWidth.ToDescriptionString()}";
+            return $"mud-dialog-width-{maxWidth.ToStringFast(true)}";
         }
 
         private bool GetFullWidth() => GetDialogOptionsOrDefault.FullWidth ?? GlobalDialogOptions.FullWidth ?? false;
@@ -297,7 +317,7 @@ namespace MudBlazor
         string IMudDialogInstance.ElementId => _elementId;
 
         /// <inheritdoc />
-        string? IMudDialogInstance.Title => Title;
+        string? IMudDialogInstance.Title => _titleState.Value;
 
         /// <inheritdoc />
         DialogOptions IMudDialogInstance.Options => GetDialogOptionsOrDefault;

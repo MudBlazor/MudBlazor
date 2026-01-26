@@ -5,7 +5,7 @@
 class MudPointerEventsNone {
     constructor() {
         this.dotnet = null;
-        this.logger = (msg, ...args) => { };
+        this.logger = () => { };
         this.pointerDownHandlerRef = null;
         this.pointerUpHandlerRef = null;
         this.pointerDownMap = new Map();
@@ -21,7 +21,7 @@ class MudPointerEventsNone {
         if (options.enableLogging) {
             this.logger = (msg, ...args) => console.log("[MudBlazor | PointerEventsNone]", msg, ...args);
         } else {
-            this.logger = (msg, ...args) => { };
+            this.logger = () => { };
         }
 
         this.logger("Called listenForPointerEvents", { dotNetReference, elementId, options });

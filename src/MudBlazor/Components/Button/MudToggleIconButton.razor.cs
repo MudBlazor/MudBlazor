@@ -5,7 +5,7 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Represents a button consisting of an icon that can be toggled between two distinct states.
+/// An icon button that toggles between two distinct states, useful for on/off or favorite/unfavorite scenarios.
 /// </summary>
 /// <remarks>
 /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
@@ -48,11 +48,11 @@ public partial class MudToggleIconButton : MudComponentBase
     /// The color of the button.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
+    /// Defaults to <see cref="Color.Default"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Button.Appearance)]
-    public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+    public Color Color { get; set; } = Color.Default;
 
     /// <summary>
     /// An alternative color to use in the toggled state.
@@ -82,11 +82,11 @@ public partial class MudToggleIconButton : MudComponentBase
     /// The display variation to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
+    /// Defaults to <see cref="Variant.Text"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Button.Appearance)]
-    public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+    public Variant Variant { get; set; } = Variant.Text;
 
     /// <summary>
     /// An alternative variant to use in the toggled state.

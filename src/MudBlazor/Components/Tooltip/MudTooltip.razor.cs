@@ -7,7 +7,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A small popup which provides more information.
+    /// Displays additional context when users hover over or focus on an element.
     /// </summary>
     public partial class MudTooltip : MudComponentBase
     {
@@ -30,15 +30,15 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass("d-flex")
             .AddClass("mud-tooltip-default", Color == Color.Default)
-            .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
+            .AddClass($"mud-tooltip-{ConvertPlacement().ToStringFast(true)}")
             .AddClass("mud-tooltip-arrow", Arrow)
-            .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+            .AddClass($"mud-border-{Color.ToStringFast(true)}", Arrow && Color != Color.Default)
+            .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
             .AddClass(Class)
             .Build();
 
         /// <summary>
-        /// Whether the display should be right to left
+        /// Displays content right-to-left.
         /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -183,7 +183,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Visible { get; set; }
 
@@ -208,7 +208,7 @@ namespace MudBlazor
         /// Gets whether the tooltip should be shown.
         /// </summary>
         /// <remarks>
-        /// The tooltip will be displayed if it is not disabled, not already visible, and either <see cref="TooltipContent"/> or <see cref="Text"/> is specified.
+        /// The tooltip will be displayed if not disabled, not already visible, and either <see cref="TooltipContent"/> or <see cref="Text"/> is specified.
         /// </remarks>
         internal bool ShowToolTip()
         {

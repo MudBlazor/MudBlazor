@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Charts
+@inherits MudRadialChartBase<T, RoseChartOptions>
+@typeparam T
+
+<div @attributes="UserAttributes" class="@Classname">
+    <BaseRadialChart T="T"
+                     TChartOptions="RoseChartOptions"
+                     ElementRefChanged="SetElementReference"
+                     Width="@Width"
+                     Height="@Height"
+                     Paths="@_paths"
+                     Radius="@Radius"
+                     ChartClass="mud-chart-rose"
+                     ChartSeries="@ChartSeries"
+                     ChartLabels="@ChartLabels"
+                     ChartOptions="@ChartOptions"
+                     CustomGraphics="@CustomGraphics"
+                     HoveredSegment="@_hoveredSegment"
+                     UserAttributes="@UserAttributes"
+                     TooltipTemplate="@TooltipTemplate"
+                     TooltipPositionFunc="@TooltipPositionFunc"
+                     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+                     OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
+                     OnMouseOut="() => OnSegmentMouseOut()" />
+
+    <Legend T="T" Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+</div>
