@@ -509,36 +509,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T?, string?>? ToStringFunc { get; set; }
 
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-            if (firstRender)
-            {
-                // we need to render the initial Value which is not possible without the items
-                // which supply the RenderFragment. So in this case, a second render is necessary
-                StateHasChanged();
-            }
-            UpdateSelectAllChecked();
-            
-            // Highlight after items are fully rendered
-            if (_needsHighlightAfterRender)
-            {
-                _needsHighlightAfterRender = false;
-                InvokeAsync(async () =>
-                {
-                    if (MultiSelection)
-                    {
-                        var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
-                        await HighlightItemAsync(firstNonDisabled);
-                    }
-                    else
-                    {
-                        await HighlightItemForValueAsync(ReadValue);
-                    }
-                });
-            }
-        }
-
         /// <summary>
         /// Whether the <c>Value</c> can be found in the list of <see cref="Items"/>.
         /// </summary>
@@ -994,6 +964,33 @@ namespace MudBlazor
             }
 
             await base.OnAfterRenderAsync(firstRender);
+
+            if (firstRender)
+            {
+                // we need to render the initial Value which is not possible without the items
+                // which supply the RenderFragment. So in this case, a second render is necessary
+                StateHasChanged();
+            }
+
+            UpdateSelectAllChecked();
+
+            // Highlight after items are fully rendered
+            if (_needsHighlightAfterRender)
+            {
+                _needsHighlightAfterRender = false;
+                await InvokeAsync(async () =>
+                {
+                    if (MultiSelection)
+                    {
+                        var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
+                        await HighlightItemAsync(firstNonDisabled);
+                    }
+                    else
+                    {
+                        await HighlightItemForValueAsync(ReadValue);
+                    }
+                });
+            }
         }
 
         /// <remarks>
