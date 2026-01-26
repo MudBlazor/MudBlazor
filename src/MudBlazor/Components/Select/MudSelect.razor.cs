@@ -799,24 +799,16 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
-        private async Task HighlightItemForValueAsync(T? value)
+        private Task HighlightItemForValueAsync(T? value)
         {
             _valueLookup.TryGetValue(value, out var item);
-            await HighlightItemAsync(item);
+            return HighlightItemAsync(item);
         }
 
-        private async Task HighlightItemAsync(MudSelectItem<T>? item)
+        private Task HighlightItemAsync(MudSelectItem<T>? item)
         {
             _activeItemId = item?.ItemId;
-            await InvokeAsync(StateHasChanged);
-        }
-
-        private Task HighlightSelectedValueAsync()
-        {
-            if (MultiSelection)
-                return HighlightItemAsync(_items.FirstOrDefault(x => !x.Disabled));
-            else
-                return HighlightItemForValueAsync(ReadValue);
+            return InvokeAsync(StateHasChanged);
         }
 
         private void UpdateSelectAllChecked()
