@@ -37,14 +37,14 @@ class MudKeyInterceptor {
     constructor(dotNetRef, options) {
         this._dotNetRef = dotNetRef;
         this._options = options;
-        this.logger = options.enableLogging ? console.log : (message) => { };
+        this.logger = options.enableLogging ? console.log : () => { };
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
     }
 
     connect(element) {
         if (!this._options)
             return;
-        if (!this._options.keys) 
+        if (!this._options.keys)
             throw "_options.keys: array of KeyOptions expected";
         if (this._isConnected) {
             // don't do double registration
@@ -100,7 +100,7 @@ class MudKeyInterceptor {
         keyOption.stopUp = (keyOption.stopUp || "none").replace(whitespace, "").toLowerCase();
     }
 
-    updatekey(updatedOption) {        
+    updatekey(updatedOption) {
         const option = this._keyOptions[updatedOption.key.toLowerCase()];
         option || this.logger('[MudBlazor | KeyInterceptor] updating option failed: key not registered');
         this.setKeyOption(updatedOption);
@@ -119,7 +119,7 @@ class MudKeyInterceptor {
             this.detachHandlers(child);
         this._isConnected = false;
     }
-    
+
     attachHandlers(child) {
         this.logger('[MudBlazor | KeyInterceptor] attaching handlers ', { child });
         if (this._observedChildren.indexOf(child) > -1) {
@@ -139,7 +139,7 @@ class MudKeyInterceptor {
         this._observedChildren = this._observedChildren.filter(x=>x!==child);
     }
 
-    onDomChanged(mutationsList, observer) {
+    onDomChanged(mutationsList, _) {
         const self = this.mudKeyInterceptor; // func is invoked with this == _observer
         //self.logger('[MudBlazor | KeyInterceptor] onDomChanged: ', { self });
         const targetClass = self._options.targetClass;

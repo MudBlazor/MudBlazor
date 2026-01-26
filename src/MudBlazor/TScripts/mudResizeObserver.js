@@ -42,7 +42,7 @@ class MudResizeObserverFactory {
 class MudResizeObserver {
 
     constructor(dotNetRef, options) {
-        this.logger = options.enableLogging ? console.log : (message) => { };
+        this.logger = options.enableLogging ? console.log : () => { };
         this.options = options;
         this._dotNetRef = dotNetRef;
 

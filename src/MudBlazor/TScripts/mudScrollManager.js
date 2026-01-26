@@ -8,7 +8,7 @@ class MudScrollManager {
     }
 
     //scrolls to year in MudDatePicker
-    scrollToYear(elementId, offset) {
+    scrollToYear(elementId) {
         const element = document.getElementById(elementId);
 
         if (element) {
@@ -16,7 +16,7 @@ class MudScrollManager {
         }
     }
 
-    // sets the scroll position of the elements container, 
+    // sets the scroll position of the elements container,
     // to the position of the element with the given element id
     scrollToListItem(elementId) {
         const element = document.getElementById(elementId);

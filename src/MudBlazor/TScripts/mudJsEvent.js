@@ -49,7 +49,7 @@ class MudJsEvent {
     constructor(dotNetRef, options) {
         this._dotNetRef = dotNetRef;
         this._options = options || {};
-        this.logger = options.enableLogging ? console.log : (message) => { };
+        this.logger = options.enableLogging ? console.log : () => { };
         this.logger('[MudBlazor | JsEvent] Initialized', { options });
         this._subscribedEvents = {};
     }
@@ -108,7 +108,7 @@ class MudJsEvent {
             this.detachHandler(child, eventName);
         }
     }
-    
+
     attachHandlers(child) {
         child.mudJsEvent = this;
         //this.logger('[MudBlazor | JsEvent] attachHandlers ', this._subscribedEvents, child);
@@ -119,7 +119,7 @@ class MudJsEvent {
             this.logger('[MudBlazor | JsEvent] attaching event ' + eventName, child);
             child.addEventListener(eventName, this.eventHandler);
         }
-        if(this._observedChildren.indexOf(child) < 0) 
+        if(this._observedChildren.indexOf(child) < 0)
             this._observedChildren.push(child);
     }
 
@@ -138,7 +138,7 @@ class MudJsEvent {
         this._observedChildren = this._observedChildren.filter(x=>x!==child);
     }
 
-    onDomChanged(mutationsList, observer) {
+    onDomChanged(mutationsList, _) {
         const self = this.mudJsEvent; // func is invoked with this == _observer
         //self.logger('[MudBlazor | JsEvent] onDomChanged: ', { self });
         const targetClass = self._options.targetClass;

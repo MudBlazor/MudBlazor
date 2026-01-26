@@ -10,7 +10,12 @@ export default defineConfig({
         //"eqeqeq": ["error", "always"],
         "no-debugger": "error",
         //"no-undef": "error",
-        //"no-unused-vars": "error",
+        "no-unused-vars": ["error", {
+            // Allow marking unused variables with an underscore, like in C#
+            "varsIgnorePattern": "^_",
+            "argsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+        }],
         "no-var": "error",
         "prefer-const": "error",
         "semi": ["error", "always"],

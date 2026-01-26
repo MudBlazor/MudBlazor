@@ -5,7 +5,7 @@
 class MudResizeListener {
 
     constructor(id) {
-        this.logger = function (message) { };
+        this.logger = function () { };
         this.options = {};
         this.throttleResizeHandlerId = -1;
         this.dotnet = undefined;
@@ -22,7 +22,7 @@ class MudResizeListener {
 
         this.options = options;
         this.dotnet = dotnetRef;
-        this.logger = options.enableLogging ? console.log : (message) => { };
+        this.logger = options.enableLogging ? console.log : () => { };
         this.logger(`[MudBlazor] Reporting resize events at rate of: ${this.options.reportRate}ms`);
         window.addEventListener("resize", this.handleResize, false);
         if (!this.options.suppressInitEvent) {
