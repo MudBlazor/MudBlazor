@@ -12,11 +12,14 @@ env:
 jobs:
   # First, run the build and test workflow to ensure quality
   build-and-test:
+    permissions: {}
     uses: ./.github/workflows/build-test-mudblazor.yml
 
   get-nightly-version:
     runs-on: ubuntu-latest
     needs: build-and-test
+    permissions:
+      contents: read
     outputs:
       VERSION: ${{ steps.get-version.outputs.VERSION }}
     steps:
