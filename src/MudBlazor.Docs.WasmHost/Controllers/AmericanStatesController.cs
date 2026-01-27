@@ -13,6 +13,7 @@ namespace MudBlazor.Docs.WasmHost.Controllers;
 public class AmericanStatesController : ControllerBase
 {
     [HttpGet("{search}")]
+    
     public IEnumerable<string> Get(string search) => AmericanStates.GetStates(search);
 
     [HttpGet]
@@ -22,8 +23,8 @@ public class AmericanStatesController : ControllerBase
     [OperationCancelledExceptionFilter]
     public async Task<IActionResult> SearchWithDelay(CancellationToken cancellationToken, [FromRoute(Name = "input")] string search = "")
     {
-        var input = (search ?? string.Empty).Trim().ToLower();
-        var states = AmericanStates.GetStates();
+          var input = (search ?? string.Empty).Trim().ToLower();
+        var states =  AmericanStates.GetStates();
 
         List<string> result = new();   
         foreach (var item in states)
