@@ -920,8 +920,8 @@ namespace MudBlazor
                 {
                     var item = shadowItem.Value;
                     var value = item.Value;
-                    var str = ToStringFunc?.Invoke(value) ?? ConvertSet(value);
-                    var length = str?.Length ?? 0;
+                    var valueToString = ConvertSet(value);
+                    var length = valueToString?.Length ?? 0;
 
                     if (length > longestItemLength)
                     {
