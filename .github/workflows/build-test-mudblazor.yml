@@ -16,9 +16,12 @@ env:
 
 jobs:
   format-check:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Cache NuGet packages
         uses: actions/cache@v5
@@ -37,9 +40,21 @@ jobs:
 
       - uses: xt0rted/dotnet-format-problem-matcher@v1
 
+      - name: Determine changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v46
+        with:
+          files: |
+            src/**
+
       - name: dotnet format
         working-directory: src
-        run: dotnet format --no-restore --verify-no-changes
+        run: |
+          if [ "${{ steps.changed-files.outputs.any_changed }}" != "true" ]; then
+            echo "No files changed under src/, skipping dotnet format."
+            exit 0
+          fi
+          dotnet format --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
 
   build-test:
     runs-on: ubuntu-latest
