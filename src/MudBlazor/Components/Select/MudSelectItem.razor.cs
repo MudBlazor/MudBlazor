@@ -22,41 +22,12 @@ namespace MudBlazor
         public MudSelectItem()
         {
             using var registerScope = CreateRegisterScope();
-            _ = registerScope.RegisterParameter<IMudSelect?>(nameof(IMudSelect))
+            registerScope.RegisterParameter<IMudSelect?>(nameof(IMudSelect))
                 .WithParameter(() => IMudSelect)
-                .WithChangeHandler(OnMudSelectChanged);
-            _ = registerScope.RegisterParameter<IMudShadowSelect?>(nameof(IMudShadowSelect))
+                .WithChangeHandler(OnMudSelectChangedAsync);
+            registerScope.RegisterParameter<IMudShadowSelect?>(nameof(IMudShadowSelect))
                 .WithParameter(() => IMudShadowSelect)
                 .WithChangeHandler(OnMudShadowSelectChanged);
-        }
-
-        private void OnMudShadowSelectChanged(ParameterChangedEventArgs<IMudShadowSelect?> args)
-        {
-            ((MudSelect<T>?)args.LastValue)?.UnregisterShadowItem(this);
-            ((MudSelect<T>?)args.Value)?.RegisterShadowItem(this);
-        }
-
-        private async Task OnMudSelectChanged(ParameterChangedEventArgs<IMudSelect?> args)
-        {
-            if (args.LastValue is MudSelect<T> oldParent)
-            {
-                oldParent.Remove(this);
-            }
-            if (args.Value == null)
-                return;
-            args.Value.CheckGenericTypeMatch(this);
-            if (MudSelect == null)
-                return;
-            var selected = MudSelect.Add(this);
-            if (args.Value.MultiSelection)
-            {
-                MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
-                await InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.GetState(x => x.SelectedValues)));
-            }
-            else
-            {
-                Selected = selected;
-            }
         }
 
         /// <summary>
@@ -160,6 +131,35 @@ namespace MudBlazor
                 await MudSelect.SelectOption(Value);
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private void OnMudShadowSelectChanged(ParameterChangedEventArgs<IMudShadowSelect?> args)
+        {
+            ((MudSelect<T>?)args.LastValue)?.UnregisterShadowItem(this);
+            ((MudSelect<T>?)args.Value)?.RegisterShadowItem(this);
+        }
+
+        private async Task OnMudSelectChangedAsync(ParameterChangedEventArgs<IMudSelect?> args)
+        {
+            if (args.LastValue is MudSelect<T> oldParent)
+            {
+                oldParent.Remove(this);
+            }
+            if (args.Value == null)
+                return;
+            args.Value.CheckGenericTypeMatch(this);
+            if (MudSelect == null)
+                return;
+            var selected = MudSelect.Add(this);
+            if (args.Value.MultiSelection)
+            {
+                MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
+                await InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.GetState(x => x.SelectedValues)));
+            }
+            else
+            {
+                Selected = selected;
+            }
         }
 
         /// <summary>

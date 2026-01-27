@@ -25,7 +25,6 @@ namespace MudBlazor
         private string? _activeItemId;
         private bool? _selectAllChecked;
         private string? _multiSelectionText;
-        private int _longestItemLength;
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
         private MudInput<string> _elementReference = null!;
@@ -55,6 +54,9 @@ namespace MudBlazor
                 .WithEventCallback(() => SelectedValuesChanged)
                 .WithChangeHandler(OnSelectedValuesChangedAsync)
                 .WithComparer(() => new SequenceComparer<T?>(Comparer));
+            registerScope.RegisterParameter<bool>(nameof(FitContent))
+                .WithParameter(() => FitContent)
+                .WithChangeHandler(OnFitContentChanged);
         }
 
         protected string OuterClassname =>
@@ -273,7 +275,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. Requires FullWidth to be <c>false</c>
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool FitContent { get; set; }
 
@@ -909,6 +911,32 @@ namespace MudBlazor
             await OnClose.InvokeAsync();
         }
 
+        private void OnFitContentChanged(ParameterChangedEventArgs<bool> args)
+        {
+            if (args.Value)
+            {
+                var longestItemLength = 0;
+                foreach (var shadowItem in _shadowLookup)
+                {
+                    var item = shadowItem.Value;
+                    var value = item.Value;
+                    var str = ToStringFunc?.Invoke(value) ?? ConvertSet(value);
+                    var length = str?.Length ?? 0;
+
+                    if (length > longestItemLength)
+                    {
+                        _longestItem = item;
+                        longestItemLength = length;
+                    }
+                }
+                StateHasChanged();
+            }
+            else
+            {
+                _longestItem = null;
+            }
+        }
+
         private void UpdateIcon()
         {
             _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
@@ -1312,18 +1340,6 @@ namespace MudBlazor
                 return;
 
             _shadowLookup[item.Value] = item;
-
-            if (!FitContent) return;
-
-            var stringValue = ToStringFunc?.Invoke(item.Value) ?? ConvertSet(item.Value);
-
-            if (_longestItem is null || stringValue?.Length > _longestItemLength)
-            {
-                _longestItem = item;
-                _longestItemLength = stringValue?.Length ?? 0;
-
-                StateHasChanged();
-            }
         }
 
         /// <summary>
