@@ -26,7 +26,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     private const string LayoutProperties = "mud";
     private const string Zindex = "mud-zindex";
 
-    private MudTheme? _theme;
+    private readonly MudTheme _originalMudTheme = new();
     private readonly ParameterState<bool> _isDarkModeState;
     private readonly ParameterState<Palette?> _currentPaletteState;
     private readonly ParameterState<bool> _observeSystemDarkModeChangeState;
@@ -166,23 +166,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     }
 
     // <inheritdoc />
-    protected override void OnInitialized()
-    {
-        _theme = Theme ?? new MudTheme();
-        base.OnInitialized();
-    }
-
-    // <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
-        if (Theme is not null)
-        {
-            if (!ReferenceEquals(_theme, Theme))
-            {
-                _theme = Theme;
-            }
-        }
-
         await _currentPaletteState.SetValueAsync(GetCurrentPalette());
 
         await base.OnParametersSetAsync();
@@ -194,16 +179,16 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     /// <returns>A <c>style</c> HTML element containing this theme's styles.</returns>
     protected string BuildTheme()
     {
-        _theme = Theme ?? new MudTheme();
-        var theme = new StringBuilder();
-        theme.AppendLine("<style class='mud-theme-provider'>");
-        theme.Append(_theme.PseudoCss.Scope);
-        theme.AppendLine("{");
-        GenerateTheme(theme);
-        theme.AppendLine("}");
-        theme.AppendLine("</style>");
+        var theme = GetTheme();
+        var themeStringBuilder = new StringBuilder();
+        themeStringBuilder.AppendLine("<style class='mud-theme-provider'>");
+        themeStringBuilder.Append(theme.PseudoCss.Scope);
+        themeStringBuilder.AppendLine("{");
+        GenerateTheme(themeStringBuilder);
+        themeStringBuilder.AppendLine("}");
+        themeStringBuilder.AppendLine("</style>");
 
-        return theme.ToString();
+        return themeStringBuilder.ToString();
     }
 
     /// <summary>
@@ -230,183 +215,180 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     /// <summary>
     /// Generates the CSS styles for the specified theme.
     /// </summary>
-    /// <param name="theme">The theme to append to.</param>
+    /// <param name="themeStringBuilder">The theme to append to.</param>
     /// <remarks>
     /// Several CSS values for color, opacity, and elevation are appended based on the value of <see cref="IsDarkMode"/>.
     /// </remarks>
-    protected virtual void GenerateTheme(StringBuilder theme)
+    protected virtual void GenerateTheme(StringBuilder themeStringBuilder)
     {
-        if (_theme is null)
-        {
-            return;
-        }
+        var theme = GetTheme();
 
-        Palette palette = _isDarkModeState.Value ? _theme.PaletteDark : _theme.PaletteLight;
+        var palette = _isDarkModeState.Value ? theme.PaletteDark : theme.PaletteLight;
 
         //Palette
-        theme.AppendLine($"--{Palette}-black: {palette.Black};");
-        theme.AppendLine($"--{Palette}-white: {palette.White};");
+        themeStringBuilder.AppendLine($"--{Palette}-black: {palette.Black};");
+        themeStringBuilder.AppendLine($"--{Palette}-white: {palette.White};");
 
-        theme.AppendLine($"--{Palette}-primary: {palette.Primary};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-primary: {palette.Primary};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-primary-rgb: {palette.Primary.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-primary-text: {palette.PrimaryContrastText};");
-        theme.AppendLine($"--{Palette}-primary-darken: {palette.PrimaryDarken};");
-        theme.AppendLine($"--{Palette}-primary-lighten: {palette.PrimaryLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-primary-text: {palette.PrimaryContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-primary-darken: {palette.PrimaryDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-primary-lighten: {palette.PrimaryLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-primary-hover: {palette.Primary.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-secondary: {palette.Secondary};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-secondary: {palette.Secondary};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-secondary-rgb: {palette.Secondary.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-secondary-text: {palette.SecondaryContrastText};");
-        theme.AppendLine($"--{Palette}-secondary-darken: {palette.SecondaryDarken};");
-        theme.AppendLine($"--{Palette}-secondary-lighten: {palette.SecondaryLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-secondary-text: {palette.SecondaryContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-secondary-darken: {palette.SecondaryDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-secondary-lighten: {palette.SecondaryLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-secondary-hover: {palette.Secondary.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-tertiary: {palette.Tertiary};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-tertiary: {palette.Tertiary};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-tertiary-rgb: {palette.Tertiary.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-tertiary-text: {palette.TertiaryContrastText};");
-        theme.AppendLine($"--{Palette}-tertiary-darken: {palette.TertiaryDarken};");
-        theme.AppendLine($"--{Palette}-tertiary-lighten: {palette.TertiaryLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-tertiary-text: {palette.TertiaryContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-tertiary-darken: {palette.TertiaryDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-tertiary-lighten: {palette.TertiaryLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-tertiary-hover: {palette.Tertiary.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-info: {palette.Info};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-info: {palette.Info};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-info-rgb: {palette.Info.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-info-text: {palette.InfoContrastText};");
-        theme.AppendLine($"--{Palette}-info-darken: {palette.InfoDarken};");
-        theme.AppendLine($"--{Palette}-info-lighten: {palette.InfoLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-info-text: {palette.InfoContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-info-darken: {palette.InfoDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-info-lighten: {palette.InfoLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-info-hover: {palette.Info.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-success: {palette.Success};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-success: {palette.Success};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-success-rgb: {palette.Success.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-success-text: {palette.SuccessContrastText};");
-        theme.AppendLine($"--{Palette}-success-darken: {palette.SuccessDarken};");
-        theme.AppendLine($"--{Palette}-success-lighten: {palette.SuccessLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-success-text: {palette.SuccessContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-success-darken: {palette.SuccessDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-success-lighten: {palette.SuccessLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-success-hover: {palette.Success.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-warning: {palette.Warning};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-warning: {palette.Warning};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-warning-rgb: {palette.Warning.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-warning-text: {palette.WarningContrastText};");
-        theme.AppendLine($"--{Palette}-warning-darken: {palette.WarningDarken};");
-        theme.AppendLine($"--{Palette}-warning-lighten: {palette.WarningLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-warning-text: {palette.WarningContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-warning-darken: {palette.WarningDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-warning-lighten: {palette.WarningLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-warning-hover: {palette.Warning.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-error: {palette.Error};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-error: {palette.Error};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-error-rgb: {palette.Error.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-error-text: {palette.ErrorContrastText};");
-        theme.AppendLine($"--{Palette}-error-darken: {palette.ErrorDarken};");
-        theme.AppendLine($"--{Palette}-error-lighten: {palette.ErrorLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-error-text: {palette.ErrorContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-error-darken: {palette.ErrorDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-error-lighten: {palette.ErrorLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-error-hover: {palette.Error.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-dark: {palette.Dark};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-dark: {palette.Dark};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-dark-rgb: {palette.Dark.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-dark-text: {palette.DarkContrastText};");
-        theme.AppendLine($"--{Palette}-dark-darken: {palette.DarkDarken};");
-        theme.AppendLine($"--{Palette}-dark-lighten: {palette.DarkLighten};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-dark-text: {palette.DarkContrastText};");
+        themeStringBuilder.AppendLine($"--{Palette}-dark-darken: {palette.DarkDarken};");
+        themeStringBuilder.AppendLine($"--{Palette}-dark-lighten: {palette.DarkLighten};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-dark-hover: {palette.Dark.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
 
-        theme.AppendLine($"--{Palette}-text-primary: {palette.TextPrimary};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-text-primary: {palette.TextPrimary};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-text-primary-rgb: {palette.TextPrimary.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-text-secondary: {palette.TextSecondary};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-text-secondary: {palette.TextSecondary};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-text-secondary-rgb: {palette.TextSecondary.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-text-disabled: {palette.TextDisabled};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-text-disabled: {palette.TextDisabled};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-text-disabled-rgb: {palette.TextDisabled.ToString(MudColorOutputFormats.ColorElements)};");
 
-        theme.AppendLine($"--{Palette}-action-default: {palette.ActionDefault};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-action-default: {palette.ActionDefault};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-action-default-hover: {palette.ActionDefault.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
-        theme.AppendLine($"--{Palette}-action-disabled: {palette.ActionDisabled};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-action-disabled: {palette.ActionDisabled};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-action-disabled-background: {palette.ActionDisabledBackground};");
 
-        theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
-        theme.AppendLine($"--{Palette}-surface-rgb: {palette.Surface.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-background: {palette.Background};");
-        theme.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
-        theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
-        theme.AppendLine($"--{Palette}-drawer-text: {palette.DrawerText};");
-        theme.AppendLine($"--{Palette}-drawer-icon: {palette.DrawerIcon};");
-        theme.AppendLine($"--{Palette}-appbar-background: {palette.AppbarBackground};");
-        theme.AppendLine($"--{Palette}-appbar-text: {palette.AppbarText};");
+        themeStringBuilder.AppendLine($"--{Palette}-surface: {palette.Surface};");
+        themeStringBuilder.AppendLine($"--{Palette}-surface-rgb: {palette.Surface.ToString(MudColorOutputFormats.ColorElements)};");
+        themeStringBuilder.AppendLine($"--{Palette}-background: {palette.Background};");
+        themeStringBuilder.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
+        themeStringBuilder.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
+        themeStringBuilder.AppendLine($"--{Palette}-drawer-text: {palette.DrawerText};");
+        themeStringBuilder.AppendLine($"--{Palette}-drawer-icon: {palette.DrawerIcon};");
+        themeStringBuilder.AppendLine($"--{Palette}-appbar-background: {palette.AppbarBackground};");
+        themeStringBuilder.AppendLine($"--{Palette}-appbar-text: {palette.AppbarText};");
 
-        theme.AppendLine($"--{Palette}-lines-default: {palette.LinesDefault};");
-        theme.AppendLine($"--{Palette}-lines-inputs: {palette.LinesInputs};");
+        themeStringBuilder.AppendLine($"--{Palette}-lines-default: {palette.LinesDefault};");
+        themeStringBuilder.AppendLine($"--{Palette}-lines-inputs: {palette.LinesInputs};");
 
-        theme.AppendLine($"--{Palette}-table-lines: {palette.TableLines};");
-        theme.AppendLine($"--{Palette}-table-striped: {palette.TableStriped};");
-        theme.AppendLine($"--{Palette}-table-hover: {palette.TableHover};");
+        themeStringBuilder.AppendLine($"--{Palette}-table-lines: {palette.TableLines};");
+        themeStringBuilder.AppendLine($"--{Palette}-table-striped: {palette.TableStriped};");
+        themeStringBuilder.AppendLine($"--{Palette}-table-hover: {palette.TableHover};");
 
-        theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
-        theme.AppendLine(
+        themeStringBuilder.AppendLine($"--{Palette}-divider: {palette.Divider};");
+        themeStringBuilder.AppendLine(
             $"--{Palette}-divider-rgb: {palette.Divider.ToString(MudColorOutputFormats.ColorElements)};");
-        theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
+        themeStringBuilder.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
-        theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
+        themeStringBuilder.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
 
-        theme.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
-        theme.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
-        theme.AppendLine($"--{Palette}-gray-lighter: {palette.GrayLighter};");
-        theme.AppendLine($"--{Palette}-gray-dark: {palette.GrayDark};");
-        theme.AppendLine($"--{Palette}-gray-darker: {palette.GrayDarker};");
+        themeStringBuilder.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
+        themeStringBuilder.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
+        themeStringBuilder.AppendLine($"--{Palette}-gray-lighter: {palette.GrayLighter};");
+        themeStringBuilder.AppendLine($"--{Palette}-gray-dark: {palette.GrayDark};");
+        themeStringBuilder.AppendLine($"--{Palette}-gray-darker: {palette.GrayDarker};");
 
-        theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
-        theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
+        themeStringBuilder.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
+        themeStringBuilder.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
 
-        theme.AppendLine($"--{Palette}-border-opacity: {palette.BorderOpacity.ToString(CultureInfo.InvariantCulture)};");
+        themeStringBuilder.AppendLine($"--{Palette}-border-opacity: {palette.BorderOpacity.ToString(CultureInfo.InvariantCulture)};");
 
         //Ripple
-        theme.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
-        theme.AppendLine($"--{Ripple}-opacity: {_theme.PaletteLight.RippleOpacity.ToString(CultureInfo.InvariantCulture)};");
-        theme.AppendLine($"--{Ripple}-opacity-secondary: {_theme.PaletteLight.RippleOpacitySecondary.ToString(CultureInfo.InvariantCulture)};");
+        themeStringBuilder.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
+        themeStringBuilder.AppendLine($"--{Ripple}-opacity: {theme.PaletteLight.RippleOpacity.ToString(CultureInfo.InvariantCulture)};");
+        themeStringBuilder.AppendLine($"--{Ripple}-opacity-secondary: {theme.PaletteLight.RippleOpacitySecondary.ToString(CultureInfo.InvariantCulture)};");
 
         //Elevations
-        theme.AppendLine($"--{Elevation}-0: {_theme.Shadows.Elevation.GetValue(0)};");
-        theme.AppendLine($"--{Elevation}-1: {_theme.Shadows.Elevation.GetValue(1)};");
-        theme.AppendLine($"--{Elevation}-2: {_theme.Shadows.Elevation.GetValue(2)};");
-        theme.AppendLine($"--{Elevation}-3: {_theme.Shadows.Elevation.GetValue(3)};");
-        theme.AppendLine($"--{Elevation}-4: {_theme.Shadows.Elevation.GetValue(4)};");
-        theme.AppendLine($"--{Elevation}-5: {_theme.Shadows.Elevation.GetValue(5)};");
-        theme.AppendLine($"--{Elevation}-6: {_theme.Shadows.Elevation.GetValue(6)};");
-        theme.AppendLine($"--{Elevation}-7: {_theme.Shadows.Elevation.GetValue(7)};");
-        theme.AppendLine($"--{Elevation}-8: {_theme.Shadows.Elevation.GetValue(8)};");
-        theme.AppendLine($"--{Elevation}-9: {_theme.Shadows.Elevation.GetValue(9)};");
-        theme.AppendLine($"--{Elevation}-10: {_theme.Shadows.Elevation.GetValue(10)};");
-        theme.AppendLine($"--{Elevation}-11: {_theme.Shadows.Elevation.GetValue(11)};");
-        theme.AppendLine($"--{Elevation}-12: {_theme.Shadows.Elevation.GetValue(12)};");
-        theme.AppendLine($"--{Elevation}-13: {_theme.Shadows.Elevation.GetValue(13)};");
-        theme.AppendLine($"--{Elevation}-14: {_theme.Shadows.Elevation.GetValue(14)};");
-        theme.AppendLine($"--{Elevation}-15: {_theme.Shadows.Elevation.GetValue(15)};");
-        theme.AppendLine($"--{Elevation}-16: {_theme.Shadows.Elevation.GetValue(16)};");
-        theme.AppendLine($"--{Elevation}-17: {_theme.Shadows.Elevation.GetValue(17)};");
-        theme.AppendLine($"--{Elevation}-18: {_theme.Shadows.Elevation.GetValue(18)};");
-        theme.AppendLine($"--{Elevation}-19: {_theme.Shadows.Elevation.GetValue(19)};");
-        theme.AppendLine($"--{Elevation}-20: {_theme.Shadows.Elevation.GetValue(20)};");
-        theme.AppendLine($"--{Elevation}-21: {_theme.Shadows.Elevation.GetValue(21)};");
-        theme.AppendLine($"--{Elevation}-22: {_theme.Shadows.Elevation.GetValue(22)};");
-        theme.AppendLine($"--{Elevation}-23: {_theme.Shadows.Elevation.GetValue(23)};");
-        theme.AppendLine($"--{Elevation}-24: {_theme.Shadows.Elevation.GetValue(24)};");
-        theme.AppendLine($"--{Elevation}-25: {_theme.Shadows.Elevation.GetValue(25)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-0: {theme.Shadows.Elevation.GetValue(0)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-1: {theme.Shadows.Elevation.GetValue(1)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-2: {theme.Shadows.Elevation.GetValue(2)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-3: {theme.Shadows.Elevation.GetValue(3)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-4: {theme.Shadows.Elevation.GetValue(4)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-5: {theme.Shadows.Elevation.GetValue(5)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-6: {theme.Shadows.Elevation.GetValue(6)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-7: {theme.Shadows.Elevation.GetValue(7)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-8: {theme.Shadows.Elevation.GetValue(8)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-9: {theme.Shadows.Elevation.GetValue(9)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-10: {theme.Shadows.Elevation.GetValue(10)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-11: {theme.Shadows.Elevation.GetValue(11)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-12: {theme.Shadows.Elevation.GetValue(12)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-13: {theme.Shadows.Elevation.GetValue(13)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-14: {theme.Shadows.Elevation.GetValue(14)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-15: {theme.Shadows.Elevation.GetValue(15)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-16: {theme.Shadows.Elevation.GetValue(16)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-17: {theme.Shadows.Elevation.GetValue(17)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-18: {theme.Shadows.Elevation.GetValue(18)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-19: {theme.Shadows.Elevation.GetValue(19)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-20: {theme.Shadows.Elevation.GetValue(20)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-21: {theme.Shadows.Elevation.GetValue(21)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-22: {theme.Shadows.Elevation.GetValue(22)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-23: {theme.Shadows.Elevation.GetValue(23)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-24: {theme.Shadows.Elevation.GetValue(24)};");
+        themeStringBuilder.AppendLine($"--{Elevation}-25: {theme.Shadows.Elevation.GetValue(25)};");
 
         //Layout Properties
-        theme.AppendLine(
-            $"--{LayoutProperties}-default-borderradius: {_theme.LayoutProperties.DefaultBorderRadius};");
-        theme.AppendLine($"--{LayoutProperties}-drawer-width-left: {_theme.LayoutProperties.DrawerWidthLeft};");
-        theme.AppendLine($"--{LayoutProperties}-drawer-width-right: {_theme.LayoutProperties.DrawerWidthRight};");
-        theme.AppendLine(
-            $"--{LayoutProperties}-drawer-width-mini-left: {_theme.LayoutProperties.DrawerMiniWidthLeft};");
-        theme.AppendLine(
-            $"--{LayoutProperties}-drawer-width-mini-right: {_theme.LayoutProperties.DrawerMiniWidthRight};");
-        theme.AppendLine($"--{LayoutProperties}-appbar-height: {_theme.LayoutProperties.AppbarHeight};");
+        themeStringBuilder.AppendLine(
+            $"--{LayoutProperties}-default-borderradius: {theme.LayoutProperties.DefaultBorderRadius};");
+        themeStringBuilder.AppendLine($"--{LayoutProperties}-drawer-width-left: {theme.LayoutProperties.DrawerWidthLeft};");
+        themeStringBuilder.AppendLine($"--{LayoutProperties}-drawer-width-right: {theme.LayoutProperties.DrawerWidthRight};");
+        themeStringBuilder.AppendLine(
+            $"--{LayoutProperties}-drawer-width-mini-left: {theme.LayoutProperties.DrawerMiniWidthLeft};");
+        themeStringBuilder.AppendLine(
+            $"--{LayoutProperties}-drawer-width-mini-right: {theme.LayoutProperties.DrawerMiniWidthRight};");
+        themeStringBuilder.AppendLine($"--{LayoutProperties}-appbar-height: {theme.LayoutProperties.AppbarHeight};");
 
         //Breakpoint
         //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");
@@ -417,143 +399,145 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         //theme.AppendLine($"--{Breakpoint}-xxl: {Theme.Breakpoints.xxl};");
 
         //Typography
-        theme.AppendLine(
-            $"--{Typography}-default-family: {FormatFontFamily(_theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-default-size: {_theme.Typography.Default.FontSize};");
-        theme.AppendLine($"--{Typography}-default-weight: {_theme.Typography.Default.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-default-lineheight: {_theme.Typography.Default.LineHeight};");
-        theme.AppendLine($"--{Typography}-default-letterspacing: {_theme.Typography.Default.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-default-text-transform: {_theme.Typography.Default.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-default-family: {FormatFontFamily(theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-default-size: {theme.Typography.Default.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-default-weight: {theme.Typography.Default.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-default-lineheight: {theme.Typography.Default.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-default-letterspacing: {theme.Typography.Default.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-default-text-transform: {theme.Typography.Default.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-h1-family: {FormatFontFamily(_theme.Typography.H1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-h1-size: {_theme.Typography.H1.FontSize};");
-        theme.AppendLine($"--{Typography}-h1-weight: {_theme.Typography.H1.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-h1-lineheight: {_theme.Typography.H1.LineHeight};");
-        theme.AppendLine($"--{Typography}-h1-letterspacing: {_theme.Typography.H1.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-h1-text-transform: {_theme.Typography.H1.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h1-family: {FormatFontFamily(theme.Typography.H1.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-h1-size: {theme.Typography.H1.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-h1-weight: {theme.Typography.H1.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h1-lineheight: {theme.Typography.H1.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-h1-letterspacing: {theme.Typography.H1.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-h1-text-transform: {theme.Typography.H1.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-h2-family: {FormatFontFamily(_theme.Typography.H2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-h2-size: {_theme.Typography.H2.FontSize};");
-        theme.AppendLine($"--{Typography}-h2-weight: {_theme.Typography.H2.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-h2-lineheight: {_theme.Typography.H2.LineHeight};");
-        theme.AppendLine($"--{Typography}-h2-letterspacing: {_theme.Typography.H2.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-h2-text-transform: {_theme.Typography.H2.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h2-family: {FormatFontFamily(theme.Typography.H2.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-h2-size: {theme.Typography.H2.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-h2-weight: {theme.Typography.H2.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h2-lineheight: {theme.Typography.H2.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-h2-letterspacing: {theme.Typography.H2.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-h2-text-transform: {theme.Typography.H2.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-h3-family: {FormatFontFamily(_theme.Typography.H3.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-h3-size: {_theme.Typography.H3.FontSize};");
-        theme.AppendLine($"--{Typography}-h3-weight: {_theme.Typography.H3.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-h3-lineheight: {_theme.Typography.H3.LineHeight};");
-        theme.AppendLine($"--{Typography}-h3-letterspacing: {_theme.Typography.H3.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-h3-text-transform: {_theme.Typography.H3.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h3-family: {FormatFontFamily(theme.Typography.H3.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-h3-size: {theme.Typography.H3.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-h3-weight: {theme.Typography.H3.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h3-lineheight: {theme.Typography.H3.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-h3-letterspacing: {theme.Typography.H3.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-h3-text-transform: {theme.Typography.H3.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-h4-family: {FormatFontFamily(_theme.Typography.H4.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-h4-size: {_theme.Typography.H4.FontSize};");
-        theme.AppendLine($"--{Typography}-h4-weight: {_theme.Typography.H4.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-h4-lineheight: {_theme.Typography.H4.LineHeight};");
-        theme.AppendLine($"--{Typography}-h4-letterspacing: {_theme.Typography.H4.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-h4-text-transform: {_theme.Typography.H4.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h4-family: {FormatFontFamily(theme.Typography.H4.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-h4-size: {theme.Typography.H4.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-h4-weight: {theme.Typography.H4.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h4-lineheight: {theme.Typography.H4.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-h4-letterspacing: {theme.Typography.H4.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-h4-text-transform: {theme.Typography.H4.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-h5-family: {FormatFontFamily(_theme.Typography.H5.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-h5-size: {_theme.Typography.H5.FontSize};");
-        theme.AppendLine($"--{Typography}-h5-weight: {_theme.Typography.H5.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-h5-lineheight: {_theme.Typography.H5.LineHeight};");
-        theme.AppendLine($"--{Typography}-h5-letterspacing: {_theme.Typography.H5.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-h5-text-transform: {_theme.Typography.H5.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h5-family: {FormatFontFamily(theme.Typography.H5.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-h5-size: {theme.Typography.H5.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-h5-weight: {theme.Typography.H5.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h5-lineheight: {theme.Typography.H5.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-h5-letterspacing: {theme.Typography.H5.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-h5-text-transform: {theme.Typography.H5.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-h6-family: {FormatFontFamily(_theme.Typography.H6.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-h6-size: {_theme.Typography.H6.FontSize};");
-        theme.AppendLine($"--{Typography}-h6-weight: {_theme.Typography.H6.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-h6-lineheight: {_theme.Typography.H6.LineHeight};");
-        theme.AppendLine($"--{Typography}-h6-letterspacing: {_theme.Typography.H6.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-h6-text-transform: {_theme.Typography.H6.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h6-family: {FormatFontFamily(theme.Typography.H6.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-h6-size: {theme.Typography.H6.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-h6-weight: {theme.Typography.H6.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-h6-lineheight: {theme.Typography.H6.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-h6-letterspacing: {theme.Typography.H6.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-h6-text-transform: {theme.Typography.H6.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-subtitle1-family: {FormatFontFamily(_theme.Typography.Subtitle1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-subtitle1-size: {_theme.Typography.Subtitle1.FontSize};");
-        theme.AppendLine($"--{Typography}-subtitle1-weight: {_theme.Typography.Subtitle1.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-subtitle1-lineheight: {_theme.Typography.Subtitle1.LineHeight};");
-        theme.AppendLine($"--{Typography}-subtitle1-letterspacing: {_theme.Typography.Subtitle1.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-subtitle1-text-transform: {_theme.Typography.Subtitle1.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-subtitle1-family: {FormatFontFamily(theme.Typography.Subtitle1.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle1-size: {theme.Typography.Subtitle1.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle1-weight: {theme.Typography.Subtitle1.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-subtitle1-lineheight: {theme.Typography.Subtitle1.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle1-letterspacing: {theme.Typography.Subtitle1.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle1-text-transform: {theme.Typography.Subtitle1.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-subtitle2-family: {FormatFontFamily(_theme.Typography.Subtitle2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-subtitle2-size: {_theme.Typography.Subtitle2.FontSize};");
-        theme.AppendLine($"--{Typography}-subtitle2-weight: {_theme.Typography.Subtitle2.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-subtitle2-lineheight: {_theme.Typography.Subtitle2.LineHeight};");
-        theme.AppendLine($"--{Typography}-subtitle2-letterspacing: {_theme.Typography.Subtitle2.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-subtitle2-text-transform: {_theme.Typography.Subtitle2.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-subtitle2-family: {FormatFontFamily(theme.Typography.Subtitle2.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle2-size: {theme.Typography.Subtitle2.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle2-weight: {theme.Typography.Subtitle2.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-subtitle2-lineheight: {theme.Typography.Subtitle2.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle2-letterspacing: {theme.Typography.Subtitle2.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-subtitle2-text-transform: {theme.Typography.Subtitle2.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-body1-family: {FormatFontFamily(_theme.Typography.Body1.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-body1-size: {_theme.Typography.Body1.FontSize};");
-        theme.AppendLine($"--{Typography}-body1-weight: {_theme.Typography.Body1.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-body1-lineheight: {_theme.Typography.Body1.LineHeight};");
-        theme.AppendLine($"--{Typography}-body1-letterspacing: {_theme.Typography.Body1.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-body1-text-transform: {_theme.Typography.Body1.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-body1-family: {FormatFontFamily(theme.Typography.Body1.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-body1-size: {theme.Typography.Body1.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-body1-weight: {theme.Typography.Body1.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-body1-lineheight: {theme.Typography.Body1.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-body1-letterspacing: {theme.Typography.Body1.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-body1-text-transform: {theme.Typography.Body1.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-body2-family: {FormatFontFamily(_theme.Typography.Body2.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-body2-size: {_theme.Typography.Body2.FontSize};");
-        theme.AppendLine($"--{Typography}-body2-weight: {_theme.Typography.Body2.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-body2-lineheight: {_theme.Typography.Body2.LineHeight};");
-        theme.AppendLine($"--{Typography}-body2-letterspacing: {_theme.Typography.Body2.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-body2-text-transform: {_theme.Typography.Body2.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-body2-family: {FormatFontFamily(theme.Typography.Body2.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-body2-size: {theme.Typography.Body2.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-body2-weight: {theme.Typography.Body2.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-body2-lineheight: {theme.Typography.Body2.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-body2-letterspacing: {theme.Typography.Body2.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-body2-text-transform: {theme.Typography.Body2.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-button-family: {FormatFontFamily(_theme.Typography.Button.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-button-size: {_theme.Typography.Button.FontSize};");
-        theme.AppendLine($"--{Typography}-button-weight: {_theme.Typography.Button.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-button-lineheight: {_theme.Typography.Button.LineHeight};");
-        theme.AppendLine($"--{Typography}-button-letterspacing: {_theme.Typography.Button.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-button-text-transform: {_theme.Typography.Button.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-button-family: {FormatFontFamily(theme.Typography.Button.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-button-size: {theme.Typography.Button.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-button-weight: {theme.Typography.Button.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-button-lineheight: {theme.Typography.Button.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-button-letterspacing: {theme.Typography.Button.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-button-text-transform: {theme.Typography.Button.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-caption-family: {FormatFontFamily(_theme.Typography.Caption.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-caption-size: {_theme.Typography.Caption.FontSize};");
-        theme.AppendLine($"--{Typography}-caption-weight: {_theme.Typography.Caption.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-caption-lineheight: {_theme.Typography.Caption.LineHeight};");
-        theme.AppendLine($"--{Typography}-caption-letterspacing: {_theme.Typography.Caption.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-caption-text-transform: {_theme.Typography.Caption.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-caption-family: {FormatFontFamily(theme.Typography.Caption.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-caption-size: {theme.Typography.Caption.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-caption-weight: {theme.Typography.Caption.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-caption-lineheight: {theme.Typography.Caption.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-caption-letterspacing: {theme.Typography.Caption.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-caption-text-transform: {theme.Typography.Caption.TextTransform};");
 
-        theme.AppendLine(
-            $"--{Typography}-overline-family: {FormatFontFamily(_theme.Typography.Overline.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
-        theme.AppendLine($"--{Typography}-overline-size: {_theme.Typography.Overline.FontSize};");
-        theme.AppendLine($"--{Typography}-overline-weight: {_theme.Typography.Overline.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-overline-lineheight: {_theme.Typography.Overline.LineHeight};");
-        theme.AppendLine($"--{Typography}-overline-letterspacing: {_theme.Typography.Overline.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-overline-text-transform: {_theme.Typography.Overline.TextTransform};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-overline-family: {FormatFontFamily(theme.Typography.Overline.FontFamily ?? theme.Typography.Default.FontFamily ?? Array.Empty<string>())};");
+        themeStringBuilder.AppendLine($"--{Typography}-overline-size: {theme.Typography.Overline.FontSize};");
+        themeStringBuilder.AppendLine($"--{Typography}-overline-weight: {theme.Typography.Overline.FontWeight};");
+        themeStringBuilder.AppendLine(
+            $"--{Typography}-overline-lineheight: {theme.Typography.Overline.LineHeight};");
+        themeStringBuilder.AppendLine($"--{Typography}-overline-letterspacing: {theme.Typography.Overline.LetterSpacing};");
+        themeStringBuilder.AppendLine($"--{Typography}-overline-text-transform: {theme.Typography.Overline.TextTransform};");
 
         //Z-Index
-        theme.AppendLine($"--{Zindex}-drawer: {_theme.ZIndex.Drawer};");
-        theme.AppendLine($"--{Zindex}-appbar: {_theme.ZIndex.AppBar};");
-        theme.AppendLine($"--{Zindex}-dialog: {_theme.ZIndex.Dialog};");
-        theme.AppendLine($"--{Zindex}-popover: {_theme.ZIndex.Popover};");
-        theme.AppendLine($"--{Zindex}-snackbar: {_theme.ZIndex.Snackbar};");
-        theme.AppendLine($"--{Zindex}-tooltip: {_theme.ZIndex.Tooltip};");
+        themeStringBuilder.AppendLine($"--{Zindex}-drawer: {theme.ZIndex.Drawer};");
+        themeStringBuilder.AppendLine($"--{Zindex}-appbar: {theme.ZIndex.AppBar};");
+        themeStringBuilder.AppendLine($"--{Zindex}-dialog: {theme.ZIndex.Dialog};");
+        themeStringBuilder.AppendLine($"--{Zindex}-popover: {theme.ZIndex.Popover};");
+        themeStringBuilder.AppendLine($"--{Zindex}-snackbar: {theme.ZIndex.Snackbar};");
+        themeStringBuilder.AppendLine($"--{Zindex}-tooltip: {theme.ZIndex.Tooltip};");
 
         // Native HTML control light/dark mode
-        theme.AppendLine($"--mud-native-html-color-scheme: {(_isDarkModeState.Value ? "dark" : "light")};");
+        themeStringBuilder.AppendLine($"--mud-native-html-color-scheme: {(_isDarkModeState.Value ? "dark" : "light")};");
     }
+
+    protected MudTheme GetTheme() => Theme ?? _originalMudTheme;
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
@@ -583,14 +567,11 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         await StopWatchingDarkMode();
     }
 
-    private Palette? GetCurrentPalette()
+    private Palette GetCurrentPalette()
     {
-        if (_theme is null)
-        {
-            return null;
-        }
+        var theme = GetTheme();
 
-        return _isDarkModeState.Value ? _theme.PaletteDark : _theme.PaletteLight;
+        return _isDarkModeState.Value ? theme.PaletteDark : theme.PaletteLight;
     }
 
     private async Task OnObserveSystemDarkModeChangeChanged(ParameterChangedEventArgs<bool> arg)
