@@ -41,6 +41,68 @@ jobs:
         working-directory: src
         run: dotnet format --no-restore --verify-no-changes
 
+  build-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.x
+            9.x
+            8.x
+
+      - name: Restore dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - name: Build MudBlazor core
+        working-directory: src
+        run: dotnet build MudBlazor/MudBlazor.csproj -c Release --no-restore
+
+  build-analyzers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.x
+            9.x
+            8.x
+
+      - name: Restore dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - name: Build analyzers
+        working-directory: src
+        run: dotnet build MudBlazor.Analyzers/MudBlazor.Analyzers.csproj -c Release --no-restore
+
+      - name: Build analyzer code fixes
+        working-directory: src
+        run: dotnet build MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj -c Release --no-restore
+
+      - name: Build analyzer test components
+        working-directory: src
+        run: dotnet build MudBlazor.Analyzers.TestComponents/MudBlazor.Analyzers.TestComponents.csproj -c Release --no-restore
+
   build-docs:
     runs-on: ubuntu-latest
     steps:
@@ -72,10 +134,6 @@ jobs:
         working-directory: src
         run: dotnet build MudBlazor.Docs/MudBlazor.Docs.csproj -c Release --no-restore
 
-      - name: Build docs server
-        working-directory: src
-        run: dotnet build MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj -c Release --no-restore
-
       - name: Build docs wasm
         working-directory: src
         run: dotnet build MudBlazor.Docs.Wasm/MudBlazor.Docs.Wasm.csproj -c Release --no-restore
@@ -84,11 +142,15 @@ jobs:
         working-directory: src
         run: dotnet build MudBlazor.Docs.WasmHost/MudBlazor.Docs.WasmHost.csproj -c Release --no-restore
 
+      - name: Build docs server
+        working-directory: src
+        run: dotnet build MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj -c Release --no-restore
+
       - name: Build examples data
         working-directory: src
         run: dotnet build MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj -c Release --no-restore
 
-  build-analyzers:
+  build-tools:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -102,23 +164,30 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.x
+          dotnet-version: |
+            10.x
+            9.x
+            8.x
 
       - name: Restore dependencies
         working-directory: src
         run: dotnet restore
 
-      - name: Build analyzers
+      - name: Build docs tests generator
         working-directory: src
-        run: dotnet build MudBlazor.Analyzers/MudBlazor.Analyzers.csproj -c Release --no-restore
+        run: dotnet build MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj -c Release --no-restore
 
-      - name: Build analyzers code fixes
+      - name: Build unit tests shared
         working-directory: src
-        run: dotnet build MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj -c Release --no-restore
+        run: dotnet build MudBlazor.UnitTests.Shared/MudBlazor.UnitTests.Shared.csproj -c Release --no-restore
 
-      - name: Build analyzers test components
+      - name: Build unit tests viewer
         working-directory: src
-        run: dotnet build MudBlazor.Analyzers.TestComponents/MudBlazor.Analyzers.TestComponents.csproj -c Release --no-restore
+        run: dotnet build MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj -c Release --no-restore
+
+      - name: Build benchmarks
+        working-directory: src
+        run: dotnet build MudBlazor.Benchmarks/MudBlazor.Benchmarks.csproj -c Release --no-restore
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -148,25 +217,9 @@ jobs:
         working-directory: src
         run: dotnet build MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --no-restore
 
-      - name: Build MudBlazor docs test generator
-        working-directory: src
-        run: dotnet build MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj -c Release --no-restore
-
-      - name: Build MudBlazor docs unit tests
-        working-directory: src
-        run: dotnet build MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj -c Release --no-restore
-
-      - name: Build MudBlazor unit test viewer
-        working-directory: src
-        run: dotnet build MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj -c Release --no-restore
-
       - name: Test MudBlazor unit tests
         working-directory: src
         run: dotnet test MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
-
-      - name: Test MudBlazor docs unit tests
-        working-directory: src
-        run: dotnet test MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/docs-' --logger "junit;LogFilePath=junit-docs.xml"
 
       - name: Publish coverage
         uses: codecov/codecov-action@v5
@@ -179,4 +232,49 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          files: src/junit.xml,src/junit-docs.xml
+          files: src/junit.xml
+
+  docs-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          # We need all runtimes for the tests
+          dotnet-version: |
+            10.x
+            9.x
+            8.x
+
+      - name: Restore dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - name: Build MudBlazor docs unit tests
+        working-directory: src
+        run: dotnet build MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj -c Release --no-restore
+
+      - name: Test MudBlazor docs unit tests
+        working-directory: src
+        run: dotnet test MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/docs-' --logger "junit;LogFilePath=junit-docs.xml"
+
+      - name: Publish docs coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload docs test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          files: src/junit-docs.xml
