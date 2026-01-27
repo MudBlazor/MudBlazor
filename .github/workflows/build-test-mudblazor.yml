@@ -41,7 +41,42 @@ jobs:
         working-directory: src
         run: dotnet format --no-restore --verify-no-changes
 
-  build-test:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.x
+            9.x
+            8.x
+
+      - name: Restore dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - name: Build docs compiler
+        working-directory: src
+        run: dotnet build MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj -c Release --no-restore
+
+      - name: Build docs site
+        working-directory: src
+        run: dotnet build MudBlazor.Docs/MudBlazor.Docs.csproj -c Release --no-restore
+
+      - name: Build docs wasm host
+        working-directory: src
+        run: dotnet build MudBlazor.Docs.WasmHost/MudBlazor.Docs.WasmHost.csproj -c Release --no-restore
+
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -65,13 +100,13 @@ jobs:
         working-directory: src
         run: dotnet restore
 
-      - name: Build solution
+      - name: Build MudBlazor unit tests
         working-directory: src
-        run: dotnet build -c Release --no-restore
+        run: dotnet build MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --no-restore
 
-      - name: Test solution
+      - name: Test MudBlazor unit tests
         working-directory: src
-        run: dotnet test -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
+        run: dotnet test MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
 
       - name: Publish coverage
         uses: codecov/codecov-action@v5
