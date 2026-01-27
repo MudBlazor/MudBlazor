@@ -1,6 +1,7 @@
 ﻿const isDarkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 let themeProvider = null;
 let isWatchingLifecycle = false;
+let checkThemeTimeout = null;
 
 function listener(e) {
     console.assert(themeProvider != null, "themeProvider is null");
@@ -8,13 +9,26 @@ function listener(e) {
 }
 
 function checkAndRestoreTheme() {
-    // Check if the theme style element exists
-    const themeStyleElement = document.querySelector('style.mud-theme-provider');
-    
-    if (!themeStyleElement && themeProvider) {
-        // Theme style element is missing, notify Blazor to re-render
-        themeProvider.invokeMethodAsync('OnThemeStyleMissingAsync');
+    // Debounce to prevent rapid consecutive calls if multiple events fire quickly
+    if (checkThemeTimeout) {
+        clearTimeout(checkThemeTimeout);
     }
+    
+    checkThemeTimeout = setTimeout(() => {
+        checkThemeTimeout = null;
+        
+        // Check if the theme style element exists
+        const themeStyleElement = document.querySelector('style.mud-theme-provider');
+        
+        if (!themeStyleElement && themeProvider) {
+            // Theme style element is missing, notify Blazor to re-render
+            try {
+                themeProvider.invokeMethodAsync('OnThemeStyleMissingAsync');
+            } catch (error) {
+                console.error('Failed to invoke OnThemeStyleMissingAsync:', error);
+            }
+        }
+    }, 100);
 }
 
 function handlePageShow(event) {
@@ -37,16 +51,22 @@ function handleVisibilityChange() {
 function startWatchingLifecycle() {
     if (!isWatchingLifecycle) {
         isWatchingLifecycle = true;
-        window.addEventListener('pageshow', handlePageShow);
-        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('pageshow', handlePageShow, { passive: true });
+        document.addEventListener('visibilitychange', handleVisibilityChange, { passive: true });
     }
 }
 
 function stopWatchingLifecycle() {
     if (isWatchingLifecycle) {
         isWatchingLifecycle = false;
-        window.removeEventListener('pageshow', handlePageShow);
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        window.removeEventListener('pageshow', handlePageShow, { passive: true });
+        document.removeEventListener('visibilitychange', handleVisibilityChange, { passive: true });
+        
+        // Clear any pending debounced check
+        if (checkThemeTimeout) {
+            clearTimeout(checkThemeTimeout);
+            checkThemeTimeout = null;
+        }
     }
 }
 
