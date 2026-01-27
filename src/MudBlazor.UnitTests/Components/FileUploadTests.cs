@@ -134,7 +134,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.Files.Should().NotBeNull();
             fileUploadInstance.Files!.Name.Should().Be(fileName);
 
-            await comp.Find("button#clear-button").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("button#clear-button").Click());
 
             fileUploadInstance.Files.Should().BeNull();
         }
@@ -151,7 +151,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FileUploadWithDragAndDropActivatorTest>();
 
-            await comp.Find("button#open-file-picker-button").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("button#open-file-picker-button").Click());
 
             Context.JSInterop.Invocations.Should().ContainSingle(invocation => invocation.Identifier == "mudFileUpload.openFilePicker");
         }

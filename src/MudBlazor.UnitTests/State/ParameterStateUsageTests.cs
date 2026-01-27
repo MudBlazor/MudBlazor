@@ -29,7 +29,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task SharedHandlerIntegration()
+    public void SharedHandlerIntegration()
     {
         var comp = Context.Render<ParameterStateSharedHandlerTestComp>();
 
@@ -39,22 +39,22 @@ public class ParameterStateUsageTests : BunitTest
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
-        await comp.Find("button.abc").ClickAsync();
+        comp.Find("button.abc").Click();
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
-        await comp.Find("button.xyz").ClickAsync();
+        comp.Find("button.xyz").Click();
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
-        await comp.Find("button.op").ClickAsync();
+        comp.Find("button.op").Click();
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("4");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
     }
 
     [Test]
-    public async Task InheritanceIntegration()
+    public void InheritanceIntegration()
     {
         var comp = Context.Render<ParameterStateSharedInheritanceHandlerTestComp>();
 
@@ -64,29 +64,29 @@ public class ParameterStateUsageTests : BunitTest
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
-        await comp.Find("button.abc").ClickAsync();
+        comp.Find("button.abc").Click();
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
-        await comp.Find("button.xyz").ClickAsync();
+        comp.Find("button.xyz").Click();
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
-        await comp.Find("button.op").ClickAsync();
+        comp.Find("button.op").Click();
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("4");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
     }
 
     [Test]
-    public async Task EventArgsIntegration()
+    public void EventArgsIntegration()
     {
         var comp = Context.Render<ParameterStateEventArgsTestComp>();
         comp.Find(".parameter-changes").Children.Length.Should().Be(0);
-        await comp.Find("button.increment-int-param").ClickAsync();
+        comp.Find("button.increment-int-param").Click();
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
         comp.Find(".parameter-changes").FirstChild?.TextContent.Trimmed().Should().Be("IntParam: 0=>1");
-        await comp.Find("button.increment-int-param").ClickAsync();
+        comp.Find("button.increment-int-param").Click();
         comp.Find(".parameter-changes").Children.Length.Should().Be(2);
         comp.Find(".parameter-changes").LastChild?.TextContent.Trimmed().Should().Be("IntParam: 1=>2");
     }
@@ -145,7 +145,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task GetStateTestIntegration()
+    public void GetStateTestIntegration()
     {
         var comp = Context.Render<ParameterStateEventArgsTestComp>();
         IElement IncrementButton() => comp.Find("button.increment-int-param");
@@ -154,12 +154,12 @@ public class ParameterStateUsageTests : BunitTest
         StateComponent().Instance.GetState(x => x.IntParam).Should().Be(0);
         StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(0);
 
-        await IncrementButton().ClickAsync();
+        IncrementButton().Click();
 
         StateComponent().Instance.GetState(x => x.IntParam).Should().Be(1);
         StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(1);
 
-        await IncrementButton().ClickAsync();
+        IncrementButton().Click();
 
         StateComponent().Instance.GetState(x => x.IntParam).Should().Be(2);
         StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(2);

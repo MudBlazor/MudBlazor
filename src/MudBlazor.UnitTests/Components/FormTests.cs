@@ -649,14 +649,14 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
 
-            await comp.Find("input").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("input").Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             // open color collection view
-            await comp.Find("div.mud-picker-color-dot-current").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
 
             // set valid color
-            await comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().ClickAsync();
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
@@ -664,11 +664,11 @@ namespace MudBlazor.UnitTests.Components
             colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
-            await comp.Find("div.mud-picker-color-dot-current").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
 
             // set invalid color
-            await comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().ClickAsync();
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
@@ -781,8 +781,8 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             await comp.Find("input").ClickAsync();
             // clicking day buttons to select a date range
-            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
-            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).ClickAsync();
+            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click());
+            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).Click());
             // wait for picker to close
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
 
@@ -1004,7 +1004,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // clear files
-            await comp.Find("button#clear-button").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("button#clear-button").Click());
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required
@@ -1963,7 +1963,7 @@ namespace MudBlazor.UnitTests.Components
         /// CheckBox should be validated like every other form component when ticked using keyboard
         /// </summary>
         [Test]
-        public async Task FormWithCheckBox_When_CheckBoxTickedUsingKeyboard()
+        public void FormWithCheckBox_When_CheckBoxTickedUsingKeyboard()
         {
             var comp = Context.Render<FormWithCheckBoxTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -1975,7 +1975,7 @@ namespace MudBlazor.UnitTests.Components
             checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // tick checkBox with a key press
-            await comp.Find("input").KeyDownAsync(Key.Space);
+            comp.Find("input").KeyDown(Key.Space);
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
@@ -1983,7 +1983,7 @@ namespace MudBlazor.UnitTests.Components
             checkBox.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // untick checkBox with a key press
-            await comp.Find("input").KeyDownAsync(Key.Space);
+            comp.Find("input").KeyDown(Key.Space);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -2032,3 +2032,4 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
+
