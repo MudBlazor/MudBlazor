@@ -13,7 +13,6 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class HiddenTests : BunitTest
     {
         [Test]
