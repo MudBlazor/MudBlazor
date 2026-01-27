@@ -32,6 +32,9 @@ Build stunning, interactive web applications with MudBlazor — the open-source 
 
 Use one of our [templates](https://github.com/MudBlazor/Templates), or follow the quick install guide below:
 
+> [!TIP]
+> Want to test the latest features? Check out our [nightly builds](/NIGHTLY-BUILDS.md) from the `dev` branch!
+
 ### Installation
 
 Install Package:
