@@ -11,7 +11,6 @@ namespace MudBlazor.UnitTests.Utilities.Debounce;
 
 #nullable enable
 [TestFixture]
-[NonParallelizable]
 public class DebounceDispatcherTests
 {
     [Test]
