@@ -94,6 +94,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     [Parameter]
     public EventCallback<Palette?> CurrentPaletteChanged { get; set; }
 
+    /// <summary>
+    /// Creates a new instance of the <see cref="MudThemeProvider"/> component.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="DynamicDependencyAttribute"/> attributes prevent the AOT compiler from trimming methods
+    /// that are invoked from JavaScript via JSInterop, ensuring they remain available at runtime.
+    /// </remarks>
     [DynamicDependency(nameof(SystemDarkModeChangedAsync))]
     [DynamicDependency(nameof(OnThemeStyleMissingAsync))]
     public MudThemeProvider()

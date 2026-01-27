@@ -59,8 +59,8 @@ function startWatchingLifecycle() {
 function stopWatchingLifecycle() {
     if (isWatchingLifecycle) {
         isWatchingLifecycle = false;
-        window.removeEventListener('pageshow', handlePageShow, { passive: true });
-        document.removeEventListener('visibilitychange', handleVisibilityChange, { passive: true });
+        window.removeEventListener('pageshow', handlePageShow);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
         
         // Clear any pending debounced check
         if (checkThemeTimeout) {
