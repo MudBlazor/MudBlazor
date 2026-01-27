@@ -25,7 +25,7 @@ public class AmericanStatesController : ControllerBase
         var input = (search ?? string.Empty).Trim().ToLower();
         var states = AmericanStates.GetStates();
 
-        List<string> result = new();
+        List<string> result = new();   
         foreach (var item in states)
         {
             if (string.IsNullOrEmpty(input) || item.Contains(input, StringComparison.InvariantCultureIgnoreCase))
