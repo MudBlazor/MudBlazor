@@ -95,6 +95,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     public EventCallback<Palette?> CurrentPaletteChanged { get; set; }
 
     [DynamicDependency(nameof(SystemDarkModeChangedAsync))]
+    [DynamicDependency(nameof(OnThemeStyleMissingAsync))]
     public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
@@ -148,6 +149,20 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         {
             await handler(isDarkMode);
         }
+    }
+
+    /// <summary>
+    /// Called by JavaScript when the theme style element is detected as missing (e.g., after PWA resume on iOS).
+    /// </summary>
+    /// <remarks>
+    /// This addresses an issue in iOS 26+ Safari PWA where the theme style element may be removed from the DOM
+    /// when the app is suspended and resumed. By forcing a state update, we trigger a re-render that restores the theme.
+    /// </remarks>
+    [JSInvokable]
+    public async Task OnThemeStyleMissingAsync()
+    {
+        // Force a state update to trigger re-render and restore the theme style element
+        await InvokeAsync(StateHasChanged);
     }
 
     // <inheritdoc />
