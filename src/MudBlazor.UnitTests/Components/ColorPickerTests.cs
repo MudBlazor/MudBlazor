@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ColorPickerMode.Should().Be(ColorPickerMode.RGB);
             comp.Instance.ColorPickerView.Should().Be(ColorPickerView.Spectrum);
             comp.Instance.UpdateBindingIfOnlyHSLChanged.Should().BeFalse();
-            comp.Instance.ReadValue.Should().Be(_defaultColor);
+            comp.Instance.ReadValue.Should().Be(null);
             comp.Instance.Palette.Should().BeEquivalentTo(_mudGridPaletteDefaultColors);
             comp.Instance.DragEffect.Should().BeTrue();
         }
@@ -1150,6 +1150,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.PickerVariant, PickerVariant.Static);
                 p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
+                p.Add(x => x.Value, _defaultColor);
             });
 
             var overlay = comp.Find(CssSelector);
