@@ -39,6 +39,22 @@ class MudKeyInterceptor {
         this._options = options;
         this.logger = options.enableLogging ? console.log : () => { };
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
+        
+        // List of known multi-character special keys that should not be filtered
+        this._specialKeys = new Set([
+            "Backspace", "Tab", "Enter", "Shift", "Control", "Alt", "Pause", "CapsLock",
+            "Escape", "Space", "PageUp", "PageDown", "End", "Home",
+            "ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown",
+            "Insert", "Delete", "Meta", "ContextMenu",
+            "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+            "F13", "F14", "F15", "F16", "F17", "F18", "F19", "F20", "F21", "F22", "F23", "F24",
+            "NumLock", "ScrollLock", "PrintScreen", "AltGraph",
+            "AudioVolumeUp", "AudioVolumeDown", "AudioVolumeMute",
+            "MediaTrackNext", "MediaTrackPrevious", "MediaStop", "MediaPlayPause",
+            "BrowserBack", "BrowserForward", "BrowserRefresh", "BrowserStop", "BrowserSearch", "BrowserFavorites", "BrowserHome",
+            "LaunchApplication1", "LaunchApplication2", "LaunchMail", "LaunchMediaPlayer",
+            "Unidentified", "Dead"
+        ]);
     }
 
     connect(element) {
@@ -176,6 +192,16 @@ class MudKeyInterceptor {
         return option.includes(combi);
     }
 
+    shouldFilterDeadKey(args) {
+        // Filter out multi-character keys which are typically from dead key sequences
+        // Dead keys produce values like "^^", "``", "´´" etc. which should be prevented
+        if (args.key.length > 1 && !this.isSpecialKey(args.key)) {
+            this.logger('[MudBlazor | KeyInterceptor] ignoring multi-char key from dead key sequence: "' + args.key + '"', args);
+            return true;
+        }
+        return false;
+    }
+
     onKeyDown(args) {
         const self = this.mudKeyInterceptor; // func is invoked with this == child
         if (!args.key) {
@@ -183,10 +209,7 @@ class MudKeyInterceptor {
             return;
         }
 
-        // Filter out multi-character keys which are typically from dead key sequences
-        // Dead keys produce values like "^^", "``", "´´" etc. which should be prevented
-        if (args.key.length > 1 && args.key !== "Dead" && !self.isSpecialKey(args.key)) {
-            self.logger('[MudBlazor | KeyInterceptor] ignoring multi-char key from dead key sequence: "' + args.key + '"', args);
+        if (self.shouldFilterDeadKey(args)) {
             args.preventDefault();
             return;
         }
@@ -234,9 +257,7 @@ class MudKeyInterceptor {
             return;
         }
 
-        // Filter out multi-character keys which are typically from dead key sequences
-        if (args.key.length > 1 && args.key !== "Dead" && !self.isSpecialKey(args.key)) {
-            self.logger('[MudBlazor | KeyInterceptor] ignoring multi-char key from dead key sequence: "' + args.key + '"', args);
+        if (self.shouldFilterDeadKey(args)) {
             args.preventDefault();
             return;
         }
@@ -272,18 +293,7 @@ class MudKeyInterceptor {
     }
 
     isSpecialKey(key) {
-        // List of known multi-character special keys that should not be filtered
-        const specialKeys = [
-            "Backspace", "Tab", "Enter", "Shift", "Control", "Alt", "Pause", "CapsLock",
-            "Escape", "Space", "PageUp", "PageDown", "End", "Home",
-            "ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown",
-            "Insert", "Delete", "Meta", "ContextMenu",
-            "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-            "NumLock", "ScrollLock", "AudioVolumeUp", "AudioVolumeDown", "AudioVolumeMute",
-            "MediaTrackNext", "MediaTrackPrevious", "MediaStop", "MediaPlayPause",
-            "Unidentified", "Dead"
-        ];
-        return specialKeys.includes(key);
+        return this._specialKeys.has(key);
     }
 
     toKeyboardEventArgs(args) {
