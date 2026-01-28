@@ -183,6 +183,14 @@ class MudKeyInterceptor {
             return;
         }
 
+        // Filter out multi-character keys which are typically from dead key sequences
+        // Dead keys produce values like "^^", "``", "´´" etc. which should be prevented
+        if (args.key.length > 1 && args.key !== "Dead" && !self.isSpecialKey(args.key)) {
+            self.logger('[MudBlazor | KeyInterceptor] ignoring multi-char key from dead key sequence: "' + args.key + '"', args);
+            args.preventDefault();
+            return;
+        }
+
         const key = args.key.toLowerCase();
         self.logger('[MudBlazor | KeyInterceptor] down "' + key + '"', args);
         let invoke = false;
@@ -226,6 +234,13 @@ class MudKeyInterceptor {
             return;
         }
 
+        // Filter out multi-character keys which are typically from dead key sequences
+        if (args.key.length > 1 && args.key !== "Dead" && !self.isSpecialKey(args.key)) {
+            self.logger('[MudBlazor | KeyInterceptor] ignoring multi-char key from dead key sequence: "' + args.key + '"', args);
+            args.preventDefault();
+            return;
+        }
+
         const key = args.key.toLowerCase();
         self.logger('[MudBlazor | KeyInterceptor] up "' + key + '"', args);
         let invoke = false;
@@ -254,6 +269,21 @@ class MudKeyInterceptor {
             args.preventDefault();
         if (this.matchesKeyCombination(keyOptions.stopUp, args))
             args.stopPropagation();
+    }
+
+    isSpecialKey(key) {
+        // List of known multi-character special keys that should not be filtered
+        const specialKeys = [
+            "Backspace", "Tab", "Enter", "Shift", "Control", "Alt", "Pause", "CapsLock",
+            "Escape", "Space", "PageUp", "PageDown", "End", "Home",
+            "ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown",
+            "Insert", "Delete", "Meta", "ContextMenu",
+            "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+            "NumLock", "ScrollLock", "AudioVolumeUp", "AudioVolumeDown", "AudioVolumeMute",
+            "MediaTrackNext", "MediaTrackPrevious", "MediaStop", "MediaPlayPause",
+            "Unidentified", "Dead"
+        ];
+        return specialKeys.includes(key);
     }
 
     toKeyboardEventArgs(args) {
