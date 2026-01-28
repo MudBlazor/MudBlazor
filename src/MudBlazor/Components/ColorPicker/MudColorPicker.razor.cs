@@ -230,7 +230,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public MudColor? Value { get; set; } = "#594ae2";
+        public MudColor? Value { get; set; }
 
         /// <summary>
         /// The currently selected value, as a string.
