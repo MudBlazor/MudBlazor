@@ -3,9 +3,6 @@ name: build-test-mudblazor
 on:
   workflow_call:
   workflow_dispatch:
-  push:
-    branches:
-      - dev
   pull_request:
 
 concurrency:
