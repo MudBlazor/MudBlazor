@@ -100,7 +100,7 @@ jobs:
             --skip-duplicate
 
       - name: Upload nightly package as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mudblazor-nightly-${{ needs.get-nightly-version.outputs.VERSION }}
           path: ./src/MudBlazor/nupkgs/*.nupkg
