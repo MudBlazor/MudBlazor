@@ -40,7 +40,9 @@ class MudKeyInterceptor {
         this.logger = options.enableLogging ? console.log : () => { };
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
         
-        // List of known multi-character special keys that should not be filtered
+        // Set of legitimate special key names that should not be filtered as dead keys
+        // These are multi-character key names from the KeyboardEvent API that represent
+        // real keyboard keys, not the result of dead key sequences
         this._specialKeys = new Set([
             "Backspace", "Tab", "Enter", "Shift", "Control", "Alt", "Pause", "CapsLock",
             "Escape", "Space", "PageUp", "PageDown", "End", "Home",
@@ -195,6 +197,8 @@ class MudKeyInterceptor {
     shouldFilterDeadKey(args) {
         // Filter out multi-character keys which are typically from dead key sequences
         // Dead keys produce values like "^^", "``", "´´" etc. which should be prevented
+        // Note: We check args.key before lowercasing, as KeyboardEvent.key returns proper-cased
+        // key names ("Backspace", "ArrowLeft", etc.) and dead key sequences maintain proper case
         if (args.key.length > 1 && !this.isSpecialKey(args.key)) {
             this.logger('[MudBlazor | KeyInterceptor] ignoring multi-char key from dead key sequence: "' + args.key + '"', args);
             return true;
@@ -209,6 +213,8 @@ class MudKeyInterceptor {
             return;
         }
 
+        // Filter dead keys early and prevent default - these are invalid input sequences
+        // that should be blocked regardless of any configured key options
         if (self.shouldFilterDeadKey(args)) {
             args.preventDefault();
             return;
