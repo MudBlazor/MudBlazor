@@ -1,7 +1,10 @@
 name: deploy-mudblazor-nightly
 
 on:
-  push:
+  workflow_run:
+    workflows: ["build-test-mudblazor"]
+    types:
+      - completed
     branches:
       - dev
   workflow_dispatch:
@@ -14,14 +17,10 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
-  # First, run the build and test workflow to ensure quality
-  build-and-test:
-    permissions: {}
-    uses: ./.github/workflows/build-test-mudblazor.yml
-
   get-nightly-version:
     runs-on: ubuntu-latest
-    needs: build-and-test
+    # Only run if the build-test workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     permissions:
       contents: read
     outputs:
