@@ -19,8 +19,8 @@ env:
 jobs:
   get-nightly-version:
     runs-on: ubuntu-latest
-    # Only run if the build-test workflow succeeded
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    # Only run on the main repository, not forks, and only if tests succeeded
+    if: ${{ github.repository == 'MudBlazor/MudBlazor' && (github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch') }}
     permissions:
       contents: read
     outputs:
