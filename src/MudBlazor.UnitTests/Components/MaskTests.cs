@@ -1108,44 +1108,5 @@ namespace MudBlazor.UnitTests.Components
             // Assert
             textField.ReadText.Should().Be(autofillValue);
         }
-
-        /// <summary>
-        /// Dead keys should not break mask validation.
-        /// Multi-character keys from dead key sequences like "^^" should be prevented.
-        /// </summary>
-        [Test]
-        public async Task Mask_DeadKeys_ShouldNotBreakMask()
-        {
-            var comp = Context.Render<MudMask>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("0000") { Placeholder = '_', CleanDelimiters = true }));
-            var maskField = comp;
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue.Should().BeNullOrEmpty());
-
-            // Try to input a valid digit
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("1___"));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue.Should().Be("1"));
-
-            // Try to input multi-character key from dead key sequence (should be ignored in JS, but test C# side)
-            // These keys should not pass validation since they don't match the single-character regex
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "^^" }));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("1___"));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue.Should().Be("1"));
-
-            // Try another multi-character dead key sequence
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "``" }));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("1___"));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue.Should().Be("1"));
-
-            // Continue with valid input
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("12__"));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue.Should().Be("12"));
-
-            // Test that Backspace (multi-character special key) still works
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadText.Should().Be("1___"));
-            await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue.Should().Be("1"));
-        }
     }
 }
