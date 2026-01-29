@@ -11,13 +11,13 @@ class MudScrollSpy {
         this.handlerRef = null;
     }
 
-    // subscribe to relevant events 
+    // subscribe to relevant events
     spying(dotnetReference, containerSelector, sectionClassSelector) {
         this.lastKnowElement = null;
 
         this.handlerRef = this.handleScroll.bind(this, dotnetReference, containerSelector, sectionClassSelector);
 
-        // add the event for scroll. In case of zooming this event is also fired 
+        // add the event for scroll. In case of zooming this event is also fired
         document.addEventListener('scroll', this.handlerRef, true);
 
         // a window resize could change the size of the relevant viewport
@@ -25,7 +25,7 @@ class MudScrollSpy {
     }
 
     // handle the document scroll event and if needed, fires the .NET event
-    handleScroll(dotnetReference, containerSelector, sectionClassSelector, event) {
+    handleScroll(dotnetReference, containerSelector, sectionClassSelector) {
         const container = document.querySelector(containerSelector);
         if (container === null) {
             return;
@@ -83,7 +83,7 @@ class MudScrollSpy {
 
     scrollToSection(sectionId) {
         if (sectionId) {
-            let element = document.getElementById(sectionId);
+            const element = document.getElementById(sectionId);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
             }

@@ -22,7 +22,7 @@
             }
             <MudSpacer />
 
-        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_SpectrumView] : null))">
+        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_SpectrumView] : string.Empty))">
             <MudIconButton Class="pa-1"
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Spectrum)"
@@ -31,7 +31,7 @@
                            aria-label="@Localizer[LanguageResource.MudColorPicker_SpectrumView]" />
         </MudTooltip>
 
-        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_GridView] : null))">
+        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_GridView] : string.Empty))">
             <MudIconButton Class="pa-1 mx-1"
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Grid)"
@@ -40,7 +40,7 @@
                            aria-label="@Localizer[LanguageResource.MudColorPicker_GridView]" />
         </MudTooltip>
 
-        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_PaletteView] : null))">
+        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_PaletteView] : string.Empty))">
             <MudIconButton Class="pa-1"
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Palette)"
@@ -263,7 +263,7 @@
                                 @if (ShowModeSwitch)
                                 {
                                     <div class="mud-picker-control-switch">
-                                        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_ModeSwitch] : null))">
+                                        <MudTooltip Text="@((ShowTooltips ? Localizer[LanguageResource.MudColorPicker_ModeSwitch] : string.Empty))">
                                             <MudIconButton OnClick="ChangeMode"
                                                            Icon="@ImportExportIcon"
                                                            Class="pa-1 me-n1"

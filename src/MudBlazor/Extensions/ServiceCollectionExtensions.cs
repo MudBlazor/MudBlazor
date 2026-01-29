@@ -224,18 +224,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds IEventListener as a transient instance.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        public static IServiceCollection AddMudEventManager(this IServiceCollection services)
-        {
-            services.TryAddTransient<IEventListener, EventListener>();
-            services.TryAddScoped<IEventListenerFactory, EventListenerFactory>();
-
-            return services;
-        }
-
-        /// <summary>
         /// Adds IPointerEventsNoneService as a scoped dependency.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -335,7 +323,6 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
-                .AddMudEventManager()
                 .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
@@ -417,7 +404,6 @@ namespace MudBlazor.Services
                     popoverOptions.Duration = options.PopoverOptions.Duration;
                 })
                 .AddMudBlazorScrollSpy()
-                .AddMudEventManager()
                 .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }

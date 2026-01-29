@@ -28,6 +28,9 @@ public enum OverflowBehavior
     /// <summary>
     /// Flips the component if it would overflow its container, dynamically adjusting as necessary to prevent overflow.
     /// </summary>
+    /// <remarks>
+    /// This is the default for popovers unless otherwise set.
+    /// </remarks>
     [Description("flip-always")]
     FlipAlways,
 }

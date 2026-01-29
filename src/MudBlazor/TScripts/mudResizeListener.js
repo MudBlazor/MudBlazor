@@ -5,7 +5,7 @@
 class MudResizeListener {
 
     constructor(id) {
-        this.logger = function (message) { };
+        this.logger = function () { };
         this.options = {};
         this.throttleResizeHandlerId = -1;
         this.dotnet = undefined;
@@ -22,7 +22,7 @@ class MudResizeListener {
 
         this.options = options;
         this.dotnet = dotnetRef;
-        this.logger = options.enableLogging ? console.log : (message) => { };
+        this.logger = options.enableLogging ? console.log : () => { };
         this.logger(`[MudBlazor] Reporting resize events at rate of: ${this.options.reportRate}ms`);
         window.addEventListener("resize", this.handleResize, false);
         if (!this.options.suppressInitEvent) {
@@ -41,7 +41,7 @@ class MudResizeListener {
 
     resizeHandler() {
         if (this.options.notifyOnBreakpointOnly) {
-            let bp = this.getBreakpoint(window.innerWidth);
+            const bp = this.getBreakpoint(window.innerWidth);
             if (bp == this.breakpoint) {
                 return;
             }
@@ -78,7 +78,7 @@ class MudResizeListener {
     }
 
     matchMedia(query) {
-        let m = window.matchMedia(query).matches;
+        const m = window.matchMedia(query).matches;
         return m;
     }
 
@@ -109,24 +109,24 @@ window.mudResizeListener = new MudResizeListener();
 window.mudResizeListenerFactory = {
     mapping: {},
     listenForResize: (dotnetRef, options, id) => {
-        var map = window.mudResizeListenerFactory.mapping;
+        const map = window.mudResizeListenerFactory.mapping;
         if (map[id]) {
             return;
         }
 
-        var listener = new MudResizeListener(id);
+        const listener = new MudResizeListener(id);
         listener.listenForResize(dotnetRef, options);
         map[id] = listener;
     },
 
     cancelListener: (id) => {
-        var map = window.mudResizeListenerFactory.mapping;
+        const map = window.mudResizeListenerFactory.mapping;
 
         if (!map[id]) {
             return;
         }
 
-        var listener = map[id];
+        const listener = map[id];
         listener.cancelListener();
         delete map[id];
     },
@@ -138,9 +138,9 @@ window.mudResizeListenerFactory = {
     },
 
     dispose() {
-        var map = window.mudResizeListenerFactory.mapping;
-        for (var id in map) {
+        const map = window.mudResizeListenerFactory.mapping;
+        for (const id in map) {
             window.mudResizeListenerFactory.cancelListener(id);
         }
     }
-}
+};

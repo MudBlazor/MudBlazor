@@ -29,8 +29,6 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx.Services.AddTransient<IJsApiService, MockJsApiService>();
             _ctx.Services.AddTransient<IDocsJsApiService, MockDocsJsApiService>();
             _ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
-            _ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
-            _ctx.Services.AddTransient<IEventListener, MockEventListener>();
             _ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
             _ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             _ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();

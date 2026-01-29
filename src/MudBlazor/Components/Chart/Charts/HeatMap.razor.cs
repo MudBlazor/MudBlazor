@@ -551,7 +551,7 @@ namespace MudBlazor.Charts
             }).CatchAndLog();
         }
 
-        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T> cell)
+        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
         }

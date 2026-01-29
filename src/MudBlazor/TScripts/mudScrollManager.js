@@ -8,20 +8,20 @@ class MudScrollManager {
     }
 
     //scrolls to year in MudDatePicker
-    scrollToYear(elementId, offset) {
-        let element = document.getElementById(elementId);
+    scrollToYear(elementId) {
+        const element = document.getElementById(elementId);
 
         if (element) {
             element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * 3;
         }
     }
 
-    // sets the scroll position of the elements container, 
+    // sets the scroll position of the elements container,
     // to the position of the element with the given element id
     scrollToListItem(elementId) {
-        let element = document.getElementById(elementId);
+        const element = document.getElementById(elementId);
         if (element) {
-            let parent = element.parentElement;
+            const parent = element.parentElement;
             if (parent) {
                 parent.scrollTop = element.offsetTop;
             }
@@ -30,19 +30,19 @@ class MudScrollManager {
 
     //scrolls to the selected element. Default is documentElement (i.e., html element)
     scrollTo(selector, left, top, behavior) {
-        let element = document.querySelector(selector) || document.documentElement;
+        const element = document.querySelector(selector) || document.documentElement;
         element.scrollTo({ left, top, behavior });
     }
 
     //scrolls the provided selector into view
     scrollIntoView(selector, behavior) {
-        let element = document.querySelector(selector) || document.documentElement;
+        const element = document.querySelector(selector) || document.documentElement;
         if (element)
             element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
     }
 
     scrollToBottom(selector, behavior) {
-        let element = document.querySelector(selector);
+        const element = document.querySelector(selector);
         if (element) {
             element.scrollTo({
                 top: element.scrollHeight,
@@ -103,7 +103,7 @@ class MudScrollManager {
             requestAnimationFrame(() => {
                 const targetElement = document.getElementById(targetItemId);
                 if (targetElement) {
-                    let scrollBehavior = behaviorString === 'smooth' ? 'smooth' : 'auto';
+                    const scrollBehavior = behaviorString === 'smooth' ? 'smooth' : 'auto';
                     targetElement.scrollIntoView({ behavior: scrollBehavior, block: 'nearest', inline: 'nearest' });
                 }
             });

@@ -141,16 +141,17 @@ namespace MudBlazor
             }
         }
 
-        private Task OnClickHandleAsync()
+        private async Task OnClickHandleAsync()
         {
             if (MultiSelection)
             {
                 Selected = !Selected;
             }
 
-            MudSelect?.SelectOption(Value);
+            if (MudSelect != null)
+                await MudSelect.SelectOption(Value);
 
-            return InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>

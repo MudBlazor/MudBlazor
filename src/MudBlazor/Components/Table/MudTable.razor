@@ -93,10 +93,10 @@
                         @if (CurrentPageItems != null && CurrentPageItems.Any())
                         {
                             var rowIndex = 0;
-                            <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                            <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                 @{
                                     var itemIndex = FilteredItems.ToList().IndexOf(item);
-                                    string generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
+                                    var generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
                                     var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndex)).Build();
                                     var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndex)).Build();
                                 }
@@ -199,7 +199,7 @@
 @code
 {
     // moved to code to avoid repeatedly code on markup block
-    internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool expandable = false)
+    internal RenderFragment RenderRows(IEnumerable<T>? source, string? customClass = null, bool expandable = false)
     {
         var rowIndex = 0;
 
@@ -213,7 +213,7 @@
              @<text>
              @{
                  var itemIndexForId = FilteredItems.ToList().IndexOf(item);
-                 string generatedRowId = itemIndexForId != -1 ? $"{_tableId}_row_{itemIndexForId}" : null;
+                 var generatedRowId = itemIndexForId != -1 ? $"{_tableId}_row_{itemIndexForId}" : null;
 
                  var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndexForId)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).Build();
                  var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndexForId)).Build();

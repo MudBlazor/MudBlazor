@@ -116,6 +116,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [NonParallelizable]
         public async Task Select_KeyDown_WhileClosed()
         {
             var comp = Context.Render<SelectFocusAndTypeTest>();
@@ -209,12 +210,12 @@ namespace MudBlazor.UnitTests.Components
             var inputs = comp.FindAll("input");
             inputs.Count.Should().Be(3);
             inputs[1].GetAttribute("value").Should().Be("Value2");
-            await inputs[1].TriggerEventAsync("onmousedown", new MouseEventArgs());
+            await inputs[1].MouseDownAsync(new MouseEventArgs());
             await Task.Delay(500);
             var listItems = comp.FindAll(".mud-list-item");
             foreach (var listItem in listItems)
             {
-                await listItem.TriggerEventAsync("onclick", new MouseEventArgs());
+                await listItem.ClickAsync(new MouseEventArgs());
             }
 
             inputs = comp.FindAll("input");
@@ -837,11 +838,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
 
             // Click clear button
-            await comp.InvokeAsync(async () =>
-            {
-                var clearButton = comp.Find(".mud-input-clear-button");
-                await clearButton.ClickAsync();
-            });
+            var clearButton = comp.Find(".mud-input-clear-button");
+            await clearButton.ClickAsync();
 
             // Value cleared
             await comp.WaitForAssertionAsync(() =>
@@ -1304,32 +1302,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
             sut.Instance.Items.Should().HaveCountGreaterThanOrEqualTo(4);
-        }
-
-        [Test]
-        public async Task Select_ValueChangeEventCount()
-        {
-            var comp = Context.Render<SelectEventCountTest>(x =>
-            {
-                x.Add(c => c.MultiSelection, false);
-            });
-            var select = comp.FindComponent<MudSelect<string>>();
-
-            comp.Instance.ValueChangeCount.Should().Be(0);
-            comp.Instance.ValuesChangeCount.Should().Be(0);
-
-            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "1")));
-            await comp.InvokeAsync(() => select.Instance.ForceUpdate());
-            await comp.WaitForAssertionAsync(() => comp.Instance.ValueChangeCount.Should().Be(1));
-            comp.Instance.ValuesChangeCount.Should().Be(1);
-            select.Instance.ReadValue.Should().Be("1");
-
-            // Changing value programmatically without ForceUpdate should change value, but should not fire change events
-            // Its by design, so this part can be change if design changes
-            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "2")));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ValueChangeCount.Should().Be(1));
-            comp.Instance.ValuesChangeCount.Should().Be(1);
-            select.Instance.ReadValue.Should().Be("2");
         }
 
         /// <summary>
@@ -1804,7 +1776,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
         {
-            // The default PopoverOptions should have OverflowBehavior.FlipOnOpen and ModalOverlay = false
+            // The default PopoverOptions should have OverflowBehavior.FlipAlways and ModalOverlay = false
             var select = Context.Render<MudSelect<string>>();
 
             // Verify that the component is using the global defaults

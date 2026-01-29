@@ -31,7 +31,7 @@ namespace MudBlazor
         /// The data grid which owns this column.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T>? DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
 
@@ -557,7 +557,7 @@ namespace MudBlazor
         #endregion
 
         internal int SortIndex { get; set; } = -1;
-        internal HeaderCell<T>? HeaderCell { get; set; }
+        internal HeaderCell<T> HeaderCell { get; set; } = null!;
 
         private Func<T, object?>? _sortBy;
         internal Func<T, object?>? groupBy;

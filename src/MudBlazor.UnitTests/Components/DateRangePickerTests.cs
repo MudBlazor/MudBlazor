@@ -926,14 +926,14 @@ namespace MudBlazor.UnitTests.Components
             var openBtn = picker[0].FindComponents<MudIconButton>();
             openBtn.Count.Should().Be(1);
             var openBtnElement = openBtn[0].Find("button");
-            await openBtnElement.TriggerEventAsync("onclick", new MouseEventArgs());
+            await openBtnElement.ClickAsync();
             await Task.Delay(500);
             IElement DayButton(string dayNumber) =>
                 comp.FindAll("button")
                     .SingleOrDefault(x => x.GetStyle().GetPropertyValue("--day-id") == dayNumber);
-            await DayButton("5").TriggerEventAsync("onclick", new MouseEventArgs());
+            await DayButton("5").ClickAsync();
             await Task.Delay(200);
-            await DayButton("7").TriggerEventAsync("onclick", new MouseEventArgs());
+            await DayButton("7").ClickAsync();
             await Task.Delay(200);
 
             IReadOnlyList<IRenderedComponent<MudIconButton>> IconButtons(int index) =>

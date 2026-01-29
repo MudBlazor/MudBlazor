@@ -56,22 +56,22 @@ namespace MudBlazor.UnitTests.Components
 
             var trs = comp.FindAll("tr");
 
-            await trs[0].TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await trs[0].PointerEnterAsync(new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: ''");
 
-            await trs[0].TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await trs[0].PointerLeaveAsync(new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
 
-            await trs[1].TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await trs[1].PointerEnterAsync(new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'B', last: 'A'");
 
-            await trs[1].TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await trs[1].PointerLeaveAsync(new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'B'");
 
-            await trs[0].TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await trs[0].PointerEnterAsync(new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: 'B'");
 
-            await trs[0].TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await trs[0].PointerLeaveAsync(new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
         }
 

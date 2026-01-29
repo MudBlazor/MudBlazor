@@ -1669,7 +1669,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePickerWithFixYearAndFixMonth()
         {
             var comp = Context.Render<FixYearFixMonthTest>();
-            await comp.Find("input").TriggerEventAsync("onclick", new MouseEventArgs());
+            await comp.Find("input").ClickAsync();
             await Task.Delay(500);
             comp.Find(".mud-button-year").GetInnerText().Should().Be("2022");
             comp.Find(".mud-picker-calendar-header-transition").GetInnerText().Should().Be("October 2022");

@@ -1594,24 +1594,24 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+                await tabs[0].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
             });
             var tabsAfterArrowRight = comp.FindAll("div.mud-tab");
             await comp.InvokeAsync(async () =>
             {
-                await tabsAfterArrowRight[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+                await tabsAfterArrowRight[1].KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             });
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
 
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+                await tabs[1].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft" });
             });
             var tabsAfterArrowLeft = comp.FindAll("div.mud-tab");
             await comp.InvokeAsync(async () =>
             {
-                await tabsAfterArrowLeft[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+                await tabsAfterArrowLeft[0].KeyDownAsync(new KeyboardEventArgs { Key = " " });
             });
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
         }
@@ -1626,26 +1626,26 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await tabs[0].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
             });
 
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+                await tabs[1].KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             });
 
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await tabs[1].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
             });
 
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[2].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+                await tabs[2].KeyDownAsync(new KeyboardEventArgs { Key = " " });
             });
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Three");
         }
@@ -1660,26 +1660,26 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+                await tabs[0].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft" });
             });
 
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+                await tabs[1].KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             });
 
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+                await tabs[1].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft" });
             });
 
             await comp.InvokeAsync(async () =>
             {
                 var tabs = comp.FindAll("div.mud-tab");
-                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+                await tabs[0].KeyDownAsync(new KeyboardEventArgs { Key = " " });
             });
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
         }
@@ -1815,7 +1815,7 @@ namespace MudBlazor.UnitTests.Components
             var tabs = comp.FindAll("div.mud-tab");
             tabs.Count.Should().Be(6);
 
-            await tabs[1].TriggerEventAsync("onmousedown", new MouseEventArgs { Button = 1 });
+            await tabs[1].MouseDownAsync(new MouseEventArgs { Button = 1 });
 
             comp.FindAll("div.mud-tab").Count
                 .Should().Be(5);
@@ -1824,7 +1824,7 @@ namespace MudBlazor.UnitTests.Components
             tabs = comp.FindAll("div.mud-tab");
             tabs.Count.Should().Be(5);
 
-            await tabs[1].TriggerEventAsync("oncontextmenu", default);
+            await tabs[1].ContextMenuAsync(default);
 
             var menuItems = comp.FindComponents<MudMenuItem>();
             menuItems.Count.Should().Be(3);
@@ -1835,7 +1835,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Close All tabs.
             tabs = comp.FindAll("div.mud-tab");
-            await tabs[0].TriggerEventAsync("oncontextmenu", default);
+            await tabs[0].ContextMenuAsync(default);
 
             await comp.FindComponents<MudMenuItem>()[1].Find(".mud-menu-item").ClickAsync();
 
