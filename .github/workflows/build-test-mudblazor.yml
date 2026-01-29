@@ -46,10 +46,8 @@ jobs:
             src/**
 
       - name: dotnet format
-        working-directory: src
         run: |
           if [ "${{ steps.changed-files.outputs.any_changed }}" != "true" ]; then
-            echo "No files changed under src/, skipping dotnet format."
             exit 0
           fi
           dotnet format --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
