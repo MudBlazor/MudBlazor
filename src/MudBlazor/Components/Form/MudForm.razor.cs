@@ -148,7 +148,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
-        
+
         /// <summary>
         /// Occurs when <c>Enter</c> is pressed on any child input of this form.
         /// </summary>
