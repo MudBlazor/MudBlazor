@@ -436,6 +436,7 @@ namespace MudBlazor
             }
             else if (colorChanged)
             {
+                await SetTextAsync(GetColorTextValue(newColor), false);
                 await _valueState.SetValueAsync(newColor);
             }
             else
