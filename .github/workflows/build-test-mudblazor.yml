@@ -50,7 +50,7 @@ jobs:
           if [ "${{ steps.changed-files.outputs.any_changed }}" != "true" ]; then
             exit 0
           fi
-          dotnet format --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
+          dotnet format src --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
 
   build-test:
     runs-on: ubuntu-latest
