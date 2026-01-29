@@ -57,7 +57,7 @@ class MudSplitPanel {
 
     // noinspection JSUnusedGlobalSymbols
     update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, forceRecalculateSize = false) {
-        let shouldRecalculateSize = horizontal !== this.horizontal || forceRecalculateSize;
+        const shouldRecalculateSize = horizontal !== this.horizontal || forceRecalculateSize;
         this.horizontal = horizontal;
         this.minPanelSize = minPanelSize;
         this.panelGap = panelGap;
@@ -66,7 +66,7 @@ class MudSplitPanel {
         this.divider.style.minWidth = this.horizontal ? null : `${panelGap}px`;
         this.divider.style.minHeight = this.horizontal ? `${panelGap}px` : null;
 
-        let containerSize = this._getContainerSize();
+        const containerSize = this._getContainerSize();
         this.divider.ariaValueMin = (this.minPanelSize / containerSize * 100).toFixed(2).toString();
         this.divider.ariaValueMax = ((containerSize - panelGap - this.minPanelSize) / containerSize * 100).toFixed(2).toString();
 

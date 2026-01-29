@@ -607,14 +607,14 @@ public class RoseChartTests : BunitTest
         petals.Count.Should().Be(2);
         var firstPetal = petals.First();
 
-        await firstPetal.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull("Tooltip should be present in the DOM after mouseover");
 
         tooltip.QuerySelector("text tspan").InnerHtml.Should().Be("A - 10");
 
-        await firstPetal.TriggerEventAsync("onmouseout", new MouseEventArgs());
+        await firstPetal.MouseOutAsync();
         comp.FindAll("g.svg-tooltip").Should().BeEmpty();
     }
 
@@ -637,7 +637,7 @@ public class RoseChartTests : BunitTest
         petals.Count.Should().Be(2);
         var firstPetal = petals.First();
 
-        await firstPetal.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltip = comp.FindAll("g.svg-tooltip");
         tooltip.Should().BeEmpty();
@@ -670,7 +670,7 @@ public class RoseChartTests : BunitTest
         var petals = comp.FindAll("path.mud-chart-serie");
         var firstPetal = petals.First();
 
-        await firstPetal.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var customContent = comp.Find("div.custom-tooltip-content");
         customContent.Should().NotBeNull();
@@ -697,7 +697,7 @@ public class RoseChartTests : BunitTest
 
         var firstPetal = comp.Find("path.mud-chart-serie");
 
-        await firstPetal.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltipDiv = comp.Find("g.svg-tooltip text");
         tooltipDiv.Should().NotBeNull();

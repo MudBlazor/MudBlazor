@@ -407,52 +407,52 @@ namespace MudBlazor.UnitTests.Components
         public async Task ObserveSystemDarkModeChange()
         {
             // Arrange & Act
-            Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
-            Context.JSInterop.SetupVoid("watchDarkThemeMedia");
+            Context.JSInterop.SetupVoid("mudThemeProvider.stopWatchingDarkMode");
+            Context.JSInterop.SetupVoid("mudThemeProvider.watchDarkMode");
             var themeProvider = Context.Render<ThemeProviderObserveSystemDarkModeChangeTest>();
 
             // Assert
-            Context.JSInterop.VerifyNotInvoke("watchDarkThemeMedia");
-            Context.JSInterop.VerifyNotInvoke("stopWatchingDarkThemeMedia");
+            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.watchDarkMode");
+            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.stopWatchingDarkMode");
 
             // Act
             await themeProvider.InvokeAsync(themeProvider.Instance.EnableObserve);
 
             // Assert
-            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia", 1);
-            Context.JSInterop.VerifyNotInvoke("stopWatchingDarkThemeMedia");
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode", 1);
+            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.stopWatchingDarkMode");
 
             // Act
             await themeProvider.InvokeAsync(themeProvider.Instance.DisableObserve);
 
             // Assert
-            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia", 1);
-            Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia", 1);
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode", 1);
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.stopWatchingDarkMode", 1);
         }
 
         [Test]
         public async Task Dispose_ShouldInvokeJs()
         {
             // Arrange
-            Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
+            Context.JSInterop.SetupVoid("mudThemeProvider.stopWatchingDarkMode");
             Context.Render<MudThemeProvider>();
 
             //Act
             await Context.DisposeComponentsAsync();
 
             // Assert
-            Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia");
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.stopWatchingDarkMode");
         }
 
         [Test]
         public void RenderComponent_ShouldInvokeJs()
         {
             // Act & Arrange
-            Context.JSInterop.SetupVoid("watchDarkThemeMedia");
+            Context.JSInterop.SetupVoid("mudThemeProvider.watchDarkMode");
             Context.Render<MudThemeProvider>();
 
             // Assert
-            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia");
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode");
         }
 
         [Test]

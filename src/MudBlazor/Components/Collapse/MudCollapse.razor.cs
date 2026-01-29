@@ -21,9 +21,10 @@ namespace MudBlazor
         private CollapseState _state = CollapseState.Exited;
 
         protected string Classname => new CssBuilder("mud-collapse-container")
-            .AddClass($"mud-collapse-entering", _state == CollapseState.Entering)
-            .AddClass($"mud-collapse-entered", _state == CollapseState.Entered)
-            .AddClass($"mud-collapse-exiting", _state == CollapseState.Exiting)
+            .AddClass("mud-collapse-entering", _state == CollapseState.Entering)
+            .AddClass("mud-collapse-entered", _state == CollapseState.Entered)
+            .AddClass("mud-collapse-exiting", _state == CollapseState.Exiting)
+            .AddClass("invisible", _state == CollapseState.Exited)
             .AddClass(Class)
             .Build();
 

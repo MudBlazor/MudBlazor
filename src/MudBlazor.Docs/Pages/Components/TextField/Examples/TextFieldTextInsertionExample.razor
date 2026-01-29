@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @ref="_textField" T="string" Label="Text insertion" Lines="3" Variant="Variant.Outlined" Text="@SampleText" HelperText="@($"Current caret position: {_currentCaretPosition}")"/>
+<MudStack Row="true" Justify="Justify.Center">
+    <MudButton OnClick="@GetCurrentCaretPositionAsync" Color="Color.Primary">Get caret position</MudButton>
+    <MudButton OnClick="@InsertAtCurrentCaretPositionAsync" Color="Color.Primary">Insert at caret position</MudButton>
+    <MudButton OnClick="@InsertAtPosition56Async" Color="Color.Primary">Insert at position 56</MudButton>
+</MudStack>
+
+@code
+{
+    private const string SampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    private MudTextField<string> _textField;
+    private int _currentCaretPosition = -1;
+
+    private async Task GetCurrentCaretPositionAsync()
+    {
+        _currentCaretPosition = await _textField.GetCurrentCaretPositionAsync();
+    }
+
+    private async Task InsertAtCurrentCaretPositionAsync()
+    {
+        await _textField.InsertTextAtCurrentCaretPositionAsync(" [this text was inserted at caret position] ");
+    }
+
+    private async Task InsertAtPosition56Async()
+    {
+        await _textField.InsertTextAsync(" [this text was inserted at position 56] ", 56);
+    }
+}

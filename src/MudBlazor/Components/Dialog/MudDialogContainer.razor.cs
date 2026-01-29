@@ -160,7 +160,7 @@ namespace MudBlazor
             }
         }
 
-        public async void OnMouseUp(MouseEventArgs args)
+        private async Task OnMouseUpAsync(MouseEventArgs args)
         {
             if (args.Button > 0)
                 await RefocusDialogAsync();

@@ -568,6 +568,9 @@ namespace MudBlazor
                 return;
             }
 
+            // Prevent conflicting actions.
+            CancelPendingActions();
+
             _isTransient = transient;
 
             // Set the menu position to the cursor if the event has coordinates.

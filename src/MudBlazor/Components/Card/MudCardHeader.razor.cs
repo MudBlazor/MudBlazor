@@ -14,8 +14,12 @@ namespace MudBlazor
     public partial class MudCardHeader : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-header")
+            .AddClass("mud-card-header-padding", ParentCard?.ContentPadding ?? true)
             .AddClass(Class)
             .Build();
+
+        [CascadingParameter]
+        private MudCard? ParentCard { get; set; }
 
         /// <summary>
         /// The avatar to display within this header.

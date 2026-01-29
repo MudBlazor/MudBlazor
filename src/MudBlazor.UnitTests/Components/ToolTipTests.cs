@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
             tooltipComp.GetState(x => x.Visible).Should().BeFalse();
 
             //trigger pointerover
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
 
             popoverContentNode().TextContent.Should().Be("my tooltip content text");
             popoverContentNode().ClassList.Should().Contain("d-flex");
@@ -67,7 +67,7 @@ namespace MudBlazor.UnitTests.Components
             //trigger pointerleave
             if (!usingFocusout)
             {
-                await button.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+                await button.ParentElement.PointerLeaveAsync(new PointerEventArgs());
             }
             else
             {
@@ -121,7 +121,7 @@ namespace MudBlazor.UnitTests.Components
             popoverContentNode.Children.Should().BeEmpty();
 
             //trigger pointerover
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
 
             //content should be visible
             popoverContentNode.ClassList.Should().Contain("mud-tooltip");
@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
             //trigger pointerleave
             if (!usingFocusout)
             {
-                await button.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+                await button.ParentElement.PointerLeaveAsync(new PointerEventArgs());
             }
             else
             {
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ToolTipPopoverClassPropertyTest>();
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
 
             var wrapperDivNode = comp.Find("#my-tooltip-content").ParentElement;
 
@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
             p.Add(x => x.Arrow, arrowValue));
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -197,7 +197,7 @@ namespace MudBlazor.UnitTests.Components
             p.Add(x => x.Color, colorValue));
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -261,7 +261,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ToolTipPlacementPropertyTest>();
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onfocusin", new FocusEventArgs());
+            await button.ParentElement.FocusInAsync(new FocusEventArgs());
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
 
@@ -275,7 +275,7 @@ namespace MudBlazor.UnitTests.Components
             var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
             tooltipComp.Visible.Should().BeFalse();
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerup", new PointerEventArgs());
+            await button.ParentElement.PointerUpAsync(new PointerEventArgs());
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
             tooltipComp.GetState(x => x.Visible).Should().BeTrue();
@@ -300,7 +300,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (!usingFocusout)
             {
-                await button.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+                await button.ParentElement.PointerLeaveAsync(new PointerEventArgs());
             }
             else
             {
@@ -317,7 +317,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TestComponents.Tooltip.TooltipStylingTest>();
             var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerup", new PointerEventArgs());
+            await button.ParentElement.PointerUpAsync(new PointerEventArgs());
 
             tooltipComp.Style.Should().Contain("background-color").And.Contain("orangered");
         }
@@ -339,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onfocusin", new FocusEventArgs());
+            await button.ParentElement.FocusInAsync(new FocusEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 
@@ -352,7 +352,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var button = comp.Find("button");
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 

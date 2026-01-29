@@ -728,11 +728,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await textField.FocusAsync());
             await comp.InvokeAsync(async () => await textField.SelectAsync());
             await comp.InvokeAsync(async () => await textField.SelectRangeAsync(0, 1));
-            await comp.InvokeAsync(() => textField.Clear());
+            await comp.InvokeAsync(() => textField.ClearAsync());
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be(null));
 
             //This gives error
-            await comp.InvokeAsync(() => textField.SetText("123"));
+            await comp.InvokeAsync(() => textField.SetTextAsync("123"));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("(123) "));
 
             //ctrl+backspace

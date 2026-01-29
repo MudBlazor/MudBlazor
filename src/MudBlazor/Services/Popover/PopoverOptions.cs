@@ -79,7 +79,7 @@ public class PopoverOptions
     /// Gets or sets the behavior applied when there is not enough space for a dropdown popover to be visible.
     /// </summary>
     /// <remarks>
-    /// The default value is <see cref="OverflowBehavior.FlipOnOpen"/>.
+    /// The default value is <see cref="OverflowBehavior.FlipAlways"/>.
     /// </remarks>
-    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipAlways;
 }

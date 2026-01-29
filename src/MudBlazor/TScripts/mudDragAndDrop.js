@@ -6,23 +6,23 @@ window.mudDragAndDrop = {
 
     initDropZone: (id) => {
         const elem = document.getElementById(id);
-        elem.addEventListener('dragover',() => event.preventDefault());
-        elem.addEventListener('dragstart', () => event.dataTransfer.setData('', event.target.id));
+        elem.addEventListener('dragover', (event) => event.preventDefault());
+        elem.addEventListener('dragstart', (event) => event.dataTransfer.setData('', event.target.id));
     },
     makeDropZonesNotRelative: () => {
-        var firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
-        for (let dropItem of firstDropItems) {
+        const firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        for (const dropItem of firstDropItems) {
             dropItem.style.position = 'static';
         }
 
         const dropZones = document.getElementsByClassName('mud-drop-zone');
-        for (let dropZone of dropZones) {
+        for (const dropZone of dropZones) {
             dropZone.style.position = 'unset';
         }
     },
     getDropZoneIdentifierOnPosition: (x, y) => {
         const elems = document.elementsFromPoint(x, y);
-        const dropZones = elems.filter(e => e.classList.contains('mud-drop-zone'))
+        const dropZones = elems.filter(e => e.classList.contains('mud-drop-zone'));
         const dropZone = dropZones[0];
         if (dropZone) {
             return dropZone.getAttribute('identifier') || "";
@@ -34,7 +34,7 @@ window.mudDragAndDrop = {
 
         const elems = document.elementsFromPoint(x, y);
 
-        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != id)
+        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != id);
         const dropItem = dropItems[0];
         if (dropItem) {
             return dropItem.getAttribute('index') || "";
@@ -43,11 +43,11 @@ window.mudDragAndDrop = {
     },
     makeDropZonesRelative: () => {
         const dropZones = document.getElementsByClassName('mud-drop-zone');
-        for (let dropZone of dropZones) {
+        for (const dropZone of dropZones) {
             dropZone.style.position = 'relative';
         }
-        var firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
-        for (let dropItem of firstDropItems) {
+        const firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        for (const dropItem of firstDropItems) {
             dropItem.style.position = 'relative';
         }
     },
@@ -57,8 +57,8 @@ window.mudDragAndDrop = {
 
 
         // keep the ACCUMULATED dragged position in the data-x/data-y attributes
-        var tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
-        var ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
+        const tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
+        const ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
 
 
         // translate the element

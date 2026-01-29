@@ -30,8 +30,6 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx.Services.AddTransient<IDocsJsApiService, MockDocsJsApiService>();
             _ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
             _ctx.Services.AddTransient<IScrollSpyFactory, MockScrollSpyFactory>();
-            _ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
-            _ctx.Services.AddTransient<IEventListener, MockEventListener>();
             _ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             _ctx.Services.AddSingleton<IMenuService, MenuService>();
             _ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();

@@ -18,7 +18,7 @@
                      Margin="@Margin"
                      Required="@Required"
                      ForId="@InputElementId"
-                     @onclick="@HandleContainerClick">
+                     @onclick="@HandleContainerClickAsync">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -82,7 +82,7 @@
                              Variant="@Variant"
                              Typo="Typo"
                              Value="@ReadText"
-                             ValueChanged="OnMaskedValueChanged"
+                             ValueChanged="OnMaskedValueChangedAsync"
                              Placeholder="@Placeholder"
                              Disabled=@GetDisabledState()
                              Underline="@Underline"

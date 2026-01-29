@@ -133,6 +133,7 @@
                                     {
                                         @ChildRowContent(item)
                                     }
+                                    @{ rowIndex++; }
                                 </MudVirtualize>
                             }
                         }
@@ -198,7 +199,7 @@
 @code
 {
     // Moved to code to avoid code repetition in the markup-block
-    internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool expandable = false)
+    internal RenderFragment RenderRows(IEnumerable<T>? source, string? customClass = null, bool expandable = false)
     {
         RenderFragment rootNode =
             @<text>

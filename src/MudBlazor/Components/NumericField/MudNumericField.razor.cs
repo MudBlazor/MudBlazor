@@ -483,7 +483,7 @@ namespace MudBlazor
         //https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
         private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
 
-        private static string? FormatParam(T value)
+        private static string? FormatParam(T? value)
         {
             if (value is IFormattable f)
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);

@@ -38,7 +38,7 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     /// <remarks>
     /// Typically used during a LINQ <c>GroupBy()</c> call to group items.
     /// </remarks>
-    public Func<T, object> Selector { get; set; } = default!;
+    public Func<T, object?>? Selector { get; set; } = default!;
 
     /// <summary>
     /// Expands this group.
@@ -56,7 +56,7 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     /// <summary>
     /// The title of the grouped column
     /// </summary>
-    public string Title { get; set; } = string.Empty;
+    public string? Title { get; set; } = string.Empty;
 
     /// <summary>
     /// The group definition within this definition.

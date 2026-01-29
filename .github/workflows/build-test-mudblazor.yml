@@ -1,6 +1,7 @@
 name: build-test-mudblazor
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     branches:
@@ -15,18 +16,36 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
-  build-test:
+  format-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
-      # We should switch to a newer version and config files. Then we can also cache the dependency.
-      - name: Install eslint
-        run: npm i -g eslint@8.57.0
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
 
-      - name: Check JS is ES6 compliant
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
+      - name: Restore dependencies
         working-directory: src
-        run: eslint --env 'es6' MudBlazor/TScripts
+        run: dotnet restore
+
+      - uses: xt0rted/dotnet-format-problem-matcher@v1
+
+      - name: dotnet format
+        working-directory: src
+        run: dotnet format --no-restore --verify-no-changes
+
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
 
       - name: Cache NuGet packages
         uses: actions/cache@v5
@@ -62,6 +81,8 @@ jobs:
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          files: src/junit.xml
