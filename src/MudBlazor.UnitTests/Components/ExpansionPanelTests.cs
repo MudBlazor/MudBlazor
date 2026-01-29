@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
             var sequence = new List<int> { 0, 2, 1 };
             foreach (var item in sequence)
             {
-                await comp.FindAll(".mud-expand-panel-header")[item].ClickAsync();
+                await comp.InvokeAsync(() => comp.FindAll(".mud-expand-panel-header")[item].Click());
 
                 var panels = comp.FindAll(".mud-expand-panel").ToList();
 
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
-                await header.ClickAsync();
+                await comp.InvokeAsync(() => header.Click());
             }
 
             //the three panels must be expanded
@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Components
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
-                await header.ClickAsync();
+                await comp.InvokeAsync(() => header.Click());
             }
 
             //we could close them all

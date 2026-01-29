@@ -11,7 +11,6 @@ namespace MudBlazor.UnitTests.Utilities.Debounce;
 
 #nullable enable
 [TestFixture]
-[NonParallelizable]
 public class DebounceDispatcherTests
 {
     [Test]
@@ -376,7 +375,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public async Task DebounceAsync_NullAction_ThrowsArgumentNullException()
+    public void DebounceAsync_NullAction_ThrowsArgumentNullException()
     {
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100);
@@ -527,7 +526,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public async Task UpdateInterval_NegativeInterval_ThrowsArgumentOutOfRangeException()
+    public void UpdateInterval_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100);

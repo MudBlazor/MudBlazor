@@ -660,13 +660,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
 
             // Act - toggle to dark mode
-            await comp.Find("button").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("button").Click());
 
             // Assert - should be dark palette
             comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteDark>();
 
             // Act - toggle back to light mode
-            await comp.Find("button").ClickAsync();
+            await comp.InvokeAsync(() => comp.Find("button").Click());
 
             // Assert - should be light palette again
             comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
