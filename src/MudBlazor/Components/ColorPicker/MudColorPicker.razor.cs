@@ -82,7 +82,7 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            
+
             var workingColor = ValueOrDefault; // initialize color picker with Value or default
             _baseColor = UpdateBaseColor(workingColor);
             var (x, y) = UpdateColorSelectorBasedOnRgb(workingColor);
