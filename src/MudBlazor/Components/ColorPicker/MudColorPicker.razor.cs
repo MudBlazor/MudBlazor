@@ -50,6 +50,8 @@ namespace MudBlazor
             "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
         };
 
+        private readonly MudColor _defaultColor = "#594ae2";
+
         [Inject]
         private TimeProvider TimeProvider { get; set; } = null!;
 
@@ -80,12 +82,10 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            if (_valueState.Value is null)
-            {
-                return;
-            }
-            _baseColor = UpdateBaseColor(_valueState.Value);
-            var (x, y) = UpdateColorSelectorBasedOnRgb(_valueState.Value);
+            
+            var workingColor = ValueOrDefault; // initialize color picker with Value or default
+            _baseColor = UpdateBaseColor(workingColor);
+            var (x, y) = UpdateColorSelectorBasedOnRgb(workingColor);
             _selectorX = x;
             _selectorY = y;
         }
@@ -106,7 +106,7 @@ namespace MudBlazor
             // TODO: To be refactored, for now we replicate old behavior that was without ParameterState
             if (!args.Value)
             {
-                var colorWithoutAlpha = _valueState.Value?.SetAlpha(1.0);
+                var colorWithoutAlpha = ValueOrDefault.SetAlpha(1.0);
                 await _textState.SetValueAsync(GetColorTextValue(colorWithoutAlpha));
                 if (!ValueChanged.HasDelegate)
                 {
@@ -115,7 +115,7 @@ namespace MudBlazor
             }
             else
             {
-                await _textState.SetValueAsync(GetColorTextValue(_valueState.Value));
+                await _textState.SetValueAsync(GetColorTextValue(ValueOrDefault));
             }
         }
 
@@ -408,17 +408,18 @@ namespace MudBlazor
 
         private async Task SetColorAsync(MudColor? newColor, bool forceUpdate = false)
         {
-            if (newColor is null)
+            if (newColor is null && _valueState.Value is null)
             {
                 return;
             }
 
-            var rgbChanged = !newColor.Equals(_valueState.Value);
-            var hslChanged = !newColor.HslEquals(_valueState.Value);
+            var rgbChanged = newColor is null || !newColor.Equals(_valueState.Value);
+            var hslChanged = newColor is null || !newColor.HslEquals(_valueState.Value);
             var colorChanged = rgbChanged || hslChanged;
-            var shouldUpdateBinding = _valueState.Value is not null && (rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged));
+            var shouldUpdateBinding = rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged);
 
-            if (colorChanged && !_skipFeedback)
+            //if color is cleared, keep _baseColor so that the picker uses the last value
+            if (newColor is not null && colorChanged && !_skipFeedback)
             {
                 _baseColor = UpdateBaseColor(newColor);
                 var (x, y) = UpdateColorSelectorBasedOnRgb(newColor);
@@ -493,10 +494,9 @@ namespace MudBlazor
 
         private async Task UpdateColorBaseOnSelectionAsync()
         {
-            if (_baseColor is null)
-            {
-                return;
-            }
+            //if underlying value is null, initialize color selector
+            _baseColor ??= ValueOrDefault;
+
             var x = _selectorX / MaxX;
             var rX = 255 - (int)((255 - _baseColor.R) * x);
             var gX = 255 - (int)((255 - _baseColor.G) * x);
@@ -509,12 +509,11 @@ namespace MudBlazor
             var b = bX * y;
 
             _skipFeedback = true;
+
             //in this mode, H is expected to be stable, so copy H value
-            if (_valueState.Value != null)
-            {
-                var newColor = new MudColor((byte)r, (byte)g, (byte)b, _valueState.Value);
-                await SetColorAsync(newColor);
-            }
+            //if null, reuse existing hue
+            var newColor = new MudColor((byte)r, (byte)g, (byte)b, _valueState.Value ?? _baseColor);
+            await SetColorAsync(newColor);
 
             _skipFeedback = false;
         }
@@ -594,39 +593,45 @@ namespace MudBlazor
             _selectorY = (offsetIsAbsolute ? e.OffsetY : e.OffsetY - (SelectorSize / 2.0) + _selectorY).EnsureRange(MaxY);
         }
 
-        private int ReadRed => _valueState.Value?.R ?? MudColor.Empty.R;
+        /// <summary>
+        /// Gets the current value, or if null returns the last valid value.
+        /// Defaults to <see cref="_defaultColor"/>.
+        /// </summary>
+        private MudColor ValueOrDefault => _valueState.Value ?? _baseColor ?? new MudColor(_defaultColor.R, _defaultColor.G, _defaultColor.B, _defaultColor);
 
-        private int ReadGreen => _valueState.Value?.G ?? MudColor.Empty.G;
+        private int ReadRed => ValueOrDefault.R;
 
-        private int ReadBlue => _valueState.Value?.B ?? MudColor.Empty.B;
+        private int ReadGreen => ValueOrDefault.G;
 
-        private int ReadAlpha => _valueState.Value?.A ?? MudColor.Empty.A;
+        private int ReadBlue => ValueOrDefault.B;
 
-        private double ReadAlphaPercentage => _valueState.Value?.APercentage ?? MudColor.Empty.APercentage;
+        private int ReadAlpha => ValueOrDefault.A;
 
-        private Task SetRedAsync(int value) => SetColorAsync(_valueState.Value?.SetR(value));
+        private double ReadAlphaPercentage => ValueOrDefault.APercentage;
 
-        private Task SetGreenAsync(int value) => SetColorAsync(_valueState.Value?.SetG(value));
+        private Task SetRedAsync(int value) => SetColorAsync(ValueOrDefault.SetR(value));
 
-        private Task SetBlueAsync(int value) => SetColorAsync(_valueState.Value?.SetB(value));
+        private Task SetGreenAsync(int value) => SetColorAsync(ValueOrDefault.SetG(value));
 
-        private Task SetAlphaAsync(int value) => SetColorAsync(_valueState.Value?.SetAlpha(value));
+        private Task SetBlueAsync(int value) => SetColorAsync(ValueOrDefault.SetB(value));
 
-        private Task SetAlphaAsync(double value) => SetColorAsync(_valueState.Value?.SetAlpha(value));
+        private Task SetAlphaAsync(int value) => SetColorAsync(ValueOrDefault.SetAlpha(value));
 
-        private double ReadHue => _valueState.Value?.H ?? MudColor.Empty.H;
+        private Task SetAlphaAsync(double value) => SetColorAsync(ValueOrDefault.SetAlpha(value));
+
+        private double ReadHue => ValueOrDefault.H;
 
         private int ReadHueInt => (int)ReadHue;
 
-        private double ReadSaturation => _valueState.Value?.S ?? MudColor.Empty.S;
+        private double ReadSaturation => ValueOrDefault.S;
 
-        private double ReadLightness => _valueState.Value?.L ?? MudColor.Empty.L;
+        private double ReadLightness => ValueOrDefault.L;
 
-        private Task SetHueAsync(double value) => SetColorAsync(_valueState.Value?.SetH(value));
+        private Task SetHueAsync(double value) => SetColorAsync(ValueOrDefault.SetH(value));
 
-        private Task SetSaturationAsync(double value) => SetColorAsync(_valueState.Value?.SetS(value));
+        private Task SetSaturationAsync(double value) => SetColorAsync(ValueOrDefault.SetS(value));
 
-        private Task SetLightnessAsync(double value) => SetColorAsync(_valueState.Value?.SetL(value));
+        private Task SetLightnessAsync(double value) => SetColorAsync(ValueOrDefault.SetL(value));
 
         /// <summary>
         /// Sets the selected color to the specified value.
@@ -636,7 +641,11 @@ namespace MudBlazor
         /// </param>
         private async Task SetInputStringAsync(string? input)
         {
-            if (MudColor.TryParse(input, out var result))
+            if (string.IsNullOrEmpty(input))
+            {
+                await SetColorAsync(null);
+            }
+            else if (MudColor.TryParse(input, out var result))
             {
                 await SetColorAsync(result);
             }
@@ -669,7 +678,7 @@ namespace MudBlazor
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == _valueState.Value).ToString();
 
         private string AlphaSliderStyle => new StyleBuilder()
-            .AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {_valueState.Value?.ToString(MudColorOutputFormats.RGB)})")
+            .AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {ValueOrDefault.ToString(MudColorOutputFormats.RGB)})")
             .Build();
     }
 }
