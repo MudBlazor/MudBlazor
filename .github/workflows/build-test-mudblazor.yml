@@ -96,4 +96,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          files: src/junit.xml
+          files: >
+            src/MudBlazor.UnitTests/junit.xml,
+            src/MudBlazor.UnitTests.Docs/junit.xml,
+            src/MudBlazor.UnitTests.Analyzers/junit.xml
