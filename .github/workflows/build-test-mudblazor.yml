@@ -223,19 +223,13 @@ jobs:
         working-directory: src
         run: dotnet restore
 
-      - name: Create test output folders
-        working-directory: src
-        run: |
-          mkdir -p TestResults/junit/unit
-          mkdir -p TestResults/coverage/unit
-
       - name: Build MudBlazor unit tests
         working-directory: src
         run: dotnet build MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --no-restore
 
       - name: Test MudBlazor unit tests
         working-directory: src
-        run: dotnet test MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/coverage/unit/' --logger "junit;LogFilePath=TestResults/junit/unit/junit.xml"
+        run: dotnet test MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/unit-' --logger "junit;LogFilePath=TestResults/junit-unit.xml"
 
       - name: Publish coverage
         uses: codecov/codecov-action@v5
@@ -248,7 +242,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          files: src/TestResults/junit/unit/junit.xml
+          files: src/TestResults/junit-unit.xml
 
   analyzers-tests:
     runs-on: ubuntu-latest
@@ -274,19 +268,13 @@ jobs:
         working-directory: src
         run: dotnet restore
 
-      - name: Create test output folders
-        working-directory: src
-        run: |
-          mkdir -p TestResults/junit/analyzers
-          mkdir -p TestResults/coverage/analyzers
-
       - name: Build MudBlazor analyzers unit tests
         working-directory: src
         run: dotnet build MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj -c Release --no-restore
 
       - name: Test MudBlazor analyzers unit tests
         working-directory: src
-        run: dotnet test MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/coverage/analyzers/' --logger "junit;LogFilePath=TestResults/junit/analyzers/junit.xml"
+        run: dotnet test MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/analyzers-' --logger "junit;LogFilePath=TestResults/junit-analyzers.xml"
 
       - name: Publish analyzers coverage
         uses: codecov/codecov-action@v5
@@ -299,7 +287,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          files: src/TestResults/junit/analyzers/junit.xml
+          files: src/TestResults/junit-analyzers.xml
 
   docs-tests:
     runs-on: ubuntu-latest
@@ -325,19 +313,13 @@ jobs:
         working-directory: src
         run: dotnet restore
 
-      - name: Create test output folders
-        working-directory: src
-        run: |
-          mkdir -p TestResults/junit/docs
-          mkdir -p TestResults/coverage/docs
-
       - name: Build MudBlazor docs unit tests
         working-directory: src
         run: dotnet build MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj -c Release --no-restore
 
       - name: Test MudBlazor docs unit tests
         working-directory: src
-        run: dotnet test MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/coverage/docs/' --logger "junit;LogFilePath=TestResults/junit/docs/junit.xml"
+        run: dotnet test MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/docs-' --logger "junit;LogFilePath=TestResults/junit-docs.xml"
 
       - name: Publish docs coverage
         uses: codecov/codecov-action@v5
@@ -350,4 +332,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          files: src/TestResults/junit/docs/junit.xml
+          files: src/TestResults/junit-docs.xml
