@@ -48,8 +48,6 @@ internal sealed class KeyCommandObserver :
 
     private static async Task DispatchAsync(IReadOnlyList<IKeyCommand> commands, KeyboardEventArgs args)
     {
-        // Execute all hooks first (hooks always return true for CanExecute)
-        // Then find and execute the first non-hook command that matches
         for (var i = 0; i < commands.Count; i++)
         {
             var command = commands[i];
