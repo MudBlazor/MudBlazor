@@ -53,7 +53,7 @@ jobs:
           fi
           dotnet format src --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
 
-  build-core:
+  core-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -80,7 +80,7 @@ jobs:
         working-directory: src
         run: dotnet build MudBlazor/MudBlazor.csproj -c Release --no-restore
 
-  build-analyzers:
+  analyzers-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -115,7 +115,7 @@ jobs:
         working-directory: src
         run: dotnet build MudBlazor.Analyzers.TestComponents/MudBlazor.Analyzers.TestComponents.csproj -c Release --no-restore
 
-  build-docs:
+  docs-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -162,7 +162,7 @@ jobs:
         working-directory: src
         run: dotnet build MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj -c Release --no-restore
 
-  build-tools:
+  tools-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -199,7 +199,7 @@ jobs:
 
       # Benchmarks are intentionally excluded
 
-  unit-tests:
+  core-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -213,7 +213,6 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          # We need all runtimes for the tests
           dotnet-version: |
             10.x
             9.x
@@ -258,7 +257,6 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          # We need all runtimes for the tests
           dotnet-version: |
             10.x
             9.x
@@ -303,7 +301,6 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          # We need all runtimes for the tests
           dotnet-version: |
             10.x
             9.x
