@@ -15,6 +15,7 @@ namespace MudBlazor.Services;
 public sealed class KeyMapBuilder
 {
     private readonly List<IKeyCommand> _commands = [];
+    private int _hookCount = 0;
 
     /// <summary>
     /// Helper to parse regex patterns from key strings.
@@ -166,13 +167,38 @@ public sealed class KeyMapBuilder
     /// <summary>
     /// Creates a conditional scope where all commands share the same condition.
     /// This is more efficient than adding the condition to each command individually.
+    /// Hooks within the scope are still inserted at the beginning to ensure they execute first.
     /// </summary>
     public KeyMapBuilder When(Func<bool> condition, Action<KeyMapBuilder> configure)
     {
         var scopedBuilder = new KeyMapBuilder();
         configure(scopedBuilder);
 
+        // Separate hooks from regular commands
+        var hooks = new List<IKeyCommand>();
+        var regularCommands = new List<IKeyCommand>();
+
         foreach (var command in scopedBuilder._commands)
+        {
+            if (command.IsHook)
+            {
+                hooks.Add(command);
+            }
+            else
+            {
+                regularCommands.Add(command);
+            }
+        }
+
+        // Insert hooks at the current hook position (maintaining declaration order)
+        foreach (var hook in hooks)
+        {
+            _commands.Insert(_hookCount, new ConditionalCommand(hook, condition));
+            _hookCount++;
+        }
+
+        // Add regular commands at the end
+        foreach (var command in regularCommands)
         {
             _commands.Add(new ConditionalCommand(command, condition));
         }
@@ -186,13 +212,13 @@ public sealed class KeyMapBuilder
     /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
     /// </summary>
     /// <remarks>
-    /// <para><strong>Important:</strong> Hooks execute in the order they are declared in the builder. For hooks to execute before specific key commands, declare them first using <c>.HookKeyDown()</c> before calling <c>.OnKeyDown()</c> or other command methods.</para>
+    /// <para><strong>Important:</strong> Hooks are always executed before regular commands, regardless of their declaration order. You can declare hooks anywhere in the builder chain and they will be automatically moved to execute first.</para>
     /// <para><strong>Example usage:</strong></para>
     /// <code>
     /// await KeyInterceptorService.SubscribeAsync(elementId, options, keys => keys
-    ///     .HookKeyDown(OnHandleKeyDownAsync)  // Hook executes first for ALL keys
+    ///     .OnKeyDown("Backspace", HandleBackspaceAsync)  // Regular commands
+    ///     .HookKeyDown(OnHandleKeyDownAsync)  // Hook still executes first for ALL keys
     ///     .When(CanHandleKeys, builder => builder
-    ///         .OnKeyDown("Backspace", HandleBackspaceAsync)  // Then specific key handlers
     ///         .OnKeyDownAny(["Escape", "Tab"], CloseAsync)));
     /// </code>
     /// <para>The hook receives the KeyboardEventArgs and can perform any necessary processing (e.g., calling a virtual method that derived classes can override). The hook will execute for every key down event, regardless of whether any specific key commands match.</para>
@@ -202,7 +228,8 @@ public sealed class KeyMapBuilder
     /// <returns>The builder for chaining.</returns>
     public KeyMapBuilder HookKeyDown(Func<KeyboardEventArgs, Task> hook)
     {
-        _commands.Add(new HookCommand(KeyEventKind.Down, hook));
+        _commands.Insert(_hookCount, new HookCommand(KeyEventKind.Down, hook));
+        _hookCount++;
         return this;
     }
 
@@ -212,13 +239,13 @@ public sealed class KeyMapBuilder
     /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
     /// </summary>
     /// <remarks>
-    /// <para><strong>Important:</strong> Hooks execute in the order they are declared in the builder. For hooks to execute before specific key commands, declare them first using <c>.HookKeyUp()</c> before calling <c>.OnKeyUp()</c> or other command methods.</para>
+    /// <para><strong>Important:</strong> Hooks are always executed before regular commands, regardless of their declaration order. You can declare hooks anywhere in the builder chain and they will be automatically moved to execute first.</para>
     /// <para><strong>Example usage:</strong></para>
     /// <code>
     /// await KeyInterceptorService.SubscribeAsync(elementId, options, keys => keys
-    ///     .HookKeyUp(OnHandleKeyUpAsync)  // Hook executes first for ALL keys
+    ///     .OnKeyUp("Enter", HandleEnterAsync)  // Regular commands
+    ///     .HookKeyUp(OnHandleKeyUpAsync)  // Hook still executes first for ALL keys
     ///     .When(CanHandleKeys, builder => builder
-    ///         .OnKeyUp("Enter", HandleEnterAsync)  // Then specific key handlers
     ///         .OnKeyUpAny(["Escape", "Tab"], CloseAsync)));
     /// </code>
     /// <para>The hook receives the KeyboardEventArgs and can perform any necessary processing (e.g., calling a virtual method that derived classes can override). The hook will execute for every key up event, regardless of whether any specific key commands match.</para>
@@ -228,7 +255,8 @@ public sealed class KeyMapBuilder
     /// <returns>The builder for chaining.</returns>
     public KeyMapBuilder HookKeyUp(Func<KeyboardEventArgs, Task> hook)
     {
-        _commands.Add(new HookCommand(KeyEventKind.Up, hook));
+        _commands.Insert(_hookCount, new HookCommand(KeyEventKind.Up, hook));
+        _hookCount++;
         return this;
     }
 
@@ -395,7 +423,8 @@ public sealed class KeyMapBuilder
     /// Used to maintain virtual method override patterns.
     /// Unlike regular commands, hooks do not stop the command chain after execution,
     /// allowing subsequent commands to also process the same key event.
-    /// Hooks execute in declaration order - declare them before other commands to ensure they run first.
+    /// Hooks are always inserted at index 0 to ensure they execute before regular commands,
+    /// regardless of their declaration order in the builder.
     /// </summary>
     private sealed class HookCommand(KeyEventKind kind, Func<KeyboardEventArgs, Task> hook) : IKeyCommand
     {
