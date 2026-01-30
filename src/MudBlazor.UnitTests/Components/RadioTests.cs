@@ -226,10 +226,10 @@ namespace MudBlazor.UnitTests.Components
             var radio = comp.FindComponent<MudRadioGroup<string>>();
             radio.Instance.Value.Should().Be(null);
 
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be(null));
 
             //Can't tabbed around the radios in test.
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
             await radio.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
 
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
         }
 

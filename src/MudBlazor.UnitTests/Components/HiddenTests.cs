@@ -13,7 +13,6 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class HiddenTests : BunitTest
     {
         [Test]
@@ -282,6 +281,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [NonParallelizable]
         public async Task TestSemaphore_RenderInParallel()
         {
             var jsRuntimeMock = new Mock<IJSRuntime>();
