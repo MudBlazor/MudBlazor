@@ -94,7 +94,7 @@ public class KeyMapBuilderHookTests
     }
 
     [Test]
-    public async Task HookKeyDown_AfterMatchingCommand_DoesNotExecute()
+    public async Task HookKeyDown_AfterMatchingCommand_StillExecutes()
     {
         // Arrange
         var executionOrder = new List<string>();
@@ -115,9 +115,10 @@ public class KeyMapBuilderHookTests
         // Act
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
 
-        // Assert - Command executes and stops chain, Hook never reached
-        executionOrder.Should().HaveCount(1);
-        executionOrder[0].Should().Be("Command");
+        // Assert - Hook executes first (inserted at index 0), then Command
+        executionOrder.Should().HaveCount(2);
+        executionOrder[0].Should().Be("Hook");
+        executionOrder[1].Should().Be("Command");
     }
 
     [Test]
@@ -211,7 +212,7 @@ public class KeyMapBuilderHookTests
     }
 
     [Test]
-    public async Task HookKeyDown_NotAffectedByWhenScope()
+    public async Task HookKeyDown_OutsideWhenScope_ExecutesRegardlessOfCondition()
     {
         // Arrange
         var condition = false; // Condition is false
@@ -235,7 +236,7 @@ public class KeyMapBuilderHookTests
         // Act
         await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
 
-        // Assert - hook executes even though When condition is false
+        // Assert - hook executes even though When condition is false (hook is outside the When scope)
         hookExecuted.Should().BeTrue();
         commandExecuted.Should().BeFalse();
     }
@@ -511,5 +512,291 @@ public class KeyMapBuilderHookTests
         // Assert - hook still executes
         hookExecuted.Should().BeTrue();
         regexCommandExecuted.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task HookKeyDown_DeclaredAtEnd_StillExecutesFirst()
+    {
+        // Arrange
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .OnKeyDown("Enter", () =>
+            {
+                executionOrder.Add("Command1");
+                return Task.CompletedTask;
+            })
+            .OnKeyDown("Escape", () =>
+            {
+                executionOrder.Add("Command2");
+                return Task.CompletedTask;
+            })
+            .HookKeyDown(args =>
+            {
+                executionOrder.Add("Hook");
+                return Task.CompletedTask;
+            });
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - Hook executes first even though declared last
+        executionOrder.Should().HaveCount(2);
+        executionOrder[0].Should().Be("Hook");
+        executionOrder[1].Should().Be("Command1");
+    }
+
+    [Test]
+    public async Task HookKeyDown_MultipleHooks_DeclaredInDifferentPositions_ExecuteInDeclarationOrder()
+    {
+        // Arrange - Hooks maintain their declaration order regardless of where they're declared
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .HookKeyDown(args =>
+            {
+                executionOrder.Add("Hook1");
+                return Task.CompletedTask;
+            })
+            .OnKeyDown("Enter", () =>
+            {
+                executionOrder.Add("Command");
+                return Task.CompletedTask;
+            })
+            .HookKeyDown(args =>
+            {
+                executionOrder.Add("Hook2");
+                return Task.CompletedTask;
+            });
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - Hooks execute first in declaration order (Hook1, Hook2), then Command
+        executionOrder.Should().HaveCount(3);
+        executionOrder[0].Should().Be("Hook1");
+        executionOrder[1].Should().Be("Hook2");
+        executionOrder[2].Should().Be("Command");
+    }
+
+    [Test]
+    public async Task HookKeyDown_InsideWhenScope_ExecutesFirst()
+    {
+        // Arrange
+        var condition = true;
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .OnKeyDown("Enter", () =>
+            {
+                executionOrder.Add("CommandOutside");
+                return Task.CompletedTask;
+            })
+            .When(() => condition, b => b
+                .OnKeyDown("Enter", () =>
+                {
+                    executionOrder.Add("CommandInside");
+                    return Task.CompletedTask;
+                })
+                .HookKeyDown(args =>
+                {
+                    executionOrder.Add("HookInside");
+                    return Task.CompletedTask;
+                }));
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - Hook inside When executes first, then CommandOutside (stops chain)
+        executionOrder.Should().HaveCount(2);
+        executionOrder[0].Should().Be("HookInside");
+        executionOrder[1].Should().Be("CommandOutside");
+    }
+
+    [Test]
+    public async Task HookKeyDown_InsideWhenScope_RespectsCondition()
+    {
+        // Arrange
+        var condition = false;
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .OnKeyDown("Enter", () =>
+            {
+                executionOrder.Add("Command");
+                return Task.CompletedTask;
+            })
+            .When(() => condition, b => b
+                .HookKeyDown(args =>
+                {
+                    executionOrder.Add("HookInside");
+                    return Task.CompletedTask;
+                }));
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - Hook inside When doesn't execute because condition is false
+        executionOrder.Should().HaveCount(1);
+        executionOrder[0].Should().Be("Command");
+    }
+
+    [Test]
+    public async Task HookKeyUp_DeclaredAtEnd_StillExecutesFirst()
+    {
+        // Arrange
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .OnKeyUp("Enter", () =>
+            {
+                executionOrder.Add("Command1");
+                return Task.CompletedTask;
+            })
+            .OnKeyUp("Escape", () =>
+            {
+                executionOrder.Add("Command2");
+                return Task.CompletedTask;
+            })
+            .HookKeyUp(args =>
+            {
+                executionOrder.Add("Hook");
+                return Task.CompletedTask;
+            });
+
+        var (_, keyUp) = builder.Build();
+
+        // Act
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - Hook executes first even though declared last
+        executionOrder.Should().HaveCount(2);
+        executionOrder[0].Should().Be("Hook");
+        executionOrder[1].Should().Be("Command1");
+    }
+
+    [Test]
+    public async Task HookKeyDown_DeclaredAfterWhenScope_StillExecutesFirst()
+    {
+        // Arrange
+        var condition = true;
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .When(() => condition, b => b
+                .OnKeyDown("Enter", () =>
+                {
+                    executionOrder.Add("CommandInWhen");
+                    return Task.CompletedTask;
+                })
+                .OnKeyDownAny(["Escape", "Tab"], () =>
+                {
+                    executionOrder.Add("CommandAnyInWhen");
+                    return Task.CompletedTask;
+                }))
+            .HookKeyDown(args =>
+            {
+                executionOrder.Add("HookAfterWhen");
+                return Task.CompletedTask;
+            });
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - Hook declared after When still executes first
+        executionOrder.Should().HaveCount(2);
+        executionOrder[0].Should().Be("HookAfterWhen");
+        executionOrder[1].Should().Be("CommandInWhen");
+    }
+
+    [Test]
+    public async Task HookKeyUp_DeclaredAfterWhenScope_StillExecutesFirst()
+    {
+        // Arrange
+        var condition = true;
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .When(() => condition, b => b
+                .OnKeyUp("Enter", () =>
+                {
+                    executionOrder.Add("CommandInWhen");
+                    return Task.CompletedTask;
+                })
+                .OnKeyUpAny(["Escape", "Tab"], () =>
+                {
+                    executionOrder.Add("CommandAnyInWhen");
+                    return Task.CompletedTask;
+                }))
+            .HookKeyUp(args =>
+            {
+                executionOrder.Add("HookAfterWhen");
+                return Task.CompletedTask;
+            });
+
+        var (_, keyUp) = builder.Build();
+
+        // Act
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - Hook declared after When still executes first
+        executionOrder.Should().HaveCount(2);
+        executionOrder[0].Should().Be("HookAfterWhen");
+        executionOrder[1].Should().Be("CommandInWhen");
+    }
+
+    [Test]
+    public async Task HookKeyDown_MixedWithWhenScopes_MaintainsCorrectOrder()
+    {
+        // Arrange
+        var condition = true;
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .HookKeyDown(args =>
+            {
+                executionOrder.Add("Hook1");
+                return Task.CompletedTask;
+            })
+            .OnKeyDown("Enter", () =>
+            {
+                executionOrder.Add("Command1");
+                return Task.CompletedTask;
+            })
+            .When(() => condition, b => b
+                .HookKeyDown(args =>
+                {
+                    executionOrder.Add("Hook2InWhen");
+                    return Task.CompletedTask;
+                })
+                .OnKeyDown("Enter", () =>
+                {
+                    executionOrder.Add("Command2InWhen");
+                    return Task.CompletedTask;
+                }))
+            .HookKeyDown(args =>
+            {
+                executionOrder.Add("Hook3");
+                return Task.CompletedTask;
+            })
+            .OnKeyDown("Enter", () =>
+            {
+                executionOrder.Add("Command3");
+                return Task.CompletedTask;
+            });
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - All hooks execute first in declaration order, then first matching command
+        executionOrder.Should().HaveCount(4);
+        executionOrder[0].Should().Be("Hook1");
+        executionOrder[1].Should().Be("Hook2InWhen");
+        executionOrder[2].Should().Be("Hook3");
+        executionOrder[3].Should().Be("Command1");
     }
 }
