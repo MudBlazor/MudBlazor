@@ -381,7 +381,6 @@ public sealed class KeyMapBuilder
     {
         public KeyEventKind Kind => inner.Kind;
 
-        // Preserve hook status from inner command
         public bool IsHook => inner.IsHook;
 
         public bool CanExecute(KeyboardEventArgs args)
@@ -402,7 +401,6 @@ public sealed class KeyMapBuilder
     {
         public KeyEventKind Kind { get; } = kind;
 
-        // Mark this as a hook so dispatcher knows not to stop the chain
         public bool IsHook => true;
 
         // Hook always executes for any key
