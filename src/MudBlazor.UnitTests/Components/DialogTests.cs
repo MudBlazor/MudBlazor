@@ -1541,15 +1541,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InjectOptions_ShouldNotBeNull()
         {
-            // Arrange
             var service = Context.Services.GetRequiredService<IDialogService>();
-            var provider = Context.Render<MudDialogProvider>();
 
             var reference = await service.ShowAsync<DialogOkCancel>();
+
             reference.InjectOptions(new DialogOptions());
             reference.Options.Should().NotBe(null);
-
-            provider.Instance.SetOptions(reference.Id, new DialogOptions());
         }
 
         /// <summary>
@@ -1558,11 +1555,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SetOptions_ShouldNotBeNull()
         {
-            // Arrange
             var service = Context.Services.GetRequiredService<IDialogService>();
             var provider = Context.Render<MudDialogProvider>();
 
             var reference = await service.ShowAsync<DialogOkCancel>();
+
             provider.Instance.SetOptions(reference.Id, new DialogOptions());
             reference.Options.Should().NotBe(null);
         }
@@ -1573,7 +1570,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldDismissOnNavigation_ShouldBeTrue()
         {
-            // Arrange
             var service = Context.Services.GetRequiredService<IDialogService>();
             var provider = Context.Render<MudDialogProvider>();
 
@@ -1592,15 +1588,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldDismissOnNavigation_ShouldBeFalse()
         {
-            // Arrange
             var service = Context.Services.GetRequiredService<IDialogService>();
             var provider = Context.Render<MudDialogProvider>();
 
+            var reference = await service.ShowAsync<DialogOkCancel>();
             var options = new DialogOptions
             {
                 CloseOnNavigation = false
             };
-            var reference = await service.ShowAsync<DialogOkCancel>("test", options: options);
+            reference.InjectOptions(options);
 
             provider.Instance.ShouldDismissOnNavigation(reference).Should().BeFalse();
         }
@@ -1611,16 +1607,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldDismissOnNavigation_ShouldBeTrueWhenCloseOnNavigationIsNull()
         {
-            // Arrange
             var service = Context.Services.GetRequiredService<IDialogService>();
             var provider = Context.Render<MudDialogProvider>();
 
+            var reference = await service.ShowAsync<DialogOkCancel>();
             var options = new DialogOptions
             {
                 CloseOnNavigation = null
             };
+            reference.InjectOptions(options);
 
-            var reference = await service.ShowAsync<DialogOkCancel>("test", options: options);
             provider.Instance.ShouldDismissOnNavigation(reference).Should().BeTrue();
         }
     }
