@@ -42,3 +42,31 @@
     Outlined, Dense with Sizing.Auto
     <MudTextField T="string" Label="example" Margin="Margin.Dense" Variant="Variant.Outlined" Sizing="InputSizing.Auto" />
 </div>
+
+<div Style="margin-top:50px">
+    Text with Sizing.Fill (in fixed height container)
+    <div style="height: 200px; display: flex; flex-direction: column; border: 1px dashed #ccc;">
+        <MudTextField T="string" Label="Fill example" Variant="Variant.Text" Sizing="InputSizing.Fill" />
+    </div>
+</div>
+
+<div Style="margin-top:50px">
+    Filled with Sizing.Fill (in fixed height container)
+    <div style="height: 200px; display: flex; flex-direction: column; border: 1px dashed #ccc;">
+        <MudTextField T="string" Label="Fill example" Variant="Variant.Filled" Sizing="InputSizing.Fill" />
+    </div>
+</div>
+
+<div Style="margin-top:50px">
+    Outlined with Sizing.Fill (in fixed height container)
+    <div style="height: 200px; display: flex; flex-direction: column; border: 1px dashed #ccc;">
+        <MudTextField T="string" Label="Fill example" Variant="Variant.Outlined" Sizing="InputSizing.Fill" />
+    </div>
+</div>
+
+<div Style="margin-top:50px">
+    Sizing.Fill with MaxLines (capped at 5 lines in tall container)
+    <div style="height: 300px; display: flex; flex-direction: column; border: 1px dashed #ccc;">
+        <MudTextField T="string" Label="Fill with MaxLines" Variant="Variant.Filled" Sizing="InputSizing.Fill" MaxLines="5" />
+    </div>
+</div>

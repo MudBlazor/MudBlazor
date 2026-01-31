@@ -28,4 +28,16 @@ public enum InputSizing
     /// </remarks>
     [Description("auto")]
     Auto,
+
+    /// <summary>
+    /// The input fills the available vertical space in its parent container.
+    /// Uses Lines as minimum height and MaxLines as maximum height (optional).
+    /// </summary>
+    /// <remarks>
+    /// Requires the parent container to have a constrained height (e.g., a flex column with bounded height, or a dialog body).
+    /// When the parent does not constrain height, this behaves like <see cref="Fixed"/> with respect to Lines/MaxLines.
+    /// Only applies to multiline inputs. For non-multiline inputs, this behaves like <see cref="Fixed"/>.
+    /// </remarks>
+    [Description("fill")]
+    Fill,
 }

@@ -24,6 +24,7 @@ public class InputTests : BunitTest
 
     [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
     [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
+    [TestCase(InputSizing.Fill, "mud-input-sizing-fill")]
     public void InputSizingHasClass(InputSizing sizing, string expectedClass)
     {
         var comp = Context.Render<MudInput<string>>(parameters => parameters

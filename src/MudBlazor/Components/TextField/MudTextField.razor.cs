@@ -95,10 +95,10 @@ namespace MudBlazor
         public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/> or <see cref="InputSizing.Fill"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
+        /// Defaults to <c>0</c>.  When <c>0</c>, this property is ignored.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]

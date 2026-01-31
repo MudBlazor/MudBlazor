@@ -467,6 +467,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FillSizingTextField_Should_NotInvokeJavaScript()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Sizing, InputSizing.Fill)
+                .Add(p => p.MaxLines, 5));
+
+            Context.JSInterop.VerifyNotInvoke("mudInputSizing.init");
+            Context.JSInterop.VerifyNotInvoke("mudInputSizing.adjustHeight");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
+
+            Context.JSInterop.VerifyNotInvoke("mudInputSizing.init");
+            Context.JSInterop.VerifyNotInvoke("mudInputSizing.adjustHeight");
+        }
+
+        [Test]
         public async Task TextFieldClearable()
         {
             var comp = Context.Render<TextFieldClearableTest>();
@@ -1200,6 +1216,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
         [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
+        [TestCase(InputSizing.Fill, "mud-input-sizing-fill")]
         public void TextFieldSizingHasClass(InputSizing sizing, string expectedClass)
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters

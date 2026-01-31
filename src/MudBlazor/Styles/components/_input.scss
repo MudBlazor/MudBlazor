@@ -542,3 +542,38 @@
 .mud-input-input-control {
   user-select: none;
 }
+
+// Fill sizing mode: input fills available vertical space
+.mud-input-sizing-fill {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+
+  // Input control container needs to stretch
+  .mud-input-control-input-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  // Inner input wrapper needs to stretch
+  .mud-input {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Textarea fills remaining space
+  textarea.mud-input-root {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+    resize: none;
+    box-sizing: border-box;
+  }
+}

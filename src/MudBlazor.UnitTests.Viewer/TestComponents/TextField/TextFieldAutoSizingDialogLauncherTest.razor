@@ -17,6 +17,10 @@
             Open Fixed Dialog
         </MudButton>
 
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="OpenFillDialogAsync">
+            Open Fill Dialog
+        </MudButton>
+
         @if (_lastResult is not null)
         {
             <MudText Color="Color.Success" Typo="Typo.subtitle2">Submitted</MudText>
@@ -84,6 +88,31 @@
         };
 
         var dialog = await DialogService.ShowAsync<TextFieldFixedSizingDialog>("Edit note (Fixed)", parameters, options);
+        await HandleDialogResult(dialog);
+    }
+
+    private async Task OpenFillDialogAsync()
+    {
+        _lastResult = null;
+        _lastCanceled = false;
+
+        var parameters = new DialogParameters<TextFieldFillSizingDialog>
+        {
+            { x => x.Title, "Edit note (Fill)" },
+            { x => x.Placeholder, "What's on your mind?" },
+            { x => x.InitialText, "Line 1\nLine 2\nLine 3" },
+            { x => x.Lines, 4 },
+            { x => x.MaxLines, 0 }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Small
+        };
+
+        var dialog = await DialogService.ShowAsync<TextFieldFillSizingDialog>("Edit note (Fill)", parameters, options);
         await HandleDialogResult(dialog);
     }
 

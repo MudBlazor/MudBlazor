@@ -164,10 +164,10 @@ namespace MudBlazor
         public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/> or <see cref="InputSizing.Fill"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
+        /// Defaults to <c>0</c>.  When <c>0</c>, this property is ignored.
         /// </remarks>
         [Parameter]
         public int MaxLines { get; set; }
@@ -289,23 +289,23 @@ namespace MudBlazor
             // Always update internal text (TextUpdateSuppression removed)
             _internalText = ReadText;
 
-            // Flag dynamic sizing to be initialized on the next render.
-            if (oldSizing == InputSizing.Fixed && newSizing != InputSizing.Fixed)
+            // Flag dynamic sizing to be initialized on the next render (only for Auto sizing).
+            if (oldSizing != InputSizing.Auto && newSizing == InputSizing.Auto)
             {
                 _shouldInitSizing = true;
             }
 
             if (IsJSRuntimeAvailable)
             {
-                if (oldSizing != InputSizing.Fixed && newSizing == InputSizing.Fixed)
+                if (oldSizing == InputSizing.Auto && newSizing != InputSizing.Auto)
                 {
-                    // Disable dynamic sizing.
+                    // Disable dynamic sizing (when switching away from Auto).
                     _shouldInitSizing = false;
                     await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
                 else if (oldLines != Lines || oldMaxLines != MaxLines || oldSizing != newSizing)
                 {
-                    if (newSizing != InputSizing.Fixed && !_shouldInitSizing)
+                    if (newSizing == InputSizing.Auto && !_shouldInitSizing)
                     {
                         // Update dynamic sizing parameters (if it was already enabled).
                         await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.updateParams", ElementReference, MaxLines);
@@ -319,7 +319,7 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (Sizing != InputSizing.Fixed)
+            if (Sizing == InputSizing.Auto)
             {
                 if (firstRender || _shouldInitSizing)
                 {
@@ -371,7 +371,7 @@ namespace MudBlazor
             if (IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference);
-                if (Sizing != InputSizing.Fixed)
+                if (Sizing == InputSizing.Auto)
                 {
                     await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
