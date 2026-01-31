@@ -15,9 +15,12 @@ namespace MudBlazor
         // a required field is added or the user touches a field that fails validation.
         private bool _valid = true;
         private bool _touched = false;
-        private Timer? _timer;
+        private ITimer? _timer;
         // Default is true, we need the form children to render
         private bool _shouldRender = true;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         protected string Classname =>
             new CssBuilder("mud-form")
@@ -375,7 +378,7 @@ namespace MudBlazor
         {
             _timer?.Dispose();
             if (debounce && ValidationDelay > 0)
-                _timer = new Timer(OnTimerComplete, null, ValidationDelay, Timeout.Infinite);
+                _timer = TimeProvider.CreateTimer(OnTimerComplete, null, TimeSpan.FromMilliseconds(ValidationDelay), Timeout.InfiniteTimeSpan);
             else
                 _ = OnEvaluateForm();
         }

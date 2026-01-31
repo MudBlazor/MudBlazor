@@ -6,7 +6,6 @@ namespace MudBlazor.UnitTests.Extensions
 {
 
     [TestFixture]
-    [NonParallelizable]
     public class TaskExtensionsTests
     {
         private Action<Exception> _originalExceptionHandler = null!;
