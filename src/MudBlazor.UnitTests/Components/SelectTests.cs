@@ -1756,6 +1756,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectOpenTwoWay()
         {
             var comp = Context.Render<SelectOpenTwoBindTest>();
+            var selectComponentInsaInstance = comp.FindComponent<MudSelect<string>>().Instance;
             IElement SwitchElement() => comp.Find("#switch");
 
             var input = comp.Find("div.mud-input-control");
@@ -1765,24 +1766,28 @@ namespace MudBlazor.UnitTests.Components
             SwitchElement().HasAttribute("checked").Should().BeTrue();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.Instance.Open.Should().BeTrue();
+            selectComponentInsaInstance.GetState(x => x.Open).Should().BeTrue();
 
             // Close the menu
             var items = comp.FindAll("div.mud-list-item");
             await items[1].ClickAsync();
 
             SwitchElement().HasAttribute("checked").Should().BeFalse();
-            comp.Instance.Open.Should().BeFalse();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.Instance.Open.Should().BeFalse();
+            selectComponentInsaInstance.GetState(x => x.Open).Should().BeFalse();
 
             // Open the menu using the switch
             await SwitchElement().ChangeAsync(true);
-            comp.Instance.Open.Should().BeTrue();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.Instance.Open.Should().BeTrue();
+            selectComponentInsaInstance.GetState(x => x.Open).Should().BeTrue();
 
             // Close the menu using the switch
             await SwitchElement().ChangeAsync(false);
-            comp.Instance.Open.Should().BeFalse();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.Instance.Open.Should().BeFalse();
+            selectComponentInsaInstance.GetState(x => x.Open).Should().BeFalse();
         }
 
         [Test]
