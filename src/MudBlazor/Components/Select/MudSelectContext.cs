@@ -84,8 +84,8 @@ namespace MudBlazor
             // Add to value lookup for fast access by value
             _valueLookup[item.Value] = item;
 
-            // Also add to shadow lookup (visible items are also accessible via shadow lookup)
-            _shadowLookup[item.Value] = item;
+            // Note: Do NOT add to _shadowLookup here - that's only for shadow items
+            // Shadow items are registered separately via RegisterShadowItem
 
             // Notify parent that an item was added (for UpdateSelectAllChecked and similar)
             _select.OnItemRegistered();
@@ -105,7 +105,7 @@ namespace MudBlazor
         {
             _items.Remove(item);
             _valueLookup.Remove(item.Value);
-            _shadowLookup.Remove(item.Value);
+            // Note: Do NOT remove from _shadowLookup - that's managed by shadow items
         }
 
         /// <summary>
