@@ -206,12 +206,9 @@ namespace MudBlazor
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
         {
-            foreach (var dialog in _dialogs.ToArray())
+            foreach (var dialog in _dialogs.ToArray().Where(ShouldDismissOnNavigation))
             {
-                if (ShouldDismissOnNavigation(dialog))
-                {
-                    DismissInstance(dialog, DialogResult.Cancel());
-                }
+                DismissInstance(dialog, DialogResult.Cancel());
             }
             StateHasChanged();
         }
