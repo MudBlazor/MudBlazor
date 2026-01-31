@@ -13,7 +13,7 @@
                         <MudText Typo="Typo.h6">@Member.Name</MudText>
                         @if (!DisplayTeam && Member.Team == Team.CoreMaintainer)
                         {
-                            <MudChip T="string" Variant="Variant.Text" Color="Color.Primary">@Member.Team.ToDescriptionString()</MudChip>
+                            <MudChip T="string" Variant="Variant.Text" Color="Color.Primary">@Member.Team.ToStringFast(true)</MudChip>
                         }
                     </MudStack>
                     
@@ -21,7 +21,7 @@
                         <MudText Typo="Typo.body2" Class="mud-text-secondary">@Member.GitHub</MudText>
                         @if (DisplayTeam)
                         {
-                            <MudChip T="string" Variant="Variant.Text" Color="@(Member.Team == Team.Contribution ? Color.Secondary : Color.Primary)" Size="Size.Small">@Member.Team.ToDescriptionString()</MudChip>
+                            <MudChip T="string" Variant="Variant.Text" Color="@(Member.Team == Team.Contribution ? Color.Secondary : Color.Primary)" Size="Size.Small">@Member.Team.ToStringFast(true)</MudChip>
                         }
                     </MudStack>
                     

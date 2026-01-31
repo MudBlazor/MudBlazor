@@ -233,7 +233,8 @@
 <DocsPageSection>
     <SectionHeader Title="Multiline">
         <Description>
-            Text fields can be expanded to accommodate multiple lines of text by setting the <CodeInline>Lines</CodeInline> property. This is useful for longer text input like comments, descriptions, or messages.
+            Text fields can be expanded to accommodate multiple lines of text by setting the <CodeInline>Lines</CodeInline> property.
+            Use <CodeInline>Sizing</CodeInline> to control whether the field grows with content.
         </Description>
     </SectionHeader>
     <SectionContent Code="@nameof(TextFieldMultilineExample)" ShowCode="false">
@@ -244,20 +245,6 @@
         you need to increase the message size limit by setting <CodeInline>MaximumReceiveMessageSize</CodeInline> accordingly in the HubOptions in your Program.cs file.
         For more details see <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/7263">this issue</MudLink> on github.
     </MudAlert>
-    <SectionSubGroups>
-        <DocsPageSection>
-            <SectionHeader Title="Auto Grow">
-                <Description>
-                    With the <CodeInline>AutoGrow</CodeInline> property set to true, the height of the text field automatically changes with the number of lines of text.
-                    The text field will not get smaller than the number of lines specified with the <CodeInline>Lines</CodeInline> property.
-                    You can limit the maximum height of the text field with the <CodeInline>MaxLines</CodeInline> property.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldAutoGrowExample)" ShowCode="false">
-                <TextFieldAutoGrowExample />
-            </SectionContent>
-        </DocsPageSection>
-    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>

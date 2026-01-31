@@ -76,7 +76,7 @@ namespace MudBlazor
         /// Replaces the dialog options.
         /// </summary>
         /// <param name="options">The new options to use</param>
-        public void InjectOptions(DialogOptions options);
+        void InjectOptions(DialogOptions options);
 
         /// <summary>
         /// Gets the result of closing the dialog.

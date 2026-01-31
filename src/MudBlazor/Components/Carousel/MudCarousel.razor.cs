@@ -19,12 +19,12 @@ namespace MudBlazor
         private readonly ParameterState<TimeSpan> _cycleTimeoutState;
 
         protected string Classname => new CssBuilder("mud-carousel")
-            .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToDescriptionString()}")
+            .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToStringFast(true)}")
             .AddClass(Class)
             .Build();
 
         protected string NavigationButtonsClassName => new CssBuilder()
-            .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+            .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToStringFast(true)}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
             .AddClass("mud-carousel-elements-rtl", RightToLeft)
             .AddClass(NavigationButtonsClass)
             .Build();

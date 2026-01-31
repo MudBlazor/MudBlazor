@@ -6,6 +6,8 @@ using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Field;
@@ -420,14 +422,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AutoGrowTextField_Should_InvokeJavaScriptInitOnRender()
+        public async Task AutoSizingTextField_Should_InvokeJavaScriptInitOnRender()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
-                .Add(p => p.AutoGrow, true)
+                .Add(p => p.Sizing, InputSizing.Auto)
                 .Add(p => p.MaxLines, 5));
 
-            Context.JSInterop.VerifyInvoke("mudInputAutoGrow.initAutoGrow", 1);
-            Context.JSInterop.Invocations["mudInputAutoGrow.initAutoGrow"].Single()
+            Context.JSInterop.VerifyInvoke("mudInputSizing.init", 1);
+            Context.JSInterop.Invocations["mudInputSizing.init"].Single()
                 .Arguments
                 .Should()
                 .HaveCount(2)
@@ -436,10 +438,10 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
 
-            Context.JSInterop.Invocations["mudInputAutoGrow.adjustHeight"].Single()
-               .Arguments
-               .Should()
-               .HaveCount(1);
+            Context.JSInterop.Invocations["mudInputSizing.adjustHeight"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(1);
         }
 
         [Test]
@@ -1052,11 +1054,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextFieldRerenderTest()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             comp.Find("input").Input(new ChangeEventArgs { Value = "test" });
             // trigger first value change
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
             // trigger delayed re-render
             await comp.InvokeAsync(() => comp.Find("#re-render-button").Click());
             // imitate "typing in progress" by extending the debounce interval until component re-renders
@@ -1067,11 +1072,12 @@ namespace MudBlazor.UnitTests.Components
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
-                await Task.Delay(delay);
+                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
             // after the final debounce, the value should be updated without swallowing any user input
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
             textField.ReadValue.Should().Be(currentText);
             textField.ReadText.Should().Be(currentText);
         }
@@ -1092,6 +1098,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextFieldFormatChangeRerenderTest()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             var comp = Context.Render<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
             DateTime expectedFinalDateTime = default;
@@ -1107,28 +1116,30 @@ namespace MudBlazor.UnitTests.Components
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 await comp.Find("input").InputAsync(currentText);
-                await Task.Delay(delay);
+                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
             // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
             textField.ReadText.Should().Be(currentText);
             // once debounce occurs, both value and text are reset because they define an invalid DateTime,
             // now with the new Format
-            await Task.Delay(comp.Instance.DebounceInterval);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
             textField.ReadValue.Should().Be(expectedFinalDateTime);
             textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// A text field with AutoGrow enabled should contain a special class.
+        /// A text field with sizing enabled should contain the correct sizing class.
         /// </summary>
-        [Test]
-        public void TextFieldAutoGrowHasClass()
+        [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
+        [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
+        public void TextFieldSizingHasClass(InputSizing sizing, string expectedClass)
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
-            .Add(p => p.AutoGrow, true));
+                .Add(p => p.Sizing, sizing));
 
-            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-auto-grow");
+            comp.Find("div.mud-input").ClassList.Should().Contain(expectedClass);
         }
 
         /// <summary>
@@ -1442,40 +1453,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Optional TextField with AutoGrow should not have required attribute and aria-required should be false.
+        /// Optional TextField with Sizing=Auto should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
-        public void OptionalTextFieldWithAutoGrow_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalTextFieldWithAutoSizing_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
-                .Add(p => p.AutoGrow, true));
+                .Add(p => p.Sizing, InputSizing.Auto));
 
             comp.Find("textarea").HasAttribute("required").Should().BeFalse();
             comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
-        /// Required TextField with AutoGrow should have required and aria-required attributes.
+        /// Required TextField with Sizing=Auto should have required and aria-required attributes.
         /// </summary>
         [Test]
-        public void RequiredTextFieldWithAutoGrow_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredTextFieldWithAutoSizing_Should_HaveRequiredAndAriaRequiredAttributes()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Required, true)
-                .Add(p => p.AutoGrow, true));
+                .Add(p => p.Sizing, InputSizing.Auto));
 
             comp.Find("textarea").HasAttribute("required").Should().BeTrue();
             comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
-        /// Required and aria-required TextField with AutoGrow attributes should be dynamic.
+        /// Required and aria-required TextField with Sizing=Auto attributes should be dynamic.
         /// </summary>
         [Test]
-        public async Task RequiredAndAriaRequiredTextFieldWithAutoGrowAttributes_Should_BeDynamic()
+        public async Task RequiredAndAriaRequiredTextFieldWithAutoSizingAttributes_Should_BeDynamic()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
-                .Add(p => p.AutoGrow, true));
+                .Add(p => p.Sizing, InputSizing.Auto));
 
             comp.Find("textarea").HasAttribute("required").Should().BeFalse();
             comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");

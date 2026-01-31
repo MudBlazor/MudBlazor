@@ -1,8 +1,11 @@
-﻿namespace MudBlazor;
+﻿using NetEscapades.EnumGenerators;
+
+namespace MudBlazor;
 
 /// <summary>
 /// Indicates the element which will receive focus.
 /// </summary>
+[EnumExtensions]
 public enum DefaultFocus
 {
     /// <summary>

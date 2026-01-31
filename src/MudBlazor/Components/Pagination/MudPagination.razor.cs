@@ -21,8 +21,8 @@ namespace MudBlazor
 
         private string Classname =>
             new CssBuilder("mud-pagination")
-                .AddClass($"mud-pagination-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-pagination-{Size.ToDescriptionString()}")
+                .AddClass($"mud-pagination-{Variant.ToStringFast(true)}")
+                .AddClass($"mud-pagination-{Size.ToStringFast(true)}")
                 .AddClass("mud-pagination-disable-elevation", !DropShadow)
                 .AddClass("mud-pagination-rtl", RightToLeft)
                 .AddClass(Class)

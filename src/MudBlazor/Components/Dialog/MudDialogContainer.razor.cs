@@ -264,7 +264,7 @@ namespace MudBlazor
             {
                 position = DialogPosition.Center;
             }
-            return $"mud-dialog-{position.ToDescriptionString()}";
+            return $"mud-dialog-{position.ToStringFast(true)}";
         }
 
         private string GetMaxWidth()
@@ -283,7 +283,7 @@ namespace MudBlazor
             {
                 maxWidth = MaxWidth.Small;
             }
-            return $"mud-dialog-width-{maxWidth.ToDescriptionString()}";
+            return $"mud-dialog-width-{maxWidth.ToStringFast(true)}";
         }
 
         private bool GetFullWidth() => GetDialogOptionsOrDefault.FullWidth ?? GlobalDialogOptions.FullWidth ?? false;

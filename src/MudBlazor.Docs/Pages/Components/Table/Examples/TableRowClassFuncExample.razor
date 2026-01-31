@@ -1,22 +1,21 @@
-﻿@using System.Net.Http.Json
-@using MudBlazor.Examples.Data.Models
+﻿@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
-@inject HttpClient httpClient
 
 <style>
     .selected {
         background-color: #1E88E5 !important;
     }
+
     .selected > td {
         color: white !important;
     }
+
     .selected > td .mud-input {
         color: white !important;
     }
 </style>
 
-<MudTable T="Element" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable"
-          RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="RowClickEvent">
+<MudTable T="Element" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @bind-SelectedItem="@_selectedElement" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@RowClickEvent">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -34,52 +33,54 @@
 </MudTable>
 <MudExpansionPanels Style="flex: 1;">
     <MudExpansionPanel Text="Show inline-clicked event log">
-        @foreach (var message in clickedEvents)
+        @foreach (var message in _clickedEvents)
         {
             <MudText>@message</MudText>
         }
-        @if(clickedEvents.Count > 0) {
+        @if (_clickedEvents.Count > 0)
+        {
             <div class="d-flex">
                 <MudSpacer/>
-                <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => clickedEvents.Clear())">Clear events</MudButton>
+                <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _clickedEvents.Clear())">Clear events</MudButton>
             </div>
         }
     </MudExpansionPanel>
 </MudExpansionPanels>
 
 @code {
-    private int selectedRowNumber = -1;
-    private MudTable<Element> mudTable;
-    private List<string> clickedEvents = new();
-    private IEnumerable<Element> Elements = new List<Element>()
+
+    private static readonly IEnumerable<Element> Elements = new List<Element>
     {
-        new Element() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 0, Molar = 1.00794 },
-        new Element() { Number = 2, Sign = "He", Name = "Helium", Position = 17, Molar = 4.002602 },
-        new Element() { Number = 3, Sign = "Li", Name = "Lithium", Position = 0, Molar = 6.941 }
+        new() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 0, Molar = 1.00794 },
+        new() { Number = 2, Sign = "He", Name = "Helium", Position = 17, Molar = 4.002602 },
+        new() { Number = 3, Sign = "Li", Name = "Lithium", Position = 0, Molar = 6.941 }
     };
+
+    private Element _selectedElement;
+    private int _selectedRowNumber = -1;
+    private readonly List<string> _clickedEvents = [];
 
     private void RowClickEvent(TableRowClickEventArgs<Element> tableRowClickEventArgs)
     {
-        clickedEvents.Add("Row has been clicked");
+        _clickedEvents.Add($"Row has been clicked {tableRowClickEventArgs.MouseEventArgs.Detail} times");
     }
 
     private string SelectedRowClassFunc(Element element, int rowNumber)
     {
-        if (selectedRowNumber == rowNumber)
+        if (_selectedRowNumber == rowNumber)
         {
-            selectedRowNumber = -1;
-            clickedEvents.Add("Selected Row: None");
+            _selectedRowNumber = -1;
+            _clickedEvents.Add("Selected Row: None");
             return string.Empty;
         }
-        else if (mudTable.SelectedItem != null && mudTable.SelectedItem.Equals(element))
+
+        if (_selectedElement is not null && _selectedElement.Equals(element))
         {
-            selectedRowNumber = rowNumber;
-            clickedEvents.Add($"Selected Row: {rowNumber}");
+            _selectedRowNumber = rowNumber;
+            _clickedEvents.Add($"Selected Row: {rowNumber}");
             return "selected";
         }
-        else
-        {
-            return string.Empty;
-        }
+
+        return string.Empty;
     }
 }

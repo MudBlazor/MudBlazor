@@ -283,7 +283,7 @@ namespace MudBlazor.UnitTests.Charts
             );
 
             var chartElement = comp.Find(".mud-chart");
-            var expectedClass = $"mud-chart-legend-{position.ToDescriptionString()}";
+            var expectedClass = $"mud-chart-legend-{position.ToStringFast(true)}";
             chartElement.ClassList.Should().Contain(expectedClass);
         }
 
