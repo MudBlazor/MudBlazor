@@ -33,7 +33,7 @@ namespace MudBlazor
         /// <summary>
         /// Creates a new instance.
         /// </summary>
-        public MudFileUpload() : base(new DefaultConverter<T>())
+        public MudFileUpload()
         {
             using var registerScope = CreateRegisterScope();
             _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
@@ -56,7 +56,7 @@ namespace MudBlazor
         /// When <c>T</c> is <see cref="IBrowserFile" />, a single file is returned.<br />
         /// When <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>, multiple files are returned.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public T? Files { get; set; }
 
@@ -144,6 +144,7 @@ namespace MudBlazor
         /// <remarks>
         /// These styles apply when <see cref="Hidden"/> is <c>false</c>.
         /// </remarks>
+        [Obsolete("Prefer the InputClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string? InputStyle { get; set; }
@@ -247,7 +248,7 @@ namespace MudBlazor
 
             await NotifyValueChangedAsync(value);
 
-            if (!Error || !SuppressOnChangeWhenInvalid)
+            if (!ErrorState.Value || !SuppressOnChangeWhenInvalid)
                 await OnFilesChanged.InvokeAsync(args);
         }
 
@@ -307,24 +308,34 @@ namespace MudBlazor
             FieldChanged(value);
         }
 
-        protected override T? ReadValue() => _filesState.Value;
+        /// <inheritdoc />
+        protected override IConverter<T?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
 
-        protected override Task WriteValueAsync(T? value) => _filesState.SetValueAsync(value);
+        protected internal override T? ReadValue => _filesState.Value;
+
+        protected override Task SetValueCoreAsync(T? value) => _filesState.SetValueAsync(value);
 
         protected override async Task ValidateValue()
         {
             await base.ValidateValue();
 
             ValidationErrors = [.. ValidationErrors, .. _validationErrors];
-            Error = ValidationErrors.Count > 0;
-            ErrorText = ValidationErrors.FirstOrDefault();
+            await ErrorState.SetValueAsync(ValidationErrors.Count > 0);
+            await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
         }
 
-        public override void ResetValidation()
+        public override Task ResetValidationAsync()
         {
             _validationErrors.Clear();
 
-            base.ResetValidation();
+            return base.ResetValidationAsync();
         }
     }
 }

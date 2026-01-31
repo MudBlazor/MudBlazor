@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.Rose" ChartSeries="@_series" @bind-SelectedIndex="_selectedIndex" ChartOptions="@_options" Width="100%" Height="300px">
+        <CustomGraphics>
+            <text x="50"
+                  y="25"
+                  dominant-baseline="middle"
+                  text-anchor="middle"
+                  fill="@_options.ChartPalette[Math.Max(0, _selectedIndex)]">@(_selectedIndex == -1 ? "" : $"Selected: {_series[0].Data[_selectedIndex].Y}")</text>
+        </CustomGraphics>
+    </MudChart>
+</MudPaper>
+
+<div>Selected Index: @_selectedIndex</div>
+
+@code {
+    private int _selectedIndex = -1;
+    private List<ChartSeries<double>> _series = new() { new() { Name = "Single Series", Data = new double[] { 70, 20, 40, 50, 80 } } };
+    private RoseChartOptions _options = new RoseChartOptions
+    {
+        ShowValues = true,
+        AngleOffset = 45,
+        ScaleFactor = 0.8,
+        ShowToolTips = false,
+    };
+}

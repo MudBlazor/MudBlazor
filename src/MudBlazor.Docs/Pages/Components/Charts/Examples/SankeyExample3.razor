@@ -1,33 +1,26 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using MudBlazor.Charts
+
+@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Sankey" Nodes="@_nodes" Edges="@_edges" Width="@_width" Height="@_height" @bind-SelectedIndex="_SelectedIndex"/>
+    <MudChart @ref="_mudChart" ChartType="ChartType.Sankey" ChartSeries="@Series.AsList()" Width="@_width" Height="@_height" @bind-SelectedIndex="_selectedIndex"/>
 </MudPaper>
 
 <MudGrid>
     <MudItem xs="12">
-        <MudText>Node selected: @(_SelectedIndex >= 0 ? _nodes[_SelectedIndex].Name : "")</MudText>
+        <MudText>Node selected: @(_selectedIndex >= 0 ? Chart.Nodes.ElementAt(_selectedIndex).Name : "")</MudText>
     </MudItem>
 </MudGrid>
 
 @code {
+    private MudChart<int> _mudChart = null!;
     private string _width = "650px";
     private string _height = "350px";
-    private int _SelectedIndex = -1;
+    private int _selectedIndex = -1;
 
-    private readonly List<SankeyChartNode> _nodes =
-    [
-        new("Balls", 0),
+    public Sankey<int> Chart => _mudChart.ChartReference as Sankey<int>;
 
-        new("Soccer ball", 1),
-        new("Football", 1),
-        new("Tennis ball", 1),
-
-        new("Good condition", 2),
-        new("Bad condition", 2),
-    ];
-
-    private readonly List<SankeyChartEdge> _edges =
+    private readonly List<SankeyEdge<int>> _edges =
     [
         new("Balls", "Soccer ball", 20),
         new("Balls", "Football", 10),
@@ -40,4 +33,7 @@
         new("Tennis ball", "Good condition", 10),
         new("Tennis ball", "Bad condition", 20),
     ];
+
+    private ChartSeries<int> Series => new() { Name = "Ball Catalog", Data = _edges };
 }
+

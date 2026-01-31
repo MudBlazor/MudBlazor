@@ -22,17 +22,16 @@ namespace MudBlazor
         public MudRangeInput()
         {
             Value = new Range<T>();
-            Converter = new RangeConverter<T>();
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text)
+            () => !string.IsNullOrEmpty(ReadText)
                   || Adornment == Adornment.Start
                   || !string.IsNullOrWhiteSpace(PlaceholderStart)
                   || !string.IsNullOrWhiteSpace(PlaceholderEnd)
                   || ShrinkLabel);
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -78,9 +77,20 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <see cref="ClearIcon"/> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         public bool Clearable { get; set; }
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// The content within this input component.
@@ -151,7 +161,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -166,31 +176,41 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        protected string InputTypeString => InputType.ToStringFast(true);
 
-        protected bool IsClearable() => Clearable && Value is not null;
+        protected bool IsClearable() => Clearable && ReadValue is not null;
+
+        /// <inheritdoc />
+        protected override IConverter<Range<T>?, string?> GetDefaultConverter()
+        {
+            return new RangeConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             await base.UpdateTextPropertyAsync(updateValue);
 
-            RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
 
-            RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await _elementReferenceStart.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }

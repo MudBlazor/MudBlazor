@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
@@ -189,7 +189,7 @@ public class ParameterContainerTests
     }
 
     [Test(Description = "https://github.com/MudBlazor/MudBlazor/pull/12023")]
-    public async Task ParameterState_Snapshot_Test()
+    public async Task ParameterState_Snapshot()
     {
         var tcs1 = new TaskCompletionSource();
         var tcs2 = new TaskCompletionSource();

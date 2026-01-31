@@ -85,7 +85,7 @@ public partial class ChartTooltip : ComponentBase
     /// Defaults to <c>"unset"</c>.
     /// </remarks>
     [Parameter]
-    public string FontColor { get; set; } = "unset";
+    public string FontColor { get; set; } = "white";
 
     /// <summary>
     /// The width of the border.
@@ -117,23 +117,30 @@ public partial class ChartTooltip : ComponentBase
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BBox))]
     public ChartTooltip() { }
 
-    private string? WidthCalculatedOnFontSize { get; set; }
+    private double _previousX;
+    private double _previousY;
+    private string? _previousFontSize;
+    private string? _previousTitle;
+    private string? _previousSubtitle;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if (FontSize != WidthCalculatedOnFontSize) await RecalculateBoxWidthAsync();
-    }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-        if (WidthCalculatedOnFontSize != null) await RecalculateBoxWidthAsync();
+        if (firstRender || FontSize != _previousFontSize || Title != _previousTitle || Subtitle != _previousSubtitle || _previousX != X || _previousY != Y)
+        {
+            await RecalculateBoxWidthAsync();
+        }
     }
 
     private async Task RecalculateBoxWidthAsync()
     {
-        WidthCalculatedOnFontSize = FontSize;
+        _previousX = X;
+        _previousY = Y;
+        _previousTitle = Title;
+        _previousSubtitle = Subtitle;
+        _previousFontSize = FontSize;
+
         var textBBox = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _text);
         var textWidth = textBBox?.Width ?? 0;
         var textHeight = textBBox?.Height ?? 0;

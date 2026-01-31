@@ -132,6 +132,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             SetDefaultValues();
         }
 

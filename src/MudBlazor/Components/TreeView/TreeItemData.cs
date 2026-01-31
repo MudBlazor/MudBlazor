@@ -12,7 +12,7 @@ namespace MudBlazor;
 /// The current state of a <see cref="MudTreeViewItem{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of item to display.</typeparam>
-public class TreeItemData<T> : IEquatable<TreeItemData<T>>
+public class TreeItemData<T> : ITreeItemData<T>, IEquatable<TreeItemData<T>>
 {
     public TreeItemData() : this(default) { }
 
@@ -80,7 +80,7 @@ public class TreeItemData<T> : IEquatable<TreeItemData<T>>
     /// <summary>
     /// The child items underneath this item.
     /// </summary>
-    public virtual List<TreeItemData<T>>? Children { get; set; }
+    public virtual IReadOnlyCollection<ITreeItemData<T>>? Children { get; set; }
 
     /// <summary>
     /// Whether this item contains child items.

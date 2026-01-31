@@ -26,16 +26,16 @@
 
             if (result is not null)
             {
-                await DialogService.ShowMessageBox("result", (string?)result.Data ?? string.Empty);
+                await DialogService.ShowMessageBoxAsync("result", (string?)result.Data ?? string.Empty);
             }
             else
             {
-                await DialogService.ShowMessageBox("error", "result was null");
+                await DialogService.ShowMessageBoxAsync("error", "result was null");
             }
         }
         catch (Exception exception)
         {
-            await DialogService.ShowMessageBox("error", exception.ToString());
+            await DialogService.ShowMessageBoxAsync("error", exception.ToString());
         }
     }
 

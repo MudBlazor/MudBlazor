@@ -5,7 +5,7 @@
 @code {
     private readonly ParameterState<bool> _expandedState; //separate field for storing parameter state
 
-    [Parameter]
+    [Parameter, ParameterState]
     public bool Expanded { get; set; }
 
     [Parameter]

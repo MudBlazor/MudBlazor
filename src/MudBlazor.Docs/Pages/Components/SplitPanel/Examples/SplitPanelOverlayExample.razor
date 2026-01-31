@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="mud-width-full mud-height-full relative">
+    <MudSplitPanel Class="mud-height-full"
+                   UseAsOverlay="true"
+                   Elevation="8"
+                   FirstPanelInitialSize="150"
+                   MinPanelSize="150"
+                   Padding="4"
+                   Rounded="true">
+        <FirstPanel>
+            <div style="display: grid; grid-template-rows: auto 1fr;" class="mud-height-full">
+                <MudText Typo="Typo.h6">Toolbox</MudText>
+                <MudStack Row="true" Wrap="Wrap.Wrap" Class="overflow-y-auto mt-2" AlignItems="AlignItems.Start" Style="align-content: flex-start;">
+                    @for (var i = 0; i < 20; i++)
+                    {
+                        var iLocal = i;
+                        <MudText>Some item @iLocal</MudText>
+                    }
+                </MudStack>
+            </div>
+        </FirstPanel>
+    </MudSplitPanel>
+    <MudStack Class="pa-4" Style="margin-left: 150px;">
+        <MudText Typo="Typo.h6">Content</MudText>
+        <MudText>
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+            duo
+            dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+            tempor
+            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+            ipsum
+            dolor sit amet.
+        </MudText>
+    </MudStack>
+</MudPaper>

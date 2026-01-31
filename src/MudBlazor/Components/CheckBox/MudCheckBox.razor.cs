@@ -7,13 +7,15 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a form input for boolean values or selecting multiple items in a list.
+    /// A form input for boolean values or selecting multiple items in a list. Use checkboxes (instead of switches or radio buttons) if multiple options can be selected from a list.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
     /// <seealso cref="MudRadio{T}"/>
+    /// <seealso cref="MudSwitch{T}"/>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
-        private string _elementId = Identifier.Create("checkbox");
+        private readonly string _elementId = Identifier.Create("checkbox");
+        private readonly string _ariaId = Identifier.Create("cbox-aria-");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -28,12 +30,12 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToStringFast(true)}")
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
-            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
             .AddClass($"mud-disabled", GetDisabledState())
@@ -52,6 +54,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
+
+        /// <summary>
+        /// The Aria Label to be assigned to the checkbox.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Used to improve accessibility for screen readers. Adds an aria-labelledby to <c>UserAttributes</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// Allows this checkbox to be controlled via the keyboard.
@@ -129,7 +141,7 @@ namespace MudBlazor
             if (TriState && typeof(T) == typeof(bool?))
             {
                 // The cycle is forced with the following steps: true, false, indeterminate, true, false, indeterminate...
-                var boolValue = (bool?)(object?)_value;
+                var boolValue = (bool?)(object?)ReadValue;
                 if (!boolValue.HasValue)
                 {
                     return SetBoolValueAsync(true, true);
@@ -190,9 +202,11 @@ namespace MudBlazor
         {
             base.OnInitialized();
 
-            if (Label is null && For is not null)
+            // if Aria Label has a value add aria-labeled by
+            if (!string.IsNullOrWhiteSpace(AriaLabel))
             {
-                Label = For.GetLabelString();
+                // we use try add in case the user has already set an aria-labelledby attribute
+                UserAttributes.TryAdd("aria-labelledby", _ariaId);
             }
         }
 

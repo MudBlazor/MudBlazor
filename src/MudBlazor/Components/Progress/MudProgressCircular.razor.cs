@@ -11,7 +11,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A circle-shaped indicator of progress for an ongoing operation.
+    /// Informs users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. Shows either the length of a process or unspecified wait time.
     /// </summary>
     /// <seealso cref="MudProgressLinear"/>
     public partial class MudProgressCircular : MudComponentBase
@@ -25,8 +25,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-progress-circular")
-                .AddClass($"mud-{Color.ToDescriptionString()}-text")
-                .AddClass($"mud-progress-{Size.ToDescriptionString()}")
+                .AddClass($"mud-{Color.ToStringFast(true)}-text")
+                .AddClass($"mud-progress-{Size.ToStringFast(true)}")
                 .AddClass("mud-progress-indeterminate", Indeterminate)
                 .AddClass("mud-progress-static", !Indeterminate)
                 .AddClass(Class)
@@ -74,14 +74,11 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the CSS <c>stroke-linecap</c> is set to <c>round</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The lowest possible value.
@@ -109,7 +106,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>False</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Value { get; set; }
 

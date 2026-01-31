@@ -18,11 +18,11 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-navmenu")
-                .AddClass($"mud-navmenu-{Color.ToDescriptionString()}")
-                .AddClass($"mud-navmenu-margin-{Margin.ToDescriptionString()}")
+                .AddClass($"mud-navmenu-{Color.ToStringFast(true)}")
+                .AddClass($"mud-navmenu-margin-{Margin.ToStringFast(true)}")
                 .AddClass("mud-navmenu-dense", Dense)
                 .AddClass("mud-navmenu-rounded", Rounded)
-                .AddClass($"mud-navmenu-bordered mud-border-{Color.ToDescriptionString()}", Bordered)
+                .AddClass($"mud-navmenu-bordered mud-border-{Color.ToStringFast(true)}", Bordered)
                 .AddClass(Class)
                 .Build();
 
@@ -54,15 +54,12 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the theme <c>border-radius</c> value will be used. 
         /// Only takes affect if <see cref="Bordered"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The vertical spacing between <see cref="MudNavLink" /> items.

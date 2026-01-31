@@ -7,7 +7,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents an overlay added to an icon or button to add information such as a number of new items.
+    /// Badges show notifications, counts, or status information on navigation items and icons.
     /// </summary>
     public partial class MudBadge : MudComponentBase
     {
@@ -16,16 +16,16 @@ namespace MudBlazor
             .Build();
 
         protected string WrapperClass => new CssBuilder("mud-badge-wrapper")
-            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-badge-{Origin.ToStringFast(true).Replace("-", " ")}")
             .Build();
 
         protected string BadgeClassname => new CssBuilder("mud-badge")
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
-            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-badge-{Origin.ToStringFast(true).Replace("-", " ")}")
             .AddClass($"mud-elevation-{Elevation.ToString()}")
-            .AddClass("mud-theme-" + Color.ToDescriptionString(), Color != Color.Default)
+            .AddClass("mud-theme-" + Color.ToStringFast(true), Color != Color.Default)
             .AddClass("mud-badge-default", Color == Color.Default)
             .AddClass("mud-badge-overlap", Overlap)
             .AddClass(BadgeClass)

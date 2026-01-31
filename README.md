@@ -32,6 +32,9 @@ Build stunning, interactive web applications with MudBlazor — the open-source 
 
 Use one of our [templates](https://github.com/MudBlazor/Templates), or follow the quick install guide below:
 
+> [!TIP]
+> Want to test the latest features? Check out our [nightly builds](/NIGHTLY-BUILDS.md) from the `dev` branch!
+
 ### Installation
 
 Install Package:
@@ -121,8 +124,9 @@ Contributions from the community are what make MudBlazor successful.
 | :--- | :---: | :---: |
 | 5.x.x | .NET 5 | Ended Jan 2022 |
 | 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended Jan 2025 |
-| 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Limited Support |
-| 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | ✅ Full Support |
+| 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended Jan 2026 |
+| 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | Limited Support |
+| 9.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0), [.NET 10](https://dotnet.microsoft.com/download/dotnet/10.0) | ✅ Full Support |
 
 > [!NOTE]
 > 1. Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/discussions/12086) for help with breaking changes.  

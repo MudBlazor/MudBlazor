@@ -108,7 +108,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
-        public RenderFragment<T>? Columns { get; set; }
+        public RenderFragment<T?>? Columns { get; set; }
 
         // Workaround because "where T : new()" didn't work with Blazor components
         // T must have a default constructor, otherwise we cannot show headers when Items collection

@@ -19,9 +19,9 @@ namespace MudBlazor
     public partial class MudButton : MudBaseButton, IDisposable
     {
         protected string Classname => new CssBuilder("mud-button-root mud-button")
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}-size-{Size.ToStringFast(true)}")
             .AddClass($"mud-width-full", GetRealFullWith())
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
@@ -29,12 +29,12 @@ namespace MudBlazor
             .Build();
 
         protected string StartIconClass => new CssBuilder("mud-button-icon-start")
-            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
+            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToStringFast(true)}")
             .AddClass(IconClass)
             .Build();
 
         protected string EndIconClass => new CssBuilder("mud-button-icon-end")
-            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
+            .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToStringFast(true)}")
             .AddClass(IconClass)
             .Build();
 
@@ -98,13 +98,11 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the button.
@@ -121,13 +119,11 @@ namespace MudBlazor
         /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
+        /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// Expands the button to 100% of the container width.

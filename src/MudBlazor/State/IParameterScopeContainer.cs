@@ -4,6 +4,7 @@
 
 namespace MudBlazor.State;
 
+#nullable enable
 internal interface IParameterScopeContainer : IParameterContainer, IDisposable
 {
     /// <summary>

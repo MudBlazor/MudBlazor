@@ -7,11 +7,8 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// Represents a bar used to display actions, branding, navigation and screen titles.
+/// Displays actions, branding, navigation and screen titles. Keep the app bar persistent while browsing different pages to ease navigation and access to actions for users.
 /// </summary>
-/// <remarks>
-/// This component is often used to keep important information persistent while browsing different pages to ease navigation and access to actions for users.
-/// </remarks>
 /// <seealso cref="MudContextualActionBar"/>
 public partial class MudAppBar : MudComponentBase
 {
@@ -23,7 +20,7 @@ public partial class MudAppBar : MudComponentBase
             .AddClass($"mud-appbar-fixed-top", Fixed && !Bottom)
             .AddClass($"mud-appbar-fixed-bottom", Fixed && Bottom)
             .AddClass($"mud-elevation-{Elevation}")
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+            .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
             .AddClass(Class)
             .Build();
 

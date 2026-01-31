@@ -19,6 +19,14 @@
     },
     "packageRules": [
         {
+            "matchManagers": [
+                "github-actions"
+            ],
+            "reviewers": [
+                "danielchalmers"
+            ]
+        },
+        {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
             ],
@@ -27,6 +35,15 @@
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis.CSharp"
+            ],
+            "enabled": false
+        },
+        {
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp.Workspaces"
             ],
             "enabled": false
         },

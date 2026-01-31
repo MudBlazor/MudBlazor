@@ -1,171 +1,234 @@
 ﻿@page "/"
 @using System.Reflection
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+@using FuzzySharp
 @inject NavigationManager NavManager
+@implements IDisposable
 
 <MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
-        <MudAppBar Elevation="0">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
-            <MudSpacer />
-            <MudAutocomplete @ref="_autocomplete" T="Type" Placeholder="Search all tests" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentAriaLabel="Search">
-                <ItemTemplate Context="result">
-                    <MudText>@result.Name</MudText> <MudText Typo="Typo.body2">@GetDescription(result)</MudText>
-                </ItemTemplate>
-            </MudAutocomplete>
-            <MudSpacer />
-            <MudTooltip Text="@ThemeLabel">
-                <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
-            </MudTooltip>
-            <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
-                <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
-            </MudTooltip>
-        </MudAppBar>
+        <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Never" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
+            <div class="test-viewer-drawer-inner">
+                <div class="test-viewer-sidebar-header">
+                    <MudText Typo="Typo.subtitle1" Class="test-viewer-title">MudBlazor Test Viewer</MudText>
+                    <MudSpacer />
+                    <MudTooltip Text="@ThemeLabel">
+                        <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
+                    </MudTooltip>
+                    <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
+                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" Edge="Edge.End" />
+                    </MudTooltip>
+                </div>
 
-        <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm" Style="overflow-y: scroll">
-            <MudDrawerHeader Class="flex-column gap-2" Style="min-height: auto !important">
-                <div class="flex-column align-start justify-center">
-                    <MudText Typo="Typo.h6">Test Components</MudText>
+                <div class="test-viewer-search">
+                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="0"
+                                  Placeholder="Search tests…" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
 
-                    <MudText Typo="Typo.subtitle2" title="@_selectedType?.Name" style="overflow: hidden; text-overflow: ellipsis;">
-                        @if (_selectedType == null)
-                        {
-                            @("None selected")
-                        }
-                        else
-                        {
-                            @_selectedType?.Name
-                        }
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary">
+                        @_filteredCountLabel
                     </MudText>
                 </div>
 
-                <div class="d-flex flex-row align-center gap-2">
-                    <MudTextField T="string" @bind-Value="@_currentSearchText" Immediate="true" FullWidth="true"
-                                  Typo="Typo.subtitle1" Placeholder="Search by component" Clearable DebounceInterval="200" />
+                <div class="test-viewer-divider" />
 
-                    <MudTooltip Text="@(_expandedState ? "Collapse all" : "Expand all")">
-                        <MudIconButton Icon="@(_expandedState ? CollapseAllIcon : ExpandAllIcon)" Size="Size.Small"
-                                       OnClick="@(() => ToggleExpanded())" />
-                    </MudTooltip>
-                </div>
-            </MudDrawerHeader>
+                <div class="test-viewer-results">
+                    <MudVirtualize Items="@_filteredEntries" Enabled="true" Context="entry">
+                        <MudButton Variant="Variant.Text" Color="Color.Inherit" FullWidth="true" DisableElevation="true"
+                                   Class="@GetEntryClass(entry)" OnClick="() => Select(entry.Type)">
+                            <div class="test-viewer-result-row">
+                                <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.DisplayName</MudText>
+                                @if (!string.IsNullOrWhiteSpace(entry.Category))
+                                {
+                                    <MudText Typo="Typo.caption" Class="mud-text-secondary test-viewer-entry-category">@entry.Category</MudText>
+                                }
+                            </div>
+                        </MudButton>
+                    </MudVirtualize>
 
-            <MudNavMenu>
-                @for (int index = 0; index < _availableDirectories.Length; index++)
-                {
-                    var dir = _availableDirectories[index];
-                    var typesInDir = _availableComponentTypes.Where(x => _typeDirectories?[x] == dir);
-
-                    if (dir is not null && (!ShouldFilter || dir.Contains(_currentSearchText, StringComparison.OrdinalIgnoreCase)))
+                    @if (_canShowAllLink)
                     {
-                        <MudNavGroup Expanded="@_mudGroupExpanded[index]" Title="@dir">
-                            @foreach (var type in typesInDir)
-                            {
-                                <MudNavLink Class="@(_selectedType == type ? "mode-links active" : "")"
-                                            OnClick="@(() => _selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
-                            }
-                        </MudNavGroup>
+                        <div class="test-viewer-show-all">
+                            <MudLink Href="#" OnClick="ShowAllResults" Typo="Typo.caption">
+                                Show all results (@_remainingResultsCount more)
+                            </MudLink>
+                        </div>
                     }
-                }
-            </MudNavMenu>
+                </div>
+            </div>
         </MudDrawer>
 
-        <MudMainContent Class="mt-4">
-            <div class="d-flex flex-row align-center justify-center">
-                <MudIcon Icon="@Icons.Material.Filled.Description" />
-                <MudText>
-                    @if (_selectedType == null)
-                    {
-                        @("No test selected")
-                    }
-                    else
-                    {
-                        @GetDescription(_selectedType)
-                    }
-                </MudText>
-            </div>
-
-            <MudPaper Class="pa-4 ma-4" Elevation="5">
-                @if (_selectedType == null)
+        <MudMainContent Class="test-viewer-main">
+            <div class="test-viewer-header">
+                @if (_selectedType is null)
                 {
-                    <MudText>Select a test using the search or nav menu</MudText>
+                    <MudText Typo="Typo.h6">No test selected</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly open a test component.</MudText>
                 }
                 else
+                {
+                    <div class="test-viewer-title-row">
+                        <MudText Typo="Typo.h6">@GetTitleForDisplay(_selectedType)</MudText>
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary test-viewer-path">@GetFilePathForDisplay(_selectedType)</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@GetDescriptionForDisplay(_selectedType)</MudText>
+                }
+            </div>
+
+            <div class="test-viewer-surface">
+                @if (_selectedType is not null)
                 {
                     @* Prevent double popovers! *@
                     <CascadingValue Name="UsePopoverProvider" Value="false" IsFixed="true">
                         @TestComponent()
                     </CascadingValue>
                 }
-            </MudPaper>
+            </div>
         </MudMainContent>
     </MudRTLProvider>
 </MudLayout>
 <style>
-    .docs-search-bar .mud-input {
-        height: 42px;
+    .test-viewer-title {
+        color: var(--mud-palette-text-primary);
     }
 
-    .docs-search-bar.mud-input-control {
-        background-color: rgba(255,255,255,.15);
-        margin-bottom: 5px;
-        height: 42px;
+    .test-viewer-drawer {
+        overflow: hidden;
+    }
+
+    .test-viewer-drawer-inner {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .test-viewer-sidebar-header {
+        padding: 10px 12px 0 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .test-viewer-search {
+        padding: 0 12px 12px 12px;
+        display: grid;
+        gap: 6px;
+    }
+
+    .test-viewer-divider {
+        height: 1px;
+        background: var(--mud-palette-divider);
+        margin: 0 12px;
+    }
+
+    .test-viewer-results {
+        flex: 1;
+        overflow: auto;
+        scrollbar-gutter: stable;
+    }
+
+    .test-viewer-result-row {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 12px;
+        text-align: start;
+    }
+
+    .test-viewer-entry-name {
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .test-viewer-entry-category {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: end;
+    }
+
+    .test-viewer-show-all {
+        padding: 10px 12px 6px 12px;
+    }
+
+    .test-viewer-entry {
+        justify-content: flex-start;
+        padding: 8px 0 8px 0;
+        padding-inline-start: 12px;
         border-radius: var(--mud-default-borderradius);
+        text-transform: none;
     }
 
-    .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
-        color: #fafafa;
+    .test-viewer-entry:hover {
+        background: var(--mud-palette-action-default-hover);
     }
 
-    .docs-search-bar .mud-input.mud-input-outlined .mud-input-outlined-border {
-        border: none;
-        border-radius: var(--mud-default-borderradius);
-    }
-
-    .mode-links.active {
+    .test-viewer-entry.test-viewer-entry-selected {
+        background: var(--mud-palette-primary-hover);
         color: var(--mud-palette-primary);
-        background-color: var(--mud-palette-primary-hover);
     }
 
-    .mud-nav-link {
-        padding: 4px;
+    .test-viewer-main {
+        padding: 0 12px 12px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        height: 100vh;
     }
 
-    .mud-collapse-container {
-        transition-duration: 100ms;
+    .test-viewer-header {
+        padding: 12px 4px 0 4px;
     }
 
-    .mud-appbar .mud-icon-button {
-        color: var(--mud-palette-appbar-text) !important;
+    .test-viewer-surface {
+        flex: 1;
+        overflow: auto;
+    }
+
+    .test-viewer-title-row {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+    }
+
+    .test-viewer-path {
+        font-family: monospace;
+        opacity: 0.6;
     }
 </style>
 
 @code {
 
-    private const string ExpandAllIcon = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>expand-all-outline</title><path d="M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H17V19H15V17H13V15H15V13H17V15H19V17Z" /></svg>""";
-    private const string CollapseAllIcon = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>collapse-all-outline</title><path d="M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H13V15H19V17Z" /></svg>""";
-
     private bool _rightToLeft;
     private Type? _selectedType;
     private bool _drawerOpen = true;
-    private bool _expandedState = true;
-    private bool[] _mudGroupExpanded = [];
+    private string _searchText = string.Empty;
+    private TestEntry[] _entries = [];
+    private TestEntry[] _filteredEntries = [];
     private Type[] _availableComponentTypes = [];
-    private string?[] _availableDirectories = [];
-    private string _currentSearchText = string.Empty;
-    private Dictionary<Type, string>? _typeDirectories;
-    private MudAutocomplete<Type> _autocomplete = null!;
+    private Dictionary<Type, TestEntry> _entryByType = [];
+    private string _filteredCountLabel = string.Empty;
+    private int _totalMatchCount;
+    private int _remainingResultsCount;
+    private bool _showAllResults;
+    private bool _canShowAllLink;
+    private CancellationTokenSource? _searchCts;
+    private Task? _searchTask;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
     {
         LayoutProperties = new LayoutProperties
         {
-            DrawerWidthLeft = "400px"
+            DrawerWidthLeft = "340px",
+            DrawerWidthRight = "340px"
         }
     };
-
-    private bool ShouldFilter => !string.IsNullOrWhiteSpace(_currentSearchText) && _currentSearchText.Length > 2;
 
     private void ToggleTheme() => _isDarkMode = !_isDarkMode;
 
@@ -173,14 +236,21 @@
 
     private string ThemeLabel => _isDarkMode ? "Light mode" : "Dark mode";
 
-    private void DocsDrawerToggle() => _drawerOpen = !_drawerOpen;
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
 
-    private void ToggleExpanded()
+    private string SearchText
     {
-        _expandedState = !_expandedState;
-        for (int i = 0; i < _mudGroupExpanded.Length; i++)
+        get => _searchText;
+        set
         {
-            _mudGroupExpanded[i] = _expandedState;
+            if (string.Equals(_searchText, value, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _searchText = value;
+            _showAllResults = false;
+            StartSearch();
         }
     }
 
@@ -189,15 +259,14 @@
         await base.OnInitializedAsync();
 
         _availableComponentTypes = GetTestComponentTypes().ToArray();
-        _availableDirectories = GetTestFolders().ToArray();
 
-        _mudGroupExpanded = new bool[_availableDirectories.Length];
-        ToggleExpanded();
+        _entries = _availableComponentTypes
+            .Select(CreateEntry)
+            .OrderBy(x => x.Name)
+            .ToArray();
 
-        _typeDirectories = _availableComponentTypes.ToDictionary(
-            type => type,
-            type => type.Namespace?.Split('.').LastOrDefault() ?? string.Empty
-        );
+        _entryByType = _entries.ToDictionary(x => x.Type, x => x);
+        StartSearch();
 
         ParseQueryString();
         NavManager.LocationChanged += HandleLocationChanged;
@@ -212,6 +281,8 @@
     public void Dispose()
     {
         NavManager.LocationChanged -= HandleLocationChanged;
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
     }
 
     private void ParseQueryString()
@@ -249,6 +320,17 @@
                 }
             }
         }
+    }
+
+    private void Select(Type componentType)
+    {
+        if (componentType is null)
+        {
+            return;
+        }
+
+        _selectedType = componentType;
+        UpdateQueryString(componentType);
     }
 
     private void UpdateQueryString(Type componentType)
@@ -290,53 +372,246 @@
         }
     }
 
-    private IEnumerable<string?> GetTestFolders()
+
+    private TestEntry CreateEntry(Type type)
     {
-        return _availableComponentTypes
-            .Select(type => type.Namespace?.Split('.').LastOrDefault())
-            .Where(namespaceName => !string.IsNullOrEmpty(namespaceName))
-            .Distinct()
-            .OrderBy(namespaceName => namespaceName);
+        var category = type.Namespace?.Split('.').LastOrDefault() ?? string.Empty;
+        var description = GetDescriptionOrNull(type);
+        var filePath = GetFilePath(type);
+        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath);
     }
 
-    private Task<IEnumerable<Type>> Search(string text, CancellationToken token)
+    private static string GetFilePath(Type type)
     {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return Task.FromResult<IEnumerable<Type>>(Type.EmptyTypes);
-        }
-
-        var components = _availableComponentTypes.Where(type => type.Name.Contains(text, StringComparison.OrdinalIgnoreCase));
-
-        return Task.FromResult(components);
+        var ns = type.Namespace ?? string.Empty;
+        var match = "MudBlazor.UnitTests.";
+        var path = ns.StartsWith(match) ? ns.Substring(match.Length).Replace('.', '/') : ns.Replace('.', '/');
+        return $"{path}/{type.Name}.razor";
     }
 
-    private async void OnSearchResult(Type? entry)
+    private static string GetDisplayName(string typeName)
     {
-        if (entry is null)
-        {
-            return;
-        }
-
-        _selectedType = entry;
-        UpdateQueryString(entry);
-        await Task.Yield();
-        await _autocomplete.ClearAsync();
+        return typeName.EndsWith("Test", StringComparison.Ordinal)
+            ? typeName.Substring(0, typeName.Length - 4)
+            : typeName;
     }
 
-    private static string? GetDescription(Type? type)
+    private static string? GetDescriptionOrNull(Type type)
     {
-        if (type is null)
-        {
-            return string.Empty;
-        }
-
         var field = type.GetField("__description__", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField);
         if (field is null || field.FieldType != typeof(string))
         {
-            return "This test component does not have a description. Field \"public static string __description__\" not found in this component.";
+            return null;
         }
 
         return (string?)field.GetValue(null);
     }
+
+    private string GetDescriptionForDisplay(Type type)
+    {
+        if (_entryByType.TryGetValue(type, out var entry) && !string.IsNullOrWhiteSpace(entry.Description))
+        {
+            return entry.Description;
+        }
+
+        return "No description provided (add public static string __description__).";
+    }
+
+    private string GetFilePathForDisplay(Type type)
+    {
+        if (_entryByType.TryGetValue(type, out var entry))
+        {
+            return entry.FilePath;
+        }
+
+        return string.Empty;
+    }
+
+    private string GetTitleForDisplay(Type type)
+    {
+        if (_entryByType.TryGetValue(type, out var entry))
+        {
+            return entry.DisplayName;
+        }
+
+        return GetDisplayName(type.Name);
+    }
+
+    private void StartSearch()
+    {
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
+        _searchCts = new CancellationTokenSource();
+        _searchTask = RecomputeFilteredEntriesAsync(_searchCts.Token);
+    }
+
+    private async Task RecomputeFilteredEntriesAsync(CancellationToken token)
+    {
+        try
+        {
+            _totalMatchCount = 0;
+            _remainingResultsCount = 0;
+            _canShowAllLink = false;
+
+            if (_entries.Length == 0)
+            {
+                _filteredEntries = [];
+                _filteredCountLabel = string.Empty;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(_searchText))
+            {
+                _filteredEntries = _entries;
+                _filteredCountLabel = $"{_entries.Length} tests";
+                _totalMatchCount = _entries.Length;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            var query = _searchText.Trim();
+            _filteredCountLabel = "Searching…";
+            await InvokeAsync(StateHasChanged);
+
+            const int threshold = 35;
+            const int defaultLimit = 20;
+
+            var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
+            List<(TestEntry Entry, int Score)>? all = _showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
+
+            for (var i = 0; i < _entries.Length; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                var entry = _entries[i];
+                var score = GetSearchScore(query, entry);
+                if (score < threshold)
+                {
+                    if (i % 25 == 0)
+                    {
+                        await Task.Yield();
+                    }
+                    continue;
+                }
+
+                _totalMatchCount++;
+
+                if (all is not null)
+                {
+                    all.Add((entry, score));
+                }
+                else
+                {
+                    InsertTopK(top, (entry, score), defaultLimit);
+                }
+
+                if (i % 25 == 0)
+                {
+                    await Task.Yield();
+                }
+            }
+
+            token.ThrowIfCancellationRequested();
+
+            IReadOnlyList<(TestEntry Entry, int Score)> final = all ?? top;
+            var ordered = final
+                .OrderByDescending(x => x.Score)
+                .ThenBy(x => x.Entry.Name)
+                .Select(x => x.Entry)
+                .ToArray();
+
+            _filteredEntries = ordered;
+            _filteredCountLabel = _totalMatchCount switch
+            {
+                0 => "No matches",
+                1 => "1 match",
+                _ => $"{_totalMatchCount} matches"
+            };
+
+            if (!_showAllResults)
+            {
+                _filteredEntries = _filteredEntries.Take(defaultLimit).ToArray();
+                _remainingResultsCount = Math.Max(0, _totalMatchCount - _filteredEntries.Length);
+                _canShowAllLink = _remainingResultsCount > 0;
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore; newer search already started.
+        }
+    }
+
+    private static void InsertTopK(List<(TestEntry Entry, int Score)> list, (TestEntry Entry, int Score) candidate, int k)
+    {
+        if (list.Count == 0)
+        {
+            list.Add(candidate);
+            return;
+        }
+
+        var inserted = false;
+        for (var i = 0; i < list.Count; i++)
+        {
+            if (candidate.Score > list[i].Score)
+            {
+                list.Insert(i, candidate);
+                inserted = true;
+                break;
+            }
+        }
+
+        if (!inserted)
+        {
+            if (list.Count < k)
+            {
+                list.Add(candidate);
+            }
+        }
+
+        if (list.Count > k)
+        {
+            list.RemoveAt(list.Count - 1);
+        }
+    }
+
+    private void ShowAllResults(MouseEventArgs args)
+    {
+        _showAllResults = true;
+        StartSearch();
+    }
+
+    private static int GetSearchScore(string query, TestEntry entry)
+    {
+        if (entry.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+        {
+            return 200;
+        }
+
+        var nameScore = Fuzz.PartialTokenSortRatio(entry.Name, query);
+        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
+
+        var combined = (int)Math.Round(nameScore * 0.85 + categoryScore * 0.15);
+
+        if (!string.IsNullOrWhiteSpace(entry.Description))
+        {
+            var descriptionScore = Fuzz.PartialTokenSortRatio(entry.Description, query);
+            combined = Math.Max(combined, (int)Math.Round(nameScore * 0.8 + descriptionScore * 0.2));
+        }
+
+        return combined;
+    }
+
+    private string GetEntryClass(TestEntry entry)
+    {
+        if (_selectedType == entry.Type)
+        {
+            return "test-viewer-entry test-viewer-entry-selected";
+        }
+
+        return "test-viewer-entry";
+    }
+
+    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath);
 }

@@ -9,7 +9,7 @@
             "type": "shell",
             "args": [
                 "clean",
-                "src/MudBlazor.sln",
+                "src/MudBlazor.slnx",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -22,7 +22,7 @@
             "type": "shell",
             "args": [
                 "build",
-                "src/MudBlazor.sln",
+                "src/MudBlazor.slnx",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

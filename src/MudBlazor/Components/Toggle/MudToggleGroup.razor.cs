@@ -13,12 +13,13 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// Maintains the selection of a group of <see cref="MudToggleItem{T}"/> components.
+    /// Toggle buttons grouped to select one or multiple values.
     /// </summary>
     /// <typeparam name="T">The type of item being toggled.</typeparam>
     /// <seealso cref="MudToggleItem{T}"/>
     /// <seealso cref="MudRadioGroup{T}"/>
     /// <seealso cref="MudRadio{T}"/>
+    /// <seealso cref="MudButtonGroup"/>
     public partial class MudToggleGroup<T> : MudComponentBase
     {
         public MudToggleGroup()
@@ -32,54 +33,45 @@ namespace MudBlazor
                 .WithParameter(() => Values)
                 .WithEventCallback(() => ValuesChanged)
                 .WithChangeHandler(OnValuesChanged);
-            _color = registerScope.RegisterParameter<Color>(nameof(Color))
+            registerScope.RegisterParameter<Color>(nameof(Color))
                 .WithParameter(() => Color)
                 .WithChangeHandler(OnParameterChanged);
-            _selectedClass = registerScope.RegisterParameter<string?>(nameof(SelectedClass))
+            registerScope.RegisterParameter<string?>(nameof(SelectedClass))
                 .WithParameter(() => SelectedClass)
                 .WithChangeHandler(OnParameterChanged);
-            _outline = registerScope.RegisterParameter<bool>(nameof(Outlined))
+            registerScope.RegisterParameter<bool>(nameof(Outlined))
                 .WithParameter(() => Outlined)
                 .WithChangeHandler(OnParameterChanged);
-            _delimiters = registerScope.RegisterParameter<bool>(nameof(Delimiters))
+            registerScope.RegisterParameter<bool>(nameof(Delimiters))
                 .WithParameter(() => Delimiters)
                 .WithChangeHandler(OnParameterChanged);
-            _rtl = registerScope.RegisterParameter<bool>(nameof(RightToLeft))
+            registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnParameterChanged);
-            _size = registerScope.RegisterParameter<Size>(nameof(Size))
+            registerScope.RegisterParameter<Size>(nameof(Size))
                 .WithParameter(() => Size)
                 .WithChangeHandler(OnParameterChanged);
-            _checkMark = registerScope.RegisterParameter<bool>(nameof(CheckMark))
+            registerScope.RegisterParameter<bool>(nameof(CheckMark))
                 .WithParameter(() => CheckMark)
                 .WithChangeHandler(OnParameterChanged);
-            _fixedContent = registerScope.RegisterParameter<bool>(nameof(FixedContent))
+            registerScope.RegisterParameter<bool>(nameof(FixedContent))
                 .WithParameter(() => FixedContent)
                 .WithChangeHandler(OnParameterChanged);
-            _disabled = registerScope.RegisterParameter<bool>(nameof(Disabled))
+            registerScope.RegisterParameter<bool>(nameof(Disabled))
                 .WithParameter(() => Disabled)
                 .WithChangeHandler(OnParameterChanged);
         }
 
         private readonly ParameterState<T?> _value;
         private readonly ParameterState<IEnumerable<T?>?> _values;
-        private readonly ParameterState<Color> _color;
-        private readonly ParameterState<string?> _selectedClass;
-        private readonly ParameterState<bool> _outline;
-        private readonly ParameterState<bool> _delimiters;
-        private readonly ParameterState<bool> _rtl;
-        private readonly ParameterState<Size> _size;
-        private readonly ParameterState<bool> _checkMark;
-        private readonly ParameterState<bool> _fixedContent;
-        private readonly ParameterState<bool> _disabled;
         private readonly List<MudToggleItem<T>> _items = new();
 
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
-            .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-toggle-group-size-{Size.ToStringFast(true)}")
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"mud-toggle-group-{Color.ToDescriptionString()}")
+            .AddClass($"mud-toggle-group-{Color.ToStringFast(true)}")
             .AddClass("mud-toggle-group-outlined", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
@@ -94,7 +86,7 @@ namespace MudBlazor
         /// <summary>
         /// Prevents the user from interacting with this toggle group.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
@@ -104,7 +96,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public T? Value { get; set; }
 
@@ -124,7 +116,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public IEnumerable<T?>? Values { get; set; }
 
@@ -144,7 +136,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedClass { get; set; }
 
@@ -179,7 +171,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public bool Outlined { get; set; } = true;
 
@@ -189,7 +181,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public bool Delimiters { get; set; } = true;
 
@@ -209,7 +201,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
@@ -232,7 +224,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="Color.Primary"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
@@ -242,7 +234,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, the checkmark icons can be customized via <c>SelectedIcon</c> and <c>UnselectedIcon</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Behavior)]
         public bool CheckMark { get; set; }
 
@@ -252,7 +244,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.List.Behavior)]
         public bool FixedContent { get; set; }
 

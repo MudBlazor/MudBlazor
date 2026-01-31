@@ -1,9 +1,7 @@
 ﻿@page "/components/timepicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Time Picker" Component="@nameof(MudTimePicker)">
-        <Description>Provides the user with a simple way to select time.</Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Time Picker" Component="@nameof(MudTimePicker)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -41,18 +39,6 @@
             </SectionHeader>
             <SectionContent Code="@nameof(TimePickerDialogExample)" ShowCode="false">
                 <TimePickerDialogExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Inline Non-modal Mode">
-                <Description>
-                    By default, the time picker is modal, preventing interaction with other elements while it is open.
-                    To allow interactions with other elements, set <CodeInline>Modal="false"</CodeInline>.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TimePickerInlineModelessExample)" ShowCode="false">
-                <TimePickerInlineModelessExample />
             </SectionContent>
         </DocsPageSection>
 

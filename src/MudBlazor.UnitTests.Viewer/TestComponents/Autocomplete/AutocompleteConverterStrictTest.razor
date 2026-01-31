@@ -1,4 +1,4 @@
-@using MudBlazor.Examples.Data
+﻿@using MudBlazor.Examples.Data
 <MudPopoverProvider />
 
 <MudAutocomplete @bind-Value="_value1" SearchFunc="@Search1" CoerceValue Strict="false" Converter="_elementConverter" PopoverClass="autocomplete-popover-class" />
@@ -8,12 +8,11 @@
 
     private ConverterElement? _value1;
     private PeriodicTableService _service = new PeriodicTableService();
-    
-    private Converter<ConverterElement?> _elementConverter = new Converter<ConverterElement?>
-    {
-        SetFunc = value => value?.ToString(), //convert to string
-        GetFunc = text => new ConverterElement { Name = text } //convert to element
-    };
+
+    private readonly IConverter<ConverterElement?, string?> _elementConverter = Conversions
+        .From((ConverterElement? value) => value?.ToString(),
+            text => new ConverterElement { Name = text });
+
 
     private async Task<IEnumerable<ConverterElement?>> Search1(string value, CancellationToken token)
     {

@@ -58,14 +58,14 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to the options in the <see cref="MudDialog"/> or options passed during <see cref="DialogService.ShowAsync(Type)"/> methods.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Misc)] // Behavior and Appearance
         public DialogOptions Options { get; set; } = DialogOptions.Default;
 
         /// <summary>
         /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Behavior)]
         public string? Title { get; set; }
 
@@ -160,7 +160,7 @@ namespace MudBlazor
             }
         }
 
-        public async void OnMouseUp(MouseEventArgs args)
+        private async Task OnMouseUpAsync(MouseEventArgs args)
         {
             if (args.Button > 0)
                 await RefocusDialogAsync();
@@ -264,7 +264,7 @@ namespace MudBlazor
             {
                 position = DialogPosition.Center;
             }
-            return $"mud-dialog-{position.ToDescriptionString()}";
+            return $"mud-dialog-{position.ToStringFast(true)}";
         }
 
         private string GetMaxWidth()
@@ -283,7 +283,7 @@ namespace MudBlazor
             {
                 maxWidth = MaxWidth.Small;
             }
-            return $"mud-dialog-width-{maxWidth.ToDescriptionString()}";
+            return $"mud-dialog-width-{maxWidth.ToStringFast(true)}";
         }
 
         private bool GetFullWidth() => GetDialogOptionsOrDefault.FullWidth ?? GlobalDialogOptions.FullWidth ?? false;
@@ -317,7 +317,7 @@ namespace MudBlazor
         string IMudDialogInstance.ElementId => _elementId;
 
         /// <inheritdoc />
-        string? IMudDialogInstance.Title => Title;
+        string? IMudDialogInstance.Title => _titleState.Value;
 
         /// <inheritdoc />
         DialogOptions IMudDialogInstance.Options => GetDialogOptionsOrDefault;

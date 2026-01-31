@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Field;
 using NUnit.Framework;
 
@@ -13,9 +13,9 @@ namespace MudBlazor.UnitTests.Components
     public class FieldTests : BunitTest
     {
         [Test]
-        public void FieldTest_ShouldRender_Variants()
+        public void Field_ShouldRender_Variants()
         {
-            var comp = Context.RenderComponent<FieldTest>();
+            var comp = Context.Render<FieldTest>();
             var fields = comp.FindAll(".mud-grid .mud-input-control.mud-field");
             fields.Should().HaveCount(3);
             fields[0].ClassList.Should().Contain("mud-input-text-with-label");
@@ -27,9 +27,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void FieldTest_ShouldRender_AriaAdornment()
+        public void Field_ShouldRender_AriaAdornment()
         {
-            var comp = Context.RenderComponent<FieldTest>();
+            var comp = Context.Render<FieldTest>();
             var fields = comp.FindAll(".mud-grid .mud-input-control.mud-field");
             fields.Should().HaveCount(3);
             fields[0].ClassList.Should().Contain("mud-input-text-with-label");
@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Issue 7533, when ChildContent is null, the mud-shrink class is applied
             // Add a shrink label override to the field in addition to the ChildContent
-            var comp = Context.RenderComponent<FieldStartAdornmentTest>();
+            var comp = Context.Render<FieldStartAdornmentTest>();
             // find all the mud-fields inner area
             var fields = comp.FindAll(".mud-input-control.mud-field > .mud-input-control-input-container > .mud-input");
             var fieldLabels = comp.FindAll(".mud-input-control.mud-field > .mud-input-control-input-container label");

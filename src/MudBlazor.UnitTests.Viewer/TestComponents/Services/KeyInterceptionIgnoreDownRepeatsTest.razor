@@ -1,0 +1,68 @@
+﻿@using MudBlazor.Services
+
+<MudStack id="@_elementId">
+    <MudButton Class="@_className" Variant="Variant.Outlined">Click Me</MudButton>
+    <MudText Class="d-flex">
+        <MudIcon Icon="@Icons.Material.Filled.ArrowCircleLeft" Class="mr-1" />
+        @_keyDownCountLeft
+    </MudText>
+    <MudText Class="d-flex">
+        <MudIcon Icon="@Icons.Material.Filled.ArrowCircleRight" Class="mr-1" />
+        @_keyDownCountRight
+    </MudText>
+</MudStack>
+
+@code {
+
+    public const string __description__ = @"
+Sample for demonstration of the KeyOptions.IgnoreDownRepeats option to prevent invocation of the .NET callback for repeated events 
+when holding down a key. Focus the button by clicking it and then press and hold either arrow left or arrow right and note the invocation
+counts below. For arrow right, only the initial keydown should be counted.";
+
+    private readonly string _elementId = Identifier.Create();
+    private readonly string _className = Identifier.Create();
+
+    private int _keyDownCountLeft = 0;
+    private int _keyDownCountRight = 0;
+
+    [Inject]
+    public IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        var options = new KeyInterceptorOptions()
+        {
+            TargetClass = _className,
+            EnableLogging = false,
+            Keys = [
+                new KeyOptions("ArrowLeft", subscribeDown: true),
+                new KeyOptions("ArrowRight", subscribeDown: true, ignoreDownRepeats: true),
+            ]
+        };
+
+        await KeyInterceptorService.SubscribeAsync(_elementId, options, HandleKeyDownAsync);
+    }
+
+    private Task HandleKeyDownAsync(KeyboardEventArgs args)
+    {
+        switch (args.Key)
+        {
+            case "ArrowLeft":
+                _keyDownCountLeft++;
+                StateHasChanged();
+                break;
+
+            case "ArrowRight":
+                _keyDownCountRight++;
+                StateHasChanged();
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+}

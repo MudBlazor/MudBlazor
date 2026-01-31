@@ -7,6 +7,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services;
 
+#nullable enable
 /// <summary>
 /// Provides a factory for creating instances of <see cref="IJsEvent"/>.
 /// </summary>
