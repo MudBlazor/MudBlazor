@@ -18,6 +18,7 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
+            .AddClass(DisabledClass, Disabled)
             .Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -62,7 +63,7 @@ namespace MudBlazor
         /// Prevents the change of the current selection.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
         public bool SelectionChangeable { get; set; } = true;
@@ -71,7 +72,7 @@ namespace MudBlazor
         /// Allows this row to be edited.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// Defaults to <c>false</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
         public bool Editable { get; set; }
@@ -80,7 +81,7 @@ namespace MudBlazor
         /// Allows this row to expand to display nested content.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// Defaults to <c>false</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
         public bool Expandable { get; set; }
@@ -90,6 +91,24 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<bool> CheckedChanged { get; set; }
+
+        /// <summary>
+        /// Disables mouse events and sets the color to <c>--mud-palette-text-disabled</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
+        [Parameter]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The class to use if <see cref="Disabled"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>mud-table-row-disabled</c>
+        /// </remarks>
+        [Parameter]
+        public string DisabledClass { get; set; } = "mud-table-row-disabled";
 
         /// <summary>
         /// The state of the checkbox when <see cref="Checkable"/> is <c>true</c>.
