@@ -48,9 +48,8 @@ internal sealed class KeyCommandObserver :
 
     private static async Task DispatchAsync(IReadOnlyList<IKeyCommand> commands, KeyboardEventArgs args)
     {
-        for (var i = 0; i < commands.Count; i++)
+        foreach (var command in commands)
         {
-            var command = commands[i];
             if (command.CanExecute(args))
             {
                 await command.ExecuteAsync(args);

@@ -14,8 +14,8 @@ namespace MudBlazor.Services;
 /// </summary>
 public sealed class KeyMapBuilder
 {
+    private int _hookCount;
     private readonly List<IKeyCommand> _commands = [];
-    private int _hookCount = 0;
 
     /// <summary>
     /// Helper to parse regex patterns from key strings.
@@ -27,7 +27,7 @@ public sealed class KeyMapBuilder
         {
             try
             {
-                return new Regex(key.Substring(1, key.Length - 2));
+                return new Regex(key.Substring(1, key.Length - 2), RegexOptions.None, TimeSpan.FromMilliseconds(250));
             }
             catch
             {
@@ -35,6 +35,7 @@ public sealed class KeyMapBuilder
                 return null;
             }
         }
+
         return null;
     }
 
@@ -212,7 +213,7 @@ public sealed class KeyMapBuilder
     /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
     /// </summary>
     /// <remarks>
-    /// <para><strong>Important:</strong> Hooks are always executed before regular commands, regardless of their declaration order. You can declare hooks anywhere in the builder chain and they will be automatically moved to execute first.</para>
+    /// <para><strong>Important:</strong> Hooks are always executed before regular commands, regardless of their declaration order. You can declare hooks anywhere in the builder chain, and they will be automatically moved to execute first.</para>
     /// <para><strong>Example usage:</strong></para>
     /// <code>
     /// await KeyInterceptorService.SubscribeAsync(elementId, options, keys => keys
@@ -239,7 +240,7 @@ public sealed class KeyMapBuilder
     /// This is useful for maintaining virtual method override patterns while using the KeyCommand API.
     /// </summary>
     /// <remarks>
-    /// <para><strong>Important:</strong> Hooks are always executed before regular commands, regardless of their declaration order. You can declare hooks anywhere in the builder chain and they will be automatically moved to execute first.</para>
+    /// <para><strong>Important:</strong> Hooks are always executed before regular commands, regardless of their declaration order. You can declare hooks anywhere in the builder chain, and they will be automatically moved to execute first.</para>
     /// <para><strong>Example usage:</strong></para>
     /// <code>
     /// await KeyInterceptorService.SubscribeAsync(elementId, options, keys => keys

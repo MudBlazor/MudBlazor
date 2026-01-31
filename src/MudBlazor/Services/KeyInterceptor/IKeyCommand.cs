@@ -10,7 +10,7 @@ namespace MudBlazor.Services;
 /// <summary>
 /// Represents a keyboard command that can be executed based on keyboard events.
 /// </summary>
-public interface IKeyCommand
+internal interface IKeyCommand
 {
     /// <summary>
     /// Gets the kind of keyboard event this command handles (Down or Up).
