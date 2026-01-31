@@ -329,6 +329,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>, returned value controls whether the edit form remains open.
+        /// The edited values are provided on a new instance to prevent changes from being
+        /// applied to the underlying data source before this callback completes successfully.
         /// </remarks>
         [Parameter]
         public Func<T, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
