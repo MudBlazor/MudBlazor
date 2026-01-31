@@ -29,15 +29,42 @@ namespace MudBlazor
         private bool _needsHighlightAfterRender;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = new HashSet<T?>();
-        protected internal List<MudSelectItem<T>> _items = new();
         private readonly string _elementId = Identifier.Create("select");
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTime _lastSearchTime = DateTime.MinValue;
         private readonly ParameterState<IEnumerable<T?>?> _selectedValuesState;
+        private readonly MudSelectContext<T> _context;
+
+        /// <summary>
+        /// Gets the context that manages communication with child items.
+        /// </summary>
+        /// <remarks>
+        /// This context provides a clean, explicit communication model:
+        /// <list type="bullet">
+        /// <item>Items register/unregister explicitly</item>
+        /// <item>Selection state is centralized</item>
+        /// <item>Items observe changes via subscriptions</item>
+        /// </list>
+        /// </remarks>
+        object IMudSelect.SelectContext => _context;
+
+        /// <summary>
+        /// Gets the context that manages shadow item registration.
+        /// </summary>
+        object IMudShadowSelect.SelectContext => _context;
+
+        /// <summary>
+        /// Gets the ordered list of all visible items.
+        /// </summary>
+        /// <remarks>
+        /// This property now delegates to the context instead of maintaining its own list.
+        /// </remarks>
+        protected internal List<MudSelectItem<T>> _items => _context.Items;
 
         public MudSelect()
         {
+            _context = new MudSelectContext<T>(this);
             Adornment = Adornment.End;
             IconSize = Size.Medium;
             // Set default value to ensure ParameterState never holds null
@@ -144,12 +171,15 @@ namespace MudBlazor
 
         private async Task SelectFirstItem(string? startChar = null)
         {
-            var selectList = _items;
+            IEnumerable<MudSelectItem<T>> selectList = _context.Items;
 
             if (!_open)
-                selectList = _shadowLookup.Values.ToList();
+            {
+                // When closed, use shadow lookup to include all items (visible + hidden)
+                selectList = GetAllShadowItems();
+            }
 
-            if (selectList.Count == 0)
+            if (!selectList.Any())
                 return;
 
             var items = selectList.Where(x => !x.Disabled);
@@ -460,7 +490,9 @@ namespace MudBlazor
             // Update internal HashSet with new values - make a defensive copy to avoid shared references
             _selectedValues = new HashSet<T?>(set, Comparer);
 
-            SelectionChangedFromOutside?.Invoke(_selectedValues);
+            // Notify all subscribed items of the selection change
+            // This replaces the SelectionChangedFromOutside event
+            _context.NotifySelectionChanged();
 
             if (!MultiSelection)
             {
@@ -523,7 +555,7 @@ namespace MudBlazor
             {
                 if (MultiSelection)
                     return false;
-                if (!_shadowLookup.TryGetValue(ReadValue, out var item))
+                if (!_context.TryGetShadowItemByValue(ReadValue, out var item) || item == null)
                     return false;
                 return item.ChildContent != null;
             }
@@ -533,13 +565,13 @@ namespace MudBlazor
         {
             get
             {
-                return _shadowLookup.TryGetValue(ReadValue, out _);
+                return _context.TryGetShadowItemByValue(ReadValue, out _);
             }
         }
 
         protected RenderFragment? GetSelectedValuePresenter()
         {
-            if (!_shadowLookup.TryGetValue(ReadValue, out var item))
+            if (!_context.TryGetShadowItemByValue(ReadValue, out var item) || item == null)
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return item.ChildContent;
         }
@@ -570,8 +602,6 @@ namespace MudBlazor
                 : base.UpdateTextPropertyAsync(updateValue);
         }
 
-        internal event Action<ICollection<T?>>? SelectionChangedFromOutside;
-
         /// <summary>
         /// Allows multiple values to be selected via checkboxes.
         /// </summary>
@@ -587,38 +617,9 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Use <see cref="MudSelectItem{T}"/> components to provide more items.
+        /// This property now delegates to the context which manages item registration.
         /// </remarks>
-        public IReadOnlyList<MudSelectItem<T>> Items => _items;
-
-        protected Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
-        protected Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
-
-        internal bool Add(MudSelectItem<T>? item)
-        {
-            if (item == null)
-                return false;
-            bool? result = null;
-            if (!_items.Select(x => x.Value).Contains(item.Value))
-            {
-                _items.Add(item);
-
-                _valueLookup[item.Value] = item;
-                if (EqualityComparer<T?>.Default.Equals(item.Value, ReadValue) && !MultiSelection)
-                    result = true;
-            }
-            UpdateSelectAllChecked();
-            if (result.HasValue == false)
-            {
-                result = item.Value?.Equals(ReadValue);
-            }
-            return result == true;
-        }
-
-        internal void Remove(MudSelectItem<T> item)
-        {
-            _items.Remove(item);
-            _valueLookup.Remove(item.Value);
-        }
+        public IReadOnlyList<MudSelectItem<T>> Items => _context.Items;
 
         /// <summary>
         /// The maximum height, in pixels, of the popover of items.
@@ -803,7 +804,7 @@ namespace MudBlazor
 
         private Task HighlightItemForValueAsync(T? value)
         {
-            _valueLookup.TryGetValue(value, out var item);
+            _context.TryGetItemByValue(value, out var item);
             return HighlightItemAsync(item);
         }
 
@@ -916,9 +917,8 @@ namespace MudBlazor
             if (args.Value)
             {
                 var longestItemLength = 0;
-                foreach (var shadowItem in _shadowLookup)
+                foreach (var item in GetAllShadowItems())
                 {
-                    var item = shadowItem.Value;
                     var value = item.Value;
                     var valueToString = ConvertSet(value);
                     var length = valueToString?.Length ?? 0;
@@ -1030,14 +1030,25 @@ namespace MudBlazor
         internal string? ConvertValueToString(T? value) => ConvertSet(value);
 
         /// <summary>
-        /// Throws an exception if the specified item is not compatible with this component.
+        /// Internal method for the context to access the current selected values.
         /// </summary>
-        /// <param name="selectItem">The item to compare.  Should be of type <c>T</c> for this component.</param>
-        public void CheckGenericTypeMatch(object selectItem)
+        internal IEnumerable<T?>? GetSelectedValues() => _selectedValuesState.Value;
+
+        /// <summary>
+        /// Internal method for the context to access the current value.
+        /// </summary>
+        internal T? GetCurrentValue() => ReadValue;
+
+        /// <summary>
+        /// Gets all items including shadow items (items with HideContent=true).
+        /// </summary>
+        /// <remarks>
+        /// This is used for operations that need access to all registered items,
+        /// not just the visible ones in the dropdown.
+        /// </remarks>
+        private IEnumerable<MudSelectItem<T>> GetAllShadowItems()
         {
-            var itemT = selectItem.GetType().GenericTypeArguments[0];
-            if (itemT != typeof(T))
-                throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
+            return _context.ShadowItems;
         }
 
         /// <summary>
@@ -1333,24 +1344,30 @@ namespace MudBlazor
         /// <summary>
         /// Links a selection item to this component.
         /// </summary>
+        /// <remarks>
+        /// This method now delegates to the context for registration.
+        /// </remarks>
         /// <param name="item">The item to add.</param>
         public void RegisterShadowItem(MudSelectItem<T>? item)
         {
             if (item == null)
                 return;
 
-            _shadowLookup[item.Value] = item;
+            _context.RegisterShadowItem(item);
         }
 
         /// <summary>
         /// Unregisters a selection item to this component.
         /// </summary>
+        /// <remarks>
+        /// This method now delegates to the context for unregistration.
+        /// </remarks>
         /// <param name="item">The item to remove.</param>
         public void UnregisterShadowItem(MudSelectItem<T>? item)
         {
             if (item == null)
                 return;
-            _shadowLookup.Remove(item.Value);
+            _context.UnregisterShadowItem(item);
         }
 
         private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
