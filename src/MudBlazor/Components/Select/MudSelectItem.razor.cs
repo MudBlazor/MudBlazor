@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -12,7 +13,7 @@ namespace MudBlazor
     /// This component uses an explicit registration model for communication with its parent:
     /// </para>
     /// <list type="bullet">
-    /// <item><description>Registers itself with the parent's context during initialization</description></item>
+    /// <item><description>Registers itself when the parent cascading parameter is set</description></item>
     /// <item><description>Subscribes to selection changes via an observable pattern</description></item>
     /// <item><description>Unregisters and unsubscribes during disposal</description></item>
     /// </list>
@@ -32,7 +33,6 @@ namespace MudBlazor
         private MudSelectContext<T>? _context;
         private MudSelectContext<T>? _shadowContext;
         private IDisposable? _selectionSubscription;
-        private bool _isInitialized;
 
         private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
@@ -40,13 +40,24 @@ namespace MudBlazor
 
         internal string ItemId { get; } = Identifier.Create();
 
+        public MudSelectItem()
+        {
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<IMudSelect?>(nameof(IMudSelect))
+                .WithParameter(() => IMudSelect)
+                .WithChangeHandler(OnMudSelectChanged);
+            registerScope.RegisterParameter<IMudShadowSelect?>(nameof(IMudShadowSelect))
+                .WithParameter(() => IMudShadowSelect)
+                .WithChangeHandler(OnMudShadowSelectChanged);
+        }
+
         /// <summary>
         /// The <see cref="MudSelect{T}"/> hosting this item.
         /// </summary>
         /// <remarks>
         /// This cascading parameter is used to obtain the context for registration.
-        /// Registration itself happens explicitly in <see cref="OnInitialized"/> rather than
-        /// implicitly in the parameter setter, making the lifecycle predictable.
+        /// When this parameter changes, OnMudSelectChanged is invoked to handle
+        /// registration and unregistration with the appropriate parent.
         /// </remarks>
         [CascadingParameter]
         internal IMudSelect? IMudSelect { get; set; }
@@ -108,8 +119,7 @@ namespace MudBlazor
         /// <remarks>
         /// <para>
         /// This state is updated by observing the parent's selection via the context.
-        /// In multi-selection mode, items subscribe to selection changes.
-        /// In single-selection mode, selection is determined during registration.
+        /// Items subscribe to selection changes and update this state accordingly.
         /// </para>
         /// </remarks>
         internal bool Selected { get; set; }
@@ -140,28 +150,62 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Initializes the item and registers it with the parent select's context.
+        /// Handles changes to the IMudShadowSelect cascading parameter.
+        /// </summary>
+        /// <remarks>
+        /// This is invoked when the shadow select parent changes (e.g., when moving between different selects).
+        /// It unregisters from the old parent and registers with the new one.
+        /// </remarks>
+        private void OnMudShadowSelectChanged(ParameterChangedEventArgs<IMudShadowSelect?> args)
+        {
+            // Unregister from old shadow parent
+            if (args.LastValue?.SelectContext is MudSelectContext<T> oldContext)
+            {
+                oldContext.UnregisterShadowItem(this);
+            }
+
+            // Register with new shadow parent
+            if (args.Value?.SelectContext is MudSelectContext<T> newContext)
+            {
+                _shadowContext = newContext;
+                _shadowContext.RegisterShadowItem(this);
+            }
+            else
+            {
+                _shadowContext = null;
+            }
+        }
+
+        /// <summary>
+        /// Handles changes to the IMudSelect cascading parameter.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This explicit registration happens once during initialization, making the lifecycle clear:
+        /// This is invoked when the select parent changes (e.g., when moving between different selects).
+        /// It handles the complete lifecycle:
         /// </para>
         /// <list type="number">
-        /// <item><description>Get the context from the parent cascading parameter</description></item>
-        /// <item><description>Register as a visible item OR shadow item based on HideContent</description></item>
-        /// <item><description>For multi-selection, subscribe to selection changes</description></item>
-        /// <item><description>Set initial Selected state</description></item>
+        /// <item><description>Unsubscribes from the old parent's selection changes</description></item>
+        /// <item><description>Unregisters from the old parent's context</description></item>
+        /// <item><description>Registers with the new parent's context</description></item>
+        /// <item><description>Subscribes to the new parent's selection changes</description></item>
+        /// <item><description>Updates the initial Selected state</description></item>
         /// </list>
         /// </remarks>
-        protected override void OnInitialized()
+        private void OnMudSelectChanged(ParameterChangedEventArgs<IMudSelect?> args)
         {
-            base.OnInitialized();
-
-            // Explicit registration with the parent's context
-            // This replaces the implicit registration that used to happen in cascading parameter setters
-            if (IMudSelect?.SelectContext is MudSelectContext<T> context)
+            // Unregister from old parent
+            if (args.LastValue?.SelectContext is MudSelectContext<T> oldContext)
             {
-                _context = context;
+                _selectionSubscription?.Dispose();
+                _selectionSubscription = null;
+                oldContext.UnregisterItem(this);
+            }
+
+            // Register with new parent
+            if (args.Value?.SelectContext is MudSelectContext<T> newContext)
+            {
+                _context = newContext;
 
                 // Register as a visible item (adds to _items, _valueLookup, and _shadowLookup)
                 var isSelected = _context.RegisterItem(this);
@@ -171,14 +215,10 @@ namespace MudBlazor
                 // This replaces the SelectionChangedFromOutside event subscription
                 _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChanged);
             }
-            else if (IMudShadowSelect?.SelectContext is MudSelectContext<T> shadowContext)
+            else
             {
-                // Shadow items only register for value-to-RenderFragment lookup
-                _shadowContext = shadowContext;
-                _shadowContext.RegisterShadowItem(this);
+                _context = null;
             }
-
-            _isInitialized = true;
         }
 
         /// <summary>
@@ -191,9 +231,6 @@ namespace MudBlazor
         /// </remarks>
         private void OnSelectionChanged(IReadOnlyCollection<T?> selectedValues)
         {
-            if (!_isInitialized)
-                return;
-
             var oldSelected = Selected;
             Selected = selectedValues.Contains(Value);
 
