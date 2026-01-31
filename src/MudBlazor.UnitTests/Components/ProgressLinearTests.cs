@@ -372,7 +372,7 @@ namespace MudBlazor.UnitTests.Components
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
-            container.GetAttribute("aria-busy").Should().Be("false");
+            container.GetAttribute("aria-busy").Should().Be("true");
             container.GetAttribute("aria-valuenow").Should().Be("75.3");
             container.GetAttribute("aria-valuemin").Should().Be("10.2");
             container.GetAttribute("aria-valuemax").Should().Be("125.22");
