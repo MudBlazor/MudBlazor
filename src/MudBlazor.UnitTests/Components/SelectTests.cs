@@ -1242,7 +1242,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var mudSelectElement = comp.Find(".mud-select");
             await comp.Find("div.mud-input-control").MouseDownAsync(new MouseEventArgs());
-            select.Instance.GetState(x=> x.Open).Should().BeTrue();
+            select.Instance.GetState(x => x.Open).Should().BeTrue();
             var items = comp.FindAll("div.mud-list-item").ToArray();
             await items[0].ClickAsync();
             await items[2].ClickAsync();
