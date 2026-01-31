@@ -604,7 +604,7 @@ namespace MudBlazor
                     result = true;
             }
             UpdateSelectAllChecked();
-            if (result.HasValue == false)
+            if (!result.HasValue)
             {
                 result = item.Value?.Equals(ReadValue);
             }
@@ -685,7 +685,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool LockScroll { get; set; } = false;
+        public bool LockScroll { get; set; }
 
         /// <summary>
         /// Occurs when the clear button is clicked.
