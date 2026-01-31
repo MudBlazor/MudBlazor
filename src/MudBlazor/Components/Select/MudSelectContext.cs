@@ -87,6 +87,9 @@ namespace MudBlazor
             // Also add to shadow lookup (visible items are also accessible via shadow lookup)
             _shadowLookup[item.Value] = item;
 
+            // Notify parent that an item was added (for UpdateSelectAllChecked and similar)
+            _select.OnItemRegistered();
+
             // Check if this item's value is currently selected
             var currentValue = _select.GetCurrentValue();
             var selectedValues = _select.GetSelectedValues();

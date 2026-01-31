@@ -520,6 +520,9 @@ namespace MudBlazor
             }
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
+            
+            // Ensure the select component re-renders to show updated selection
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -1038,6 +1041,17 @@ namespace MudBlazor
         /// Internal method for the context to access the current value.
         /// </summary>
         internal T? GetCurrentValue() => ReadValue;
+
+        /// <summary>
+        /// Called by the context when an item is registered.
+        /// </summary>
+        /// <remarks>
+        /// This triggers necessary updates like UpdateSelectAllChecked.
+        /// </remarks>
+        internal void OnItemRegistered()
+        {
+            UpdateSelectAllChecked();
+        }
 
         /// <summary>
         /// Gets all items including shadow items (items with HideContent=true).
