@@ -402,5 +402,29 @@ namespace MudBlazor.UnitTests.Components
             var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
+
+        /// <summary>
+        /// MudRadio should not render p elements inside the radiogroup (WCAG 2.1 compliance).
+        /// The Label and ChildContent should be rendered inside span elements instead of MudText (which renders as p).
+        /// </summary>
+        [Test]
+        public void RadioGroup_ShouldNotRenderParagraphElements()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(self => self
+                .AddChildContent<MudRadio<string>>(radio => radio
+                    .Add(x => x.Value, "1")
+                    .Add(x => x.Label, "Option 1"))
+                .AddChildContent<MudRadio<string>>(radio => radio
+                    .Add(x => x.Value, "2")
+                    .AddChildContent("Option 2")));
+
+            // The radiogroup should not contain any <p> elements (WCAG 2.1 compliance)
+            var radioGroup = comp.Find("div[role=\"radiogroup\"]");
+            radioGroup.QuerySelectorAll("p").Should().BeEmpty("because p elements are not allowed inside radiogroup role for WCAG 2.1 compliance");
+
+            // Labels should be rendered as span elements with typography classes
+            var spans = comp.FindAll("label span.mud-typography");
+            spans.Count.Should().Be(2, "because both Label and ChildContent should be rendered in span elements");
+        }
     }
 }
