@@ -50,9 +50,6 @@ namespace MudBlazor
             "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
         };
 
-        [Inject]
-        private TimeProvider TimeProvider { get; set; } = null!;
-
         public MudColorPicker()
         {
             AdornmentIcon = Icons.Material.Outlined.Palette;

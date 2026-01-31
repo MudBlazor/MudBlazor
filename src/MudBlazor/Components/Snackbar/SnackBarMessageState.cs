@@ -1,7 +1,7 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System.Diagnostics;
+using MudBlazor.Utilities;
 using static System.String;
 
 namespace MudBlazor
@@ -13,13 +13,14 @@ namespace MudBlazor
         public bool UserHasInteracted { get; set; }
         public SnackbarOptions Options { get; }
         public SnackbarState SnackbarState { get; set; }
-        public Stopwatch Stopwatch { get; } = new Stopwatch();
+        public ValueStopwatch Stopwatch { get; }
 
-        public SnackBarMessageState(SnackbarOptions options)
+        public SnackBarMessageState(SnackbarOptions options, TimeProvider timeProvider)
         {
             Options = options;
             AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
+            Stopwatch = new ValueStopwatch(timeProvider);
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
 

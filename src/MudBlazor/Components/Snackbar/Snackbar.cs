@@ -15,7 +15,7 @@ namespace MudBlazor
         private bool _paused = false;
         private bool _transitionCancellable = true;
         private bool _hideOnResume = false;
-        private Timer Timer { get; }
+        private ITimer Timer { get; }
         internal SnackBarMessageState State { get; }
 
         /// <summary>
@@ -40,11 +40,11 @@ namespace MudBlazor
         /// </summary>
         public Severity Severity => State.Options.Severity;
 
-        internal Snackbar(SnackbarMessage message, SnackbarOptions options)
+        internal Snackbar(SnackbarMessage message, SnackbarOptions options, TimeProvider timeProvider)
         {
             SnackbarMessage = message;
-            State = new SnackBarMessageState(options);
-            Timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            State = new SnackBarMessageState(options, timeProvider);
+            Timer = timeProvider.CreateTimer(TimerElapsed, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         }
 
         internal void Init() => TransitionTo(SnackbarState.Showing);
@@ -216,7 +216,7 @@ namespace MudBlazor
             }
 
             State.Stopwatch.Restart();
-            Timer.Change(duration, Timeout.Infinite);
+            Timer.Change(TimeSpan.FromMilliseconds(duration), Timeout.InfiniteTimeSpan);
 
             return true;
         }
@@ -224,7 +224,7 @@ namespace MudBlazor
         private void StopTimer()
         {
             State.Stopwatch.Stop();
-            Timer.Change(Timeout.Infinite, Timeout.Infinite);
+            Timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         }
 
         public void Dispose()
