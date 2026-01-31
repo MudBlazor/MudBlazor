@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
-            await comp.InvokeAsync(async () => await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ListClass, "my-list-class")));
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ListClass, "my-list-class"));
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-list-class"));
         }
 
@@ -28,9 +28,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task Select_CheckLayerClass()
         {
             var comp = Context.Render<MudSelect<string>>();
-            await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.OuterClass, "my-outer-class")));
-            await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Class, "my-main-class")));
-            await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InputClass, "my-input-class")));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.OuterClass, "my-outer-class")
+                .Add(x => x.Class, "my-main-class")
+                .Add(x => x.InputClass, "my-input-class"));
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-outer-class"));
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-main-class"));
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-input-class"));
@@ -1241,7 +1242,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var mudSelectElement = comp.Find(".mud-select");
             await comp.Find("div.mud-input-control").MouseDownAsync(new MouseEventArgs());
-            select.Instance._open.Should().BeTrue();
+            select.Instance.GetState(x=> x.Open).Should().BeTrue();
             var items = comp.FindAll("div.mud-list-item").ToArray();
             await items[0].ClickAsync();
             await items[2].ClickAsync();
@@ -1714,18 +1715,18 @@ namespace MudBlazor.UnitTests.Components
 
             var instance = comp.Instance;
 
-            instance._open.Should().BeFalse();
+            instance.GetState(x => x.Open).Should().BeFalse();
 
             await comp.InvokeAsync(async () => await instance.HandleMouseDown(args));
 
             switch (args.Button)
             {
                 case 0:
-                    instance._open.Should().BeTrue();
+                    instance.GetState(x => x.Open).Should().BeTrue();
                     break;
                 case 1:
                 case 2:
-                    instance._open.Should().BeFalse();
+                    instance.GetState(x => x.Open).Should().BeFalse();
                     break;
             }
         }
@@ -1763,10 +1764,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PopoverSettings_OverridesDefaultValues()
         {
-            var select = Context.Render<MudSelect<string>>(p =>
+            var select = Context.Render<MudSelect<string>>(parameters =>
             {
-                p.Add(p => p.PopoverFixed, true);
-                p.Add(p => p.Modal, true);
+                parameters.Add(x => x.PopoverFixed, true);
+                parameters.Add(x => x.Modal, true);
             });
 
             select.Instance.PopoverFixed.Should().BeTrue();
