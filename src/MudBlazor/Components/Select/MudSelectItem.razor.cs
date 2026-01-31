@@ -143,6 +143,7 @@ namespace MudBlazor
         {
             if (args.LastValue is MudSelect<T> oldParent)
             {
+                oldParent.SelectionChangedFromOutside -= OnUpdateSelectionStateFromOutside;
                 oldParent.Remove(this);
             }
             if (args.Value == null)
@@ -169,6 +170,7 @@ namespace MudBlazor
         {
             try
             {
+                MudSelect?.SelectionChangedFromOutside -= OnUpdateSelectionStateFromOutside;
                 MudSelect?.Remove(this);
                 ((MudSelect<T>?)IMudShadowSelect)?.UnregisterShadowItem(this);
             }
