@@ -252,17 +252,20 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets a value indicating whether the select dropdown is open.
+        /// Whether this select dropdown is open and the options are visible.
         /// </summary>
+        /// <remarks>
+        /// When this property changes, <see cref="OpenChanged"/> occurs.
+        /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Popover.Behavior)]
         public bool Open { get; set; }
 
         /// <summary>
-        /// Occurs when the <see cref="Open"/> state of the select dropdown changes.
+        /// Occurs when <see cref="Open"/> has changed.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Category(CategoryTypes.Popover.Behavior)]
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
