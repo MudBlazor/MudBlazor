@@ -1619,6 +1619,21 @@ namespace MudBlazor.UnitTests.Components
 
             provider.Instance.ShouldDismissOnNavigation(reference).Should().BeTrue();
         }
+
+        /// <summary>
+        /// ShouldDismissOnNavigation() should return true if the dialog reference's options is set to null.
+        /// </summary>
+        [Test]
+        public async Task ShouldDismissOnNavigation_ShouldBeTrueWhenOptionsIsNull()
+        {
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var provider = Context.Render<MudDialogProvider>();
+
+            var reference = await service.ShowAsync<DialogOkCancel>();
+            reference.InjectOptions(null);
+
+            provider.Instance.ShouldDismissOnNavigation(reference).Should().BeTrue();
+        }
     }
     internal class CustomDialogService : DialogService
     {
