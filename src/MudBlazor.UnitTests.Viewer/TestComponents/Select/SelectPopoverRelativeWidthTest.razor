@@ -11,7 +11,7 @@
     </div>
 
     <div class="pa-4 d-inline-block" style="width:125px;">
-        <MudSelect @bind-Value=_selected Variant="Variant.Outlined" RelativeWidth="DropdownWidth.Adaptive" Dense id="expanded-select" PopoverClass="expanded">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" RelativeWidth="DropdownWidth.Adaptive" Dense id="expanded-select" PopoverClass="expanded">
             @foreach (var value in _values)
             {
                 <MudSelectItem T="string" Value="@value">@value</MudSelectItem>

@@ -433,7 +433,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
-            var items = comp.FindAll("div.mud-list-item").ToArray();
+            var items = comp.FindAll("div.mud-list-item");
             await items[1].ClickAsync();
             // menu should be closed now
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -444,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
             //open the menu again
             await input.MouseDownAsync(new MouseEventArgs());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            items = comp.FindAll("div.mud-list-item").ToArray();
+            items = comp.FindAll("div.mud-list-item");
 
             await items[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
@@ -488,7 +488,7 @@ namespace MudBlazor.UnitTests.Components
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            var items = comp.FindAll("div.mud-list-item").ToArray();
+            var items = comp.FindAll("div.mud-list-item");
             await items[1].ClickAsync();
             // menu should be closed now
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -700,6 +700,7 @@ namespace MudBlazor.UnitTests.Components
             var mudListItem = comp.FindComponent<MudListItem<string>>();
             mudListItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z\"/>");
         }
+
         [Test]
         public async Task MultiSelect_SelectAll4()
         {
@@ -1652,18 +1653,18 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
             //Open restricted popover
-            await comp.Find("#restricted-select").MouseDownAsync(new PointerEventArgs());
+            await comp.Find("#restricted-select").MouseDownAsync();
 
             //confirm relative width class
             comp.Find(".restricted").ClassList.Should().Contain("mud-popover-open").And.Contain("mud-popover-relative-width");
 
             //close popover
-            await comp.Find("#restricted-select").MouseDownAsync(new PointerEventArgs());
+            await comp.Find("#restricted-select").MouseDownAsync();
 
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
             //Open expanded popover
-            await comp.Find("#expanded-select").MouseDownAsync(new PointerEventArgs());
+            await comp.Find("#expanded-select").MouseDownAsync();
 
             //confirm relative width class not applied
             comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
@@ -1741,7 +1742,7 @@ namespace MudBlazor.UnitTests.Components
 
             //open the popover
             var input = comp.Find("div.mud-input-control");
-            await input.MouseDownAsync(new MouseEventArgs());
+            await input.MouseDownAsync();
 
             //click an item and see the value change
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -1749,6 +1750,39 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() => comp.Instance.FormFieldChangedEventArgs.Should().NotBeNull());
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().BeEquivalentTo(comp.Instance.States.Take(2).Reverse());
+        }
+
+        [Test]
+        public async Task SelectOpenTwoWay()
+        {
+            var comp = Context.Render<SelectOpenTwoBindTest>();
+            IElement SwitchElement() => comp.Find("#switch");
+
+            var input = comp.Find("div.mud-input-control");
+            // Open the menu
+            await input.MouseDownAsync();
+
+            SwitchElement().HasAttribute("checked").Should().BeTrue();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.Instance.Open.Should().BeTrue();
+
+            // Close the menu
+            var items = comp.FindAll("div.mud-list-item");
+            await items[1].ClickAsync();
+
+            SwitchElement().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.Open.Should().BeFalse();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            // Open the menu using the switch
+            await SwitchElement().ChangeAsync(true);
+            comp.Instance.Open.Should().BeTrue();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Close the menu using the switch
+            await SwitchElement().ChangeAsync(false);
+            comp.Instance.Open.Should().BeFalse();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
         [Test]
@@ -1784,6 +1818,5 @@ namespace MudBlazor.UnitTests.Components
             // Modal should be null (using PopoverOptions defaults)
             select.Instance.Modal.Should().BeNull();
         }
-#nullable disable
     }
 }
