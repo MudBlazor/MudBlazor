@@ -251,11 +251,18 @@ namespace MudBlazor
             await ScrollToItemAsync(item);
         }
 
+        /// <summary>
+        /// Sets a value indicating whether the select dropdown is open.
+        /// </summary>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Popover.Behavior)]
         public bool Open { get; set; }
 
+        /// <summary>
+        /// Occurs when the <see cref="Open"/> state of the select dropdown changes.
+        /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
