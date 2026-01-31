@@ -167,12 +167,9 @@ namespace MudBlazor
                 var isSelected = _context.RegisterItem(this);
                 Selected = isSelected;
 
-                // In multi-selection mode, subscribe to selection changes
+                // Subscribe to selection changes to keep Selected state in sync
                 // This replaces the SelectionChangedFromOutside event subscription
-                if (_context.MultiSelection)
-                {
-                    _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChanged);
-                }
+                _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChanged);
             }
             else if (IMudShadowSelect?.SelectContext is MudSelectContext<T> shadowContext)
             {

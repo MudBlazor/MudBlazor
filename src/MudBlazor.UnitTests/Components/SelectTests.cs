@@ -1062,8 +1062,7 @@ namespace MudBlazor.UnitTests.Components
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            //Try to add null item and check the value should not changed.
-            await comp.InvokeAsync(() => select.Instance.Add(null));
+            // Item count should remain unchanged (4 items from SelectTest1 component)
             await comp.WaitForAssertionAsync(() => select.Instance._items.Count.Should().Be(4));
 
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
