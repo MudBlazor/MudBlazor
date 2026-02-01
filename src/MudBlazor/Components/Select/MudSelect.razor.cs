@@ -175,7 +175,7 @@ namespace MudBlazor
 
         private async Task SelectFirstItem(string? startChar = null)
         {
-            IEnumerable<MudSelectItem<T>> selectList = _context.Items;
+            IReadOnlyCollection<MudSelectItem<T>> selectList = _context.Items;
 
             if (!_openState.Value)
             {
@@ -183,7 +183,7 @@ namespace MudBlazor
                 selectList = GetAllShadowItems();
             }
 
-            if (!selectList.Any())
+            if (selectList.Count == 0)
                 return;
 
             var items = selectList.Where(x => !x.Disabled);
@@ -527,9 +527,6 @@ namespace MudBlazor
             }
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
-
-            // Ensure the select component re-renders to show updated selection
-            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -1061,7 +1058,7 @@ namespace MudBlazor
         /// This is used for operations that need access to all registered items,
         /// not just the visible ones in the dropdown.
         /// </remarks>
-        private IEnumerable<MudSelectItem<T>> GetAllShadowItems()
+        private IReadOnlyCollection<MudSelectItem<T>> GetAllShadowItems()
         {
             return _context.ShadowItems;
         }

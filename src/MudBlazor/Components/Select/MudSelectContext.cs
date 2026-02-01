@@ -49,7 +49,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets all shadow items (including both visible and hidden items).
         /// </summary>
-        public IEnumerable<MudSelectItem<T>> ShadowItems => _shadowLookup.Values;
+        public IReadOnlyCollection<MudSelectItem<T>> ShadowItems => _shadowLookup.Values;
 
         /// <summary>
         /// Gets whether multi-selection is enabled.
