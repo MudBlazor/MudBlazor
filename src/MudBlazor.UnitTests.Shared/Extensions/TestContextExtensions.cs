@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Shared.Mocks;
 
@@ -18,6 +19,9 @@ namespace MudBlazor.UnitTests.Shared.Extensions
                 options.SnackbarConfiguration.HideTransitionDuration = 0;
                 options.PopoverOptions.CheckForPopoverProvider = false;
             });
+            var timeProvider = new FakeTimeProvider();
+            ctx.Services.AddSingleton<TimeProvider>(timeProvider);
+            ctx.Services.AddSingleton(timeProvider);
             ctx.Services.AddScoped(sp => new HttpClient());
             ctx.Services.AddOptions();
         }

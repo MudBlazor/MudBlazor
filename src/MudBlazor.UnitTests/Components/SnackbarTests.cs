@@ -3,13 +3,13 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.Snackbar;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class SnackbarTests : BunitTest
     {
         private IRenderedComponent<MudSnackbarProvider> _provider;
@@ -401,7 +401,7 @@ namespace MudBlazor.UnitTests.Components
 
             primary.PauseTransitions(true);
 
-            await Task.Delay(primary.State.Options.VisibleStateDuration * 2);
+            Context.AdvanceTime(primary.State.Options.VisibleStateDuration * 2);
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
@@ -533,7 +533,7 @@ namespace MudBlazor.UnitTests.Components
             snackbar.Should().NotBeNull();
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            await Task.Delay(200);
+            Context.AdvanceTime(200);
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
@@ -611,7 +611,7 @@ namespace MudBlazor.UnitTests.Components
 
             await _provider.Find(".mud-snackbar").PointerEnterAsync(new PointerEventArgs());
 
-            await Task.Delay(primary.State.Options.VisibleStateDuration * 2);
+            Context.AdvanceTime(primary.State.Options.VisibleStateDuration * 2);
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
@@ -643,7 +643,7 @@ namespace MudBlazor.UnitTests.Components
 
             _provider.Find(".mud-snackbar").TouchStart();
 
-            await Task.Delay(primary.State.Options.VisibleStateDuration * 2);
+            Context.AdvanceTime(primary.State.Options.VisibleStateDuration * 2);
 
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
@@ -679,13 +679,13 @@ namespace MudBlazor.UnitTests.Components
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
 
             // Pointer is still over and the state should still be visible.
-            await Task.Delay(primary.State.Options.VisibleStateDuration * 2);
+            Context.AdvanceTime(primary.State.Options.VisibleStateDuration * 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
             // Leave pointer and let the hide transition that's been pending start.
             await _provider.Find(".mud-snackbar").PointerLeaveAsync(new PointerEventArgs());
-            await Task.Delay(primary.State.Options.HideTransitionDuration / 2);
+            Context.AdvanceTime(primary.State.Options.HideTransitionDuration / 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Hiding);
 
             // Re-enter halfway through hide transition.
@@ -725,13 +725,13 @@ namespace MudBlazor.UnitTests.Components
             // Ensure that leaving with the pointer does not trigger a hide transition by itself, like if the timer was not properly utilized.
 
             _provider.Find(".mud-snackbar").PointerLeave(new PointerEventArgs());
-            await Task.Delay(primary.State.Options.VisibleStateDuration / 2);
+            Context.AdvanceTime(primary.State.Options.VisibleStateDuration / 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
             // The snackbar should naturally leave the visibility state after the configured duration.
-            await Task.Delay(primary.State.Options.VisibleStateDuration);
-            _provider.FindAll(".mud-snackbar").Count.Should().Be(0);
+            Context.AdvanceTime(primary.State.Options.VisibleStateDuration);
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -751,7 +751,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Prove that the pointer entering the snackbar does not restart the duration from zero.
 
-            await Task.Delay(60); // 60% through the visible duration.
+            Context.AdvanceTime(60); // 60% through the visible duration.
             await _provider.Find(".mud-snackbar").PointerEnterAsync(new PointerEventArgs());
             await _provider.Find(".mud-snackbar").PointerLeaveAsync(new PointerEventArgs());
             _provider.Find(".mud-snackbar").TouchStart();
