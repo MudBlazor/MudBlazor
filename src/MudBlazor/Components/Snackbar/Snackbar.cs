@@ -15,7 +15,8 @@ namespace MudBlazor
         private bool _paused = false;
         private bool _transitionCancellable = true;
         private bool _hideOnResume = false;
-        private Timer Timer { get; }
+        private ITimer? _timer;
+        private readonly TimeProvider _timeProvider;
         internal SnackBarMessageState State { get; }
 
         /// <summary>
@@ -40,11 +41,11 @@ namespace MudBlazor
         /// </summary>
         public Severity Severity => State.Options.Severity;
 
-        internal Snackbar(SnackbarMessage message, SnackbarOptions options)
+        internal Snackbar(SnackbarMessage message, SnackbarOptions options, TimeProvider timeProvider)
         {
             SnackbarMessage = message;
-            State = new SnackBarMessageState(options);
-            Timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            _timeProvider = timeProvider;
+            State = new SnackBarMessageState(options, timeProvider);
         }
 
         internal void Init() => TransitionTo(SnackbarState.Showing);
@@ -215,16 +216,18 @@ namespace MudBlazor
                 return false;
             }
 
-            State.Stopwatch.Restart();
-            Timer.Change(duration, Timeout.Infinite);
+            State.StartTransition(_timeProvider.GetUtcNow());
+            _timer?.Dispose();
+            _timer = _timeProvider.CreateTimer(TimerElapsed, null, TimeSpan.FromMilliseconds(duration), Timeout.InfiniteTimeSpan);
 
             return true;
         }
 
         private void StopTimer()
         {
-            State.Stopwatch.Stop();
-            Timer.Change(Timeout.Infinite, Timeout.Infinite);
+            State.StopTransition(_timeProvider.GetUtcNow());
+            _timer?.Dispose();
+            _timer = null;
         }
 
         public void Dispose()
@@ -241,8 +244,6 @@ namespace MudBlazor
             }
 
             StopTimer();
-
-            Timer.Dispose();
         }
     }
 }

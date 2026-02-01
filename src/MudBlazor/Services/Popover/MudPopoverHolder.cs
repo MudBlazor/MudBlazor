@@ -9,6 +9,8 @@ namespace MudBlazor;
 #nullable enable
 internal class MudPopoverHolder : IMudPopoverHolder
 {
+    private readonly TimeProvider _timeProvider;
+
     /// <inheritdoc />
     public Guid Id { get; }
 
@@ -46,9 +48,11 @@ internal class MudPopoverHolder : IMudPopoverHolder
     /// Initializes a new instance of the <see cref="MudPopoverHolder"/> class.
     /// </summary>
     /// <param name="id">The unique identifier of the popover.</param>
-    public MudPopoverHolder(Guid id)
+    /// <param name="timeProvider">The time provider for obtaining the current time.</param>
+    public MudPopoverHolder(Guid id, TimeProvider timeProvider)
     {
         Id = id;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>
@@ -85,7 +89,7 @@ internal class MudPopoverHolder : IMudPopoverHolder
         ShowContent = showContent;
         if (showContent)
         {
-            ActivationDate = DateTime.Now;
+            ActivationDate = _timeProvider.GetLocalNow().DateTime;
         }
         else
         {

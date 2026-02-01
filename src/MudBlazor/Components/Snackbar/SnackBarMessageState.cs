@@ -1,7 +1,6 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System.Diagnostics;
 using static System.String;
 
 namespace MudBlazor
@@ -13,13 +12,39 @@ namespace MudBlazor
         public bool UserHasInteracted { get; set; }
         public SnackbarOptions Options { get; }
         public SnackbarState SnackbarState { get; set; }
-        public Stopwatch Stopwatch { get; } = new Stopwatch();
+        private readonly TimeProvider _timeProvider;
+        private DateTimeOffset _transitionStartTime;
+        private long _elapsedMilliseconds;
 
-        public SnackBarMessageState(SnackbarOptions options)
+        public SnackBarMessageState(SnackbarOptions options, TimeProvider timeProvider)
         {
             Options = options;
+            _timeProvider = timeProvider;
             AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
+        }
+
+        /// <summary>
+        /// Records the start time of the current transition.
+        /// </summary>
+        internal void StartTransition(DateTimeOffset now)
+        {
+            _transitionStartTime = now;
+            _elapsedMilliseconds = 0;
+        }
+
+        /// <summary>
+        /// Stops tracking the transition and records the elapsed time.
+        /// </summary>
+        internal void StopTransition(DateTimeOffset now)
+        {
+            _elapsedMilliseconds = (long)(now - _transitionStartTime).TotalMilliseconds;
+        }
+
+        private long GetElapsedMilliseconds()
+        {
+            var now = _timeProvider.GetUtcNow();
+            return (long)(now - _transitionStartTime).TotalMilliseconds;
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
 
@@ -103,7 +128,8 @@ namespace MudBlazor
 
         private int RemainingTransitionMilliseconds(int transitionDuration)
         {
-            var duration = transitionDuration - (int)Stopwatch.ElapsedMilliseconds;
+            var elapsed = GetElapsedMilliseconds();
+            var duration = transitionDuration - (int)elapsed;
 
             return duration >= 0 ? duration : 0;
         }
