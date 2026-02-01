@@ -1046,6 +1046,7 @@ namespace MudBlazor
         /// <remarks>
         /// This triggers necessary updates like UpdateSelectAllChecked.
         /// </remarks>
+        [Obsolete("Seems not needed for now?")]
         internal void OnItemRegistered()
         {
             UpdateSelectAllChecked();

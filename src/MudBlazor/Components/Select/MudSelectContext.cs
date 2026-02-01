@@ -88,7 +88,7 @@ namespace MudBlazor
             // Shadow items are registered separately via RegisterShadowItem
 
             // Notify parent that an item was added (for UpdateSelectAllChecked and similar)
-            _select.OnItemRegistered();
+            //_select.OnItemRegistered();
 
             // Check if this item's value is currently selected
             var currentValue = _select.GetCurrentValue();
