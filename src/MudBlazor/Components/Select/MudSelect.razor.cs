@@ -176,27 +176,28 @@ namespace MudBlazor
             }
 
             if (selectList.Count == 0)
+            {
                 return;
+            }
 
-            var items = selectList.Where(x => !x.Disabled);
+            var items = selectList
+                .Where(x => !x.Disabled)
+                .ToList();
+
+            if (items.Count == 0)
+                return;
 
             if (!string.IsNullOrWhiteSpace(startChar))
             {
                 var searchItem = SelectItemBySearch(items, startChar);
-
-                if (searchItem != null)
+                if (searchItem is not null)
                 {
                     await SelectAndHighlightItemAsync(searchItem);
                     return;
                 }
             }
 
-            // If no specific search or no matching items, select the first item
-            var firstItem = items.FirstOrDefault();
-            if (firstItem == null)
-                return;
-
-            await SelectAndHighlightItemAsync(firstItem);
+            await SelectAndHighlightItemAsync(items[0]);
         }
 
         private MudSelectItem<T>? SelectItemBySearch(IEnumerable<MudSelectItem<T>> items, string inputChar)
@@ -263,12 +264,9 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAndUpdateTextAsync(item.Value, updateText: true);
-                await HighlightItemAsync(item);
             }
-            else
-            {
-                await HighlightItemAsync(item);
-            }
+
+            await HighlightItemAsync(item);
             await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
@@ -554,7 +552,7 @@ namespace MudBlazor
             {
                 if (MultiSelection)
                     return false;
-                if (!_context.TryGetShadowItemByValue(ReadValue, out var item) || item == null)
+                if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
                     return false;
                 return item.ChildContent != null;
             }
@@ -570,7 +568,7 @@ namespace MudBlazor
 
         protected RenderFragment? GetSelectedValuePresenter()
         {
-            if (!_context.TryGetShadowItemByValue(ReadValue, out var item) || item == null)
+            if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return item.ChildContent;
         }
@@ -668,7 +666,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// The icon displayed for the clear button when <see cref="Clearable"/> is <c>true</c>.
