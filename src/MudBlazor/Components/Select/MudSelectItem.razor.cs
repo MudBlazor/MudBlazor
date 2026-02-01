@@ -238,8 +238,6 @@ namespace MudBlazor
             {
                 await MudSelect.SelectOption(Value);
             }
-
-            //await InvokeAsync(StateHasChanged);
         }
 
         /// <inheritdoc />

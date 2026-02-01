@@ -492,7 +492,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Func<List<string?>?, string>? MultiSelectionTextFunc { get; set; }
+        public Func<IReadOnlyList<string?>?, string>? MultiSelectionTextFunc { get; set; }
 
         /// <summary>
         /// The string used to separate multiple selected values.
@@ -780,21 +780,31 @@ namespace MudBlazor
         public async Task SelectOption(object? obj)
         {
             var value = (T?)obj;
+            var comparer = Comparer ?? EqualityComparer<T?>.Default;
+
             if (MultiSelection)
             {
-                // multi-selection: menu stays open
+                // Toggle selection
                 if (!_selectedValues.Add(value))
-                    _selectedValues.Remove(value);
-
-                if (MultiSelectionTextFunc != null)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet!).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                    _selectedValues.Remove(value);
+                }
+
+                // Convert once
+                var converted = _selectedValues.Select(ConvertSet).ToList();
+                var text = string.Join(Delimiter, converted);
+
+                if (MultiSelectionTextFunc is not null)
+                {
+                    await SetCustomizedTextAsync(
+                        text,
+                        selectedConvertedValues: converted,
+                        multiSelectionTextFunc: MultiSelectionTextFunc
+                    );
                 }
                 else
                 {
-                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet!)), updateValue: false);
+                    await SetTextAndUpdateValueAsync(text, updateValue: false);
                 }
 
                 UpdateSelectAllChecked();
@@ -802,43 +812,43 @@ namespace MudBlazor
             }
             else
             {
-                // single selection
-                // Highlight the item BEFORE closing so the next open shows it highlighted
+                // Highlight before closing
                 await HighlightItemForValueAsync(value);
 
-                // CloseMenu(true) doesn't close popover in BSS
                 await CloseMenu(false);
 
-                // Update internal selected values and ParameterState
-                _selectedValues.Clear();
-                _selectedValues.Add(value);
-
-                // Early return if value hasn't changed (but after updating SelectedValues)
-                // Use Comparer if available, otherwise use default
-                var comparer = Comparer ?? EqualityComparer<T?>.Default;
+                // Early exit if unchanged
                 if (comparer.Equals(ReadValue, value))
                 {
-                    // Still need to publish SelectedValues to ParameterState in case it wasn't initialized
-                    await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
-                    StateHasChanged();
+                    // Still publish state
+                    await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, comparer));
                     return;
                 }
+
+                // Replace selection
+                _selectedValues.Clear();
+                _selectedValues.Add(value);
 
                 await SetValueAndUpdateTextAsync(value);
                 _elementReference.SetText(ReadText).CatchAndLog();
             }
 
-            // For multi-selection, highlight after value is set
+            // Highlight for multi-selection
             if (MultiSelection)
             {
                 await HighlightItemForValueAsync(value);
             }
 
-            // Create a new HashSet to ensure ParameterState detects the change
-            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+            // Publish updated selection
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, comparer));
+
             FieldChanged(_selectedValues);
+
             if (MultiSelection && typeof(T) == typeof(string))
+            {
                 await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
+            }
+
             await InvokeAsync(StateHasChanged);
         }
 
@@ -1124,8 +1134,8 @@ namespace MudBlazor
         }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
-            List<string?>? selectedConvertedValues = null,
-            Func<List<string?>?, string>? multiSelectionTextFunc = null)
+            IReadOnlyList<string?>? selectedConvertedValues = null,
+            Func<IReadOnlyList<string?>?, string>? multiSelectionTextFunc = null)
         {
             // The Text property of the control is updated
             var customText = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
