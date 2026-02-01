@@ -122,7 +122,7 @@ namespace MudBlazor
             }
         }
 
-        protected string? DisplayString
+        protected string DisplayString
         {
             get
             {

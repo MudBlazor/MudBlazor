@@ -28,7 +28,7 @@ namespace MudBlazor
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
         private MudInput<string> _elementReference = null!;
-        private HashSet<T?> _selectedValues = new HashSet<T?>();
+        private HashSet<T?> _selectedValues = [];
         private readonly string _elementId = Identifier.Create("select");
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
@@ -1118,7 +1118,7 @@ namespace MudBlazor
         protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetValueAndUpdateTextAsync(default, false);
-            await SetTextAndUpdateValueAsync(default, false);
+            await SetTextAndUpdateValueAsync(null, false);
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
@@ -1315,7 +1315,7 @@ namespace MudBlazor
         public async Task ClearAsync()
         {
             await SetValueAndUpdateTextAsync(default, false);
-            await SetTextAndUpdateValueAsync(default, false);
+            await SetTextAndUpdateValueAsync(null, false);
             _selectedValues.Clear();
             await BeginValidateAsync();
             StateHasChanged();
@@ -1398,9 +1398,11 @@ namespace MudBlazor
         protected override bool HasValue(T? value)
         {
             // Fixes issue #4328
-
             if (MultiSelection)
-                return _selectedValues?.Any() ?? false;
+            {
+                return _selectedValues.Count != 0;
+            }
+
             return base.HasValue(value);
         }
     }
