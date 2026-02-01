@@ -26,7 +26,7 @@ internal sealed class MudSelectContext<T>
 {
     private readonly MudSelect<T> _select;
     private readonly List<MudSelectItem<T>> _items = [];
-    private readonly List<Action<IReadOnlyCollection<T?>>> _selectionObservers = [];
+    private readonly List<Func<IReadOnlyCollection<T?>, Task>> _selectionObservers = [];
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
 
@@ -87,9 +87,6 @@ internal sealed class MudSelectContext<T>
 
         // Note: Do NOT add to _shadowLookup here - that's only for shadow items
         // Shadow items are registered separately via RegisterShadowItem
-
-        // Notify parent that an item was added (for UpdateSelectAllChecked and similar)
-        //_select.OnItemRegistered();
 
         // Check if this item's value is currently selected
         var currentValue = _select.ReadValue;
@@ -162,49 +159,55 @@ internal sealed class MudSelectContext<T>
     /// </summary>
     /// <param name="observer">The callback to invoke when selection changes.</param>
     /// <returns>A disposable subscription that can be used to unsubscribe.</returns>
-    public IDisposable SubscribeToSelectionChanges(Action<IReadOnlyCollection<T?>> observer)
+    public IDisposable SubscribeToSelectionChanges(Func<IReadOnlyCollection<T?>, Task> observer)
     {
         _selectionObservers.Add(observer);
         return new SelectionSubscription(this, observer);
     }
 
     /// <summary>
-    /// Notifies all observers of a selection change.
-    /// </summary>
-    public void NotifySelectionChanged()
-    {
-        var selectedValues = SelectedValues;
-        foreach (var observer in _selectionObservers.ToArray())
-        {
-            observer(selectedValues);
-        }
-    }
-
-    /// <summary>
     /// Unsubscribes an observer from selection changes.
     /// </summary>
-    private void Unsubscribe(Action<IReadOnlyCollection<T?>> observer)
+    private void Unsubscribe(Func<IReadOnlyCollection<T?>, Task> observer)
     {
         _selectionObservers.Remove(observer);
     }
 
     /// <summary>
+    /// Notifies all observers of a selection change.
+    /// </summary>
+    public async Task NotifySelectionChangedAsync()
+    {
+        var selectedValues = SelectedValues;
+        for (var i = _selectionObservers.Count - 1; i >= 0; i--)
+        {
+            await _selectionObservers[i](selectedValues);
+        }
+    }
+
+    /// <summary>
     /// Represents a subscription to selection changes that can be disposed to unsubscribe.
     /// </summary>
-    private sealed class SelectionSubscription(MudSelectContext<T> context, Action<IReadOnlyCollection<T?>> observer)
+    private sealed class SelectionSubscription(MudSelectContext<T> context, Func<IReadOnlyCollection<T?>, Task> observer)
         : IDisposable
     {
         private MudSelectContext<T>? _context = context;
-        private Action<IReadOnlyCollection<T?>>? _observer = observer;
+        private Func<IReadOnlyCollection<T?>, Task>? _observer = observer;
 
         public void Dispose()
         {
-            if (_context != null && _observer != null)
+            var context = _context;
+            var observer = _observer;
+
+            if (context is null || observer is null)
             {
-                _context.Unsubscribe(_observer);
-                _context = null;
-                _observer = null;
+                return;
             }
+
+            _context = null;
+            _observer = null;
+
+            context.Unsubscribe(observer);
         }
     }
 }

@@ -213,7 +213,7 @@ namespace MudBlazor
 
                 // Subscribe to selection changes to keep Selected state in sync
                 // This replaces the SelectionChangedFromOutside event subscription
-                _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChanged);
+                _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChangedAsync);
             }
             else
             {
@@ -229,14 +229,14 @@ namespace MudBlazor
         /// It updates the local Selected state and triggers a re-render if needed.
         /// This replaces the OnUpdateSelectionStateFromOutside method.
         /// </remarks>
-        private void OnSelectionChanged(IReadOnlyCollection<T?> selectedValues)
+        private async Task OnSelectionChangedAsync(IReadOnlyCollection<T?> selectedValues)
         {
             var oldSelected = Selected;
             Selected = selectedValues.Contains(Value);
 
             if (oldSelected != Selected)
             {
-                InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -283,13 +283,13 @@ namespace MudBlazor
                 _selectionSubscription = null;
 
                 // Unregister from context
-                if (_context != null)
+                if (_context is not null)
                 {
                     _context.UnregisterItem(this);
                     _context = null;
                 }
 
-                if (_shadowContext != null)
+                if (_shadowContext is not null)
                 {
                     _shadowContext.UnregisterShadowItem(this);
                     _shadowContext = null;

@@ -167,7 +167,7 @@ namespace MudBlazor
 
         private async Task SelectFirstItem(string? startChar = null)
         {
-            IReadOnlyCollection<MudSelectItem<T>> selectList = _context.Items;
+            IReadOnlyCollection<MudSelectItem<T>> selectList = Items;
 
             if (!_openState.Value)
             {
@@ -517,8 +517,7 @@ namespace MudBlazor
             _selectedValues = new HashSet<T?>(set, Comparer);
 
             // Notify all subscribed items of the selection change
-            // This replaces the SelectionChangedFromOutside event
-            _context.NotifySelectionChanged();
+            await _context.NotifySelectionChangedAsync();
 
             if (!MultiSelection)
             {
@@ -1053,18 +1052,6 @@ namespace MudBlazor
         /// Internal method for the context to access the current selected values.
         /// </summary>
         internal IEnumerable<T?>? GetSelectedValues() => _selectedValuesState.Value;
-
-        /// <summary>
-        /// Called by the context when an item is registered.
-        /// </summary>
-        /// <remarks>
-        /// This triggers necessary updates like UpdateSelectAllChecked.
-        /// </remarks>
-        [Obsolete("Seems not needed for now?")]
-        internal void OnItemRegistered()
-        {
-            UpdateSelectAllChecked();
-        }
 
         /// <summary>
         /// Sets the focus to this component.
