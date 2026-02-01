@@ -4,11 +4,11 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Comparer;
-using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -54,14 +54,6 @@ namespace MudBlazor
         /// Gets the context that manages shadow item registration.
         /// </summary>
         object IMudShadowSelect.SelectContext => _context;
-
-        /// <summary>
-        /// Gets the ordered list of all visible items.
-        /// </summary>
-        /// <remarks>
-        /// This property now delegates to the context instead of maintaining its own list.
-        /// </remarks>
-        protected internal List<MudSelectItem<T>> _items => _context.Items;
 
         public MudSelect()
         {
@@ -130,23 +122,23 @@ namespace MudBlazor
 
         private async Task SelectAdjacentItem(int direction)
         {
-            if (_items.Count == 0)
+            if (Items.Count == 0)
                 return;
-            var index = _items.FindIndex(x => x.ItemId == _activeItemId);
+            var index = Items.FindIndex(x => x.ItemId == _activeItemId);
             if (direction < 0 && index < 0)
                 index = 0;
             MudSelectItem<T>? item = null;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
-            for (var i = 0; i < _items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 index += direction;
                 if (index < 0)
                     index = 0;
-                if (index >= _items.Count)
-                    index = _items.Count - 1;
-                if (_items[index].Disabled)
+                if (index >= Items.Count)
+                    index = Items.Count - 1;
+                if (Items[index].Disabled)
                     continue;
-                item = _items[index];
+                item = Items[index];
                 if (!MultiSelection)
                 {
                     // When SelectionOnEnter is true, we only update the visual highlight during navigation.
@@ -261,9 +253,9 @@ namespace MudBlazor
 
         private async Task SelectLastItem()
         {
-            if (_items.Count == 0)
+            if (Items.Count == 0)
                 return;
-            var item = _items.LastOrDefault(x => !x.Disabled);
+            var item = Items.LastOrDefault(x => !x.Disabled);
             if (item == null)
                 return;
             if (!MultiSelection)
@@ -729,13 +721,13 @@ namespace MudBlazor
         /// <param name="index">The ordinal of the item to select (starting at <c>0</c>).  When <see cref="MultiSelection"/> is <c>true</c>, the item will be added to the selected items.</param>
         public async Task SelectOption(int index)
         {
-            if (index < 0 || index >= _items.Count)
+            if (index < 0 || index >= Items.Count)
             {
                 if (!MultiSelection)
                     await CloseMenu();
                 return;
             }
-            await SelectOption(_items[index].Value);
+            await SelectOption(Items[index].Value);
         }
 
         /// <summary>
@@ -827,7 +819,7 @@ namespace MudBlazor
                 {
                     _selectAllChecked = false;
                 }
-                else if (_items.Count(x => !x.Disabled) == _selectedValues.Count)
+                else if (Items.Count(x => !x.Disabled) == _selectedValues.Count)
                 {
                     _selectAllChecked = true;
                 }
@@ -880,10 +872,10 @@ namespace MudBlazor
             //Scroll the active item on each opening
             if (_activeItemId != null)
             {
-                var index = _items.FindIndex(x => x.ItemId == _activeItemId);
+                var index = Items.FindIndex(x => x.ItemId == _activeItemId);
                 if (index > 0)
                 {
-                    var item = _items[index];
+                    var item = Items[index];
                     await ScrollToItemAsync(item);
                 }
             }
@@ -1003,7 +995,7 @@ namespace MudBlazor
                 {
                     if (MultiSelection)
                     {
-                        var firstNonDisabled = _items.FirstOrDefault(x => !x.Disabled);
+                        var firstNonDisabled = Items.FirstOrDefault(x => !x.Disabled);
                         await HighlightItemAsync(firstNonDisabled);
                     }
                     else
@@ -1240,7 +1232,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    var index = _items.FindIndex(x => x.ItemId == _activeItemId);
+                    var index = Items.FindIndex(x => x.ItemId == _activeItemId);
                     if (!MultiSelection)
                     {
                         if (!_openState.Value)
@@ -1333,7 +1325,7 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T?>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), Comparer);
+            var selectedValues = new HashSet<T?>(Items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), Comparer);
             _selectedValues = new HashSet<T?>(selectedValues, Comparer);
             if (MultiSelectionTextFunc != null)
             {
