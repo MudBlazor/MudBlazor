@@ -791,7 +791,6 @@ namespace MudBlazor.UnitTests.Components
             // clicking day buttons to select a date range
             await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click());
             await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).Click());
-            Context.AdvanceTime(dateRangePicker.ClosingDelay);
             // wait for picker to close
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
 
