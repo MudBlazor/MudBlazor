@@ -31,6 +31,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services)
         {
+            services.AddCommonServices();
             services.TryAddScoped<ISnackbar, SnackbarService>();
 
             return services;
@@ -170,6 +171,7 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudPopoverService(this IServiceCollection services)
         {
+            services.AddCommonServices();
             services.TryAddScoped<IPopoverService, PopoverService>();
 
             return services;
