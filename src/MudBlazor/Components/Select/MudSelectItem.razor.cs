@@ -150,10 +150,6 @@ namespace MudBlazor
                 _shadowContext = newContext;
                 _shadowContext.RegisterShadowItem(this);
             }
-            else
-            {
-                _shadowContext = null;
-            }
         }
 
         /// <summary>
@@ -190,10 +186,6 @@ namespace MudBlazor
                 Selected = isSelected;
 
                 _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChangedAsync);
-            }
-            else
-            {
-                _context = null;
             }
         }
 
