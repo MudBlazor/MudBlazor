@@ -1,7 +1,6 @@
 ﻿using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Shared.Mocks;
 
@@ -12,9 +11,6 @@ namespace MudBlazor.UnitTests.Shared.Extensions
         public static void AddTestServices(this BunitContext ctx)
         {
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
-            var fakeTimeProvider = new FakeTimeProvider();
-            ctx.Services.AddSingleton<TimeProvider>(fakeTimeProvider);
-            ctx.Services.AddSingleton(fakeTimeProvider);
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddMudServices(options =>
             {
