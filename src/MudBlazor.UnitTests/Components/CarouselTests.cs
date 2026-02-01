@@ -1,7 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.Carousel;
 using NUnit.Framework;
 
@@ -186,13 +185,13 @@ namespace MudBlazor.UnitTests.Components
             for (var interval = 150; interval <= 300; interval += 150)
             {
                 await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval)));
-                Context.AdvanceTime(TimeSpan.FromMilliseconds(interval));
+                await Task.Delay(interval);
                 await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(3000));
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-                Context.AdvanceTime(TimeSpan.FromMilliseconds(interval));
+                await Task.Delay(interval);
                 await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(3000));
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-                Context.AdvanceTime(TimeSpan.FromMilliseconds(interval));
+                await Task.Delay(interval);
                 await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(3000));
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
             }

@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Globalization;
 using AngleSharp.Dom;
 using AwesomeAssertions;
@@ -14,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
-using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
 
@@ -145,12 +143,11 @@ namespace MudBlazor.UnitTests.Components
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
-            Context.AdvanceTime(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().NotBe(100), TimeSpan.FromMilliseconds(100));
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
-            //More than 200 ms had elapsed, so Value should be updated
-            Context.AdvanceTime(TimeSpan.FromMilliseconds(100));
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(100));
+            //More than 200 ms had elapsed, so Value should be updated (CPU time will likely take more than 200ms)
+            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(100), TimeSpan.FromMilliseconds(300));
             numericField.ReadText.Should().Be("100");
         }
 

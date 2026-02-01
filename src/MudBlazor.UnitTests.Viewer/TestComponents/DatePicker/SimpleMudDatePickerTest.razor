@@ -6,7 +6,6 @@
                Date="@Date"
                DateChanged="HandleDateChanged"
                ReadOnly="Readonly"
-               ClosingDelay="ClosingDelay"
                @bind-PickerMonth="PickerMonth"
                IsDateDisabledFunc="IsDateDisabledFunc"
                OpenTo="@OpenTo"
@@ -64,9 +63,6 @@
 
     [Parameter]
     public DayOfWeek? FirstDayOfWeek { get; set; }
-
-    [Parameter]
-    public int ClosingDelay { get; set; } = 100;
 
     private async Task HandleDateChanged(DateTime? input)
     {
