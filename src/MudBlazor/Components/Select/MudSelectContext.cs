@@ -186,16 +186,11 @@ internal sealed class MudSelectContext<T>
     /// <summary>
     /// Represents a subscription to selection changes that can be disposed to unsubscribe.
     /// </summary>
-    private sealed class SelectionSubscription : IDisposable
+    private sealed class SelectionSubscription(MudSelectContext<T> context, Action<IReadOnlyCollection<T?>> observer)
+        : IDisposable
     {
-        private MudSelectContext<T>? _context;
-        private Action<IReadOnlyCollection<T?>>? _observer;
-
-        public SelectionSubscription(MudSelectContext<T> context, Action<IReadOnlyCollection<T?>> observer)
-        {
-            _context = context;
-            _observer = observer;
-        }
+        private MudSelectContext<T>? _context = context;
+        private Action<IReadOnlyCollection<T?>>? _observer = observer;
 
         public void Dispose()
         {
@@ -208,15 +203,11 @@ internal sealed class MudSelectContext<T>
         }
     }
 
-    private sealed class CollectionWrapper : IReadOnlyCollection<T?>
+    private sealed class CollectionWrapper(ICollection<T?> inner) : IReadOnlyCollection<T?>
     {
-        private readonly ICollection<T?> _inner;
+        public int Count => inner.Count;
 
-        public CollectionWrapper(ICollection<T?> inner) => _inner = inner;
-
-        public int Count => _inner.Count;
-
-        public IEnumerator<T?> GetEnumerator() => _inner.GetEnumerator();
+        public IEnumerator<T?> GetEnumerator() => inner.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

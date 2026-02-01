@@ -185,7 +185,9 @@ namespace MudBlazor
                 .ToList();
 
             if (items.Count == 0)
+            {
                 return;
+            }
 
             if (!string.IsNullOrWhiteSpace(startChar))
             {
@@ -200,7 +202,7 @@ namespace MudBlazor
             await SelectAndHighlightItemAsync(items[0]);
         }
 
-        private MudSelectItem<T>? SelectItemBySearch(IEnumerable<MudSelectItem<T>> items, string inputChar)
+        private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> items, string inputChar)
         {
             var now = DateTime.UtcNow;
 
@@ -216,24 +218,45 @@ namespace MudBlazor
 
             _lastSearchTime = now;
 
-            var mudSelectItems = items as MudSelectItem<T>[] ?? items.ToArray();
+            MudSelectItem<T>? activeItem = null;
+            MudSelectItem<T>? previousItem = null;
+            List<MudSelectItem<T>>? matches = null;
 
-            var matchingItems = mudSelectItems
-                .Where(x => !x.Disabled && ConvertSet(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
-                .ToList();
+            foreach (var item in items)
+            {
+                if (item.ItemId == _activeItemId)
+                    activeItem = item;
 
-            if (matchingItems.Count == 0)
-                return mudSelectItems.FirstOrDefault(x => x.ItemId == _activeItemId);
+                if (item.ItemId == _lastSelectedId)
+                    previousItem = item;
 
-            var currentItem = mudSelectItems.FirstOrDefault(x => x.ItemId == _activeItemId);
-            if (currentItem == null)
-                return matchingItems[0];
+                if (!item.Disabled)
+                {
+                    var text = ConvertSet(item.Value);
+                    if (text is not null && text.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        matches ??= [];
+                        matches.Add(item);
+                    }
+                }
+            }
 
-            var previousItem = mudSelectItems.First(x => x.ItemId == _lastSelectedId);
-            var currentIndex = matchingItems.IndexOf(previousItem);
-            var nextIndex = (currentIndex + 1) % matchingItems.Count;
+            // No matches → return active item
+            if (matches is null || matches.Count == 0)
+            {
+                return activeItem;
+            }
 
-            return matchingItems[nextIndex];
+            // No previous item → return first match
+            if (previousItem is null)
+            {
+                return matches[0];
+            }
+
+            var index = matches.IndexOf(previousItem);
+            var nextIndex = (index + 1) % matches.Count;
+
+            return matches[nextIndex];
         }
 
         private async Task SelectAndHighlightItemAsync(MudSelectItem<T> item)
