@@ -8,24 +8,6 @@ namespace MudBlazor
     /// <summary>
     /// A selectable option displayed within a <see cref="MudSelect{T}"/> component.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    /// This component uses an explicit registration model for communication with its parent:
-    /// </para>
-    /// <list type="bullet">
-    /// <item><description>Registers itself when the parent cascading parameter is set</description></item>
-    /// <item><description>Subscribes to selection changes via an observable pattern</description></item>
-    /// <item><description>Unregisters and unsubscribes during disposal</description></item>
-    /// </list>
-    /// <para>
-    /// This design ensures:
-    /// </para>
-    /// <list type="bullet">
-    /// <item><description>Clear ownership and lifecycle management</description></item>
-    /// <item><description>No hidden side effects in parameter setters</description></item>
-    /// <item><description>Automatic cleanup via IDisposable</description></item>
-    /// </list>
-    /// </remarks>
     /// <typeparam name="T">The type of value linked to this item.  Must be the same type as the parent <see cref="MudSelect{T}"/>.</typeparam>
     /// <seealso cref="MudSelect{T}"/>
     public partial class MudSelectItem<T> : MudComponentBase, IDisposable
@@ -252,10 +234,12 @@ namespace MudBlazor
             }
 
             // Notify parent to update selection
-            if (MudSelect != null)
+            if (MudSelect is not null)
+            {
                 await MudSelect.SelectOption(Value);
+            }
 
-            await InvokeAsync(StateHasChanged);
+            //await InvokeAsync(StateHasChanged);
         }
 
         /// <inheritdoc />

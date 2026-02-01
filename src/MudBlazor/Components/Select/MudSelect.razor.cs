@@ -37,22 +37,10 @@ namespace MudBlazor
         private readonly ParameterState<IEnumerable<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
 
-        /// <summary>
-        /// Gets the context that manages communication with child items.
-        /// </summary>
-        /// <remarks>
-        /// This context provides a clean, explicit communication model:
-        /// <list type="bullet">
-        /// <item>Items register/unregister explicitly</item>
-        /// <item>Selection state is centralized</item>
-        /// <item>Items observe changes via subscriptions</item>
-        /// </list>
-        /// </remarks>
+        /// <inheritdoc />
         object IMudSelect.SelectContext => _context;
 
-        /// <summary>
-        /// Gets the context that manages shadow item registration.
-        /// </summary>
+        /// <inheritdoc />
         object IMudShadowSelect.SelectContext => _context;
 
         public MudSelect()
