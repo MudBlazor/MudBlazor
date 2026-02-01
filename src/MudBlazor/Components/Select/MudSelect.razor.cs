@@ -180,19 +180,10 @@ namespace MudBlazor
                 return;
             }
 
-            var items = selectList
-                .Where(x => !x.Disabled)
-                .ToList();
-
-            if (items.Count == 0)
-            {
-                return;
-            }
-
             if (!string.IsNullOrWhiteSpace(startChar))
             {
-                // Hm, we pass only non-disabled items to the search
-                var searchItem = SelectItemBySearch(items, startChar);
+                // Pass full list - SelectItemBySearch handles disabled items
+                var searchItem = SelectItemBySearch(selectList, startChar);
                 if (searchItem is not null)
                 {
                     await SelectAndHighlightItemAsync(searchItem);
@@ -200,10 +191,20 @@ namespace MudBlazor
                 }
             }
 
-            await SelectAndHighlightItemAsync(items[0]);
+            // Find first non-disabled item without allocating
+            foreach (var item in selectList)
+            {
+                if (item.Disabled)
+                {
+                    continue;
+                }
+
+                await SelectAndHighlightItemAsync(item);
+                return;
+            }
         }
 
-        private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> activeItems, string inputChar)
+        private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> items, string inputChar)
         {
             UpdateSearchText(inputChar);
 
@@ -213,7 +214,7 @@ namespace MudBlazor
             MudSelectItem<T>? nextMatch = null;
             var foundPrevious = false;
 
-            foreach (var item in activeItems)
+            foreach (var item in items)
             {
                 TrackSpecialItems(item, ref activeItem, ref previousItem);
 
