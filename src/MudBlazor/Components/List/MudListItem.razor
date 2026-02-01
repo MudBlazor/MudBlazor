@@ -2,16 +2,21 @@
 @inherits MudComponentBase
 @typeparam T
 
+@{
+    var isDisabled = GetDisabled();
+    var isDense = GetDense();
+}
+
 <MudElement HtmlTag="@HtmlTag"
-            Class="@Classname"
+            Class="@GetClassname(isDisabled, isDense)"
             Style="@Style"
             tabindex="0"
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
             href="@Href"
             target="@Target"
-            PreventDefault="@GetPreventDefault()"
-            ClickPropagation="@GetClickPropagation()">
+            PreventDefault="@isDisabled"
+            ClickPropagation="false">
 
     @if (AvatarContent is not null)
     {
@@ -23,7 +28,7 @@
     {
         <div class="mud-list-item-icon">
             <MudIcon Icon="@Icon"
-                     Disabled="@GetDisabled()"
+                     Disabled="@isDisabled"
                      Color="@IconColor"
                      Size="@IconSize" />
         </div>
@@ -35,7 +40,7 @@
                      TriState
                      ReadOnly="@ReadOnly"
                      Class="mud-list-item-checkbox my-n2 ms-n2"
-                     Disabled="@GetDisabled()"
+                     Disabled="@isDisabled"
                      CheckedIcon="@GetCheckedIcon()"
                      UncheckedIcon="@GetUncheckedIcon()"
                      IndeterminateIcon="@GetIndeterminateIcon()"
@@ -45,8 +50,8 @@
                      @bind-Value:set="@(x => OnCheckboxChangedAsync())" />
     }
 
-    <div class="mud-list-item-text@(Inset ? " mud-list-item-text-inset" : string.Empty)">
-        <MudText Typo="@TextTypo">
+    <div class="@GetTextClassname()">
+        <MudText Typo="@(isDense ? Typo.body2 : Typo.body1)">
             @if (ChildContent != null)
             {
                 @ChildContent
@@ -67,8 +72,8 @@
 
     @if (NestedList != null)
     {
-        <MudIcon Disabled="@GetDisabled()"
-                 Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")"
+        <MudIcon Disabled="@isDisabled"
+                 Icon="@(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)"
                  Size="@IconSize"
                  Color="@ExpandIconColor" />
     }
@@ -85,8 +90,8 @@
                 ReadOnly="@ReadOnly"
                 Color="@(MudList?.Color ?? Color.Primary)"
                 Padding="false"
-                Disabled="@GetDisabled()"
-                Dense="@GetDense()"
+                Disabled="@isDisabled"
+                Dense="@isDense"
                 Gutters="@(MudList?.Gutters ?? true)">
             @NestedList
         </MudList>

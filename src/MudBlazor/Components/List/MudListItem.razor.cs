@@ -28,17 +28,23 @@ namespace MudBlazor
                 .WithEventCallback(() => ExpandedChanged);
         }
 
-        protected string Classname =>
-            new CssBuilder("mud-list-item")
-                .AddClass("mud-list-item-dense", GetDense())
+        private string GetClassname(bool isDisabled, bool isDense)
+        {
+            var isClickable = GetClickable(isDisabled);
+            var showSelectedStyle = !MultiSelection && _selected && !isDisabled;
+            return new CssBuilder("mud-list-item")
+                .AddClass("mud-list-item-dense", isDense)
                 .AddClass("mud-list-item-gutters", GetGutters())
-                .AddClass("mud-list-item-clickable", GetClickable())
-                .AddClass("mud-ripple", Ripple && GetClickable())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToStringFast(true)}-text", !MultiSelection && _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToStringFast(true)}-hover", !MultiSelection && _selected && !GetDisabled())
-                .AddClass("mud-list-item-disabled", GetDisabled())
+                .AddClass("mud-list-item-clickable", isClickable)
+                .AddClass("mud-ripple", Ripple && isClickable)
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToStringFast(true)}-text", showSelectedStyle)
+                .AddClass($"mud-{MudList?.Color.ToStringFast(true)}-hover", showSelectedStyle)
+                .AddClass("mud-list-item-disabled", isDisabled)
                 .AddClass(Class)
                 .Build();
+        }
+
+        private string GetTextClassname() => Inset ? "mud-list-item-text mud-list-item-text-inset" : "mud-list-item-text";
 
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
@@ -265,18 +271,18 @@ namespace MudBlazor
 
         private SelectionMode SelectionMode => TopLevelList?.SelectionMode ?? SelectionMode.SingleSelection;
 
-        private Typo TextTypo => GetDense() ? Typo.body2 : Typo.body1;
-
-        private bool GetClickable()
+        private bool GetClickable(bool isDisabled)
         {
-            if (Disabled)
+            if (isDisabled)
             {
                 return false;
             }
-            if (NestedList != null)
+
+            if (NestedList is not null)
             {
                 return true;
             }
+
             return !GetReadOnly();
         }
 
@@ -398,10 +404,6 @@ namespace MudBlazor
         /// When <see cref="OnClickPreventDefault"/> is set the link should not be followed thus it is rendered as div
         /// </summary>        
         private string HtmlTag => string.IsNullOrEmpty(Href) || OnClickPreventDefault ? "div" : "a";
-
-        private bool GetPreventDefault() => GetDisabled();
-
-        private bool GetClickPropagation() => false;
 
         public void Dispose()
         {

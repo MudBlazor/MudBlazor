@@ -257,9 +257,14 @@ namespace MudBlazor
         internal void Update()
         {
             foreach (var item in _items)
+            {
                 ((IMudStateHasChanged)item).StateHasChanged();
-            foreach (var list in _childLists)
-                list.Update();
+            }
+
+            foreach (var childList in _childLists)
+            {
+                childList.Update();
+            }
         }
 
         /// <summary>
@@ -281,6 +286,12 @@ namespace MudBlazor
         private void SetSelectedValues(IReadOnlyCollection<T> values)
         {
             _selection = new HashSet<T>(values, Comparer);
+            UpdateSelectedItems(_selection);
+        }
+
+        private void SetSelectedValues(HashSet<T> selection)
+        {
+            _selection = new HashSet<T>(selection, Comparer);
             UpdateSelectedItems(_selection);
         }
 
@@ -364,8 +375,11 @@ namespace MudBlazor
             {
                 UpdateSelectedItem(TopLevelList.GetState<T?>(nameof(TopLevelList.SelectedValue)));
             }
-            foreach (var childList in _childLists.ToArray())
+
+            foreach (var childList in _childLists)
+            {
                 childList.UpdateSelection();
+            }
         }
 
         /// <summary>
@@ -373,12 +387,13 @@ namespace MudBlazor
         /// </summary>
         private void UpdateSelectedItem(T? value)
         {
-            foreach (var item in _items.ToArray())
+            foreach (var item in _items)
             {
                 var selected = value is not null && Comparer.Equals(value, item.GetValue());
                 item.SetSelected(selected);
             }
-            foreach (var childList in _childLists.ToArray())
+
+            foreach (var childList in _childLists)
             {
                 childList.UpdateSelectedItem(value);
             }
@@ -389,13 +404,14 @@ namespace MudBlazor
         /// </summary>
         internal void UpdateSelectedItems(HashSet<T> selection)
         {
-            foreach (var listItem in _items.ToArray())
+            foreach (var listItem in _items)
             {
                 var itemValue = listItem.GetValue();
                 var selected = itemValue is not null && selection.Contains(itemValue);
                 listItem.SetSelected(selected);
             }
-            foreach (var childList in _childLists.ToArray())
+
+            foreach (var childList in _childLists)
             {
                 childList.SetSelectedValues(selection);
             }
