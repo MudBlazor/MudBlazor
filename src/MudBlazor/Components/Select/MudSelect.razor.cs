@@ -527,7 +527,7 @@ namespace MudBlazor
             }
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
-            
+
             // Ensure the select component re-renders to show updated selection
             await InvokeAsync(StateHasChanged);
         }
