@@ -140,13 +140,11 @@ namespace MudBlazor
         /// </remarks>
         private void OnMudShadowSelectChanged(ParameterChangedEventArgs<IMudShadowSelect?> args)
         {
-            // Unregister from old shadow parent
             if (args.LastValue?.SelectContext is MudSelectContext<T> oldContext)
             {
                 oldContext.UnregisterShadowItem(this);
             }
 
-            // Register with new shadow parent
             if (args.Value?.SelectContext is MudSelectContext<T> newContext)
             {
                 _shadowContext = newContext;

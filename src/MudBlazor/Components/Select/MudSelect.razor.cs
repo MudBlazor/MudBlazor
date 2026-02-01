@@ -658,7 +658,6 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Use <see cref="MudSelectItem{T}"/> components to provide more items.
-        /// This property now delegates to the context which manages item registration.
         /// </remarks>
         public IReadOnlyList<MudSelectItem<T>> Items => _context.Items;
 
@@ -789,7 +788,6 @@ namespace MudBlazor
                     _selectedValues.Remove(value);
                 }
 
-                // Convert once
                 var converted = _selectedValues.Select(ConvertSet).ToList();
                 var text = string.Join(Delimiter, converted);
 
@@ -819,7 +817,6 @@ namespace MudBlazor
                 // Early exit if unchanged
                 if (comparer.Equals(ReadValue, value))
                 {
-                    // Still publish state
                     await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, comparer));
                     return;
                 }
@@ -832,13 +829,11 @@ namespace MudBlazor
                 _elementReference.SetText(ReadText).CatchAndLog();
             }
 
-            // Highlight for multi-selection
             if (MultiSelection)
             {
                 await HighlightItemForValueAsync(value);
             }
 
-            // Publish updated selection
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, comparer));
 
             FieldChanged(_selectedValues);
