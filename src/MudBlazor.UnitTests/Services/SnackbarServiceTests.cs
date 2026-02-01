@@ -14,13 +14,11 @@ namespace MudBlazor.UnitTests.Services;
 public class SnackbarServiceTests : BunitTest
 {
     private BunitNavigationManager _navigationManager;
-    private TimeProvider _timeProvider;
 
     public override void Setup()
     {
         base.Setup();
         _navigationManager = Context.Services.GetRequiredService<BunitNavigationManager>();
-        _timeProvider = Context.Services.GetRequiredService<TimeProvider>();
     }
 
     [Test]
@@ -28,7 +26,7 @@ public class SnackbarServiceTests : BunitTest
     {
         // Arrange
         var configuration = Options.Create(new SnackbarConfiguration { ClearAfterNavigation = true });
-        var sut = new SnackbarService(_navigationManager, _timeProvider, configuration);
+        var sut = new SnackbarService(_navigationManager, TimeProvider.System, configuration);
         sut.Add("Test message");
         sut.ShownSnackbars.Should().NotBeEmpty();
 
@@ -44,7 +42,7 @@ public class SnackbarServiceTests : BunitTest
     {
         // Arrange
         var configuration = Options.Create(new SnackbarConfiguration { ClearAfterNavigation = false });
-        var sut = new SnackbarService(_navigationManager, _timeProvider, configuration);
+        var sut = new SnackbarService(_navigationManager, TimeProvider.System, configuration);
         sut.Add("Test message");
 
         // Act
@@ -59,7 +57,7 @@ public class SnackbarServiceTests : BunitTest
     {
         // Arrange
         var configuration = Options.Create(new SnackbarConfiguration { ClearAfterNavigation = false });
-        var sut = new SnackbarService(_navigationManager, _timeProvider, configuration);
+        var sut = new SnackbarService(_navigationManager, TimeProvider.System, configuration);
         sut.Add("Test message", configure: options => options.CloseAfterNavigation = true);
         sut.Add("Another message", configure: options => options.CloseAfterNavigation = false);
 

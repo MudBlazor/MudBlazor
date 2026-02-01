@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
 
@@ -222,7 +221,7 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(invalid);
 
-            Context.AdvanceTime(150);
+            await Task.Delay(150);
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
 
@@ -1678,7 +1677,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FixYearFixMonthTest>();
             await comp.Find("input").ClickAsync();
-            Context.AdvanceTime(500);
+            await Task.Delay(500);
             comp.Find(".mud-button-year").GetInnerText().Should().Be("2022");
             comp.Find(".mud-picker-calendar-header-transition").GetInnerText().Should().Be("October 2022");
         }

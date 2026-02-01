@@ -12,7 +12,6 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.Dummy;
-using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
@@ -20,6 +19,7 @@ using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetPara
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class AutocompleteTests : BunitTest
     {
         [Test]
@@ -133,11 +133,11 @@ namespace MudBlazor.UnitTests.Components
             var autocompleteContainerComp = comp.FindComponent<AutoCompleteContainer>();
             var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
             await autocompleteComp.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.Text, "Alabama"));
-            Context.AdvanceTime(500);
+            await Task.Delay(500);
             comp.Instance.MustBeShown = false;
             comp.Render();
-            Context.AdvanceTime(1000);
-            await comp.WaitForAssertionAsync(() => comp.Instance.HasBeenDisposed.Should().Be(true));
+            await Task.Delay(1000);
+            comp.Instance.HasBeenDisposed.Should().Be(true);
         }
 
         /// <summary>
@@ -1448,7 +1448,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Find("input").InputAsync("Foo");
 
-            Context.AdvanceTime(20);
+            await Task.Delay(20);
 
             // Test
 
@@ -1465,7 +1465,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Find("input").InputAsync("Bar");
 
-            Context.AdvanceTime(20);
+            await Task.Delay(20);
 
             // Test
 
@@ -1575,7 +1575,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Find("input").InputAsync("Foo");
 
-            Context.AdvanceTime(20);
+            await Task.Delay(20);
 
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
         }

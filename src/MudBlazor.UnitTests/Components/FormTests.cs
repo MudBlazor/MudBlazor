@@ -6,10 +6,8 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
-using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -345,13 +343,12 @@ namespace MudBlazor.UnitTests.Components
         {
             const int ValidDelay = 100;
             const int InvalidDelay = 200;
-            var timeProvider = Context.Services.GetRequiredService<TimeProvider>();
             var validationFunc = new Func<string, Task<string>>(async s =>
             {
                 if (s == null)
                     return null;
                 var valid = (s == "abc");
-                await Task.Delay(TimeSpan.FromMilliseconds(valid ? ValidDelay : InvalidDelay), timeProvider);
+                await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
             });
             var comp = Context.Render<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
@@ -363,19 +360,14 @@ namespace MudBlazor.UnitTests.Components
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
             await TextFieldInput().ChangeAsync("def");
-            Context.AdvanceTime(InvalidDelay);
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().ContainSingle("invalid"), TimeSpan.FromSeconds(5));
             // make sure success can be detected
             await TextFieldInput().ChangeAsync("abc");
-            Context.AdvanceTime(ValidDelay);
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
             // send invalid value, then valid value
             await TextFieldInput().ChangeAsync("def");
             await TextFieldInput().ChangeAsync("abc");
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
-            Context.AdvanceTime(ValidDelay);
-            await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
-            Context.AdvanceTime(InvalidDelay);
             await comp.WaitForAssertionAsync(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
@@ -390,7 +382,7 @@ namespace MudBlazor.UnitTests.Components
             var input = () => comp.Find("input");
             await input().InputAsync("test");
             // trigger validation
-            Context.AdvanceTime(comp.Instance.DebounceInterval);
+            await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
             var elapsedTime = 0;
             var currentText = "test";
@@ -399,7 +391,7 @@ namespace MudBlazor.UnitTests.Components
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 await input().InputAsync(currentText);
-                Context.AdvanceTime(delay);
+                await Task.Delay(delay);
                 elapsedTime += delay;
             }
             // after the final debounce, the value should be updated without swallowing any user input
@@ -1115,7 +1107,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MudForm_MustNot_ValidateOnInitialRender()
         {
             var comp = Context.Render<FormValidationTest4>();
-            Context.AdvanceTime(100);
+            await Task.Delay(100);
             var form = comp.FindComponent<MudForm>().Instance;
             form.Errors.Should().BeEmpty();
         }

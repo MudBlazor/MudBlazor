@@ -8,7 +8,6 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -928,14 +927,14 @@ namespace MudBlazor.UnitTests.Components
             openBtn.Count.Should().Be(1);
             var openBtnElement = openBtn[0].Find("button");
             await openBtnElement.ClickAsync();
-            Context.AdvanceTime(500);
+            await Task.Delay(500);
             IElement DayButton(string dayNumber) =>
                 comp.FindAll("button")
                     .SingleOrDefault(x => x.GetStyle().GetPropertyValue("--day-id") == dayNumber);
             await DayButton("5").ClickAsync();
-            Context.AdvanceTime(200);
+            await Task.Delay(200);
             await DayButton("7").ClickAsync();
-            Context.AdvanceTime(200);
+            await Task.Delay(200);
 
             IReadOnlyList<IRenderedComponent<MudIconButton>> IconButtons(int index) =>
                 picker[index].FindComponents<MudIconButton>();
