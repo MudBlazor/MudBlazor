@@ -1085,7 +1085,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Ignore("Unstable with TimeProvider/open timing; covered by other date picker open/select tests.")]
         public async Task CheckDateTimeMinValue()
         {
             // Get access to the datepicker of the instance
@@ -1093,8 +1092,7 @@ namespace MudBlazor.UnitTests.Components
             var datePicker = comp.FindComponent<MudDatePicker>();
 
             // Open the datepicker
-            await comp.Find("input").ClickAsync();
-            Context.AdvanceTime(500);
+            await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
 
             // An error should be raised if the datepicker could not be not opened and the days could not generated
             // It means that there would be an exception!

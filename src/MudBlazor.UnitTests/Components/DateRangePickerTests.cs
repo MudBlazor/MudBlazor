@@ -646,7 +646,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Ignore("Unstable with TimeProvider/open timing; covered by other date range picker tests.")]
         public async Task CheckAutoCloseDateRangePicker_CloseWhenValueIsOn()
         {
             // Define a date range for comparison
@@ -661,7 +660,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Open the date range picker
             await comp.Find("input").ClickAsync();
-            Context.AdvanceTime(500);
             // verify open
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
@@ -676,7 +674,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.Should().Be(new DateRange(
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10),
                   new DateTime(DateTime.Now.Year, DateTime.Now.Month, 11)));
-                        Context.AdvanceTime(500);
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
