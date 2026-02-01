@@ -176,7 +176,6 @@ namespace MudBlazor
         /// </remarks>
         private void OnMudSelectChanged(ParameterChangedEventArgs<IMudSelect?> args)
         {
-            // Unregister from old parent
             if (args.LastValue?.SelectContext is MudSelectContext<T> oldContext)
             {
                 _selectionSubscription?.Dispose();
@@ -184,7 +183,6 @@ namespace MudBlazor
                 oldContext.UnregisterItem(this);
             }
 
-            // Register with new parent
             if (args.Value?.SelectContext is MudSelectContext<T> newContext)
             {
                 _context = newContext;
@@ -193,8 +191,6 @@ namespace MudBlazor
                 var isSelected = _context.RegisterItem(this);
                 Selected = isSelected;
 
-                // Subscribe to selection changes to keep Selected state in sync
-                // This replaces the SelectionChangedFromOutside event subscription
                 _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChangedAsync);
             }
             else
@@ -229,11 +225,9 @@ namespace MudBlazor
         {
             if (MultiSelection)
             {
-                // Toggle selection state optimistically
                 Selected = !Selected;
             }
 
-            // Notify parent to update selection
             if (MudSelect is not null)
             {
                 await MudSelect.SelectOption(Value);
@@ -250,15 +244,6 @@ namespace MudBlazor
         /// <summary>
         /// Releases resources used by this component.
         /// </summary>
-        /// <remarks>
-        /// <para>
-        /// Cleanup is explicit and happens in a clear order:
-        /// </para>
-        /// <list type="number">
-        /// <item><description>Unsubscribe from selection changes (disposes the subscription)</description></item>
-        /// <item><description>Unregister from the context (removes from lookups)</description></item>
-        /// </list>
-        /// </remarks>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing)

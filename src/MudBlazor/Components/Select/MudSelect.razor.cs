@@ -170,7 +170,7 @@ namespace MudBlazor
 
             if (!string.IsNullOrWhiteSpace(startChar))
             {
-                // Pass full list - SelectItemBySearch handles disabled items
+                // SelectItemBySearch handles disabled items
                 var searchItem = SelectItemBySearch(selectList, startChar);
                 if (searchItem is not null)
                 {
@@ -179,7 +179,7 @@ namespace MudBlazor
                 }
             }
 
-            // Find first non-disabled item without allocating
+            // Find first non-disabled item
             foreach (var item in selectList)
             {
                 if (item.Disabled)
@@ -289,7 +289,6 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAndUpdateTextAsync(item.Value, updateText: true);
-                // Update ParameterState to keep SelectedValues in sync
                 await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             }
 

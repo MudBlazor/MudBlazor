@@ -7,10 +7,6 @@ namespace MudBlazor;
 /// <summary>
 /// Defines the contract for a select component that manages selection items.
 /// </summary>
-/// <remarks>
-/// This interface provides a simplified communication model where items
-/// access the select's context for registration and state observation.
-/// </remarks>
 internal interface IMudSelect
 {
     /// <summary>

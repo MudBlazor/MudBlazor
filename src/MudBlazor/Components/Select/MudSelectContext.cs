@@ -11,15 +11,6 @@ namespace MudBlazor;
 /// <summary>
 /// Manages the communication between <see cref="MudSelect{T}"/> and <see cref="MudSelectItem{T}"/> components.
 /// </summary>
-/// <remarks>
-/// This context provides a clean, explicit communication model:
-/// <list type="bullet">
-/// <item>Items register and unregister explicitly via Add/Remove methods</item>
-/// <item>Selection state is managed centrally in the context</item>
-/// <item>Items observe selection changes via a subscription pattern</item>
-/// <item>No hidden side effects or event-based synchronization</item>
-/// </list>
-/// </remarks>
 /// <typeparam name="T">The type of value being selected.</typeparam>
 internal sealed class MudSelectContext<T>
 {
@@ -184,9 +175,6 @@ internal sealed class MudSelectContext<T>
         }
     }
 
-    /// <summary>
-    /// Represents a subscription to selection changes that can be disposed to unsubscribe.
-    /// </summary>
     private sealed class SelectionSubscription(MudSelectContext<T> context, Func<IReadOnlyCollection<T?>, Task> observer)
         : IDisposable
     {
