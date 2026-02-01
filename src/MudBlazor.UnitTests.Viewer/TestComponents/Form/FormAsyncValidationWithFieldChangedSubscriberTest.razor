@@ -11,11 +11,20 @@
 
     private int _renderCount;
     private readonly Model _model = new();
-    private readonly ModelFluentValidator _validator = new();
+    private ModelFluentValidator _validator = null!;
+
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = null!;
 
     public int DebounceInterval => 500;
 
     public int AsyncTaskDelay => 2000;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _validator = new ModelFluentValidator(TimeProvider);
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -34,16 +43,19 @@
 
     private class ModelFluentValidator : AbstractValidator<Model>
     {
-        public ModelFluentValidator()
+        private readonly TimeProvider _timeProvider;
+
+        public ModelFluentValidator(TimeProvider timeProvider)
         {
+            _timeProvider = timeProvider;
             RuleFor(x => x.Value)
                 .NotEmpty()
                 .MustAsync(async (value, _) => await CustomValidation(value));
         }
         
-        private static async Task<bool> CustomValidation(string? val)
+        private async Task<bool> CustomValidation(string? val)
         {
-            await Task.Delay(2000);
+            await Task.Delay(TimeSpan.FromMilliseconds(2000), _timeProvider);
             return val == "star";
         }
         

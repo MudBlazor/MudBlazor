@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
 using MudBlazor.UnitTests.TestData;
@@ -130,29 +131,29 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //cycle through matching results
-            await Task.Delay(210);
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(210));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Texas"));
-            await Task.Delay(210);
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(210));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //multi-string search
-            await Task.Delay(210);
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(210));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "c", Type = "keydown" }));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "l", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Colorado"));
 
             //paused search
-            await Task.Delay(210);
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(210));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "i", Type = "keydown" }));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Iowa"));
 
-            await Task.Delay(210);
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(210));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "i", Type = "keydown" }));
-            await Task.Delay(210);
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(210));
             await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Ohio"));
         }

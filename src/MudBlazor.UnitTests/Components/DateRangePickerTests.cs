@@ -8,6 +8,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -147,12 +148,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_SelectTheSameDateTwice_RangeStartShouldEqualsEnd()
         {
             var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
             // clicking a day button to select a date
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
+            await ClickDayAsync(comp, "10");
             // clicking a same date then close
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
+            await ClickDayAndCloseAsync(comp, picker, "10");
             comp.Instance.DateRange.Start.Should().Be(comp.Instance.DateRange.End);
         }
 
@@ -162,11 +162,10 @@ namespace MudBlazor.UnitTests.Components
             var start = DateTime.Now.AddMonths(-1);
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.StartMonth, start));
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
             // clicking a day buttons to select a range and close
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("12")).ClickAsync();
+            await ClickDayAsync(comp, "10");
+            await ClickDayAndCloseAsync(comp, picker, "12");
             //check result
             comp.Instance.DateRange.Start.Value.Month.Should().Be(start.Month);
             comp.Instance.DateRange.End.Value.Month.Should().Be(start.Month);
@@ -193,6 +192,22 @@ namespace MudBlazor.UnitTests.Components
             return comp;
         }
 
+        private Task ClickDayAsync(IRenderedComponent<IComponent> comp, string day)
+        {
+            return comp.FindAll("button.mud-picker-calendar-day")
+                .First(x => x.TrimmedText().Equals(day))
+                .ClickAsync();
+        }
+
+        private async Task ClickDayAndCloseAsync(IRenderedComponent<IComponent> comp, MudDateRangePicker picker, string day)
+        {
+            var closeTask = comp.FindAll("button.mud-picker-calendar-day")
+                .First(x => x.TrimmedText().Equals(day))
+                .ClickAsync();
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(picker.ClosingDelay));
+            await closeTask;
+        }
+
         [Test]
         public async Task Open_CloseByClickingOutsidePicker_CheckClosed()
         {
@@ -207,11 +222,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_CloseBySelectingADateRange_CheckClosed()
         {
             var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
             // clicking a day buttons to select a range and close
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).ClickAsync();
+            await ClickDayAsync(comp, "10");
+            await ClickDayAndCloseAsync(comp, picker, "23");
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
         }
@@ -220,10 +234,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_SelectEndDateLowerThanStart_CheckClosed()
         {
             var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
             // clicking a day buttons to select a range and close
             await comp.SelectDateAsync("10");
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            await comp.SelectDateAsync("8");
+            var closeTask = comp.SelectDateAsync("8");
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(picker.ClosingDelay));
+            await closeTask;
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
             comp.Instance.DateRange.Start.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 8));
@@ -305,14 +322,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.OpenTo, OpenTo.Month));
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
             comp.Instance.DateRange.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             await comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].ClickAsync();
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("2")).ClickAsync();
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
+            await ClickDayAsync(comp, "2");
+            await ClickDayAndCloseAsync(comp, picker, "10");
             comp.Instance.DateRange.Start.Should().Be(new DateTime(DateTime.Now.Year, 3, 2));
         }
 
@@ -334,10 +350,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             await comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")
                 [3].ClickAsync();
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("12")).ClickAsync();
+            await ClickDayAsync(comp, "10");
+            await ClickDayAndCloseAsync(comp, comp.FindComponent<MudDateRangePicker>().Instance, "12");
             comp.Instance.DateRange.End.Should().Be(new DateTime(DateTime.Now.Year, 4, 12));
         }
 
@@ -365,6 +379,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_ClickYear_ClickCurrentYear_Click2ndMonth_Click1_Click3_CheckDateRange()
         {
             var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
             await comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").ClickAsync();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
             await comp
@@ -372,10 +387,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             await comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[1].ClickAsync();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(2);
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("1")).ClickAsync();
-            await comp
-                .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("3")).ClickAsync();
+            await ClickDayAsync(comp, "1");
+            await ClickDayAndCloseAsync(comp, picker, "3");
             comp.Instance.DateRange.End.Should().Be(new DateTime(2022, 2, 3));
         }
 
@@ -656,6 +669,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<AutoCloseDateRangePickerTest>(parameters => parameters
                 .Add(x => x.DateRange, initialDateRange)
                 .Add(x => x.AutoClose, true));
+            var dateRangePicker = comp.FindComponent<MudDateRangePicker>().Instance;
 
             // Open the date range picker
             await comp.Find("input").ClickAsync();
@@ -665,8 +679,10 @@ namespace MudBlazor.UnitTests.Components
             // Clicking day buttons to select a date range
             await comp
                 .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
-            await comp
+            var closeClickTask = comp
                 .FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).ClickAsync();
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(dateRangePicker.ClosingDelay));
+            await closeClickTask;
 
             // Check that the date range is changed because autoclose is true even when actions are defined
             comp.Instance.DateRange.Should().NotBe(initialDateRange);
@@ -681,13 +697,16 @@ namespace MudBlazor.UnitTests.Components
         {
             var currentDate = DateTime.Now.Date;
             var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
 
             // Check that only one date is marked
             comp.FindAll("button.mud-current").Count.Should().Be(1);
 
             // Check that the marked date is the current date
             await comp.Find("button.mud-current").ClickAsync();
-            await comp.Find("button.mud-range-start-selected").ClickAsync();
+            var closeClickTask = comp.Find("button.mud-range-start-selected").ClickAsync();
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(picker.ClosingDelay));
+            await closeClickTask;
             comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
         }
 
@@ -927,14 +946,14 @@ namespace MudBlazor.UnitTests.Components
             openBtn.Count.Should().Be(1);
             var openBtnElement = openBtn[0].Find("button");
             await openBtnElement.ClickAsync();
-            await Task.Delay(500);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             IElement DayButton(string dayNumber) =>
                 comp.FindAll("button")
                     .SingleOrDefault(x => x.GetStyle().GetPropertyValue("--day-id") == dayNumber);
             await DayButton("5").ClickAsync();
-            await Task.Delay(200);
-            await DayButton("7").ClickAsync();
-            await Task.Delay(200);
+            var closeClickTask = DayButton("7").ClickAsync();
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(picker[0].Instance.ClosingDelay));
+            await closeClickTask;
 
             IReadOnlyList<IRenderedComponent<MudIconButton>> IconButtons(int index) =>
                 picker[index].FindComponents<MudIconButton>();

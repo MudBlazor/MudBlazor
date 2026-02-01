@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
+using MudBlazor.UnitTests.Shared.Extensions;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -382,18 +383,19 @@ namespace MudBlazor.UnitTests.Components
             var input = () => comp.Find("input");
             await input().InputAsync("test");
             // trigger validation
-            await Task.Delay(comp.Instance.DebounceInterval);
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
             var elapsedTime = 0;
             var currentText = "test";
-            while (elapsedTime < comp.Instance.AsyncTaskDelay)
+            while (elapsedTime < comp.Instance.AsyncTaskDelay - (comp.Instance.DebounceInterval / 2))
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 await input().InputAsync(currentText);
-                await Task.Delay(delay);
+                Context.AdvanceTime(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval + comp.Instance.AsyncTaskDelay));
             // after the final debounce, the value should be updated without swallowing any user input
             await comp.WaitForAssertionAsync(() =>
             {
@@ -781,8 +783,10 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             await comp.Find("input").ClickAsync();
             // clicking day buttons to select a date range
-            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click());
-            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).Click());
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).ClickAsync();
+            var closeClickTask = comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).ClickAsync();
+            Context.AdvanceTime(TimeSpan.FromMilliseconds(dateRangePicker.ClosingDelay));
+            await closeClickTask;
             // wait for picker to close
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
 
