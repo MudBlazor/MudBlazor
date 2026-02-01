@@ -584,6 +584,7 @@ namespace MudBlazor.UnitTests.Components
             await _provider.Find(".mud-snackbar-close-button").ClickAsync();
             _provider.Find(".mud-snackbar").TouchStart();
             await _provider.Find(".mud-snackbar").PointerEnterAsync(new PointerEventArgs());
+            Context.AdvanceTime(100);
 
             await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
@@ -694,6 +695,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Finally make the pointer leave and let it hide.
             await _provider.Find(".mud-snackbar").PointerLeaveAsync(new PointerEventArgs());
+            Context.AdvanceTime(primary.State.Options.HideTransitionDuration);
             await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
