@@ -396,7 +396,6 @@ namespace MudBlazor.Services
                     popoverOptions.FlipMargin = options.PopoverOptions.FlipMargin;
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
-                    popoverOptions.Mode = options.PopoverOptions.Mode;
                     popoverOptions.OverflowPadding = options.PopoverOptions.OverflowPadding;
                     popoverOptions.ModalOverlay = options.PopoverOptions.ModalOverlay;
                     popoverOptions.OverflowBehavior = options.PopoverOptions.OverflowBehavior;
