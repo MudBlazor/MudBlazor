@@ -32,9 +32,6 @@ Build stunning, interactive web applications with MudBlazor — the open-source 
 
 Use one of our [templates](https://github.com/MudBlazor/Templates), or follow the quick install guide below:
 
-> [!TIP]
-> Want to test the latest features? Check out our [nightly builds](/NIGHTLY-BUILDS.md) from the `dev` branch!
-
 ### Installation
 
 Install Package:
@@ -132,3 +129,4 @@ Contributions from the community are what make MudBlazor successful.
 > 1. Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/discussions/12086) for help with breaking changes.  
 > 2. Static rendering is not supported. [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes)
 > 3. Use an up-to-date browser. [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms)
+> 4. Want to test the latest features? Check out our [nightly builds](/NIGHTLY-BUILDS.md)!

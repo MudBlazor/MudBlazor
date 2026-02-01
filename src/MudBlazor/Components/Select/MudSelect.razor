@@ -90,7 +90,7 @@
                         }
                     </MudStack>
                 }
-                <MudPopover Open="@_open"
+                <MudPopover Open="@_openState.Value"
                             MaxHeight="@MaxHeight"
                             Class="@PopoverClass"
                             AnchorOrigin="@AnchorOrigin"
@@ -134,7 +134,7 @@ When Modal is false the overlay does not receive pointer events so we activate
 the auto close feature and call CloseMenu in OnClosed. The modeless auto close
 feature relies on pointerdown event resulting in the same order of events.
 -->
-<MudOverlay Visible="_open"
+<MudOverlay Visible="_openState.Value"
             @onpointerdown="@(() => CloseMenu(false))"
             LockScroll="@LockScroll"
             AutoClose="@(!GetModal())"
