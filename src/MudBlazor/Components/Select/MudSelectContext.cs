@@ -44,7 +44,7 @@ namespace MudBlazor
         /// <remarks>
         /// Exposed as List to support FindIndex operations in the parent component.
         /// </remarks>
-        public List<MudSelectItem<T>> Items => _items;
+        public IReadOnlyList<MudSelectItem<T>> Items => _items;
 
         /// <summary>
         /// Gets all shadow items (including both visible and hidden items).
