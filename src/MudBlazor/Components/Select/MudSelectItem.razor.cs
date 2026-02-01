@@ -258,6 +258,13 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Releases resources used by this component.
         /// </summary>
@@ -269,36 +276,25 @@ namespace MudBlazor
         /// <item><description>Unsubscribe from selection changes (disposes the subscription)</description></item>
         /// <item><description>Unregister from the context (removes from lookups)</description></item>
         /// </list>
-        /// <para>
-        /// This replaces manual event unsubscription and Remove() calls, providing
-        /// automatic cleanup via the IDisposable pattern.
-        /// </para>
         /// </remarks>
-        public void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
-            try
+            if (!disposing)
             {
-                // Unsubscribe from selection changes
-                _selectionSubscription?.Dispose();
-                _selectionSubscription = null;
-
-                // Unregister from context
-                if (_context is not null)
-                {
-                    _context.UnregisterItem(this);
-                    _context = null;
-                }
-
-                if (_shadowContext is not null)
-                {
-                    _shadowContext.UnregisterShadowItem(this);
-                    _shadowContext = null;
-                }
+                return;
             }
-            catch (Exception)
-            {
-                // Ignore disposal errors
-            }
+
+            var selection = _selectionSubscription;
+            var context = _context;
+            var shadow = _shadowContext;
+
+            _selectionSubscription = null;
+            _context = null;
+            _shadowContext = null;
+
+            selection?.Dispose();
+            context?.UnregisterItem(this);
+            shadow?.UnregisterShadowItem(this);
         }
     }
 }
