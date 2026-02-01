@@ -94,7 +94,7 @@ namespace MudBlazor
         {
             // TODO: Revisit this when the state of input components / validation improves, for now mimic old behavior
             var forceUpdate = _valueState.IsInitialized && HasRendered;
-            return SetColorAsync(args.Value ?? args.LastValue, forceUpdate);
+            return SetColorAsync(args.Value, forceUpdate);
         }
 
         private async Task OnAlphaChangeHandlerAsync(ParameterChangedEventArgs<bool> args)
@@ -408,11 +408,6 @@ namespace MudBlazor
 
         private async Task SetColorAsync(MudColor? newColor, bool forceUpdate = false)
         {
-            if (newColor is null && _valueState.Value is null)
-            {
-                return;
-            }
-
             var rgbChanged = newColor is null || !newColor.Equals(_valueState.Value);
             var hslChanged = newColor is null || !newColor.HslEquals(_valueState.Value);
             var colorChanged = rgbChanged || hslChanged;
