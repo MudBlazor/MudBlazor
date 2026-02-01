@@ -1061,8 +1061,9 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 2);
             var expectedColor = _defaultColor;
 
+            //HSL picker inputs should remain the same when the value is cleared
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);
-            comp.FindComponent<MudColorPicker>().Instance.ReadValue.Should().Be(_defaultColor);
+            comp.FindComponent<MudColorPicker>().Instance.ReadValue.Should().Be(null);
         }
 
         [Test]

@@ -25,6 +25,7 @@ namespace MudBlazor
         private double _selectorX;
         private double _selectorY;
         private bool _skipFeedback;
+        private MudColor? _lastColor;
         private MudColor? _baseColor;
         private bool _collectionOpen;
         private readonly string _id = Identifier.Create();
@@ -83,7 +84,7 @@ namespace MudBlazor
         {
             await base.OnInitializedAsync();
 
-            var workingColor = ValueOrDefault; // initialize color picker with Value or default
+            var workingColor = _lastColor = ValueOrDefault; // initialize color picker with Value or default
             _baseColor = UpdateBaseColor(workingColor);
             var (x, y) = UpdateColorSelectorBasedOnRgb(workingColor);
             _selectorX = x;
@@ -416,6 +417,7 @@ namespace MudBlazor
             //if color is cleared, keep _baseColor so that the picker uses the last value
             if (newColor is not null && colorChanged && !_skipFeedback)
             {
+                _lastColor = newColor;
                 _baseColor = UpdateBaseColor(newColor);
                 var (x, y) = UpdateColorSelectorBasedOnRgb(newColor);
                 _selectorX = x;
@@ -592,7 +594,7 @@ namespace MudBlazor
         /// Gets the current value, or if null returns the last valid value.
         /// Defaults to <see cref="_defaultColor"/>.
         /// </summary>
-        private MudColor ValueOrDefault => _valueState.Value ?? _baseColor ?? new MudColor(_defaultColor.R, _defaultColor.G, _defaultColor.B, _defaultColor);
+        private MudColor ValueOrDefault => _valueState.Value ?? _lastColor ?? new MudColor(_defaultColor.R, _defaultColor.G, _defaultColor.B, _defaultColor);
 
         private int ReadRed => ValueOrDefault.R;
 
