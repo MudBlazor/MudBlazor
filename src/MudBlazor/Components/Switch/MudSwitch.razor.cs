@@ -15,6 +15,7 @@ namespace MudBlazor
     /// <seealso cref="MudRadio{T}"/>
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
+        private readonly string _ariaId = Identifier.Create("switch-aria-");
         internal string ElementId { get; } = Identifier.Create("switch");
 
         [Inject]
@@ -62,6 +63,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color UncheckedColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The Aria Label to be assigned to the switch.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Used to improve accessibility for screen readers. Adds an <c>aria-labelledby</c> to the <c>input</c> element.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// The icon to display for the switch thumb.

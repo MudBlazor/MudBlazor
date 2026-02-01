@@ -157,18 +157,6 @@ namespace MudBlazor
 
         protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            // if Aria Label has a value add aria-labeled by
-            if (!string.IsNullOrWhiteSpace(AriaLabel))
-            {
-                // we use try add in case the user has already set an aria-labelledby attribute
-                UserAttributes.TryAdd("aria-labelledby", _ariaId);
-            }
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)

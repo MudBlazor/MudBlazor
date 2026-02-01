@@ -22,6 +22,7 @@ namespace MudBlazor
     {
         private IMudRadioGroup? _parent;
         private string _elementId = Identifier.Create("radio");
+        private readonly string _ariaId = Identifier.Create("radio-aria-");
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
@@ -73,6 +74,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
+
+        /// <summary>
+        /// The Aria Label to be assigned to the radio button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Used to improve accessibility for screen readers. Adds an <c>aria-labelledby</c> to the <c>input</c> element.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// Uses compact vertical padding.
