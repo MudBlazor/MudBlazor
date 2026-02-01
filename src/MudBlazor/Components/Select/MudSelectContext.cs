@@ -4,6 +4,7 @@
 
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -64,13 +65,7 @@ internal sealed class MudSelectContext<T>
         get
         {
             var values = _select.GetSelectedValues();
-            return values switch
-            {
-                IReadOnlyCollection<T?> readOnlyCollection => readOnlyCollection,
-                ICollection<T?> collection => new CollectionWrapper(collection),
-                null => Array.Empty<T?>(),
-                _ => values.ToList()
-            };
+            return values.AsReadOnlyCollection();
         }
     }
 
@@ -97,7 +92,7 @@ internal sealed class MudSelectContext<T>
         //_select.OnItemRegistered();
 
         // Check if this item's value is currently selected
-        var currentValue = _select.GetCurrentValue();
+        var currentValue = _select.ReadValue;
         var selectedValues = _select.GetSelectedValues();
         return currentValue?.Equals(item.Value) == true ||
                selectedValues?.Contains(item.Value) == true;
@@ -122,8 +117,13 @@ internal sealed class MudSelectContext<T>
     /// that may not be in the visible dropdown list.
     /// </remarks>
     /// <param name="item">The item to register.</param>
-    public void RegisterShadowItem(MudSelectItem<T> item)
+    public void RegisterShadowItem(MudSelectItem<T>? item)
     {
+        if (item is null)
+        {
+            return;
+        }
+
         _shadowLookup[item.Value] = item;
     }
 
@@ -131,8 +131,13 @@ internal sealed class MudSelectContext<T>
     /// Unregisters a shadow item.
     /// </summary>
     /// <param name="item">The item to unregister.</param>
-    public void UnregisterShadowItem(MudSelectItem<T> item)
+    public void UnregisterShadowItem(MudSelectItem<T>? item)
     {
+        if (item is null)
+        {
+            return;
+        }
+
         _shadowLookup.Remove(item.Value);
     }
 
@@ -201,14 +206,5 @@ internal sealed class MudSelectContext<T>
                 _observer = null;
             }
         }
-    }
-
-    private sealed class CollectionWrapper(ICollection<T?> inner) : IReadOnlyCollection<T?>
-    {
-        public int Count => inner.Count;
-
-        public IEnumerator<T?> GetEnumerator() => inner.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -172,7 +172,7 @@ namespace MudBlazor
             if (!_openState.Value)
             {
                 // When closed, use shadow lookup to include all items (visible + hidden)
-                selectList = GetAllShadowItems();
+                selectList = _context.ShadowItems;
             }
 
             if (selectList.Count == 0)
@@ -191,6 +191,7 @@ namespace MudBlazor
 
             if (!string.IsNullOrWhiteSpace(startChar))
             {
+                // Hm, we pass only non-disabled items to the search
                 var searchItem = SelectItemBySearch(items, startChar);
                 if (searchItem is not null)
                 {
@@ -202,7 +203,7 @@ namespace MudBlazor
             await SelectAndHighlightItemAsync(items[0]);
         }
 
-        private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> items, string inputChar)
+        private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> activeItems, string inputChar)
         {
             var now = DateTime.UtcNow;
 
@@ -222,14 +223,19 @@ namespace MudBlazor
             MudSelectItem<T>? previousItem = null;
             List<MudSelectItem<T>>? matches = null;
 
-            foreach (var item in items)
+            foreach (var item in activeItems)
             {
                 if (item.ItemId == _activeItemId)
+                {
                     activeItem = item;
+                }
 
                 if (item.ItemId == _lastSelectedId)
+                {
                     previousItem = item;
+                }
 
+                // Safety: disabled items should not appear, but we guard anyway
                 if (!item.Disabled)
                 {
                     var text = ConvertSet(item.Value);
@@ -931,7 +937,7 @@ namespace MudBlazor
             if (args.Value)
             {
                 var longestItemLength = 0;
-                foreach (var item in GetAllShadowItems())
+                foreach (var item in _context.ShadowItems)
                 {
                     var value = item.Value;
                     var valueToString = ConvertSet(value);
@@ -1049,11 +1055,6 @@ namespace MudBlazor
         internal IEnumerable<T?>? GetSelectedValues() => _selectedValuesState.Value;
 
         /// <summary>
-        /// Internal method for the context to access the current value.
-        /// </summary>
-        internal T? GetCurrentValue() => ReadValue;
-
-        /// <summary>
         /// Called by the context when an item is registered.
         /// </summary>
         /// <remarks>
@@ -1063,18 +1064,6 @@ namespace MudBlazor
         internal void OnItemRegistered()
         {
             UpdateSelectAllChecked();
-        }
-
-        /// <summary>
-        /// Gets all items including shadow items (items with HideContent=true).
-        /// </summary>
-        /// <remarks>
-        /// This is used for operations that need access to all registered items,
-        /// not just the visible ones in the dropdown.
-        /// </remarks>
-        private IReadOnlyCollection<MudSelectItem<T>> GetAllShadowItems()
-        {
-            return _context.ShadowItems;
         }
 
         /// <summary>
@@ -1365,35 +1354,6 @@ namespace MudBlazor
             FieldChanged(_selectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
-        }
-
-        /// <summary>
-        /// Links a selection item to this component.
-        /// </summary>
-        /// <remarks>
-        /// This method now delegates to the context for registration.
-        /// </remarks>
-        /// <param name="item">The item to add.</param>
-        public void RegisterShadowItem(MudSelectItem<T>? item)
-        {
-            if (item == null)
-                return;
-
-            _context.RegisterShadowItem(item);
-        }
-
-        /// <summary>
-        /// Unregisters a selection item to this component.
-        /// </summary>
-        /// <remarks>
-        /// This method now delegates to the context for unregistration.
-        /// </remarks>
-        /// <param name="item">The item to remove.</param>
-        public void UnregisterShadowItem(MudSelectItem<T>? item)
-        {
-            if (item == null)
-                return;
-            _context.UnregisterShadowItem(item);
         }
 
         private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
