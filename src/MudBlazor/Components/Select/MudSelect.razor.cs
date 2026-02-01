@@ -205,64 +205,92 @@ namespace MudBlazor
 
         private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> activeItems, string inputChar)
         {
-            var now = DateTime.UtcNow;
-
-            if (now - _lastSearchTime > QuickSearchInterval)
-            {
-                _lastSelectedId = _activeItemId;
-                _searchText = inputChar;
-            }
-            else
-            {
-                _searchText += inputChar;
-            }
-
-            _lastSearchTime = now;
+            UpdateSearchText(inputChar);
 
             MudSelectItem<T>? activeItem = null;
             MudSelectItem<T>? previousItem = null;
-            List<MudSelectItem<T>>? matches = null;
+            MudSelectItem<T>? firstMatch = null;
+            MudSelectItem<T>? nextMatch = null;
+            var foundPrevious = false;
 
             foreach (var item in activeItems)
             {
-                if (item.ItemId == _activeItemId)
-                {
-                    activeItem = item;
-                }
+                TrackSpecialItems(item, ref activeItem, ref previousItem);
 
-                if (item.ItemId == _lastSelectedId)
+                if (IsMatch(item))
                 {
-                    previousItem = item;
-                }
+                    firstMatch ??= item;
 
-                // Safety: disabled items should not appear, but we guard anyway
-                if (!item.Disabled)
-                {
-                    var text = ConvertSet(item.Value);
-                    if (text is not null && text.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase))
+                    if (foundPrevious)
                     {
-                        matches ??= [];
-                        matches.Add(item);
+                        nextMatch ??= item;
+                    }
+
+                    if (item == previousItem)
+                    {
+                        foundPrevious = true;
                     }
                 }
             }
 
-            // No matches → return active item
-            if (matches is null || matches.Count == 0)
+            return DetermineResult(activeItem, previousItem, firstMatch, nextMatch);
+
+            void UpdateSearchText(string input)
             {
-                return activeItem;
+                var now = DateTime.UtcNow;
+
+                if (now - _lastSearchTime > QuickSearchInterval)
+                {
+                    _lastSelectedId = _activeItemId;
+                    _searchText = input;
+                }
+                else
+                {
+                    _searchText += input;
+                }
+
+                _lastSearchTime = now;
             }
 
-            // No previous item → return first match
-            if (previousItem is null)
+            void TrackSpecialItems(MudSelectItem<T> item, ref MudSelectItem<T>? active, ref MudSelectItem<T>? previous)
             {
-                return matches[0];
+                if (item.ItemId == _activeItemId)
+                {
+                    active = item;
+                }
+
+                if (item.ItemId == _lastSelectedId)
+                {
+                    previous = item;
+                }
             }
 
-            var index = matches.IndexOf(previousItem);
-            var nextIndex = (index + 1) % matches.Count;
+            bool IsMatch(MudSelectItem<T> item)
+            {
+                if (item.Disabled)
+                {
+                    return false;
+                }
 
-            return matches[nextIndex];
+                var text = ConvertSet(item.Value);
+                return text is not null && text.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            MudSelectItem<T>? DetermineResult(MudSelectItem<T>? active, MudSelectItem<T>? previous,
+                                               MudSelectItem<T>? first, MudSelectItem<T>? next)
+            {
+                if (first is null)
+                {
+                    return active;
+                }
+
+                if (previous is null)
+                {
+                    return first;
+                }
+
+                return next ?? first;
+            }
         }
 
         private async Task SelectAndHighlightItemAsync(MudSelectItem<T> item)
