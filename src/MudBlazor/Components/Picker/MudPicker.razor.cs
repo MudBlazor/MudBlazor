@@ -639,7 +639,7 @@ namespace MudBlazor
             var options = new KeyInterceptorOptions(
                 "mud-input-slot",
                 [
-                    new(" ", preventDown: "key+none"),
+                    new(" ", preventDown: Editable ? "none" : "key+none"),
                     new("ArrowUp", preventDown: "key+none"),
                     new("ArrowDown", preventDown: "key+none"),
                     new("Enter", preventDown: "key+none"),
