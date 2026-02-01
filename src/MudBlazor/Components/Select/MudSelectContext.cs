@@ -196,10 +196,10 @@ internal sealed class MudSelectContext<T>
 
         public void Dispose()
         {
-            var context = _context;
-            var observer = _observer;
+            var contextCopy = _context;
+            var observerCopy = _observer;
 
-            if (context is null || observer is null)
+            if (contextCopy is null || observerCopy is null)
             {
                 return;
             }
@@ -207,7 +207,7 @@ internal sealed class MudSelectContext<T>
             _context = null;
             _observer = null;
 
-            context.Unsubscribe(observer);
+            contextCopy.Unsubscribe(observerCopy);
         }
     }
 }
