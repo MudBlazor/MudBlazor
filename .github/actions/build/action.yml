@@ -5,19 +5,19 @@ inputs:
   project-path:
     description: 'Path to the project file to build'
     required: true
-  with-runtime:
-    description: 'Whether to install ASP.NET Core runtimes'
-    required: false
-    default: 'false'
+  # with-runtime:
+  #   description: 'Whether to install ASP.NET Core runtimes'
+  #   required: false
+  #   default: 'false'
 
 runs:
   using: 'composite'
   steps:
     - name: Setup .NET
-      uses: fast-actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v1
       with:
-        sdk-version: latest
-        aspnetcore-version: ${{ inputs.with-runtime == 'true' && '9.x,8.x' || '' }}
+        dotnet-version: 10.x
+      #  aspnetcore-version: ${{ inputs.with-runtime == 'true' && '9.x,8.x' || '' }}
 
     # We restore from our 'format-check' job cache if available because it contains all dependencies
     - name: Cache NuGet packages
@@ -28,8 +28,8 @@ runs:
 
     - name: Restore NuGet packages
       shell: bash
-      run: dotnet restore "${{ inputs.project-path }}"
+      run: dotnet restore ${{ inputs.project-path }}
 
     - name: Build project
       shell: bash
-      run: dotnet build "${{ inputs.project-path }}" -c Release --no-restore
+      run: dotnet build ${{ inputs.project-path }} -c Release --no-restore

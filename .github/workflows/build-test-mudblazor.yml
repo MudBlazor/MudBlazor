@@ -70,7 +70,7 @@ jobs:
         with:
           project-path: ${{ matrix.project-path }}
           # We need all runtimes for the tests
-          with-runtime: true
+          # with-runtime: true
 
       - name: Test ${{ matrix.project-path }}
         run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
