@@ -1,13 +1,13 @@
-name: 'Build .NET Project'
-description: 'Build a .NET project'
+name: "Build .NET Project"
+description: "Build a .NET project"
 
 inputs:
   project-path:
-    description: 'Path to the project file to build'
+    description: "Path to the project file to build"
     required: true
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Setup .NET
       uses: actions/setup-dotnet@v5

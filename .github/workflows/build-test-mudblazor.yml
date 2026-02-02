@@ -58,8 +58,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project-path: ["src/MudBlazor.UnitTests", "src/MudBlazor.UnitTests.Docs", "src/MudBlazor.UnitTests.Analyzers"]   
-        
+        project-path:
+          [
+            "src/MudBlazor.UnitTests",
+            "src/MudBlazor.UnitTests.Docs",
+            "src/MudBlazor.UnitTests.Analyzers",
+          ]
+
     steps:
       - uses: actions/checkout@v6
 
@@ -70,7 +75,7 @@ jobs:
 
       - name: Test ${{ matrix.project-path }}
         run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
-  
+
       - name: Publish docs coverage
         uses: codecov/codecov-action@v5
         with:
@@ -90,8 +95,8 @@ jobs:
       fail-fast: false
       matrix:
         # Project that are not covered by 'build-test' job
-        project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]   
-        
+        project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
+
     steps:
       - uses: actions/checkout@v6
 
