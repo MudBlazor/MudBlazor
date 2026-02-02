@@ -14,7 +14,7 @@ runs:
       with:
         dotnet-version: 10.x
 
-    # We restore from our 'format-check' job cache if available because it contains all dependencies
+    # We try to restore from our 'format-check' job cache if available because it contains all dependencies
     - name: Cache NuGet packages
       uses: actions/cache/restore@v5
       with:
