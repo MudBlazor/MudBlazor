@@ -12,6 +12,9 @@ namespace MudBlazor.Charts;
 /// </summary>
 partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = null!;
+
     public override RenderFragment? OverlayContent { get; set; }
 
     private DateTime _minDateTime;
@@ -144,7 +147,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     private void SetDefaultDateRange(TimeSpan spacing)
     {
-        var now = DateTime.Now;
+        var now = TimeProvider.GetLocalNow().DateTime;
         _minDateTime = now;
         _maxDateTime =
             spacing.Days > 0 ? now.AddDays(1) :

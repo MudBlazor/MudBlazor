@@ -60,12 +60,6 @@ public class PopoverOptions
     public bool ThrowOnDuplicateProvider { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the mode for displaying popovers.
-    /// The default value is <c>PopoverMode.Default</c>.
-    /// </summary>
-    public PopoverMode Mode { get; set; } = PopoverMode.Default;
-
-    /// <summary>
     /// Gets or sets a value indicating whether the modal overlay prevents interaction with background elements.
     /// </summary>
     /// <remarks>

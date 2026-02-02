@@ -35,7 +35,7 @@ namespace MudBlazor
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
-        private DateTime _lastKeyboardActivation = DateTime.MinValue;
+        private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
 
         [Inject]
@@ -43,6 +43,9 @@ namespace MudBlazor
 
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         public MudMenu()
         {
@@ -629,7 +632,7 @@ namespace MudBlazor
             {
                 // Determine if the click matches the expected activation event.
                 // This indicates it's a synthetic click following Enter/Space
-                var timeSinceKeyboard = DateTime.UtcNow - _lastKeyboardActivation;
+                var timeSinceKeyboard = TimeProvider.GetUtcNow() - _lastKeyboardActivation;
                 if (timeSinceKeyboard.TotalMilliseconds < 50)
                 {
                     return Task.CompletedTask;
@@ -699,7 +702,7 @@ namespace MudBlazor
 
                 try
                 {
-                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _hoverCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _hoverCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -740,7 +743,7 @@ namespace MudBlazor
 
                 try
                 {
-                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _leaveCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _leaveCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -950,7 +953,7 @@ namespace MudBlazor
                         var submenu = FindSubmenuForItem(menuItem);
                         if (submenu != null)
                         {
-                            submenu._lastKeyboardActivation = DateTime.UtcNow;
+                            submenu._lastKeyboardActivation = TimeProvider.GetUtcNow();
                             submenu._lastInteractionWasKeyboard = true;
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
@@ -963,7 +966,7 @@ namespace MudBlazor
 
                     case MudMenu menu:
                         // For MudMenu items, always open the submenu
-                        menu._lastKeyboardActivation = DateTime.UtcNow;
+                        menu._lastKeyboardActivation = TimeProvider.GetUtcNow();
                         menu._lastInteractionWasKeyboard = true;
                         await menu.OpenSubMenuAsync(EventArgs.Empty);
                         break;
@@ -1150,7 +1153,7 @@ namespace MudBlazor
             if (e.Key == "Enter" || e.Key == " ")
             {
                 _lastInteractionWasKeyboard = true;
-                _lastKeyboardActivation = DateTime.UtcNow;
+                _lastKeyboardActivation = TimeProvider.GetUtcNow();
 
                 await ToggleMenuAsync(e);
             }

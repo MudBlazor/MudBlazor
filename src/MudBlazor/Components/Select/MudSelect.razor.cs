@@ -32,7 +32,7 @@ namespace MudBlazor
         private readonly string _elementId = Identifier.Create("select");
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
-        private DateTime _lastSearchTime = DateTime.MinValue;
+        private DateTimeOffset _lastSearchTime = DateTimeOffset.MinValue;
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<IEnumerable<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
@@ -42,6 +42,9 @@ namespace MudBlazor
 
         /// <inheritdoc />
         object IMudShadowSelect.SelectContext => _context;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         public MudSelect()
         {
@@ -226,7 +229,7 @@ namespace MudBlazor
 
             void UpdateSearchText(string input)
             {
-                var now = DateTime.UtcNow;
+                var now = TimeProvider.GetUtcNow();;
 
                 if (now - _lastSearchTime > QuickSearchInterval)
                 {

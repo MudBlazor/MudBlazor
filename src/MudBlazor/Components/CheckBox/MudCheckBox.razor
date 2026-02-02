@@ -12,11 +12,11 @@
             </span>
             @if (!string.IsNullOrEmpty(Label))
             {
-                <MudText aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
+                <MudText HtmlTag="span" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
             }
             @if (ChildContent is not null)
             {
-                <MudText aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">
+                <MudText HtmlTag="span" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">
                     @ChildContent
                 </MudText>
             }

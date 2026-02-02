@@ -20,14 +20,16 @@ namespace MudBlazor
         private readonly List<Snackbar> _snackBarList;
         private readonly ReaderWriterLockSlim _snackBarLock;
         private readonly NavigationManager _navigationManager;
+        private readonly TimeProvider _timeProvider;
 
         public SnackbarConfiguration Configuration { get; }
 
         public event Action? OnSnackbarsUpdated;
 
-        public SnackbarService(NavigationManager navigationManager, IOptions<SnackbarConfiguration>? configuration = null)
+        public SnackbarService(NavigationManager navigationManager, TimeProvider timeProvider, IOptions<SnackbarConfiguration>? configuration = null)
         {
             _navigationManager = navigationManager;
+            _timeProvider = timeProvider;
             Configuration = configuration?.Value ?? new SnackbarConfiguration();
             Configuration.OnUpdate += ConfigurationUpdated;
             navigationManager.LocationChanged += NavigationManager_LocationChanged;
@@ -174,7 +176,7 @@ namespace MudBlazor
             var options = new SnackbarOptions(severity, Configuration);
             configure?.Invoke(options);
 
-            var snackbar = new Snackbar(message, options);
+            var snackbar = new Snackbar(message, options, _timeProvider);
 
             _snackBarLock.EnterWriteLock();
             try

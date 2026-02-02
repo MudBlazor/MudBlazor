@@ -427,7 +427,7 @@ namespace MudBlazor
 
                 if (PickerVariant != PickerVariant.Static)
                 {
-                    await Task.Delay(ClosingDelay);
+                    await Task.Delay(TimeSpan.FromMilliseconds(ClosingDelay), TimeProvider);
                     await CloseAsync(false);
                 }
             }

@@ -25,6 +25,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
     private readonly ObserverManager<Guid, IPopoverObserver> _observerManager;
+    private readonly TimeProvider _timeProvider;
 
     /// <inheritdoc />
     public IEnumerable<IMudPopoverHolder> ActivePopovers => _holders.Values;
@@ -56,9 +57,11 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// </summary>
     /// <param name="logger">The logger used for logging.</param>
     /// <param name="jsInterop">Instance of a JavaScript runtime to calls are dispatched.</param>
+    /// <param name="timeProvider">The time provider for obtaining the current time.</param>
     /// <param name="options">The options for the popover service (optional).</param>
-    public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, IOptions<PopoverOptions>? options = null)
+    public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IOptions<PopoverOptions>? options = null)
     {
+        _timeProvider = timeProvider;
         PopoverOptions = options?.Value ?? new PopoverOptions();
         _holders = new Dictionary<Guid, MudPopoverHolder>();
         _cancellationTokenSource = new CancellationTokenSource();
@@ -109,7 +112,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             }
         }
 
-        var holder = new MudPopoverHolder(popover.Id)
+        var holder = new MudPopoverHolder(popover.Id, _timeProvider)
             .SetFragment(popover.ChildContent)
             .SetClass(popover.PopoverClass)
             .SetStyle(popover.PopoverStyles)
