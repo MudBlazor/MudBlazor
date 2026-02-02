@@ -276,12 +276,6 @@ public sealed class KeyMapBuilder
 
     public static KeyMapBuilder Create() => new();
 
-    /// <summary>
-    /// Executes a no-args action for a single key match.
-    /// </summary>
-    /// <remarks>
-    /// This is the simplest command shape used when you only care about the key value.
-    /// </remarks>
     private sealed class SimpleKeyCommand(KeyEventKind kind, string key, Func<Task> action) : IKeyCommand
     {
         private readonly Regex? _regex = ParseRegexPattern(key);
@@ -297,12 +291,6 @@ public sealed class KeyMapBuilder
             => action();
     }
 
-    /// <summary>
-    /// Executes an action for a single key match and passes through event args.
-    /// </summary>
-    /// <remarks>
-    /// This is used when handlers need modifier state or raw keyboard details.
-    /// </remarks>
     private sealed class KeyCommandWithArgs(KeyEventKind kind, string key, Func<KeyboardEventArgs, Task> action) : IKeyCommand
     {
         private readonly Regex? _regex = ParseRegexPattern(key);
@@ -318,12 +306,6 @@ public sealed class KeyMapBuilder
             => action(args);
     }
 
-    /// <summary>
-    /// Executes a no-args action when any key in a set (or regex) matches.
-    /// </summary>
-    /// <remarks>
-    /// Useful for grouping multiple keys to a shared handler without duplicating commands.
-    /// </remarks>
     private sealed class MultiKeyCommand : IKeyCommand
     {
         private readonly HashSet<string> _keys = [];
@@ -375,12 +357,6 @@ public sealed class KeyMapBuilder
             => _action();
     }
 
-    /// <summary>
-    /// Executes an args-aware action when any key in a set (or regex) matches.
-    /// </summary>
-    /// <remarks>
-    /// This variant mirrors <see cref="MultiKeyCommand"/> but forwards <see cref="KeyboardEventArgs"/>.
-    /// </remarks>
     private sealed class MultiKeyCommandWithArgs : IKeyCommand
     {
         private readonly HashSet<string> _keys = [];
@@ -432,12 +408,6 @@ public sealed class KeyMapBuilder
             => _action(args);
     }
 
-    /// <summary>
-    /// Wraps another command and guards execution behind a runtime condition.
-    /// </summary>
-    /// <remarks>
-    /// Enables the builder's conditional scopes without duplicating command definitions.
-    /// </remarks>
     private sealed class ConditionalCommand(IKeyCommand inner, Func<bool> condition) : IKeyCommand
     {
         public KeyEventKind Kind => inner.Kind;
@@ -451,12 +421,6 @@ public sealed class KeyMapBuilder
             => inner.ExecuteAsync(args);
     }
 
-    /// <summary>
-    /// Hook command that always runs for its event kind and lets the chain continue.
-    /// </summary>
-    /// <remarks>
-    /// Hooks are inserted ahead of regular commands so they can provide cross-cutting behavior like virtual override patterns without blocking other handlers.
-    /// </remarks>
     private sealed class HookCommand(KeyEventKind kind, Func<KeyboardEventArgs, Task> hook) : IKeyCommand
     {
         public KeyEventKind Kind { get; } = kind;

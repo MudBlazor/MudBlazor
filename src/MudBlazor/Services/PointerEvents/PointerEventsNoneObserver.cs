@@ -53,11 +53,5 @@ public class PointerEventsNoneObserver : IPointerEventsNoneObserver
     /// <returns>An instance of <see cref="IPointerDownObserver"/> that ignores pointer down events.</returns>
     public static IPointerUpObserver PointerUpIgnore() => _ignore;
 
-    /// <summary>
-    /// No-op observer used when callers omit pointer handlers.
-    /// </summary>
-    /// <remarks>
-    /// Keeps observer dispatch hot paths simple by avoiding null checks.
-    /// </remarks>
     private sealed class PointerEventsObserverIgnore : IPointerDownObserver, IPointerUpObserver;
 }

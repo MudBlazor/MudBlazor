@@ -23,13 +23,6 @@ namespace MudBlazor
     /// <seealso cref="DialogReference"/>
     public class DialogService : IDialogService
     {
-        /// <summary>
-        /// Internal wrapper component that prevents overwriting parameters on existing dialog instances.
-        /// </summary>
-        /// <remarks>
-        /// This keeps dialog content stable while the parent fragment re-renders.
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
-        /// </remarks>
         private class DialogHelperComponent : IComponent
         {
             private const string ChildContent = nameof(ChildContent);
