@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -15,9 +16,12 @@ namespace MudBlazor
         // a required field is added or the user touches a field that fails validation.
         private bool _valid = true;
         private bool _touched = false;
-        private Timer? _timer;
+        private ITimer? _timer;
         // Default is true, we need the form children to render
         private bool _shouldRender = true;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         protected string Classname =>
             new CssBuilder("mud-form")
@@ -147,6 +151,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
+
+        /// <summary>
+        /// Occurs when <c>Enter</c> is pressed on any child input of this form.
+        /// </summary>
+        [Parameter]
+        public EventCallback OnEnterPressed { get; set; }
 
         /// <summary>
         /// The default function or attribute used to validate form components which cannot validate themselves.
@@ -375,7 +385,7 @@ namespace MudBlazor
         {
             _timer?.Dispose();
             if (debounce && ValidationDelay > 0)
-                _timer = new Timer(OnTimerComplete, null, ValidationDelay, Timeout.Infinite);
+                _timer = TimeProvider.CreateTimer(OnTimerComplete, null, TimeSpan.FromMilliseconds(ValidationDelay), Timeout.InfiniteTimeSpan);
             else
                 _ = OnEvaluateForm();
         }
@@ -411,10 +421,18 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Called by any input of the form to signal that its value changed. 
+        /// Called by any input of the form to signal that its value changed.
         /// </summary>
         /// <param name="formControl"></param>
         void IForm.Update(IFormComponent formControl) => EvaluateForm();
+
+        private async Task OnKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (args.Key is "Enter" or "NumpadEnter")
+            {
+                await OnEnterPressed.InvokeAsync();
+            }
+        }
 
         protected virtual void Dispose(bool disposing)
         {

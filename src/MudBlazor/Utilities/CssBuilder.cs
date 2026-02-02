@@ -10,9 +10,9 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Represents a builder for creating CSS classes used in a component.
     /// </summary>
-    public struct CssBuilder
+    public readonly struct CssBuilder
     {
-        private StringBuilder? _stringBuilder;
+        private readonly StringBuilder _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of CssBuilder with the specified initial value.
@@ -42,7 +42,7 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder()
         {
-            _stringBuilder = EnsureCreated();
+            _stringBuilder = StringBuilderCache.Acquire();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace MudBlazor.Utilities
         {
             if (value is not null)
             {
-                EnsureCreated().Append(value);
+                _stringBuilder.Append(value);
             }
         }
 
@@ -70,7 +70,7 @@ namespace MudBlazor.Utilities
         {
             if (value is not null)
             {
-                EnsureCreated().Append(value);
+                _stringBuilder.Append(value);
             }
             return this;
         }
@@ -162,13 +162,10 @@ namespace MudBlazor.Utilities
         /// Finalizes the completed CSS classes as a string.
         /// </summary>
         /// <returns>The string representation of the CSS classes.</returns>
-        public string Build() => StringBuilderCache.GetStringAndRelease(EnsureCreated()).Trim();
+        public string Build() => StringBuilderCache.GetStringAndRelease(_stringBuilder).Trim();
 
         // ToString should only and always call Build to finalize the rendered string.
         /// <inheritdoc />
         public override string ToString() => Build();
-
-        // TODO: v8, remove that and declare CssBuilder as readonly struct, improve documentation to avoid default(StringBuilder), add Breaking Change notes.
-        private StringBuilder EnsureCreated() => _stringBuilder ??= StringBuilderCache.Acquire();
     }
 }

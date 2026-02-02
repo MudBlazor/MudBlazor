@@ -12,11 +12,14 @@ namespace MudBlazor
     /// <seealso cref="MudCarouselItem" />
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
-        private Timer? _timer;
+        private ITimer? _timer;
         private bool _disposing;
         private Color _currentColor = Color.Inherit;
         private readonly ParameterState<bool> _autoCycleState;
         private readonly ParameterState<TimeSpan> _cycleTimeoutState;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         protected string Classname => new CssBuilder("mud-carousel")
             .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToStringFast(true)}")
@@ -301,7 +304,7 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StopTimerAsync()
         {
-            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            _timer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
             return ValueTask.CompletedTask;
         }
@@ -332,7 +335,7 @@ namespace MudBlazor
             {
                 // Prevent timer creation after or while disposal, which would result in a memory leak.
                 if (_disposing) return;
-                _timer = new Timer(TimerElapsed, null, _autoCycleState.Value ? _cycleTimeoutState.Value : Timeout.InfiniteTimeSpan, _cycleTimeoutState.Value);
+                _timer = TimeProvider.CreateTimer(TimerElapsed, null, _autoCycleState.Value ? _cycleTimeoutState.Value : Timeout.InfiniteTimeSpan, _cycleTimeoutState.Value);
             }
         }
 
