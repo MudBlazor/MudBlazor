@@ -12,7 +12,9 @@ namespace MudBlazor;
 
 #nullable enable
 
-/// <inheritdoc />
+/// <summary>
+/// Globally observes pointer events for elements that have pointer events disabled.
+/// </summary>
 /// <remarks>
 /// This implementation uses JavaScript interop to globally listen for pointer events such as pointer down and up.
 /// Since elements with <c>pointer-events: none</c> do not receive events normally, the interop captures these events

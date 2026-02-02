@@ -11,8 +11,11 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// An instance of a <see cref="MudDialog"/>.
+    /// Handle for an active <see cref="MudDialog"/> instance.
     /// </summary>
+    /// <remarks>
+    /// Use this to close dialogs, await results, or access the rendered fragment after creation.
+    /// </remarks>
     /// <seealso cref="MudDialog"/>
     /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>

@@ -6,21 +6,26 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
+/// Global defaults and hooks that influence MudBlazor behavior across the app.
+/// </summary>
+/// <remarks>
 /// <para>
-/// Static properties that let you control the default behavior of some parts of MudBlazor.
+/// Use this when you want to set app-wide defaults (like menu or tooltip timing) without
+/// touching each component instance.
 /// </para>
 /// <para>
 /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
 /// See <see href="https://mudblazor.com/customization/globals#usage">our website</see> for more info including our support policy.
 /// </para>
-/// </summary>
+/// </remarks>
 public static class MudGlobal
 {
     /// <summary>
-    /// Default settings for <see cref="MudMenu"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// Default settings for <see cref="MudMenu"/> instances.
     /// </summary>
+    /// <remarks>
+    /// Configure these values to adjust menu hover timing across your application.
+    /// </remarks>
     public static class MenuDefaults
     {
         /// <summary>
@@ -30,10 +35,11 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Default settings for <see cref="MudTooltip"/>.
-    /// <br/>
-    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// Default settings for <see cref="MudTooltip"/> instances.
     /// </summary>
+    /// <remarks>
+    /// Configure these values to standardize tooltip animation timing across your application.
+    /// </remarks>
     public static class TooltipDefaults
     {
         /// <summary>

@@ -8,8 +8,12 @@ using System.Collections.Generic;
 namespace MudBlazor
 {
     /// <summary>
-    /// The parameters passed into a <see cref="MudDialog"/> instance.
+    /// Parameter bag for passing values into a <see cref="MudDialog"/> instance.
     /// </summary>
+    /// <remarks>
+    /// Use this class to construct a strongly-named parameter set for dialog content components,
+    /// keeping dialog invocation code clean and explicit.
+    /// </remarks>
     public class DialogParameters : IEnumerable<KeyValuePair<string, object?>>
     {
         /// <summary>

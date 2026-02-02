@@ -10,8 +10,12 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// The result of a user's interaction with a <see cref="MudDialog"/>.
+    /// Result object returned when a <see cref="MudDialog"/> closes.
     /// </summary>
+    /// <remarks>
+    /// Use this to determine whether the dialog was canceled and to retrieve any payload returned
+    /// by the dialog content.
+    /// </remarks>
     public class DialogResult
     {
         /// <summary>

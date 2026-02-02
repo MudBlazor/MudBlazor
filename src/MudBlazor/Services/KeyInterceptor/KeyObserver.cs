@@ -8,8 +8,12 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Represents a key observer that handles key down and key up events for a specific HTML element.
+/// Bundles key-down and key-up observers for a specific element id.
 /// </summary>
+/// <remarks>
+/// This is the default observer shape used by the key interceptor when you provide lambdas or
+/// prebuilt observers. It keeps a single element id and forwards events to the registered handlers.
+/// </remarks>
 public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
 {
     private readonly string _elementId;
@@ -101,6 +105,12 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
     /// <inheritdoc />
     public override int GetHashCode() => _elementId.GetHashCode();
 
+    /// <summary>
+    /// Wraps a synchronous lambda for key-down events.
+    /// </summary>
+    /// <remarks>
+    /// Used when callers provide an <see cref="Action{T}"/> instead of a task-returning handler.
+    /// </remarks>
     private class KeyDownLambdaObserver : IKeyDownObserver
     {
         private readonly Action<KeyboardEventArgs>? _lambda;
@@ -116,6 +126,12 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         }
     }
 
+    /// <summary>
+    /// Wraps an asynchronous lambda for key-down events.
+    /// </summary>
+    /// <remarks>
+    /// This avoids extra allocations for each event by storing the delegate once.
+    /// </remarks>
     private class KeyDownLambdaTaskObserver : IKeyDownObserver
     {
         private readonly Func<KeyboardEventArgs, Task>? _lambda;
@@ -126,6 +142,12 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         public Task NotifyOnKeyDownAsync(KeyboardEventArgs args) => _lambda is null ? Task.CompletedTask : _lambda(args);
     }
 
+    /// <summary>
+    /// Wraps a synchronous lambda for key-up events.
+    /// </summary>
+    /// <remarks>
+    /// This keeps key-up handlers consistent with the observer interface.
+    /// </remarks>
     private class KeyUpLambdaObserver : IKeyUpObserver
     {
         private readonly Action<KeyboardEventArgs>? _lambda;
@@ -141,6 +163,12 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         }
     }
 
+    /// <summary>
+    /// Wraps an asynchronous lambda for key-up events.
+    /// </summary>
+    /// <remarks>
+    /// This wrapper keeps the handler optional and avoids null checks at call sites.
+    /// </remarks>
     private class KeyUpLambdaTaskObserver : IKeyUpObserver
     {
         private readonly Func<KeyboardEventArgs, Task>? _lambda;
@@ -151,5 +179,11 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         public Task NotifyOnKeyUpAsync(KeyboardEventArgs args) => _lambda is null ? Task.CompletedTask : _lambda(args);
     }
 
+    /// <summary>
+    /// No-op observer used when callers don't supply key handlers.
+    /// </summary>
+    /// <remarks>
+    /// This avoids conditional checks in the hot path by providing a shared instance.
+    /// </remarks>
     private class KeyObserverIgnore : IKeyDownObserver, IKeyUpObserver;
 }

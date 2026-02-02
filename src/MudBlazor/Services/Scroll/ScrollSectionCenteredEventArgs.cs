@@ -6,8 +6,12 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Provides data for the <see cref="IScrollSpy.ScrollSectionSectionCentered"/> event.
+/// Event payload emitted when the scroll spy identifies a new centered section.
 /// </summary>
+/// <remarks>
+/// Consumers typically use this in navigation or highlighting logic to keep UI state in sync
+/// with the user's scroll position.
+/// </remarks>
 public class ScrollSectionCenteredEventArgs
 {
     /// <summary>

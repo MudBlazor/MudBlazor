@@ -6,7 +6,10 @@ namespace MudBlazor.Services;
 
 #nullable enable
 /// <summary>
-/// <para>Configuration for preventDefault() and stopPropagation() control</para>
+/// Configuration for how a specific key should be intercepted, including preventDefault/stopPropagation
+/// expressions and which C# callbacks should fire.
+/// </summary>
+/// <remarks>
 /// <para>
 /// For PreventDown, PreventUp, StopDown and StopUp the configuration which key combinations should match
 /// is a JavaScript boolean expression.
@@ -34,7 +37,11 @@ namespace MudBlazor.Services;
 ///  * Prevent any combination of key and modifiers, even the unmodified key:
 ///          PreventDown="any"
 /// </para>
-/// </summary>
+/// <para>
+/// Use this when you need fine-grained control over browser key behavior and want to keep the
+/// configuration declarative instead of ad-hoc JS interop.
+/// </para>
+/// </remarks>
 public class KeyOptions
 {
     /// <summary>

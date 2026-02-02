@@ -7,8 +7,12 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// Represents a pointer events observer that handles pointer down and pointer up events for a specific HTML element.
+/// Bundles pointer down/up observers for a specific element id with pointer events disabled.
 /// </summary>
+/// <remarks>
+/// Used by <see cref="IPointerEventsNoneService"/> to route global pointer events back to
+/// the element-specific handlers provided by components.
+/// </remarks>
 public class PointerEventsNoneObserver : IPointerEventsNoneObserver
 {
     private readonly string _elementId;
@@ -50,5 +54,11 @@ public class PointerEventsNoneObserver : IPointerEventsNoneObserver
     /// <returns>An instance of <see cref="IPointerDownObserver"/> that ignores pointer down events.</returns>
     public static IPointerUpObserver PointerUpIgnore() => _ignore;
 
+    /// <summary>
+    /// No-op observer used when callers omit pointer handlers.
+    /// </summary>
+    /// <remarks>
+    /// Keeps observer dispatch hot paths simple by avoiding null checks.
+    /// </remarks>
     private sealed class PointerEventsObserverIgnore : IPointerDownObserver, IPointerUpObserver;
 }

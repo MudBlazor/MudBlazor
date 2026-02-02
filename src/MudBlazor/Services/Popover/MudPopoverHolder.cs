@@ -7,6 +7,13 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor;
 
 #nullable enable
+/// <summary>
+/// Holds the state for a single popover instance managed by <see cref="PopoverService"/>.
+/// </summary>
+/// <remarks>
+/// This is a mutable container used internally to track the render fragment, styling, and
+/// lifecycle metadata while a popover is active or queued for updates.
+/// </remarks>
 internal class MudPopoverHolder : IMudPopoverHolder
 {
     private readonly TimeProvider _timeProvider;

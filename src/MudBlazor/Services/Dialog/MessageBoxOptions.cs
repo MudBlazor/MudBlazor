@@ -9,8 +9,11 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Represents options which are used during calls to show a simple <see cref="MudDialog"/>.
+/// Options for displaying a simple message box dialog via <see cref="IDialogService"/>.
 /// </summary>
+/// <remarks>
+/// Use this when you want a quick yes/no/cancel prompt without building a custom dialog component.
+/// </remarks>
 [ExcludeFromCodeCoverage]
 public class MessageBoxOptions
 {

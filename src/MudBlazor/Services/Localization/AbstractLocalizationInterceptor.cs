@@ -7,8 +7,12 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Provides a base implementation for <see cref="ILocalizationInterceptor"/>.
+/// Base class for localization interceptors that can swap or augment MudBlazor translations.
 /// </summary>
+/// <remarks>
+/// Derive from this when you need custom resource sources or fallback logic beyond the
+/// defaults provided by <see cref="DefaultLocalizationInterceptor"/>.
+/// </remarks>
 public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
 {
     /// <summary>

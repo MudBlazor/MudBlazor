@@ -4,12 +4,14 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// This customizable localizer service allows users to supply custom translations for MudBlazor components.
-/// Users can register custom implementations using the following syntax, where the scope depends on the implementation:
-/// <c>services.Add{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</c>
-/// or
-/// <c>services.TryAdd{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</c>
+/// Base localizer that applications can override to supply MudBlazor translations.
 /// </summary>
+/// <remarks>
+/// Register a custom implementation with DI (for example,
+/// <c>services.Add{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</c> or
+/// <c>services.TryAdd{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</c>)
+/// to provide localized strings for components.
+/// </remarks>
 public class MudLocalizer
 {
     /// <summary>

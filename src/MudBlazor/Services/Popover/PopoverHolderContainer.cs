@@ -6,8 +6,12 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Represents a container for <see cref="IMudPopoverHolder"/>, along with the associated <see cref="PopoverHolderOperation"/>.
+/// Wraps popover holder updates so the popover service can batch or process operations consistently.
 /// </summary>
+/// <remarks>
+/// This container travels through the popover update pipeline, letting the service communicate
+/// add/remove/update operations with the holders affected by the change.
+/// </remarks>
 public class PopoverHolderContainer
 {
     /// <summary>

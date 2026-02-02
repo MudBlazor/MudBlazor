@@ -5,9 +5,12 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// The <see cref="DefaultLocalizationInterceptor"/> manages translations, incorporating English as the default language,
-/// facilitating the addition of custom translations without imposing limitations on their implementation.
+/// Default localization interceptor that blends built-in English resources with optional custom translations.
 /// </summary>
+/// <remarks>
+/// This is the standard interceptor used by MudBlazor. It keeps the internal English resources as a
+/// reliable fallback while allowing apps to override or extend translations.
+/// </remarks>
 public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
 {
     /// <summary>

@@ -7,6 +7,12 @@ using MudBlazor.Services;
 namespace MudBlazor;
 
 #nullable enable
+/// <summary>
+/// Adapts an asynchronous lambda into an <see cref="IBrowserViewportObserver"/>.
+/// </summary>
+/// <remarks>
+/// This is used by subscription overloads that accept <see cref="Func{T, TResult}"/> handlers.
+/// </remarks>
 internal class BrowserViewportLambdaTaskObserver : IBrowserViewportObserver
 {
     private readonly Func<BrowserViewportEventArgs, Task> _lambda;

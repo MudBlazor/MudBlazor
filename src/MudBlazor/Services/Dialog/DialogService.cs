@@ -10,10 +10,11 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// A service for managing <see cref="MudDialog"/> components.
+    /// Service used to create, show, and close MudBlazor dialogs.
     /// </summary>
     /// <remarks>
-    /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
+    /// Register this service and include a <see cref="MudDialogProvider"/> in your layout so dialogs
+    /// can render and respond to close requests.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
     /// <seealso cref="MudDialogContainer"/>
@@ -24,9 +25,12 @@ namespace MudBlazor
     public class DialogService : IDialogService
     {
         /// <summary>
-        /// This internal wrapper component prevents overwriting parameters of once instantiated dialog instances.
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
+        /// Internal wrapper component that prevents overwriting parameters on existing dialog instances.
         /// </summary>
+        /// <remarks>
+        /// This keeps dialog content stable while the parent fragment re-renders.
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
+        /// </remarks>
         private class DialogHelperComponent : IComponent
         {
             private const string ChildContent = nameof(ChildContent);

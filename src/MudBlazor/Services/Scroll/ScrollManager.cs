@@ -8,8 +8,12 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Manages scroll behavior.
+/// Centralizes scroll operations that need JS interop (scrolling to elements, locking scroll, etc.).
 /// </summary>
+/// <remarks>
+/// Components use this service to perform consistent scroll behaviors across the library, keeping
+/// JS interop calls in one place and avoiding duplicate logic.
+/// </remarks>
 internal sealed class ScrollManager : IScrollManager
 {
     private readonly IJSRuntime _jSRuntime;

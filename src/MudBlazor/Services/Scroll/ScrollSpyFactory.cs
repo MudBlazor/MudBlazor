@@ -9,8 +9,12 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Factory class for creating instances of <see cref="IScrollSpy"/>.
+/// Creates <see cref="IScrollSpy"/> instances tied to the current DI container.
 /// </summary>
+/// <remarks>
+/// Used by components that need to observe active sections without constructing the JS interop
+/// dependencies themselves.
+/// </remarks>
 internal sealed class ScrollSpyFactory : IScrollSpyFactory
 {
     private readonly IServiceProvider _provider;
