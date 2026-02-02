@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
+using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -36,8 +38,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -53,8 +56,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices_WithConfigurationAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         SnackbarConfiguration? expectedOptions = null;
 
@@ -403,9 +407,10 @@ public class ServiceCollectionExtensionsTests
     public void AddMudServices_ShouldRegisterAllServices()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -457,9 +462,10 @@ public class ServiceCollectionExtensionsTests
     public void AddMudServices_ShouldRegisterAllServices_WithOptionsAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         MudServicesConfiguration? expectedOptions = null;
 
