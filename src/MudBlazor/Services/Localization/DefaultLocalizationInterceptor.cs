@@ -8,8 +8,7 @@ namespace MudBlazor;
 /// Default localization interceptor that blends built-in English resources with optional custom translations.
 /// </summary>
 /// <remarks>
-/// This is the standard interceptor used by MudBlazor. It keeps the internal English resources as a
-/// reliable fallback while allowing apps to override or extend translations.
+/// This is the standard interceptor used by MudBlazor. It keeps the internal English resources as a reliable fallback while allowing apps to override or extend translations.
 /// </remarks>
 public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
 {

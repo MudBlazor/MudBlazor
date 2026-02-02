@@ -11,8 +11,7 @@ namespace MudBlazor.Services;
 /// Dispatches keyboard events to a precompiled command list with an early-exit pipeline.
 /// </summary>
 /// <remarks>
-/// The key interceptor builds this observer after mapping user key bindings. It keeps the hot path
-/// small by splitting commands by event kind and stopping on the first non-hook match.
+/// The key interceptor builds this observer after mapping user key bindings. It keeps the hot path small by splitting commands by event kind and stopping on the first non-hook match.
 /// </remarks>
 internal sealed class KeyCommandObserver :
     IKeyDownObserver,

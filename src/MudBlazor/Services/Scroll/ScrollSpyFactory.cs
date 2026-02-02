@@ -12,8 +12,7 @@ namespace MudBlazor;
 /// Creates <see cref="IScrollSpy"/> instances tied to the current DI container.
 /// </summary>
 /// <remarks>
-/// Used by components that need to observe active sections without constructing the JS interop
-/// dependencies themselves.
+/// Used by components that need to observe active sections without constructing the JS interop dependencies themselves.
 /// </remarks>
 internal sealed class ScrollSpyFactory : IScrollSpyFactory
 {

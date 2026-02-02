@@ -13,8 +13,7 @@ namespace MudBlazor
     /// Service used to create, show, and close MudBlazor dialogs.
     /// </summary>
     /// <remarks>
-    /// Register this service and include a <see cref="MudDialogProvider"/> in your layout so dialogs
-    /// can render and respond to close requests.
+    /// Register this service and include a <see cref="MudDialogProvider"/> in your layout so dialogs can render and respond to close requests.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
     /// <seealso cref="MudDialogContainer"/>

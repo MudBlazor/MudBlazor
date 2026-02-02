@@ -12,9 +12,7 @@ namespace MudBlazor.Services;
 /// Fluent API for building key-command maps that the key interceptor can execute efficiently.
 /// </summary>
 /// <remarks>
-/// Use this builder when you want readable, declarative keyboard shortcuts and a single observer
-/// that can be registered with <see cref="IKeyInterceptorService"/>. It compiles user-friendly
-/// declarations into a minimal command list optimized for dispatch.
+/// Use this builder when you want readable, declarative keyboard shortcuts and a single observer that can be registered with <see cref="IKeyInterceptorService"/>. It compiles user-friendly declarations into a minimal command list optimized for dispatch.
 /// </remarks>
 public sealed class KeyMapBuilder
 {
@@ -457,8 +455,7 @@ public sealed class KeyMapBuilder
     /// Hook command that always runs for its event kind and lets the chain continue.
     /// </summary>
     /// <remarks>
-    /// Hooks are inserted ahead of regular commands so they can provide cross-cutting behavior
-    /// like virtual override patterns without blocking other handlers.
+    /// Hooks are inserted ahead of regular commands so they can provide cross-cutting behavior like virtual override patterns without blocking other handlers.
     /// </remarks>
     private sealed class HookCommand(KeyEventKind kind, Func<KeyboardEventArgs, Task> hook) : IKeyCommand
     {

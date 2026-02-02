@@ -11,8 +11,7 @@ namespace MudBlazor;
 /// Bundles key-down and key-up observers for a specific element id.
 /// </summary>
 /// <remarks>
-/// This is the default observer shape used by the key interceptor when you provide lambdas or
-/// prebuilt observers. It keeps a single element id and forwards events to the registered handlers.
+/// This is the default observer shape used by the key interceptor when you provide lambdas or prebuilt observers. It keeps a single element id and forwards events to the registered handlers.
 /// </remarks>
 public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
 {

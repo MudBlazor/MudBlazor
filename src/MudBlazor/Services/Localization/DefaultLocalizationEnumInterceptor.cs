@@ -12,8 +12,7 @@ namespace MudBlazor;
 /// Handles localization for enum values using <see cref="DisplayAttribute"/> metadata.
 /// </summary>
 /// <remarks>
-/// This is used internally to translate enum display names with the same interceptor pipeline
-/// used for other MudBlazor strings.
+/// This is used internally to translate enum display names with the same interceptor pipeline used for other MudBlazor strings.
 /// </remarks>
 internal class DefaultLocalizationEnumInterceptor : ILocalizationEnumInterceptor
 {

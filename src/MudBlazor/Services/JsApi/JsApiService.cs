@@ -11,8 +11,7 @@ namespace MudBlazor;
 /// Lightweight wrapper around common browser JS calls used across MudBlazor components.
 /// </summary>
 /// <remarks>
-/// Keeps interop usage centralized for tasks like clipboard, window navigation, and style updates
-/// so components stay focused on UI logic.
+/// Keeps interop usage centralized for tasks like clipboard, window navigation, and style updates so components stay focused on UI logic.
 /// </remarks>
 internal class JsApiService : IJsApiService
 {

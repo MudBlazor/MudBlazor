@@ -9,8 +9,7 @@ namespace MudBlazor;
 /// <remarks>
 /// Register a custom implementation with DI (for example,
 /// <c>services.Add{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</c> or
-/// <c>services.TryAdd{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</c>)
-/// to provide localized strings for components.
+/// <c>services.TryAdd{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</c>) to provide localized strings for components.
 /// </remarks>
 public class MudLocalizer
 {

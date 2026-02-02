@@ -18,8 +18,7 @@ namespace MudBlazor;
 /// Tracks browser window size changes and resolves them to MudBlazor breakpoints.
 /// </summary>
 /// <remarks>
-/// This service manages the JS listener lifecycle, caches the latest size, and notifies observers
-/// so components can respond to viewport changes without rolling their own interop.
+/// This service manages the JS listener lifecycle, caches the latest size, and notifies observers so components can respond to viewport changes without rolling their own interop.
 /// </remarks>
 internal sealed class BrowserViewportService : IBrowserViewportService
 {

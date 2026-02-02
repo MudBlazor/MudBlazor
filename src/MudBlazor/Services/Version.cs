@@ -9,8 +9,7 @@ namespace MudBlazor;
 /// Central place to read runtime library metadata such as the MudBlazor version.
 /// </summary>
 /// <remarks>
-/// Useful for diagnostics, bug reports, and displaying version info in app footers or about dialogs
-/// without hard-coding values.
+/// Useful for diagnostics, bug reports, and displaying version info in app footers or about dialogs without hard-coding values.
 /// </remarks>
 public static class Metadata
 {

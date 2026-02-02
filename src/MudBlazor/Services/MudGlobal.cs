@@ -10,8 +10,7 @@ namespace MudBlazor;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Use this when you want to set app-wide defaults (like menu or tooltip timing) without
-/// touching each component instance.
+/// Use this when you want to set app-wide defaults (like menu or tooltip timing) without touching each component instance.
 /// </para>
 /// <para>
 /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.

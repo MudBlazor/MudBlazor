@@ -9,9 +9,7 @@ namespace MudBlazor.Services;
 /// Creates <see cref="IResizeObserver"/> instances wired to the current DI container and JS runtime.
 /// </summary>
 /// <remarks>
-/// This factory is used by components and services that need to track element size changes without
-/// directly depending on JavaScript interop wiring. It keeps the construction details in one place
-/// so callers can focus on subscribing to resize events.
+/// This factory is used by components and services that need to track element size changes without directly depending on JavaScript interop wiring. It keeps the construction details in one place so callers can focus on subscribing to resize events.
 /// </remarks>
 internal sealed class ResizeObserverFactory : IResizeObserverFactory
 {

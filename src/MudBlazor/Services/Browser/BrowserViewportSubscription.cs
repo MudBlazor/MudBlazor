@@ -14,8 +14,7 @@ namespace MudBlazor;
 /// Tracks the relationship between a JS resize listener and a .NET viewport observer.
 /// </summary>
 /// <remarks>
-/// This subscription object allows the service to share listeners across observers with
-/// identical options, reducing unnecessary JS hooks.
+/// This subscription object allows the service to share listeners across observers with identical options, reducing unnecessary JS hooks.
 /// </remarks>
 internal class BrowserViewportSubscription : IEquatable<BrowserViewportSubscription>
 {

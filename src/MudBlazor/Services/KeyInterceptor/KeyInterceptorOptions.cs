@@ -9,8 +9,7 @@ namespace MudBlazor.Services;
 /// Settings for wiring keyboard interception to specific elements and key bindings.
 /// </summary>
 /// <remarks>
-/// These options are passed when subscribing to the key interceptor so the JS hook knows which
-/// element to observe and which keys to pre-register for performance.
+/// These options are passed when subscribing to the key interceptor so the JS hook knows which element to observe and which keys to pre-register for performance.
 /// </remarks>
 public sealed class KeyInterceptorOptions
 {

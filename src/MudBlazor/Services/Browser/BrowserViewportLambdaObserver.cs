@@ -11,8 +11,7 @@ namespace MudBlazor;
 /// Adapts a synchronous lambda into an <see cref="IBrowserViewportObserver"/>.
 /// </summary>
 /// <remarks>
-/// Used by the viewport service overloads that accept an <see cref="Action{T}"/> so callers can
-/// subscribe without implementing a full observer type.
+/// Used by the viewport service overloads that accept an <see cref="Action{T}"/> so callers can subscribe without implementing a full observer type.
 /// </remarks>
 internal class BrowserViewportLambdaObserver : IBrowserViewportObserver
 {

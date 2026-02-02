@@ -9,8 +9,7 @@ namespace MudBlazor;
 /// Options that control how MudBlazor popovers are positioned, animated, and managed.
 /// </summary>
 /// <remarks>
-/// Configure this when registering MudBlazor services to keep popover behavior consistent
-/// across selects, menus, tooltips, and other popover-based components.
+/// Configure this when registering MudBlazor services to keep popover behavior consistent across selects, menus, tooltips, and other popover-based components.
 /// </remarks>
 public class PopoverOptions
 {

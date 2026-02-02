@@ -17,8 +17,7 @@ namespace MudBlazor;
 /// Coordinates JavaScript key interception with managed observers for specific elements.
 /// </summary>
 /// <remarks>
-/// Components subscribe with element ids and receive callbacks for key up/down events. The service
-/// manages JS connection lifetimes and dispatches events through the observer manager.
+/// Components subscribe with element ids and receive callbacks for key up/down events. The service manages JS connection lifetimes and dispatches events through the observer manager.
 /// </remarks>
 internal sealed class KeyInterceptorService : IKeyInterceptorService
 {

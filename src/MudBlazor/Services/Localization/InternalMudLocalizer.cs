@@ -8,9 +8,7 @@ namespace MudBlazor;
 /// Internal localization entry point that delegates translation work to configured interceptors.
 /// </summary>
 /// <remarks>
-/// Components access localization through this class so they can be decoupled from specific
-/// resource providers. By default it uses <see cref="DefaultLocalizationInterceptor"/>, but
-/// applications can plug in custom interceptors.
+/// Components access localization through this class so they can be decoupled from specific resource providers. By default it uses <see cref="DefaultLocalizationInterceptor"/>, but applications can plug in custom interceptors.
 /// </remarks>
 internal sealed class InternalMudLocalizer
 {

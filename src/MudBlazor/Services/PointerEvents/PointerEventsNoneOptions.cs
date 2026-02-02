@@ -9,8 +9,7 @@ namespace MudBlazor;
 /// Options for configuring the pointer-events-none interop service.
 /// </summary>
 /// <remarks>
-/// Use these options when you need to disable pointer events on elements while still tracking
-/// pointer up/down notifications for cleanup or state transitions.
+/// Use these options when you need to disable pointer events on elements while still tracking pointer up/down notifications for cleanup or state transitions.
 /// </remarks>
 public class PointerEventsNoneOptions
 {

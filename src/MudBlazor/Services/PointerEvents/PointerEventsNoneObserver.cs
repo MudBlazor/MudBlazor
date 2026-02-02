@@ -10,8 +10,7 @@ namespace MudBlazor;
 /// Bundles pointer down/up observers for a specific element id with pointer events disabled.
 /// </summary>
 /// <remarks>
-/// Used by <see cref="IPointerEventsNoneService"/> to route global pointer events back to
-/// the element-specific handlers provided by components.
+/// Used by <see cref="IPointerEventsNoneService"/> to route global pointer events back to the element-specific handlers provided by components.
 /// </remarks>
 public class PointerEventsNoneObserver : IPointerEventsNoneObserver
 {

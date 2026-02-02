@@ -9,8 +9,7 @@ namespace MudBlazor;
 /// Wraps popover holder updates so the popover service can batch or process operations consistently.
 /// </summary>
 /// <remarks>
-/// This container travels through the popover update pipeline, letting the service communicate
-/// add/remove/update operations with the holders affected by the change.
+/// This container travels through the popover update pipeline, letting the service communicate add/remove/update operations with the holders affected by the change.
 /// </remarks>
 public class PopoverHolderContainer
 {

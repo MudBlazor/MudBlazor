@@ -9,8 +9,7 @@ namespace MudBlazor;
 /// Event payload emitted when the scroll spy identifies a new centered section.
 /// </summary>
 /// <remarks>
-/// Consumers typically use this in navigation or highlighting logic to keep UI state in sync
-/// with the user's scroll position.
+/// Consumers typically use this in navigation or highlighting logic to keep UI state in sync with the user's scroll position.
 /// </remarks>
 public class ScrollSectionCenteredEventArgs
 {
