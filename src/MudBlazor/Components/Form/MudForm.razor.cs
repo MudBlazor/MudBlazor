@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -147,6 +148,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
+
+        /// <summary>
+        /// Occurs when <c>Enter</c> is pressed on any child input of this form.
+        /// </summary>
+        [Parameter]
+        public EventCallback OnEnterPressed { get; set; }
 
         /// <summary>
         /// The default function or attribute used to validate form components which cannot validate themselves.
@@ -411,10 +418,18 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Called by any input of the form to signal that its value changed. 
+        /// Called by any input of the form to signal that its value changed.
         /// </summary>
         /// <param name="formControl"></param>
         void IForm.Update(IFormComponent formControl) => EvaluateForm();
+
+        private async Task OnKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (args.Key is "Enter" or "NumpadEnter")
+            {
+                await OnEnterPressed.InvokeAsync();
+            }
+        }
 
         protected virtual void Dispose(bool disposing)
         {

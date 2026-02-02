@@ -656,7 +656,7 @@ namespace MudBlazor
         protected virtual async Task ResetValueAsync()
         {
             /* to be overridden */
-            await SetValueAsync(default);
+            await SetValueCoreAsync(default);
             Touched = false;
             await InvokeAsync(StateHasChanged);
         }
@@ -1051,7 +1051,7 @@ namespace MudBlazor
 
         protected internal virtual T? ReadValue => _value;
 
-        protected virtual Task SetValueAsync(T? value)
+        protected virtual Task SetValueCoreAsync(T? value)
         {
             _value = value;
 

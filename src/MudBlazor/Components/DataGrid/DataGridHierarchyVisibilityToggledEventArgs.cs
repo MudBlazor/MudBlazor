@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Utilities
 {
+#nullable enable
     /// <summary>
     /// Represents the information related to a <see cref="MudDataGrid{T}.HierarchyVisibilityToggled"/> event.
     /// </summary>

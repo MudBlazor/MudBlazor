@@ -320,7 +320,7 @@ namespace MudBlazor
 
         protected internal override T? ReadValue => _filesState.Value;
 
-        protected override Task SetValueAsync(T? value) => _filesState.SetValueAsync(value);
+        protected override Task SetValueCoreAsync(T? value) => _filesState.SetValueAsync(value);
 
         protected override async Task ValidateValue()
         {

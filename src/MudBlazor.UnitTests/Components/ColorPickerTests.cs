@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
             var rInput = GetColorInput(comp, 0);
 
             var expectedColor = comp.Instance.ColorValue.SetR(r);
-            rInput.Change(expectedColor.R.ToString());
+            await rInput.ChangeAsync(expectedColor.R.ToString());
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
@@ -186,7 +186,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetG(g);
 
-            gInput.Change(expectedColor.G.ToString());
+            await gInput.ChangeAsync(expectedColor.G.ToString());
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetB(b);
 
-            bInput.Change(expectedColor.B.ToString());
+            await bInput.ChangeAsync(expectedColor.B.ToString());
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
@@ -216,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
 
-            aInput.Change(a.ToString(CultureInfo.CurrentUICulture));
+            await aInput.ChangeAsync(a.ToString(CultureInfo.CurrentUICulture));
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
@@ -231,7 +231,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetH(h);
 
-            hInput.Change(expectedColor.H.ToString());
+            await hInput.ChangeAsync(expectedColor.H.ToString());
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -246,7 +246,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetS(s);
 
-            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
+            await sColor.ChangeAsync(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -260,7 +260,7 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 2);
 
             var expectedColor = comp.Instance.ColorValue.SetL(l);
-            lColor.Change(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
+            await lColor.ChangeAsync(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -274,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 3);
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
-            lColor.Change(a.ToString(CultureInfo.CurrentUICulture));
+            await lColor.ChangeAsync(a.ToString(CultureInfo.CurrentUICulture));
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -290,7 +290,7 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 0, 1);
 
             var expectedColor = colorHexString;
-            lColor.Change(colorHexString);
+            await lColor.ChangeAsync(colorHexString);
 
             await CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HEX);
         }
@@ -306,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
             var hexInput = GetColorInput(comp, 0, 1);
 
             var expectedColor = _defaultColor;
-            hexInput.Change(colorHexString);
+            await hexInput.ChangeAsync(colorHexString);
 
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HEX);
         }
@@ -324,7 +324,7 @@ namespace MudBlazor.UnitTests.Components
                 hueColorSlider.Should().ContainSingle();
                 hueColorSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
 
-                hueColorSlider[0].Input(i.ToString());
+                await hueColorSlider[0].InputAsync(i.ToString());
 
                 await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
@@ -364,7 +364,7 @@ namespace MudBlazor.UnitTests.Components
                 hueColorSlider.Should().ContainSingle();
                 hueColorSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
 
-                hueColorSlider[0].Input(i.ToString());
+                await hueColorSlider[0].InputAsync(i.ToString());
 
                 await CheckColorRelatedValues(comp, 208.46, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
@@ -878,7 +878,7 @@ namespace MudBlazor.UnitTests.Components
                 var colorElement = collectionView.Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
-                await comp.InvokeAsync(() => colorElement.ClickAsync());
+                await colorElement.ClickAsync();
                 await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
@@ -1080,7 +1080,7 @@ namespace MudBlazor.UnitTests.Components
             await CheckColorRelatedValues(comp, 11.37, 7.84, comp.Instance.ColorValue, ColorPickerMode.HSL);
 
             var expectedColor = comp.Instance.ColorValue.SetS(comp.Instance.ColorValue.S - 0.01);
-            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
+            await sColor.ChangeAsync(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
 
             await CheckColorRelatedValues(comp, 11.37, 7.84, expectedColor, ColorPickerMode.HSL);
             var colorValueAfterChange = comp.Instance.ColorValue.ToString(MudColorOutputFormats.HexA);
@@ -1192,7 +1192,7 @@ namespace MudBlazor.UnitTests.Components
                 "mud-popover-open",
                 "mud-popover-top-left",
                 "mud-popover-anchor-bottom-left",
-                "mud-popover-overflow-flip-onopen",
+                "mud-popover-overflow-flip-always",
                 "mud-picker-popover",
                 "mud-elevation-8",
             ]);
@@ -1235,12 +1235,12 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures both the text and value update when the text is changed
         /// </summary>
         [Test]
-        public void ColorPickerValueShouldUpdateOnTextTest()
+        public async Task ColorPickerValueShouldUpdateOnText()
         {
             var comp = Context.Render<MudColorPicker>(parameters => parameters
                 .Add(x => x.Editable, true));
 
-            comp.Find("input").Change("#180f6fff");
+            await comp.Find("input").ChangeAsync("#180f6fff");
             comp.Instance.GetState(x => x.Text).Should().Be("#180f6fff");
             comp.Instance.GetState(x => x.Value).Should().Be(new MudColor("#180f6fff"));
         }

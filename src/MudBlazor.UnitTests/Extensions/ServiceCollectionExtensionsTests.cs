@@ -293,7 +293,6 @@ public class ServiceCollectionExtensionsTests
             options.FlipMargin = 100;
             options.OverflowPadding = 0;
             options.ThrowOnDuplicateProvider = false;
-            options.Mode = PopoverMode.Default;
             options.ModalOverlay = true;
             options.OverflowBehavior = OverflowBehavior.FlipNever;
             expectedOptions = options;
@@ -362,24 +361,6 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMudEventManager_ShouldRegisterServices()
-    {
-        // Arrange
-        var services = new ServiceCollection()
-            .AddSingleton<IJSRuntime, MockJsRuntime>();
-
-        // Act
-        services.AddMudEventManager();
-        var serviceProvider = services.BuildServiceProvider();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
-
-        // Assert
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
-    }
-
-    [Test]
     public void AddMudBlazorPointerEventsNoneService_ShouldRegisterServices()
     {
         // Arrange
@@ -445,8 +426,6 @@ public class ServiceCollectionExtensionsTests
         var scrollSpy = serviceProvider.GetService<IScrollSpy>();
         var scrollSpyFactory = serviceProvider.GetService<IScrollSpyFactory>();
         var jsApiService = serviceProvider.GetService<IJsApiService>();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
@@ -468,8 +447,6 @@ public class ServiceCollectionExtensionsTests
         scrollSpy.Should().NotBeNull();
         scrollSpyFactory.Should().NotBeNull();
         jsApiService.Should().NotBeNull();
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
@@ -525,7 +502,6 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.FlipMargin = 100;
             options.PopoverOptions.OverflowPadding = 12;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
-            options.PopoverOptions.Mode = PopoverMode.Default;
             options.PopoverOptions.ModalOverlay = true;
             options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
             options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
@@ -550,8 +526,6 @@ public class ServiceCollectionExtensionsTests
         var scrollSpy = serviceProvider.GetService<IScrollSpy>();
         var scrollSpyFactory = serviceProvider.GetService<IScrollSpyFactory>();
         var jsApiService = serviceProvider.GetService<IJsApiService>();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
@@ -581,8 +555,6 @@ public class ServiceCollectionExtensionsTests
         scrollSpy.Should().NotBeNull();
         scrollSpyFactory.Should().NotBeNull();
         jsApiService.Should().NotBeNull();
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
@@ -593,7 +565,6 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
         actualPopoverOptions.OverflowPadding.Should().Be(expectedOptions.PopoverOptions.OverflowPadding);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
-        actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
         actualPopoverOptions.ModalOverlay.Should().Be(expectedOptions.PopoverOptions.ModalOverlay);
         actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
         actualPopoverOptions.Delay.Should().Be(expectedOptions.PopoverOptions.Delay);

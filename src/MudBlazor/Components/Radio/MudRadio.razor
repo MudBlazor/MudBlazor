@@ -11,11 +11,11 @@
             </span>
             @if (!string.IsNullOrEmpty(Label))
             {
-                <MudText Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
+                <MudText HtmlTag="span" Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
             }
             @if (ChildContent is not null)
             {
-                <MudText Color="HasErrors ? Color.Error : Color.Inherit">
+                <MudText HtmlTag="span" Color="HasErrors ? Color.Error : Color.Inherit">
                     @ChildContent
                 </MudText>
             }

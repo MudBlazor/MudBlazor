@@ -10,9 +10,9 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Represents a builder for creating in-line styles used in a component.
     /// </summary>
-    public struct StyleBuilder
+    public readonly struct StyleBuilder
     {
-        private StringBuilder? _stringBuilder;
+        private readonly StringBuilder _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of StyleBuilder with the specified property and value.
@@ -53,7 +53,7 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         public StyleBuilder()
         {
-            _stringBuilder = EnsureCreated();
+            _stringBuilder = StringBuilderCache.Acquire();
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace MudBlazor.Utilities
         /// <param name="prop">The CSS property.</param>
         /// <param name="value">The value of the property.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder(string prop, string value) =>
-            EnsureCreated()
+        public StyleBuilder(string prop, string value) : this() =>
+            _stringBuilder
                 .Append(prop)
                 .Append(':')
                 .Append(value)
@@ -104,7 +104,7 @@ namespace MudBlazor.Utilities
         {
             if (style is not null)
             {
-                EnsureCreated().Append(style);
+                _stringBuilder.Append(style);
             }
             return this;
         }
@@ -116,7 +116,7 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         private StyleBuilder AddRaw(char c)
         {
-            EnsureCreated().Append(c);
+            _stringBuilder.Append(c);
             return this;
         }
 
@@ -224,13 +224,10 @@ namespace MudBlazor.Utilities
         /// Finalizes the completed style as a string.
         /// </summary>
         /// <returns>The string representation of the style.</returns>
-        public string Build() => StringBuilderCache.GetStringAndRelease(EnsureCreated()).Trim();
+        public string Build() => StringBuilderCache.GetStringAndRelease(_stringBuilder).Trim();
 
         // ToString should only and always call Build to finalize the rendered string.
         /// <inheritdoc />
         public override string ToString() => Build();
-
-        // TODO: v8, remove that and declare StyleBuilder as readonly struct, improve documentation to avoid default(StyleBuilder), add Breaking Change notes.
-        private StringBuilder EnsureCreated() => _stringBuilder ??= StringBuilderCache.Acquire();
     }
 }

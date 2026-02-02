@@ -2,43 +2,22 @@
 
 <MudPopoverProvider></MudPopoverProvider>
 
-@if (IsDateDisabledFunc != null)
-{
-    <MudDatePicker @ref="_picker"
-                   Date="@Date"
-                   DateChanged="HandleDateChanged"
-                   ReadOnly="Readonly"
-                   @bind-PickerMonth="PickerMonth"
-                   IsDateDisabledFunc="IsDateDisabledFunc"
-                   OpenTo="@OpenTo"
-                   FixDay="@FixDay"
-                   FixMonth="@FixMonth"
-                   FixYear="@FixYear"
-                   MinDate="@MinDate"
-                   MaxDate="@MaxDate"
-                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
-                   Culture="@(new CultureInfo("en-US"))"
-                   InputId="@InputId"
-                   FirstDayOfWeek="@FirstDayOfWeek" />
-}
-else
-{
-    <MudDatePicker @ref="_picker"
-                   Date="@Date"
-                   DateChanged="HandleDateChanged"
-                   ReadOnly="Readonly"
-                   @bind-PickerMonth="PickerMonth"
-                   OpenTo="@OpenTo"
-                   FixDay="@FixDay"
-                   FixMonth="@FixMonth"
-                   FixYear="@FixYear"
-                   MinDate="@MinDate"
-                   MaxDate="@MaxDate"
-                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
-                   Culture="@(new CultureInfo("en-US"))"
-                   InputId="@InputId"
-                   FirstDayOfWeek="@FirstDayOfWeek"/>
-}
+<MudDatePicker @ref="_picker"
+               Date="@Date"
+               DateChanged="HandleDateChanged"
+               ReadOnly="Readonly"
+               @bind-PickerMonth="PickerMonth"
+               IsDateDisabledFunc="IsDateDisabledFunc"
+               OpenTo="@OpenTo"
+               FixDay="@FixDay"
+               FixMonth="@FixMonth"
+               FixYear="@FixYear"
+               MinDate="@MinDate"
+               MaxDate="@MaxDate"
+               AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
+               Culture="@(new CultureInfo("en-US"))"
+               InputId="@InputId"
+               FirstDayOfWeek="@FirstDayOfWeek" />
 
 @code {
     private MudDatePicker _picker = null!;
@@ -53,7 +32,7 @@ else
     public bool Readonly { get; set; }
 
     [Parameter]
-    public Func<DateTime, bool>? IsDateDisabledFunc { get; set; }
+    public Func<DateTime, bool>? IsDateDisabledFunc { get; set; } = _ => false;
 
     [Parameter]
     public OpenTo OpenTo { get; set; } = OpenTo.Date;

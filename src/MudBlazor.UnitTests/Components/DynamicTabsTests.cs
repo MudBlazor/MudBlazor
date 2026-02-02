@@ -13,6 +13,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DynamicTabsTests : BunitTest
     {
+        [SetUp]
         public override void Setup()
         {
             base.Setup();
@@ -107,7 +108,7 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint since it's not active");
 
-                await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+                await item.ParentElement.PointerEnterAsync();
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -116,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("close here");
 
-                await item.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+                await item.ParentElement.PointerLeaveAsync();
 
             }
 
@@ -135,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
-                await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+                await item.ParentElement.PointerEnterAsync();
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -144,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("add here");
 
-                await item.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+                await item.ParentElement.PointerLeaveAsync();
             }
         }
 
@@ -154,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SimpleDynamicTabsInteractionTest>();
 
             var addButton = comp.Find(".my-add-icon-class");
-            addButton.Click();
+            await addButton.ClickAsync();
 
             await Task.Delay(5);
             comp.Instance.AddClickCounter.Should().Be(1);
@@ -168,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 3; i++)
             {
                 var closeButton = comp.FindAll(".my-close-icon-class")[i];
-                closeButton.Click();
+                await closeButton.ClickAsync();
 
                 await Task.Delay(5);
 

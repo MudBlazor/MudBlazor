@@ -5,6 +5,7 @@
 using System;
 
 namespace MudBlazor;
+#nullable enable
 
 /// <summary>
 /// Indicates how string values are compared for a <see cref="MudDataGrid{T}"/> filter.

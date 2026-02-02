@@ -60,12 +60,6 @@ public class PopoverOptions
     public bool ThrowOnDuplicateProvider { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the mode for displaying popovers.
-    /// The default value is <c>PopoverMode.Default</c>.
-    /// </summary>
-    public PopoverMode Mode { get; set; } = PopoverMode.Default;
-
-    /// <summary>
     /// Gets or sets a value indicating whether the modal overlay prevents interaction with background elements.
     /// </summary>
     /// <remarks>
@@ -79,7 +73,7 @@ public class PopoverOptions
     /// Gets or sets the behavior applied when there is not enough space for a dropdown popover to be visible.
     /// </summary>
     /// <remarks>
-    /// The default value is <see cref="OverflowBehavior.FlipOnOpen"/>.
+    /// The default value is <see cref="OverflowBehavior.FlipAlways"/>.
     /// </remarks>
-    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipAlways;
 }

@@ -1,0 +1,17 @@
+﻿<MudPopoverProvider />
+
+<MudSelect T="string" @bind-Value="_value" @bind-Open="Open">
+    <MudSelectItem Value="@("1")">1</MudSelectItem>
+    <MudSelectItem Value="@("2")">2</MudSelectItem>
+    <MudSelectItem Value="@("3")">3</MudSelectItem>
+</MudSelect>
+
+<MudSwitch id="switch" Color="Color.Primary" @bind-Value="Open" Label="Open" />
+
+@code {
+    public static string __description__ = "Tests Open two-way bind.";
+
+    private string? _value = null;
+
+    public bool Open { get; private set; }
+}

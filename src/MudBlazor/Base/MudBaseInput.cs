@@ -575,21 +575,7 @@ namespace MudBlazor
         /// <summary>
         /// Override to write Value to ParameterState instead of backing field.
         /// </summary>
-        protected override Task SetValueAsync(T? value) => _valueState.SetValueAsync(value);
-
-        /// <summary>
-        /// Sets the value, values, and text, and calls validation.
-        /// </summary>
-        /// <remarks>
-        /// This method is typically called when the user has changed the <see cref="Value"/> or <see cref="Text"/> programmatically.
-        /// </remarks>
-        /// <returns>
-        /// A <see cref="Task"/> object.
-        /// </returns>
-        public virtual Task ForceUpdate()
-        {
-            return SetValueAndUpdateTextAsync(ReadValue, force: true);
-        }
+        protected override Task SetValueCoreAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// Occurs when the value has changed internally.
@@ -771,7 +757,7 @@ namespace MudBlazor
 
         protected internal string? ReadText => _textState.Value;
 
-        protected Task SetTextAsync(string? text) => _textState.SetValueAsync(text);
+        protected Task SetTextCoreAsync(string? text) => _textState.SetValueAsync(text);
 
         protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {

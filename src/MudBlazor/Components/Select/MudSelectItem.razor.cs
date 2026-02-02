@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -12,53 +13,31 @@ namespace MudBlazor
     /// <seealso cref="MudSelect{T}"/>
     public partial class MudSelectItem<T> : MudComponentBase, IDisposable
     {
-        private IMudSelect? _parent;
-        private IMudShadowSelect? _shadowParent;
-
         private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
         internal string ItemId { get; } = Identifier.Create();
 
+        public MudSelectItem()
+        {
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<IMudSelect?>(nameof(IMudSelect))
+                .WithParameter(() => IMudSelect)
+                .WithChangeHandler(OnMudSelectChangedAsync);
+            registerScope.RegisterParameter<IMudShadowSelect?>(nameof(IMudShadowSelect))
+                .WithParameter(() => IMudShadowSelect)
+                .WithChangeHandler(OnMudShadowSelectChanged);
+        }
+
         /// <summary>
         /// The <see cref="MudSelect{T}"/> hosting this item.
         /// </summary>
         [CascadingParameter]
-        internal IMudSelect? IMudSelect
-        {
-            get => _parent;
-            set
-            {
-                _parent = value;
-                if (_parent == null)
-                    return;
-                _parent.CheckGenericTypeMatch(this);
-                if (MudSelect == null)
-                    return;
-                var selected = MudSelect.Add(this);
-                if (_parent.MultiSelection)
-                {
-                    MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
-                    InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.GetState(x => x.SelectedValues)));
-                }
-                else
-                {
-                    Selected = selected;
-                }
-            }
-        }
+        internal IMudSelect? IMudSelect { get; set; }
 
         [CascadingParameter]
-        internal IMudShadowSelect? IMudShadowSelect
-        {
-            get => _shadowParent;
-            set
-            {
-                _shadowParent = value;
-                ((MudSelect<T>?)_shadowParent)?.RegisterShadowItem(this);
-            }
-        }
+        internal IMudShadowSelect? IMudShadowSelect { get; set; }
 
         /// <summary>
         /// Select items with HideContent==true are only there to register their RenderFragment with the select but
@@ -141,16 +120,47 @@ namespace MudBlazor
             }
         }
 
-        private Task OnClickHandleAsync()
+        private async Task OnClickHandleAsync()
         {
             if (MultiSelection)
             {
                 Selected = !Selected;
             }
 
-            MudSelect?.SelectOption(Value);
+            if (MudSelect != null)
+                await MudSelect.SelectOption(Value);
 
-            return InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        private void OnMudShadowSelectChanged(ParameterChangedEventArgs<IMudShadowSelect?> args)
+        {
+            ((MudSelect<T>?)args.LastValue)?.UnregisterShadowItem(this);
+            ((MudSelect<T>?)args.Value)?.RegisterShadowItem(this);
+        }
+
+        private async Task OnMudSelectChangedAsync(ParameterChangedEventArgs<IMudSelect?> args)
+        {
+            if (args.LastValue is MudSelect<T> oldParent)
+            {
+                oldParent.SelectionChangedFromOutside -= OnUpdateSelectionStateFromOutside;
+                oldParent.Remove(this);
+            }
+            if (args.Value == null)
+                return;
+            args.Value.CheckGenericTypeMatch(this);
+            if (MudSelect == null)
+                return;
+            var selected = MudSelect.Add(this);
+            if (args.Value.MultiSelection)
+            {
+                MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
+                await InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.GetState(x => x.SelectedValues)));
+            }
+            else
+            {
+                Selected = selected;
+            }
         }
 
         /// <summary>
@@ -160,8 +170,9 @@ namespace MudBlazor
         {
             try
             {
+                MudSelect?.SelectionChangedFromOutside -= OnUpdateSelectionStateFromOutside;
                 MudSelect?.Remove(this);
-                ((MudSelect<T>?)_shadowParent)?.UnregisterShadowItem(this);
+                ((MudSelect<T>?)IMudShadowSelect)?.UnregisterShadowItem(this);
             }
             catch (Exception)
             {

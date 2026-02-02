@@ -167,27 +167,15 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState() && !(MudRadioGroup?.GetReadOnlyState() ?? false);
+
+        private async Task HandleBackspaceAsync()
         {
-            if (GetDisabledState() || GetReadOnlyState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (MudRadioGroup is not null)
             {
-                return;
-            }
-
-            switch (keyboardEventArgs.Key)
-            {
-                case "Enter" or "NumpadEnter" or " ":
-                    await SelectAsync();
-                    break;
-                case "Backspace":
-                    {
-                        if (MudRadioGroup is not null)
-                        {
-                            await MudRadioGroup.ResetAsync();
-                        }
-
-                        break;
-                    }
+                await MudRadioGroup.ResetAsync();
             }
         }
 
@@ -217,7 +205,10 @@ namespace MudBlazor
                         new("Backspace", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)
+                        .OnKeyDown("Backspace", HandleBackspaceAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
