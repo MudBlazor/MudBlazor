@@ -89,7 +89,7 @@ internal class MudPopoverHolder : IMudPopoverHolder
         ShowContent = showContent;
         if (showContent)
         {
-            ActivationDate = _timeProvider.GetLocalNow().DateTime;
+            ActivationDate = DateTime.Now;
         }
         else
         {
