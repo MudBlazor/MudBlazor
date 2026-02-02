@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Build .NET Project
+      - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
         with:
           project-path: ${{ matrix.project-path }}
@@ -76,7 +76,7 @@ jobs:
       - name: Test ${{ matrix.project-path }}
         run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
 
-      - name: Publish docs coverage
+      - name: Publish coverage
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -100,7 +100,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Build .NET Project
+      - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
         with:
           project-path: ${{ matrix.project-path }}
