@@ -19,6 +19,13 @@ runs:
         sdk-version: latest
         aspnetcore-version: ${{ inputs.with-runtime == 'true' && '9.x,8.x' || '' }}
 
+    # We restore from our 'format-check' job cache if available because it contains all dependencies
+    - name: Cache NuGet packages
+      uses: actions/cache/restore@v5
+      with:
+        key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+        path: ${{ env.NUGET_PACKAGES }}
+
     - name: Restore NuGet packages
       shell: bash
       run: dotnet restore "${{ inputs.project-path }}"
