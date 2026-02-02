@@ -2337,5 +2337,31 @@ namespace MudBlazor.UnitTests.Components
             // Modal should be null (using PopoverOptions defaults)
             auto.Instance.Modal.Should().BeNull();
         }
+
+        [Test]
+        public async Task Autocomplete_KeyInterceptorObserving_Flag_IsSet()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // After rendering, the key interceptor should be observing
+            // This is set during OnAfterRenderAsync on first render
+            await comp.WaitForAssertionAsync(() => autocomplete._keyInterceptorObserving.Should().BeTrue("Key interceptor should be observing after first render"));
+
+            // Verify it remains true after interactions - open the menu
+            autocompleteComponent.Find("input").Input("Calif");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // The flag should still be true during interaction
+            autocomplete._keyInterceptorObserving.Should().BeTrue("Key interceptor should remain observing during user interaction");
+
+            // Close the menu
+            await comp.InvokeAsync(autocomplete.CloseMenuAsync);
+
+            // The flag should still be true even when closed
+            // Once the key interceptor is set up, it remains observing for the lifetime of the component
+            autocomplete._keyInterceptorObserving.Should().BeTrue("Key interceptor should remain observing even when menu is closed");
+        }
     }
 }
