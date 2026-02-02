@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project-path: ["src/MudBlazor.UnitTests/MudBlazor.UnitTests", "src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs", "src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers"]   
+        project-path: ["src/MudBlazor.UnitTests", "src/MudBlazor.UnitTests.Docs", "src/MudBlazor.UnitTests.Analyzers"]   
         
     steps:
       - uses: actions/checkout@v6
