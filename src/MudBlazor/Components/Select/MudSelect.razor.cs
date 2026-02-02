@@ -229,7 +229,7 @@ namespace MudBlazor
 
             void UpdateSearchText(string input)
             {
-                var now = TimeProvider.GetUtcNow();;
+                var now = TimeProvider.GetUtcNow();
 
                 if (now - _lastSearchTime > QuickSearchInterval)
                 {
