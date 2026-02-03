@@ -9,13 +9,13 @@ using MudBlazor.Services;
 namespace MudBlazor;
 
 #nullable enable
-[DebuggerDisplay("{DebuggerToString(),nq}")]
 /// <summary>
 /// Tracks the relationship between a JS resize listener and a .NET viewport observer.
 /// </summary>
 /// <remarks>
 /// This subscription object allows the service to share listeners across observers with identical options, reducing unnecessary JS hooks.
 /// </remarks>
+[DebuggerDisplay("{DebuggerToString(),nq}")]
 internal class BrowserViewportSubscription : IEquatable<BrowserViewportSubscription>
 {
     public Guid JavaScriptListenerId { get; }
