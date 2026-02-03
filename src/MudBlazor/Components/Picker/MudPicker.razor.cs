@@ -639,6 +639,8 @@ namespace MudBlazor
             var options = new KeyInterceptorOptions(
                 "mud-input-slot",
                 [
+                    new(" ", preventDown: "key+none"),
+                    //Allow space (" ") when Editable == true so that the user can enter a space before "AM"/"PM".
                     new(" ", preventDown: Editable ? "none" : "key+none"),
                     new("ArrowUp", preventDown: "key+none"),
                     new("ArrowDown", preventDown: "key+none"),
@@ -653,6 +655,19 @@ namespace MudBlazor
                     .OnKeyDown("Backspace", HandleBackspaceAsync)
                     .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
         }
+
+        private async Task UpdateSpaceKeyOptionAsync()
+        {
+            if (!_keyInterceptorObserving)
+                return;
+
+            //On the event that the Editable property is toggled, we need update the Key Interceptor
+            //  for the space-character so that the user can enter a space before "AM"/"PM"
+            var option = new KeyOptions(" ", preventDown: Editable ? "none" : "key+none");
+
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, option);
+        }
+
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
 
@@ -691,6 +706,8 @@ namespace MudBlazor
             {
                 await EnsureKeyInterceptorAsync();
             }
+
+            await UpdateSpaceKeyOptionAsync();
 
             await base.OnAfterRenderAsync(firstRender);
         }
