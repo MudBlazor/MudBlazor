@@ -21,7 +21,7 @@ namespace MudBlazor
 
         private ParameterState<bool> _expandedState;
 
-        internal string ItemId = Identifier.Create("list-item-");
+        internal readonly string ItemId = Identifier.Create("list-item-");
 
         private ElementReference _elementReference = new();
 
