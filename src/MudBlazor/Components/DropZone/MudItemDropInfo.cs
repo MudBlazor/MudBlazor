@@ -6,7 +6,6 @@ using System;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Record encapsulating data regarding a completed transaction
 /// </summary>

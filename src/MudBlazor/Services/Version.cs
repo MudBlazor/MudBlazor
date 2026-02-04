@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides metadata about the MudBlazor library.
 /// </summary>

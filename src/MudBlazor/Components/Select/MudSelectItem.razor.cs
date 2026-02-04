@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A selectable option displayed within a <see cref="MudSelect{T}"/> component.
     /// </summary>

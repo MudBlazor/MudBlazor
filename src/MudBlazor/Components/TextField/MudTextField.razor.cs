@@ -6,7 +6,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// An input for collecting text values.
     /// </summary>

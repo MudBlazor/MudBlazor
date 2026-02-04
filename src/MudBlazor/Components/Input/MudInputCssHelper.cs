@@ -2,7 +2,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// A set of methods which generate CSS classes for <see cref="MudBaseInput{T}" /> components.
 /// </summary>

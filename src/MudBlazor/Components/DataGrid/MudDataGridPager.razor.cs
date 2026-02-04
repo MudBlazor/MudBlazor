@@ -13,7 +13,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a pager for navigating pages of a <see cref="MudDataGrid{T}"/>.
     /// </summary>

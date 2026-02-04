@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides data for the <see cref="IScrollSpy.ScrollSectionSectionCentered"/> event.
 /// </summary>

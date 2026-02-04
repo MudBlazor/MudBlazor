@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>

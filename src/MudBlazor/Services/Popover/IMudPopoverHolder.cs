@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// This interface serves as a container for the values of a <see cref="IPopover"/> and is used by the <see cref="MudPopoverProvider"/> to render the popover.
 /// </summary>

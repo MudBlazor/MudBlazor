@@ -12,7 +12,6 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Throttle;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>

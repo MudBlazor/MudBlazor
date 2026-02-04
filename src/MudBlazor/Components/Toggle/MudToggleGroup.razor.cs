@@ -10,7 +10,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Toggle buttons grouped to select one or multiple values.

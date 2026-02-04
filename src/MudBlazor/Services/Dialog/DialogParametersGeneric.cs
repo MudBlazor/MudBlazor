@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// The parameters passed into a <see cref="MudDialog"/> instance.
 /// </summary>

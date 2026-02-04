@@ -6,7 +6,6 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Extensions;
 
-#nullable enable
 public static class BoundingClientRectExtensions
 {
     public static bool IsEqualTo(this BoundingClientRect? sourceRect, BoundingClientRect? targetRect, double tolerance = 0.00001)

@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Factory for creating instances of <see cref="IResizeObserver"/>.
 /// </summary>

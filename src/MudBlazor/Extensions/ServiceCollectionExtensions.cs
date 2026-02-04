@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace MudBlazor.Services
 {
-#nullable enable
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {

@@ -11,7 +11,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a cell displayed at the top of a <see cref="MudDataGrid{T}"/> column.
     /// </summary>

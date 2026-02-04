@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services
 {
-#nullable enable
     /// <summary>
     /// Represents options for <see cref="IBrowserViewportService"/>.
     /// </summary>

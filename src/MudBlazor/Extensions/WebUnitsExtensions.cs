@@ -6,7 +6,6 @@ using System.Globalization;
 
 namespace MudBlazor.Utilities
 {
-#nullable enable
     public static class WebUnitsExtensions
     {
         public static string ToPx(this int val) => $"{val}px";

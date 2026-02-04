@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents a container for <see cref="IMudPopoverHolder"/>, along with the associated <see cref="PopoverHolderOperation"/>.
 /// </summary>

@@ -3,7 +3,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Contains common snackbar CSS classes.

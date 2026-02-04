@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Interfaces
 {
-#nullable enable
     public interface IFormComponent
     {
         public bool Required { get; set; }

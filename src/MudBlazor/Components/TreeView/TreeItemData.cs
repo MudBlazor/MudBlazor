@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The current state of a <see cref="MudTreeViewItem{T}"/>.

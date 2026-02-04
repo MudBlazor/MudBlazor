@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// <para>Configuration for preventDefault() and stopPropagation() control</para>
 /// <para>

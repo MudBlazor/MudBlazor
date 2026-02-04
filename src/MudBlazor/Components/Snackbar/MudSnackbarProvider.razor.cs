@@ -5,7 +5,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-#nullable enable
 
 namespace MudBlazor
 {

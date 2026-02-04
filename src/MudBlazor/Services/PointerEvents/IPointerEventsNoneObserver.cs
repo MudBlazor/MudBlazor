@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents an observer that listens for pointer down and pointer up events

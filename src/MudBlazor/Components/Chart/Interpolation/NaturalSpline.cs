@@ -3,7 +3,6 @@
  *  http://www.mosismath.com/NaturalSplines/NaturalSplines.html
  */
 
-#nullable enable
 using System.Diagnostics;
 
 namespace MudBlazor.Interpolation

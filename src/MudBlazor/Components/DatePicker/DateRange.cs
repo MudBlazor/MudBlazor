@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents a date range used by a <see cref="MudDatePicker"/>.
 /// </summary>

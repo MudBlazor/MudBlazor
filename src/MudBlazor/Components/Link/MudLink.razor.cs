@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A clickable link which can navigate to a URL.

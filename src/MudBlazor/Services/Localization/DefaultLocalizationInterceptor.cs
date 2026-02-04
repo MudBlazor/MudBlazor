@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// The <see cref="DefaultLocalizationInterceptor"/> manages translations, incorporating English as the default language,
 /// facilitating the addition of custom translations without imposing limitations on their implementation.

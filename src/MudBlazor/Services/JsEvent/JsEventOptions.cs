@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Services
 {
-#nullable enable
     public class JsEventOptions
     {
         /// <summary>

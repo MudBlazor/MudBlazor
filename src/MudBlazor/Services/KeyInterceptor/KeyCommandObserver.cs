@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Efficiently dispatches keyboard events to registered commands.
 /// Uses early-exit pattern for optimal performance.

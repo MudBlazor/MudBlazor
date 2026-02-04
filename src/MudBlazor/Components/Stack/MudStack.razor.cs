@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Manages layout of its child items along the vertical or horizontal axis with optional spacing.

@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Manages scroll spying behavior for specified elements.
     /// </summary>

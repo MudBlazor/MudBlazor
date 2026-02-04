@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents the options for <see cref="IPopoverService"/>.
 /// </summary>

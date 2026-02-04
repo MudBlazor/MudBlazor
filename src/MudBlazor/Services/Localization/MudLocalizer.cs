@@ -2,7 +2,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// This customizable localizer service allows users to supply custom translations for MudBlazor components.
 /// Users can register custom implementations using the following syntax, where the scope depends on the implementation:

@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Configuration options for key interception.
 /// </summary>

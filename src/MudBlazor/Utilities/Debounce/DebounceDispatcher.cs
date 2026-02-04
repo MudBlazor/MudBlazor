@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Debounce;
 
-#nullable enable
 /// <summary>
 /// Delays the invocation of an action until a predetermined interval has elapsed since the last call.
 /// </summary>

@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Options for configuring the <see cref="IResizeObserver"/>.
 /// </summary>

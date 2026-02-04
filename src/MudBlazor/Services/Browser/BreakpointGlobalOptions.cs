@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Breakpoint definitions for <see cref="BrowserViewportService"/>.
 /// </summary>

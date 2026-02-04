@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Provides a standard set of colors, shapes, sizes and shadows to a layout.

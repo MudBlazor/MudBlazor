@@ -11,7 +11,6 @@ using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>

@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 internal class BrowserViewportLambdaObserver : IBrowserViewportObserver
 {
     private readonly Action<BrowserViewportEventArgs> _lambda;

@@ -12,7 +12,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A dropdown input for selecting an item from a list of options.

@@ -2,7 +2,6 @@
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Typography settings for <see cref="Typo"/> types used throughout the theme.
     /// </summary>

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// An icon button that toggles between two distinct states, useful for on/off or favorite/unfavorite scenarios.
 /// </summary>

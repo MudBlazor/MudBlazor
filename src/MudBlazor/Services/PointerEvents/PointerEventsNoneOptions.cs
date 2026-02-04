@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents options for <see cref="IPointerEventsNoneService"/>.
 /// </summary>

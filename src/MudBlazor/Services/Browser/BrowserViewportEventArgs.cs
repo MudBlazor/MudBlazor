@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides data for the browser viewport event.
 /// </summary>

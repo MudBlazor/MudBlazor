@@ -1,7 +1,6 @@
 ﻿using MudBlazor.Charts;
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.

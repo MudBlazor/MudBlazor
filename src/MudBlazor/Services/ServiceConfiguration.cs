@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services
 {
-#nullable enable
     // Add additional configuration objects here when adding new services
 
     /// <summary>

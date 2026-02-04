@@ -12,7 +12,6 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents a service that intercepts key events for specified HTML elements.
 /// </summary>

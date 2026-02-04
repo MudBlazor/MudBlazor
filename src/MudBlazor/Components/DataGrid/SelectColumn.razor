@@ -3,7 +3,6 @@
 @typeparam T
 
 @code {
-#nullable enable
     public RenderFragment<HeaderContext<T>>? GetSelectHeaderTemplate() => context =>
     {
         if (ShowInHeader && context.IsMultiSelection)
@@ -24,7 +23,6 @@
                       ValueChanged="@context.Actions.SetSelectedItemAsync"
                       Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)" />;
 
-#nullable enable
     private RenderFragment<FooterContext<T>>? GetSelectFooterTemplate() => context =>
     {
         if (ShowInFooter && context.IsMultiSelection)

@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the primary content displayed within a <see cref="MudCard"/>.
     /// </summary>

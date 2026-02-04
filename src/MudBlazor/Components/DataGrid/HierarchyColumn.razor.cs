@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
 /// </summary>
@@ -134,7 +133,6 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     [Parameter]
     public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
 
-#nullable enable
     /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>

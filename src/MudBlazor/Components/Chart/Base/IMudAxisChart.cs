@@ -5,7 +5,6 @@
 using System.Numerics;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>

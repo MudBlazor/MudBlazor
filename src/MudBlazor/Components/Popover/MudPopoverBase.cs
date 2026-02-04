@@ -8,7 +8,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A base class for implementing Popover components.

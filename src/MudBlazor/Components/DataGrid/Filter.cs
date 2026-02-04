@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-#nullable enable
     internal class Filter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;

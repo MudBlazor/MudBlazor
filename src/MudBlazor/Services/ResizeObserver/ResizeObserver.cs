@@ -5,7 +5,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 
 namespace MudBlazor.Services;
-#nullable enable
 
 /// <summary>
 /// Observes resize events on elements and provides size information.

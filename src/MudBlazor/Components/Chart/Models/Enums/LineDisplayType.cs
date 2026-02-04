@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MudBlazor;
+﻿namespace MudBlazor;
 
 /// <summary>
 /// Specifies the type of graphical representation for a line or area.

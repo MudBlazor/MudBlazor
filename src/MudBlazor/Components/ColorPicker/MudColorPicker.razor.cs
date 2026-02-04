@@ -12,7 +12,6 @@ using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a sophisticated and customizable pop-up for choosing a color.
     /// </summary>

@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents a pointer events observer that handles pointer down and pointer up events for a specific HTML element.

@@ -3,7 +3,6 @@
 
 using MudBlazor.Components.Snackbar;
 
-#nullable enable
 
 namespace MudBlazor
 {

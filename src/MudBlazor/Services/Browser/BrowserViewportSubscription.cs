@@ -8,7 +8,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 [DebuggerDisplay("{DebuggerToString(),nq}")]
 internal class BrowserViewportSubscription : IEquatable<BrowserViewportSubscription>
 {

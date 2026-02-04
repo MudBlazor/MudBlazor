@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents options which are used during calls to show a simple <see cref="MudDialog"/>.
 /// </summary>

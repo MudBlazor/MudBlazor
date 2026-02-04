@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 internal class MudPopoverHolder : IMudPopoverHolder
 {
     private readonly TimeProvider _timeProvider;

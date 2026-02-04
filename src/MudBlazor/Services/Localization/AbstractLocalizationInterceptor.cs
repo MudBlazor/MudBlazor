@@ -5,7 +5,6 @@ using MudBlazor.Resources;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides a base implementation for <see cref="ILocalizationInterceptor"/>.
 /// </summary>

@@ -6,7 +6,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Compact elements used to enter information, select a choice, filter content, or trigger an action.

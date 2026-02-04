@@ -7,7 +7,6 @@ using System.Reflection;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Default implementation of the <see cref="ILocalizationEnumInterceptor"/> interface.
 /// Provides localization for enumeration values using display attributes and string localizers.

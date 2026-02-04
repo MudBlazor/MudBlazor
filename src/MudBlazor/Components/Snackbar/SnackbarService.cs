@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using MudBlazor.Components.Snackbar;
 using MudBlazor.Components.Snackbar.InternalComponents;
 
-#nullable enable
 
 namespace MudBlazor
 {

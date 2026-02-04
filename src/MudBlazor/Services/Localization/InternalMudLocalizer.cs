@@ -3,7 +3,6 @@ using Microsoft.Extensions.Localization;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// The <see cref="InternalMudLocalizer"/> service forwards translations to the <see cref="ILocalizationInterceptor"/> service.
 /// By default, the <see cref="DefaultLocalizationInterceptor"/> is used, though custom implementations can be provided.

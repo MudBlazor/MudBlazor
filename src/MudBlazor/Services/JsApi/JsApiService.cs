@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides JavaScript API services for various browser operations.
 /// </summary>

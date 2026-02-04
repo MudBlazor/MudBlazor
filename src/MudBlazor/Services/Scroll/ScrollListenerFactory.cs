@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Factory class for creating instances of <see cref="IScrollListener"/>.
 /// </summary>

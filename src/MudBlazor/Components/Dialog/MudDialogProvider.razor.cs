@@ -6,7 +6,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>

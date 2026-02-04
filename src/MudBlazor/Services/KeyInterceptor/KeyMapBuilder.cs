@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// A fluent builder for creating declarative key command mappings.
 /// Supports conditional execution and efficient command dispatching.

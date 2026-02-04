@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Represents the size of a browser window.
 /// </summary>

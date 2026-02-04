@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Manages scroll behavior.
 /// </summary>

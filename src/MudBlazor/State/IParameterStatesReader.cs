@@ -4,7 +4,6 @@
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents a reader for parameter states.
 /// </summary>

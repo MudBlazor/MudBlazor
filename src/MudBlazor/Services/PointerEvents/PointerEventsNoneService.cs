@@ -10,7 +10,6 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <inheritdoc />
 /// <remarks>

@@ -6,7 +6,6 @@ using MudBlazor.Interop;
 
 namespace MudBlazor
 {
-#nullable enable
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {

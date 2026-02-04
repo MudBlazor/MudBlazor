@@ -16,7 +16,6 @@ using MudBlazor.Utilities.Clone;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a sortable, filterable data grid with multiselection and pagination.
     /// </summary>
