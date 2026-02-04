@@ -10,7 +10,7 @@
             <MudButton OnClick="ToggleCloseButtonAsync">Toggle Close Button</MudButton>
             <MudButton OnClick="ToggleFullWidthAsync">Toggle Full Width</MudButton>
             <MudButton OnClick="ToggleHeaderAsync">Toggle Header</MudButton>
-            <MudCheckBox T="bool?" Value="MudDialog.Options.CloseOnNavigation" ValueChanged="@(async v => await CloseOnNavigationChangedAsync(v))">Close On Navigation</MudCheckBox>
+            <MudCheckBox TriState="true" T="bool?" Value="MudDialog.Options.CloseOnNavigation" ValueChanged="@(async v => await CloseOnNavigationChangedAsync(v))">Close On Navigation</MudCheckBox>
             <MudButton OnClick="ChangeUrl">Change Url</MudButton>
         </div>
     </DialogContent>
