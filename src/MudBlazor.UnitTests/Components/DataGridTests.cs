@@ -23,11 +23,8 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     public record TestModel1(string Name, int? Age);
-
     public record TestModel2(string Name, int? Age, DateTime? Date);
-
     public record TestModel3(string Name, int? Age, Severity? Status);
-
     public record TestModel4(string Name, int? Age, bool? Hired);
 
     [TestFixture]
@@ -72,158 +69,74 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A");
-            cells[1].TextContent.Should().Be("73");
-            cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("11");
-            cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("99");
-            cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C");
-            cells[13].TextContent.Should().Be("33");
-            cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by Name.
-            cells[0].TextContent.Should().Be("C");
-            cells[1].TextContent.Should().Be("33");
-            cells[2].TextContent.Should().Be("33333");
-            cells[3].TextContent.Should().Be("C");
-            cells[4].TextContent.Should().Be("44");
-            cells[5].TextContent.Should().Be("1111111");
-            cells[6].TextContent.Should().Be("C");
-            cells[7].TextContent.Should().Be("55");
-            cells[8].TextContent.Should().Be("222222");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("73");
-            cells[14].TextContent.Should().Be("7");
-            cells[15].TextContent.Should().Be("A");
-            cells[16].TextContent.Should().Be("11");
-            cells[17].TextContent.Should().Be("4444");
-            cells[18].TextContent.Should().Be("A");
-            cells[19].TextContent.Should().Be("99");
-            cells[20].TextContent.Should().Be("66");
+            cells[0].TextContent.Should().Be("C"); cells[1].TextContent.Should().Be("33"); cells[2].TextContent.Should().Be("33333");
+            cells[3].TextContent.Should().Be("C"); cells[4].TextContent.Should().Be("44"); cells[5].TextContent.Should().Be("1111111");
+            cells[6].TextContent.Should().Be("C"); cells[7].TextContent.Should().Be("55"); cells[8].TextContent.Should().Be("222222");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("73"); cells[14].TextContent.Should().Be("7");
+            cells[15].TextContent.Should().Be("A"); cells[16].TextContent.Should().Be("11"); cells[17].TextContent.Should().Be("4444");
+            cells[18].TextContent.Should().Be("A"); cells[19].TextContent.Should().Be("99"); cells[20].TextContent.Should().Be("66");
 
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             cells = dataGrid.FindAll("td");
 
             // Back to original order without sorting
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
             await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortBy, x => x.Name));
             ////await comp.InvokeAsync(() => column.Instance.CompileSortBy());
 
             // Check the values of rows - should not be sorted and should be in the original order.
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             // sort through the sort icon
             await dataGrid.Find(".column-options button").ClickAsync();
             cells = dataGrid.FindAll("td");
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A");
-            cells[1].TextContent.Should().Be("73");
-            cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("11");
-            cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("99");
-            cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C");
-            cells[13].TextContent.Should().Be("33");
-            cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
@@ -273,157 +186,73 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A");
-            cells[1].TextContent.Should().Be("73");
-            cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("11");
-            cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("99");
-            cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C");
-            cells[13].TextContent.Should().Be("33");
-            cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by Name.
-            cells[0].TextContent.Should().Be("C");
-            cells[1].TextContent.Should().Be("33");
-            cells[2].TextContent.Should().Be("33333");
-            cells[3].TextContent.Should().Be("C");
-            cells[4].TextContent.Should().Be("44");
-            cells[5].TextContent.Should().Be("1111111");
-            cells[6].TextContent.Should().Be("C");
-            cells[7].TextContent.Should().Be("55");
-            cells[8].TextContent.Should().Be("222222");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("73");
-            cells[14].TextContent.Should().Be("7");
-            cells[15].TextContent.Should().Be("A");
-            cells[16].TextContent.Should().Be("11");
-            cells[17].TextContent.Should().Be("4444");
-            cells[18].TextContent.Should().Be("A");
-            cells[19].TextContent.Should().Be("99");
-            cells[20].TextContent.Should().Be("66");
+            cells[0].TextContent.Should().Be("C"); cells[1].TextContent.Should().Be("33"); cells[2].TextContent.Should().Be("33333");
+            cells[3].TextContent.Should().Be("C"); cells[4].TextContent.Should().Be("44"); cells[5].TextContent.Should().Be("1111111");
+            cells[6].TextContent.Should().Be("C"); cells[7].TextContent.Should().Be("55"); cells[8].TextContent.Should().Be("222222");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("73"); cells[14].TextContent.Should().Be("7");
+            cells[15].TextContent.Should().Be("A"); cells[16].TextContent.Should().Be("11"); cells[17].TextContent.Should().Be("4444");
+            cells[18].TextContent.Should().Be("A"); cells[19].TextContent.Should().Be("99"); cells[20].TextContent.Should().Be("66");
 
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             cells = dataGrid.FindAll("td");
 
             // Back to original order without sorting
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizeServerDataTest.Item>>();
             await column.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortBy, x => x.Name));
 
             // Check the values of rows - should not be sorted and should be in the original order.
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             // sort through the sort icon
             await dataGrid.Find(".column-options button").ClickAsync();
             cells = dataGrid.FindAll("td");
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A");
-            cells[1].TextContent.Should().Be("73");
-            cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("11");
-            cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("99");
-            cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C");
-            cells[13].TextContent.Should().Be("33");
-            cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableVirtualizeServerDataTest.Item>>();
@@ -453,28 +282,16 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(9, because: "We have 3 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
-            cells[0].TextContent.Should().Be("A");
-            cells[1].TextContent.Should().Be("73");
-            cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("11");
-            cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("B");
-            cells[7].TextContent.Should().Be("42");
-            cells[8].TextContent.Should().Be("555");
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("B"); cells[7].TextContent.Should().Be("42"); cells[8].TextContent.Should().Be("555");
         }
 
         [Test]
@@ -569,7 +386,9 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizeServerDataTest.Item>
             {
-                Column = dataGrid.Instance.RenderedColumns.First(), Operator = FilterOperator.String.Equal, Value = "C"
+                Column = dataGrid.Instance.RenderedColumns.First(),
+                Operator = FilterOperator.String.Equal,
+                Value = "C"
             }));
 
             // Check the values of rows
@@ -597,7 +416,9 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
             {
-                Column = dataGrid.Instance.RenderedColumns.First(), Operator = FilterOperator.String.Equal, Value = "C"
+                Column = dataGrid.Instance.RenderedColumns.First(),
+                Operator = FilterOperator.String.Equal,
+                Value = "C"
             }));
 
             // Check the values of rows
@@ -713,7 +534,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableServerDataTest.Item>
                 {
-                    Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(), Operator = FilterOperator.String.Equal, Value = "C"
+                    Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(),
+                    Operator = FilterOperator.String.Equal,
+                    Value = "C"
                 });
             });
 
@@ -822,7 +645,9 @@ namespace MudBlazor.UnitTests.Components
 
             var twoBFilter = new FilterDefinition<DataGridMultiSelectionTest.Item>
             {
-                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(c => c.PropertyName == "Name"), Operator = FilterOperator.String.Equal, Value = "B"
+                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(c => c.PropertyName == "Name"),
+                Operator = FilterOperator.String.Equal,
+                Value = "B"
             };
 
             // Add a FilterDefinition to filter where the Name == "B".
@@ -939,7 +764,7 @@ namespace MudBlazor.UnitTests.Components
             var first = new TaskCompletionSource<GridData<int>>();
             // Set the ServerData function
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p =>
-                    p.VirtualizeServerData,
+                p.VirtualizeServerData,
                 new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, cancellationToken) =>
                 {
                     // Remember the cancellation token
@@ -959,7 +784,7 @@ namespace MudBlazor.UnitTests.Components
             var second = new TaskCompletionSource<GridData<int>>();
             // Set the VirtualizeServerData function to a new method...
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p =>
-                    p.VirtualizeServerData,
+                p.VirtualizeServerData,
                 new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task)));
 
             await Task.Delay(20);
@@ -1494,105 +1319,49 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A");
-            cells[1].TextContent.Should().Be("73");
-            cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("11");
-            cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("99");
-            cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C");
-            cells[13].TextContent.Should().Be("33");
-            cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by A.
-            cells[0].TextContent.Should().Be("C");
-            cells[1].TextContent.Should().Be("33");
-            cells[2].TextContent.Should().Be("33333");
-            cells[3].TextContent.Should().Be("C");
-            cells[4].TextContent.Should().Be("44");
-            cells[5].TextContent.Should().Be("1111111");
-            cells[6].TextContent.Should().Be("C");
-            cells[7].TextContent.Should().Be("55");
-            cells[8].TextContent.Should().Be("222222");
-            cells[9].TextContent.Should().Be("B");
-            cells[10].TextContent.Should().Be("42");
-            cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("73");
-            cells[14].TextContent.Should().Be("7");
-            cells[15].TextContent.Should().Be("A");
-            cells[16].TextContent.Should().Be("11");
-            cells[17].TextContent.Should().Be("4444");
-            cells[18].TextContent.Should().Be("A");
-            cells[19].TextContent.Should().Be("99");
-            cells[20].TextContent.Should().Be("66");
+            cells[0].TextContent.Should().Be("C"); cells[1].TextContent.Should().Be("33"); cells[2].TextContent.Should().Be("33333");
+            cells[3].TextContent.Should().Be("C"); cells[4].TextContent.Should().Be("44"); cells[5].TextContent.Should().Be("1111111");
+            cells[6].TextContent.Should().Be("C"); cells[7].TextContent.Should().Be("55"); cells[8].TextContent.Should().Be("222222");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("73"); cells[14].TextContent.Should().Be("7");
+            cells[15].TextContent.Should().Be("A"); cells[16].TextContent.Should().Be("11"); cells[17].TextContent.Should().Be("4444");
+            cells[18].TextContent.Should().Be("A"); cells[19].TextContent.Should().Be("99"); cells[20].TextContent.Should().Be("66");
 
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be the default order of the items.
-            cells[0].TextContent.Should().Be("B");
-            cells[1].TextContent.Should().Be("42");
-            cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A");
-            cells[4].TextContent.Should().Be("73");
-            cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A");
-            cells[7].TextContent.Should().Be("11");
-            cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C");
-            cells[10].TextContent.Should().Be("33");
-            cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A");
-            cells[13].TextContent.Should().Be("99");
-            cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C");
-            cells[16].TextContent.Should().Be("44");
-            cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C");
-            cells[19].TextContent.Should().Be("55");
-            cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.None));
             dataGrid.Instance.DropContainerHasChanged();
@@ -1610,240 +1379,440 @@ namespace MudBlazor.UnitTests.Components
             var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>();
             Func<DataGridFiltersTest.Model, bool> func = null;
 
-#region FilterOperator.String.Contains
+            #region FilterOperator.String.Contains
 
             //default Case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Contains, Value = "Joe" };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Contains, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value default case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Contains, Value = null, };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Value = null,
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value default case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Contains, Value = null };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Value = null
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.String.NotContains
+            #region FilterOperator.String.NotContains
 
             // default case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotContains, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             // case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotContains, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotContains, Value = null };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotContains,
+                Value = null
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Does not contain", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.String.Equal
+            #region FilterOperator.String.Equal
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Equal, Value = "Joe" };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Equal,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Equal, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Equal,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value default case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Equal, Value = null, };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Equal,
+                Value = null,
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Equal, Value = null };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Equal,
+                Value = null
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.String.NotEqual
+            #region FilterOperator.String.NotEqual
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotEqual, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             //case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotEqual, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotEqual, Value = null };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotEqual,
+                Value = null
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.String.StartsWith
+            #region FilterOperator.String.StartsWith
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.StartsWith, Value = "Joe" };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.StartsWith, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.StartsWith, Value = null };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.StartsWith,
+                Value = null
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Not Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.String.EndsWith
+            #region FilterOperator.String.EndsWith
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.EndsWith, Value = "Joe" };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.EndsWith, Value = "Joe" };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe"
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.EndsWith, Value = null };
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.EndsWith,
+                Value = null
+            };
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.String.Empty
+            #region FilterOperator.String.Empty
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.Empty, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotEmpty, Value = null, };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null,
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeFalse();
 
-#endregion
+            #endregion
 
-#region FilterOperator.String.NotEmpty
+            #region FilterOperator.String.NotEmpty
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotEmpty, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = FilterOperator.String.NotEmpty, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("", 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new(string.Empty, 45, null, null, null, null, null)).Should().BeFalse();
 
-#endregion
+            #endregion
 
             // handle null operator
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = nameColumn, Operator = null, Value = "Joe" };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = nameColumn,
+                Operator = null,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Joe Not", 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new(null, 45, null, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
@@ -1856,26 +1825,50 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             var hiredColumn = dataGrid.Instance.GetColumnByPropertyName("Hired");
 
-#region FilterOperator.Boolean.Is
+            #region FilterOperator.Boolean.Is
 
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = hiredColumn, Operator = FilterOperator.Boolean.Is, Value = true };
-            var func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = hiredColumn,
+                Operator = FilterOperator.Boolean.Is,
+                Value = true
+            };
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, false, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, true, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = hiredColumn, Operator = FilterOperator.Boolean.Is, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = hiredColumn,
+                Operator = FilterOperator.Boolean.Is,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, false, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, true, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = hiredColumn, Operator = null, Value = true };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = hiredColumn,
+                Operator = null,
+                Value = true
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, false, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, true, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
@@ -1888,43 +1881,83 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             var statusColumn = dataGrid.Instance.GetColumnByPropertyName("Status");
 
-#region FilterOperator.Enum.Is
+            #region FilterOperator.Enum.Is
 
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = statusColumn, Operator = FilterOperator.Enum.Is, Value = Severity.Normal };
-            var func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.Is,
+                Value = Severity.Normal
+            };
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 456, Severity.Info, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = statusColumn, Operator = FilterOperator.Enum.Is, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.Is,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 456, Severity.Info, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.Enum.IsNot
+            #region FilterOperator.Enum.IsNot
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = statusColumn, Operator = FilterOperator.Enum.IsNot, Value = Severity.Normal };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsNot,
+                Value = Severity.Normal
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = statusColumn, Operator = FilterOperator.Enum.IsNot, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsNot,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = statusColumn, Operator = null, Value = Severity.Normal };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = null,
+                Value = Severity.Normal
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
@@ -1938,129 +1971,265 @@ namespace MudBlazor.UnitTests.Components
             var dateColumn = dataGrid.Instance.GetColumnByPropertyName("HiredOn");
             var utcnow = DateTime.UtcNow;
 
-#region FilterOperator.DateTime.Is
+            #region FilterOperator.DateTime.Is
 
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.Is, Value = utcnow };
-            var func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.Is,
+                Value = utcnow
+            };
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.Is, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.Is,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateTime.IsNot
+            #region FilterOperator.DateTime.IsNot
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.IsNot, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.IsNot, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateTime.After
+            #region FilterOperator.DateTime.After
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.After, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.After,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.After, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.After,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateTime.OnOrAfter
+            #region FilterOperator.DateTime.OnOrAfter
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.OnOrAfter, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.OnOrAfter, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateTime.Before
+            #region FilterOperator.DateTime.Before
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.Before, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.Before,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.Before, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.Before,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateTime.OnOrBefore
+            #region FilterOperator.DateTime.OnOrBefore
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.OnOrBefore, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.OnOrBefore, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateTime.Empty
+            #region FilterOperator.DateTime.Empty
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.Empty, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.Empty,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.Empty, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateTime.NotEmpty
+            #region FilterOperator.DateTime.NotEmpty
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.NotEmpty, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = FilterOperator.DateTime.NotEmpty, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
-#endregion
+            #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dateColumn, Operator = null, Value = utcnow };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dateColumn,
+                Operator = null,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 45, null, null, utcnow, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
         }
@@ -2073,137 +2242,273 @@ namespace MudBlazor.UnitTests.Components
             var dateColumn = dataGrid.Instance.GetColumnByPropertyName("HiredOn");
             var testDate = new DateOnly(2020, 3, 10);
 
-#region FilterOperator.DateOnly.Is
+            #region FilterOperator.DateOnly.Is
 
-            var filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.Is, Value = testDate };
-            var func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            var filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Is,
+                Value = testDate
+            };
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeFalse();
             func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.Is, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Is,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateOnly.IsNot
+            #region FilterOperator.DateOnly.IsNot
 
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.IsNot, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.IsNot,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
             func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.IsNot, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.IsNot,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateOnly.After
+            #region FilterOperator.DateOnly.After
 
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.After, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.After,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
             func.Invoke(new("Joe", 32, null)).Should().BeFalse();
             func.Invoke(new("John", 32, new DateOnly(2022, 6, 15))).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.After, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.After,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateOnly.OnOrAfter
+            #region FilterOperator.DateOnly.OnOrAfter
 
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.OnOrAfter, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrAfter,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeFalse();
             func.Invoke(new("John", 32, new DateOnly(2022, 6, 15))).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.OnOrAfter, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrAfter,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateOnly.Before
+            #region FilterOperator.DateOnly.Before
 
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.Before, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Before,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
             func.Invoke(new("Joe", 32, null)).Should().BeFalse();
             func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.Before, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Before,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateOnly.OnOrBefore
+            #region FilterOperator.DateOnly.OnOrBefore
 
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.OnOrBefore, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrBefore,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeFalse();
             func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.OnOrBefore, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrBefore,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateOnly.Empty
+            #region FilterOperator.DateOnly.Empty
 
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.Empty, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Empty,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
             func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.Empty, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.DateOnly.NotEmpty
+            #region FilterOperator.DateOnly.NotEmpty
 
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.NotEmpty, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.NotEmpty,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeFalse();
             func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = FilterOperator.DateOnly.NotEmpty, Value = null };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeFalse();
 
-#endregion
+            #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model> { Column = dateColumn, Operator = null, Value = testDate };
-            func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = null,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
             func.Invoke(new("Joe", 32, null)).Should().BeTrue();
         }
@@ -2215,112 +2520,216 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             var ageColumn = dataGrid.Instance.GetColumnByPropertyName("Age");
 
-#region FilterOperator.Number.Equal
+            #region FilterOperator.Number.Equal
 
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.Equal, Value = 45 };
-            var func = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.Equal,
+                Value = 45
+            };
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeFalse();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.Equal, Value = null };
-            var func2 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.Equal,
+                Value = null
+            };
+            var func2 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             // data type is an int
             func2.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
             func2.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
             func2.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.Number.NotEqual
+            #region FilterOperator.Number.NotEqual
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.NotEqual, Value = 45 };
-            var func3 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.NotEqual,
+                Value = 45
+            };
+            var func3 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func3.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
             func3.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
             func3.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.NotEqual, Value = null };
-            var func4 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.NotEqual,
+                Value = null
+            };
+            var func4 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func4.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
             func4.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
             func4.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.Number.GreaterThan
+            #region FilterOperator.Number.GreaterThan
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.GreaterThan, Value = 45 };
-            var func5 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 45
+            };
+            var func5 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func5.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
             func5.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func5.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.GreaterThan, Value = null };
-            var func6 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = null
+            };
+            var func6 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func6.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
             func6.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func6.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.Number.LessThan
+            #region FilterOperator.Number.LessThan
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.LessThan, Value = 45 };
-            var func7 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.LessThan,
+                Value = 45
+            };
+            var func7 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func7.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeTrue();
             func7.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
             func7.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeFalse();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.LessThan, Value = null };
-            var func8 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.LessThan,
+                Value = null
+            };
+            var func8 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func8.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeTrue();
             func8.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
             func8.Invoke(new("Joe", null, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.Number.GreaterThanOrEqual
+            #region FilterOperator.Number.GreaterThanOrEqual
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.GreaterThanOrEqual, Value = 45 };
-            var func9 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.GreaterThanOrEqual,
+                Value = 45
+            };
+            var func9 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func9.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeFalse();
             func9.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeFalse();
             func9.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.GreaterThanOrEqual, Value = null };
-            var func10 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.GreaterThanOrEqual,
+                Value = null
+            };
+            var func10 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func10.Invoke(new("Sam", 4, null, null, null, null, null)).Should().BeTrue();
             func10.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
             func10.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
-#region FilterOperator.Number.LessThanOrEqual
+            #region FilterOperator.Number.LessThanOrEqual
 
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.LessThanOrEqual, Value = 45 };
-            var func11 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.LessThanOrEqual,
+                Value = 45
+            };
+            var func11 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func11.Invoke(new("Sam", 46, null, null, null, null, null)).Should().BeFalse();
             func11.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeFalse();
             func11.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             // null value
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = FilterOperator.Number.LessThanOrEqual, Value = null };
-            var func12 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = FilterOperator.Number.LessThanOrEqual,
+                Value = null
+            };
+            var func12 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func12.Invoke(new("Sam", 46, null, null, null, null, null)).Should().BeTrue();
             func12.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
             func12.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
-#endregion
+            #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = ageColumn, Operator = null, Value = 45 };
-            var func13 = filterDefinition.GenerateFilterFunction(new FilterOptions { FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity });
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = ageColumn,
+                Operator = null,
+                Value = 45
+            };
+            var func13 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             func13.Invoke(new("Sam", 456, null, null, null, null, null)).Should().BeTrue();
             func13.Invoke(new("Sam", null, null, null, null, null, null)).Should().BeTrue();
             func13.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
@@ -2429,42 +2838,80 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
             // test filter definition on the Name property (string contains)
-            var stringFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = "contains", Value = "John" };
+            var stringFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = "contains",
+                Value = "John"
+            };
 
             // test filter definition on the Age property (int >)
-            var intFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = ">", Value = 30 };
+            var intFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
+                Operator = ">",
+                Value = 30
+            };
 
             // test filter definition on the Status property (Enum is)
-            var enumFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Status"), Operator = "is", Value = Severity.Normal };
+            var enumFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Status"),
+                Operator = "is",
+                Value = Severity.Normal
+            };
 
             // test filter definition on the Hired property (Bool is)
-            var boolFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Hired"), Operator = "is", Value = true };
+            var boolFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Hired"),
+                Operator = "is",
+                Value = true
+            };
 
             // test filter definition on the Hired property (Bool null)
-            var boolFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Hired"), Value = null };
+            var boolFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Hired"),
+                Value = null
+            };
 
             // test filter definition on the HiredOn property (DateTime is)
             var dateTimeFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
-                Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"), Operator = "is", Value = DateTime.UtcNow.Date
+                Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"),
+                Operator = "is",
+                Value = DateTime.UtcNow.Date
             };
 
             // test filter definition on the HiredOn property (DateTime null)
-            var dateTimeFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"), Value = null };
+            var dateTimeFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"),
+                Value = null
+            };
 
             // test filter definition on the StartDate property (DateOnly is)
             var dateOnlyFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
-                Column = dataGrid.Instance.GetColumnByPropertyName("StartDate"), Operator = "is", Value = new DateOnly(2020, 3, 10)
+                Column = dataGrid.Instance.GetColumnByPropertyName("StartDate"),
+                Operator = "is",
+                Value = new DateOnly(2020, 3, 10)
             };
 
             // test filter definition on the StartDate property (DateOnly null)
-            var dateOnlyFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("StartDate"), Value = null };
+            var dateOnlyFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("StartDate"),
+                Value = null
+            };
 
             // test filter definition on the ApplicationId property (Guid equals)
             var guidFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
-                Column = dataGrid.Instance.GetColumnByPropertyName("ApplicationId"), Operator = "equals", Value = Guid.NewGuid()
+                Column = dataGrid.Instance.GetColumnByPropertyName("ApplicationId"),
+                Operator = "equals",
+                Value = Guid.NewGuid()
             };
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(stringFilterDefinition));
@@ -2581,7 +3028,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = "contains", Value = "Test" };
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = "contains",
+                Value = "Test"
+            };
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
             await comp.WaitForAssertionAsync(() => dataGrid.Instance.FilterDefinitions.Should().Contain(filterDefinition));
@@ -2598,7 +3050,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Name") };
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name")
+            };
 
             var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
             var newBoolColumn = dataGrid.Instance.GetColumnByPropertyName("Hired");
@@ -2637,10 +3092,10 @@ namespace MudBlazor.UnitTests.Components
 
             items.Count.Should().Be(4);
             items.ToMarkup()
-                .Should().Contain("starts with")
-                .And.Contain("ends with")
-                .And.Contain("equals")
-                .And.Contain("contains");
+                 .Should().Contain("starts with")
+                 .And.Contain("ends with")
+                 .And.Contain("equals")
+                 .And.Contain("contains");
         }
 
         [Test]
@@ -2807,7 +3262,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
             await comp.InvokeAsync(() => dataGrid.Instance
-                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+            .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
 
             dataGrid.FindAll("td")[5].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
         }
@@ -2899,7 +3354,7 @@ namespace MudBlazor.UnitTests.Components
                 await buttons[10].ClickAsync();
 
                 dataGrid.FindAll("td")
-                    .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
+                .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
             });
         }
 
@@ -3271,7 +3726,9 @@ namespace MudBlazor.UnitTests.Components
             {
                 return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
                 {
-                    Column = dataGrid.Instance.RenderedColumns.First(), Operator = FilterOperator.String.Contains, Value = "test"
+                    Column = dataGrid.Instance.RenderedColumns.First(),
+                    Operator = FilterOperator.String.Contains,
+                    Value = "test"
                 });
             });
 
@@ -3459,7 +3916,11 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
 
             (double Top, double Left) openPosition = (50, 50);
-            var mouseArgs = new MouseEventArgs { PageY = openPosition.Top, PageX = openPosition.Left };
+            var mouseArgs = new MouseEventArgs
+            {
+                PageY = openPosition.Top,
+                PageX = openPosition.Left
+            };
             comp.Find(".filter-button").Click(mouseArgs);
             await comp.WaitForAssertionAsync(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
         }
@@ -3715,16 +4176,31 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.Count().Should().Be(2);
             var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
 
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>() { Column = guidColumn, Operator = "equals", Value = "invalid guid", });
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Column = guidColumn,
+                Operator = "equals",
+                Value = "invalid guid",
+            });
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>() { Column = guidColumn, Operator = "equals", Value = comp.Instance.Guid1, });
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Column = guidColumn,
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+            });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>() { Column = guidColumn, Operator = "not equals", Value = comp.Instance.Guid1, });
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Column = guidColumn,
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+            });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
         }
@@ -3750,13 +4226,23 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>() { Column = guidColumn, Operator = "equals", Value = comp.Instance.Guid1, });
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            {
+                Column = guidColumn,
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+            });
             comp.Render();
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>() { Column = guidColumn, Operator = "not equals", Value = comp.Instance.Guid1, });
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            {
+                Column = guidColumn,
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+            });
             comp.Render();
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
@@ -3881,22 +4367,10 @@ namespace MudBlazor.UnitTests.Components
             var cells = dataGrid.FindAll(".mud-table-body td input[value]");
 
             // We want to check the cell values since there are cases when something is broken with MudNumericField's culture, and you won't know without checking values
-            cells[0].GetAttribute("value").Should().Be("Sam");
-            cells[1].GetAttribute("value").Should().Be("56");
-            cells[2].GetAttribute("value").Should().Be("3.5");
-            cells[3].GetAttribute("value").Should().Be("5,2");
-            cells[4].GetAttribute("value").Should().Be("Alicia");
-            cells[5].GetAttribute("value").Should().Be("54");
-            cells[6].GetAttribute("value").Should().Be("3.6");
-            cells[7].GetAttribute("value").Should().Be("4,8");
-            cells[8].GetAttribute("value").Should().Be("Ira");
-            cells[9].GetAttribute("value").Should().Be("27");
-            cells[10].GetAttribute("value").Should().Be("3.9");
-            cells[11].GetAttribute("value").Should().Be("6,2");
-            cells[12].GetAttribute("value").Should().Be("John");
-            cells[13].GetAttribute("value").Should().Be("32");
-            cells[14].GetAttribute("value").Should().Be("4.2");
-            cells[15].GetAttribute("value").Should().Be("3,2");
+            cells[0].GetAttribute("value").Should().Be("Sam"); cells[1].GetAttribute("value").Should().Be("56"); cells[2].GetAttribute("value").Should().Be("3.5"); cells[3].GetAttribute("value").Should().Be("5,2");
+            cells[4].GetAttribute("value").Should().Be("Alicia"); cells[5].GetAttribute("value").Should().Be("54"); cells[6].GetAttribute("value").Should().Be("3.6"); cells[7].GetAttribute("value").Should().Be("4,8");
+            cells[8].GetAttribute("value").Should().Be("Ira"); cells[9].GetAttribute("value").Should().Be("27"); cells[10].GetAttribute("value").Should().Be("3.9"); cells[11].GetAttribute("value").Should().Be("6,2");
+            cells[12].GetAttribute("value").Should().Be("John"); cells[13].GetAttribute("value").Should().Be("32"); cells[14].GetAttribute("value").Should().Be("4.2"); cells[15].GetAttribute("value").Should().Be("3,2");
 
             // total with es-ES culture (decimals separated by comma)
             var filterTotal = dataGrid.FindAll("th.filter-header-cell input")[3];
@@ -4220,8 +4694,8 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[2].InnerHtml.Should().Be("Age");
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
-        }
 
+        }
         [Test]
         public async Task DataGridEditFormDialogIsCustomizable()
         {
@@ -4357,14 +4831,10 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
-            {
-                Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = FilterOperator.String.Empty
-            }));
+            { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = FilterOperator.String.Empty }));
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
-            {
-                Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = FilterOperator.Number.GreaterThan, Value = 30
-            }));
+            { Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = FilterOperator.Number.GreaterThan, Value = 30 }));
 
             // test filter definition without value
             var nameHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[0];
@@ -4407,8 +4877,8 @@ namespace MudBlazor.UnitTests.Components
                 .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .GetValue(dgComp.Instance)!;
             Context.JSInterop
-                .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
-                .SetResult(new Interop.BoundingClientRect { Width = 50 });
+              .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
+              .SetResult(new Interop.BoundingClientRect { Width = 50 });
             var colComps = comp.FindComponents<HeaderCell<DataGridHideAndResizeTest.Model>>();
             foreach (var colComp in colComps)
             {
@@ -4443,8 +4913,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
-            var nameFilter = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = FilterOperator.String.Contains, Value = "Sam", };
-            var ageFilter = new FilterDefinition<DataGridFiltersTest.Model> { Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = FilterOperator.Number.GreaterThan, Value = 42, };
+            var nameFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam",
+            };
+            var ageFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 42,
+            };
 
             var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().Where([nameFilter, ageFilter]);
             query.ToString().Should().Match("*x.Name.Contains(*x.Age > Convert(42*");
@@ -4587,14 +5067,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGrid_TwoWayBind_SelectedItem_SelectedItems()
         {
             int selectedItem = 3;
-            var items = new List<int>
-            {
-                1,
-                2,
-                3,
-                4,
-                5
-            };
+            var items = new List<int> { 1, 2, 3, 4, 5 };
             HashSet<int> selectedItems = new HashSet<int> { selectedItem };
             var comp = Context.Render<MudDataGrid<int>>(parameters =>
             {
@@ -5021,7 +5494,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async System.Threading.Tasks.Task SelectAll_WithNoDisabledFunc_StillWorks()
         {
-            var items = new List<TestDataItem> { new TestDataItem { Id = 1, Name = "Item 1" }, new TestDataItem { Id = 2, Name = "Item 2" } };
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Item 1" },
+                new TestDataItem { Id = 2, Name = "Item 2" }
+            };
 
             var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
@@ -5039,7 +5516,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SelectAll_WithDisabledFunc_ReturningAllFalse_StillWorks()
         {
-            var items = new List<TestDataItem> { new TestDataItem { Id = 1, Name = "Item 1", ShouldBeDisabled = false }, new TestDataItem { Id = 2, Name = "Item 2", ShouldBeDisabled = false } };
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Item 1", ShouldBeDisabled = false },
+                new TestDataItem { Id = 2, Name = "Item 2", ShouldBeDisabled = false }
+            };
             Func<TestDataItem, bool> disabledFunc = item => false; // All items are effectively enabled
 
             var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
@@ -5271,7 +5752,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridFilterIcons()
         {
             var comp = Context.Render<DataGridFilterIconsTest>();
-
             MudIconButton FirstFilterButton() =>
                 comp.FindComponents<MudIconButton>().FirstOrDefault(x => x.Markup.Contains("filter-button"))?.Instance;
 
@@ -5306,7 +5786,7 @@ namespace MudBlazor.UnitTests.Components
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
         }
 
-#region Selection Cleanup Tests (ObservableCollection)
+        #region Selection Cleanup Tests (ObservableCollection)
 
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
@@ -5507,9 +5987,9 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(3));
         }
 
-#endregion
+        #endregion
 
-#region Selection Cleanup Tests (List)
+        #region Selection Cleanup Tests (List)
 
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenItemRemovedFromList()
@@ -5580,9 +6060,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
         }
 
-#endregion
+        #endregion
 
-#region Hierarchy Cleanup Tests (ObservableCollection)
+        #region Hierarchy Cleanup Tests (ObservableCollection)
 
         [Test]
         public async Task DataGrid_OpenHierarchies_ShouldClearWhenExpandedItemRemovedFromObservableCollection()
@@ -5644,9 +6124,9 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.Instance._openHierarchies.Count.Should().Be(0));
         }
 
-#endregion
+        #endregion
 
-#region Hierarchy Cleanup Tests (List)
+        #region Hierarchy Cleanup Tests (List)
 
         [Test]
         public async Task DataGrid_OpenHierarchies_ShouldClearWhenExpandedItemRemovedFromList()
@@ -5686,6 +6166,6 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.Instance._openHierarchies.Count.Should().Be(0));
         }
 
-#endregion
+        #endregion
     }
 }
