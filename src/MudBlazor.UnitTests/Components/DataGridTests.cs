@@ -833,6 +833,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridPaginationShouldFormatNumbersWithCommas()
+        {
+            var comp = Context.Render<DataGridPaginationFormattingTest>();
+
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 1,000");
+        }
+
+        [Test]
+        public void DataGridPaginationShouldRespectCustomFormatWithSingleTag()
+        {
+            var comp = Context.Render<DataGridPaginationCustomFormatTest>();
+
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("Total: 1,000");
+        }
+        
+        [Test]
         public void DataGridPaginationPageSizeDropDown()
         {
             var comp = Context.Render<DataGridPaginationTest>(self => self.Add(x => x.PageSizeDropDown, false));
