@@ -56,9 +56,10 @@ namespace MudBlazor
         /// Determines if the dialog should close on navigation.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>null</c>.
+        /// When <c>null</c> this option is considered <c>true</c> if the absolute path changes and <c>false</c> if only the query or fragment changes.
         /// </remarks>
-        public bool? CloseOnNavigation { get; init; } = true;
+        public bool? CloseOnNavigation { get; init; }
 
         /// <summary>
         /// Hides the dialog header.
