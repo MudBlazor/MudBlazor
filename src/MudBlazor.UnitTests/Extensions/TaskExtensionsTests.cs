@@ -6,8 +6,23 @@ namespace MudBlazor.UnitTests.Extensions
 {
 
     [TestFixture]
+    [NonParallelizable]
     public class TaskExtensionsTests
     {
+        private Action<Exception> _originalExceptionHandler = null!;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
+        }
+
         private async Task AsyncTaskExceptionGenerator(string errorMessage)
         {
             await Task.Delay(10);

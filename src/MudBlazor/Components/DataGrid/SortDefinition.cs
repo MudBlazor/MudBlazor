@@ -2,9 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-
 namespace MudBlazor;
 
 #nullable enable
@@ -18,4 +15,4 @@ namespace MudBlazor;
 /// <param name="Index">The order of this sort relative to other sort definitions.</param>
 /// <param name="SortFunc">The custom function used to sort values.</param>
 /// <param name="Comparer">The comparer used to compare values.</param>
-public sealed record SortDefinition<T>(string SortBy, bool Descending, int Index, Func<T, object> SortFunc, IComparer<object>? Comparer = null);
+public sealed record SortDefinition<T>(string SortBy, bool Descending, int Index, Func<T, object?> SortFunc, IComparer<object?>? Comparer = null);

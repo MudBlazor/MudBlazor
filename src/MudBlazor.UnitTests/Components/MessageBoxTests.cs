@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
-            comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].Click();
+            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
         }
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
-            comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].Click();
+            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
         }
@@ -104,6 +104,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_NoOptions_NoMudDefaults()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = (DialogService)Context.Services.GetService<IDialogService>()!;
@@ -166,12 +167,12 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Count.Should().Be(3);
 
             // close it manually
-            comp.FindAll("button")[0].Click();
+            await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("button").Should().BeEmpty();
 
             dialogResult?.Result.Data?.Should().BeNull();
@@ -180,6 +181,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_WithOptions_NoMudDefaults()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = (DialogService)Context.Services.GetService<IDialogService>();
@@ -240,7 +242,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 
@@ -250,6 +252,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_CloseOnEscapeKey_NoOptions_WithMudDefaults()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<MudDialogProvider>(builder =>
             {
                 builder.Add(p => p.CloseOnEscapeKey, true);
@@ -309,7 +312,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs() { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 

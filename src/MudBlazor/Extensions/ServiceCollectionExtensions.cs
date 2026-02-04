@@ -224,18 +224,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds IEventListener as a transient instance.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        public static IServiceCollection AddMudEventManager(this IServiceCollection services)
-        {
-            services.TryAddTransient<IEventListener, EventListener>();
-            services.TryAddScoped<IEventListenerFactory, EventListenerFactory>();
-
-            return services;
-        }
-
-        /// <summary>
         /// Adds IPointerEventsNoneService as a scoped dependency.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -335,7 +323,6 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
-                .AddMudEventManager()
                 .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
@@ -409,7 +396,6 @@ namespace MudBlazor.Services
                     popoverOptions.FlipMargin = options.PopoverOptions.FlipMargin;
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
-                    popoverOptions.Mode = options.PopoverOptions.Mode;
                     popoverOptions.OverflowPadding = options.PopoverOptions.OverflowPadding;
                     popoverOptions.ModalOverlay = options.PopoverOptions.ModalOverlay;
                     popoverOptions.OverflowBehavior = options.PopoverOptions.OverflowBehavior;
@@ -417,7 +403,6 @@ namespace MudBlazor.Services
                     popoverOptions.Duration = options.PopoverOptions.Duration;
                 })
                 .AddMudBlazorScrollSpy()
-                .AddMudEventManager()
                 .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }

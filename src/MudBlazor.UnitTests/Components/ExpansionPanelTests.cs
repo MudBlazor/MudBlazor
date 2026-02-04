@@ -12,14 +12,14 @@ namespace MudBlazor.UnitTests.Components
     {
 
         [OneTimeSetUp]
-        public void Init()
+        public static void Init()
         {
             AssertionConfiguration.Current.Formatting.MaxDepth = 100;
             AssertionConfiguration.Current.Formatting.MaxLines = 5000;
         }
 
         [OneTimeTearDown]
-        public void Cleanup()
+        public static void Cleanup()
         {
             AssertionConfiguration.Current.Formatting.MaxDepth = 5;
             AssertionConfiguration.Current.Formatting.MaxLines = 100;
@@ -57,14 +57,14 @@ namespace MudBlazor.UnitTests.Components
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]
-        public void MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
+        public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
         {
             var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
 
             //click in the three headers
             //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             //{
-            //    header.Click();
+            //    await header.ClickAsync();
             //}
 
             //Only one panel should be expanded
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should expand panel
         /// </summary>
         [Test]
-        public void MudExpansionPanel_IsInitiallyExpanded_Expands()
+        public async Task MudExpansionPanel_IsInitiallyExpanded_Expands()
         {
             var comp = Context.Render<ExpansionPanelStartExpandedTest>();
 
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
             panels.Count.Should().Be(1);
 
             var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First();
-            header.Click();
+            await header.ClickAsync();
 
             //we could close the panel
             panels = comp.FindAll(".mud-panel-expanded").ToList();
@@ -165,7 +165,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that ExpandAll method expands all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_ExpandAllAsync()
+        public async Task MudExpansionPanel_ExpandAll()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
@@ -190,7 +190,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAll method collapses all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllAsync()
+        public async Task MudExpansionPanel_CollapseAll()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAllExcept method collapses all panels except one.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllExceptAsync()
+        public async Task MudExpansionPanel_CollapseAllExcept()
         {
             var panels = Context.Render<MudExpansionPanels>();
             var panel1 = Context.Render<MudExpansionPanel>().Instance;
@@ -308,16 +308,16 @@ namespace MudBlazor.UnitTests.Components
             var header = comp.Find(".mud-expand-panel-header");
 
             comp.Markup.Should().NotContain("mud-panel-expanded");
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             comp.Markup.Should().Contain("mud-panel-expanded");
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = " " });
             comp.Markup.Should().NotContain("mud-panel-expanded");
         }
 
         /// <summary>
         /// Tests that buttons and other interactive content within a collapsed expansion panel 
         /// are properly hidden from accessibility tools and keyboard navigation by being placed 
-        /// in a container with the hidden attribute.
+        /// in a container with the visibility:hidden attribute.
         /// </summary>
         [Test]
         public void MudExpansionPanel_Button_IsInHiddenContainer_When_Panel_Collapsed()
@@ -327,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
             var hiddenParent = button
                 .GetAncestors()
                 .OfType<IElement>()
-                .FirstOrDefault(e => e.HasAttribute("hidden"));
+                .FirstOrDefault(e => e.ClassList.Contains("invisible"));
 
             hiddenParent.Should().NotBeNull("button should not be accessible when the panel is collapsed");
         }
@@ -346,11 +346,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-panel-expanded");
 
             // Try to expand with Enter key - should be ignored
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             comp.Markup.Should().NotContain("mud-panel-expanded");
 
             // Try to expand with Space key - should be ignored
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = " " });
             comp.Markup.Should().NotContain("mud-panel-expanded");
         }
 
@@ -368,8 +368,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-panel-expanded");
             comp.Find("button").Should().NotBeNull();
 
-            var contentDiv = comp.Find(".mud-expand-panel-content");
-            contentDiv.HasAttribute("hidden").Should().BeTrue();
+            var contentDiv = comp.Find(".mud-collapse-container");
+            contentDiv.ClassList.Contains("invisible").Should().BeTrue();
         }
 
         /// <summary>

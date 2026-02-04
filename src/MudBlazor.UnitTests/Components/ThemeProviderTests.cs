@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void IsDarkModeTest()
+        public void IsDarkMode()
         {
             var comp = Context.Render<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
@@ -265,7 +265,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDarkModeTest()
+        public void CustomThemeDarkMode()
         {
             var myCustomTheme = new MudTheme
             {
@@ -282,7 +282,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDarkModePrimaryDerivateColorTest()
+        public void CustomThemeDarkModePrimaryDerivateColor()
         {
             // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
             var myCustomTheme = new MudTheme()
@@ -299,7 +299,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDefaultTest()
+        public void CustomThemeDefault()
         {
             var defaultTheme = new MudTheme();
 
@@ -318,7 +318,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task WatchSystemDarkModeTest()
+        public async Task WatchSystemDarkMode()
         {
             var systemMockValue = false;
             Task SystemChangedResult(bool newValue)
@@ -338,7 +338,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("host")]
         [TestCase(":root")]
         [TestCase(":host")]
-        public void PseudoCssScope_Test(string scope)
+        public void PseudoCssScope(string scope)
         {
             var mudTheme = new MudTheme
             {
@@ -364,7 +364,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void PseudoCssRootColor_Test()
+        public void PseudoCssRootColor()
         {
             const string Scope = ":root";
             var mudTheme = new MudTheme
@@ -407,52 +407,52 @@ namespace MudBlazor.UnitTests.Components
         public async Task ObserveSystemDarkModeChange()
         {
             // Arrange & Act
-            Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
-            Context.JSInterop.SetupVoid("watchDarkThemeMedia");
+            Context.JSInterop.SetupVoid("mudThemeProvider.stopWatchingDarkMode");
+            Context.JSInterop.SetupVoid("mudThemeProvider.watchDarkMode");
             var themeProvider = Context.Render<ThemeProviderObserveSystemDarkModeChangeTest>();
 
             // Assert
-            Context.JSInterop.VerifyNotInvoke("watchDarkThemeMedia");
-            Context.JSInterop.VerifyNotInvoke("stopWatchingDarkThemeMedia");
+            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.watchDarkMode");
+            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.stopWatchingDarkMode");
 
             // Act
             await themeProvider.InvokeAsync(themeProvider.Instance.EnableObserve);
 
             // Assert
-            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia", 1);
-            Context.JSInterop.VerifyNotInvoke("stopWatchingDarkThemeMedia");
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode", 1);
+            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.stopWatchingDarkMode");
 
             // Act
             await themeProvider.InvokeAsync(themeProvider.Instance.DisableObserve);
 
             // Assert
-            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia", 1);
-            Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia", 1);
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode", 1);
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.stopWatchingDarkMode", 1);
         }
 
         [Test]
         public async Task Dispose_ShouldInvokeJs()
         {
             // Arrange
-            Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
+            Context.JSInterop.SetupVoid("mudThemeProvider.stopWatchingDarkMode");
             Context.Render<MudThemeProvider>();
 
             //Act
             await Context.DisposeComponentsAsync();
 
             // Assert
-            Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia");
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.stopWatchingDarkMode");
         }
 
         [Test]
         public void RenderComponent_ShouldInvokeJs()
         {
             // Act & Arrange
-            Context.JSInterop.SetupVoid("watchDarkThemeMedia");
+            Context.JSInterop.SetupVoid("mudThemeProvider.watchDarkMode");
             Context.Render<MudThemeProvider>();
 
             // Assert
-            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia");
+            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode");
         }
 
         [Test]

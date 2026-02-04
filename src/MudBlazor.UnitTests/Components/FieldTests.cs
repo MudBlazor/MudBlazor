@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
     public class FieldTests : BunitTest
     {
         [Test]
-        public void FieldTest_ShouldRender_Variants()
+        public void Field_ShouldRender_Variants()
         {
             var comp = Context.Render<FieldTest>();
             var fields = comp.FindAll(".mud-grid .mud-input-control.mud-field");
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void FieldTest_ShouldRender_AriaAdornment()
+        public void Field_ShouldRender_AriaAdornment()
         {
             var comp = Context.Render<FieldTest>();
             var fields = comp.FindAll(".mud-grid .mud-input-control.mud-field");

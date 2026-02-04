@@ -65,7 +65,7 @@
                 }
             </div>
         </div>
-        @if (PrePanelContent != null)
+        @if (PrePanelContent is not null && ActivePanel is not null)
         {
             @PrePanelContent(ActivePanel)
         }

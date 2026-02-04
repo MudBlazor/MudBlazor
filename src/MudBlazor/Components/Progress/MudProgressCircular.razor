@@ -3,6 +3,7 @@
 @inherits MudComponentBase
 
 <div role="progressbar"
+     aria-busy="@((Indeterminate || _valueState.Value < Max).ToString().ToLowerInvariant())"
      aria-valuenow="@_valueState.Value.ToInvariantString()"
      aria-valuemin="@Min.ToInvariantString()"
      aria-valuemax="@Max.ToInvariantString()"

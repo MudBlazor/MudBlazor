@@ -29,6 +29,7 @@ namespace MudBlazor
                 .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
                 .AddClass($"mud-progress-linear-{Size.ToStringFast(true)}")
                 .AddClass($"mud-progress-linear-color-{Color.ToStringFast(true)}")
+                .AddClass("mud-progress-linear-background", ShowBackground)
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
                 .AddClass("mud-flip-x-rtl")
@@ -152,6 +153,16 @@ namespace MudBlazor
         [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue { get; set; }
+
+        /// <summary>
+        /// Shows a background for the portion of the progress bar that has not yet been filled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool ShowBackground { get; set; } = true;
 
         public MudProgressLinear()
         {

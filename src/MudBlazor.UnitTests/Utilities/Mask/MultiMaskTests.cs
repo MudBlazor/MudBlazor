@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
     public class MultiMaskTests
     {
         [Test]
-        public void MultiMask_Test()
+        public void MultiMask()
         {
             var mask = new MultiMask("0000 0000 0000 0000",
                 new MaskOption("American Express", "0000 000000 00000", @"^(34|37)"),

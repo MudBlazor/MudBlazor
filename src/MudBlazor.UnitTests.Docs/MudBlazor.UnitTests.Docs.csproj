@@ -2,10 +2,13 @@
   
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <!-- Docs tests are generated only in CI to keep local builds fast (set GenerateDocsTests=true to override). -->
+    <GenerateDocsTests Condition="'$(CI)' == 'true'">true</GenerateDocsTests>
+    <GenerateDocsTests Condition="'$(GenerateDocsTests)' == ''">false</GenerateDocsTests>
   </PropertyGroup>
   
   <!--Execute the code generator-->
-  <Target Name="GenerateTests" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="GenerateTests" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true' and '$(GenerateDocsTests)' == 'true'">
     <!--Command-line for the code generator-->
     <Message Text="Generating Tests" Importance="high" />
     <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj&quot;" />
@@ -13,7 +16,7 @@
 
   <!--Add Content that is being generated as part of the build cycle-->
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
-  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="GenerateTests">
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="GenerateTests" Condition="'$(GenerateDocsTests)' == 'true'">
     <ItemGroup>
       <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
       <!--This avoids full recompile after adding generated files-->
@@ -24,6 +27,11 @@
       <Compile Include="Generated\ExampleDocsTests.generated.cs" />
     </ItemGroup>
   </Target>
+
+  <ItemGroup Condition="'$(GenerateDocsTests)' != 'true'">
+    <!--Keep generated docs tests out of local builds even if files exist on disk.-->
+    <Compile Remove="Generated\**\*.generated.cs" />
+  </ItemGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
@@ -55,13 +63,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="JunitXml.TestLogger" Version="6.1.0" />
+    <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.0.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
-    <PackageReference Include="NUnit3TestAdapter" Version="6.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="ReportGenerator" Version="5.5.1" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
@@ -70,7 +78,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
     <ProjectReference Include="..\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj" />
-    <ProjectReference Include="..\MudBlazor.UnitTests.Docs.Generator\MudBlazor.UnitTests.Docs.Generator.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\MudBlazor.UnitTests.Docs.Generator\MudBlazor.UnitTests.Docs.Generator.csproj" Condition="'$(GenerateDocsTests)' == 'true'" PrivateAssets="all" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
   </ItemGroup>
 

@@ -22,9 +22,11 @@ class MudSplitPanel {
         this.secondPanel = children[2];
 
         this.isDragging = false;
+        this.dividerHasMoved = false;
         this.startPos = 0;
         this.startFirstSize = 0;
         this.lastTap = 0;
+        this.lastDragEndDate = 0;
         this.firstPanelInitialSize = firstPanelInitialSize;
         this.keyboardStep = 10;
 
@@ -57,7 +59,7 @@ class MudSplitPanel {
 
     // noinspection JSUnusedGlobalSymbols
     update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, forceRecalculateSize = false) {
-        let shouldRecalculateSize = horizontal !== this.horizontal || forceRecalculateSize;
+        const shouldRecalculateSize = horizontal !== this.horizontal || forceRecalculateSize;
         this.horizontal = horizontal;
         this.minPanelSize = minPanelSize;
         this.panelGap = panelGap;
@@ -66,7 +68,7 @@ class MudSplitPanel {
         this.divider.style.minWidth = this.horizontal ? null : `${panelGap}px`;
         this.divider.style.minHeight = this.horizontal ? `${panelGap}px` : null;
 
-        let containerSize = this._getContainerSize();
+        const containerSize = this._getContainerSize();
         this.divider.ariaValueMin = (this.minPanelSize / containerSize * 100).toFixed(2).toString();
         this.divider.ariaValueMax = ((containerSize - panelGap - this.minPanelSize) / containerSize * 100).toFixed(2).toString();
 
@@ -104,6 +106,7 @@ class MudSplitPanel {
     _onMouseDown(e) {
         e.preventDefault();
         this.isDragging = true;
+        this.dividerHasMoved = false;
 
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -138,6 +141,7 @@ class MudSplitPanel {
         const max = containerSize - this.panelGap - min;
 
         if (newFirstSize >= min && newFirstSize <= max) {
+            this.dividerHasMoved = true;
             this._setPanelSizes(newFirstSize, containerSize);
         }
     }
@@ -157,6 +161,10 @@ class MudSplitPanel {
         if (!this.isDragging) return;
         this.isDragging = false;
 
+        if (this.dividerHasMoved) {
+            this.lastDragEndDate = Date.now();
+        }
+
         document.body.style.userSelect = "";
         document.body.style.cursor = "";
         document.removeEventListener("mousemove", this._onMouseMove);
@@ -167,6 +175,9 @@ class MudSplitPanel {
 
     _onDoubleClick() {
         if (!this.resetOnDoubleClick) return;
+
+        // Fixes the edge case where the user first clicks and then clicks again and holds to drag
+        if (Date.now() - this.lastDragEndDate < 100) return;
 
         const containerSize = this.horizontal
             ? this.container.offsetHeight

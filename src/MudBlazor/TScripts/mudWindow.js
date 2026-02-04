@@ -9,7 +9,7 @@ class MudWindow {
     }
 
     changeCssById (id, css) {
-        var element = document.getElementById(id);
+        const element = document.getElementById(id);
         if (element) {
             element.className = css;
         }

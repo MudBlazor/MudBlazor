@@ -105,7 +105,7 @@ namespace MudBlazor
         /// If the Property expression looks like 'x => x.y.z', to set the value of 'z' we need to find the value of 'y', we can dig recursively until we find it.
         /// </summary>
         /// <exception cref="NullReferenceException"></exception>
-        private object RecursiveGetSubProperties(MemberExpression memberExpression, object item)
+        private object? RecursiveGetSubProperties(MemberExpression memberExpression, object? item)
         {
             if (memberExpression.Expression is MemberExpression { Member: PropertyInfo propertyInfo } subMemberExpress)
             {
@@ -117,7 +117,7 @@ namespace MudBlazor
             return item;
         }
 
-        protected internal override void SetProperty(object item, object? value)
+        protected internal override void SetProperty(object? item, object? value)
         {
             var expression = Property.Body;
 
