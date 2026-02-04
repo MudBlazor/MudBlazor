@@ -388,7 +388,7 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(FieldId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
-            base.OnAfterRender(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async Task HandleKeyDownAsync(KeyboardEventArgs args)
