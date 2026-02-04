@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Creates <see cref="IJsEvent"/> instances wired to the current JS runtime.
 /// </summary>

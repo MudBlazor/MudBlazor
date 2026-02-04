@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Holds the state for a single popover instance managed by <see cref="PopoverService"/>.
 /// </summary>

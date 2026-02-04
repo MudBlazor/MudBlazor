@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Centralizes scroll operations that need JS interop (scrolling to elements, locking scroll, etc.).
 /// </summary>

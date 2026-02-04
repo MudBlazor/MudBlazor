@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Tracks which section is centered in a scroll container and exposes it to components.
     /// </summary>

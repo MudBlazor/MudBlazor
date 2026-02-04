@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a slide displayed within a <see cref="MudCarousel{TData}"/>.
     /// </summary>

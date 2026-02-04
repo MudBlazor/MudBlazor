@@ -6,7 +6,6 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
-#nullable enable
 public partial class ChartData<T>
 {
     public ChartData(DateTime dateTime, T value) => Points = [new ChartPoint<T>(dateTime, value)];

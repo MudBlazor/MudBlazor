@@ -5,7 +5,6 @@ using MudBlazor.Resources;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Base class for localization interceptors that can swap or augment MudBlazor translations.
 /// </summary>

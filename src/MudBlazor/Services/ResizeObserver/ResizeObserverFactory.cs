@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Creates <see cref="IResizeObserver"/> instances wired to the current DI container and JS runtime.
 /// </summary>

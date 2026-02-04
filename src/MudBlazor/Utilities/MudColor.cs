@@ -10,7 +10,6 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
 {
-#nullable enable
     /// <summary>
     /// Specifies different output formats for <seealso cref="MudColor"/>.
     /// </summary>

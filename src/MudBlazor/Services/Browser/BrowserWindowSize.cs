@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Simple size payload for browser viewport measurements.
 /// </summary>

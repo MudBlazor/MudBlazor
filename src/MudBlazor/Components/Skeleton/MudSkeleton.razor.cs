@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Displays a placeholder preview of content before the data gets loaded, reducing load-time frustration.

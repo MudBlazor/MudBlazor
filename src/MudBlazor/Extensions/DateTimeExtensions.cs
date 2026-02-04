@@ -7,7 +7,6 @@ using System.Globalization;
 
 namespace MudBlazor.Extensions;
 
-#nullable enable
 /// <summary>
 /// Represents methods added to DateTime types.
 /// </summary>

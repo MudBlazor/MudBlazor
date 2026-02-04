@@ -5,7 +5,6 @@ using static System.String;
 
 namespace MudBlazor
 {
-#nullable enable
     internal class SnackBarMessageState
     {
         private string AnimationId { get; }

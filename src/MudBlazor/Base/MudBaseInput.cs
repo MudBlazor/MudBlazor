@@ -5,7 +5,6 @@ using MudBlazor.State;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a base class for designing form input components.
     /// </summary>

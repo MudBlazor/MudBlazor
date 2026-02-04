@@ -13,7 +13,6 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Tracks browser window size changes and resolves them to MudBlazor breakpoints.
 /// </summary>

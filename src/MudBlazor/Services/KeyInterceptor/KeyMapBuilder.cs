@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Fluent API for building key-command maps that the key interceptor can execute efficiently.
 /// </summary>

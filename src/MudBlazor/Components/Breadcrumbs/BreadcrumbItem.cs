@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents a portion of a list of breadcrumbs.

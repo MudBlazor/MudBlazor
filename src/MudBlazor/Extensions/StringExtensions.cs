@@ -7,7 +7,6 @@ using System.Globalization;
 // ReSharper disable once CheckNamespace
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides extension methods for string manipulation and formatting.
 /// </summary>

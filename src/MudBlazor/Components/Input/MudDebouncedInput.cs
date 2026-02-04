@@ -4,7 +4,6 @@ using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A base class for designing input components which update after a delay.
     /// </summary>

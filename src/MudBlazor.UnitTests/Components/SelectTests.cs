@@ -340,8 +340,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
+            IMudSelect mudSelect = select.Instance;
+            var context = (MudSelectContext<int?>)mudSelect.SelectContext;
 
-            var registerAction = () => select.Instance.RegisterShadowItem(null);
+            var registerAction = () => context.RegisterShadowItem(null);
 
             registerAction.Should().NotThrow();
         }
@@ -355,8 +357,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
             var itemWithNullValue = Context.Render<MudSelectItem<int?>>(parameters => parameters.Add(x => x.Value, null));
+            IMudSelect mudSelect = select.Instance;
+            var context = (MudSelectContext<int?>)mudSelect.SelectContext;
 
-            var registerAction = () => select.Instance.RegisterShadowItem(itemWithNullValue.Instance);
+            var registerAction = () => context.RegisterShadowItem(itemWithNullValue.Instance);
 
             registerAction.Should().NotThrow();
         }
@@ -369,8 +373,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
+            IMudSelect mudSelect = select.Instance;
+            var context = (MudSelectContext<int?>)mudSelect.SelectContext;
 
-            var unregisterAction = () => select.Instance.UnregisterShadowItem(null);
+            var unregisterAction = () => context.UnregisterShadowItem(null);
 
             unregisterAction.Should().NotThrow();
         }
@@ -384,9 +390,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
             var itemWithNullValue = Context.Render<MudSelectItem<int?>>(parameters => parameters.Add(x => x.Value, null));
+            IMudSelect mudSelect = select.Instance;
+            var context = (MudSelectContext<int?>)mudSelect.SelectContext;
 
-            select.Instance.RegisterShadowItem(itemWithNullValue.Instance);
-            var unregisterAction = () => select.Instance.UnregisterShadowItem(itemWithNullValue.Instance);
+            context.RegisterShadowItem(itemWithNullValue.Instance);
+            var unregisterAction = () => context.UnregisterShadowItem(itemWithNullValue.Instance);
 
             unregisterAction.Should().NotThrow();
         }
@@ -1064,9 +1072,7 @@ namespace MudBlazor.UnitTests.Components
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            //Try to add null item and check the value should not changed.
-            await comp.InvokeAsync(() => select.Instance.Add(null));
-            await comp.WaitForAssertionAsync(() => select.Instance._items.Count.Should().Be(4));
+            await comp.WaitForAssertionAsync(() => select.Instance.Items.Count.Should().Be(4));
 
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
             await comp.InvokeAsync(() => select.Instance.ToggleMenu());

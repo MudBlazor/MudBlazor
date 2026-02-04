@@ -6,7 +6,6 @@ using System.Numerics;
 
 namespace MudBlazor.Charts;
 
-#nullable enable
 /// <summary>
 /// Represents a chart component.
 /// </summary>

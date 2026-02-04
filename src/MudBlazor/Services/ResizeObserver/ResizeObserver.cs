@@ -5,7 +5,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 
 namespace MudBlazor.Services;
-#nullable enable
 
 /// <summary>
 /// Watches elements for size changes and keeps a local cache of their bounds for fast lookup.

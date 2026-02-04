@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Utilities;
 
-#nullable enable
 /// <summary>
 /// Contains all Javascript key code strings (using e.code standard).
 /// </summary>

@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Allows the user to select a single choice from a group of options. Use radio buttons (not switches) when only one item can be selected from a list.

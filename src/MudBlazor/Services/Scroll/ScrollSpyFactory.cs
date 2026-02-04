@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Creates <see cref="IScrollSpy"/> instances tied to the current DI container.
 /// </summary>

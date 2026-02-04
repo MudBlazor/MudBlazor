@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Provides the contract for data that can be rendered inside a <see cref="MudTreeView{T}"/>.

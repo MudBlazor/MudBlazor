@@ -7,7 +7,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents a service that intercepts key events for specified HTML elements.
 /// </summary>

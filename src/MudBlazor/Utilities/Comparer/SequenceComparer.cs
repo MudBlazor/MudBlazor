@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Comparer;
 
-#nullable enable
 
 /// <summary>
 /// Compares two sequences element-by-element using a specified element comparer.

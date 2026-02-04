@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Charts;
 
-#nullable enable
 /// <summary>
 /// Represents the options for a line chart that has axes.
 /// </summary>

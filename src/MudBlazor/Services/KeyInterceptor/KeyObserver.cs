@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Bundles key-down and key-up observers for a specific element id.
 /// </summary>

@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Justification.BarGroup;
 
-#nullable enable
 internal class SpaceBetweenStrategy : IBarGroupPositionStrategy
 {
     public double[] CalculatePositions(BarGroupContext ctx)

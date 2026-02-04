@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A clickable column which toggles the sort column and direction for a <see cref="MudTable{T}"/>.

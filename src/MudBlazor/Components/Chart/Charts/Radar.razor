@@ -30,7 +30,6 @@
 </div>
 
 @code {
-#nullable enable
     private RenderFragment RenderChartGrid() => builder =>
     {
         if (ChartOptions?.ShowGridLines is not true || _gridLines.Count == 0) return;

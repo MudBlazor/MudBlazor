@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Wraps popover holder updates so the popover service can batch or process operations consistently.
 /// </summary>

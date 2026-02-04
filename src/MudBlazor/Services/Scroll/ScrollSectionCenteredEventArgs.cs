@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Event payload emitted when the scroll spy identifies a new centered section.
 /// </summary>

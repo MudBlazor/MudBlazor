@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Configuration knobs for resize observation, including debounce timing and optional logging.
 /// </summary>

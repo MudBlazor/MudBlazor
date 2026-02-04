@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A collection of multiple <see cref="MudChip{T}"/> components that allows single or multi-selection.

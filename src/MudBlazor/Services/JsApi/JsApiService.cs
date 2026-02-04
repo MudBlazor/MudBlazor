@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Lightweight wrapper around common browser JS calls used across MudBlazor components.
 /// </summary>

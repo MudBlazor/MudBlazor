@@ -3,7 +3,6 @@ using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>

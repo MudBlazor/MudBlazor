@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Configuration for how a specific key should be intercepted, including preventDefault/stopPropagation expressions and which C# callbacks should fire.
 /// </summary>

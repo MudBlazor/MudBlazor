@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Options for displaying a simple message box dialog via <see cref="IDialogService"/>.
 /// </summary>

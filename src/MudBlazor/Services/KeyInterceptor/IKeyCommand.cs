@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Represents a keyboard command that can be executed based on keyboard events.
 /// </summary>

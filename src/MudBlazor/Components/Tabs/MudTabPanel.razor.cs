@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A tab as part of a <see cref="MudTabs"/> or <see cref="MudDynamicTabs"/> component.

@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides a comparer for <see cref="double"/> values with an epsilon tolerance.
 /// </summary>

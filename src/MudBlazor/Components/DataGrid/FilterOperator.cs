@@ -7,7 +7,6 @@ using MudBlazor.Resources;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents comparison operations which execute a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>

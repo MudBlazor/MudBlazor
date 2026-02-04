@@ -10,7 +10,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>

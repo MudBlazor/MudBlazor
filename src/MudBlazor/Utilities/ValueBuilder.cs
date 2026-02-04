@@ -2,7 +2,6 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-#nullable enable
 namespace MudBlazor.Utilities;
 
 public class ValueBuilder

@@ -3,7 +3,6 @@
  *  http://www.mosismath.com/PeriodicSplines/PeriodicSplines.html
  */
 
-#nullable enable
 using System.Diagnostics;
 
 namespace MudBlazor.Interpolation

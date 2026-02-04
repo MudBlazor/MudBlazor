@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// JS-backed scroll listener that streams scroll updates from a selector to .NET callbacks.
     /// </summary>

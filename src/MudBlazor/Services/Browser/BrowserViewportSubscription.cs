@@ -8,7 +8,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Tracks the relationship between a JS resize listener and a .NET viewport observer.
 /// </summary>

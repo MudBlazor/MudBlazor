@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Options for configuring the pointer-events-none interop service.
 /// </summary>

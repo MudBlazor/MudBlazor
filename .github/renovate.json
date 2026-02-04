@@ -10,6 +10,7 @@
     "labels": [
         "dependency"
     ],
+    "commitMessagePrefix": "Build: ",
     "minimumReleaseAge": "14 days",
     "vulnerabilityAlerts": {
         "enabled": true,
@@ -76,6 +77,30 @@
                 "minor"
             ],
             "automerge": true
+        }
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
+            ],
+            "matchStrings": [
+                "<BunVersion>(?<currentValue>.*?)</BunVersion>"
+            ],
+            "depNameTemplate": "bun",
+            "datasourceTemplate": "npm"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
+            ],
+            "matchStrings": [
+                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
+            ],
+            "depNameTemplate": "BunDotNet.Cli",
+            "datasourceTemplate": "nuget"
         }
     ]
 }

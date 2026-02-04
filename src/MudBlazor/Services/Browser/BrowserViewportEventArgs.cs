@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Event payload emitted when the browser viewport size or breakpoint changes.
 /// </summary>

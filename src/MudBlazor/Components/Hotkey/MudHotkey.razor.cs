@@ -6,7 +6,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Allows registering a hotkey.
 /// </summary>

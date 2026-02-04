@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// A character which represents a set of allowed values in a <see cref="MudMask"/>.
 /// </summary>

@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Strongly-typed dialog parameter bag for components of type <typeparamref name="T"/>.
 /// </summary>

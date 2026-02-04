@@ -11,7 +11,6 @@ using MudBlazor.State.Invocation;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents a collection of multiple <see cref="ParameterScopeContainer"/> instances combined into a union.
 /// </summary>

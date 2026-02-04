@@ -4,7 +4,6 @@
 
 using System.ComponentModel;
 
-#nullable enable
 namespace MudBlazor;
 
 /// <summary>

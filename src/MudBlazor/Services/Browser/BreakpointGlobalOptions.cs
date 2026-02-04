@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Stores global breakpoint definitions and resolves per-component overrides.
 /// </summary>

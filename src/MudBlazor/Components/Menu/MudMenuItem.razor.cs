@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A choice displayed as part of a list within a <see cref="MudMenu"/> component.
     /// </summary>

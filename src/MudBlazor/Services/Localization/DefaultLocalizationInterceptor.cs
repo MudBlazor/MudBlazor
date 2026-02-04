@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Default localization interceptor that blends built-in English resources with optional custom translations.
 /// </summary>

@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Services
 {
-#nullable enable
     /// <summary>
     /// Options for subscribing to DOM events through <see cref="IJsEvent"/>.
     /// </summary>

@@ -3,7 +3,6 @@
 // See https://github.com/Blazored
 // Copyright (c) 2020 Adapted by MudBlazor
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>

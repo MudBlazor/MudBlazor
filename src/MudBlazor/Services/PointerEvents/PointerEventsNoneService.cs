@@ -10,7 +10,6 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Globally observes pointer events for elements that have pointer events disabled.

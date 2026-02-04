@@ -7,7 +7,6 @@ using MudBlazor.State;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a form input component which stores a boolean value.
     /// </summary>

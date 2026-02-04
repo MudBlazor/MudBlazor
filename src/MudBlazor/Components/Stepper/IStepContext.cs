@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Exposes read-only state and state mutation helpers for a single step.
 /// Implemented by <see cref="MudStep"/> and passed to templates (for example <see cref="MudStepper.TitleTemplate"/>,

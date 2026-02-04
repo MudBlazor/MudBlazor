@@ -2,7 +2,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Base localizer that applications can override to supply MudBlazor translations.
 /// </summary>

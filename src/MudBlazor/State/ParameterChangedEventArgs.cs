@@ -2,7 +2,6 @@
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents event arguments containing the last and current values of a parameter.
 /// </summary>

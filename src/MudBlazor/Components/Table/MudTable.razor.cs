@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     // Note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 

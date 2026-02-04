@@ -11,7 +11,6 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts;
 
-#nullable enable
 public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     protected List<SvgPath> _gridLines = [];

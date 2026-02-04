@@ -12,7 +12,6 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Coordinates JavaScript key interception with managed observers for specific elements.
 /// </summary>

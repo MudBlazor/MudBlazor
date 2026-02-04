@@ -1,6 +1,5 @@
 ﻿using MudBlazor.Interop;
 
-#nullable enable
 
 namespace MudBlazor
 {

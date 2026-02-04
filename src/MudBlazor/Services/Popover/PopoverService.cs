@@ -11,7 +11,6 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Manages popover lifecycles, state updates, and JS positioning for all active popovers.
 /// </summary>

@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Options that control how MudBlazor popovers are positioned, animated, and managed.
 /// </summary>

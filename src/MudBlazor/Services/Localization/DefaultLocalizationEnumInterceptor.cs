@@ -7,7 +7,6 @@ using System.Reflection;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Handles localization for enum values using <see cref="DisplayAttribute"/> metadata.
 /// </summary>

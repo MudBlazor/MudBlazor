@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Central place to read runtime library metadata such as the MudBlazor version.
 /// </summary>

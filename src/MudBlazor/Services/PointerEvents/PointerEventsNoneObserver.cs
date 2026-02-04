@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Bundles pointer down/up observers for a specific element id with pointer events disabled.

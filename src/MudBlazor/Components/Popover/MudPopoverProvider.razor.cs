@@ -7,7 +7,6 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A required component which manages all MudBlazor popovers.

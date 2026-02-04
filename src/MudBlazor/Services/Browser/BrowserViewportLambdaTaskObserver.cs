@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Adapts an asynchronous lambda into an <see cref="IBrowserViewportObserver"/>.
 /// </summary>

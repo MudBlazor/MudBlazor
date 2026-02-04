@@ -6,7 +6,6 @@ using System.Text;
 
 namespace MudBlazor.Utilities
 {
-#nullable enable
     /// <summary>
     /// Represents a builder for creating CSS classes used in a component.
     /// </summary>

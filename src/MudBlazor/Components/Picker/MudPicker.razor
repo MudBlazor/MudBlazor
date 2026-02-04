@@ -4,7 +4,6 @@
 
 @code
 {
-#nullable enable
     protected virtual RenderFragment? InputContent =>
         // note: Mask needs to remain before Text!
         @<MudTextField T="string"
@@ -42,14 +41,12 @@
                        InputId="@InputId"
                        @onclick="OnClickAsync" />;
 
-#nullable enable
     /// <summary>
     /// Gets the content to be rendered inside the picker.
     /// Override this property to provide custom content for the picker.
     /// </summary>
     protected virtual RenderFragment? PickerContent => null;
 
-#nullable enable
     protected virtual RenderFragment? Render =>
         @<CascadingValue Value="@this" IsFixed="true">
             <div class="@PickerClassname" id="@ElementId">

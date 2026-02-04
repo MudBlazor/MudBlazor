@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 namespace MudBlazor
 {
-#nullable enable
     public partial class MudVirtualize<T> : ComponentBase
     {
         /// <summary>

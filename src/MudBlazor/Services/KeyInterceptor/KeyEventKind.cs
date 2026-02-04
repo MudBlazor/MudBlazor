@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Specifies the type of keyboard event.
 /// </summary>

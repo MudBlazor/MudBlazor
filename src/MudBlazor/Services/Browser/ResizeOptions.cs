@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services
 {
-#nullable enable
     /// <summary>
     /// Options that control browser resize observation and breakpoint handling.
     /// </summary>

@@ -4,7 +4,6 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A validator for rows within a <see cref="MudTable{T}"/>.

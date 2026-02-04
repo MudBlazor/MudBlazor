@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Settings for wiring keyboard interception to specific elements and key bindings.
 /// </summary>

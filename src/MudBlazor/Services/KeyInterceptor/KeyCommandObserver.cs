@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Dispatches keyboard events to a precompiled command list with an early-exit pipeline.
 /// </summary>

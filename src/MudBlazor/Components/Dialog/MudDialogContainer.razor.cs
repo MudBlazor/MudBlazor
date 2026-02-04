@@ -7,7 +7,6 @@ using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>

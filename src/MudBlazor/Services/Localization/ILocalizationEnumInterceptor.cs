@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides functionality to localize enumeration values.
 /// Users can register custom implementations using the syntax:

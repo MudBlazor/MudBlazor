@@ -13,7 +13,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Displays a list of options that users can select from. Make menus easy to open, close, and select. Menus can open from a variety of components.
     /// </summary>

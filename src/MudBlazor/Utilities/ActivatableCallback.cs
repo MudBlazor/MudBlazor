@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 
-#nullable enable
 namespace MudBlazor
 {
     public class ActivatableCallback : IActivatable

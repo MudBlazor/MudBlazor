@@ -3,7 +3,6 @@ using Microsoft.Extensions.Localization;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Internal localization entry point that delegates translation work to configured interceptors.
 /// </summary>

@@ -6,7 +6,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a navigation panel docked to the side of the page.
     /// </summary>

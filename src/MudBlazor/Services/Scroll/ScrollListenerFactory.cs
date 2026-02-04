@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Creates <see cref="IScrollListener"/> instances with the configured JS runtime.
 /// </summary>

@@ -7,7 +7,6 @@ using System.Numerics;
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class BoolConverter
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.Interfaces)]

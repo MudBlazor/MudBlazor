@@ -5,7 +5,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.JSInterop;
 
-#nullable enable
 namespace MudBlazor.Services
 {
     /// <summary>

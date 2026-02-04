@@ -8,7 +8,6 @@ using static MudBlazor.BoolConverter;
 
 namespace MudBlazor;
 
-#nullable enable
 public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
 {
     private static readonly SafeType[] _numericTypes =
