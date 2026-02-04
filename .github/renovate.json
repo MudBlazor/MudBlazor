@@ -83,7 +83,7 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
-                "/^Directory.Build.props$/"
+                "/(^|/)Directory\\.Build\\.props$/"
             ],
             "matchStrings": [
                 "<BunVersion>(?<currentValue>.*?)</BunVersion>"
@@ -94,7 +94,7 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
-                "/^Directory.Build.props$/"
+                "/(^|/)Directory\\.Build\\.props$/"
             ],
             "matchStrings": [
                 "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
