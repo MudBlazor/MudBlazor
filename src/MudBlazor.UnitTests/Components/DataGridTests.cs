@@ -397,7 +397,7 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Filterable, false));
         }
-
+        
         [Test]
         public async Task DataGridFilterable()
         {
@@ -870,7 +870,23 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".mud-table-pagination-select")[^1].TextContent.Trim().Should().Be("All");
         }
+        
+        [Test]
+        public void DataGridPagination_Should_FormatNumbersWithCommas()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationFormattingTest>();
 
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 1,000");
+        }
+        
+        [Test]
+        public void DataGridPagination_Should_RespectCustomFormatWithSingleTag()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationCustomFormatTest>();
+
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("Total: 1,000");
+        }
+        
         [Test]
         public void DataGridPaginationNoItems()
         {
@@ -881,7 +897,7 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("0-0 of 0");
         }
-
+        
         [Test]
         public async Task DataGridHideNavigation()
         {
