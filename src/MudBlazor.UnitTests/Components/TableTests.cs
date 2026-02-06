@@ -156,6 +156,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensure the loading progress indicator has an accessible name.
+        /// </summary>
+        [Test]
+        public async Task TableLoadingProgressHasAriaLabel()
+        {
+            var comp = Context.Render<TableLoadingTest>();
+            var loadingSwitch = comp.Find("#switch");
+            await loadingSwitch.ChangeAsync(true);
+
+            var progress = comp.Find(".mud-table-loading-progress");
+            progress.GetAttribute("aria-label").Should().NotBeNullOrWhiteSpace();
+        }
+
+        /// <summary>
         /// Ensure that when the loading switch is enabled,
         /// a new row appears in the table header without affecting the table body.
         /// </summary>
@@ -3074,4 +3088,3 @@ namespace MudBlazor.UnitTests.Components
 
     }
 }
-

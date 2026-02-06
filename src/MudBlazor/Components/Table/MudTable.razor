@@ -1,6 +1,8 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudTableBase
 @using MudBlazor.Utilities
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
 @typeparam T
 
 @(ClearFilterCache()) @*Clear filtered items cache for this render*@
@@ -61,7 +63,7 @@
                             {
                                 <tr>
                                     <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
-                                        <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true"/>
+                                        <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" aria-label="@Localizer[LanguageResource.MudTable_Loading]" />
                                     </th>
                                 </tr>
                             }
@@ -72,7 +74,7 @@
                         <thead class="@HeadClassname">
                             <tr class="mud-table-row">
                                 <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
-                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true"/>
+                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" aria-label="@Localizer[LanguageResource.MudTable_Loading]" />
                                 </th>
                             </tr>
                         </thead>
