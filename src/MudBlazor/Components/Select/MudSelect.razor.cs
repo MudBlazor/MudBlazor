@@ -529,7 +529,7 @@ namespace MudBlazor
         private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
         {
             var value = arg.Value;
-            
+
             // Update internal HashSet with new values - make a defensive copy to avoid shared references
             // The HashSet uses the Comparer for equality checks and ensures uniqueness
             _selectedValues = value != null ? new HashSet<T?>(value, Comparer) : new HashSet<T?>(Comparer);
