@@ -196,7 +196,7 @@ namespace MudBlazor
         /// It updates the local Selected state and triggers a re-render if needed.
         /// This replaces the OnUpdateSelectionStateFromOutside method.
         /// </remarks>
-        private async Task OnSelectionChangedAsync(IReadOnlyCollection<T?> selectedValues)
+        private async Task OnSelectionChangedAsync(IReadOnlyList<T?> selectedValues)
         {
             var oldSelected = Selected;
             Selected = selectedValues.Contains(Value);
