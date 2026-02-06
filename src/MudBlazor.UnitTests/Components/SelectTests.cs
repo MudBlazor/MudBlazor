@@ -480,7 +480,7 @@ namespace MudBlazor.UnitTests.Components
                   textChangedCount = eventCounter++;
                   text = x;
               })));
-            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, (Action<IEnumerable<string>>)(x =>
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, (Action<IReadOnlyCollection<string>>)(x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
@@ -541,7 +541,7 @@ namespace MudBlazor.UnitTests.Components
                   textChangedCount = eventCounter++;
                   text = x;
               })));
-            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, (Action<IEnumerable<string>>)(x =>
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, (Action<IReadOnlyCollection<string>>)(x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;

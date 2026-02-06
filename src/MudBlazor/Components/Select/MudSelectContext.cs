@@ -16,7 +16,7 @@ internal sealed class MudSelectContext<T>
 {
     private readonly MudSelect<T> _select;
     private readonly List<MudSelectItem<T>> _items = [];
-    private readonly List<Func<IReadOnlyList<T?>, Task>> _selectionObservers = [];
+    private readonly List<Func<IReadOnlyCollection<T?>, Task>> _selectionObservers = [];
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
 
@@ -50,11 +50,11 @@ internal sealed class MudSelectContext<T>
     /// <summary>
     /// Gets the current selected values.
     /// </summary>
-    public IReadOnlyList<T?> SelectedValues
+    public IReadOnlyCollection<T?> SelectedValues
     {
         get
         {
-            return _select.GetSelectedValues();
+            return _select.GetSelectedValues() ?? Array.Empty<T?>();
         }
     }
 
@@ -148,7 +148,7 @@ internal sealed class MudSelectContext<T>
     /// </summary>
     /// <param name="observer">The callback to invoke when selection changes.</param>
     /// <returns>A disposable subscription that can be used to unsubscribe.</returns>
-    public IDisposable SubscribeToSelectionChanges(Func<IReadOnlyList<T?>, Task> observer)
+    public IDisposable SubscribeToSelectionChanges(Func<IReadOnlyCollection<T?>, Task> observer)
     {
         _selectionObservers.Add(observer);
         return new SelectionSubscription(this, observer);
@@ -157,7 +157,7 @@ internal sealed class MudSelectContext<T>
     /// <summary>
     /// Unsubscribes an observer from selection changes.
     /// </summary>
-    private void Unsubscribe(Func<IReadOnlyList<T?>, Task> observer)
+    private void Unsubscribe(Func<IReadOnlyCollection<T?>, Task> observer)
     {
         _selectionObservers.Remove(observer);
     }
@@ -174,11 +174,11 @@ internal sealed class MudSelectContext<T>
         }
     }
 
-    private sealed class SelectionSubscription(MudSelectContext<T> context, Func<IReadOnlyList<T?>, Task> observer)
+    private sealed class SelectionSubscription(MudSelectContext<T> context, Func<IReadOnlyCollection<T?>, Task> observer)
         : IDisposable
     {
         private MudSelectContext<T>? _context = context;
-        private Func<IReadOnlyList<T?>, Task>? _observer = observer;
+        private Func<IReadOnlyCollection<T?>, Task>? _observer = observer;
 
         public void Dispose()
         {

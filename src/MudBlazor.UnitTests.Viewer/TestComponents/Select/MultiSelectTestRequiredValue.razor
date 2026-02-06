@@ -36,10 +36,10 @@
     private MudSelect<TestClass> _objectSelect = null!;
 
     private string? _value;
-    private IEnumerable<string?>? _values;
+    private IReadOnlyCollection<string?>? _values;
 
     private TestClass? _selectedRole;
-    private IEnumerable<TestClass>? _selectedRoles = new List<TestClass>();
+    private IReadOnlyCollection<TestClass>? _selectedRoles = new List<TestClass>();
     private readonly List<TestClass> _roles =
     [
         new TestClass { Name = "Admin", NameTranslated = "Administrator" },
