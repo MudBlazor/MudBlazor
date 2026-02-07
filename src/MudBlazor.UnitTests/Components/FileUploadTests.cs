@@ -569,19 +569,14 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(null)]
         public void GetFileNames_ShouldNotThrow_ForDifferentTypes(Type type)
         {
-            // Arrange
-            var actualType = type ?? typeof(object);
-            var componentType = typeof(MudFileUpload<>).MakeGenericType(actualType);
-
-            var renderMethod = Context.GetType()
-                .GetMethod("Render", Type.EmptyTypes)
-                .MakeGenericMethod(componentType);
-
-            var comp = renderMethod.Invoke(Context, null);
-            var instance = comp.GetType().GetProperty("Instance").GetValue(comp);
-
             // Act & Assert
-            Action action = () => instance.GetType().GetMethod("GetFilenames").Invoke(instance, null);
+            Action action = type switch
+            {
+                not null when type == typeof(IBrowserFile) => () => Context.Render<MudFileUpload<IBrowserFile>>().Instance.GetFilenames(),
+                not null when type == typeof(IReadOnlyList<IBrowserFile>) => () => Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>().Instance.GetFilenames(),
+                _ => () => Context.Render<MudFileUpload<object>>().Instance.GetFilenames()
+            };
+
             action.Should().NotThrow();
         }
 
