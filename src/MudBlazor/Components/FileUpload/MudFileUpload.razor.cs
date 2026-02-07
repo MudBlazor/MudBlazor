@@ -160,7 +160,7 @@ namespace MudBlazor
         /// Enables a drag-and-drop area inside the component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>false</c>.  During drag operations, the internal <see cref="InputFile"/> element can be shown to capture drop events even when <see cref="Hidden"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -170,7 +170,7 @@ namespace MudBlazor
         /// Indicates whether a drag operation is active.
         /// </summary>
         /// <remarks>
-        /// When <c>true</c>, the internal <see cref="InputFile"/> element is shown to capture the drop.  Drop-related events reset it to <c>false</c>.
+        /// When <c>true</c>, the internal <see cref="InputFile"/> element is shown to capture the drop, which temporarily overrides <see cref="Hidden"/>.  When <c>false</c>, visibility follows <see cref="Hidden"/> again.  Drop-related events reset it to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
