@@ -420,6 +420,7 @@
   <data name="MudFileUpload_Button" xml:space="preserve">
     <value>Click to Upload</value>
   </data>
+  </data>
   <data name="Converter_InvalidBoolean" xml:space="preserve">
     <value>Not a valid boolean</value>
   </data>

@@ -149,7 +149,7 @@ namespace MudBlazor
         public bool Hidden { get; set; } = true;
 
         /// <summary>
-        /// Enables a drag and drop zone inside the MudFileUpload        
+        /// Enables a drag and drop zone inside the MudFileUpload
         /// </summary>
         /// <remarks>
         /// Defaults to false
@@ -256,7 +256,7 @@ namespace MudBlazor
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
 
         /// <summary>
-        /// Removes a file from <see cref="Files"/> by its filename if T is an  <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
+        /// Removes a file from <see cref="Files"/> by its filename if T is an <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
         /// </summary>
         /// <param name="filename">The name of the file to remove.</param>
         public async Task RemoveFile(string filename)
