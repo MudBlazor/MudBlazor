@@ -9,8 +9,8 @@
                 Choose File
             </MudButton>
             <MudPaper Class="mud-width-full flex-wrap d-flex align-center justify-center mud-border-primary mud-text-primary"
-            Style="background-color:inherit;"
-            Outlined="true">
+                      Style="background-color:inherit;"
+                      Outlined="true">
                 @(context.GetFilenames().Count > 0 ? context.GetFilenames()[0] : string.Empty)
             </MudPaper>
         </MudButtonGroup>
@@ -26,8 +26,8 @@
                 Choose File
             </MudButton>
             <MudPaper Class="mud-width-full flex-wrap d-flex align-center justify-center mud-border-secondary mud-text-secondary"
-            Style="background-color:inherit;"
-            Outlined="true">
+                      Style="background-color:inherit;"
+                      Outlined="true">
                 @if (_uploading)
                 {
                     <MudProgressLinear Class="mx-2" Color="Color.Tertiary" Size="Size.Large" Value="_uploadValue" Min="_uploadMin" Max="_uploadMax" />
@@ -46,25 +46,25 @@
 </MudFileUpload>
 
 <MudText Typo="Typo.h6">With Interactive MudChips</MudText>
-<MudFileUpload @bind-Files="@_files" 
-Class="mud-width-full"
-MaximumFileCount="5"
-AppendMultipleFiles>
+<MudFileUpload @bind-Files="@_files"
+               Class="mud-width-full"
+               MaximumFileCount="5"
+               AppendMultipleFiles>
     <CustomContent>
         <MudButtonGroup Color="Color.Info" Variant="Variant.Filled" Class="mud-width-full">
             <MudButton Color="Color.Info" OnClick="@context.OpenFilePickerAsync" Style="min-width: 150px;">
                 Choose Files
             </MudButton>
             <MudPaper Class="mud-width-full flex-wrap d-flex align-center justify-center mud-border-info mud-text-info"
-            Style="background-color:inherit;"
-            Outlined="true">
+                      Style="background-color:inherit;"
+                      Outlined="true">
                 @foreach (string f in context.GetFilenames())
                 {
                     <MudChip T="string"
-                    Color="Color.Info"
-                    Size="Size.Small"
-                    OnClose="@(async () => await context.RemoveFile(f))"
-                    CloseIcon="@Icons.Material.Outlined.Delete">
+                             Color="Color.Info"
+                             Size="Size.Small"
+                             OnClose="@(async () => await context.RemoveFile(f))"
+                             CloseIcon="@Icons.Material.Outlined.Delete">
                         @f
                     </MudChip>
                 }
@@ -81,9 +81,9 @@ AppendMultipleFiles>
         </CardHeaderContent>
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Disabled="_editmode" Color="Color.Primary" OnClick="@(() => _editmode = !_editmode)" />
-            <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="@ResetPicture"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="@ResetPicture" />
             <MudIconButton Icon="@Icons.Material.Filled.Close" />
-        </CardHeaderActions>        
+        </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
         <MudTextField @bind-Value="_employeeName" ReadOnly="@(!_editmode)" Label="Employee Name" />
@@ -94,19 +94,19 @@ AppendMultipleFiles>
             }
             else
             {
-                <MudImage Src="@_base64" Alt="Employee Image" Height="64" Width="64" Elevation="25" Class="rounded-lg" />                
-            }            
+                <MudImage Src="@_base64" Alt="Employee Image" Height="64" Width="64" Elevation="25" Class="rounded-lg" />
+            }
             @if (_editmode)
             {
                 <MudSpacer />
                 <MudFileUpload @bind-Files="@_pictureFile"
-                OnFilesChanged="@SwapPicture"
-                Accept=".jpg,.bmp,.tiff,.jpeg,.png">
+                               OnFilesChanged="@SwapPicture"
+                               Accept=".jpg,.bmp,.tiff,.jpeg,.png">
                     <SelectedTemplate />
                 </MudFileUpload>
                 <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="@ResetPicture" />
             }
-        </MudStack>        
+        </MudStack>
     </MudCardContent>
     @if (_editmode)
     {
@@ -136,7 +136,7 @@ AppendMultipleFiles>
 
     private bool _editmode = true;
     private bool _swapping;
-    private readonly string _employeeName = "Catherine Doe";
+    private string _employeeName = "Catherine Doe";
     private string _base64 = string.Empty;
 
     protected override async Task OnInitializedAsync()
