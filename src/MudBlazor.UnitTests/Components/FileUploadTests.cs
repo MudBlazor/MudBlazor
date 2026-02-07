@@ -134,7 +134,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.Files.Should().NotBeNull();
             fileUploadInstance.Files!.Name.Should().Be(fileName);
 
-            await comp.InvokeAsync(() => comp.Find("button#clear-button").Click());
+            await comp.Find("button#clear-button").ClickAsync();
 
             fileUploadInstance.Files.Should().BeNull();
         }
@@ -151,7 +151,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FileUploadWithDragAndDropActivatorTest>();
 
-            await comp.InvokeAsync(() => comp.Find("button#open-file-picker-button").Click());
+            await comp.Find("button#open-file-picker-button").ClickAsync();
 
             Context.JSInterop.Invocations.Should().ContainSingle(invocation => invocation.Identifier == "mudFileUpload.openFilePicker");
         }
@@ -434,15 +434,15 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-file-upload-dragarea").Should().NotBeNull();
 
             // Test drag enter
-            await comp.InvokeAsync(() => comp.Find(".mud-file-upload-dragarea").DragEnter());
+            await comp.Find(".mud-file-upload-dragarea").DragEnterAsync();
             comp.Find(".mud-file-upload-dragarea").ClassList.Should().Contain("mud-border-primary");
 
             // Test drag leave
-            await comp.InvokeAsync(() => comp.Find("input").DragLeave());
+            await comp.Find("input").DragLeaveAsync();
             comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
 
             // Test drag end
-            await comp.InvokeAsync(() => comp.Find("input").DragEnd());
+            await comp.Find("input").DragEndAsync();
             comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
         }
 
