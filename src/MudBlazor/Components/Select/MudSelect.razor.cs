@@ -12,7 +12,6 @@ using MudBlazor.Utilities.Comparer;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// A dropdown input for selecting an item from a list of options.
     /// </summary>
@@ -41,9 +40,6 @@ namespace MudBlazor
 
         /// <inheritdoc />
         object IMudShadowSelect.SelectContext => _context;
-
-        [Inject]
-        private TimeProvider TimeProvider { get; set; } = null!;
 
         public MudSelect()
         {
@@ -96,6 +92,9 @@ namespace MudBlazor
                 .Build();
 
         [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
+
+        [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [Inject]
@@ -103,218 +102,6 @@ namespace MudBlazor
 
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
-
-        private Task SelectNextItem() => SelectAdjacentItem(+1);
-
-        private Task SelectPreviousItem() => SelectAdjacentItem(-1);
-
-        private async Task SelectAdjacentItem(int direction)
-        {
-            if (Items.Count == 0)
-                return;
-            var index = Items.FindIndex(x => x.ItemId == _activeItemId);
-            if (direction < 0 && index < 0)
-                index = 0;
-            MudSelectItem<T>? item = null;
-            // the loop allows us to jump over disabled items until we reach the next non-disabled one
-            for (var i = 0; i < Items.Count; i++)
-            {
-                index += direction;
-                if (index < 0)
-                    index = 0;
-                if (index >= Items.Count)
-                    index = Items.Count - 1;
-                if (Items[index].Disabled)
-                    continue;
-                item = Items[index];
-                if (!MultiSelection)
-                {
-                    // When SelectionOnEnter is true, we only update the visual highlight during navigation.
-                    // When false (default), the value is immediately updated as the user moves through the list.
-                    if (!SelectionOnEnter)
-                    {
-                        _selectedValues.Clear();
-                        _selectedValues.Add(item.Value);
-                        await SetValueAndUpdateTextAsync(item.Value, updateText: true);
-                    }
-
-                    await HighlightItemAsync(item);
-                    break;
-                }
-
-                // in multiselect mode don't select anything, just highlight.
-                // selecting is done by Enter
-                await HighlightItemAsync(item);
-                break;
-            }
-            await _elementReference.SetText(ReadText);
-            await ScrollToItemAsync(item);
-        }
-        private ValueTask ScrollToItemAsync(MudSelectItem<T>? item)
-            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
-
-        private async Task SelectFirstItem(string? startChar = null)
-        {
-            IReadOnlyCollection<MudSelectItem<T>> selectList = Items;
-
-            if (!_openState.Value)
-            {
-                // When closed, use shadow lookup to include all items (visible + hidden)
-                selectList = _context.ShadowItems;
-            }
-
-            if (selectList.Count == 0)
-            {
-                return;
-            }
-
-            if (!string.IsNullOrWhiteSpace(startChar))
-            {
-                // SelectItemBySearch handles disabled items
-                var searchItem = SelectItemBySearch(selectList, startChar);
-                if (searchItem is not null)
-                {
-                    await SelectAndHighlightItemAsync(searchItem);
-                    return;
-                }
-            }
-
-            // Find first non-disabled item
-            foreach (var item in selectList)
-            {
-                if (item.Disabled)
-                {
-                    continue;
-                }
-
-                await SelectAndHighlightItemAsync(item);
-                return;
-            }
-        }
-
-        private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> items, string inputChar)
-        {
-            UpdateSearchText(inputChar);
-
-            MudSelectItem<T>? activeItem = null;
-            MudSelectItem<T>? previousItem = null;
-            MudSelectItem<T>? firstMatch = null;
-            MudSelectItem<T>? nextMatch = null;
-            var foundPrevious = false;
-
-            foreach (var item in items)
-            {
-                TrackSpecialItems(item, ref activeItem, ref previousItem);
-
-                if (IsMatch(item))
-                {
-                    firstMatch ??= item;
-
-                    if (foundPrevious)
-                    {
-                        nextMatch ??= item;
-                    }
-
-                    if (item == previousItem)
-                    {
-                        foundPrevious = true;
-                    }
-                }
-            }
-
-            return DetermineResult(activeItem, previousItem, firstMatch, nextMatch);
-
-            void UpdateSearchText(string input)
-            {
-                var now = TimeProvider.GetUtcNow();
-
-                if (now - _lastSearchTime > QuickSearchInterval)
-                {
-                    _lastSelectedId = _activeItemId;
-                    _searchText = input;
-                }
-                else
-                {
-                    _searchText += input;
-                }
-
-                _lastSearchTime = now;
-            }
-
-            void TrackSpecialItems(MudSelectItem<T> item, ref MudSelectItem<T>? active, ref MudSelectItem<T>? previous)
-            {
-                if (item.ItemId == _activeItemId)
-                {
-                    active = item;
-                }
-
-                if (item.ItemId == _lastSelectedId)
-                {
-                    previous = item;
-                }
-            }
-
-            bool IsMatch(MudSelectItem<T> item)
-            {
-                if (item.Disabled)
-                {
-                    return false;
-                }
-
-                var text = ConvertSet(item.Value);
-                return text is not null && text.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase);
-            }
-
-            MudSelectItem<T>? DetermineResult(MudSelectItem<T>? active, MudSelectItem<T>? previous,
-                                               MudSelectItem<T>? first, MudSelectItem<T>? next)
-            {
-                if (first is null)
-                {
-                    return active;
-                }
-
-                if (previous is null)
-                {
-                    return first;
-                }
-
-                return next ?? first;
-            }
-        }
-
-        private async Task SelectAndHighlightItemAsync(MudSelectItem<T> item)
-        {
-            if (!MultiSelection)
-            {
-                _selectedValues.Clear();
-                _selectedValues.Add(item.Value);
-                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
-                await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
-            }
-
-            await HighlightItemAsync(item);
-            await _elementReference.SetText(ReadText);
-            await ScrollToItemAsync(item);
-        }
-
-        private async Task SelectLastItem()
-        {
-            if (Items.Count == 0)
-                return;
-            var item = Items.LastOrDefault(x => !x.Disabled);
-            if (item == null)
-                return;
-            if (!MultiSelection)
-            {
-                _selectedValues.Clear();
-                _selectedValues.Add(item.Value);
-                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
-            }
-
-            await HighlightItemAsync(item);
-            await _elementReference.SetText(ReadText);
-            await ScrollToItemAsync(item);
-        }
 
         /// <summary>
         /// Whether this select dropdown is open and the options are visible.
@@ -394,11 +181,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool? Modal { get; set; }
-
-        /// <summary>
-        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
-        /// </summary>
-        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
@@ -524,44 +306,35 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Data)]
         public IReadOnlyCollection<T?>? SelectedValues { get; set; } = [];
 
-        private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
-        {
-            var value = arg.Value;
+        /// <summary>
+        /// The icon used for selected items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBox"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
-            // Update internal HashSet with new values - make a defensive copy to avoid shared references
-            // The HashSet uses the Comparer for equality checks and ensures uniqueness
-            _selectedValues = value != null ? new HashSet<T?>(value, Comparer) : new HashSet<T?>(Comparer);
+        /// <summary>
+        /// The icon used for unselected items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBoxOutlineBlank"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
-            // Notify all subscribed items of the selection change
-            await _context.NotifySelectionChangedAsync();
-
-            if (!MultiSelection)
-            {
-                await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
-            }
-            else
-            {
-                //Warning. Here the Converter was not set yet
-                if (MultiSelectionTextFunc != null)
-                {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc);
-                }
-                else
-                {
-                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
-                }
-            }
-
-            // Only fire FieldChanged after the first render to avoid triggering during initialization
-            if (HasRendered)
-            {
-                FieldChanged(_selectedValues);
-            }
-            if (MultiSelection && typeof(T) == typeof(string))
-                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
-        }
+        /// <summary>
+        /// The icon used when at least one, but not all, items are selected.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
         /// The comparer for testing equality of selected values.
@@ -585,65 +358,6 @@ namespace MudBlazor
         public Func<T?, string?>? ToStringFunc { get; set; }
 
         /// <summary>
-        /// Whether the <c>Value</c> can be found in the list of <see cref="Items"/>.
-        /// </summary>
-        /// <remarks>
-        /// When <c>false</c>, the <c>Value</c> will be displayed as a string.
-        /// </remarks>
-        protected bool CanRenderValue
-        {
-            get
-            {
-                if (MultiSelection)
-                    return false;
-                if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
-                    return false;
-                return item.ChildContent != null;
-            }
-        }
-
-        protected bool IsValueInList
-        {
-            get
-            {
-                return _context.TryGetShadowItemByValue(ReadValue, out _);
-            }
-        }
-
-        protected RenderFragment? GetSelectedValuePresenter()
-        {
-            if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
-                return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
-            return item.ChildContent;
-        }
-
-        protected override Task UpdateValuePropertyAsync(bool updateText)
-        {
-            // For MultiSelection of non-string T's we don't update the Value!!!
-            if (typeof(T) == typeof(string) || !MultiSelection)
-                base.UpdateValuePropertyAsync(updateText);
-            return Task.CompletedTask;
-        }
-
-        protected override Task UpdateTextPropertyAsync(bool updateValue)
-        {
-            // when multiselection is true, we return
-            // a comma separated list of selected values
-            if (MultiSelectionTextFunc != null)
-            {
-                return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc)
-                    : base.UpdateTextPropertyAsync(updateValue);
-            }
-
-            return MultiSelection
-                ? SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)))
-                : base.UpdateTextPropertyAsync(updateValue);
-        }
-
-        /// <summary>
         /// Allows multiple values to be selected via checkboxes.
         /// </summary>
         /// <remarks>
@@ -652,14 +366,6 @@ namespace MudBlazor
         [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool MultiSelection { get; set; }
-
-        /// <summary>
-        /// The list of choices the user can select.
-        /// </summary>
-        /// <remarks>
-        /// Use <see cref="MudSelectItem{T}"/> components to provide more items.
-        /// </remarks>
-        public IReadOnlyList<MudSelectItem<T>> Items => _context.Items;
 
         /// <summary>
         /// The maximum height, in pixels, of the popover of items.
@@ -747,6 +453,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool SelectionOnEnter { get; set; }
+
+        /// <summary>
+        /// The list of choices the user can select.
+        /// </summary>
+        /// <remarks>
+        /// Use <see cref="MudSelectItem{T}"/> components to provide more items.
+        /// </remarks>
+        public IReadOnlyList<MudSelectItem<T>> Items => _context.Items;
 
         /// <summary>
         /// The current adornment icon to display.
@@ -1147,34 +861,62 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The icon used for selected items.
+        /// Whether the <c>Value</c> can be found in the list of <see cref="Items"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.CheckBox"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// When <c>false</c>, the <c>Value</c> will be displayed as a string.
         /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+        protected bool CanRenderValue
+        {
+            get
+            {
+                if (MultiSelection)
+                    return false;
+                if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
+                    return false;
+                return item.ChildContent != null;
+            }
+        }
+
+        protected bool IsValueInList => _context.TryGetShadowItemByValue(ReadValue, out _);
 
         /// <summary>
-        /// The icon used for unselected items.
+        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.CheckBoxOutlineBlank"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
-        /// <summary>
-        /// The icon used when at least one, but not all, items are selected.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+        protected RenderFragment? GetSelectedValuePresenter()
+        {
+            if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
+                return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+            return item.ChildContent;
+        }
+
+        protected override Task UpdateValuePropertyAsync(bool updateText)
+        {
+            // For MultiSelection of non-string T's we don't update the Value!!!
+            if (typeof(T) == typeof(string) || !MultiSelection)
+                base.UpdateValuePropertyAsync(updateText);
+            return Task.CompletedTask;
+        }
+
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            // when multiselection is true, we return
+            // a comma separated list of selected values
+            if (MultiSelectionTextFunc != null)
+            {
+                return MultiSelection
+                    ? SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                        multiSelectionTextFunc: MultiSelectionTextFunc)
+                    : base.UpdateTextPropertyAsync(updateValue);
+            }
+
+            return MultiSelection
+                ? SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)))
+                : base.UpdateTextPropertyAsync(updateValue);
+        }
 
         /// <summary>
         /// The icon to display whether all, none, or some items are selected.
@@ -1185,9 +927,49 @@ namespace MudBlazor
         /// If no items are selected, <see cref="UncheckedIcon"/> is returned.
         /// Otherwise, <see cref="IndeterminateIcon"/> is returned.
         /// </remarks>
-        protected string SelectAllCheckBoxIcon
+        protected string SelectAllCheckBoxIcon => _selectAllChecked.HasValue
+            ? _selectAllChecked.Value
+                ? CheckedIcon
+                : UncheckedIcon
+            : IndeterminateIcon;
+
+        private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
         {
-            get => _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
+            var value = arg.Value;
+
+            // Update internal HashSet with new values - make a defensive copy to avoid shared references
+            // The HashSet uses the Comparer for equality checks and ensures uniqueness
+            _selectedValues = value != null ? new HashSet<T?>(value, Comparer) : new HashSet<T?>(Comparer);
+
+            // Notify all subscribed items of the selection change
+            await _context.NotifySelectionChangedAsync();
+
+            if (!MultiSelection)
+            {
+                await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
+            }
+            else
+            {
+                //Warning. Here the Converter was not set yet
+                if (MultiSelectionTextFunc != null)
+                {
+                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                }
+                else
+                {
+                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                }
+            }
+
+            // Only fire FieldChanged after the first render to avoid triggering during initialization
+            if (HasRendered)
+            {
+                FieldChanged(_selectedValues);
+            }
+            if (MultiSelection && typeof(T) == typeof(string))
+                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
         }
 
         internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
@@ -1372,6 +1154,218 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 await FocusAsync();
             }
+        }
+
+        private Task SelectNextItem() => SelectAdjacentItem(+1);
+
+        private Task SelectPreviousItem() => SelectAdjacentItem(-1);
+
+        private async Task SelectAdjacentItem(int direction)
+        {
+            if (Items.Count == 0)
+                return;
+            var index = Items.FindIndex(x => x.ItemId == _activeItemId);
+            if (direction < 0 && index < 0)
+                index = 0;
+            MudSelectItem<T>? item = null;
+            // the loop allows us to jump over disabled items until we reach the next non-disabled one
+            for (var i = 0; i < Items.Count; i++)
+            {
+                index += direction;
+                if (index < 0)
+                    index = 0;
+                if (index >= Items.Count)
+                    index = Items.Count - 1;
+                if (Items[index].Disabled)
+                    continue;
+                item = Items[index];
+                if (!MultiSelection)
+                {
+                    // When SelectionOnEnter is true, we only update the visual highlight during navigation.
+                    // When false (default), the value is immediately updated as the user moves through the list.
+                    if (!SelectionOnEnter)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(item.Value);
+                        await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                    }
+
+                    await HighlightItemAsync(item);
+                    break;
+                }
+
+                // in multiselect mode don't select anything, just highlight.
+                // selecting is done by Enter
+                await HighlightItemAsync(item);
+                break;
+            }
+            await _elementReference.SetText(ReadText);
+            await ScrollToItemAsync(item);
+        }
+        private ValueTask ScrollToItemAsync(MudSelectItem<T>? item)
+            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
+
+        private async Task SelectFirstItem(string? startChar = null)
+        {
+            IReadOnlyCollection<MudSelectItem<T>> selectList = Items;
+
+            if (!_openState.Value)
+            {
+                // When closed, use shadow lookup to include all items (visible + hidden)
+                selectList = _context.ShadowItems;
+            }
+
+            if (selectList.Count == 0)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(startChar))
+            {
+                // SelectItemBySearch handles disabled items
+                var searchItem = SelectItemBySearch(selectList, startChar);
+                if (searchItem is not null)
+                {
+                    await SelectAndHighlightItemAsync(searchItem);
+                    return;
+                }
+            }
+
+            // Find first non-disabled item
+            foreach (var item in selectList)
+            {
+                if (item.Disabled)
+                {
+                    continue;
+                }
+
+                await SelectAndHighlightItemAsync(item);
+                return;
+            }
+        }
+
+        private MudSelectItem<T>? SelectItemBySearch(IReadOnlyCollection<MudSelectItem<T>> items, string inputChar)
+        {
+            UpdateSearchText(inputChar);
+
+            MudSelectItem<T>? activeItem = null;
+            MudSelectItem<T>? previousItem = null;
+            MudSelectItem<T>? firstMatch = null;
+            MudSelectItem<T>? nextMatch = null;
+            var foundPrevious = false;
+
+            foreach (var item in items)
+            {
+                TrackSpecialItems(item, ref activeItem, ref previousItem);
+
+                if (IsMatch(item))
+                {
+                    firstMatch ??= item;
+
+                    if (foundPrevious)
+                    {
+                        nextMatch ??= item;
+                    }
+
+                    if (item == previousItem)
+                    {
+                        foundPrevious = true;
+                    }
+                }
+            }
+
+            return DetermineResult(activeItem, previousItem, firstMatch, nextMatch);
+
+            void UpdateSearchText(string input)
+            {
+                var now = TimeProvider.GetUtcNow();
+
+                if (now - _lastSearchTime > QuickSearchInterval)
+                {
+                    _lastSelectedId = _activeItemId;
+                    _searchText = input;
+                }
+                else
+                {
+                    _searchText += input;
+                }
+
+                _lastSearchTime = now;
+            }
+
+            void TrackSpecialItems(MudSelectItem<T> item, ref MudSelectItem<T>? active, ref MudSelectItem<T>? previous)
+            {
+                if (item.ItemId == _activeItemId)
+                {
+                    active = item;
+                }
+
+                if (item.ItemId == _lastSelectedId)
+                {
+                    previous = item;
+                }
+            }
+
+            bool IsMatch(MudSelectItem<T> item)
+            {
+                if (item.Disabled)
+                {
+                    return false;
+                }
+
+                var text = ConvertSet(item.Value);
+                return text is not null && text.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            MudSelectItem<T>? DetermineResult(MudSelectItem<T>? active, MudSelectItem<T>? previous,
+                                               MudSelectItem<T>? first, MudSelectItem<T>? next)
+            {
+                if (first is null)
+                {
+                    return active;
+                }
+
+                if (previous is null)
+                {
+                    return first;
+                }
+
+                return next ?? first;
+            }
+        }
+
+        private async Task SelectAndHighlightItemAsync(MudSelectItem<T> item)
+        {
+            if (!MultiSelection)
+            {
+                _selectedValues.Clear();
+                _selectedValues.Add(item.Value);
+                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+            }
+
+            await HighlightItemAsync(item);
+            await _elementReference.SetText(ReadText);
+            await ScrollToItemAsync(item);
+        }
+
+        private async Task SelectLastItem()
+        {
+            if (Items.Count == 0)
+                return;
+            var item = Items.LastOrDefault(x => !x.Disabled);
+            if (item == null)
+                return;
+            if (!MultiSelection)
+            {
+                _selectedValues.Clear();
+                _selectedValues.Add(item.Value);
+                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+            }
+
+            await HighlightItemAsync(item);
+            await _elementReference.SetText(ReadText);
+            await ScrollToItemAsync(item);
         }
 
         internal Task OnBlurAsync(FocusEventArgs obj)
