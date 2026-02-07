@@ -65,7 +65,8 @@
     </MudFileUpload>
 </MudStack>
 
-@code {
+@code
+{
     IBrowserFile _file;
     IReadOnlyList<IBrowserFile> _files = new List<IBrowserFile>();
 
@@ -75,7 +76,7 @@
         _files = [
             new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
             new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-                 ];
+        ];
     }
 
     public class DummyBrowserFile : IBrowserFile

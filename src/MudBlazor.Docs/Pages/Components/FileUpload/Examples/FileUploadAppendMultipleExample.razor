@@ -1,4 +1,4 @@
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack Row Justify="Justify.SpaceAround" AlignItems="AlignItems.Start" Class="mud-width-full">
     <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles>
@@ -28,7 +28,8 @@
     <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles="false">
         <CustomContent>
             <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary" OnClick="@context.OpenFilePickerAsync"
+                       Color="Color.Primary"
+                       OnClick="@context.OpenFilePickerAsync"
                        StartIcon="@Icons.Material.Filled.CloudUpload">
                 AppendMultipleFiles = false
             </MudButton>

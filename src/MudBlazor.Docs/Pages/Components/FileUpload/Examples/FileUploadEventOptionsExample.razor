@@ -25,16 +25,16 @@
 
 @code
 {
-    IList<IBrowserFile> files = new List<IBrowserFile>();
+    IList<IBrowserFile> _files = new List<IBrowserFile>();
     private void UploadFiles(IBrowserFile file)
     {
-        files.Add(file);
+        _files.Add(file);
         //TODO upload the files to the server
     }
 
     private void UploadFiles(InputFileChangeEventArgs args)
     {
-        files.Add(args.File);
+        _files.Add(args.File);
         //TODO upload the files to the server
     }
 }

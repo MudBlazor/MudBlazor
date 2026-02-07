@@ -84,14 +84,15 @@
     </MudForm>
 </MudStack>
 
-@code {
+@code
+{
 #nullable enable
     public class Model
     {
         public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
     }
 
-    private Model _model =  new();
+    private Model _model = new();
     private ModelFluentValidator _validationRules = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
     private bool _isValid;

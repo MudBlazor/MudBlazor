@@ -4,7 +4,7 @@
     <MudCardContent>
         <MudFileUpload @bind-Files="@_browserFiles"
                        AppendMultipleFiles
-                       DragandDrop="true"
+                       DragAndDrop="true"
                        tabindex="-1"
                        @bind-Dragging="@_dragging"
                        @bind-Dragging:after="@ClearDragClass">
@@ -18,15 +18,15 @@
                         Drag and drop files here or click
                     </MudText>
                     <div class="flex-grow-1">
-                    @foreach (var file in context.GetFilenames())
-                    {
-                        <MudChip T="string"
-                                 Color="Color.Dark"
-                                 Text="@file"
-                                 CloseIcon="@Icons.Material.Outlined.Close"
-                                 OnClose="@(async () => await context.RemoveFile(file))"
-                                 tabindex="-1" />
-                    }
+                        @foreach (var file in context.GetFilenames())
+                        {
+                            <MudChip T="string"
+                                     Color="Color.Dark"
+                                     Text="@file"
+                                     CloseIcon="@Icons.Material.Outlined.Close"
+                                     OnClose="@(async () => await context.RemoveFile(file))"
+                                     tabindex="-1" />
+                        }
                     </div>
                     <MudToolBar Gutters="false"
                                 Class="d-flex justify-end align-end gap-4">
@@ -63,10 +63,10 @@
         _browserFiles = [
             new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
             new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-                        ];
+        ];
     }
 
-        private void SetDragClass()
+    private void SetDragClass()
     {
         _dragClass = $"{DefaultDragClass} mud-border-success";
         _dragging = true;

@@ -4,9 +4,9 @@
     <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
         <CustomContent>
             <MudButton Variant="Variant.Filled"
-            Color="Color.Primary"
-            OnClick="@context.OpenFilePickerAsync"
-            StartIcon="@Icons.Material.Filled.CloudUpload">
+                       Color="Color.Primary"
+                       OnClick="@context.OpenFilePickerAsync"
+                       StartIcon="@Icons.Material.Filled.CloudUpload">
                 Upload Files
             </MudButton>
         </CustomContent>
@@ -16,9 +16,9 @@
     <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
         <CustomContent>
             <MudFab Color="Color.Secondary"
-            StartIcon="@Icons.Material.Filled.Image"
-            OnClick="@context.OpenFilePickerAsync"
-            Label="Load picture" />
+                    StartIcon="@Icons.Material.Filled.Image"
+                    OnClick="@context.OpenFilePickerAsync"
+                    Label="Load picture" />
         </CustomContent>
         <SelectedTemplate />
     </MudFileUpload>
@@ -26,8 +26,8 @@
     <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
         <CustomContent>
             <MudFab Color="Color.Success"
-            OnClick="@context.OpenFilePickerAsync"
-            StartIcon="@Icons.Material.Filled.AttachFile" />
+                    OnClick="@context.OpenFilePickerAsync"
+                    StartIcon="@Icons.Material.Filled.AttachFile" />
         </CustomContent>
         <SelectedTemplate />
     </MudFileUpload>
@@ -35,8 +35,8 @@
     <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
         <CustomContent>
             <MudIconButton Color="Color.Info"
-            OnClick="@context.OpenFilePickerAsync"
-            Icon="@Icons.Material.Filled.PhotoCamera">
+                           OnClick="@context.OpenFilePickerAsync"
+                           Icon="@Icons.Material.Filled.PhotoCamera">
             </MudIconButton>
         </CustomContent>
         <SelectedTemplate />
@@ -45,8 +45,8 @@
     <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Disabled>
         <CustomContent>
             <MudButton Variant="Variant.Filled"
-            OnClick="@context.OpenFilePickerAsync"
-            Color="Color.Primary">
+                       OnClick="@context.OpenFilePickerAsync"
+                       Color="Color.Primary">
                 Disabled Button
             </MudButton>
         </CustomContent>
@@ -63,13 +63,13 @@
     {
         <MudFlexBreak />
         <MudList T="string">
-        @foreach (var file in _files)
-        {
-            <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
-                @file.Name <code>@file.Size bytes</code>
-            </MudListItem>
-        }
-        </MudList>   
+            @foreach (var file in _files)
+            {
+                <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+                    @file.Name <code>@file.Size bytes</code>
+                </MudListItem>
+            }
+        </MudList>
     }
 }
 

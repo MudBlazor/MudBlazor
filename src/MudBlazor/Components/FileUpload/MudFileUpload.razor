@@ -2,8 +2,6 @@
 @typeparam T
 @namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Forms
-@using MudBlazor.Interfaces
-
 @{
 #pragma warning disable CS0618 // Type or member is obsolete
 }
@@ -14,36 +12,36 @@
         {
             var localIndex = index;
             <InputFile @key="@localIndex"
-            OnChange="OnChangeAsync"
-            class="@GetInputClass(localIndex)"
-            style="@InputStyle"
-            hidden="@(Hidden && !_draggingState.Value ? "" : null)"
-            multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
-            accept="@Accept"
-            disabled="@(GetDisabledState())"
-            @attributes="UserAttributes"
-            @ondrop="@(() => _draggingState.SetValueAsync(false))"
-            @ondragleave="@(() => _draggingState.SetValueAsync(false))"
-            @ondragend="@(() => _draggingState.SetValueAsync(false))"
-            id="@GetInputId(localIndex)"
-            required="@Required"
-            aria-required="@Required.ToString().ToLowerInvariant()" />
+                       OnChange="OnChangeAsync"
+                       class="@GetInputClass(localIndex)"
+                       style="@InputStyle"
+                       hidden="@(Hidden && !_draggingState.Value ? "" : null)"
+                       multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                       accept="@Accept"
+                       disabled="@(GetDisabledState())"
+                       @attributes="UserAttributes"
+                       @ondrop="@(() => _draggingState.SetValueAsync(false))"
+                       @ondragleave="@(() => _draggingState.SetValueAsync(false))"
+                       @ondragend="@(() => _draggingState.SetValueAsync(false))"
+                       id="@GetInputId(localIndex)"
+                       required="@Required"
+                       aria-required="@Required.ToString().ToLowerInvariant()" />
         }
         @if (CustomContent == null)
-        {         
+        {
             @if (DragAndDrop)
             {
-                <MudPaper Outlined="true" 
-                @onclick="OnDragAreaClickAsync"
-                @ondragenter="OnDragEnterAsync"
-                Class="@DragClass">
+                <MudPaper Outlined="true"
+                          @onclick="OnDragAreaClickAsync"
+                          @ondragenter="OnDragEnterAsync"
+                          Class="@DragClass">
                     <MudIcon Disabled="GetDisabledState()" Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
                     <MudText Color="@(GetDisabledState() ? Color.Default : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
                 </MudPaper>
             }
             else
             {
-                <MudButton Variant="Variant.Filled" 
+                <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            StartIcon="@Icons.Material.Filled.CloudUpload"
                            Disabled="GetDisabledState()"
@@ -64,7 +62,7 @@
             @if (SelectedTemplate != null)
             {
                 @SelectedTemplate(_filesState.Value)
-            }            
+            }
             else
             {
                 <!-- Make sure there is at least one file -->
