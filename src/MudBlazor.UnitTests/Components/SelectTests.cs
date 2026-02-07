@@ -475,16 +475,16 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.TextChanged, (Action<string>)(x =>
-              {
-                  textChangedCount = eventCounter++;
-                  text = x;
-              })));
-            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, (Action<IReadOnlyCollection<string>>)(x =>
-              {
-                  selectedValuesChangedCount = eventCounter++;
-                  selectedValues = x;
-              })));
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.TextChanged, x =>
+            {
+                textChangedCount = eventCounter++;
+                text = x;
+            }));
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.SelectedValuesChanged, x =>
+            {
+                selectedValuesChangedCount = eventCounter++;
+                selectedValues = x;
+            }));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state

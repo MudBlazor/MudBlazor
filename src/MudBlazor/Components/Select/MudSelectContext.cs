@@ -50,13 +50,7 @@ internal sealed class MudSelectContext<T>
     /// <summary>
     /// Gets the current selected values.
     /// </summary>
-    public IReadOnlyCollection<T?> SelectedValues
-    {
-        get
-        {
-            return _select.GetSelectedValues() ?? Array.Empty<T?>();
-        }
-    }
+    public IReadOnlyCollection<T?> SelectedValues => _select.GetSelectedValues() ?? Array.Empty<T?>();
 
     /// <summary>
     /// Registers an item as visible in the dropdown list.
