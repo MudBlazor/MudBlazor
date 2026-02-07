@@ -583,6 +583,8 @@ namespace MudBlazor.UnitTests.Components
             // Act & Assert
             Action action = () => instance.GetType().GetMethod("GetFilenames").Invoke(instance, null);
             action.Should().NotThrow();
+        }
+
         private static InputFileContent CreateDummyFile(string fileName, long size)
         {
             var content = new byte[size];
