@@ -17,9 +17,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_CheckListClass()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter" }));
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ListClass, "my-list-class"));
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-list-class"));
         }
@@ -120,40 +121,41 @@ namespace MudBlazor.UnitTests.Components
         [NonParallelizable]
         public async Task Select_KeyDown_WhileClosed()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
 
             //open menu on keydown
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //cycle through matching results
             await Task.Delay(210);
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Texas"));
             await Task.Delay(210);
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //multi-string search
             await Task.Delay(210);
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "c", Type = "keydown" }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "l", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "c", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "l", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Colorado"));
 
             //paused search
             await Task.Delay(210);
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "i", Type = "keydown" }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Iowa"));
 
             await Task.Delay(210);
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "i", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
             await Task.Delay(210);
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Ohio"));
         }
 
@@ -1089,67 +1091,68 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_KeyboardNavigation_SingleSelect()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectTest1>();
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //If we didn't select an item with mouse or arrow keys yet, value should remains null.
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be(null));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", AltKey = true, Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             //If dropdown is closed, arrow key should not set a value.
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be(null));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "NumpadEnter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
             //End key should not select the last disabled item
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "End", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("3"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("2"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Home", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
             //Arrow up should select still the first item
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "End", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("3"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "2", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "2", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("2"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "2", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "2", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("2"));
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(1));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
             comp.Render(); // <-- this is necessary for reliable passing of the test
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
@@ -1157,24 +1160,25 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_SelectionOnEnter_ShouldOnlyChangeOnEnter()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectTest3>();
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true, Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", AltKey = true, Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             // ArrowDown should move the highlight but NOT change the value
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown" })); // Move to "1"
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown" })); // Move to "2"
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown" })); // Move to "1"
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown" })); // Move to "1"
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown" })); // Move to "2"
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" })); // Move to "1"
 
             // Value is still null/default even though we moved focus
             await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().BeNull());
 
             // Confirm selection with Enter
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown" }));
 
             // Now the value should be "1" and popover should close
             await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().Be("1"));
@@ -1184,60 +1188,61 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_KeyboardNavigation_MultiSelect()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<MultiSelectTest3>();
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "a", CtrlKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "a", CtrlKey = true, Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("0 feline has been selected"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "A", CtrlKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "A", CtrlKey = true, Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("7 felines have been selected"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("6 felines have been selected"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "A", CtrlKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "A", CtrlKey = true, Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("7 felines have been selected"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().Contain("Jaguar"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Home", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "NumpadEnter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Jaguar"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().Contain("Leopard"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "End", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
 
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
 
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
             //Test the keyup event
-            await comp.InvokeAsync(() => select.Instance.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keyup", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyUp(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keyup", }));
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
 
-            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Tab", Type = "keydown", }));
-            await comp.InvokeAsync(() => select.Instance.OnKeyUp.InvokeAsync(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyUp(select.Instance.ElementId, new KeyboardEventArgs { Key = "Tab" }));
             comp.Render(); // <-- this is necessary for reliable passing of the test
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
@@ -1254,7 +1259,7 @@ namespace MudBlazor.UnitTests.Components
             await items[0].ClickAsync();
             await items[2].ClickAsync();
             //emulate focus out
-            mudSelectElement.FocusOut();
+            await mudSelectElement.FocusOutAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("Alaska, Alabama, American Samoa"));
             //check if we received focus event from the MudSelect.OnFocusOutAsync
             Context.JSInterop.VerifyFocusAsyncInvoke();
@@ -1263,15 +1268,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_ItemlessSelect()
         {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<MudSelect<string>>();
 
             // print the generated html
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp.Instance.ElementId, new KeyboardEventArgs { Key = "Home", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp.Instance.ElementId, new KeyboardEventArgs { Key = "End", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Instance.GetState(x => x.SelectedValues).Should().HaveCount(0));
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(null));
         }

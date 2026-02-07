@@ -27,13 +27,14 @@ namespace MudBlazor
         private bool _needsHighlightAfterRender;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
-        private readonly string _elementId = Identifier.Create("select");
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTimeOffset _lastSearchTime = DateTimeOffset.MinValue;
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
+
+        internal string ElementId { get; } = Identifier.Create("select");
 
         /// <inheritdoc />
         object IMudSelect.SelectContext => _context;
@@ -630,7 +631,7 @@ namespace MudBlazor
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
 
         /// <summary>
@@ -652,7 +653,7 @@ namespace MudBlazor
             }
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "none"));
         }
 
         /// <summary>
@@ -1094,7 +1095,7 @@ namespace MudBlazor
         /// </summary>
         internal IReadOnlyCollection<T?>? GetSelectedValues() => _selectedValuesState.Value;
 
-        internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        private async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
@@ -1193,7 +1194,7 @@ namespace MudBlazor
             await OnKeyDown.InvokeAsync(obj);
         }
 
-        internal Task HandleKeyUpAsync(KeyboardEventArgs obj)
+        private Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
             return OnKeyUp.InvokeAsync(obj);
         }
@@ -1241,7 +1242,7 @@ namespace MudBlazor
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -1396,7 +1397,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
     }
