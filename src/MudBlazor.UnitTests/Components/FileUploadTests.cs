@@ -427,7 +427,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FileUpload_DragAndDrop_Test()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.DragAndDrop, true));
 
             // Verify drag area exists
@@ -454,7 +454,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var fileName = "test.txt";
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "text/plain", []);
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.Files, defaultFile));
 
             // Verify initial state
@@ -481,7 +481,7 @@ namespace MudBlazor.UnitTests.Components
                 new DummyBrowserFile("test2.txt", DateTimeOffset.Now, 0, "text/plain", [])
             };
 
-            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(x => x.Files, files));
 
             // Verify initial state
@@ -500,7 +500,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests SelectedTemplate rendering
         /// </summary>
         [Test]
-        public void FileUpload_SelectedTemplate_Test()
+        public async Task FileUpload_SelectedTemplate_Test()
         {
             // Arrange
             var files = new List<IBrowserFile>
@@ -510,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
             };
 
             // Create the component with initial template
-            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(x => x.SelectedTemplate, context => builder =>
                 {
                     builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
@@ -521,7 +521,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Simulate file upload by triggering OnChange
             var inputFile = comp.FindComponent<InputFile>();
-            inputFile.InvokeAsync(() => inputFile.Instance.OnChange.InvokeAsync(
+            await comp.InvokeAsync(() => inputFile.Instance.OnChange.InvokeAsync(
                 new InputFileChangeEventArgs(files)));
 
             // Re-render and verify
@@ -543,7 +543,7 @@ namespace MudBlazor.UnitTests.Components
                 new DummyBrowserFile("invalid.txt", DateTimeOffset.Now, 10485761, "text/plain", [])
             };
 
-            var comp = Context.RenderComponent<FileUploadFormValidationTest>(parameters => parameters
+            var comp = Context.Render<FileUploadFormValidationTest>(parameters => parameters
                 .Add(p => p.SuppressOnChangeWhenInvalid, suppressOnChangeWhenInvalid));
 
             // Act 1: Upload a valid file
@@ -574,7 +574,7 @@ namespace MudBlazor.UnitTests.Components
             var componentType = typeof(MudFileUpload<>).MakeGenericType(actualType);
 
             var renderMethod = Context.GetType()
-                .GetMethod("RenderComponent", [typeof(ComponentParameter[])])
+                .GetMethod("Render", [typeof(ComponentParameter[])])
                 .MakeGenericMethod(componentType);
 
             var comp = renderMethod.Invoke(Context, [Array.Empty<ComponentParameter>()]);
