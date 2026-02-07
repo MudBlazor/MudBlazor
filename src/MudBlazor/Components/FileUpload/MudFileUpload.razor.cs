@@ -53,7 +53,6 @@ namespace MudBlazor
 
         protected string DragClass =>
             new CssBuilder("mud-file-upload-dragarea")
-                .AddClass("relative d-flex rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full justify-center align-center flex-column")
                 .AddClass("mud-border-primary", _draggingState.Value)
                 .Build();
 

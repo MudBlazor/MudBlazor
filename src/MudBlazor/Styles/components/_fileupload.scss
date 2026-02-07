@@ -15,6 +15,20 @@
     z-index: 2;
   }
 
+  .mud-file-upload-dragarea {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    border-radius: var(--mud-default-borderradius);
+    border-width: 2px;
+    border-style: dashed;
+  }
+
   &.mud-input-control {
     margin-top: 0;
   }
