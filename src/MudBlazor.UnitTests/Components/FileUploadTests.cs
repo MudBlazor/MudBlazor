@@ -574,10 +574,10 @@ namespace MudBlazor.UnitTests.Components
             var componentType = typeof(MudFileUpload<>).MakeGenericType(actualType);
 
             var renderMethod = Context.GetType()
-                .GetMethod("Render", [typeof(ComponentParameter[])])
+                .GetMethod("Render", Type.EmptyTypes)
                 .MakeGenericMethod(componentType);
 
-            var comp = renderMethod.Invoke(Context, [Array.Empty<ComponentParameter>()]);
+            var comp = renderMethod.Invoke(Context, null);
             var instance = comp.GetType().GetProperty("Instance").GetValue(comp);
 
             // Act & Assert
