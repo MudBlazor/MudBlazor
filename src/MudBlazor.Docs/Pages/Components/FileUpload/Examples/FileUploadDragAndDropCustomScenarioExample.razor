@@ -30,7 +30,7 @@
                       Outlined="true"
                       Class="@_dragClass">
                 <MudText Typo="Typo.h6">
-                    Drag and drop files here or click
+                    Drag files here or click to browse
                 </MudText>
                 @foreach (var file in _fileNames)
                 {
@@ -47,7 +47,7 @@
         <MudButton Color="Color.Primary"
                    OnClick="@OpenFilePickerAsync"
                    Variant="Variant.Filled">
-            Open file picker
+            Browse files
         </MudButton>
         <MudButton Color="Color.Primary"
                    Disabled="@(!_fileNames.Any())"
@@ -96,7 +96,7 @@
     {
         // Upload the files here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("TODO: Upload your files!");
+        Snackbar.Add("Upload started (demo).");
     }
 
     private void SetDragClass()

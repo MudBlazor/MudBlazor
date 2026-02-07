@@ -6,7 +6,7 @@
             <MudButton Variant="Variant.Filled"
                        OnClick="@context.OpenFilePickerAsync"
                        Color="Color.Primary">
-                Default Template
+                Default template
             </MudButton>
         </CustomContent>
     </MudFileUpload>
@@ -16,7 +16,7 @@
             <MudButton Variant="Variant.Filled"
                        OnClick="@context.OpenFilePickerAsync"
                        Color="Color.Primary">
-                Single File
+                Single file
             </MudButton>
         </CustomContent>
         <SelectedTemplate>
@@ -26,7 +26,7 @@
             }
             else
             {
-                <MudText>No File</MudText>
+                <MudText>No file selected</MudText>
             }
         </SelectedTemplate>
     </MudFileUpload>
@@ -36,7 +36,7 @@
             <MudButton Variant="Variant.Filled"
                        OnClick="@context.OpenFilePickerAsync"
                        Color="Color.Secondary">
-                Multiple Files
+                Multiple files
             </MudButton>
         </CustomContent>
         <SelectedTemplate>
@@ -49,7 +49,7 @@
             }
             else
             {
-                <MudText>No Files</MudText>
+                <MudText>No files selected</MudText>
             }
         </SelectedTemplate>
     </MudFileUpload>
@@ -59,7 +59,7 @@
             <MudFab Color="Color.Warning"
                     StartIcon="@Icons.Material.Filled.Image"
                     OnClick="@context.OpenFilePickerAsync"
-                    Label="No Template" />
+                    Label="No template" />
         </CustomContent>
         <SelectedTemplate />
     </MudFileUpload>

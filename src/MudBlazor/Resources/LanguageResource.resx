@@ -418,10 +418,10 @@
     <value>Column options</value>
   </data>
   <data name="MudFileUpload_DragAndDrop" xml:space="preserve">
-    <value>Drag and drop file(s) here or click</value>
+    <value>Drag files here or click to browse</value>
   </data>
   <data name="MudFileUpload_Button" xml:space="preserve">
-    <value>Click to Upload</value>
+    <value>Browse files</value>
   </data>
   <data name="Converter_InvalidBoolean" xml:space="preserve">
     <value>Not a valid boolean</value>

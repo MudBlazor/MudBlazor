@@ -15,7 +15,7 @@
                           @ondragenter="@SetDragClass"
                           Class="@_dragClass">
                     <MudText Typo="Typo.h6">
-                        Drag and drop files here or click
+                        Drag files here or click to browse
                     </MudText>
                     <div class="flex-grow-1">
                         @foreach (var file in context.GetFilenames())
@@ -33,7 +33,7 @@
                         <MudButton Color="Color.Primary"
                                    OnClick="@context.OpenFilePickerAsync"
                                    Variant="Variant.Filled">
-                            Open file picker
+                            Browse files
                         </MudButton>
                         <MudButton Color="Color.Error"
                                    Disabled="@(!context.GetFilenames().Any())"

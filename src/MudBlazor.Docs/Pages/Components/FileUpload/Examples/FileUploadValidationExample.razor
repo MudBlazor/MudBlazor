@@ -26,7 +26,7 @@
                                            Color="Color.Primary"
                                            OnClick="@context.OpenFilePickerAsync"
                                            StartIcon="@Icons.Material.Filled.CloudUpload">
-                                    Upload Files
+                                    Choose file
                                 </MudButton>
                             </CustomContent>
                             <SelectedTemplate />
@@ -37,7 +37,7 @@
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.Clear"
                                    OnClick="@ClearAsync">
-                            Clear Files
+                            Clear selection
                         </MudButton>
                     </MudItem>
                 </MudGrid>
@@ -62,7 +62,7 @@
     {
         //If SuppressOnChangeWhenInvalid is false, perform your validations here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add($"This file has the extension {_model.File.Name.Split(".").Last()}", Severity.Info);
+        Snackbar.Add($"Selected file type: .{_model.File.Name.Split(".").Last()}", Severity.Info);
 
         //TODO upload the files to the server
     }
