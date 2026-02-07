@@ -28,8 +28,11 @@
         {
             RuleFor(x => x.File)
                 .NotEmpty();
-            When(x => x.File is not null, () => { RuleFor(x => x.File!.Size)
-                .LessThanOrEqualTo(10485760).WithMessage("The maximum file size is 10 MB"); });
+            When(x => x.File is not null, () =>
+            {
+                RuleFor(x => x.File!.Size)
+                .LessThanOrEqualTo(10485760).WithMessage("The maximum file size is 10 MB");
+            });
             RuleFor(x => x.Files)
                 .NotEmpty();
         }

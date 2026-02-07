@@ -1,6 +1,6 @@
-<style>
+﻿<style>
     .mud-button-root:disabled {
-    pointer-events: auto;
+        pointer-events: auto;
     }
 </style>
 
@@ -8,54 +8,54 @@
 
 <MudText>Blank FileUpload Drag False</MudText>
 <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-AppendMultipleFiles />
+               AppendMultipleFiles />
 
 -----------------
 
 <MudText>Blank FileUpload Drag True</MudText>
 <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-Style="height: 300px;width: 300px;"
-AppendMultipleFiles
-DragAndDrop />
+               Style="height: 300px;width: 300px;"
+               AppendMultipleFiles
+               DragAndDrop />
 
 
 ----------------
 
 <MudText>File Upload with Activator Content</MudText>
 <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-@ref="@_fileUpload"
-AppendMultipleFiles
-DragandDrop="true"
-tabindex="-1"
-@bind-Dragging="@_dragging"
-@bind-Dragging:after="@ClearDragClass">
+               @ref="@_fileUpload"
+               AppendMultipleFiles
+               DragandDrop="true"
+               tabindex="-1"
+               @bind-Dragging="@_dragging"
+               @bind-Dragging:after="@ClearDragClass">
     <CustomContent>
         <MudPaper Height="300px"
-        Outlined="true"
-        @onclick="@context.OpenFilePickerAsync"
-        @ondragenter="@SetDragClass"
-        Class="@_dragClass">
+                  Outlined="true"
+                  @onclick="@context.OpenFilePickerAsync"
+                  @ondragenter="@SetDragClass"
+                  Class="@_dragClass">
             <MudText Typo="Typo.h6">
                 Drag and drop files here or click
             </MudText>
             @foreach (var file in context.GetFilenames())
             {
                 <MudChip T="string"
-                Color="Color.Dark"
-                Text="@file"
-                tabindex="-1" />
+                         Color="Color.Dark"
+                         Text="@file"
+                         tabindex="-1" />
             }
             <MudToolBar Gutters="@false"
-            Class="relative d-flex justify-end gap-4 z-11">
+                        Class="relative d-flex justify-end gap-4 z-11">
                 <MudButton Color="Color.Primary"
-                OnClick="@context.OpenFilePickerAsync"
-                Variant="Variant.Filled">
+                           OnClick="@context.OpenFilePickerAsync"
+                           Variant="Variant.Filled">
                     Open file picker
                 </MudButton>
                 <MudButton Color="Color.Error"
-                Disabled="@(!context.GetFilenames().Any())"
-                OnClick="@context.ClearAsync"
-                Variant="Variant.Filled">
+                           Disabled="@(!context.GetFilenames().Any())"
+                           OnClick="@context.ClearAsync"
+                           Variant="Variant.Filled">
                     Clear
                 </MudButton>
             </MudToolBar>
@@ -68,7 +68,7 @@ tabindex="-1"
 
 
 
-    #nullable enable
+#nullable enable
     public static string __description__ = "A test for using components inside CustomContent that don't activate.";
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string _dragClass = DefaultDragClass;
