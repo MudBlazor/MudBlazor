@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents a service which generates C# functions from text-based filter operations.
@@ -99,6 +98,25 @@ public static class FilterExpressionGenerator
                 FilterOperator.Number.LessThanOrEqual => propertyExpression.GenerateBinary<T>(ExpressionType.LessThanOrEqual, filter.Value),
                 FilterOperator.Number.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
                 FilterOperator.Number.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
+                _ => x => true
+            };
+        }
+
+        if (fieldType.IsDateOnly)
+        {
+            if (filter.Value is null && filter.Operator != FilterOperator.DateOnly.Empty && filter.Operator != FilterOperator.DateOnly.NotEmpty)
+                return x => true;
+
+            return filter.Operator switch
+            {
+                FilterOperator.DateOnly.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, filter.Value),
+                FilterOperator.DateOnly.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, filter.Value),
+                FilterOperator.DateOnly.After => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThan, filter.Value),
+                FilterOperator.DateOnly.OnOrAfter => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThanOrEqual, filter.Value),
+                FilterOperator.DateOnly.Before => propertyExpression.GenerateBinary<T>(ExpressionType.LessThan, filter.Value),
+                FilterOperator.DateOnly.OnOrBefore => propertyExpression.GenerateBinary<T>(ExpressionType.LessThanOrEqual, filter.Value),
+                FilterOperator.DateOnly.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
+                FilterOperator.DateOnly.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
                 _ => x => true
             };
         }

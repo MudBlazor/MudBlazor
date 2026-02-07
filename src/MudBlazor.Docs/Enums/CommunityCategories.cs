@@ -3,9 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor.Docs.Enums;
 
+[EnumExtensions]
 public enum CommunityCategories
 {
     [Description("Parent")]

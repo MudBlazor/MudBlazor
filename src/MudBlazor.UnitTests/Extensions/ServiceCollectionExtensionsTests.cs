@@ -2,7 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
+using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -36,8 +38,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -53,8 +56,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices_WithConfigurationAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         SnackbarConfiguration? expectedOptions = null;
 
@@ -75,7 +79,6 @@ public class ServiceCollectionExtensionsTests
         snackBarService.Should().NotBeNull();
         actualOptions.Should().BeSameAs(expectedOptions);
     }
-
 
     [Test]
     public void AddMudBlazorResizeListener_ShouldRegisterServices()
@@ -292,8 +295,10 @@ public class ServiceCollectionExtensionsTests
             options.QueueDelay = TimeSpan.FromSeconds(5);
             options.ContainerClass = "container_class";
             options.FlipMargin = 100;
+            options.OverflowPadding = 0;
             options.ThrowOnDuplicateProvider = false;
-            options.Mode = PopoverMode.Default;
+            options.ModalOverlay = true;
+            options.OverflowBehavior = OverflowBehavior.FlipNever;
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -360,24 +365,6 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMudEventManager_ShouldRegisterServices()
-    {
-        // Arrange
-        var services = new ServiceCollection()
-            .AddSingleton<IJSRuntime, MockJsRuntime>();
-
-        // Act
-        services.AddMudEventManager();
-        var serviceProvider = services.BuildServiceProvider();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
-
-        // Assert
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
-    }
-
-    [Test]
     public void AddMudBlazorPointerEventsNoneService_ShouldRegisterServices()
     {
         // Arrange
@@ -419,9 +406,10 @@ public class ServiceCollectionExtensionsTests
     public void AddMudServices_ShouldRegisterAllServices()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -443,8 +431,6 @@ public class ServiceCollectionExtensionsTests
         var scrollSpy = serviceProvider.GetService<IScrollSpy>();
         var scrollSpyFactory = serviceProvider.GetService<IScrollSpyFactory>();
         var jsApiService = serviceProvider.GetService<IJsApiService>();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
@@ -466,8 +452,6 @@ public class ServiceCollectionExtensionsTests
         scrollSpy.Should().NotBeNull();
         scrollSpyFactory.Should().NotBeNull();
         jsApiService.Should().NotBeNull();
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
@@ -477,9 +461,10 @@ public class ServiceCollectionExtensionsTests
     public void AddMudServices_ShouldRegisterAllServices_WithOptionsAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         MudServicesConfiguration? expectedOptions = null;
 
@@ -521,8 +506,12 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.QueueDelay = TimeSpan.FromSeconds(5);
             options.PopoverOptions.ContainerClass = "container_class";
             options.PopoverOptions.FlipMargin = 100;
+            options.PopoverOptions.OverflowPadding = 12;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
-            options.PopoverOptions.Mode = PopoverMode.Default;
+            options.PopoverOptions.ModalOverlay = true;
+            options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
+            options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
+            options.PopoverOptions.Duration = TimeSpan.FromSeconds(2);
 
             expectedOptions = options;
         });
@@ -543,8 +532,6 @@ public class ServiceCollectionExtensionsTests
         var scrollSpy = serviceProvider.GetService<IScrollSpy>();
         var scrollSpyFactory = serviceProvider.GetService<IScrollSpyFactory>();
         var jsApiService = serviceProvider.GetService<IJsApiService>();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
@@ -574,8 +561,6 @@ public class ServiceCollectionExtensionsTests
         scrollSpy.Should().NotBeNull();
         scrollSpyFactory.Should().NotBeNull();
         jsApiService.Should().NotBeNull();
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
@@ -584,8 +569,12 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
         actualPopoverOptions.ContainerClass.Should().Be(expectedOptions.PopoverOptions.ContainerClass);
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
+        actualPopoverOptions.OverflowPadding.Should().Be(expectedOptions.PopoverOptions.OverflowPadding);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
-        actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
+        actualPopoverOptions.ModalOverlay.Should().Be(expectedOptions.PopoverOptions.ModalOverlay);
+        actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
+        actualPopoverOptions.Delay.Should().Be(expectedOptions.PopoverOptions.Delay);
+        actualPopoverOptions.Duration.Should().Be(expectedOptions.PopoverOptions.Duration);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);

@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents an observer that observes and responds to key up and down events.
 /// </summary>

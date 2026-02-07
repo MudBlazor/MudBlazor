@@ -1,4 +1,4 @@
-﻿<MudTable @ref="Table" T="Element" Items="_items" @bind-SelectedItem="_selectedItem"
+﻿<MudTable T="Element" Items="_items" @bind-SelectedItem="_selectedItem"
           RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CanCancelEdit="true">
     <HeaderContent>
         <MudTh>Value</MudTh>
@@ -24,8 +24,6 @@
         new() { Value = "B", Id = "Id2" },
         new() { Value = "C", Id = "Id3" }
     ];
-
-    public MudTable<Element> Table { get; private set; } = null!;
 
     private void BackupItem(object element)
     {

@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Displays items in chronological order.
@@ -17,10 +16,10 @@ namespace MudBlazor
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline")
-                .AddClass($"mud-timeline-{TimelineOrientation.ToDescriptionString()}")
-                .AddClass($"mud-timeline-position-{ConvertTimelinePosition().ToDescriptionString()}")
+                .AddClass($"mud-timeline-{TimelineOrientation.ToStringFast(true)}")
+                .AddClass($"mud-timeline-position-{ConvertTimelinePosition().ToStringFast(true)}")
                 .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
-                .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
+                .AddClass($"mud-timeline-align-{TimelineAlign.ToStringFast(true)}")
                 .AddClass($"mud-timeline-modifiers", Modifiers)
                 .AddClass($"mud-timeline-rtl", RightToLeft)
                 .AddClass(Class)

@@ -3,7 +3,7 @@
 @page "/components/chart-types/heatmapchart"
 
 <DocsPage>
-    <DocsPageHeader Title="HeatMap Chart" SubTitle="A chart that displays a HeatMap" Component="@nameof(MudBlazor.Charts.HeatMap)">
+    <DocsPageHeader Title="HeatMap Chart" SubTitle="A chart that displays a HeatMap" Component="@nameof(MudBlazor.Charts.HeatMap<T>)">
         <Description>
             <DocsPageSection>
                 <MudAlert Class="mt-4" Severity="Severity.Warning">
@@ -22,7 +22,7 @@
             <SectionHeader Title="Basic HeatMap">
                 <Description>
                     The basic HeatMap Chart will take from 1 to 5 colors and create a heat map based on the <CodeInline>ChartSeries</CodeInline> data you provide. Colors will be interpolated if more than 1.
-                    Colors can be provided via <CodeInline>ChartOptions</CodeInline> and XAxisLabels are provided via the <CodeInline>XAxisLabel</CodeInline> Option. These values will be used in order and if you wanted to skip a 
+                    Colors can be provided via <CodeInline>HeatMapChartOptions</CodeInline> and XAxisLabels are provided via the <CodeInline>ChartLabels</CodeInline>. These values will be used in order and if you wanted to skip a 
                     column just adding <CodeInline>string.Empty</CodeInline> would work.
                 </Description>
             </SectionHeader>

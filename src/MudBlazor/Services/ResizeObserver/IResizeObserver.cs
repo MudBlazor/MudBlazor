@@ -3,7 +3,6 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-#nullable enable
     /// <summary>
     /// Interface for observing resize events on elements.
     /// </summary>

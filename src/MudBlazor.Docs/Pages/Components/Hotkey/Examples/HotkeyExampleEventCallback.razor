@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Utilities
+@inject ISnackbar SnackbarService
+
+<MudStack>
+    <MudStack Row="true">
+        <MudSelect T="JsKey" Label="Key" @bind-Value="@_selectedKey" Style="width: 200px;">
+            @foreach (var key in Enum.GetValues<JsKey>())
+            {
+                <MudSelectItem T="JsKey" Value="@key">@Enum.GetName(typeof(JsKey), key)</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="JsKeyModifier" Label="Modifier" @bind-SelectedValues="@_selectedKeyModifiers" MultiSelection="true" Style="min-width: 200px;">
+            @foreach (var keyModifier in Enum.GetValues<JsKeyModifier>())
+            {
+                <MudSelectItem T="JsKeyModifier" Value="@keyModifier">@Enum.GetName(typeof(JsKeyModifier), keyModifier)</MudSelectItem>
+            }
+        </MudSelect>
+    </MudStack>
+    <MudAlert Severity="Severity.Info">Press the selected key-combination to show the snackbar.</MudAlert>
+</MudStack>
+
+<MudHotkey Key="@_selectedKey" KeyModifiers="@_selectedKeyModifiers" OnHotkeyPressed="OnHotKey" />
+
+@code {
+    private JsKey _selectedKey = JsKey.KeyB;
+    private IReadOnlyCollection<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.ControlLeft];
+
+    private void OnHotKey()
+    {
+        SnackbarService.Add("Hotkey pressed", Severity.Success);
+    }
+}

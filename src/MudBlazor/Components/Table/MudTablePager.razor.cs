@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A component which changes pages and page size for a <see cref="MudTable{T}"/>.
@@ -193,7 +192,6 @@ namespace MudBlazor
                 SetRowsPerPage(size);
             }
         }
-
 
         protected override void OnParametersSet()
         {

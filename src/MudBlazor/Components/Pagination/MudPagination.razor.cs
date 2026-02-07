@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A list of clickable page numbers along with navigation buttons.
     /// </summary>
@@ -21,8 +20,8 @@ namespace MudBlazor
 
         private string Classname =>
             new CssBuilder("mud-pagination")
-                .AddClass($"mud-pagination-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-pagination-{Size.ToDescriptionString()}")
+                .AddClass($"mud-pagination-{Variant.ToStringFast(true)}")
+                .AddClass($"mud-pagination-{Size.ToStringFast(true)}")
                 .AddClass("mud-pagination-disable-elevation", !DropShadow)
                 .AddClass("mud-pagination-rtl", RightToLeft)
                 .AddClass(Class)
@@ -68,7 +67,7 @@ namespace MudBlazor
         /// <summary>
         /// The total number of pages.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Behavior)]
         public int Count { get; set; } = 1;
 
@@ -80,7 +79,7 @@ namespace MudBlazor
         /// A value of <c>1</c> would show one-page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
         /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Appearance)]
         public int BoundaryCount { get; set; } = 2;
 
@@ -92,14 +91,14 @@ namespace MudBlazor
         /// A value of <c>1</c> would show one-page number in the middle: <c>&lt; 1 ... 5 ... 9 &gt;</c> <br />
         /// A value of <c>3</c> would show three-page numbers in the middle: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c>
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Appearance)]
         public int MiddleCount { get; set; } = 3;
 
         /// <summary>
         /// The selected page number.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Behavior)]
         public int Selected { get; set; } = 1;
 

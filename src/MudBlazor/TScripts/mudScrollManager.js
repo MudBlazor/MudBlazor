@@ -2,26 +2,26 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-class MudScrollManager { 
+class MudScrollManager {
     constructor() {
         this._lockCount = 0; // internal tracking for the # of overlay locks
     }
 
     //scrolls to year in MudDatePicker
-    scrollToYear(elementId, offset) {
-        let element = document.getElementById(elementId);
+    scrollToYear(elementId) {
+        const element = document.getElementById(elementId);
 
         if (element) {
             element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * 3;
         }
     }
 
-    // sets the scroll position of the elements container, 
+    // sets the scroll position of the elements container,
     // to the position of the element with the given element id
     scrollToListItem(elementId) {
-        let element = document.getElementById(elementId);
+        const element = document.getElementById(elementId);
         if (element) {
-            let parent = element.parentElement;
+            const parent = element.parentElement;
             if (parent) {
                 parent.scrollTop = element.offsetTop;
             }
@@ -30,19 +30,19 @@ class MudScrollManager {
 
     //scrolls to the selected element. Default is documentElement (i.e., html element)
     scrollTo(selector, left, top, behavior) {
-        let element = document.querySelector(selector) || document.documentElement;
+        const element = document.querySelector(selector) || document.documentElement;
         element.scrollTo({ left, top, behavior });
     }
 
     //scrolls the provided selector into view
     scrollIntoView(selector, behavior) {
-        let element = document.querySelector(selector) || document.documentElement;
+        const element = document.querySelector(selector) || document.documentElement;
         if (element)
             element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
     }
 
     scrollToBottom(selector, behavior) {
-        let element = document.querySelector(selector);
+        const element = document.querySelector(selector);
         if (element) {
             element.scrollTo({
                 top: element.scrollHeight,
@@ -78,7 +78,36 @@ class MudScrollManager {
             // remove both lock classes to be sure it's unlocked
             element.classList.remove(lockclass);
             element.classList.remove(lockclass + "-no-padding");
-        }        
+        }
+    }
+
+    scrollToVirtualizedItem(containerId, itemIndex, itemHeight, targetItemId, behaviorString) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.warn(`ScrollManager.scrollToVirtualizedItem: Container with id '${containerId}' not found.`);
+            return;
+        }
+
+        // Calculate initial estimated scroll position
+        const isScrollable = container.scrollHeight > container.clientHeight || container.scrollWidth > container.clientWidth;
+        const actualContainer = (container === document.documentElement || container === document.body) && !isScrollable ? window : container;
+
+        requestAnimationFrame(() => {
+            // Apply the estimated scroll position.
+            if (actualContainer === window) {
+                actualContainer.scrollTo(0, itemIndex * itemHeight);
+            } else {
+                actualContainer.scrollTop = itemIndex * itemHeight;
+            }
+
+            requestAnimationFrame(() => {
+                const targetElement = document.getElementById(targetItemId);
+                if (targetElement) {
+                    const scrollBehavior = behaviorString === 'smooth' ? 'smooth' : 'auto';
+                    targetElement.scrollIntoView({ behavior: scrollBehavior, block: 'nearest', inline: 'nearest' });
+                }
+            });
+        });
     }
 };
 window.mudScrollManager = new MudScrollManager();

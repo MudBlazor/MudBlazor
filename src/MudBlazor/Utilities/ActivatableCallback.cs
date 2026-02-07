@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public class ActivatableCallback : IActivatable
     {
-        public Action<object, MouseEventArgs> ActivateCallback { get; set; }
+        public Action<object, MouseEventArgs>? ActivateCallback { get; set; }
 
         public void Activate(object sender, MouseEventArgs args)
         {

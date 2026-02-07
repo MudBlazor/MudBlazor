@@ -8,14 +8,13 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A tab as part of a <see cref="MudTabs"/> or <see cref="MudDynamicTabs"/> component.
 /// </summary>
-public partial class MudTabPanel
+public partial class MudTabPanel : MudComponentBase
 {
-    private Boolean _disposed;
+    private bool _disposed;
 
     protected string Stylename =>
         new StyleBuilder()
@@ -27,6 +26,12 @@ public partial class MudTabPanel
         new CssBuilder("mud-tab-panel")
             .AddClass("mud-tab-panel-hidden", !Visible)
             .AddClass(Class)
+            .Build();
+
+    internal string PanelClassname =>
+        new CssBuilder("mud-tab-panel")
+            .AddClass("mud-tab-panel-hidden", !Visible)
+            .AddClass(PanelClass)
             .Build();
 
     [CascadingParameter]
@@ -149,7 +154,23 @@ public partial class MudTabPanel
     /// <summary>
     /// Occurs when this tab is clicked.
     /// </summary>
-    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback that is invoked when a mouse down event occurs.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public EventCallback<MouseEventArgs> OnMouseDown { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback that is invoked when a context menu event occurs.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public EventCallback<MouseEventArgs> OnContextMenu { get; set; }
 
     /// <summary>
     /// The content within this tab.
@@ -200,25 +221,36 @@ public partial class MudTabPanel
     [Category(CategoryTypes.Tabs.Appearance)]
     public string? SortKey { get; set; }
 
+    /// <summary>
+    /// The CSS classes applied to the panel. The <c>Class</c> property applies to the tab button only.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Appearance)]
+    public string? PanelClass { get; set; }
+
     /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if (firstRender && Parent is not null)
+        if (firstRender && Parent != null)
         {
-            await Parent.SetPanelRef(PanelRef);
+            await Parent.SetPanelRefAsync(PanelRef);
         }
     }
 
     /// <inheritdoc/>
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values
         //if (Parent == null)
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
-        base.OnInitialized();
+        await base.OnInitializedAsync();
 
-        Parent?.AddPanel(this);
+        if (Parent != null)
+            await Parent.AddPanelAsync(this);
     }
 
     /// <inheritdoc/>

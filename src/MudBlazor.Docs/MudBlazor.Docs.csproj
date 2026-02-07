@@ -3,12 +3,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-  </PropertyGroup>
-
-  <!--Outside Visual Studio SolutionDir is not available-->
-  <PropertyGroup>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 
   <!--Analyzer Config-->
@@ -18,19 +13,19 @@
   </PropertyGroup>
 
   <!--Execute the code generator-->
-  <Target Name="GenerateDocs" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="GenerateDocs" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs" Importance="high" />
-    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
+    <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
-  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="GenerateDocs">
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="GenerateDocs">
     <ItemGroup>
       <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
       <!--This avoids full recompile after adding generated files-->
-      <!--See https://github.com/dotnet/msbuild/issues/6401-->
+      <!--See https://github.com/dotnet/msbuild/issues/6401 -->
       <Compile Remove="Models\Snippets.generated.cs" />
       <Compile Include="Models\Snippets.generated.cs" />
       <Compile Remove="Models\Generated\ApiDocumentation.generated.cs" />
@@ -60,38 +55,67 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="Blazor-Analytics" Version="3.12.0" />
+    <PackageReference Include="Blazor-Analytics" Version="4.0.0" />
     <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.1" />
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.2" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
   </ItemGroup>
 
   <!--Project dependencies-->
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
     <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
-    <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../MudBlazor.Analyzers/MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MudBlazor.SassCompiler" Version="2.0.7">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <ProjectReference Include="../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <!--Dont Include in build output-->
   <ItemGroup>
-    <Content Remove="compilerconfig.json" />
-    <Content Remove="sasscompiler.json" />
+    <Content Remove="build.mjs" />
   </ItemGroup>
+
+  <!-- Only rebuild web assets if any of the source files have changed -->
+  <ItemGroup>
+    <ScssAssetInputs Include="Styles/**/*.scss" />
+    <WebAssetInputs Include="@(ScssAssetInputs)" />
+    <UpToDateCheckInput Include="@(WebAssetInputs)" />
+  </ItemGroup>
+
+  <Target Name="BuildWebAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(WebAssetsBuilt)' != 'true'
+                AND '$(SkipBunCompile)' != 'true'">
+
+    <PropertyGroup>
+      <WebAssetsBuilt>true</WebAssetsBuilt>
+    </PropertyGroup>
+
+    <Message Importance="High"
+             Text="Building MudBlazor.Docs web assets (inner build, TFM: $(TargetFramework))" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+  <Target Name="RegisterGeneratedAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'
+                AND '$(DesignTimeBuild)' != 'true'
+                AND '$(SkipBunCompile)' != 'true'">
+
+    <ItemGroup>
+      <_NewAssets Include="wwwroot/MudBlazorDocs.min.css"
+                  Exclude="@(Content)" />
+      <Content Include="@(_NewAssets)" />
+    </ItemGroup>
+
+  </Target>
+
 
 </Project>

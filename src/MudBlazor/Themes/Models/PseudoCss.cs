@@ -4,7 +4,6 @@
 
 namespace MudBlazor
 {
-#nullable enable
     public class PseudoCss
     {
         private string _scope = ":root";

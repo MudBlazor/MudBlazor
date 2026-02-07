@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 namespace MudBlazor
 {
-#nullable enable
     public partial class MudVirtualize<T> : ComponentBase
     {
         /// <summary>
@@ -22,13 +21,13 @@ namespace MudBlazor
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Gets or sets the item template for the list.
+        /// Item template for the list.
         /// </summary>
         [Parameter]
         public RenderFragment<T>? ChildContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the template for the items that have not yet been loaded in memory.
+        /// Template for the items that have not yet been loaded in memory.
         /// </summary>
         [Parameter]
         public RenderFragment? Placeholder { get; set; }
@@ -40,13 +39,13 @@ namespace MudBlazor
         public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the fixed item source.
+        /// Fixed item source.
         /// </summary>
         [Parameter]
         public ICollection<T>? Items { get; set; }
 
         /// <summary>
-        /// Gets or sets the function providing items to the list.
+        /// Function providing items to the list.
         /// </summary>
         [Parameter]
         public ItemsProviderDelegate<T>? ItemsProvider { get; set; }
@@ -65,6 +64,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public float ItemSize { get; set; } = 50f;
+
+        /// <summary>
+        /// Gets or sets the maximum number of items that will be rendered, even if the client reports
+        /// that its viewport is large enough to show more. The default value is 100.
+        ///
+        /// This should only be used as a safeguard against excessive memory usage or large data loads.
+        /// Do not set this to a smaller number than you expect to fit on a realistic-sized window, because
+        /// that will leave a blank gap below and the user may not be able to see the rest of the content.
+        /// </summary>
+        [Parameter]
+        public int MaxItemCount { get; set; } = 100;
 
         /// <summary>
         /// Gets or sets tag name of the HTML element that will be used as virtualization spacer. Default is div.

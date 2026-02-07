@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     internal class Cell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
@@ -59,7 +58,7 @@ namespace MudBlazor
             _cellContext = new CellContext<T>(_dataGrid, _item);
         }
 
-        public async Task StringValueChangedAsync(string value)
+        public async Task StringValueChangedAsync(string? value)
         {
             _column.SetProperty(_item, value);
 

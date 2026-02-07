@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A chronological item displayed as part of a <see cref="MudTimeline"/>
@@ -17,27 +16,27 @@ namespace MudBlazor
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline-item")
-                .AddClass($"mud-timeline-item-{TimelineAlign.ToDescriptionString()}")
+                .AddClass($"mud-timeline-item-{TimelineAlign.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 
         protected string DotClassnames =>
             new CssBuilder("mud-timeline-item-dot")
-                .AddClass($"mud-timeline-dot-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-timeline-dot-size-{Size.ToStringFast(true)}")
                 .AddClass($"mud-elevation-{Elevation}")
                 .Build();
 
         protected string DotInnerClassnames =>
             new CssBuilder("mud-timeline-item-dot-inner")
                 .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
-                .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
+                .AddClass($"mud-timeline-dot-{Color.ToStringFast(true)}")
                 .Build();
 
         [CascadingParameter]
         protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
         /// <summary>
-        /// (Obsolete) The icon displayed for the dot.
+        /// The icon displayed for the dot.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]

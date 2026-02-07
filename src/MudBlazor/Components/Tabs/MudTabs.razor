@@ -4,7 +4,7 @@
 <div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         <div class="@TabBarClassnames">
-            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles">
+            <div @ref="@_tabsInnerSize" class="mud-tabs-tabbar-inner" style="@MaxHeightStyles" id="@_elementId">
                 @if (HeaderPosition == TabHeaderPosition.Before && Header != null)
                 {
                     <div class="mud-tabs-header mud-tabs-header-before">
@@ -13,43 +13,47 @@
                 }
                 @if (_showScrollButtons)
                 {
-                    <div class="mud-tabs-scroll-button">
+                    <div class="mud-tabs-scroll-button" 
+                         @ondragover="@(e => _throttleDispatcher.Value.ThrottleAsync(() => { ScrollPrev(); return Task.CompletedTask; }))">
                         <MudIconButton Icon="@_prevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
                     </div>
                 }
                 <div @ref="@_tabsContentSize" class="mud-tabs-tabbar-content">
-                    <div class="@WrapperClassnames" style="@WrapperScrollStyle">
-                        @foreach (MudTabPanel panel in _panels)
+                        @if (EnableDragAndDrop)
                         {
-                            @if (panel.TabContent == null && panel.TabWrapperContent == null)
-                            {
-                                <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip" @key="@panel">
-                                    @RenderTab(panel)
-                                </MudTooltip>
-                            }
-                            else
-                            {
-                                <div class="d-inline-block" style="width: fit-content;" @key="@panel">
-                                    @if (panel.TabWrapperContent is null) 
+                            <MudDropContainer @ref="_dropContainer" T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels"
+                                              ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
+                                              ItemDisabled="@((item) => item.Disabled)" role="tablist">
+                                <ChildContent>
+                                    <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true" />
+                                    @if (!HideSlider && _isSliderPositionDetermined)
                                     {
-                                        @RenderTab(panel)
+                                        <div class="@SliderClass" style="@SliderStyle"></div>
                                     }
-                                    else
-                                    {
-                                        @panel.TabWrapperContent(RenderTab(panel))
-                                    }
-                                </div>
-                            }
+                                </ChildContent>
+                                <ItemRenderer>
+                                    @RenderTabWrapperSection(context)
+                                </ItemRenderer>
+                            </MudDropContainer>                        
                         }
-                        @if (!HideSlider && IsSliderPositionDetermined)
+                        else
                         {
-                            <div class="@SliderClass" style="@SliderStyle"></div>
-                        }
-                    </div>
+                            <div class="@WrapperClassnames" style="@WrapperScrollStyle" role="tablist">
+                                @foreach (MudTabPanel panel in _panels)
+                                {
+                                    @RenderTabWrapperSection(panel)
+                                }
+                                @if (!HideSlider && _isSliderPositionDetermined)
+                                {
+                                    <div class="@SliderClass" style="@SliderStyle"></div>
+                                }
+                            </div>
+                        }                    
                 </div>
                 @if (_showScrollButtons)
                 {
-                    <div class="mud-tabs-scroll-button">
+                    <div class="mud-tabs-scroll-button" 
+                         @ondragover="@(e => _throttleDispatcher.Value.ThrottleAsync(() => { ScrollNext(); return Task.CompletedTask; }))">
                         <MudIconButton Icon="@_nextIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollNext())" Disabled="@_nextButtonDisabled" />
                     </div>
                 }
@@ -61,7 +65,7 @@
                 }
             </div>
         </div>
-        @if (PrePanelContent != null)
+        @if (PrePanelContent is not null && ActivePanel is not null)
         {
             @PrePanelContent(ActivePanel)
         }
@@ -72,36 +76,61 @@
 </div>
 
 @code {
-#nullable enable
-    RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) )>
-        @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader != null)
+    private RenderFragment RenderTabWrapperSection(MudTabPanel panel) =>
+        @<text>
+             @if (panel.TabContent is null && panel.TabWrapperContent is null)
+             {
+                 <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip" @key="@panel">
+                     @RenderTab(panel)
+                 </MudTooltip>
+             }
+             else
+             {
+                 <div class="d-inline-block" style="width: fit-content;" @key="@panel">
+                     @if (panel.TabWrapperContent is null)
+                     {
+                         @RenderTab(panel)
+                     }
+                     else
+                     {
+                         @panel.TabWrapperContent(RenderTab(panel))
+                     }
+                 </div>
+             }
+         </text>;
+
+    private RenderFragment RenderTab(MudTabPanel panel) =>
+        @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@(e => ActivatePanelClickAsync(panel, e, false))" @onmousedown="panel.OnMouseDown" @oncontextmenu="panel.OnContextMenu" @oncontextmenu:preventDefault="@(panel.OnContextMenu.HasDelegate)"
+              aria-controls="@GetTabPanelId(panel)" role="tab" id="@GetTabId(panel)" aria-selected="@(panel == ActivePanel ? "true" : "false")"
+              tabindex="@(panel == ActivePanel ? "0" : "-1")" @onkeydown="@(e => HandleTabKeyDownAsync(e, panel))">
+            @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader is not null)
             {
                 <div class="mud-tabs-panel-header mud-tabs-panel-header-before">
                     @TabPanelHeader(panel)
                 </div>
             }
-            @if (panel.TabContent != null)
+            @if (panel.TabContent is not null)
             {
                 @panel.TabContent
             }
-            else if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
+            else if (!string.IsNullOrEmpty(panel.Text) && string.IsNullOrEmpty(panel.Icon))
             {
                 @panel.Text
             }
-            else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+            else if (string.IsNullOrEmpty(panel.Text) && !string.IsNullOrEmpty(panel.Icon))
             {
-                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" />
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)"/>
             }
-            else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+            else if (!string.IsNullOrEmpty(panel.Text) && !string.IsNullOrEmpty(panel.Icon))
             {
-                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text"/>
                 @panel.Text
             }
-            @if (panel.BadgeData != null || panel.BadgeIcon != null || panel.BadgeDot)
+            @if (panel.BadgeData is not null || panel.BadgeIcon is not null || panel.BadgeDot)
             {
-                <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+                <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Color="@panel.BadgeColor" Class="mud-tab-badge"/>
             }
-            @if (TabPanelHeaderPosition == TabHeaderPosition.After && TabPanelHeader != null)
+            @if (TabPanelHeaderPosition == TabHeaderPosition.After && TabPanelHeader is not null)
             {
                 <div class="mud-tabs-panel-header mud-tabs-panel-header-after">
                     @TabPanelHeader(panel)

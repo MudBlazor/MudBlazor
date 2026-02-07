@@ -3,7 +3,6 @@
 
 using MudBlazor.Components.Snackbar;
 
-#nullable enable
 
 namespace MudBlazor
 {
@@ -15,7 +14,8 @@ namespace MudBlazor
         private bool _paused = false;
         private bool _transitionCancellable = true;
         private bool _hideOnResume = false;
-        private Timer Timer { get; }
+        private ITimer? _timer;
+        private readonly TimeProvider _timeProvider;
         internal SnackBarMessageState State { get; }
 
         /// <summary>
@@ -40,11 +40,11 @@ namespace MudBlazor
         /// </summary>
         public Severity Severity => State.Options.Severity;
 
-        internal Snackbar(SnackbarMessage message, SnackbarOptions options)
+        internal Snackbar(SnackbarMessage message, SnackbarOptions options, TimeProvider timeProvider)
         {
             SnackbarMessage = message;
-            State = new SnackBarMessageState(options);
-            Timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            _timeProvider = timeProvider;
+            State = new SnackBarMessageState(options, timeProvider);
         }
 
         internal void Init() => TransitionTo(SnackbarState.Showing);
@@ -92,9 +92,9 @@ namespace MudBlazor
         /// <summary>
         /// Transitions the snackbar to the specified state.
         /// </summary>
-        /// <param name="state">The state to transition to</param>
-        /// <param name="animate">Whether the transition should be animated or instant</param>
-        /// <param name="cancellable">Whether the transition, if animated, can be cancelled</param>
+        /// <param name="state">The state to transition to.</param>
+        /// <param name="animate">The transition should be animated or instant.</param>
+        /// <param name="cancellable">The transition, if animated, can be cancelled.</param>
         private void TransitionTo(SnackbarState state, bool animate = true, bool cancellable = true)
         {
             // A new non-cancellable transition takes priority and will force a resume.
@@ -121,7 +121,7 @@ namespace MudBlazor
                     TransitionTo(SnackbarState.Visible);
                 }
             }
-            else if (state.IsVisible() && !options.RequireInteraction)
+            else if (state.IsVisible() && !options.RequiresInteraction)
             {
                 if (!animate || !StartTimer(options.VisibleStateDuration))
                 {
@@ -215,16 +215,18 @@ namespace MudBlazor
                 return false;
             }
 
-            State.Stopwatch.Restart();
-            Timer.Change(duration, Timeout.Infinite);
+            State.StartTransition(_timeProvider.GetUtcNow());
+            _timer?.Dispose();
+            _timer = _timeProvider.CreateTimer(TimerElapsed, null, TimeSpan.FromMilliseconds(duration), Timeout.InfiniteTimeSpan);
 
             return true;
         }
 
         private void StopTimer()
         {
-            State.Stopwatch.Stop();
-            Timer.Change(Timeout.Infinite, Timeout.Infinite);
+            State.StopTransition(_timeProvider.GetUtcNow());
+            _timer?.Dispose();
+            _timer = null;
         }
 
         public void Dispose()
@@ -241,8 +243,6 @@ namespace MudBlazor
             }
 
             StopTimer();
-
-            Timer.Dispose();
         }
     }
 }

@@ -4,7 +4,6 @@
 
 namespace MudBlazor.State.Rule.Exclusion;
 
-#nullable enable
 /// <summary>
 /// Represents an exclusion rule based on the <see cref="ParameterMetadata"/>.
 /// </summary>

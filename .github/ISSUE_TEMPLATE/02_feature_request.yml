@@ -1,0 +1,19 @@
+name: Feature Request
+description: Suggest an idea or improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Suggest **new features** for MudBlazor. For questions, use [Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Describe your idea
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Example code and screenshots
+      description: Have you seen this feature elsewhere, or do you have a mockup? How would you implement it?

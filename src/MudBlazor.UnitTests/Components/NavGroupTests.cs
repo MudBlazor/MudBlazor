@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
 
@@ -15,14 +13,14 @@ namespace MudBlazor.UnitTests.Components
         /// Adding the mud-nav-group-disabled css tag to the group
         /// </summary>
         [Test]
-        public void Two_Way_Bindable_Disabled()
+        public async Task Two_Way_Bindable_Disabled()
         {
-            var comp = Context.RenderComponent<NavMenuGroupDisabledTest>();
+            var comp = Context.Render<NavMenuGroupDisabledTest>();
 
             comp.Markup.Should().NotContain("mud-nav-group-disabled");
             comp.Markup.Should().NotContain("mud-expanded");
 
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
 
             comp.Markup.Should().Contain("mud-nav-group-disabled");
         }
@@ -34,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         public void NavGroup_Should_UseNavTag()
         {
             var expectedTitle = "navgroup-title";
-            var comp = Context.RenderComponent<MudNavGroup>(parameters =>
+            var comp = Context.Render<MudNavGroup>(parameters =>
                     parameters.Add(p => p.Title, expectedTitle));
 
             comp.FindAll("nav").Should().Contain(navNode => navNode.GetAttribute("aria-label") == expectedTitle);
@@ -46,14 +44,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavGroup_Should_Expand_Via_Expanded_Binding()
         {
-            var comp = Context.RenderComponent<NavGroupWithExpandedBindingTest>();
+            var comp = Context.Render<NavGroupWithExpandedBindingTest>();
             GetExpandedState().Should().BeFalse();
 
-            await comp.InvokeAsync(() => comp.Find("#navgroup-switch").Change(true));
+            await comp.Find("#navgroup-switch").ChangeAsync(true);
 
             GetExpandedState().Should().BeTrue();
 
-            await comp.InvokeAsync(() => comp.Find("#navgroup-switch").Change(false));
+            await comp.Find("#navgroup-switch").ChangeAsync(false);
 
             GetExpandedState().Should().BeFalse();
             return;
@@ -62,3 +60,4 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
+

@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a set of slides which transition after a delay.
     /// </summary>
@@ -12,19 +11,22 @@ namespace MudBlazor
     /// <seealso cref="MudCarouselItem" />
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
-        private Timer? _timer;
+        private ITimer? _timer;
         private bool _disposing;
         private Color _currentColor = Color.Inherit;
         private readonly ParameterState<bool> _autoCycleState;
         private readonly ParameterState<TimeSpan> _cycleTimeoutState;
 
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
+
         protected string Classname => new CssBuilder("mud-carousel")
-            .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToDescriptionString()}")
+            .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToStringFast(true)}")
             .AddClass(Class)
             .Build();
 
         protected string NavigationButtonsClassName => new CssBuilder()
-            .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+            .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToStringFast(true)}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
             .AddClass("mud-carousel-elements-rtl", RightToLeft)
             .AddClass(NavigationButtonsClass)
             .Build();
@@ -92,7 +94,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="MudCarouselItem"/> items will be rotated after the delay specified in <see cref="AutoCycleTime" />.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]
         public bool AutoCycle { get; set; } = true;
 
@@ -102,7 +104,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="TimeSpan.Zero"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]
         public TimeSpan AutoCycleTime { get; set; } = TimeSpan.FromSeconds(5);
 
@@ -237,11 +239,11 @@ namespace MudBlazor
         public override void AddItem(MudCarouselItem item)
         {
             Items.Add(item);
+
             if (Items.Count - 1 == SelectedIndex)
-            {
                 _currentColor = item.Color;
-                StateHasChanged();
-            }
+
+            StateHasChanged();
         }
 
         private void TimerElapsed(object? stateInfo) => InvokeAsync(async () => await TimerTickAsync());
@@ -301,7 +303,7 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StopTimerAsync()
         {
-            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            _timer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
             return ValueTask.CompletedTask;
         }
@@ -332,7 +334,7 @@ namespace MudBlazor
             {
                 // Prevent timer creation after or while disposal, which would result in a memory leak.
                 if (_disposing) return;
-                _timer = new Timer(TimerElapsed, null, _autoCycleState.Value ? _cycleTimeoutState.Value : Timeout.InfiniteTimeSpan, _cycleTimeoutState.Value);
+                _timer = TimeProvider.CreateTimer(TimerElapsed, null, _autoCycleState.Value ? _cycleTimeoutState.Value : Timeout.InfiniteTimeSpan, _cycleTimeoutState.Value);
             }
         }
 

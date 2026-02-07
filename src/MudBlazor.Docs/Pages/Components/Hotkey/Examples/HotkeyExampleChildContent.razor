@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Utilities
+
+<MudStack>
+    <MudStack Row="true">
+        <MudSelect Label="Key" @bind-Value="@_selectedKey" Style="width: 200px;">
+            @foreach (var key in Enum.GetValues<JsKey>())
+            {
+                <MudSelectItem Value="@key">@Enum.GetName(typeof(JsKey), key)</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="JsKeyModifier" Label="Modifier" @bind-SelectedValues="@_selectedKeyModifiers" MultiSelection="true" Style="min-width: 200px;">
+            @foreach (var keyModifier in Enum.GetValues<JsKeyModifier>())
+            {
+                <MudSelectItem T="JsKeyModifier" Value="@keyModifier">@Enum.GetName(typeof(JsKeyModifier), keyModifier)</MudSelectItem>
+            }
+        </MudSelect>
+        <MudStack Spacing="0">
+            <MudCheckBox @bind-Value="@_hideChildContentOnRepress" Label="Hide child content on repress" Class="mt-n3"/>
+            <MudCheckBox @bind-Value="@_disabled" Label="Disabled" Class="mt-n5"/>
+        </MudStack>
+    </MudStack>
+    <MudAlert Severity="Severity.Info">Press the selected key-combination to toggle the button.</MudAlert>
+    <MudHotkey Key="@_selectedKey" KeyModifiers="@_selectedKeyModifiers" HideChildContentOnRepress="@_hideChildContentOnRepress" Disabled="@_disabled">
+        <MudButton EndIcon="@Icons.Material.Outlined.EmojiEmotions" Color="Color.Primary" Variant="Variant.Filled">
+            I'm a button
+        </MudButton>
+    </MudHotkey>
+</MudStack>
+
+@code {
+    private bool _disabled;
+    private JsKey _selectedKey = JsKey.KeyA;
+    private bool _hideChildContentOnRepress = true;
+    private IReadOnlyCollection<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.ControlLeft];
+}

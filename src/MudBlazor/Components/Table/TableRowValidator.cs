@@ -4,7 +4,6 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A validator for rows within a <see cref="MudTable{T}"/>.
@@ -65,7 +64,7 @@ namespace MudBlazor
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                formControl.Validate();
+                formControl.ValidateAsync();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);

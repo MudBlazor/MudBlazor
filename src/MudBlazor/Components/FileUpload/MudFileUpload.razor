@@ -5,6 +5,10 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using MudBlazor.Interfaces
 
+@{
+#pragma warning disable CS0618 // Type or member is obsolete
+}
+
 <MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         @for (var index = 1; index <= _numberOfActiveFileInputs; index++)

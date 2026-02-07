@@ -7,7 +7,6 @@ using MudBlazor.Resources;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents comparison operations which execute a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
@@ -185,6 +184,52 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Represents filters which are available for date only values.
+        /// </summary>
+        public static class DateOnly
+        {
+            /// <summary>
+            /// Find values matching the filter date.
+            /// </summary>
+            public const string Is = "is";
+
+            /// <summary>
+            /// Find values different from the filter date.
+            /// </summary>
+            public const string IsNot = "is not";
+
+            /// <summary>
+            /// Find values after the filter date.
+            /// </summary>
+            public const string After = "is after";
+
+            /// <summary>
+            /// Find values on or after the filter date.
+            /// </summary>
+            public const string OnOrAfter = "is on or after";
+
+            /// <summary>
+            /// Find values before the filter date.
+            /// </summary>
+            public const string Before = "is before";
+
+            /// <summary>
+            /// Find values on or before the filter date.
+            /// </summary>
+            public const string OnOrBefore = "is on or before";
+
+            /// <summary>
+            /// Find null values.
+            /// </summary>
+            public const string Empty = "is empty";
+
+            /// <summary>
+            /// Find any non-null value.
+            /// </summary>
+            public const string NotEmpty = "is not empty";
+        }
+
+        /// <summary>
         /// Represents filters which are available for Guid values.
         /// </summary>
         public static class Guid
@@ -200,7 +245,7 @@ namespace MudBlazor
             public const string NotEqual = "not equals";
         }
 
-        internal static string[] GetOperatorByDataType(Type type)
+        internal static string[] GetOperatorByDataType(Type? type)
         {
             var fieldType = FieldType.Identify(type);
             return GetOperatorByDataType(fieldType);
@@ -248,6 +293,20 @@ namespace MudBlazor
                 return new[]
                 {
                     Boolean.Is,
+                };
+            }
+            if (fieldType.IsDateOnly)
+            {
+                return new[]
+                {
+                    DateOnly.Is,
+                    DateOnly.IsNot,
+                    DateOnly.After,
+                    DateOnly.OnOrAfter,
+                    DateOnly.Before,
+                    DateOnly.OnOrBefore,
+                    DateOnly.Empty,
+                    DateOnly.NotEmpty,
                 };
             }
             if (fieldType.IsDateTime)

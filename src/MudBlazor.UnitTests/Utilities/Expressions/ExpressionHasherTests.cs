@@ -2,10 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
 
@@ -228,7 +226,7 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         }
 
         [Test]
-        public void ExpressionHasherTests_Get_Null_HashCode_Test()
+        public void ExpressionHasherTests_Get_Null_HashCode()
         {
             Expression<Func<ExpressionTestClass, string?>>? exp1 = null;
             Expression<Func<ExpressionTestClass, string?>>? exp2 = null;
@@ -384,7 +382,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
 
             h1.Equals(h2).Should().BeFalse();
         }
-
 
         [Test(Description = "VisitIndex")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test14()

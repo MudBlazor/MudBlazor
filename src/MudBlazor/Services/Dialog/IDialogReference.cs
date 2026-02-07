@@ -6,7 +6,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -19,6 +18,11 @@ namespace MudBlazor
         /// The unique ID of this dialog.
         /// </summary>
         Guid Id { get; }
+
+        /// <summary>
+        /// The options used for this dialog.
+        /// </summary>
+        DialogOptions? Options { get; }
 
         /// <summary>
         /// The content within this dialog.
@@ -66,6 +70,12 @@ namespace MudBlazor
         /// </summary>
         /// <param name="inst">The new dialog to use.</param>
         void InjectDialog(object inst);
+
+        /// <summary>
+        /// Replaces the dialog options.
+        /// </summary>
+        /// <param name="options">The new options to use</param>
+        void InjectOptions(DialogOptions options);
 
         /// <summary>
         /// Gets the result of closing the dialog.

@@ -5,7 +5,8 @@
 			   OpenTo="@OpenTo"
 			   AmPm="AmPm"
 			   TimeEditMode="TimeEditMode"
-			   MinuteSelectionStep="MinuteSelectionStep" />
+			   MinuteSelectionStep="MinuteSelectionStep"
+			   InputId="@InputId" />
 
 @code {
 	private MudTimePicker _picker = null!;
@@ -24,6 +25,9 @@
 
 	[Parameter]
     public int MinuteSelectionStep { get; set; } = 1;
+
+	[Parameter]
+	public string? InputId { get; set; }
 
     public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
 

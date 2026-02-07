@@ -9,10 +9,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// A layer which darkens a window, often as part of showing a <see cref="MudDialog" />.
+/// Renders a translucent layer over content, typically used for modals, popovers, progress bars, or blocking interactions.
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
@@ -69,7 +68,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.Overlay.Behavior)]
     public bool Visible { get; set; }
 
@@ -218,11 +217,17 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         {
             _previousLockScroll = LockScroll;
             _previousAbsolute = Absolute;
-            await HandleLockScrollChange();
+
+            // Calling HandleLockScrollChange when the overlay isn't intially set to
+            // visible will incorrectly decrement the lock count
+            if (_visibleState.Value)
+            {
+                await HandleLockScrollChange();
+            }
 
             // If the overlay is initially visible and modeless auto-close is enabled,
             // then start tracking pointer down events.
-            if (Visible && !Modal && AutoClose)
+            if (_visibleState.Value && !Modal && AutoClose)
             {
                 await StartModelessAutoCloseTrackingAsync();
             }
@@ -244,7 +249,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             return;
         }
 
-        if (Visible)
+        if (_visibleState.Value)
         {
             await StartModelessAutoCloseTrackingAsync();
         }

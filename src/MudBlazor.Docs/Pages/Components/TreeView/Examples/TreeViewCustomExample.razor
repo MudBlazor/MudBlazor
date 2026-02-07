@@ -32,7 +32,7 @@
 </MudStack>
 
 @code {
-    public void OnCheckboxChanged(bool selected, TreeItemData<Product> context)
+    public void OnCheckboxChanged(bool selected, ITreeItemData<Product> context)
     {
         context.Selected = selected;
         if (context.Value?.Price is null)

@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
@@ -72,12 +73,15 @@ public sealed partial class ApiTypeHierarchy
             // Now check for types inheriting from this type
             foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
             {
-                primaryItem?.Children?.Add(new()
+
+                var children = primaryItem.Children?.ToList() ?? new List<ITreeItemData<DocumentedType>>();
+                children.Add(new TreeItemData<DocumentedType>
                 {
                     Children = [],
                     Text = descendant.NameFriendly,
                     Value = descendant
                 });
+                primaryItem.Children = children;
             }
 
             // Set the items
@@ -102,7 +106,7 @@ public sealed partial class ApiTypeHierarchy
     [Inject]
     private NavigationManager? Browser { get; set; }
 
-    private string GetIcon(TreeItemData<DocumentedType> context)
+    private string GetIcon(ITreeItemData<DocumentedType> context)
     {
         if (context.Value!.Name == "Root")
         {
@@ -112,7 +116,7 @@ public sealed partial class ApiTypeHierarchy
         return Icons.Custom.Uncategorized.Empty;
     }
 
-    private bool GetReadOnly(TreeItemData<DocumentedType> context)
+    private bool GetReadOnly(ITreeItemData<DocumentedType> context)
     {
         return context.Value!.Name == "Root" || context.Value.NameFriendly == Type?.NameFriendly || string.IsNullOrEmpty(context.Value.ApiUrl);
     }

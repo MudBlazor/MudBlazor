@@ -4,9 +4,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a button consisting of an icon.
+    /// A clickable icon for actions and commands.
     /// </summary>
     /// <remarks>
     /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
@@ -21,14 +20,14 @@ namespace MudBlazor
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-button", when: AsButton)
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !AsButton && Color != Color.Default)
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
-            .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !AsButton && Color != Color.Default)
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}", AsButton)
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}", AsButton)
+            .AddClass($"mud-button-{Variant.ToStringFast(true)}-size-{Size.ToStringFast(true)}", AsButton)
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-ripple-icon", Ripple && !AsButton)
-            .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
-            .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
+            .AddClass($"mud-icon-button-size-{Size.ToStringFast(true)}", when: () => Size != Size.Medium)
+            .AddClass($"mud-icon-button-edge-{Edge.ToStringFast(true)}", when: () => Edge != Edge.False)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
             .AddClass(Class)
             .Build();
@@ -49,11 +48,11 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the button.
@@ -79,11 +78,11 @@ namespace MudBlazor
         /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
+        /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// The custom content within this button.

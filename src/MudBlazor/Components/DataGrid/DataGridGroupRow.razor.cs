@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
-#nullable enable
 
 namespace MudBlazor
 {
@@ -83,7 +82,7 @@ namespace MudBlazor
         {
             _expanded = !_expanded;
             if (Items != null)
-                DataGrid.ToggleGroupExpandAsync(GroupDefinition.Title, Items.Key, GroupDefinition, _expanded);
+                DataGrid.ToggleGroupExpand(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
         }
     }
 }

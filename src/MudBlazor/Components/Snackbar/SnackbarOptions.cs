@@ -3,7 +3,6 @@
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// The options applied to an individual snackbar.
@@ -69,14 +68,6 @@ namespace MudBlazor
         public bool CloseAfterNavigation { get; set; }
 
         /// <summary>
-        /// Hides the icon for the snackbar.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        public bool HideIcon { get; set; }
-
-        /// <summary>
         /// The custom icon to display for the snackbar.
         /// </summary>
         /// <remarks>
@@ -99,6 +90,8 @@ namespace MudBlazor
         /// Defaults to <see cref="SnackbarDuplicatesBehavior.GlobalDefault"/> which is set via <see cref="SnackbarConfiguration.PreventDuplicates"/>.
         /// </remarks>
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
+
+        internal bool RequiresInteraction => RequireInteraction ?? !string.IsNullOrWhiteSpace(Action);
 
         /// <summary>
         /// Creates new options for a snackbar.

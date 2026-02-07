@@ -7,10 +7,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// A surface for grouping other components.
+/// A surface for grouping other components, generally used for foregrounds and can be combined with Flex for layout.
 /// </summary>
 public partial class MudPaper : MudComponentBase
 {
@@ -48,12 +47,11 @@ public partial class MudPaper : MudComponentBase
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
-    /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
     /// When <c>true</c>, the <c>border-radius</c> is set to <c>0</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public bool Square { get; set; } = MudGlobal.Rounded == false;
+    public bool Square { get; set; }
 
     /// <summary>
     /// Displays an outline around this component.

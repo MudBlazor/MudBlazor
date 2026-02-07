@@ -1,0 +1,39 @@
+﻿@using MudBlazor.Charts
+
+@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart @ref="_mudChart" ChartType="ChartType.Sankey" ChartSeries="@Series.AsList()" Width="@_width" Height="@_height" @bind-SelectedIndex="_selectedIndex"/>
+</MudPaper>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText>Node selected: @(_selectedIndex >= 0 ? Chart.Nodes.ElementAt(_selectedIndex).Name : "")</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudChart<int> _mudChart = null!;
+    private string _width = "650px";
+    private string _height = "350px";
+    private int _selectedIndex = -1;
+
+    public Sankey<int> Chart => _mudChart.ChartReference as Sankey<int>;
+
+    private readonly List<SankeyEdge<int>> _edges =
+    [
+        new("Balls", "Soccer ball", 20),
+        new("Balls", "Football", 10),
+        new("Balls", "Tennis ball", 30),
+        
+        new("Soccer ball", "Good condition", 17),
+        new("Soccer ball", "Bad condition", 3),
+        new("Football", "Good condition", 5),
+        new("Football", "Bad condition", 5),
+        new("Tennis ball", "Good condition", 10),
+        new("Tennis ball", "Bad condition", 20),
+    ];
+
+    private ChartSeries<int> Series => new() { Name = "Ball Catalog", Data = _edges };
+}
+

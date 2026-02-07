@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a slide displayed within a <see cref="MudCarousel{TData}"/>.
     /// </summary>
@@ -15,7 +14,7 @@ namespace MudBlazor
         private bool _disposed = false;
 
         protected string Classname => new CssBuilder("mud-carousel-item")
-            .AddClass($"mud-carousel-item-{Color.ToDescriptionString()}")
+            .AddClass($"mud-carousel-item-{Color.ToStringFast(true)}")
             .AddClass("mud-carousel-item-exit", !_disposed && Parent?.LastContainer == this)
             .AddClass("mud-carousel-transition-fade-in", !_disposed && Transition == Transition.Fade && Parent?.SelectedContainer == this)
             .AddClass("mud-carousel-transition-fade-out", !_disposed && Transition == Transition.Fade && Parent?.LastContainer == this)

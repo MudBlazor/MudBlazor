@@ -84,12 +84,12 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudProgressCircular)] = "progress",
                 [typeof(MudText)] = "typography",
                 [typeof(MudSnackbarProvider)] = "snackbar",
-                [typeof(Bar)] = "barchart",
-                [typeof(StackedBar)] = "stackedbarchart",
-                [typeof(Donut)] = "donutchart",
-                [typeof(Line)] = "linechart",
-                [typeof(TimeSeries)] = "timeserieschart",
-                [typeof(Pie)] = "piechart",
+                [typeof(Bar<T>)] = "barchart",
+                [typeof(StackedBar<T>)] = "stackedbarchart",
+                [typeof(Donut<T>)] = "donutchart",
+                [typeof(Line<T>)] = "linechart",
+                [typeof(TimeSeries<T>)] = "timeserieschart",
+                [typeof(Pie<T>)] = "piechart",
                 [typeof(MudChip<T>)] = "chips",
                 [typeof(ChartOptions)] = "options"
             };
