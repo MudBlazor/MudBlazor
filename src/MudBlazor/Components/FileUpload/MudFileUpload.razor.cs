@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
@@ -246,6 +247,36 @@ namespace MudBlazor
         }
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
+
+        private Task OnDragAreaClickAsync(MouseEventArgs _)
+        {
+            if (GetDisabledState())
+            {
+                return Task.CompletedTask;
+            }
+
+            return OpenFilePickerAsync();
+        }
+
+        private Task OnDragEnterAsync(DragEventArgs _)
+        {
+            if (GetDisabledState())
+            {
+                return Task.CompletedTask;
+            }
+
+            return _draggingState.SetValueAsync(true);
+        }
+
+        private Task OnFileChipCloseAsync(string filename)
+        {
+            if (GetDisabledState())
+            {
+                return Task.CompletedTask;
+            }
+
+            return RemoveFile(filename);
+        }
 
         private int _numberOfActiveFileInputs = 1;
         private string? GetInputClass(int fileInputIndex) => fileInputIndex == _numberOfActiveFileInputs

@@ -34,8 +34,8 @@
             @if (DragAndDrop)
             {
                 <MudPaper Outlined="true" 
-                @onclick="@(GetDisabledState() ? null : OpenFilePickerAsync)"
-                @ondragenter="@(GetDisabledState() ? null : () => _draggingState.SetValueAsync(true))"
+                @onclick="OnDragAreaClickAsync"
+                @ondragenter="OnDragEnterAsync"
                 Class="@DragClass">
                     <MudIcon Disabled="GetDisabledState()" Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
                     <MudText Color="@(GetDisabledState() ? Color.Default : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
@@ -78,7 +78,7 @@
                                      Disabled="GetDisabledState()"
                                      Text="@file"
                                      CloseIcon="@Icons.Material.Outlined.Close"
-                                     OnClose="@(GetDisabledState() ? null : async () => await RemoveFile(file))"
+                                     OnClose="@(() => OnFileChipCloseAsync(file))"
                                      tabindex="-1" />
                         }
                     </span>
