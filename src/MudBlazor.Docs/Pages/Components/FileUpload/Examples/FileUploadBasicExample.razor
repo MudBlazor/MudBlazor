@@ -13,7 +13,7 @@
     </MudCardHeader>
     <MudCardContent>
         <MudFileUpload @bind-Files="_file"
-        Disabled="@_disabled" />
+                       Disabled="_disabled" />
     </MudCardContent>
 </MudCard>
 
@@ -23,13 +23,13 @@
     </MudCardHeader>
     <MudCardContent>
         <MudFileUpload @bind-Files="_files"
-        DragAndDrop="true"
-        Disabled="@_disabled" />
+                       DragAndDrop="true"
+                       Disabled="_disabled" />
     </MudCardContent>
 </MudCard>
 
 <MudItem md="12" Class="d-flex justify-center">
-    <MudSwitch T="bool" @bind-Value="@_disabled" Label="Disabled" LabelPlacement="Placement.Right" />
+    <MudSwitch T="bool" @bind-Value="_disabled" Label="Disabled" LabelPlacement="Placement.Right" />
 </MudItem>
 
 @code
@@ -44,7 +44,7 @@
         _files = [
             new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 0, "image/jpeg", []),
             new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 0, "image/jpeg", []),
-                 ];
+        ];
     }
 
     public class DummyBrowserFile : IBrowserFile
