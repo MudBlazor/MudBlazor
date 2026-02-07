@@ -516,10 +516,9 @@ namespace MudBlazor
         /// <summary>
         /// Selects the item with the specified value.
         /// </summary>
-        /// <param name="obj">The value to select.  When <see cref="MultiSelection"/> is <c>true</c>, the selection is cleared if it was already selected.</param>
-        public async Task SelectOption(object? obj)
+        /// <param name="value">The value to select.  When <see cref="MultiSelection"/> is <c>true</c>, the selection is cleared if it was already selected.</param>
+        public async Task SelectOption(T? value)
         {
-            var value = (T?)obj;
             var comparer = Comparer ?? EqualityComparer<T?>.Default;
 
             if (MultiSelection)
