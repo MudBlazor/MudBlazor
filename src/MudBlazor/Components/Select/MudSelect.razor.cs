@@ -50,8 +50,6 @@ namespace MudBlazor
             _context = new MudSelectContext<T>(this);
             Adornment = Adornment.End;
             IconSize = Size.Medium;
-            // Set default value to ensure ParameterState never holds null
-            SelectedValues = [];
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
@@ -524,7 +522,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public IReadOnlyCollection<T?>? SelectedValues { get; set; }
+        public IReadOnlyCollection<T?>? SelectedValues { get; set; } = [];
 
         private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
         {
