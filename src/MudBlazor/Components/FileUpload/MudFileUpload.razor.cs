@@ -310,7 +310,15 @@ namespace MudBlazor
 
                 case IReadOnlyList<IBrowserFile> fileList:
                     var updatedList = fileList.Where(file => file.Name != filename).ToList();
-                    await _filesState.SetValueAsync((T)(object)updatedList); // Cast to T to update Files
+                    if (updatedList.Count == 0)
+                    {
+                        // When the last file is removed in multi-file mode, treat it as "no selection"
+                        await _filesState.SetValueAsync(default);
+                    }
+                    else
+                    {
+                        await _filesState.SetValueAsync((T)(object)updatedList); // Cast to T to update Files
+                    }
                     break;
             }
         }
