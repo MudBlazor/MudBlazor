@@ -10,6 +10,7 @@
     "labels": [
         "dependency"
     ],
+    "commitMessagePrefix": "Build: ",
     "minimumReleaseAge": "14 days",
     "vulnerabilityAlerts": {
         "enabled": true,
@@ -19,6 +20,14 @@
     },
     "packageRules": [
         {
+            "matchManagers": [
+                "github-actions"
+            ],
+            "reviewers": [
+                "danielchalmers"
+            ]
+        },
+        {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
             ],
@@ -27,6 +36,15 @@
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis.CSharp"
+            ],
+            "enabled": false
+        },
+        {
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp.Workspaces"
             ],
             "enabled": false
         },
@@ -59,6 +77,30 @@
                 "minor"
             ],
             "automerge": true
+        }
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
+            ],
+            "matchStrings": [
+                "<BunVersion>(?<currentValue>.*?)</BunVersion>"
+            ],
+            "depNameTemplate": "bun",
+            "datasourceTemplate": "npm"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
+            ],
+            "matchStrings": [
+                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
+            ],
+            "depNameTemplate": "BunDotNet.Cli",
+            "datasourceTemplate": "nuget"
         }
     ]
 }

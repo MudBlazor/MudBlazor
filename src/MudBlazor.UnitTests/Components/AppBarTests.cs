@@ -2,11 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.AppBar;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -19,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithModifiedToolBarClass()
         {
-            var comp = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.ToolBarClass), "test-class"));
+            var comp = Context.Render<MudAppBar>(parameters => parameters.Add(x => x.ToolBarClass, "test-class"));
 
             // Find the Toolbar inside the AppBar
             comp.Find("div").ToMarkup()
@@ -33,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomUnset()
         {
-            var bar = Context.RenderComponent<MudAppBar>();
+            var bar = Context.Render<MudAppBar>();
             bar.Markup
                .Should()
                .StartWith("<header")
@@ -47,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomSetFalse()
         {
-            var bar = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), false));
+            var bar = Context.Render<MudAppBar>(parameters => parameters.Add(x => x.Bottom, false));
             bar.Markup
                .Should()
                .StartWith("<header")
@@ -61,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithBottomSetTrue()
         {
-            var bar = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.Bottom), true));
+            var bar = Context.Render<MudAppBar>(parameters => parameters.Add(x => x.Bottom, true));
             bar.Markup
                .Should()
                .StartWith("<footer")
@@ -75,32 +74,32 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBar_WrapContent_ShouldBeFalseByDefault()
         {
-            var comp = Context.RenderComponent<MudAppBar>();
+            var comp = Context.Render<MudAppBar>();
             comp.FindComponent<MudToolBar>().Instance.WrapContent.Should().Be(false);
         }
 
         [Test]
-        public void AppBarWithContextualSetTrue()
+        public async Task AppBarWithContextualSetTrue()
         {
-            var comp = Context.RenderComponent<ContextualAppBarTest>();
+            var comp = Context.Render<ContextualAppBarTest>();
             var bar = comp.FindComponent<MudAppBar>();
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
 
-            comp.Find(".mud-switch-input").Change(true);
+            await comp.Find(".mud-switch-input").ChangeAsync(true);
 
             bar.Markup.Should().Contain("contextual-app-bar").And.Contain("mud-theme-tertiary");
         }
 
         [Test]
-        public void AppBarWithContextualSetFalse()
+        public async Task AppBarWithContextualSetFalse()
         {
-            var comp = Context.RenderComponent<ContextualAppBarTest>(Parameter(nameof(ContextualAppBarTest.IsContextual), false));
+            var comp = Context.Render<ContextualAppBarTest>(parameters => parameters.Add(x => x.IsContextual, false));
             var bar = comp.FindComponent<MudAppBar>();
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
 
-            comp.Find(".mud-switch-input").Change(true);
+            await comp.Find(".mud-switch-input").ChangeAsync(true);
 
             bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
         }

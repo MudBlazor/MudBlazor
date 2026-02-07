@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A line-shaped indicator of progress for an ongoing operation.
@@ -27,8 +26,9 @@ namespace MudBlazor
                 .AddClass($"mud-progress-linear-striped", Striped)
                 .AddClass($"mud-progress-indeterminate", Indeterminate)
                 .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
-                .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
-                .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
+                .AddClass($"mud-progress-linear-{Size.ToStringFast(true)}")
+                .AddClass($"mud-progress-linear-color-{Color.ToStringFast(true)}")
+                .AddClass("mud-progress-linear-background", ShowBackground)
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
                 .AddClass("mud-flip-x-rtl")
@@ -119,7 +119,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0.0</c>.  Usually a percentage.  Should be lower than <see cref="Max"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Min { get; set; } = 0.0;
 
@@ -129,7 +129,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>100.0</c>.  Usually a percentage.  Should be higher than <see cref="Min"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Max { get; set; } = 100.0;
 
@@ -139,7 +139,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>false</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Value { get; set; }
 
@@ -149,9 +149,19 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Only shows when <see cref="Buffer"/> is <c>true</c> and <see cref="Indeterminate"/> is <c>false</c>.  Typically a value greater than <see cref="Value"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue { get; set; }
+
+        /// <summary>
+        /// Shows a background for the portion of the progress bar that has not yet been filled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool ShowBackground { get; set; } = true;
 
         public MudProgressLinear()
         {

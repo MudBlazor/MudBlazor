@@ -6,7 +6,6 @@ using MudBlazor.Components.Snackbar;
 
 namespace MudBlazor
 {
-#nullable enable
     public partial class MudSnackbarElement : MudComponentBase, IDisposable
     {
         private RenderFragment? _css;

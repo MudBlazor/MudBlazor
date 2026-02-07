@@ -17,8 +17,10 @@
         <MudPickerContent>
             <div id="@_mudPickerCalendarContentElementId" class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")" @onmousedown:preventDefault="true">
                 @{
-                    int dayId = 0;
-                    @if (_picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 1 && Culture.Calendar.GetMonth(_picker_month.Value) == 1)
+                    int dayId = 0; 
+                    var culture = GetCulture();
+                    var calendar = culture.Calendar;
+                    @if (_picker_month.HasValue && calendar.GetYear(_picker_month.Value) == 1 && calendar.GetMonth(_picker_month.Value) == 1)
                     {
                         dayId = -1;
                     }
@@ -105,7 +107,7 @@
                                     @for (int week = 0; week < 6; week++)
                                     {
                                         int tempWeek = week;
-                                        var firstMonthFirstYear = _picker_month.HasValue && Culture.Calendar.GetYear(_picker_month.Value) == 1 && Culture.Calendar.GetMonth(_picker_month.Value) == 1;
+                                        var firstMonthFirstYear = _picker_month.HasValue && calendar.GetYear(_picker_month.Value) == 1 && calendar.GetMonth(_picker_month.Value) == 1;
 
                                         @if (ShowWeekNumbers)
                                         {
@@ -122,7 +124,7 @@
                                             {
                                                 var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
                                                 <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId : tempId + 1);"
-                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
+                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month!.Value.Day ? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
                                                         @onclick="@(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
                                                         onpointerover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
@@ -137,7 +139,7 @@
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text"></p>
                                                 </button>
                                             }
-                                            wasMaxValue = day == Culture.Calendar.MaxSupportedDateTime;
+                                            wasMaxValue = day == calendar.MaxSupportedDateTime;
                                         }
                                     }
                                 </div>

@@ -6,7 +6,6 @@ using System;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a description of a <see cref="MudGrid"/> field.
     /// </summary>

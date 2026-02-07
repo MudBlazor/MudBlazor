@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
@@ -25,7 +25,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_BasicRendering_NoData()
     {
-        var comp = Context.RenderComponent<Rose<double>>();
+        var comp = Context.Render<Rose<double>>();
         comp.Markup.Should().Contain("<svg");
         comp.FindAll("path.mud-chart-series").Count.Should().Be(0); // No data, no series paths
     }
@@ -33,7 +33,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_BasicRendering_WithData()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
@@ -46,7 +46,7 @@ public class RoseChartTests : BunitTest
     public void RoseChart_Option_AngleOffset()
     {
         var options = new RoseChartOptions { AngleOffset = 90 };
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10 } } })
             .Add(p => p.ChartOptions, options)
             .Add(p => p.Width, "300px")
@@ -65,7 +65,7 @@ public class RoseChartTests : BunitTest
         var optionsSmall = new RoseChartOptions { ScaleFactor = 0.5 };
         var optionsLarge = new RoseChartOptions { ScaleFactor = 1.0 };
 
-        var compSmall = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var compSmall = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartOptions, optionsSmall)
             .Add(p => p.Width, "300px")
@@ -73,7 +73,7 @@ public class RoseChartTests : BunitTest
         );
         var pathDataSmall = compSmall.Find("path.mud-chart-serie").GetAttribute("d");
 
-        var compLarge = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var compLarge = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartOptions, optionsLarge)
             .Add(p => p.Width, "300px")
@@ -87,7 +87,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Option_ShowChartLabels_True()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true })
             .Add(p => p.ChartLabels, new string[] { "LabelA", "LabelB" })
@@ -101,7 +101,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Option_ShowChartLabels_False()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = false }) // Default
             .Add(p => p.ChartLabels, new string[] { "LabelA", "LabelB" })
@@ -114,7 +114,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Option_ShowAsPercentage()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 30 } } }) // Total 40
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true, ShowAsPercentage = true })
             .Add(p => p.ChartLabels, new string[] { "A", "B" })
@@ -129,7 +129,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Data_EmptySeries()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>>()) // Empty list of series
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
@@ -141,7 +141,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Data_SeriesWithEmptyData()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { } } })
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
@@ -151,10 +151,10 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Interaction_SelectedIndex()
+    public async Task RoseChart_Interaction_SelectedIndex()
     {
         var selectedIndex = -1;
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
@@ -164,22 +164,22 @@ public class RoseChartTests : BunitTest
         );
 
         // Click on the first path segment (index 0)
-        comp.FindAll("path.mud-chart-serie").First().Click();
+        await comp.FindAll("path.mud-chart-serie").First().ClickAsync();
         selectedIndex.Should().Be(0);
 
         // Click on the third path segment (index 2)
-        comp.FindAll("path.mud-chart-serie").Last().Click();
+        await comp.FindAll("path.mud-chart-serie").Last().ClickAsync();
         selectedIndex.Should().Be(2);
     }
 
     [Test]
-    public void RoseChart_CanHideSeries_Test()
+    public async Task RoseChart_CanHideSeries()
     {
         var chartData = new double[] { 10, 20, 30, 40 };
         string[] chartLabels = { "Petal 1", "Petal 2", "Petal 3", "Petal 4" };
         var chartSeriesList = new List<ChartSeries<double>>() { new() { Data = chartData } };
 
-        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.Height, "300px")
             .Add(p => p.Width, "300px")
@@ -207,20 +207,20 @@ public class RoseChartTests : BunitTest
         }
 
         // Hide "Petal 1"
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+        await seriesCheckboxes[0].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeFalse("Petal 1 checkbox should be unchecked after hiding");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Petal 1 path should be hidden");
         comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Petal 2 path should remain visible");
 
         // Show "Petal 1" again
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+        await seriesCheckboxes[0].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeTrue("Petal 1 checkbox should be checked after re-showing");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Petal 1 path should be visible again");
 
         // Hide "Petal 3"
-        comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+        await seriesCheckboxes[2].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeFalse("Petal 3 checkbox should be unchecked after hiding");
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Petal 3 path should be hidden");
@@ -229,7 +229,7 @@ public class RoseChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Petal 4 path should still be visible");
 
         // Show "Petal 3" again
-        comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+        await seriesCheckboxes[2].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeTrue("Petal 3 checkbox should be checked after re-showing");
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Petal 3 path should be visible again");
@@ -238,7 +238,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_ChartLabels_NotSet()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true, ShowLegend = true })
             .Add(p => p.Width, "300px")
@@ -258,7 +258,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_ChartLabels_MoreLabelsThanData()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true, ShowLegend = true })
             .Add(p => p.ChartLabels, new string[] { "LabelA", "LabelB", "LabelC" })
@@ -302,7 +302,7 @@ public class RoseChartTests : BunitTest
             builder.CloseElement();
         };
 
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.CustomGraphics, customSvg)
@@ -326,7 +326,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Dimensions_ShouldRenderWithDefaults()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } })
         );
 
@@ -340,7 +340,6 @@ public class RoseChartTests : BunitTest
         svgElement.GetAttribute("width").Should().Be("80%");
         svgElement.GetAttribute("height").Should().Be("80%");
 
-
         // Assert that chart content (petals) are defined
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(2);
     }
@@ -348,7 +347,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_MatchBoundsToSize_False_ShouldRespectExplicitDimensions()
     {
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.MatchBoundsToSize, false)
             .Add(p => p.Width, "250px")
@@ -368,7 +367,7 @@ public class RoseChartTests : BunitTest
 
     private IRenderedComponent<MudChart<double>> RenderRoseChartWithLegend(Position legendPosition, bool rtl = false)
     {
-        return Context.RenderComponent<MudChart<double>>(parameters => parameters
+        return Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new[] { "LabelA", "LabelB", "LabelC" })
@@ -436,7 +435,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_CanHideSeries_WithAggregationByDataSet_ShouldHideCorrectSeriesPetal()
+    public async Task RoseChart_CanHideSeries_WithAggregationByDataSet_ShouldHideCorrectSeriesPetal()
     {
         var chartSeries = new List<ChartSeries<double>>
         {
@@ -444,7 +443,7 @@ public class RoseChartTests : BunitTest
             new() { Name = "Set B", Data = new double[] { 30 } }      // Sum = 30
         };
 
-        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartOptions, new RoseChartOptions { AggregationOption = AggregationOption.GroupByDataSet, ChartPalette = _baseChartPalette })
@@ -476,21 +475,19 @@ public class RoseChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[0]}']").Count.Should().Be(1, "Petal for Set A with correct color should exist.");
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[1]}']").Count.Should().Be(1, "Petal for Set B with correct color should exist.");
 
-
         // Hide "Set A"
-        comp.InvokeAsync(() => checkboxSetA.Change(false));
+        await checkboxSetA.ChangeAsync(false);
 
         legendCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-query after change
         legendCheckboxes[0].IsChecked().Should().BeFalse("Checkbox for Set A should be unchecked");
         legendCheckboxes[1].IsChecked().Should().BeTrue("Checkbox for Set B should remain checked");
-
 
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[0]}']").Count.Should().Be(0, "Petal for Set A should be hidden.");
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[1]}']").Count.Should().Be(1, "Petal for Set B should still be visible.");
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(1); // Only Set B's petal remains
 
         // Show "Set A" Again
-        comp.InvokeAsync(() => checkboxSetA.Change(true));
+        await checkboxSetA.ChangeAsync(true);
 
         legendCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-query
         legendCheckboxes[0].IsChecked().Should().BeTrue("Checkbox for Set A should be checked again");
@@ -510,7 +507,7 @@ public class RoseChartTests : BunitTest
             new() { Name = "Gamma", Data = new double[] { 5 } }       // Sum = 5
         };
 
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartOptions, new RoseChartOptions { AggregationOption = AggregationOption.GroupByDataSet, ShowValues = true, ShowLegend = true })
             .Add(p => p.Width, "400px")
@@ -569,7 +566,7 @@ public class RoseChartTests : BunitTest
             new() { Name = "s2", Data = new double[] { 5,  15 } }  // X=5,  Y=15
         };
 
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, new RoseChartOptions { AggregationOption = AggregationOption.GroupByLabel, ShowValues = true, ShowLegend = true })
@@ -592,12 +589,12 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldDisplayDefaultTooltip_OnPetalHover_When_ShowToolTipsTrue()
+    public async Task RoseChart_Tooltips_ShouldDisplayDefaultTooltip_OnPetalHover_When_ShowToolTipsTrue()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
 
-        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
@@ -610,24 +607,24 @@ public class RoseChartTests : BunitTest
         petals.Count.Should().Be(2);
         var firstPetal = petals.First();
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull("Tooltip should be present in the DOM after mouseover");
 
         tooltip.QuerySelector("text tspan").InnerHtml.Should().Be("A - 10");
 
-        firstPetal.TriggerEvent("onmouseout", new MouseEventArgs());
+        await firstPetal.MouseOutAsync();
         comp.FindAll("g.svg-tooltip").Should().BeEmpty();
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldNotDisplayDefaultTooltip_When_ShowToolTipsFalse()
+    public async Task RoseChart_Tooltips_ShouldNotDisplayDefaultTooltip_When_ShowToolTipsFalse()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
 
-        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
@@ -640,14 +637,14 @@ public class RoseChartTests : BunitTest
         petals.Count.Should().Be(2);
         var firstPetal = petals.First();
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltip = comp.FindAll("g.svg-tooltip");
         tooltip.Should().BeEmpty();
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldRenderCustomTooltip_When_TooltipTemplateIsProvided()
+    public async Task RoseChart_Tooltips_ShouldRenderCustomTooltip_When_TooltipTemplateIsProvided()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
@@ -660,7 +657,7 @@ public class RoseChartTests : BunitTest
             builder.CloseElement();
         };
 
-        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
@@ -673,7 +670,7 @@ public class RoseChartTests : BunitTest
         var petals = comp.FindAll("path.mud-chart-serie");
         var firstPetal = petals.First();
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var customContent = comp.Find("div.custom-tooltip-content");
         customContent.Should().NotBeNull();
@@ -681,14 +678,14 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldPositionTooltipWithCustomLogic_When_TooltipPositionFuncIsProvided()
+    public async Task RoseChart_Tooltips_ShouldPositionTooltipWithCustomLogic_When_TooltipPositionFuncIsProvided()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0 } } };
         var chartLabels = new[] { "A" };
 
         Func<SvgPath, (double X, double Y)> customPositionFunc = _ => (123.0, 456.0);
 
-        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
@@ -700,7 +697,7 @@ public class RoseChartTests : BunitTest
 
         var firstPetal = comp.Find("path.mud-chart-serie");
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltipDiv = comp.Find("g.svg-tooltip text");
         tooltipDiv.Should().NotBeNull();
@@ -715,7 +712,7 @@ public class RoseChartTests : BunitTest
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.5, 20.77, 30.0 } } };
         var chartLabels = new[] { "A", "B", "C" };
 
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, chartLabels)
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true, ShowAsPercentage = false })
@@ -743,12 +740,12 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Option_ChartPalette_ShouldApplyCustomPaletteColorsToPetals()
+    public async Task RoseChart_Option_ChartPalette_ShouldApplyCustomPaletteColorsToPetals()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0, 30.0 } } };
         var customPalette = new[] { "rgb(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)" }; // Red, Green, Blue
 
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartOptions, new RoseChartOptions { ChartPalette = customPalette })
             .Add(p => p.Width, "300px")
@@ -760,7 +757,7 @@ public class RoseChartTests : BunitTest
 
         for (var i = 0; i < petals.Count; i++)
         {
-            var markup = petals[i].ToMarkup();
+            var markup = petals[i].OuterHtml;
             var expectedColor = customPalette[i];
             markup.Should().Contain($"stroke=\"{expectedColor}\"");
             markup.Should().Contain($"fill=\"{expectedColor}\"");
@@ -768,12 +765,12 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Option_ChartPalette_ShouldCycleColors_When_DataPointsExceedPaletteSize()
+    public async Task RoseChart_Option_ChartPalette_ShouldCycleColors_When_DataPointsExceedPaletteSize()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0, 30.0, 40.0 } } };
         var customPalette = new[] { "rgb(255, 0, 0)", "rgb(0, 255, 0)" };
 
-        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+        var comp = Context.Render<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartOptions, new RoseChartOptions { ChartPalette = customPalette })
             .Add(p => p.Width, "300px")
@@ -785,7 +782,7 @@ public class RoseChartTests : BunitTest
 
         for (var i = 0; i < petals.Count; i++)
         {
-            var markup = petals[i].ToMarkup();
+            var markup = petals[i].OuterHtml;
             var expectedColor = customPalette[i % customPalette.Length];
             markup.Should().Contain($"stroke=\"{expectedColor}\"");
             markup.Should().Contain($"fill=\"{expectedColor}\"");

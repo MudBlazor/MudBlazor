@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.Charts;
 using MudBlazor.Interop;
 using NUnit.Framework;
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
@@ -199,7 +199,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void TimeSeriesChartEmptyData()
         {
-            var comp = Context.RenderComponent<TimeSeries<double>>();
+            var comp = Context.Render<TimeSeries<double>>();
             comp.Markup.Should().Contain("mud-chart-line mud-ltr");
         }
 
@@ -209,7 +209,7 @@ namespace MudBlazor.UnitTests.Charts
             var time = new DateTime(2000, 1, 1);
             var format = "dd/MM HH:mm";
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, new() {
                     new ChartSeries<double>()
@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void TimeSeriesChart_CanHideSeries_Test()
+        public async Task TimeSeriesChart_CanHideSeries()
         {
             var mockYAxisLabelSize = new ElementSize { Width = 27.5, Height = 14.8 };
             var mockXAxisLabelSize = new ElementSize { Width = 50.5, Height = 14.8 }; // Adjusted width slightly
@@ -286,7 +286,7 @@ namespace MudBlazor.UnitTests.Charts
                 }
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -312,21 +312,21 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Pressure series path should initially be hidden");
 
             // Hide Temperature series
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Temperature checkbox should be unchecked after hiding");
             chartSeries[0].Visible.Should().BeFalse("Temperature Visible property should be false after hiding");
             comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(0, "Temperature series path should be hidden");
 
             // Show Temperature series again
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Temperature checkbox should be checked after re-showing");
             chartSeries[0].Visible.Should().BeTrue("Temperature Visible property should be true after re-showing");
             comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Temperature series path should be visible again");
 
             // Hide Humidity series
-            comp.InvokeAsync(() => seriesCheckboxes[1].Change(false));
+            await seriesCheckboxes[1].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[1].IsChecked().Should().BeFalse("Humidity checkbox should be unchecked after hiding");
             chartSeries[1].Visible.Should().BeFalse("Humidity Visible property should be false after hiding");
@@ -334,7 +334,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Temperature series path should remain visible");
 
             // Show Pressure series
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Pressure checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Pressure Visible property should be true after showing");

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -14,14 +13,14 @@ public partial class MudFabMenu : MudFab
 {
     private new string Classname => new CssBuilder("mud-fab-menu-container")
         .AddClass("fixed", Fixed)
-        .AddClass($"align-{AlignItems.ToDescriptionString()}")
+        .AddClass($"align-{AlignItems.ToStringFast(true)}")
         .AddClass(Class)
         .Build();
 
     private string ClassnameMenu => new CssBuilder("mud-fab-menu")
         .AddClass("mud-fab-menu-open", _openState.Value)
         .AddClass("mud-fab-menu-dampen", DampenItemsBackgroundColor)
-        .AddClass($"align-{AlignItems.ToDescriptionString()}")
+        .AddClass($"align-{AlignItems.ToStringFast(true)}")
         .AddClass($"mud-fab-menu-{Size.ToString().ToLower()}", !string.IsNullOrEmpty(Label))
         .AddClass(MenuClass)
         .Build();
@@ -81,7 +80,7 @@ public partial class MudFabMenu : MudFab
     /// <remarks>
     /// When this property changes, <see cref="OpenChanged"/> occurs.
     /// </remarks>
-    [Parameter, Category(CategoryTypes.Menu.PopupBehavior)]
+    [Parameter, ParameterState, Category(CategoryTypes.Menu.PopupBehavior)]
     public bool Open { get; set; }
 
     /// <summary>

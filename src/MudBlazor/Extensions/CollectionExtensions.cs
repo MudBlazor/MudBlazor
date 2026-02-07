@@ -6,7 +6,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 internal static class CollectionExtensions
 {

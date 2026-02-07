@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,12 +23,12 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that invalid T values are logged using the provided ILogger
         /// </summary>
         [Test]
-        public void InvalidTLogWarning_Test()
+        public void InvalidTLogWarning()
         {
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
             Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
-            var comp = Context.RenderComponent<MudFileUpload<MudTextField<string>>>();
+            var comp = Context.Render<MudFileUpload<MudTextField<string>>>();
 
             var entries = logger.GetEntries();
             entries.Count.Should().Be(1);
@@ -41,9 +41,9 @@ namespace MudBlazor.UnitTests.Components
         /// Checks the FileUpload CSS classes
         /// </summary>
         [Test]
-        public void FileUpload_CSSTest()
+        public void FileUpload_CSS()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.Class, "outer-test")
                 .Add(x => x.InputClass, "inner-test"));
 
@@ -57,9 +57,9 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures the underlying input receives the multiple attribute
         /// </summary>
         [Test]
-        public void FileUpload_MultipleTest()
+        public void FileUpload_Multiple()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
 
             var input = comp.Find("input");
             input.HasAttribute("multiple").Should().BeTrue();
@@ -71,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_HiddenTest1()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
 
             var input = comp.Find("input");
             input.HasAttribute("hidden").Should().BeTrue();
@@ -83,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_HiddenTest2()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
                 parameters.Add(x => x.Hidden, false));
 
             var input = comp.Find("input");
@@ -94,9 +94,9 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures the underlying input receives the accept attribute
         /// </summary>
         [Test]
-        public void FileUpload_AcceptTest()
+        public void FileUpload_Accept()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.Accept, ".png, .jpg"));
 
             var input = comp.Find("input");
@@ -109,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_ButtonTemplateContextTest_Renders()
         {
-            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>();
+            var comp = Context.Render<FileUploadWithDragAndDropActivatorTest>();
 
             var openFilePickerButton = comp.Find("button#open-file-picker-button");
             openFilePickerButton.ToMarkup().Should().Contain("Open file picker");
@@ -126,8 +126,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var fileName = "cat.jpg";
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", []);
-            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>(
-                ComponentParameterFactory.Parameter(nameof(FileUploadWithDragAndDropActivatorTest.File), defaultFile));
+            var comp = Context.Render<FileUploadWithDragAndDropActivatorTest>(parameters =>
+                parameters.Add(x => x.File, defaultFile));
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = fileUploadComp.Instance;
 
@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FileUpload_OpenFilePickerAsync_Should_OpenFilePicker_When_Clicked()
         {
-            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>();
+            var comp = Context.Render<FileUploadWithDragAndDropActivatorTest>();
 
             await comp.InvokeAsync(() => comp.Find("button#open-file-picker-button").Click());
 
@@ -160,11 +160,11 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the OnFilesChangedEvent
         /// </summary>
         [Test]
-        public async Task FileUpload_OnFilesChangedTest()
+        public async Task FileUpload_OnFilesChanged()
         {
             var fileContent = InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt");
 
-            var comp = Context.RenderComponent<FileUploadOnFilesChangedTest>();
+            var comp = Context.Render<FileUploadOnFilesChangedTest>();
 
             var input = comp.FindComponent<InputFile>();
             input.UploadFiles(fileContent);
@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the FileValueChanged event bound to a form
         /// </summary>
         [Test]
-        public async Task FileUpload_FileValueChangedTest()
+        public async Task FileUpload_FileValueChanged()
         {
             InputFileContent[] fileContent =
             [
@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests.Components
                 InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
             ];
 
-            var comp = Context.RenderComponent<FileUploadFormValidationTest>();
+            var comp = Context.Render<FileUploadFormValidationTest>();
 
             var inputs = comp.FindComponents<InputFile>();
             inputs.Count.Should().Be(2);
@@ -214,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the FileValueChanged event bound to a form with validation
         /// </summary>
         [Test]
-        public async Task FileUpload_ValidationTest()
+        public async Task FileUpload_Validation()
         {
             InputFileContent[] fileContent =
             [
@@ -225,7 +225,7 @@ namespace MudBlazor.UnitTests.Components
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture; //<<< rework this!
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
-            var comp = Context.RenderComponent<FileUploadFormValidationTest>();
+            var comp = Context.Render<FileUploadFormValidationTest>();
 
             var form = comp.Instance.Form;
             await comp.InvokeAsync(() => form.Validate());
@@ -265,7 +265,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that more than 10 files can be uploaded
         /// </summary>
         [Test]
-        public void FileUpload_MaximumFileCountTest()
+        public void FileUpload_MaximumFileCount()
         {
             List<InputFileContent> files = [];
             for (var i = 0; i < 11; i++)
@@ -275,7 +275,7 @@ namespace MudBlazor.UnitTests.Components
 
             files.Count.Should().Be(11); //ensure there are 11 files
 
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>();
+            var comp = Context.Render<FileUploadMultipleFilesTest>();
 
             var multiple = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
             var multipleInput = multiple.FindComponent<InputFile>();
@@ -289,12 +289,11 @@ namespace MudBlazor.UnitTests.Components
         /// Makes sure the file upload is disabled
         /// </summary>
         [Test]
-        public async Task FileUploadDisabledTest()
+        public async Task FileUploadDisabled()
         {
-            var comp = Context.RenderComponent<FileUploadDisabledTest>();
+            var comp = Context.Render<FileUploadDisabledTest>();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeFalse();
-
 
             await comp.SetParametersAndRenderAsync(parameters =>
                 parameters.Add(x => x.Disabled,
@@ -311,9 +310,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void FileUploadAppendMultipleTest(bool appendMultiple)
+        public void FileUploadAppendMultiple(bool appendMultiple)
         {
-            var comp = Context.RenderComponent<FileUploadAppendMultipleTest>(p =>
+            var comp = Context.Render<FileUploadAppendMultipleTest>(p =>
                 p.Add(x => x.AppendMultipleFiles, appendMultiple));
 
             var input = comp.FindComponent<InputFile>();
@@ -335,7 +334,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OptionalFileUpload_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
@@ -347,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RequiredFileUpload_Should_HaveRequiredAndAriaRequiredAttributes()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
@@ -360,7 +359,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
             comp.Find("input").GetAttribute("aria-required").Should().Be("false");
@@ -378,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Generate_new_InputFile_on_file_change()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>();
 
             // only 1 input element should be present
             comp.FindAll("input").Should().HaveCount(1);
@@ -400,7 +399,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Should_trigger_file_change_callbacks_as_expected()
         {
-            var comp = Context.RenderComponent<FileUploadChangeCountTests>();
+            var comp = Context.Render<FileUploadChangeCountTests>();
 
             // first file change should trigger both callbacks
             var fileContent = new byte[5];
@@ -595,7 +594,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_SingleFile_WithinLimit()
         {
-            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+            var comp = Context.Render<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
 
             var file = CreateDummyFile("test.txt", 50);
             var input = comp.FindComponent<InputFile>();
@@ -610,7 +609,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_SingleFile_ExceedsLimit()
         {
-            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+            var comp = Context.Render<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
 
             var file = CreateDummyFile("test.txt", 150);
             var input = comp.FindComponent<InputFile>();
@@ -626,7 +625,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_SingleFile_NoLimit()
         {
-            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
+            var comp = Context.Render<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
 
             var file = CreateDummyFile("test.txt", 200);
             var input = comp.FindComponent<InputFile>();
@@ -644,7 +643,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_MultipleFiles_AllWithinLimit()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+            var comp = Context.Render<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
 
             var file1 = CreateDummyFile("test1.txt", 50);
             var file2 = CreateDummyFile("test2.txt", 70);
@@ -665,7 +664,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_MultipleFiles_SomeExceedLimit()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+            var comp = Context.Render<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
 
             var file1 = CreateDummyFile("test1.txt", 50);
             var file2 = CreateDummyFile("test2.txt", 120);
@@ -688,7 +687,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_MultipleFiles_AllExceedLimit()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+            var comp = Context.Render<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
 
             var file1 = CreateDummyFile("test1.txt", 120);
             var file2 = CreateDummyFile("test2.txt", 150);
@@ -711,7 +710,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_MultipleFiles_NoLimit()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
+            var comp = Context.Render<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
 
             var file1 = CreateDummyFile("test1.txt", 200);
             var file2 = CreateDummyFile("test2.txt", 300);
@@ -732,7 +731,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaxFileSize_ClearValidationAfterError()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100));
+            var comp = Context.Render<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100));
 
             var file1 = CreateDummyFile("test1.txt", 200);
             var file2 = CreateDummyFile("test2.txt", 300);
@@ -761,7 +760,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaxFileSize_ResetValidationAfterError()
         {
-            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100));
+            var comp = Context.Render<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100));
 
             var file1 = CreateDummyFile("test1.txt", 200);
 

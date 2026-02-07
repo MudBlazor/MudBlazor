@@ -1,7 +1,6 @@
 ﻿using MudBlazor.Charts;
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
@@ -222,12 +221,6 @@ namespace MudBlazor
         public static class Carousel
         {
             public const string Data = "Data";
-            public const string Behavior = "Behavior";
-            public const string Appearance = "Appearance";
-        }
-
-        public static class Chat
-        {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
@@ -499,6 +492,12 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class SplitPanel
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class SwipeArea
         {
             public const string Behavior = "Behavior";
@@ -563,6 +562,12 @@ namespace MudBlazor
         }
 
         public static class Text
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class Hotkey
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";

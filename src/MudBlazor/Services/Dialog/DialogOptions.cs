@@ -3,7 +3,6 @@
 // See https://github.com/Blazored
 // Copyright (c) 2020 Adapted by MudBlazor
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -53,6 +52,15 @@ namespace MudBlazor
         public bool? CloseOnEscapeKey { get; init; }
 
         /// <summary>
+        /// Determines if the dialog should close on navigation.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// When <c>null</c> this option is considered <c>true</c> if the absolute path changes and <c>false</c> if only the query or fragment changes.
+        /// </remarks>
+        public bool? CloseOnNavigation { get; init; }
+
+        /// <summary>
         /// Hides the dialog header.
         /// </summary>
         /// <remarks>
@@ -91,5 +99,13 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         public string? BackgroundClass { get; init; }
+
+        /// <summary>
+        /// The element which will receive focus when a dialog is shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        public DefaultFocus? DefaultFocus { get; init; }
     }
 }

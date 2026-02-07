@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A scrollable list for displaying text, avatars, and icons.
+    /// A scrollable list for displaying text, avatars, and icons. Use lists to help users find a specific item and act on it.
     /// </summary>
     /// <remarks>
     /// This component contains an optional <see cref="MudListSubheader"/> and one or more <see cref="MudListItem{T}"/>.
@@ -165,7 +165,7 @@ namespace MudBlazor
         /// <remarks>
         /// This value is updated when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Selecting)]
         public T? SelectedValue { get; set; }
 
@@ -184,7 +184,7 @@ namespace MudBlazor
         /// <remarks>
         /// This value is updated when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
@@ -298,7 +298,7 @@ namespace MudBlazor
         internal async Task RegisterAsync(MudListItem<T> item)
         {
             _items.Add(item);
-            if (SelectedValue is not null && Equals(item.GetValue(), SelectedValue))
+            if (_selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
             {
                 item.SetSelected(true);
                 await _selectedValueState.SetValueAsync(item.GetValue());
@@ -357,11 +357,11 @@ namespace MudBlazor
         {
             if (SelectionMode == SelectionMode.MultiSelection)
             {
-                UpdateSelectedItems(new HashSet<T>(TopLevelList.SelectedValues ?? Array.Empty<T>(), Comparer));
+                UpdateSelectedItems(new HashSet<T>(TopLevelList.GetState<IReadOnlyCollection<T>?>(nameof(TopLevelList.SelectedValues)) ?? Array.Empty<T>(), Comparer));
             }
             else
             {
-                UpdateSelectedItem(TopLevelList.SelectedValue);
+                UpdateSelectedItem(TopLevelList.GetState<T?>(nameof(TopLevelList.SelectedValue)));
             }
             foreach (var childList in _childLists.ToArray())
                 childList.UpdateSelection();

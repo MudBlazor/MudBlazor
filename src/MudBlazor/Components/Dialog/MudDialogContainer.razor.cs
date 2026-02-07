@@ -7,7 +7,6 @@ using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -29,7 +28,8 @@ namespace MudBlazor
         private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
-        private readonly string _elementId = Identifier.Create("dialog");
+
+        internal string ElementId { get; } = Identifier.Create("dialog");
 
         public MudDialogContainer()
         {
@@ -58,14 +58,14 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to the options in the <see cref="MudDialog"/> or options passed during <see cref="DialogService.ShowAsync(Type)"/> methods.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Misc)] // Behavior and Appearance
         public DialogOptions Options { get; set; } = DialogOptions.Default;
 
         /// <summary>
         /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Behavior)]
         public string? Title { get; set; }
 
@@ -135,22 +135,29 @@ namespace MudBlazor
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                    .OnKeyDown("Escape", HandleEscapeAsync)
+                    .OnKeyDown("/./", HandleAnyKeyDownAsync)
+                    .OnKeyUp("/./", HandleAnyKeyUpAsync));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
+        private Task HandleEscapeAsync()
         {
-            switch (args.Key)
+            if (GetCloseOnEscapeKey())
             {
-                case "Escape":
-                    if (GetCloseOnEscapeKey())
-                    {
-                        ((IMudDialogInstance)this).Cancel();
-                    }
-                    break;
+                ((IMudDialogInstance)this).Cancel();
             }
+            return Task.CompletedTask;
+        }
+
+        private async Task HandleAnyKeyDownAsync(KeyboardEventArgs args)
+        {
+            // Don't invoke callback for Escape - it's handled separately
+            if (args.Key == "Escape")
+                return;
+
             if (_dialog is not null && _dialog.OnKeyDown.HasDelegate)
             {
                 await _dialog.OnKeyDown.InvokeAsync(args);
@@ -160,13 +167,7 @@ namespace MudBlazor
             }
         }
 
-        public async void OnMouseUp(MouseEventArgs args)
-        {
-            if (args.Button > 0)
-                await RefocusDialogAsync();
-        }
-
-        internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
+        private async Task HandleAnyKeyUpAsync(KeyboardEventArgs args)
         {
             if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
             {
@@ -175,6 +176,12 @@ namespace MudBlazor
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
                 await InvokeAsync(StateHasChanged);
             }
+        }
+
+        private async Task OnMouseUpAsync(MouseEventArgs args)
+        {
+            if (args.Button > 0)
+                await RefocusDialogAsync();
         }
 
         private bool GetHideHeader()
@@ -264,7 +271,7 @@ namespace MudBlazor
             {
                 position = DialogPosition.Center;
             }
-            return $"mud-dialog-{position.ToDescriptionString()}";
+            return $"mud-dialog-{position.ToStringFast(true)}";
         }
 
         private string GetMaxWidth()
@@ -283,7 +290,7 @@ namespace MudBlazor
             {
                 maxWidth = MaxWidth.Small;
             }
-            return $"mud-dialog-width-{maxWidth.ToDescriptionString()}";
+            return $"mud-dialog-width-{maxWidth.ToStringFast(true)}";
         }
 
         private bool GetFullWidth() => GetDialogOptionsOrDefault.FullWidth ?? GlobalDialogOptions.FullWidth ?? false;
@@ -302,7 +309,7 @@ namespace MudBlazor
             _disposed = true;
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
 
@@ -314,10 +321,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        string IMudDialogInstance.ElementId => _elementId;
+        string IMudDialogInstance.ElementId => ElementId;
 
         /// <inheritdoc />
-        string? IMudDialogInstance.Title => Title;
+        string? IMudDialogInstance.Title => _titleState.Value;
 
         /// <inheritdoc />
         DialogOptions IMudDialogInstance.Options => GetDialogOptionsOrDefault;
@@ -326,6 +333,7 @@ namespace MudBlazor
         async Task IMudDialogInstance.SetOptionsAsync(DialogOptions options)
         {
             await _dialogOptionsState.SetValueAsync(options);
+            Parent.SetOptions(Id, options);
             await InvokeAsync(StateHasChanged);
         }
 

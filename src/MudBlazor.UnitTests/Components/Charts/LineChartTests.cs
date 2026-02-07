@@ -2,10 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.Charts;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -45,7 +44,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void LineChartEmptyData()
         {
-            var comp = Context.RenderComponent<Bar<double>>();
+            var comp = Context.Render<Bar<double>>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
@@ -61,7 +60,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -139,9 +138,8 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path expected to be visible");
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path expected to be hidden");
 
-
                 // Hide Series 1
-                await comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+                await seriesCheckboxes[0].ChangeAsync(false);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox hidden");
@@ -152,7 +150,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path still hidden");
 
                 // Show Series 1 again
-                await comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+                await seriesCheckboxes[0].ChangeAsync(true);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox visible again");
@@ -160,7 +158,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Series 1 path visible again");
 
                 // Show Series 3 (was initially hidden)
-                await comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+                await seriesCheckboxes[2].ChangeAsync(true);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox visible");
@@ -171,7 +169,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path still visible (after Series 3 shown)");
 
                 // Hide Series 3 again
-                await comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+                await seriesCheckboxes[2].ChangeAsync(false);
 
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 seriesCheckboxes[2].IsChecked().Should().BeFalse("Series 3 checkbox hidden again");
@@ -195,7 +193,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -266,7 +264,7 @@ namespace MudBlazor.UnitTests.Charts
                 new ChartSeries<double>() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")

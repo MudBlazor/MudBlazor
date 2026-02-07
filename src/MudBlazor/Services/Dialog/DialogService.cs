@@ -6,14 +6,13 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// A service for managing <see cref="MudDialog"/> components.
+    /// Service used to create, show, and close MudBlazor dialogs.
     /// </summary>
     /// <remarks>
-    /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
+    /// Register this service and include a <see cref="MudDialogProvider"/> in your layout so dialogs can render and respond to close requests.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
     /// <seealso cref="MudDialogContainer"/>
@@ -24,10 +23,12 @@ namespace MudBlazor
     public class DialogService : IDialogService
     {
         /// <summary>
-        /// This internal wrapper components prevents overwriting parameters of once
-        /// instantiated dialog instances
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
+        /// Internal wrapper component that prevents overwriting parameters on existing dialog instances.
         /// </summary>
+        /// <remarks>
+        /// This keeps dialog content stable while the parent fragment re-renders.
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
+        /// </remarks>
         private class DialogHelperComponent : IComponent
         {
             private const string ChildContent = nameof(ChildContent);
@@ -134,10 +135,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public Task<bool?> ShowMessageBox(string? title, string message, string yesText = "OK",
+        public Task<bool?> ShowMessageBoxAsync(string? title, string message, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null)
         {
-            return ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBoxAsync(new MessageBoxOptions
             {
                 Title = title,
                 Message = message,
@@ -148,10 +149,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public Task<bool?> ShowMessageBox(string? title, MarkupString markupMessage, string yesText = "OK",
+        public Task<bool?> ShowMessageBoxAsync(string? title, MarkupString markupMessage, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null)
         {
-            return ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBoxAsync(new MessageBoxOptions
             {
                 Title = title,
                 MarkupMessage = markupMessage,
@@ -162,7 +163,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public async Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
+        public async Task<bool?> ShowMessageBoxAsync(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
         {
             var parameters = new DialogParameters
             {
@@ -216,7 +217,7 @@ namespace MudBlazor
             }
 
             var dialogReference = CreateReference();
-
+            dialogReference.InjectOptions(options);
             var dialogContent = DialogHelperComponent.Wrap(builder =>
             {
                 var i = 0;

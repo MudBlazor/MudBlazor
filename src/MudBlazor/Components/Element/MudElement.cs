@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A primitive component which allows dynamically changing the HTML element rendered under the hood.
     /// </summary>

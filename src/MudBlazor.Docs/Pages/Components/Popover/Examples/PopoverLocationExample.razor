@@ -88,7 +88,7 @@
     {
         string align = "";
         string justify = "";
-        string[] pos = TransformOrigin.ToDescriptionString().Split("-");
+        string[] pos = TransformOrigin.ToStringFast(true).Split("-");
 
         if(pos[0] == "center")
         {

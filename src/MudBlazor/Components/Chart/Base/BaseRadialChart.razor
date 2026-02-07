@@ -41,7 +41,7 @@
                     </g>
                 }
 
-            @if (item is SvgPolygon points)
+            @if (item is SvgPolygon points && ChartDataPoints is not null)
             {
                 @ChartDataPoints(points)
             }

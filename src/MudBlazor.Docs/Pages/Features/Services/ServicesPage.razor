@@ -75,9 +75,28 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(ScrollListenerExample)">
-                <ScrollListenerExample/>
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Basic implementation"/>
+                    <SectionContent Code="@nameof(ScrollListenerExampleSimple)">
+                        <ScrollListenerExampleSimple/>
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Advanced implementation">
+                        <Description>
+                            This example shows how
+                            <CodeInline>ScrollManager</CodeInline>
+                            and
+                            <CodeInline>ScrollListener</CodeInline>
+                            can be used in conjunction.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ScrollListenerExampleAdvanced)">
+                        <ScrollListenerExampleAdvanced/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

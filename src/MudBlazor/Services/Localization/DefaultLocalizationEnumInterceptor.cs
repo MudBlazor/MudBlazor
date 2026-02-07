@@ -7,11 +7,12 @@ using System.Reflection;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Default implementation of the <see cref="ILocalizationEnumInterceptor"/> interface.
-/// Provides localization for enumeration values using display attributes and string localizers.
+/// Handles localization for enum values using <see cref="DisplayAttribute"/> metadata.
 /// </summary>
+/// <remarks>
+/// This is used internally to translate enum display names with the same interceptor pipeline used for other MudBlazor strings.
+/// </remarks>
 internal class DefaultLocalizationEnumInterceptor : ILocalizationEnumInterceptor
 {
     private readonly ILocalizationInterceptor _interceptor;

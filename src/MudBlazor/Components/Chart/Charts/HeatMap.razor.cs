@@ -13,7 +13,6 @@ using MudBlazor.Interop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
 
 namespace MudBlazor.Charts
 {
@@ -119,7 +118,7 @@ namespace MudBlazor.Charts
 
         private PointF _hoveredLegendPosition;
 
-        private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+        private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs, leading: true);
 
         private const int DebounceIntervalMs = 150;
 
@@ -542,7 +541,7 @@ namespace MudBlazor.Charts
 
         private void DebouncedRebuild()
         {
-            _debouncer.DebounceAfterFirstExecuteAsync(async () =>
+            _debouncer.DebounceAsync(async () =>
             {
                 await InvokeAsync(() =>
                 {
@@ -551,7 +550,7 @@ namespace MudBlazor.Charts
             }).CatchAndLog();
         }
 
-        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T> cell)
+        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
         }
@@ -589,7 +588,7 @@ namespace MudBlazor.Charts
         {
             if (!disposing) return;
 
-            _debouncer?.Cancel();
+            _debouncer.Dispose();
             _dotNetObjectReference?.Dispose();
         }
     }

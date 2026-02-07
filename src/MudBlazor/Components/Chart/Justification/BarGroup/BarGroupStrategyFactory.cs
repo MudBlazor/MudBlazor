@@ -36,5 +36,5 @@ internal class BarGroupContext
     public double HorizontalStartSpace { get; init; }
     public double HorizontalEndSpace { get; init; }
     public double SeriesSpacingRatio { get; init; }
-    public Func<double, int, int> CalculateSpaceWidth { get; init; }
+    public required Func<double, int, int> CalculateSpaceWidth { get; init; }
 }

@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
@@ -24,7 +24,6 @@ namespace MudBlazor.UnitTests.Charts
             "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
         };
 
-
         private readonly string[] _customPalette =
         {
             "#015482", "#CC1512", "#FFE135", "#087830", "#D70040", "#B20931", "#202E54", "#F535AA", "#017B92",
@@ -41,7 +40,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void DonutChartEmptyData()
         {
-            var comp = Context.RenderComponent<Donut<double>>();
+            var comp = Context.Render<Donut<double>>();
             comp.Markup.Should().Contain("mud-chart-donut");
         }
 
@@ -54,7 +53,7 @@ namespace MudBlazor.UnitTests.Charts
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
                 "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
@@ -105,7 +104,7 @@ namespace MudBlazor.UnitTests.Charts
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
                 "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
@@ -134,7 +133,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -171,7 +170,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 0, 0 };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.ChartSeries, [data]));
 
@@ -179,13 +178,13 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void DonutChart_CanHideSeries_Test()
+        public async Task DonutChart_CanHideSeries()
         {
             var chartData = new double[] { 25, 35, 15, 25 };
             string[] chartLabels = { "Area A", "Area B", "Area C", "Area D" };
             var chartSeries = new List<ChartSeries<double>>() { new() { Data = chartData } };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
@@ -205,7 +204,6 @@ namespace MudBlazor.UnitTests.Charts
 
             string[] series = [series1, series2, series3, series4];
 
-
             // Initially, all segments should be visible and their checkboxes checked
             for (var i = 0; i < chartLabels.Length; i++)
             {
@@ -214,20 +212,20 @@ namespace MudBlazor.UnitTests.Charts
             }
 
             // Hide "Area A"
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Area A checkbox should be unchecked after hiding");
             comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Area A path should be hidden");
             comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Area B path should remain visible");
 
             // Show "Area A" again
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Area A checkbox should be checked after re-showing");
             comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Area A path should be visible again");
 
             // Hide "Area C"
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+            await seriesCheckboxes[2].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeFalse("Area C checkbox should be unchecked after hiding");
             comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Area C path should be hidden");
@@ -236,7 +234,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Area D path should still be visible");
 
             // Show "Area C" again
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Area C checkbox should be checked after re-showing");
             comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Area C path should be visible again");

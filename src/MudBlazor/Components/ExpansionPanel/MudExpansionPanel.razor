@@ -21,7 +21,7 @@
     <MudCollapse Expanded="_expandedState.Value" MaxHeight="@MaxHeight">
         @if (KeepContentAlive || _expandedState.Value)
         {
-            <div class="@PanelContentClassname" hidden="@(!_expandedState.Value)">
+            <div class="@PanelContentClassname">
                 @ChildContent
             </div>
         }

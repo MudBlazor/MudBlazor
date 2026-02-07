@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Charts
         public void StackedBarChart_DefaultRender_ShouldNotThrow()
         {
             // Test basic rendering with default parameters to ensure no exceptions.
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar));
             comp.Should().NotBeNull();
             comp.Markup.Should().Contain("mud-chart");
@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Charts
         public void StackedBarChart_EmptyData_ShouldRenderAxesAndLegend()
         {
             // Test rendering with empty ChartSeries and ChartLabels.
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, new List<ChartSeries<double>>())
                 .Add(p => p.ChartLabels, System.Array.Empty<string>()));
@@ -68,7 +68,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartEmptyData()
         {
-            var comp = Context.RenderComponent<StackedBar<double>>();
+            var comp = Context.Render<StackedBar<double>>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B", "C" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Charts
             // Labels should ideally match the series with the most data points
             string[] xAxisLabels = { "A", "B", "C" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, initialSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -180,7 +180,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, initialSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -210,7 +210,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -236,7 +236,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] initialXAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, initialXAxisLabels));
@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Charts
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "Series 1", Data = new double[] { 10 } } };
             string[] xAxisLabels = { "A" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -275,7 +275,7 @@ namespace MudBlazor.UnitTests.Charts
         [TestCase(Position.Right)]
         public void StackedBarChart_LegendPosition_ShouldApplyCorrectClass(Position position)
         {
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.LegendPosition, position)
                 .Add(p => p.ChartSeries, new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 1.0 } } })
@@ -283,7 +283,7 @@ namespace MudBlazor.UnitTests.Charts
             );
 
             var chartElement = comp.Find(".mud-chart");
-            var expectedClass = $"mud-chart-legend-{position.ToDescriptionString()}";
+            var expectedClass = $"mud-chart-legend-{position.ToStringFast(true)}";
             chartElement.ClassList.Should().Contain(expectedClass);
         }
 
@@ -298,7 +298,7 @@ namespace MudBlazor.UnitTests.Charts
             string[] xAxisLabels = { "A" };
             var customPalette = new string[] { "#FF0000", "#00FF00" }; // Red, Green
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -323,7 +323,7 @@ namespace MudBlazor.UnitTests.Charts
             string[] xAxisLabels = { "A" };
             var customPalette = new string[] { "#111111", "#222222" }; // Only two colors
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -341,7 +341,7 @@ namespace MudBlazor.UnitTests.Charts
         [TestCase("50%", "75%")]
         public void StackedBarChart_WidthAndHeight_ShouldApplyToSvg(string width, string height)
         {
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Width, width)
                 .Add(p => p.Height, height));
@@ -354,7 +354,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public async Task StackedBarChart_RightToLeft_True_ShouldAdjustLegendPositionStartEnd()
         {
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.RightToLeft, true)
                 .Add(p => p.LegendPosition, Position.Start) // Should become Right in RTL
@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B", "C" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -413,7 +413,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -448,7 +448,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Q1", "Q2", "Q3", "Q4" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -473,7 +473,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -498,7 +498,7 @@ namespace MudBlazor.UnitTests.Charts
             // Only one X-axis label for the single data point category
             string[] xAxisLabels = { "Category A" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -519,7 +519,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Solo Point" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
@@ -538,7 +538,7 @@ namespace MudBlazor.UnitTests.Charts
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
             string[] xAxisLabels = { "A" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -549,12 +549,12 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Tooltip_ShowToolTipsTrue_ShouldRenderTooltipComponent()
+        public async Task StackedBarChart_Tooltip_ShowToolTipsTrue_ShouldRenderTooltipComponent()
         {
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
             string[] xAxisLabels = { "A" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -563,14 +563,14 @@ namespace MudBlazor.UnitTests.Charts
             // The ChartTooltip component should be present
             var bar = comp.Find("path.mud-chart-bar");
 
-            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+            await bar.MouseOverAsync();
 
             var tooltip = comp.Find("g.svg-tooltip");
             tooltip.Should().NotBeNull();
         }
 
         [Test]
-        public void StackedBarChart_Selection_LegendClick_ShouldUpdateSelectedIndexAndFireEvent()
+        public async Task StackedBarChart_Selection_LegendClick_ShouldUpdateSelectedIndexAndFireEvent()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -581,7 +581,7 @@ namespace MudBlazor.UnitTests.Charts
             var selectedIndex = -1; // Initial value, should be different from what we click
             var eventFiredCount = 0;
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -598,16 +598,16 @@ namespace MudBlazor.UnitTests.Charts
             legendItems.Should().HaveCount(2);
 
             // Click the second legend item (index 1)
-            legendItems[1].Click();
-            comp.WaitForAssertion(() => selectedIndex.Should().Be(1));
+            await legendItems[1].ClickAsync();
+            await comp.WaitForAssertionAsync(() => selectedIndex.Should().Be(1));
             eventFiredCount.Should().Be(1);
 
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1);
 
             // Click the first legend item (index 0)
             legendItems = comp.FindAll("div.mud-chart-legend-item");
-            legendItems[0].Click();
-            comp.WaitForAssertion(() => selectedIndex.Should().Be(0));
+            await legendItems[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => selectedIndex.Should().Be(0));
             eventFiredCount.Should().Be(2);
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0);
         }
@@ -622,7 +622,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "X" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -654,7 +654,7 @@ namespace MudBlazor.UnitTests.Charts
                 builder.CloseElement();
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -672,7 +672,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Tooltip_TooltipTemplate_ShouldRenderCustomTooltip()
+        public async Task StackedBarChart_Tooltip_TooltipTemplate_ShouldRenderCustomTooltip()
         {
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "TemplateSeries", Data = new[] { 77.0 } } };
             string[] xAxisLabels = { "TX" };
@@ -684,7 +684,7 @@ namespace MudBlazor.UnitTests.Charts
                 builder.CloseElement();
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -693,7 +693,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var bar = comp.Find("path.mud-chart-bar");
 
-            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+            await bar.MouseOverAsync();
 
             var customContent = comp.Find("div.custom-tooltip-content");
             customContent.Should().NotBeNull();
@@ -707,13 +707,13 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_Tooltip_TooltipPositionFunc_ShouldBeCalledOnHover()
+        public async Task StackedBarChart_Tooltip_TooltipPositionFunc_ShouldBeCalledOnHover()
         {
             _tooltipPositionFuncCalled = false;
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "PosFuncSeries", Data = new[] { 55.0 } } };
             string[] xAxisLabels = { "PFX" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -722,7 +722,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var bar = comp.Find("path.mud-chart-bar");
 
-            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+            await bar.MouseOverAsync();
 
             _tooltipPositionFuncCalled.Should().BeTrue();
 
@@ -736,7 +736,7 @@ namespace MudBlazor.UnitTests.Charts
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 1000.0, 2000.0 } } };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -754,7 +754,7 @@ namespace MudBlazor.UnitTests.Charts
             string[] xAxisLabels = { "A" };
 
             // Test with specific YAxisTicks
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -781,7 +781,7 @@ namespace MudBlazor.UnitTests.Charts
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0, 50.0 } } };
             string[] xAxisLabels = { "A", "B" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -805,7 +805,7 @@ namespace MudBlazor.UnitTests.Charts
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
             string[] xAxisLabels = { "A" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -825,7 +825,7 @@ namespace MudBlazor.UnitTests.Charts
             var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
             string[] xAxisLabels = { "A" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
@@ -839,7 +839,6 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll("g.mud-charts-gridlines-xaxis-lines").Should().NotBeEmpty();
         }
 
-
         [Test]
         public async Task BarChartExampleData()
         {
@@ -851,14 +850,13 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "650px")
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
-
 
             comp.Instance.ChartSeries.Should().NotBeEmpty();
 
@@ -872,10 +870,10 @@ namespace MudBlazor.UnitTests.Charts
             legend.Should().NotBeNull(because: "we have a legend");
             legend.FindAll(LEGEND_CSS_SELECTOR).Should().HaveCount(chartSeries.Count, because: "the number series should match the legend item count");
             // click second item of legend (because SelectedIndex starts with 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1, because: "second legend item was clicked");
             // click first item of legend (to check, if get's back to 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0, because: "first legend item was clicked");
 
             if (chartSeries.Count <= 3)
@@ -885,7 +883,6 @@ namespace MudBlazor.UnitTests.Charts
             }
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(3 * 9, because: "3 series with 9 data points each");
-
 
             comp.Markup.Should()
                 .Contain("d=\"M 44 320 L 44 235.2143\"");
@@ -928,7 +925,7 @@ namespace MudBlazor.UnitTests.Charts
                 new() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -961,7 +958,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void StackedBarChart_CanHideSeries_Test()
+        public async Task StackedBarChart_CanHideSeries()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -971,7 +968,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Label A", "Label B", "Label C" };
 
-            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -998,21 +995,21 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(0, "Series 3 should have no bar segments visible initially");
 
             // Hide Series 1
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
             chartSeries[0].Visible.Should().BeFalse("Series 1 Visible property should be false after hiding");
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(0, "Series 1 bar segments should be hidden");
 
             // Show Series 1 again
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after re-showing");
             chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true after re-showing");
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bar segments should be visible again");
 
             // Hide Series 2
-            comp.InvokeAsync(() => seriesCheckboxes[1].Change(false));
+            await seriesCheckboxes[1].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
             chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false after hiding");
@@ -1020,7 +1017,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bar segments should remain visible");
 
             // Show Series 3
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true after showing");

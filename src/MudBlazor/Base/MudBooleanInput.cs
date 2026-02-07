@@ -3,17 +3,25 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a form input component which stores a boolean value.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
-        public MudBooleanInput() : base(new BoolConverter<T?>()) { }
+        private readonly ParameterState<T?> _valueState;
+
+        public MudBooleanInput()
+        {
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithEventCallback(() => ValueChanged);
+        }
 
         protected virtual string? Classname { get; set; }
         protected virtual string? LabelClassname { get; set; }
@@ -52,17 +60,9 @@ namespace MudBlazor
         /// <summary>
         /// The currently selected value.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T? Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-
-            }
-        }
+        public T? Value { get; set; }
 
         /// <summary>
         /// Prevents the parent component from receiving click events.
@@ -122,7 +122,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => Converter.Set(Value);
+        protected bool? BoolValue => ConvertSet(_valueState.Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
@@ -135,7 +135,8 @@ namespace MudBlazor
             {
                 Touched = true;
             }
-            return SetCheckedAsync(Converter.Get(value));
+
+            return SetCheckedAsync(ConvertGet(value));
         }
 
         protected async Task SetCheckedAsync(T? value)
@@ -145,25 +146,27 @@ namespace MudBlazor
                 return;
             }
 
-            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            if (!EqualityComparer<T>.Default.Equals(_valueState.Value, value))
             {
-                Value = value;
-                await ValueChanged.InvokeAsync(value);
+                await _valueState.SetValueAsync(value);
                 await BeginValidateAsync();
-                FieldChanged(Value);
+                FieldChanged(_valueState.Value);
             }
         }
 
-        protected override bool SetConverter(Converter<T?, bool?> value)
+        /// <inheritdoc />
+        protected override IConverter<T?, bool?> GetDefaultConverter() => BoolConverter<T?>.Instance;
+
+        /// <inheritdoc />
+        protected override async Task OnConverterChangedAsync()
         {
-            var changed = base.SetConverter(value);
-            if (changed)
-            {
-                SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
-            }
-
-            return changed;
+            await base.OnConverterChangedAsync();
+            await SetBoolValueAsync(ConvertSet(_valueState.Value));
         }
+
+        protected internal override T? ReadValue => _valueState.Value;
+
+        protected override Task SetValueCoreAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// A value is required, so if not checked we return ERROR.
@@ -181,6 +184,17 @@ namespace MudBlazor
                 Placement.Right => Placement.End,
                 _ => placement
             };
+        }
+
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Label is null && For is not null)
+            {
+                Label = For.GetLabelString();
+            }
         }
     }
 }

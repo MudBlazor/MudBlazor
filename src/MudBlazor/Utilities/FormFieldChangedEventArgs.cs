@@ -13,7 +13,7 @@ namespace MudBlazor.Utilities
 {
     public class FormFieldChangedEventArgs
     {
-        public IFormComponent Field { get; set; }
-        public object NewValue { get; set; }
+        public IFormComponent? Field { get; set; }
+        public object? NewValue { get; set; }
     }
 }

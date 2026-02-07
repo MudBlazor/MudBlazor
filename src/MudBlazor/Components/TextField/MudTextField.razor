@@ -18,7 +18,7 @@
                      Margin="@Margin"
                      Required="@Required"
                      ForId="@InputElementId"
-                     @onclick="@HandleContainerClick">
+                     @onclick="@HandleContainerClickAsync">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -31,13 +31,12 @@
                               InputMode="@InputMode"
                               Lines="@Lines"
                               MaxLines="@MaxLines"
-                              AutoGrow="@AutoGrow"
+                              Sizing="@Sizing"
                               Style="@Style"
                               Variant="@Variant"
                               Typo="@Typo"
-                              TextUpdateSuppression="@TextUpdateSuppression"
-                              Value="@Text"
-                              ValueChanged="(s) => SetTextAsync(s)"
+                              Value="@ReadText"
+                              ValueChanged="(s) => SetTextAndUpdateValueAsync(s)"
                               Placeholder="@Placeholder"
                               Disabled=@GetDisabledState()
                               Underline="@Underline"
@@ -58,7 +57,6 @@
                               Margin="@Margin"
                               OnBlur="@OnBlurredAsync"
                               OnKeyDown="@InvokeKeyDownAsync"
-                              OnInternalInputChanged="OnChange"
                               OnKeyUp="@InvokeKeyUpAsync"
                               KeyDownPreventDefault="KeyDownPreventDefault"
                               KeyUpPreventDefault="KeyUpPreventDefault"
@@ -83,9 +81,8 @@
                              Style="@Style"
                              Variant="@Variant"
                              Typo="Typo"
-                             TextUpdateSuppression="@TextUpdateSuppression"
-                             Value="@Text"
-                             ValueChanged="OnMaskedValueChanged"
+                             Value="@ReadText"
+                             ValueChanged="OnMaskedValueChangedAsync"
                              Placeholder="@Placeholder"
                              Disabled=@GetDisabledState()
                              Underline="@Underline"

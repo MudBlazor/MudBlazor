@@ -5,7 +5,6 @@ using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Justification.StackedBars;
 
-#nullable enable
 namespace MudBlazor.Charts
 {
     /// <summary>

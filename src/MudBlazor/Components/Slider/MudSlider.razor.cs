@@ -6,9 +6,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// A component which allows users to select a value within a specified range.
+    /// Allows users to select a value within a specified range. Sliders should present the full range of available values and the value should take effect immediately.
     /// </summary>
     /// <typeparam name="T">The type of the value the slider represents.</typeparam>
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
@@ -33,8 +32,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-slider")
-                .AddClass($"mud-slider-{Size.ToDescriptionString()}")
-                .AddClass($"mud-slider-{Color.ToDescriptionString()}")
+                .AddClass($"mud-slider-{Size.ToStringFast(true)}")
+                .AddClass($"mud-slider-{Color.ToStringFast(true)}")
                 .AddClass("mud-slider-vertical", Vertical)
                 .AddClass(Class)
                 .Build();
@@ -107,7 +106,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  When this value changes, <see cref="ValueChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Slider.Data)]
         public T Value { get; set; } = T.Zero;
 
@@ -117,7 +116,7 @@ namespace MudBlazor
         /// <remarks>
         /// When this value changes, <see cref="NullableValueChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Slider.Data)]
         public T? NullableValue { get; set; } = default;
 

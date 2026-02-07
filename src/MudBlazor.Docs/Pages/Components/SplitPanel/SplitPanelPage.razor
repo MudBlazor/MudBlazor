@@ -1,0 +1,35 @@
+﻿@page "/components/splitpanel"
+
+<DocsPage>
+    <DocsPageHeader Title="Split Panel" Component="@nameof(MudSplitPanel)" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionContent Code="@nameof(SplitPanelBasicExample)" DarkenBackground="true">
+                <SplitPanelBasicExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Overlay">
+                <Description>
+                    Note that the background of a panel automatically becomes transparent if no content was added.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SplitPanelOverlayExample)" DarkenBackground="true">
+                <SplitPanelOverlayExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Split panel inside split panel"/>
+            <SectionContent Code="@nameof(SplitPanelInsideSplitPanelExample)" DarkenBackground="true">
+                <SplitPanelInsideSplitPanelExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Functions"/>
+            <SectionContent Code="@nameof(SplitPanelFunctionsExample)" DarkenBackground="true">
+                <SplitPanelFunctionsExample/>
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

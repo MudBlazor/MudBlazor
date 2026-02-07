@@ -11,7 +11,6 @@ using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// The <see cref="ParameterState{T}"/> automatically manages parameter value changes for <see cref="ParameterAttribute"/> as part of
 /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
@@ -47,13 +46,69 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     public bool HasHandler => _parameterChangedHandler is not null;
 
     /// <inheritdoc />
-    public override bool IsInitialized => _isInitialized;
+    public override bool HasCallback => _eventCallbackFunc().HasDelegate;
 
     /// <inheritdoc />
-    public override T? InitialValue => _initialValue;
+    [MemberNotNullWhen(true, nameof(_value), nameof(_initialValue))]
+    public override bool IsInitialized => _isInitialized;
+
+    [MemberNotNullWhen(true, nameof(_value))]
+    private bool TreatAsInitialized { get; set; }
+
+    /// <inheritdoc />
+    public override T InitialValue
+    {
+        get
+        {
+            if (!IsInitialized)
+            {
+                return _getParameterValueFunc();
+            }
+
+            return _initialValue;
+        }
+    }
 
     /// <inheritdoc/>
-    public override T? Value => _value;
+    /// <remarks>
+    /// <para>
+    /// Some (bad) components may attempt to read parameter values before OnInitialized is called
+    /// (e.g., during SetParametersAsync). In that case, the state is not yet fully initialized,
+    /// and accessing the Value will return null even when the parameter has a default value, such as:
+    /// <code>[Parameter] string MyParameter { get; set; } = "some value";</code>
+    /// <br/>
+    /// To avoid this, if initialization has not yet occurred, fall back to the delegate
+    /// that retrieves the current parameter value.
+    /// <br/>
+    /// Important: Some incorrect tests bypass the normal Blazor lifecycle, which can lead to
+    /// incorrect state being read. For example:
+    /// </para>
+    /// <code>
+    ///      var panels = Context.RenderComponent&lt;MudExpansionPanels&gt;();
+    ///      var panel = new MudExpansionPanel();
+    ///      panels.Instance.AddPanelAsync(panel);
+    /// </code>
+    /// <para>
+    /// In this scenario, MudExpansionPanel is created outside Blazor's lifecycle, so
+    /// AddPanelAsync receives an invalid _expandedState.Value.
+    /// Such test patterns should be avoided—rewrite the tests to follow normal Blazor usage.
+    /// </para>
+    /// </remarks>
+    public override T Value
+    {
+        get
+        {
+            if (!TreatAsInitialized && !IsInitialized)
+            {
+                return _getParameterValueFunc();
+            }
+
+            return _value;
+        }
+    }
+
+    /// <inheritdoc/>
+    public override T RenderValue => _getParameterValueFunc();
 
     /// <summary>
     /// Gets the function to provide the comparer for the parameter.
@@ -67,16 +122,23 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
         _comparer = comparer ?? new ParameterEqualityComparerSwappable<T>(() => EqualityComparer<T>.Default);
-        _lastValue = default;
-        _value = default;
     }
 
     /// <inheritdoc/>
     public override Task SetValueAsync(T value)
     {
-        if (!_comparer.Equals(Value, value))
+        // Avoid using the Value property here because its getter includes an
+        // IsInitialized branch which may cause the SetValueAsync to be skipped.
+        if (!_comparer.Equals(_value, value))
         {
             _value = value;
+            if (!TreatAsInitialized)
+            {
+                // https://github.com/MudBlazor/MudBlazor/pull/12241
+                // Workaround for components that read parameter values before OnInitialized is called aka Select and Autocomplete.
+                // Can be removed in future major versions when such components are fixed.
+                TreatAsInitialized = true;
+            }
             var eventCallback = _eventCallbackFunc();
             if (eventCallback.HasDelegate)
             {
@@ -129,6 +191,36 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 
         var changed = false;
         _parameterChangedEventArgs = null;
+        var comparer = ExtractComparer(parameters);
+
+        // This if construction is to trigger [MaybeNullWhen(false)] for newValue, otherwise it wouldn't if we assign it directly to a variable,
+        // and we'd need to suppress it's nullability.
+        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: comparer))
+        {
+            changed = true;
+            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(parameters, Metadata.ParameterName, currentParameterValue, newValue);
+        }
+
+        return changed;
+    }
+
+    /// <summary>
+    /// Extracts the appropriate equality comparer for the parameter from the provided <see cref="ParameterView"/>.
+    /// </summary>
+    /// <param name="parameters">The <see cref="ParameterView"/> containing the incoming parameter values.</param>
+    /// <returns>
+    /// The equality comparer to use for comparing parameter values. Returns either the updated comparer from the 
+    /// <paramref name="parameters"/> if available, or the current comparer stored in <see cref="_comparer"/>.
+    /// </returns>
+    /// <remarks>
+    /// This method handles a special edge case where both a parameter and its associated comparer parameter 
+    /// change simultaneously in Razor syntax. Since Blazor calls <c>SetParameterProperties</c> after this method executes,
+    /// the new comparer may not yet be set in the component. This method manually extracts the updated comparer 
+    /// from the <paramref name="parameters"/> to ensure <see cref="HasParameterChanged"/> uses the correct comparer 
+    /// instead of a stale one.
+    /// </remarks>
+    public IEqualityComparer<T> ExtractComparer(ParameterView parameters)
+    {
         IEqualityComparer<T> comparer = _comparer;
 
         // This handles a very special case when the Parameter and the associated Comparer change in razor syntax at same time.
@@ -142,15 +234,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
             }
         }
 
-        // This if construction is to trigger [MaybeNullWhen(false)] for newValue, otherwise it wouldn't if we assign it directly to a variable,
-        // and we'd need to suppress it's nullability.
-        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: comparer))
-        {
-            changed = true;
-            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newValue);
-        }
-
-        return changed;
+        return comparer;
     }
 
     ///  <summary>

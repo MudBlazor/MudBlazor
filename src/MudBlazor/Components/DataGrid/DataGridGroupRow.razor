@@ -28,7 +28,7 @@
     <!-- The last group will have items, otherwise we need the next group row -->
     @if (GroupDefinition.InnerGroup != null)
     {
-        var innerGroupItems = DataGrid?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
+        var innerGroupItems = DataGrid.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
         var groupDefinitions = DataGrid.GetGroupDefinitions(GroupDefinition.InnerGroup, innerGroupItems);
         @foreach (var group in groupDefinitions)
         {

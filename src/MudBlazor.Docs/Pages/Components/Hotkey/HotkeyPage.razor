@@ -1,0 +1,35 @@
+﻿@page "/components/hotkey"
+
+<DocsPage>
+    <DocsPageHeader Title="Hotkey" Component="@nameof(MudHotkey)"/>
+    <DocsPageSection>
+        <SectionHeader Title="Usage">
+            <Description>
+                There are 2 general usages: Render child components and/or use the
+                <CodeInline>OnHotkeyPressed</CodeInline>
+                event.
+                <br/>
+                <MudAlert Severity="Severity.Info">If you want a global hotkey, add the
+                    <CodeInline>MudHotkey</CodeInline>
+                    to your
+                    <CodeInline>MainLayout.razor</CodeInline>
+                    .
+                </MudAlert>
+            </Description>
+        </SectionHeader>
+        <SectionSubGroups>
+            <DocsPageSection>
+                <SectionHeader Title="Child content"/>
+                <SectionContent Code="@nameof(HotkeyExampleChildContent)">
+                    <HotkeyExampleChildContent/>
+                </SectionContent>
+            </DocsPageSection>
+            <DocsPageSection>
+                <SectionHeader Title="Event callback"/>
+                <SectionContent Code="@nameof(HotkeyExampleEventCallback)">
+                    <HotkeyExampleEventCallback/>
+                </SectionContent>
+            </DocsPageSection>
+        </SectionSubGroups>
+    </DocsPageSection>
+</DocsPage>

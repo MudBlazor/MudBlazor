@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>
@@ -157,7 +156,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// </summary>
     protected ElementReference? _yAxisGroupElementReference;
 
-    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs, leading: true);
     private const int DebounceIntervalMs = 200;
 
     [DynamicDependency(nameof(OnElementSizeChanged))]
@@ -378,7 +377,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
 
     private void DebouncedRebuild()
     {
-        _debouncer.DebounceAfterFirstExecuteAsync(async () =>
+        _debouncer.DebounceAsync(async () =>
         {
             await InvokeAsync(() =>
             {
@@ -425,7 +424,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         if (disposing)
         {
-            _debouncer.Cancel();
+            _debouncer.Dispose();
         }
 
         _dotNetObjectReference.Dispose();

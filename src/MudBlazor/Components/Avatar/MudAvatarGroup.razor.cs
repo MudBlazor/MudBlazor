@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a grouping of multiple <see cref="MudAvatar"/> components.
     /// </summary>
@@ -16,7 +15,7 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-avatar-group")
             .AddClass($"mud-avatar-group-outlined", Outlined)
-            .AddClass($"mud-avatar-group-outlined-{OutlineColor.ToDescriptionString()}", Outlined)
+            .AddClass($"mud-avatar-group-outlined-{OutlineColor.ToStringFast(true)}", Outlined)
             .AddClass(Class)
             .Build();
 

@@ -7,21 +7,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// A component for aligning child items horizontally or vertically.
+/// Manages layout of its child items along the vertical or horizontal axis with optional spacing.
 /// </summary>
 public partial class MudStack : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("d-flex")
             .AddClass(getFlexDirection())
-            .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify is not null)
-            .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems is not null)
-            .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap is not null)
+            .AddClass($"justify-{Justify?.ToStringFast(true)}", Justify is not null)
+            .AddClass($"align-{AlignItems?.ToStringFast(true)}", AlignItems is not null)
+            .AddClass($"flex-{Wrap?.ToStringFast(true)}", Wrap is not null)
             .AddClass($"gap-{Spacing}", Spacing >= 0)
-            .AddClass($"flex-grow-{StretchItems?.ToDescriptionString()}", StretchItems is not null and not MudBlazor.StretchItems.None)
+            .AddClass($"flex-grow-{StretchItems?.ToStringFast(true)}", StretchItems is not null and not MudBlazor.StretchItems.None)
             .AddClass(Class)
             .Build();
 

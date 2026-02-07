@@ -7,19 +7,17 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// An interactive menu that displays a list of options.
+    /// Displays a list of options that users can select from. Make menus easy to open, close, and select. Menus can open from a variety of components.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
-    public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
+    public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;
         private readonly List<MudMenu> _subMenus = [];
@@ -36,13 +34,21 @@ namespace MudBlazor
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
-        private DateTime _lastKeyboardActivation = DateTime.MinValue;
+        private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
+        private readonly MenuContext _menuContext;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
+        [Inject]
+        private IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
+
         public MudMenu()
         {
+            _menuContext = new MenuContext(this);
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
@@ -142,7 +148,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon when <see cref="Icon"/> is set.
+        /// The color of the <see cref="StartIcon"/> and <see cref="EndIcon"/> icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Inherit"/>.
@@ -152,7 +158,7 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The icon displayed before the text.
+        /// The icon displayed before the text when <see cref="Icon"/> is not set. Also used for nested <see cref="MudMenu"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -162,7 +168,7 @@ namespace MudBlazor
         public string? StartIcon { get; set; }
 
         /// <summary>
-        /// The icon displayed after the text.
+        /// The icon displayed after the text when <see cref="Icon"/> is not set.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -172,7 +178,7 @@ namespace MudBlazor
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// The color of this menu's button when <see cref="Icon"/> is not set.
+        /// The color of this menu's button when <see cref="Icon"/> is not set, or the color of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.
@@ -182,8 +188,11 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of this menu's button when <see cref="Icon" /> is not set.
+        /// The size of this menu's button when <see cref="Icon"/> is not set, or the size of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
         public Size Size { get; set; } = Size.Medium;
@@ -239,14 +248,27 @@ namespace MudBlazor
         public bool PositionAtCursor { get; set; }
 
         /// <summary>
-        /// Overrides the default button with a custom component.
+        /// Overrides the default button with custom content that receives a <see cref="MenuContext"/>.
         /// </summary>
         /// <remarks>
-        /// Can be a <see cref="MudButton"/>, <see cref="MudIconButton"/>, or any other component.
+        /// <para>The context provides methods to control the menu: <see cref="MenuContext.OpenAsync"/>,
+        /// <see cref="MenuContext.CloseAsync"/>, <see cref="MenuContext.ToggleAsync"/>, and
+        /// <see cref="MenuContext.CloseAllAsync"/>.</para>
+        /// <para>Example usage:</para>
+        /// <code>
+        /// &lt;MudMenu&gt;
+        ///     &lt;ActivatorContent&gt;
+        ///         &lt;MudButton OnClick="@context.ToggleAsync"&gt;Open Menu&lt;/MudButton&gt;
+        ///     &lt;/ActivatorContent&gt;
+        ///     &lt;ChildContent&gt;
+        ///         &lt;MudMenuItem&gt;Item 1&lt;/MudMenuItem&gt;
+        ///     &lt;/ChildContent&gt;
+        /// &lt;/MudMenu&gt;
+        /// </code>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public RenderFragment? ActivatorContent { get; set; }
+        public RenderFragment<MenuContext>? ActivatorContent { get; set; }
 
         /// <summary>
         /// The action which opens the menu, when <see cref="ActivatorContent"/> is set.
@@ -279,15 +301,14 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// The behavior of the dropdown popover menu
+        /// Displays the dropdown popover in a fixed position, even while scrolling.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
-        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+        public bool PopoverFixed { get; set; }
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
@@ -345,11 +366,24 @@ namespace MudBlazor
         /// Prevents interaction with background elements while this menu is open.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <see cref="PopoverOptions.ModalOverlay" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
-        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
+        public bool? Modal { get; set; }
+
+        /// <summary>
+        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// </summary>
+        /// <remarks>
+        /// TODO: Once .NET 8 support is dropped, consider using constructor injection (available in .NET 9+) to set defaults directly.
+        /// </remarks>
+        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
+
+        /// <summary>
+        /// Gets the transition duration for the popover, using dense menus to disable animations.
+        /// </summary>
+        protected double GetTransitionDuration() => GetDense() ? 0 : PopoverService.PopoverOptions.Duration.TotalMilliseconds;
 
         /// <summary>
         /// The <see cref="MudMenuItem" /> components within this menu.
@@ -364,7 +398,7 @@ namespace MudBlazor
         /// <remarks>
         /// When this property changes, <see cref="OpenChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public bool Open { get; set; }
 
@@ -536,6 +570,9 @@ namespace MudBlazor
                 return;
             }
 
+            // Prevent conflicting actions.
+            CancelPendingActions();
+
             _isTransient = transient;
 
             // Set the menu position to the cursor if the event has coordinates.
@@ -594,7 +631,7 @@ namespace MudBlazor
             {
                 // Determine if the click matches the expected activation event.
                 // This indicates it's a synthetic click following Enter/Space
-                var timeSinceKeyboard = DateTime.UtcNow - _lastKeyboardActivation;
+                var timeSinceKeyboard = TimeProvider.GetUtcNow() - _lastKeyboardActivation;
                 if (timeSinceKeyboard.TotalMilliseconds < 50)
                 {
                     return Task.CompletedTask;
@@ -664,7 +701,7 @@ namespace MudBlazor
 
                 try
                 {
-                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _hoverCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _hoverCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -705,7 +742,7 @@ namespace MudBlazor
 
                 try
                 {
-                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _leaveCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _leaveCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -750,25 +787,6 @@ namespace MudBlazor
             _hoverCts?.Cancel();
             // ReSharper restore MethodHasAsyncOverload
         }
-
-        /// <summary>
-        /// Implementation of IActivatable.Activate, toggles the menu.
-        /// </summary>
-        /// <remarks>
-        /// This method serves as the entry point for activating the menu via an external activator.
-        /// </remarks>
-        void IActivatable.Activate(object activator, MouseEventArgs args)
-        {
-            // Prevent activation if the activator button has a specific CSS class that marks it as non-activatable.
-            if (activator is MudBaseButton activatorButton &&
-                (activatorButton.Class?.Contains("mud-no-activator") ?? false))
-            {
-                return;
-            }
-
-            ToggleMenuAsync(args).CatchAndLog();
-        }
-
 
         /// <summary>
         /// Disposes managed and unmanaged resources.
@@ -934,7 +952,7 @@ namespace MudBlazor
                         var submenu = FindSubmenuForItem(menuItem);
                         if (submenu != null)
                         {
-                            submenu._lastKeyboardActivation = DateTime.UtcNow;
+                            submenu._lastKeyboardActivation = TimeProvider.GetUtcNow();
                             submenu._lastInteractionWasKeyboard = true;
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
@@ -947,7 +965,7 @@ namespace MudBlazor
 
                     case MudMenu menu:
                         // For MudMenu items, always open the submenu
-                        menu._lastKeyboardActivation = DateTime.UtcNow;
+                        menu._lastKeyboardActivation = TimeProvider.GetUtcNow();
                         menu._lastInteractionWasKeyboard = true;
                         await menu.OpenSubMenuAsync(EventArgs.Empty);
                         break;
@@ -1134,7 +1152,7 @@ namespace MudBlazor
             if (e.Key == "Enter" || e.Key == " ")
             {
                 _lastInteractionWasKeyboard = true;
-                _lastKeyboardActivation = DateTime.UtcNow;
+                _lastKeyboardActivation = TimeProvider.GetUtcNow();
 
                 await ToggleMenuAsync(e);
             }

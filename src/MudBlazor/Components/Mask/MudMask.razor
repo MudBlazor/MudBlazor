@@ -4,7 +4,7 @@
 @inherits MudBaseInput<string>
 @inject InternalMudLocalizer Localizer
 
-<div id="@_elementId" class="@Classname" style="@Style">
+<div id="@ElementId" class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
         <MudInputAdornment Class="@AdornmentClassname"
@@ -23,22 +23,23 @@
                   @ref="_elementReference"
                   @attributes="UserAttributes"
                   id="@InputElementId"
-                  type="@InputType.ToDescriptionString()"
-                  value="@Text"
+                  type="@InputType.ToStringFast(true)"
                   placeholder="@Placeholder"
                   disabled=@GetDisabledState()
                   readonly="@GetReadOnlyState()"
                   @onblur="@OnBlurredAsync"
                   @onfocus="OnFocused"
-                  @oncut="OnCut"
-                  @oncopy="OnCopy"
-                  @oninput="OnInputAsync"
-                  inputmode="@InputMode.ToDescriptionString()"
+                  @oncut="OnCutAsync"
+                  @oncopy="OnCopyAsync"
+                  @bind:get="@ReadText"
+                  @bind:set="@OnInputAsync"
+                  @bind:event="oninput"
+                  inputmode="@InputMode.ToStringFast(true)"
                   aria-describedby="@GetAriaDescribedByString()"
                   aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
-            @Text
+            @ReadText
         </textarea>
     }
     else
@@ -47,17 +48,18 @@
                @ref="_elementReference"
                @attributes="UserAttributes"
                id="@InputElementId"
-               type="@InputType.ToDescriptionString()"
-               value="@Text"
+               type="@InputType.ToStringFast(true)"
                placeholder="@Placeholder"
                disabled=@GetDisabledState()
                readonly="@GetReadOnlyState()"
                @onblur="@OnBlurredAsync"
                @onfocus="OnFocused"
-               @oncut="OnCut"
-               @oncopy="OnCopy"
-               @oninput="OnInputAsync"
-               inputmode="@InputMode.ToDescriptionString()"
+               @oncut="OnCutAsync"
+               @oncopy="OnCopyAsync"
+               @bind:get="@ReadText"
+               @bind:set="@OnInputAsync"
+               @bind:event="oninput"
+               inputmode="@InputMode.ToStringFast(true)"
                aria-describedby="@GetAriaDescribedByString()"
                aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
                required="@Required"

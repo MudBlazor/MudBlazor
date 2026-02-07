@@ -12,7 +12,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A form component for uploading one or more files.  For <c>T</c>, use either <c>IBrowserFile</c> for a single file or <c>IReadOnlyList&lt;IBrowserFile&gt;</c> for multiple files.
@@ -32,7 +31,7 @@ namespace MudBlazor
         /// <summary>
         /// Creates a new instance.
         /// </summary>
-        public MudFileUpload() : base(new DefaultConverter<T>())
+        public MudFileUpload()
         {
             using var registerScope = CreateRegisterScope();
             _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
@@ -69,7 +68,7 @@ namespace MudBlazor
         /// When <c>T</c> is <see cref="IBrowserFile" />, a single file is returned.<br />
         /// When <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>, multiple files are returned.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public T? Files { get; set; }
 
@@ -380,9 +379,19 @@ namespace MudBlazor
             FieldChanged(value);
         }
 
-        protected override T? ReadValue() => _filesState.Value;
+        /// <inheritdoc />
+        protected override IConverter<T?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
 
-        protected override Task WriteValueAsync(T? value) => _filesState.SetValueAsync(value);
+        protected internal override T? ReadValue => _filesState.Value;
+
+        protected override Task SetValueCoreAsync(T? value) => _filesState.SetValueAsync(value);
 
         protected override async Task ValidateValue()
         {

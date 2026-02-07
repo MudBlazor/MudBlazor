@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Localization;
 using Moq;
 using MudBlazor.Resources;

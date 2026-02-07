@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
     /// <summary>
@@ -55,7 +54,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
         public string? AriaLabel { get; set; }
-
 
         /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.
