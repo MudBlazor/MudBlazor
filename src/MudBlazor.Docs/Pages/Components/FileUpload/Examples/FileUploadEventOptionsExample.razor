@@ -25,7 +25,8 @@
 
 @code
 {
-    IList<IBrowserFile> _files = new List<IBrowserFile>();
+    private readonly IList<IBrowserFile> _files = new List<IBrowserFile>();
+
     private void UploadFiles(IBrowserFile file)
     {
         _files.Add(file);

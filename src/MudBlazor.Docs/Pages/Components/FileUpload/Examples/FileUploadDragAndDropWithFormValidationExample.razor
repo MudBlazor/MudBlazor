@@ -92,8 +92,8 @@
         public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
     }
 
-    private Model _model = new();
-    private ModelFluentValidator _validationRules = new();
+    private readonly Model _model = new();
+    private readonly ModelFluentValidator _validationRules = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
     private bool _isValid;
     private bool _isTouched;

@@ -60,8 +60,9 @@
 
 @code
 {
+    private readonly IList<IBrowserFile> _files = new List<IBrowserFile>();
     private MudFileUpload<IReadOnlyList<IBrowserFile>> _fileUpload;
-    IList<IBrowserFile> _files = new List<IBrowserFile>();
+
     private void UploadFiles(IReadOnlyList<IBrowserFile> files)
     {
         foreach (var file in files)
@@ -74,7 +75,11 @@
     private async Task RemoveFile(string file)
     {
         _files.Remove(_files.FirstOrDefault(x => x.Name == file));
-        await _fileUpload?.RemoveFile(file);
+
+        if (_fileUpload is not null)
+        {
+            await _fileUpload.RemoveFile(file);
+        }
     }
 
     private void UploadFiles2(IBrowserFile file)

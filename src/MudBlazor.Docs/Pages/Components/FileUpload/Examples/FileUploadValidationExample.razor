@@ -52,9 +52,9 @@
 
 @code
 {
+    private readonly FileModelFluentValidator _validationRules = new();
+    private readonly FileModel _model = new();
     private MudForm _form;
-    private FileModel _model = new();
-    private FileModelFluentValidator _validationRules = new();
     private bool _suppressOnChangeWhenInvalid;
     private MudFileUpload<IBrowserFile> _fileUpload;
 

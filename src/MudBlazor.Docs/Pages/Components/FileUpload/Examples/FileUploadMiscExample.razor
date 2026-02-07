@@ -201,7 +201,7 @@
         }
         _swapping = true;
         StateHasChanged();
-        using var stream = _pictureFile.OpenReadStream(5242880); // Limit to 500KB
+        using var stream = _pictureFile.OpenReadStream(5242880); // Limit to 5MB.
         using var memoryStream = new MemoryStream();
         await stream.CopyToAsync(memoryStream);
         var fileBytes = memoryStream.ToArray();
