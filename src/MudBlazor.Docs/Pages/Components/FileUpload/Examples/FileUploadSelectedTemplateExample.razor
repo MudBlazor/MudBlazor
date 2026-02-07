@@ -67,28 +67,19 @@
 
 @code
 {
-    IBrowserFile _file;
-    IReadOnlyList<IBrowserFile> _files = new List<IBrowserFile>();
-
-    protected override void OnInitialized()
-    {
-        _file = new DummyBrowserFile("test.jpg", DateTimeOffset.Now, 1024, "image/jpeg", new byte[1024]);
-        _files = [
-            new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-            new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-        ];
-    }
+    private IBrowserFile _file = new DummyBrowserFile("test.jpg", DateTimeOffset.Now, 1024, "image/jpeg", new byte[1024]);
+    private IReadOnlyList<IBrowserFile> _files =
+    [
+        new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+        new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+    ];
 
     public class DummyBrowserFile : IBrowserFile
     {
         public string Name { get; }
-
         public DateTimeOffset LastModified { get; }
-
         public long Size { get; }
-
         public string ContentType { get; }
-
         public byte[] Content { get; }
 
         public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)

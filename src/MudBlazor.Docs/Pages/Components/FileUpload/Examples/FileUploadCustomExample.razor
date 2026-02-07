@@ -3,7 +3,7 @@
 <MudCard Style="width: 70%;">
     <MudCardContent>
         <MudFileUpload @bind-Files="@_browserFiles"
-                       AppendMultipleFiles
+                       AppendMultipleFiles="true"
                        DragAndDrop="true"
                        tabindex="-1"
                        @bind-Dragging="@_dragging"
@@ -51,20 +51,14 @@
 
 @code
 {
-    private IReadOnlyList<IBrowserFile> _browserFiles;
-
     private const string DefaultDragClass = "relative d-flex flex-column p-r gap-2 rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private IReadOnlyList<IBrowserFile> _browserFiles =
+    [
+        new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+        new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+    ];
     private string _dragClass = DefaultDragClass;
-
     private bool _dragging = false;
-
-    protected override void OnInitialized()
-    {
-        _browserFiles = [
-            new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-            new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-        ];
-    }
 
     private void SetDragClass()
     {
@@ -83,13 +77,9 @@
     public class DummyBrowserFile : IBrowserFile
     {
         public string Name { get; }
-
         public DateTimeOffset LastModified { get; }
-
         public long Size { get; }
-
         public string ContentType { get; }
-
         public byte[] Content { get; }
 
         public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)

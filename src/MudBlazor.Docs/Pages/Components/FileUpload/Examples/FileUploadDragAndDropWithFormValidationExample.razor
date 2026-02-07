@@ -25,7 +25,7 @@
                            @ref="@_fileUpload"
                            @bind-Files="_model.Files"
                            For="@(() => _model.Files)"
-                           AppendMultipleFiles
+                           AppendMultipleFiles="true"
                            Hidden="@false"
                            InputClass="file-upload-input"
                            ErrorText="@string.Empty"
@@ -87,19 +87,14 @@
 @code
 {
 #nullable enable
-    public class Model
-    {
-        public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
-    }
-
+    private const string FileContent = "this is content";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private readonly Model _model = new();
     private readonly ModelFluentValidator _validationRules = new();
+    private string _dragClass = DefaultDragClass;
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
     private bool _isValid;
     private bool _isTouched;
-    private const string FileContent = "this is content";
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
-    private string _dragClass = DefaultDragClass;
 
     private void Upload()
     {
@@ -119,6 +114,11 @@
 
     private Task ClearAsync()
         => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
+
+    public class Model
+    {
+        public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
+    }
 
     public class ModelFluentValidator : AbstractValidator<Model>
     {

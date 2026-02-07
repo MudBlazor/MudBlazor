@@ -49,7 +49,7 @@
 <MudFileUpload @bind-Files="@_files"
                Class="mud-width-full"
                MaximumFileCount="5"
-               AppendMultipleFiles>
+               AppendMultipleFiles="true">
     <CustomContent>
         <MudButtonGroup Color="Color.Info" Variant="Variant.Filled" Class="mud-width-full">
             <MudButton Color="Color.Info" OnClick="@context.OpenFilePickerAsync" Style="min-width: 150px;">
@@ -80,13 +80,13 @@
             <MudText Typo="Typo.h6">Employee Edit</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Filled.Edit" Disabled="_editmode" Color="Color.Primary" OnClick="@(() => _editmode = !_editmode)" />
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Disabled="_editMode" Color="Color.Primary" OnClick="@(() => _editMode = !_editMode)" />
             <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="@ResetPicture" />
             <MudIconButton Icon="@Icons.Material.Filled.Close" />
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
-        <MudTextField @bind-Value="_employeeName" ReadOnly="@(!_editmode)" Label="Employee Name" />
+        <MudTextField @bind-Value="_employeeName" ReadOnly="@(!_editMode)" Label="Employee Name" />
         <MudStack Class="my-2" Row AlignItems="AlignItems.Center">
             @if (_swapping)
             {
@@ -96,7 +96,7 @@
             {
                 <MudImage Src="@_base64" Alt="Employee Image" Height="64" Width="64" Elevation="25" Class="rounded-lg" />
             }
-            @if (_editmode)
+            @if (_editMode)
             {
                 <MudSpacer />
                 <MudFileUpload @bind-Files="@_pictureFile"
@@ -108,14 +108,14 @@
             }
         </MudStack>
     </MudCardContent>
-    @if (_editmode)
+    @if (_editMode)
     {
         <MudCardActions Class="gap-4">
             <MudSpacer />
             <MudButton Color="Color.Primary" Variant="Variant.Filled" Disabled="@string.IsNullOrWhiteSpace(_employeeName)">
                 Save
             </MudButton>
-            <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="@(() => _editmode = !_editmode)">
+            <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="@(() => _editMode = !_editMode)">
                 Cancel
             </MudButton>
         </MudCardActions>
@@ -124,30 +124,25 @@
 
 @code
 {
-    IBrowserFile _uploadFile;
+    private readonly int _uploadMin = 0;
+    private readonly int _uploadMax = 100;
+    private IBrowserFile _uploadFile = new DummyBrowserFile("upload.jpg", DateTimeOffset.Now, 524288000, "image/jpeg", new byte[1024]);
     private bool _uploading;
     private int _uploadValue = 0;
-    private int _uploadMin = 0;
-    private int _uploadMax = 100;
-
-    IBrowserFile _file;
-    IBrowserFile _pictureFile;
-    IReadOnlyList<IBrowserFile> _files = new List<IBrowserFile>();
-
-    private bool _editmode = true;
+    private IBrowserFile _file = new DummyBrowserFile("test.jpg", DateTimeOffset.Now, 1024, "image/jpeg", new byte[1024]);
+    private IBrowserFile _pictureFile;
+    private IReadOnlyList<IBrowserFile> _files =
+    [
+        new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+        new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+    ];
+    private bool _editMode = true;
     private bool _swapping;
     private string _employeeName = "Catherine Doe";
     private string _base64 = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        _uploadFile = new DummyBrowserFile("upload.jpg", DateTimeOffset.Now, 524288000, "image/jpeg", new byte[1024]);
-        _file = new DummyBrowserFile("test.jpg", DateTimeOffset.Now, 1024, "image/jpeg", new byte[1024]);
-        _files = [
-            new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-            new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
-        ];
-
         // set _base64 from images/mony.jpg
         await ResetPicture();
     }
@@ -161,8 +156,6 @@
 
     public async Task Upload()
     {
-        _uploadMin = 0;
-        _uploadMax = 100;
         _uploading = true;
         StateHasChanged();
 
@@ -218,13 +211,9 @@
     public class DummyBrowserFile : IBrowserFile
     {
         public string Name { get; }
-
         public DateTimeOffset LastModified { get; }
-
         public long Size { get; }
-
         public string ContentType { get; }
-
         public byte[] Content { get; }
 
         public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)

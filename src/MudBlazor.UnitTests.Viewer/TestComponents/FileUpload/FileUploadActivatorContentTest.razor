@@ -8,15 +8,15 @@
 
 <MudText>Blank FileUpload Drag False</MudText>
 <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-               AppendMultipleFiles />
+               AppendMultipleFiles="true" />
 
 -----------------
 
 <MudText>Blank FileUpload Drag True</MudText>
 <MudFileUpload T="IReadOnlyList<IBrowserFile>"
                Style="height: 300px;width: 300px;"
-               AppendMultipleFiles
-               DragAndDrop />
+               AppendMultipleFiles="true"
+               DragAndDrop="true" />
 
 
 ----------------
@@ -24,8 +24,8 @@
 <MudText>File Upload with Activator Content</MudText>
 <MudFileUpload T="IReadOnlyList<IBrowserFile>"
                @ref="@_fileUpload"
-               AppendMultipleFiles
-               DragAndDrop
+               AppendMultipleFiles="true"
+               DragAndDrop="true"
                tabindex="-1"
                @bind-Dragging="@_dragging"
                @bind-Dragging:after="@ClearDragClass">
@@ -65,14 +65,10 @@
 </MudFileUpload>
 
 @code {
-
-
-
 #nullable enable
     public static string __description__ = "A test for using components inside CustomContent that don't activate.";
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string _dragClass = DefaultDragClass;
-
     private bool _dragging = false;
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
