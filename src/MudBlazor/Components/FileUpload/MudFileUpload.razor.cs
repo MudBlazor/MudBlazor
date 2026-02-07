@@ -283,7 +283,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            return RemoveFile(filename);
+            return RemoveFileAsync(filename);
         }
 
         private int _numberOfActiveFileInputs = 1;
@@ -300,7 +300,7 @@ namespace MudBlazor
         /// Applies when <c>T</c> is <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
         /// </remarks>
         /// <param name="filename">The name of the file to remove.</param>
-        public async Task RemoveFile(string filename)
+        public async Task RemoveFileAsync(string filename)
         {
             switch (_filesState.Value)
             {

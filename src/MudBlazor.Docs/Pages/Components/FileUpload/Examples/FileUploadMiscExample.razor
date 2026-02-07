@@ -63,7 +63,7 @@
                     <MudChip T="string"
                              Color="Color.Info"
                              Size="Size.Small"
-                             OnClose="@(async () => await context.RemoveFile(f))"
+                             OnClose="@(async () => await context.RemoveFileAsync(f))"
                              CloseIcon="@Icons.Material.Outlined.Delete">
                         @f
                     </MudChip>

@@ -447,10 +447,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tests RemoveFile functionality for single file
+        /// Tests RemoveFileAsync functionality for single file
         /// </summary>
         [Test]
-        public async Task FileUpload_RemoveFile_SingleFile_Test()
+        public async Task FileUpload_RemoveFileAsync_SingleFile_Test()
         {
             var fileName = "test.txt";
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "text/plain", []);
@@ -462,7 +462,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetFilenames().Should().ContainSingle(x => x == fileName);
 
             // Remove file
-            await comp.InvokeAsync(() => comp.Instance.RemoveFile(fileName));
+            await comp.InvokeAsync(() => comp.Instance.RemoveFileAsync(fileName));
 
             // Verify file was removed
             comp.Instance.GetState(x => x.Files).Should().BeNull();
@@ -470,10 +470,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tests RemoveFile functionality for multiple files
+        /// Tests RemoveFileAsync functionality for multiple files
         /// </summary>
         [Test]
-        public async Task FileUpload_RemoveFile_MultipleFiles_Test()
+        public async Task FileUpload_RemoveFileAsync_MultipleFiles_Test()
         {
             var files = new List<IBrowserFile>
             {
@@ -489,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetFilenames().Should().HaveCount(2);
 
             // Remove one file
-            await comp.InvokeAsync(() => comp.Instance.RemoveFile("test1.txt"));
+            await comp.InvokeAsync(() => comp.Instance.RemoveFileAsync("test1.txt"));
 
             // Verify file was removed
             comp.Instance.GetState(x => x.Files).Should().HaveCount(1);

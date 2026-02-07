@@ -24,7 +24,7 @@
                                      Color="Color.Dark"
                                      Text="@file"
                                      CloseIcon="@Icons.Material.Outlined.Close"
-                                     OnClose="@(async () => await context.RemoveFile(file))"
+                                     OnClose="@(async () => await context.RemoveFileAsync(file))"
                                      tabindex="-1" />
                         }
                     </div>

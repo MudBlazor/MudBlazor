@@ -37,7 +37,7 @@
                                              Disabled="@(_fileUpload?.Disabled ?? false)"
                                              Text="@file.Name"
                                              CloseIcon="@Icons.Material.Outlined.Close"
-                                             OnClose="@(async () => await RemoveFile(file.Name))"
+                                             OnClose="@(async () => await RemoveFileAsync(file.Name))"
                                              tabindex="-1" />
                                 </ChildContent>
                                 <TooltipContent>
@@ -72,13 +72,13 @@
         //TODO upload the files to the server
     }
 
-    private async Task RemoveFile(string file)
+    private async Task RemoveFileAsync(string file)
     {
         _files.Remove(_files.FirstOrDefault(x => x.Name == file));
 
         if (_fileUpload is not null)
         {
-            await _fileUpload.RemoveFile(file);
+            await _fileUpload.RemoveFileAsync(file);
         }
     }
 
