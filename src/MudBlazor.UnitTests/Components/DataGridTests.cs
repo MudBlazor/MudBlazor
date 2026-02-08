@@ -1075,29 +1075,33 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
 
-            await Task.Delay(20);
-
             if (shouldClose)
             {
-                //verify dialog closed
-                comp.FindAll("div.mud-dialog").Count.Should().Be(0);
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    //verify dialog closed
+                    comp.FindAll("div.mud-dialog").Count.Should().Be(0);
 
-                //verify values changed
-                dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
-                dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
-                dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Galadriel");
-                dataGrid.FindAll("td")[3].Html().Trim().Should().Be($"{age}");
+                    //verify values changed
+                    dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+                    dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+                    dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Galadriel");
+                    dataGrid.FindAll("td")[3].Html().Trim().Should().Be($"{age}");
+                });
             }
             else
             {
-                //verify dialog still open
-                comp.Find("div.mud-dialog").Should().NotBeNull();
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    //verify dialog still open
+                    comp.Find("div.mud-dialog").Should().NotBeNull();
 
-                //verify values not changed
-                dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
-                dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
-                dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Johanna");
-                dataGrid.FindAll("td")[3].Html().Trim().Should().Be("23");
+                    //verify values not changed
+                    dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+                    dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+                    dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Johanna");
+                    dataGrid.FindAll("td")[3].Html().Trim().Should().Be("23");
+                });
             }
         }
 
