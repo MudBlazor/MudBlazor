@@ -1167,7 +1167,7 @@ namespace MudBlazor
                     StateHasChanged();
                 }
             }
-            else if (!(args.ShiftKey || args.AltKey || args.MetaKey))
+            else if (!args.ShiftKey && !args.AltKey && !args.MetaKey)
             {
                 await SelectFirstItem(args.Key.ToLowerInvariant());
                 await FocusAsync();
