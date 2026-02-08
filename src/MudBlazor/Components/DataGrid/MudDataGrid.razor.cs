@@ -325,12 +325,23 @@ namespace MudBlazor
         public EventCallback<T> CanceledEditingItem { get; set; }
 
         /// <summary>
-        /// Called when the user saves changes to an item.
+        /// Invoked when the user saves changes to an item, allowing for validation, 
+        /// persistence, or other processing.
         /// </summary>
         /// <remarks>
-        /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>, returned value controls whether the edit form remains open.
-        /// The edited values are provided on a new instance to prevent changes from being
-        /// applied to the underlying data source before this callback completes successfully.
+        /// <para>
+        /// The callback receives a separate instance of the item with the committed values, 
+        /// preventing changes from being applied to the underlying data source before 
+        /// validation or processing completes.
+        /// </para>
+        /// <para>
+        /// Return a <see cref="DataGridEditFormAction"/> value to control the edit form behavior. 
+        /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>:
+        /// </para>
+        /// <list type="bullet">
+        /// <item><see cref="DataGridEditFormAction.Close"/> - Accepts changes and closes the form</item>
+        /// <item><see cref="DataGridEditFormAction.KeepOpen"/> - Rejects changes and keeps the form open for corrections</item>
+        /// </list>
         /// </remarks>
         [Parameter]
         public Func<T, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
