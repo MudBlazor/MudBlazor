@@ -1178,7 +1178,16 @@ namespace MudBlazor
         {
             if (args.CtrlKey || args.ShiftKey || args.AltKey || args.MetaKey)
                 return;
-            await SelectFirstItem(args.Key.ToLowerInvariant());
+
+            var key = args.Key;
+            if (string.IsNullOrWhiteSpace(key))
+                return;
+
+            key = key.ToLowerInvariant();
+            if (key.Length != 1)
+                return;
+
+            await SelectFirstItem(key);
             await FocusAsync();
         }
 
