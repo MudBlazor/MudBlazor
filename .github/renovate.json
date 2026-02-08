@@ -88,6 +88,26 @@
             "addLabels": [
                 "tests"
             ]
+        },
+        {
+            "description": "Group Bun toolchain updates and request Bun reviewer.",
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchPackageNames": [
+                "bun",
+                "BunDotNet.Cli"
+            ],
+            "matchFileNames": [
+                "src/Directory.Build.props"
+            ],
+            "groupName": "bun toolchain",
+            "groupSlug": "bun-toolchain",
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
         }
     ],
     "customManagers": [
@@ -100,14 +120,7 @@
                 "<BunVersion>(?<currentValue>.*?)</BunVersion>"
             ],
             "depNameTemplate": "bun",
-            "datasourceTemplate": "npm",
-            "groupName": "bun toolchain",
-            "groupSlug": "bun-toolchain",
-            "separateMajorMinor": false,
-            "separateMultipleMajor": false,
-            "reviewers": [
-                "meenzen"
-            ]
+            "datasourceTemplate": "npm"
         },
         {
             "customType": "regex",
@@ -118,14 +131,7 @@
                 "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
             ],
             "depNameTemplate": "BunDotNet.Cli",
-            "datasourceTemplate": "nuget",
-            "groupName": "bun toolchain",
-            "groupSlug": "bun-toolchain",
-            "separateMajorMinor": false,
-            "separateMultipleMajor": false,
-            "reviewers": [
-                "meenzen"
-            ]
+            "datasourceTemplate": "nuget"
         }
     ]
 }
