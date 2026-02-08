@@ -77,10 +77,6 @@
             "matchFileNames": [
                 "src/**/MudBlazor.Docs*.csproj"
             ],
-            "matchUpdateTypes": [
-                "patch",
-                "minor"
-            ],
             "addLabels": [
                 "docs"
             ]
@@ -88,10 +84,6 @@
         {
             "matchFileNames": [
                 "src/**/MudBlazor.UnitTests*.csproj"
-            ],
-            "matchUpdateTypes": [
-                "patch",
-                "minor"
             ],
             "addLabels": [
                 "tests"
