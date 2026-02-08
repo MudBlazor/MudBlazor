@@ -537,6 +537,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ShowPreview_ShouldUseDefaultColor_WhenValueIsNull()
+        {
+            var comp = Context.Render<MudColorPicker>(p =>
+            {
+                p.Add(x => x.Value, null);
+                p.Add(x => x.ShowPreview, true);
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+            });
+
+            var colorDot = comp.Find(_colorDotCssSelector);
+            var style = colorDot.GetAttribute("style");
+            style.Should().Be($"background: {_defaultColor.ToString(MudColorOutputFormats.RGBA)};");
+        }
+
+        [Test]
         public async Task Toggle_Sliders()
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ShowSliders, true));
