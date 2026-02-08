@@ -1237,8 +1237,7 @@ namespace MudBlazor
                         .OnKeyDown("Home", () => SelectFirstItem())
                         .OnKeyDown("End", SelectLastItem)
                         .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)
-                        .OnKeyDown("a", HandleKeyAAsync)
-                        .OnKeyDown("A", HandleKeyAAsync)
+                        .OnKeyDownAny(["a", "A"], HandleKeyAAsync)
                         .OnKeyDown("/^[^ ]$/", HandleCharacterSearchAsync)));
             }
 
