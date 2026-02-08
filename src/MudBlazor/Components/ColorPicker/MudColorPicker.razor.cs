@@ -589,6 +589,18 @@ namespace MudBlazor
             }
         }
 
+        private Task OnPointerLeaveAsync(PointerEventArgs e)
+        {
+            // Flush the final color update when the pointer leaves during a drag,
+            // since pointermove/pointerup won't fire on this element anymore.
+            if (e.Buttons == 1 && DragEffect)
+            {
+                return UpdateColorBaseOnSelectionAsync();
+            }
+
+            return Task.CompletedTask;
+        }
+
         private void SetSelectorBasedOnPointerEvents(PointerEventArgs e, bool offsetIsAbsolute)
         {
             _selectorX = (offsetIsAbsolute ? e.OffsetX : e.OffsetX - (SelectorSize / 2.0) + _selectorX).EnsureRange(MaxX);
