@@ -128,6 +128,9 @@ namespace MudBlazor
             { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
         };
 
+        /// <summary>
+        /// Displays this color picker right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

@@ -45,6 +45,9 @@ namespace MudBlazor
             };
         }
 
+        /// <summary>
+        /// Displays content right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

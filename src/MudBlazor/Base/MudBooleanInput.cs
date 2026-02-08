@@ -74,6 +74,9 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool StopClickPropagation { get; set; } = true;
 
+        /// <summary>
+        /// Displays this input using right-to-left layout.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -112,6 +115,9 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
+        /// <summary>
+        /// The content within this component.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public RenderFragment? ChildContent { get; set; }

@@ -35,6 +35,9 @@ namespace MudBlazor
             .AddClass(BulletsClass)
             .Build();
 
+        /// <summary>
+        /// Displays carousel controls right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

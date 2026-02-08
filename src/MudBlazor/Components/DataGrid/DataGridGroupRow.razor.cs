@@ -26,14 +26,23 @@ namespace MudBlazor
             .AddStyle(GroupStyleFunc?.Invoke(GroupDefinition))
             .Build();
 
+        /// <summary>
+        /// The data grid which contains this group row.
+        /// </summary>
         [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
         public MudDataGrid<T> DataGrid { get; set; } = null!;
 
+        /// <summary>
+        /// Occurs when a row is clicked.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Selecting)]
         public EventCallback<(MouseEventArgs args, T item, int index)> RowClick { get; set; }
 
+        /// <summary>
+        /// Occurs when a row is right-clicked.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Selecting)]
         public EventCallback<(MouseEventArgs args, T item, int index)> ContextRowClick { get; set; }
@@ -52,22 +61,37 @@ namespace MudBlazor
         [Category(CategoryTypes.DataGrid.Grouping)]
         public IGrouping<object?, T>? Items { get; set; }
 
+        /// <summary>
+        /// The CSS classes applied to the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? GroupClass { get; set; }
 
+        /// <summary>
+        /// The CSS styles applied to the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? GroupStyle { get; set; }
 
+        /// <summary>
+        /// The function used to compute CSS classes for the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public Func<GroupDefinition<T>, string>? GroupClassFunc { get; set; }
 
+        /// <summary>
+        /// The function used to compute CSS styles for the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public Func<GroupDefinition<T>, string>? GroupStyleFunc { get; set; }
 
+        /// <summary>
+        /// The CSS classes applied to this group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? StyleClass { get; set; }

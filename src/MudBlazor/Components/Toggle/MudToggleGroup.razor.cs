@@ -161,6 +161,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public bool Vertical { get; set; }
 
+        /// <summary>
+        /// Displays items right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

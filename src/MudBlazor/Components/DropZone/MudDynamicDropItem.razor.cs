@@ -81,10 +81,16 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     [Category(CategoryTypes.DropZone.Disabled)]
     public string? DisabledClass { get; set; }
 
+    /// <summary>
+    /// The index of this item within its drop zone.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Sorting)]
     public int Index { get; set; } = -1;
 
+    /// <summary>
+    /// Hides this item's content.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Sorting)]
     public bool HideContent { get; set; }

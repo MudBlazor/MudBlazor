@@ -226,6 +226,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Expanding)]
         public bool Expanded { get; set; }
 
+        /// <summary>
+        /// Occurs when <see cref="Expanded"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 

@@ -43,6 +43,9 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
+        /// <summary>
+        /// Displays this dialog right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

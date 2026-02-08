@@ -25,6 +25,9 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        /// <summary>
+        /// Displays content right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
