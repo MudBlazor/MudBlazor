@@ -1,11 +1,3 @@
-// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-/**
- * Bundles all JS interop modules exported as `window.mud*`.
- * Keep this list in sync with the TScripts directory (excluding this file).
- */
 import "./mudAAAlicense";
 import "./mudDragAndDrop";
 import "./mudElementReference";
