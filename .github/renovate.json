@@ -81,7 +81,14 @@
                 "<BunVersion>(?<currentValue>.*?)</BunVersion>"
             ],
             "depNameTemplate": "bun",
-            "datasourceTemplate": "npm"
+            "datasourceTemplate": "npm",
+            "groupName": "bun toolchain",
+            "groupSlug": "bun-toolchain",
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
         },
         {
             "customType": "regex",
@@ -92,7 +99,14 @@
                 "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
             ],
             "depNameTemplate": "BunDotNet.Cli",
-            "datasourceTemplate": "nuget"
+            "datasourceTemplate": "nuget",
+            "groupName": "bun toolchain",
+            "groupSlug": "bun-toolchain",
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
         }
     ]
 }
