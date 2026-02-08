@@ -16,6 +16,9 @@ class MudPointerEventsNone {
         this.pointerUpMap = new Map();
     }
 
+    /**
+     * Starts global pointer listeners for an element configured with pointer-events-none behavior.
+     */
     listenForPointerEvents(dotNetReference, elementId, options) {
         if (!options) {
             this.logger("options object is required but was not provided");
@@ -72,10 +75,16 @@ class MudPointerEventsNone {
         }
     }
 
+    /**
+     * Handles global pointerdown and routes matching IDs to .NET.
+     */
     pointerDownHandler(event) {
         this._handlePointerEvent(event, this.pointerDownMap, "RaiseOnPointerDown");
     }
 
+    /**
+     * Handles global pointerup and routes matching IDs to .NET.
+     */
     pointerUpHandler(event) {
         this._handlePointerEvent(event, this.pointerUpMap, "RaiseOnPointerUp");
     }
@@ -132,6 +141,9 @@ class MudPointerEventsNone {
         this.dotnet.invokeMethodAsync(raiseMethod, matchingIds);
     }
 
+    /**
+     * Stops pointer listener participation for a specific element ID.
+     */
     cancelListener(elementId) {
         if (!elementId) {
             this.logger("cancelListener called with invalid elementId");
@@ -160,6 +172,9 @@ class MudPointerEventsNone {
         }
     }
 
+    /**
+     * Removes global listeners and clears all tracked element subscriptions.
+     */
     dispose() {
         if (!this.dotnet && !this.pointerDownHandlerRef && !this.pointerUpHandlerRef) {
             this.logger("dispose() called but instance was already cleaned up");

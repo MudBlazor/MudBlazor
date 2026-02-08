@@ -11,6 +11,9 @@ class MudResizeObserverFactory {
         this._maps = {};
     }
 
+    /**
+     * Creates (or reuses) an observer instance for an ID and starts observing elements.
+     */
     connect(id, dotNetRef, elements, elementIds, options) {
         const existingEntry = this._maps[id];
         if (!existingEntry) {
@@ -22,6 +25,9 @@ class MudResizeObserverFactory {
         return result;
     }
 
+    /**
+     * Stops observing a specific element for an observer ID.
+     */
     disconnect(id, element) {
         //I can't think about a case, where this can be called, without observe has been called before
         //however, a check is not harmful either
@@ -31,6 +37,9 @@ class MudResizeObserverFactory {
         }
     }
 
+    /**
+     * Disposes and removes the observer instance for an ID.
+     */
     cancelListener(id) {
         //cancelListener is called during dispose of .net instance
         //in rare cases it could be possible, that no object has been connect so far
@@ -48,7 +57,6 @@ class MudResizeObserverFactory {
  * Aggregates observed element metadata needed for stable interop callbacks.
  */
 class MudResizeObserver {
-
     constructor(dotNetRef, options) {
         this.logger = options.enableLogging ? console.log : () => { };
         this.options = options;
@@ -93,6 +101,9 @@ class MudResizeObserver {
         });
     }
 
+    /**
+     * Forwards accumulated resize changes to .NET.
+     */
     resizeHandler(changes) {
         try {
             this.logger("[MudBlazor | ResizeObserver] OnSizeChanged handler invoked");
@@ -102,6 +113,9 @@ class MudResizeObserver {
         }
     }
 
+    /**
+     * Starts observing all provided elements and returns initial rect snapshots.
+     */
     connect(elements, ids) {
         const result = [];
         this.logger('[MudBlazor | ResizeObserver] Start observing elements...');
@@ -124,6 +138,9 @@ class MudResizeObserver {
         return result;
     }
 
+    /**
+     * Stops observing one element by observer element ID.
+     */
     disconnect(elementId) {
         this.logger('[MudBlazor | ResizeObserver] Try to unobserve element with id', { elementId });
 
@@ -139,6 +156,9 @@ class MudResizeObserver {
         }
     }
 
+    /**
+     * Disconnects the underlying ResizeObserver and clears .NET references.
+     */
     cancelListener() {
         this.logger('[MudBlazor | ResizeObserver] Closing ResizeObserver. Detaching all observed elements');
 
@@ -146,6 +166,4 @@ class MudResizeObserver {
         this._dotNetRef = undefined;
     }
 }
-
-
 window.mudResizeObserver = new MudResizeObserverFactory();

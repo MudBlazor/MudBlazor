@@ -7,12 +7,17 @@
  * Centralizes feature checks for browsers with partial Pointer Events support.
  */
 window.mudPointerCapture = {
+    /**
+     * Captures pointer events to the given element for the active pointer ID.
+     */
     capture: function (element, pointerId) {
         if (element && typeof element.setPointerCapture === 'function') {
             element.setPointerCapture(pointerId);
         }
     },
-    
+    /**
+     * Releases pointer capture for the given element and pointer ID.
+     */
     release: function (element, pointerId) {
         if (element && typeof element.releasePointerCapture === 'function') {
             element.releasePointerCapture(pointerId);

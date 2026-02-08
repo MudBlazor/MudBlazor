@@ -17,6 +17,9 @@ class MudScrollListener {
         this.targetElements = Object.create(null);
     }
 
+    /**
+     * Starts a throttled scroll subscription for a selector and listener ID.
+     */
     listenForScroll(dotnetReference, listenerId, selector, reportRateMs) {
         if (this.targetElements[listenerId]) {
             this.cancelListener(listenerId);
@@ -37,6 +40,9 @@ class MudScrollListener {
         return element;
     }
 
+    /**
+     * Debounces scroll callbacks according to report rate.
+     */
     throttleScrollHandler(dotnetReference, listenerId, reportRateMs) {
         clearTimeout(this.throttleScrollHandlerIds[listenerId]);
 
@@ -46,6 +52,9 @@ class MudScrollListener {
         );
     }
 
+    /**
+     * Captures current scroll state and forwards it to .NET.
+     */
     scrollHandler(dotnetReference, listenerId) {
         try {
             const scrollData = this._getCurrentScrollPosition(this.targetElements[listenerId]);
@@ -57,6 +66,9 @@ class MudScrollListener {
         }
     }
 
+    /**
+     * Returns current scroll metrics for the provided selector.
+     */
     getCurrentScrollPosition(selector) {
         const element = this._getElementBySelector(selector);
         return this._getCurrentScrollPosition(element);
@@ -82,6 +94,9 @@ class MudScrollListener {
         };
     }
 
+    /**
+     * Stops and removes a scroll subscription by listener ID.
+     */
     cancelListener(listenerId) {
         if (this.throttleScrollHandlerIds[listenerId]) {
             clearTimeout(this.throttleScrollHandlerIds[listenerId]);

@@ -8,6 +8,9 @@
  * Keeps updates caret-safe while still dispatching native `input` events.
  */
 class MudInput {
+    /**
+     * Clears the value of an input element by ID.
+     */
     resetValue(id) {
         const input = document.getElementById(id);
         if (input) {
@@ -15,10 +18,16 @@ class MudInput {
         }
     }
 
+    /**
+     * Returns the current caret start position.
+     */
     getCaretPosition(element) {
         return element.selectionStart;
     }
 
+    /**
+     * Inserts text at the current selection/caret position.
+     */
     insertAtCurrentCaretPosition(element, text) {
         const start = element.selectionStart !== null && element.selectionStart !== undefined ? element.selectionStart : 0;
         const end = element.selectionEnd !== null && element.selectionEnd !== undefined ? element.selectionEnd : start;
@@ -26,6 +35,9 @@ class MudInput {
         this._insertText(element, text, start, end);
     }
 
+    /**
+     * Inserts text at a specific character position.
+     */
     insertAtPosition(element, text, position) {
         const value = element.value !== null && element.value !== undefined ? element.value : '';
         const insertPos = this._clampPosition(position, value.length);
@@ -48,6 +60,7 @@ class MudInput {
             element.selectionStart = element.selectionEnd = newCaretPos;
         }
 
+        // Keep Blazor/input bindings in sync when value is mutated from JS.
         element.dispatchEvent(new Event('input', {bubbles: true}));
     }
 

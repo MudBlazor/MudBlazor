@@ -7,6 +7,9 @@
  * Tracks pressed state so drag-over-stick selection remains continuous.
  */
 window.mudTimePicker = {
+    /**
+     * Attaches pointer handlers for clock stick hover/select interactions.
+     */
     initPointerEvents: (clock, dotNetHelper) => {
         let isPointerDown = false;
 
@@ -77,6 +80,9 @@ window.mudTimePicker = {
         };
     },
 
+    /**
+     * Detaches pointer handlers previously registered on the clock container.
+     */
     destroyPointerEvents: (container) => {
         if (container == null) {
             return;
