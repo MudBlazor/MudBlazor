@@ -77,19 +77,45 @@
         <DocsPageSection>
             <SectionHeader Title="Editing">
                 <Description>
-                    The <CodeInline Tag>MudDataGrid</CodeInline> component supports data editing. To enable it, set <CodeInline>ReadOnly</CodeInline> to 
-                    <CodeInline>false</CodeInline> and choose an <CodeInline>EditMode</CodeInline>: either <CodeInline>DataGridEditMode.Form</CodeInline> 
-                    (popup form) or <CodeInline>DataGridEditMode.Cell</CodeInline> (Excel-style inline editing).
-                    <br /><br />
-                    Changes trigger <CodeInline>CommittedItemChanges</CodeInline> and update the data source <CodeInline>Items</CodeInline>. To disable 
-                    editing for a column, set <CodeInline>Editable</CodeInline> to <CodeInline>false</CodeInline>. To make a field optional, set 
-                    <CodeInline>Required</CodeInline> to <CodeInline>false</CodeInline>.
-                    <br /><br />
-                    By default, each editable cell uses a suitable input component. You can override this with an <CodeInline Tag>EditTemplate</CodeInline> 
-                    for full control, see the <CodeInline>Position</CodeInline> column example below.
+                    The <CodeInline Tag>MudDataGrid</CodeInline> supports data editing. To enable it, set
+                    <CodeInline>ReadOnly</CodeInline> to <CodeInline>false</CodeInline> and choose an
+                    <CodeInline>EditMode</CodeInline>:
+                    <ul>
+                        <li><CodeInline>DataGridEditMode.Form</CodeInline> - Opens a popup form for editing</li>
+                        <li><CodeInline>DataGridEditMode.Cell</CodeInline> - Enables Excel-style inline editing</li>
+                    </ul>
+
+                    <strong>Saving Changes</strong>
                     <br />
-                    To add and edit a new row programmatically, call <CodeInline>SetEditingItemAsync</CodeInline> with an instance of type <CodeInline>T</CodeInline> 
-                    for Form style or just add the item to <CodeInline>Items</CodeInline> for cell style.
+                    When a user saves changes, the <CodeInline>CommittedItemChanges</CodeInline> callback is invoked
+                    with the edited values. This callback should return:
+                    <ul>
+                        <li><CodeInline>DataGridEditFormAction.Close</CodeInline> - Accepts the changes and closes the edit form</li>
+                        <li><CodeInline>DataGridEditFormAction.KeepOpen</CodeInline> - Rejects the changes and keeps the form open (useful for validation failures)</li>
+                    </ul>
+                    In the example below, the form remains open when Molar mass is negative, allowing the user to correct the error.
+                    <br /><br />
+
+                    <strong>Column Configuration</strong>
+                    <br />
+                    To disable editing for a specific column, set <CodeInline>Editable</CodeInline> to <CodeInline>false</CodeInline>.
+                    To make a field optional, set <CodeInline>Required</CodeInline> to <CodeInline>false</CodeInline>.
+                    <br /><br />
+
+                    <strong>Custom Input Components</strong>
+                    <br />
+                    By default, each editable cell uses an appropriate input component based on the data type.
+                    You can provide custom editing UI using an <CodeInline Tag>EditTemplate</CodeInline>
+                    (see the <CodeInline>Position</CodeInline> column in the example below).
+                    <br /><br />
+
+                    <strong>Programmatic Editing</strong>
+                    <br />
+                    To add and edit a new row programmatically:
+                    <ul>
+                        <li><strong>Form mode:</strong> Call <CodeInline>SetEditingItemAsync</CodeInline> with a new instance of type <CodeInline>T</CodeInline></li>
+                        <li><strong>Cell mode:</strong> Add the new item directly to <CodeInline>Items</CodeInline></li>
+                    </ul>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridEditingExample)" ShowCode="false" Block="true" FullWidth="true">

@@ -7,7 +7,6 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// The current state of a <see cref="MudTable{T}"/>.

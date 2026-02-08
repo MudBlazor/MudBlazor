@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
-#nullable enable
     public static class DataGridExtensions
     {
         public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridState<T> state)

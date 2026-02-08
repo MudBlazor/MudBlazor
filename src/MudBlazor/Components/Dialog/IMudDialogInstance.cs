@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 public interface IMudDialogInstance
 {
     /// <summary>

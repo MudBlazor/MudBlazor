@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents a divider between breadcrumb items.

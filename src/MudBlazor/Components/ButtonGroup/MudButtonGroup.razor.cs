@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Groups related <see cref="MudButton"/> components together visually.
     /// </summary>
@@ -24,6 +23,9 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        /// <summary>
+        /// Displays buttons right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

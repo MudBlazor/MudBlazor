@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Exceptions;
 
-#nullable enable
 /// <summary>
 /// Exception type used to represent failures during value conversion performed by converters.
 /// </summary>

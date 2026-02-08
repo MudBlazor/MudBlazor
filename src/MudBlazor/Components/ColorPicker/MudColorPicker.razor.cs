@@ -12,7 +12,6 @@ using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a sophisticated and customizable pop-up for choosing a color.
     /// </summary>
@@ -130,6 +129,9 @@ namespace MudBlazor
             { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
         };
 
+        /// <summary>
+        /// Displays this color picker right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

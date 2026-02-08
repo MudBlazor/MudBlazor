@@ -1,0 +1,30 @@
+name: "Build .NET Project"
+description: "Build a .NET project"
+
+inputs:
+  project-path:
+    description: "Path to the project file to build"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.x
+
+    # We try to restore from our 'format-check' job cache if available because it contains all dependencies
+    - name: Cache NuGet packages
+      uses: actions/cache/restore@v5
+      with:
+        key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+        path: ${{ env.NUGET_PACKAGES }}
+
+    - name: Restore NuGet packages
+      shell: bash
+      run: dotnet restore ${{ inputs.project-path }}
+
+    - name: Build project
+      shell: bash
+      run: dotnet build ${{ inputs.project-path }} -c Release --no-restore

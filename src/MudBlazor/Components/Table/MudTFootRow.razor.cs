@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A footer row displayed at the bottom of a <see cref="MudTable{T}"/> and each group.

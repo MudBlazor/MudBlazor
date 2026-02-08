@@ -2,17 +2,20 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor;
-
-#nullable enable
+namespace MudBlazor.Services;
 
 /// <summary>
-/// Specifies the mode for displaying popovers.
+/// Specifies the type of keyboard event.
 /// </summary>
-public enum PopoverMode
+public enum KeyEventKind
 {
     /// <summary>
-    /// The default popover mode that uses the <see cref="IPopoverService"/>.
+    /// Represents a key down event.
     /// </summary>
-    Default = 0,
+    Down,
+
+    /// <summary>
+    /// Represents a key up event.
+    /// </summary>
+    Up
 }

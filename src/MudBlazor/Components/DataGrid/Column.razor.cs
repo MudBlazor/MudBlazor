@@ -13,7 +13,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a vertical set of values.
     /// </summary>

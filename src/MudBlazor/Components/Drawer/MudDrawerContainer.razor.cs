@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A container for a <see cref="MudDrawer"/> component.
@@ -34,6 +33,9 @@ namespace MudBlazor
                 .AddStyle(Style)
                 .Build();
 
+        /// <summary>
+        /// Displays drawers right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

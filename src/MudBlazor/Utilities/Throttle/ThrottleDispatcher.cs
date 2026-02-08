@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Throttle;
 
-#nullable enable
 /// <summary>
 /// Limits the rate at which an action can be invoked.
 /// </summary>

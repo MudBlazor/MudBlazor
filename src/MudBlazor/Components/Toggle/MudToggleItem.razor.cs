@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// An item as part of a <see cref="MudToggleGroup{T}"/>

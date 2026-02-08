@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// A set of contiguous characters used to build a <see cref="BlockMask"/>.
 /// </summary>

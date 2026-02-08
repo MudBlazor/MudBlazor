@@ -1,4 +1,5 @@
 ﻿using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
@@ -20,7 +21,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx = new BunitContext();
             _ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             _ctx.Services.AddSingleton(TimeProvider.System);
-            _ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            _ctx.Services.AddSingleton<NavigationManager>(new BunitNavigationManager(_ctx));
             _ctx.Services.AddSingleton<IDialogService>(new DialogService());
             _ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
             _ctx.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());

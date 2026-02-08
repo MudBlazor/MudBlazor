@@ -1,9 +1,14 @@
 ﻿using MudBlazor.Interop;
 
-#nullable enable
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Payload for scroll events emitted by MudBlazor scroll listeners.
+    /// </summary>
+    /// <remarks>
+    /// Components and services use this to react to scroll position and element geometry without extra JS interop calls, keeping UI behavior responsive.
+    /// </remarks>
     public class ScrollEventArgs : EventArgs
     {
         /// <summary>

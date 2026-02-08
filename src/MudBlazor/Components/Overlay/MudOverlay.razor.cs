@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Renders a translucent layer over content, typically used for modals, popovers, progress bars, or blocking interactions.

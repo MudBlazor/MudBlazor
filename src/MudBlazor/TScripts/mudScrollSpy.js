@@ -2,16 +2,20 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-//Functions related to the scroll spy
+/**
+ * Scroll section tracking for the ScrollSpy service.
+ * Updates URL hash and section callbacks directly in JS to minimize interop churn.
+ */
 class MudScrollSpy {
-
     constructor() {
         this.lastKnowElement = null;
         //needed as variable to remove the event listeners
         this.handlerRef = null;
     }
 
-    // subscribe to relevant events
+    /**
+     * Starts section tracking for a scroll container and section selector.
+     */
     spying(dotnetReference, containerSelector, sectionClassSelector) {
         this.lastKnowElement = null;
 
@@ -24,7 +28,9 @@ class MudScrollSpy {
         window.addEventListener('resize', this.handlerRef, true);
     }
 
-    // handle the document scroll event and if needed, fires the .NET event
+    /**
+     * Recomputes the active section and notifies .NET when it changes.
+     */
     handleScroll(dotnetReference, containerSelector, sectionClassSelector) {
         const container = document.querySelector(containerSelector);
         if (container === null) {
@@ -50,6 +56,7 @@ class MudScrollSpy {
             const diff = Math.abs(rect.top - center);
 
             if (!foundAbove && rect.top < center) {
+                // Prefer the most recent section above center so active state follows reading direction.
                 foundAbove = true;
                 minDifference = diff;
                 elementId = element.id;
@@ -68,11 +75,15 @@ class MudScrollSpy {
 
         if (elementId !== this.lastKnowElement) {
             this.lastKnowElement = elementId;
+            // replaceState updates deep-linking without polluting browser history while scrolling.
             history.replaceState(null, '', window.location.pathname + "#" + elementId);
             dotnetReference.invokeMethodAsync('SectionChangeOccured', elementId);
         }
     }
 
+    /**
+     * Marks a section as active and updates the URL hash without scrolling.
+     */
     activateSection(sectionId) {
         const element = document.getElementById(sectionId);
         if (element) {
@@ -81,6 +92,9 @@ class MudScrollSpy {
         }
     }
 
+    /**
+     * Scrolls to a section ID, or to the top when no section is provided.
+     */
     scrollToSection(sectionId) {
         if (sectionId) {
             const element = document.getElementById(sectionId);
@@ -93,7 +107,9 @@ class MudScrollSpy {
         }
     }
 
-    //remove event listeners
+    /**
+     * Stops section tracking and removes registered listeners.
+     */
     unspy() {
         document.removeEventListener('scroll', this.handlerRef, true);
         window.removeEventListener('resize', this.handlerRef, true);

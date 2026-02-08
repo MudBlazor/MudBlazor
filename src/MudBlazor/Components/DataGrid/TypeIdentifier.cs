@@ -8,7 +8,6 @@ using System.Numerics;
 
 namespace MudBlazor
 {
-#nullable enable
     internal class TypeIdentifier
     {
         private static readonly HashSet<Type> _numericTypes = new()

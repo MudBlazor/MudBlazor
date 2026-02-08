@@ -11,7 +11,6 @@ using MudBlazor.Utilities.Expressions;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a column in a <see cref="MudDataGrid{T}"/> associated with an object's property.
     /// </summary>

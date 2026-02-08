@@ -5,7 +5,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-#nullable enable
 namespace MudBlazor.Utilities;
 
 public static class SortingAssistant

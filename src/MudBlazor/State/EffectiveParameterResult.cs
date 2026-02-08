@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents the result of resolving which parameter is effective when coordinating between two related parameters.
 /// </summary>

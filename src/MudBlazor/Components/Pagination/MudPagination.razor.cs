@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A list of clickable page numbers along with navigation buttons.
     /// </summary>

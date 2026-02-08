@@ -8,24 +8,17 @@
         "mergeConfidence:all-badges"
     ],
     "labels": [
-        "dependency"
+        "dependency",
+        "build"
     ],
-    "minimumReleaseAge": "14 days",
+    "commitMessagePrefix": "Build: ",
     "vulnerabilityAlerts": {
         "enabled": true,
-        "labels": [
-            "triage needed"
+        "addLabels": [
+            "awaiting triage"
         ]
     },
     "packageRules": [
-        {
-            "matchManagers": [
-                "github-actions"
-            ],
-            "reviewers": [
-                "danielchalmers"
-            ]
-        },
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
@@ -76,6 +69,44 @@
                 "minor"
             ],
             "automerge": true
+        }
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
+            ],
+            "matchStrings": [
+                "<BunVersion>(?<currentValue>.*?)</BunVersion>"
+            ],
+            "depNameTemplate": "bun",
+            "datasourceTemplate": "npm",
+            "groupName": "bun toolchain",
+            "groupSlug": "bun-toolchain",
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
+            ],
+            "matchStrings": [
+                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
+            ],
+            "depNameTemplate": "BunDotNet.Cli",
+            "datasourceTemplate": "nuget",
+            "groupName": "bun toolchain",
+            "groupSlug": "bun-toolchain",
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
         }
     ]
 }

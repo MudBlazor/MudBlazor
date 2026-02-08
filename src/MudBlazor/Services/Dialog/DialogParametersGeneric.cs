@@ -6,10 +6,12 @@ using System.Linq.Expressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// The parameters passed into a <see cref="MudDialog"/> instance.
+/// Strongly-typed dialog parameter bag for components of type <typeparamref name="T"/>.
 /// </summary>
+/// <remarks>
+/// Use this when you want compile-time safety for parameter names while building dialog parameters.
+/// </remarks>
 /// <seealso cref="MudDialogContainer"/>
 /// <seealso cref="MudDialogProvider"/>
 /// <seealso cref="MudDialog"/>

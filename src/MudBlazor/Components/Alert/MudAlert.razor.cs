@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Displays an important message which is statically embedded in the page content.
@@ -46,6 +45,9 @@ namespace MudBlazor
             };
         }
 
+        /// <summary>
+        /// Displays content right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

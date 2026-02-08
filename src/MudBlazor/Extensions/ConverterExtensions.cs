@@ -4,7 +4,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor.Extensions;
 
-#nullable enable
 /// <summary>
 /// Extension helpers for working with <see cref="IConverter{TIn,TOut}"/> and <see cref="IReversibleConverter{TIn,TOut}"/>.
 /// </summary>

@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A component which changes pages and page size for a <see cref="MudTable{T}"/>.
@@ -28,6 +27,9 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        /// <summary>
+        /// Displays pager controls right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

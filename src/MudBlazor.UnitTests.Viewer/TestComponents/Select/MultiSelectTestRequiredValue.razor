@@ -27,7 +27,7 @@
 </MudStack>
 
 <MudText>Value: @_selectedRole?.Name</MudText>
-<MudText>Selected values: @(_selectedRoles is null ? null : string.Join(", ", _selectedRoles.Select(x => x.Name)))</MudText>
+<MudText>Selected values: @(string.Join(", ", _selectedRoles.Select(x => x.Name)))</MudText>
 
 @code {
     public static string __description__ = "Multi-Select Required Should Recognize Values";
@@ -36,14 +36,14 @@
     private MudSelect<TestClass> _objectSelect = null!;
 
     private string? _value;
-    private IEnumerable<string?>? _values;
+    private IReadOnlyCollection<string?>? _values;
 
     private TestClass? _selectedRole;
-    private IEnumerable<TestClass>? _selectedRoles = new List<TestClass>();
+    private IReadOnlyCollection<TestClass> _selectedRoles = [];
     private readonly List<TestClass> _roles =
     [
-        new TestClass { Name = "Admin", NameTranslated = "Administrator" },
-        new TestClass { Name = "Customer", NameTranslated = "Kunde" }
+        new() { Name = "Admin", NameTranslated = "Administrator" },
+        new() { Name = "Customer", NameTranslated = "Kunde" }
     ];
 
     public class TestClass

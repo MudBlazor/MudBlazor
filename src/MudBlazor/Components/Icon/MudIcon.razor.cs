@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A picture displayed via an SVG path or font.

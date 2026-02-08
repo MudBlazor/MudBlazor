@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents a service which generates C# functions from text-based filter operations.

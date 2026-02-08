@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the logic of a filter applied to <see cref="MudGrid"/> data.
     /// </summary>

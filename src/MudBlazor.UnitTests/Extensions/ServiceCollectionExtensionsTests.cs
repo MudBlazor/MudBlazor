@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
+using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -36,8 +38,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -53,8 +56,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices_WithConfigurationAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         SnackbarConfiguration? expectedOptions = null;
 
@@ -293,7 +297,6 @@ public class ServiceCollectionExtensionsTests
             options.FlipMargin = 100;
             options.OverflowPadding = 0;
             options.ThrowOnDuplicateProvider = false;
-            options.Mode = PopoverMode.Default;
             options.ModalOverlay = true;
             options.OverflowBehavior = OverflowBehavior.FlipNever;
             expectedOptions = options;
@@ -403,9 +406,10 @@ public class ServiceCollectionExtensionsTests
     public void AddMudServices_ShouldRegisterAllServices()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -457,9 +461,10 @@ public class ServiceCollectionExtensionsTests
     public void AddMudServices_ShouldRegisterAllServices_WithOptionsAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         MudServicesConfiguration? expectedOptions = null;
 
@@ -503,7 +508,6 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.FlipMargin = 100;
             options.PopoverOptions.OverflowPadding = 12;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
-            options.PopoverOptions.Mode = PopoverMode.Default;
             options.PopoverOptions.ModalOverlay = true;
             options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
             options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
@@ -567,7 +571,6 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
         actualPopoverOptions.OverflowPadding.Should().Be(expectedOptions.PopoverOptions.OverflowPadding);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
-        actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
         actualPopoverOptions.ModalOverlay.Should().Be(expectedOptions.PopoverOptions.ModalOverlay);
         actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
         actualPopoverOptions.Delay.Should().Be(expectedOptions.PopoverOptions.Delay);

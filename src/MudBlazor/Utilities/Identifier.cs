@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides high-performance methods to create unique identifiers with optional prefixes.
 /// </summary>

@@ -9,7 +9,6 @@ using System.Threading;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the current paging, sorting, and filtering for a <see cref="MudDataGrid{T}"/>.
     /// </summary>

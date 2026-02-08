@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Provides extension methods for <see cref="IJSRuntime"/> to handle JavaScript interop calls with error handling.
     /// </summary>

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -30,7 +29,7 @@ namespace MudBlazor
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
-        private Timer? _debounceTimer;
+        private ITimer? _debounceTimer;
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private bool _handleNextFocus;
@@ -40,6 +39,9 @@ namespace MudBlazor
 
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -626,7 +628,7 @@ namespace MudBlazor
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
             else
-                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
+                _debounceTimer = TimeProvider.CreateTimer(OnDebounceComplete, null, TimeSpan.FromMilliseconds(DebounceInterval), Timeout.InfiniteTimeSpan);
         }
 
         private void OnDebounceComplete(object? stateInfo) => InvokeAsync(OpenMenuAsync);

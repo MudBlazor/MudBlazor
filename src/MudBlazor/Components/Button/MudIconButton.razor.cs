@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A clickable icon for actions and commands.
     /// </summary>

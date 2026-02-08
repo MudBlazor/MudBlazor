@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Factory interface for creating instances of <see cref="IResizeObserver"/>.
 /// </summary>
