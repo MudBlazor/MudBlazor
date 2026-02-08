@@ -417,13 +417,16 @@ namespace MudBlazor
             var shouldUpdateBinding = rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged);
 
             //if color is cleared, keep _baseColor so that the picker uses the last value
-            if (newColor is not null && colorChanged && !_skipFeedback)
+            if (newColor is not null && colorChanged)
             {
                 _lastColor = newColor;
-                _baseColor = UpdateBaseColor(newColor);
-                var (x, y) = UpdateColorSelectorBasedOnRgb(newColor);
-                _selectorX = x;
-                _selectorY = y;
+                if (!_skipFeedback)
+                {
+                    _baseColor = UpdateBaseColor(newColor);
+                    var (x, y) = UpdateColorSelectorBasedOnRgb(newColor);
+                    _selectorX = x;
+                    _selectorY = y;
+                }
             }
 
             if (shouldUpdateBinding || forceUpdate)
@@ -596,7 +599,7 @@ namespace MudBlazor
         /// Gets the current value, or if null returns the last valid value.
         /// Defaults to <see cref="_defaultColor"/>.
         /// </summary>
-        private MudColor ValueOrDefault => _valueState.Value ?? _lastColor ?? new MudColor(_defaultColor.R, _defaultColor.G, _defaultColor.B, _defaultColor);
+        private MudColor ValueOrDefault => _valueState.Value ?? _lastColor ?? _defaultColor;
 
         private int ReadRed => ValueOrDefault.R;
 
