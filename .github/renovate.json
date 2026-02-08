@@ -41,13 +41,27 @@
             "enabled": false
         },
         {
+            "description": "Keep updates in draft while release age is unknown or younger than 14 days.",
+            "matchJsonata": [
+                "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
+            ],
+            "draftPR": true,
+            "prBodyNotes": [
+                "Draft reason: this target version is either under 14 days old or does not publish a reliable release timestamp yet."
+            ]
+        },
+        {
+            "description": "Keep NuGet major updates in draft for manual review of potential breaking changes.",
             "matchManagers": [
                 "nuget"
             ],
             "matchUpdateTypes": [
                 "major"
             ],
-            "draftPR": true
+            "draftPR": true,
+            "prBodyNotes": [
+                "Major update: validate release notes, migration guidance, and API compatibility before merging."
+            ]
         },
         {
             "matchFileNames": [
@@ -61,14 +75,27 @@
         },
         {
             "matchFileNames": [
-                "src/**/MudBlazor.UnitTests*.csproj",
                 "src/**/MudBlazor.Docs*.csproj"
             ],
             "matchUpdateTypes": [
                 "patch",
                 "minor"
             ],
-            "automerge": true
+            "addLabels": [
+                "docs"
+            ]
+        },
+        {
+            "matchFileNames": [
+                "src/**/MudBlazor.UnitTests*.csproj"
+            ],
+            "matchUpdateTypes": [
+                "patch",
+                "minor"
+            ],
+            "addLabels": [
+                "tests"
+            ]
         }
     ],
     "customManagers": [
