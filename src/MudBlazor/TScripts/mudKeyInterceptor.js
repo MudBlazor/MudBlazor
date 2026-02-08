@@ -2,10 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Key interception bridge used by:
-// - KeyInterceptor interop adapter
-// - KeyInterceptor service consumers
-// Options are applied in JS first so preventDefault/stopPropagation happen before Blazor handlers run.
+/**
+ * Factory that resolves elements and manages MudKeyInterceptor instances.
+ * Exposes connect/update/disconnect entry points for .NET interop.
+ */
 class MudKeyInterceptorFactory {
 
     connect(dotNetRef, elementId, options) {
@@ -36,6 +36,10 @@ class MudKeyInterceptorFactory {
 }
 window.mudKeyInterceptor = new MudKeyInterceptorFactory();
 
+/**
+ * Applies key options and raises keyboard callbacks to .NET.
+ * Handles preventDefault/stopPropagation in JS before component handlers run.
+ */
 class MudKeyInterceptor {
 
     constructor(dotNetRef, options) {

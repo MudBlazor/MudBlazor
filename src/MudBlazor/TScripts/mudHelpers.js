@@ -2,10 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Cross-cutting DOM helpers shared by multiple TScripts and chart components.
-// Primary consumers:
-// - Element reference focus navigation helpers (`getTabbableElements`)
-// - Chart sizing/measurement flows (`mudGetSvgBBox`, `mudObserveElementSize`)
+/**
+ * Cross-cutting DOM helpers shared by interop modules and chart sizing flows.
+ * Exposes small global utilities consumed by other TScripts and component interop calls.
+ */
 window.getTabbableElements = (element) => {
     return element.querySelectorAll(
         "a[href]:not([tabindex='-1'])," +

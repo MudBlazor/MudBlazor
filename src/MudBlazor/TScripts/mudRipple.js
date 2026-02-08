@@ -1,10 +1,10 @@
 // Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-//
-// Global ripple effect handler for elements rendered with the `.mud-ripple` CSS class.
-// Used indirectly by button/list/chip/radio/etc components that toggle ripple via their C# parameters.
-// This is event-delegated on `document` so no per-component JS interop registration is required.
+/**
+ * Global ripple effect handler for elements with the `.mud-ripple` class.
+ * Uses document-level event delegation so components do not need per-instance JS registration.
+ */
 
 (function () {
     // Minimum duration (ms) before ripple can start fading out

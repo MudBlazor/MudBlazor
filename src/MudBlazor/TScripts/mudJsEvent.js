@@ -2,8 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Dynamic event bridge used by the JsEvent service.
-// It observes subtree mutations so handlers stay attached even when matching child nodes are re-rendered by Blazor.
+/**
+ * Factory that wires element IDs to MudJsEvent instances.
+ * Provides connect/subscribe lifecycle entry points for .NET interop.
+ */
 class MudJsEventFactory {
     connect(dotNetRef, elementId, options) {
         //console.log('[MudBlazor | MudJsEventFactory] connect ', { dotNetRef, elementId, options });
@@ -45,7 +47,10 @@ class MudJsEventFactory {
 }
 window.mudJsEvent = new MudJsEventFactory();
 
-
+/**
+ * Observes a container and attaches configured event handlers to matching children.
+ * Keeps subscriptions stable across dynamic DOM changes from re-rendering.
+ */
 class MudJsEvent {
 
     constructor(dotNetRef, options) {

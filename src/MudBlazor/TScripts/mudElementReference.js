@@ -2,11 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Shared ElementReference interop surface.
-// Used from:
-// - ElementReference extension helpers
-// - Input blur workaround hookup/cleanup
-// Keeping these helpers centralized avoids repeating browser-specific focus and selection quirks in components.
+/**
+ * Shared ElementReference interop surface for focus, selection, and DOM metrics.
+ * Centralizes browser-specific behavior used by components and extension helpers.
+ */
 class MudElementReference {
     constructor() {
         this.listenerId = 0;

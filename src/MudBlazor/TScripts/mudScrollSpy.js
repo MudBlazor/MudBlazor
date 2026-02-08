@@ -2,8 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Scroll section tracking for the ScrollSpy service.
-// Keeping URL hash updates in JS avoids round-tripping layout state through .NET on every scroll tick.
+/**
+ * Scroll section tracking for the ScrollSpy service.
+ * Updates URL hash and section callbacks directly in JS to minimize interop churn.
+ */
 class MudScrollSpy {
 
     constructor() {

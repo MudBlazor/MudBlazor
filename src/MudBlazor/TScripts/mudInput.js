@@ -2,11 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Text input editing interop for:
-// - text field caret APIs and insertion helpers
-// - file upload input reset (`resetValue`)
-// It centralizes caret-safe insertion logic so input updates still raise native `input` events.
 // noinspection JSUnusedGlobalSymbols
+/**
+ * Text input interop for caret APIs, insertion helpers, and value reset.
+ * Keeps updates caret-safe while still dispatching native `input` events.
+ */
 class MudInput {
     resetValue(id) {
         const input = document.getElementById(id);

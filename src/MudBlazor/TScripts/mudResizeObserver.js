@@ -2,8 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Element resize observer bridge for the ResizeObserver service.
-// A factory map is used because one .NET service instance can observe many elements over time.
+/**
+ * Factory that maps .NET observer IDs to MudResizeObserver instances.
+ * Enables independent element-observer lifecycles per service instance.
+ */
 class MudResizeObserverFactory {
     constructor() {
         this._maps = {};
@@ -41,6 +43,10 @@ class MudResizeObserverFactory {
     }
 }
 
+/**
+ * Wraps the browser ResizeObserver and forwards size changes to .NET.
+ * Aggregates observed element metadata needed for stable interop callbacks.
+ */
 class MudResizeObserver {
 
     constructor(dotNetRef, options) {

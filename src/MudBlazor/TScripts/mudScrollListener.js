@@ -7,7 +7,7 @@
 // noinspection JSUnusedGlobalSymbols
 /**
  * Companion interop for the ScrollListener service.
- * It keeps one throttled handler per listener id so multiple components can subscribe independently.
+ * Keeps one throttled handler per listener ID for independent subscriptions.
  */
 class MudScrollListener {
     constructor() {

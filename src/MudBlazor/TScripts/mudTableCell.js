@@ -2,8 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Table keyboard navigation helpers for the MudTable component.
-// Focus/click/select are coordinated in JS so the browser applies native focus semantics before .NET continues.
+/**
+ * Table keyboard navigation helpers for the MudTable component.
+ * Coordinates focus/click/select in JS so native focus behavior is preserved.
+ */
 window.mudTableCell = {
     focusCell(rowId, cellIndex) {
         const row = document.getElementById(rowId);

@@ -2,9 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Pointer interaction model for the analog clock UI in `MudTimePicker`.
-// Used by the MudTimePicker component.
-// JS tracks pressed state so drag-over-stick selection feels continuous without flooding Blazor event plumbing.
+/**
+ * Pointer interaction model for the analog clock UI in MudTimePicker.
+ * Tracks pressed state so drag-over-stick selection remains continuous.
+ */
 window.mudTimePicker = {
     initPointerEvents: (clock, dotNetHelper) => {
         let isPointerDown = false;

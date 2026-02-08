@@ -1,9 +1,10 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-//
-// System dark-mode bridge for the MudThemeProvider component.
-// MediaQuery listeners live in JS so updates fire even when no component currently triggers a render cycle.
+/**
+ * System dark-mode bridge for the MudThemeProvider component.
+ * Keeps media-query listeners in JS so OS theme changes are captured reliably.
+ */
 const isDarkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 let themeProvider = null;
 

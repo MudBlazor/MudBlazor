@@ -2,8 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Generic browser/window operations used by the JS API service.
-// Keeping these wrappers centralized constrains direct browser API dependencies to one interop surface.
+/**
+ * Generic browser/window operations exposed to the JS API service.
+ * Centralizes direct browser API dependencies behind one interop surface.
+ */
 class MudWindow {
 
     copyToClipboard (text) {

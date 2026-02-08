@@ -2,9 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Viewport resize notifications for BrowserViewportService/Hidden and related responsive components.
-// Called through the resize-listener interop adapter.
-// The factory keeps many logical subscriptions multiplexed over browser resize events.
+/**
+ * Viewport resize listener used by responsive services and components.
+ * Supports throttled callbacks and breakpoint-aware notifications.
+ */
 class MudResizeListener {
 
     constructor(id) {

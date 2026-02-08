@@ -7,7 +7,7 @@
 // noinspection JSUnusedGlobalSymbols
 /**
  * Companion interop for the MudHotkey component.
- * Matching requires exact modifier sets so the same shortcut is not triggered by "extra key" combinations.
+ * Matches exact key-plus-modifier combinations to avoid accidental overlaps.
  */
 class MudHotkeyListener {
     constructor() {
