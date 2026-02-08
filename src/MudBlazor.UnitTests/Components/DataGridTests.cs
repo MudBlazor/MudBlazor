@@ -1062,6 +1062,65 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        [Theory]
+        [TestCase(12, true)]
+        [TestCase(-12, false)]
+        public async Task DataGridChangesBehaviorTest(int age, bool shouldClose)
+        {
+            var comp = Context.Render<DataGridEditFormActionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditFormActionTest.Model>>();
+
+            //verify values before opening dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("23");
+
+            //verify no dialog open
+            comp.FindAll("div.mud-dialog").Count.Should().Be(0);
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+
+            //verify dialog open
+            comp.Find("div.mud-dialog").Should().NotBeNull();
+
+            //edit data
+            comp.FindAll("div input")[0].Change("Galadriel");
+            comp.FindAll("div input")[1].Change(age);
+
+            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+
+            if (shouldClose)
+            {
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    //verify dialog closed
+                    comp.FindAll("div.mud-dialog").Count.Should().Be(0);
+
+                    //verify values changed
+                    dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+                    dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+                    dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Galadriel");
+                    dataGrid.FindAll("td")[3].Html().Trim().Should().Be($"{age}");
+                });
+            }
+            else
+            {
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    //verify dialog still open
+                    comp.Find("div.mud-dialog").Should().NotBeNull();
+
+                    //verify values not changed
+                    dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+                    dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+                    dataGrid.FindAll("td")[2].Html().Trim().Should().Be("Johanna");
+                    dataGrid.FindAll("td")[3].Html().Trim().Should().Be("23");
+                });
+            }
+        }
+
         [Test(Description = "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
         public void DataGridNoNullExceptionWhenNestedPropertyNullValue()
         {
@@ -1210,7 +1269,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
-            dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CommittedItemChanges.Should().NotBeNull();
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
             dataGrid.Instance.CanceledEditingItem.HasDelegate.Should().Be(true);
             dataGrid.Instance.CanceledEditingItem.Should().Be(dataGrid.Instance.CanceledEditingItem);

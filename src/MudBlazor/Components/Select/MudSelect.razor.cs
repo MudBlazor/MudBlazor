@@ -1095,108 +1095,100 @@ namespace MudBlazor
         /// </summary>
         internal IReadOnlyCollection<T?>? GetSelectedValues() => _selectedValuesState.Value;
 
-        private async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
+        private async Task HandleArrowUpAsync(KeyboardEventArgs args)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-            var key = obj.Key.ToLowerInvariant();
-            if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            if (args.AltKey)
             {
-                await SelectFirstItem(key);
-                await FocusAsync();
+                await CloseMenu();
                 return;
             }
-            switch (obj.Key)
+
+            if (!_openState.Value)
             {
-                case "Tab":
-                    await CloseMenu(false);
-                    break;
-                case "ArrowUp":
-                    if (obj.AltKey)
-                    {
-                        await CloseMenu();
-                        break;
-                    }
-
-                    if (!_openState.Value)
-                    {
-                        await OpenMenu();
-                        break;
-                    }
-
-                    await SelectPreviousItem();
-                    break;
-                case "ArrowDown":
-                    if (obj.AltKey)
-                    {
-                        await OpenMenu();
-                        break;
-                    }
-
-                    if (!_openState.Value)
-                    {
-                        await OpenMenu();
-                        break;
-                    }
-
-                    await SelectNextItem();
-                    break;
-                case " ":
-                    await ToggleMenu();
-                    break;
-                case "Escape":
-                    await CloseMenu(true);
-                    break;
-                case "Home":
-                    await SelectFirstItem();
-                    break;
-                case "End":
-                    await SelectLastItem();
-                    break;
-                case "Enter":
-                case "NumpadEnter":
-                    var index = Items.FindIndex(x => x.ItemId == _activeItemId);
-                    if (!MultiSelection)
-                    {
-                        if (!_openState.Value)
-                        {
-                            await OpenMenu();
-                            break;
-                        }
-
-                        // this also closes the menu
-                        await SelectOption(index);
-                        break;
-                    }
-
-                    if (!_openState.Value)
-                    {
-                        await OpenMenu();
-                        break;
-                    }
-
-                    await SelectOption(index);
-                    await _elementReference.SetText(ReadText);
-                    break;
-                case "a":
-                case "A":
-                    if (obj.CtrlKey)
-                    {
-                        if (MultiSelection)
-                        {
-                            await SelectAllClickAsync();
-                            StateHasChanged();
-                        }
-                    }
-                    break;
+                await OpenMenu();
+                return;
             }
 
-            await OnKeyDown.InvokeAsync(obj);
+            await SelectPreviousItem();
         }
 
-        private Task HandleKeyUpAsync(KeyboardEventArgs obj)
+        private async Task HandleArrowDownAsync(KeyboardEventArgs args)
         {
-            return OnKeyUp.InvokeAsync(obj);
+            if (args.AltKey)
+            {
+                await OpenMenu();
+                return;
+            }
+
+            if (!_openState.Value)
+            {
+                await OpenMenu();
+                return;
+            }
+
+            await SelectNextItem();
+        }
+
+        private async Task HandleEnterAsync()
+        {
+            var index = Items.FindIndex(x => x.ItemId == _activeItemId);
+            if (!MultiSelection)
+            {
+                if (!_openState.Value)
+                {
+                    await OpenMenu();
+                    return;
+                }
+
+                // this also closes the menu
+                await SelectOption(index);
+                return;
+            }
+
+            if (!_openState.Value)
+            {
+                await OpenMenu();
+                return;
+            }
+
+            await SelectOption(index);
+            await _elementReference.SetText(ReadText);
+        }
+
+        private async Task HandleKeyAAsync(KeyboardEventArgs args)
+        {
+            if (args.CtrlKey)
+            {
+                if (MultiSelection)
+                {
+                    await SelectAllClickAsync();
+                    StateHasChanged();
+                }
+            }
+            else if (!args.ShiftKey && !args.AltKey && !args.MetaKey)
+            {
+                await SelectFirstItem(args.Key.ToLowerInvariant());
+                await FocusAsync();
+            }
+        }
+
+        private async Task HandleCharacterSearchAsync(KeyboardEventArgs args)
+        {
+            if (args.CtrlKey || args.ShiftKey || args.AltKey || args.MetaKey)
+                return;
+
+            var key = args.Key;
+            if (string.IsNullOrWhiteSpace(key))
+                return;
+
+            key = key.ToLowerInvariant();
+            if (key.Length != 1)
+                return;
+
+            await SelectFirstItem(key);
+            await FocusAsync();
         }
 
         internal Task OnBlurAsync(FocusEventArgs obj)
@@ -1242,7 +1234,20 @@ namespace MudBlazor
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(ElementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                    .HookKeyUp(args => OnKeyUp.InvokeAsync(args))
+                    .When(CanHandleKeys, builder => builder
+                        .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
+                        .OnKeyDown("Tab", () => CloseMenu(false))
+                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                        .OnKeyDown(" ", ToggleMenu)
+                        .OnKeyDown("Escape", () => CloseMenu(true))
+                        .OnKeyDown("Home", () => SelectFirstItem())
+                        .OnKeyDown("End", SelectLastItem)
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)
+                        .OnKeyDownAny(["a", "A"], HandleKeyAAsync)
+                        .OnKeyDown("/^[^ ]$/", HandleCharacterSearchAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
