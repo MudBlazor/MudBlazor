@@ -97,6 +97,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="MudBlazor.Utilities.StringHelpers" Static="True" />
+  </ItemGroup>
+
+  <ItemGroup>
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
