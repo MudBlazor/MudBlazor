@@ -10,13 +10,13 @@ runs:
   using: "composite"
   steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5
       with:
         dotnet-version: 10.x
 
     # We try to restore from our 'format-check' job cache if available because it contains all dependencies
     - name: Cache NuGet packages
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
       with:
         key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
         path: ${{ env.NUGET_PACKAGES }}

@@ -20,16 +20,16 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Cache NuGet packages
-        uses: actions/cache@v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
         with:
           key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
           path: ${{ env.NUGET_PACKAGES }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5
         with:
           dotnet-version: 10.x
 
@@ -37,11 +37,11 @@ jobs:
         working-directory: src
         run: dotnet restore
 
-      - uses: xt0rted/dotnet-format-problem-matcher@v1
+      - uses: xt0rted/dotnet-format-problem-matcher@b90c4f18e3daa4f8fd266e41eba4f351b2e00b75 # v1
 
       - name: Determine changed files
         id: changed-files
-        uses: tj-actions/changed-files@v47
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
         with:
           files: |
             src/**
@@ -66,7 +66,7 @@ jobs:
           ]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
@@ -77,13 +77,13 @@ jobs:
         run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
 
       - name: Publish coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
@@ -98,7 +98,7 @@ jobs:
         project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
