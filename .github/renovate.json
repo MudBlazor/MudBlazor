@@ -41,7 +41,7 @@
             "enabled": false
         },
         {
-            "description": "Keep updates in draft while release age is unknown or younger than 14 days.",
+            "description": "Keep updates in draft while release age is unknown or immature.",
             "matchJsonata": [
                 "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
             ],
@@ -51,7 +51,7 @@
             ]
         },
         {
-            "description": "Keep NuGet major updates in draft for manual review of potential breaking changes.",
+            "description": "Keep major NuGet updates in draft for manual review of potential breaking changes.",
             "matchManagers": [
                 "nuget"
             ],
@@ -60,7 +60,7 @@
             ],
             "draftPR": true,
             "prBodyNotes": [
-                "Major update: validate release notes, migration guidance, and API compatibility before merging."
+                "Draft reason: this is a major update."
             ]
         },
         {
