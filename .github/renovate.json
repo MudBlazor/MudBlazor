@@ -15,7 +15,7 @@
     "vulnerabilityAlerts": {
         "enabled": true,
         "addLabels": [
-            "awaiting triage"
+            "security"
         ]
     },
     "packageRules": [
