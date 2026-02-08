@@ -1,4 +1,8 @@
-﻿// SplitPanel resize behavior for the MudSplitPanel component.
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+//
+// SplitPanel resize behavior for the MudSplitPanel component.
 // This JS owns pointer/keyboard interaction and ARIA value updates to keep divider movement smooth.
 // noinspection JSUnusedGlobalSymbols
 class MudSplitPanel {
