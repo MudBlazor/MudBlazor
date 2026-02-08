@@ -1,3 +1,6 @@
+// Bundle entrypoint for MudBlazor JS interop.
+// Why: every `window.mud*` API used from C# must be imported here so it lands in `wwwroot/MudBlazor.min.js`.
+// Keep this list in sync with the TScripts directory (excluding this file).
 import "./mudAAAlicense";
 import "./mudDragAndDrop";
 import "./mudElementReference";

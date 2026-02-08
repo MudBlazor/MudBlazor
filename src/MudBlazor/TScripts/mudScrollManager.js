@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+// Scroll utility interop used by the ScrollManager service.
+// Centralizing it here keeps DOM/container edge cases out of components (body vs element scrolling, lock nesting).
 class MudScrollManager {
     constructor() {
         this._lockCount = 0; // internal tracking for the # of overlay locks

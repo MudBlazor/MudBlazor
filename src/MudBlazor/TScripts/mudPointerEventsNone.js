@@ -2,6 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+// Pointer event recovery for elements intentionally styled with `pointer-events: none`.
+// Used by the pointer-events-none interop/service layer.
+// It temporarily toggles candidate elements to `pointer-events: auto` only for hit-testing at event coordinates.
 class MudPointerEventsNone {
     constructor() {
         this.dotnet = null;

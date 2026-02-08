@@ -1,5 +1,8 @@
 // noinspection JSUnusedGlobalSymbols
 
+// Programmatic file picker trigger for MudFileUpload.
+// Used by the file upload component interop.
+// `showPicker()` is preferred to match native picker behavior in newer Safari; `click()` is the fallback.
 class MudFileUpload {
     openFilePicker (id) {
         const element = document.getElementById(id);

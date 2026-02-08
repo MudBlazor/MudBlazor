@@ -1,4 +1,6 @@
-﻿const isDarkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+﻿// System dark-mode bridge for the MudThemeProvider component.
+// MediaQuery listeners live in JS so updates fire even when no component currently triggers a render cycle.
+const isDarkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 let themeProvider = null;
 
 function listener(e) {

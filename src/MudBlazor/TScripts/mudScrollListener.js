@@ -1,7 +1,10 @@
 ﻿"use strict";
 
 // noinspection JSUnusedGlobalSymbols
-/** This is the companion class for the MudBlazor.ScrollListener. */
+/**
+ * Companion interop for the ScrollListener service.
+ * It keeps one throttled handler per listener id so multiple components can subscribe independently.
+ */
 class MudScrollListener {
     constructor() {
         this.EVENT_TYPE = "scroll";

@@ -2,6 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+// Cross-cutting DOM helpers shared by multiple TScripts and chart components.
+// Primary consumers:
+// - Element reference focus navigation helpers (`getTabbableElements`)
+// - Chart sizing/measurement flows (`mudGetSvgBBox`, `mudObserveElementSize`)
 window.getTabbableElements = (element) => {
     return element.querySelectorAll(
         "a[href]:not([tabindex='-1'])," +
@@ -17,7 +21,8 @@ window.getTabbableElements = (element) => {
     );
 };
 
-//from: https://github.com/RemiBou/BrowserInterop
+// Legacy serializer kept on `window` for JS interop payload normalization in browser-only call paths.
+// Source inspiration: https://github.com/RemiBou/BrowserInterop
 function serializeParameter(data, spec) {
     if (typeof data == "undefined" ||
         data === null) {

@@ -2,6 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+// Core placement engine for all MudBlazor popovers/tooltips/menus.
+// Interop entry points are called from the popover interop adapter/service.
+// This file owns collision handling, flip logic, and observer lifecycle so C# only manages popover state.
 window.mudpopoverHelper = {
     // set by the class MudPopover in initialize
     mainContainerClass: null,

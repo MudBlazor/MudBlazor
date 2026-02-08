@@ -1,4 +1,6 @@
-﻿// noinspection JSUnusedGlobalSymbols
+﻿// SplitPanel resize behavior for the MudSplitPanel component.
+// This JS owns pointer/keyboard interaction and ARIA value updates to keep divider movement smooth.
+// noinspection JSUnusedGlobalSymbols
 class MudSplitPanel {
     static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
         window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap);

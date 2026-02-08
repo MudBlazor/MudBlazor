@@ -1,7 +1,10 @@
 "use strict";
 
 // noinspection JSUnusedGlobalSymbols
-/** This is the companion class for the MudBlazor.MudHotkey component. */
+/**
+ * Companion interop for the MudHotkey component.
+ * Matching requires exact modifier sets so the same shortcut is not triggered by "extra key" combinations.
+ */
 class MudHotkeyListener {
     constructor() {
         this._EVENT_TYPE = "keydown";

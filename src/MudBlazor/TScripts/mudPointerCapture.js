@@ -2,7 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// Simple helper for pointer capture in DataGrid column resizing
+// Pointer capture helper for DataGrid column resizing.
+// Used during DataGrid header resize interactions.
+// Wrapping these calls keeps feature checks in one place for browsers with partial Pointer Events support.
 window.mudPointerCapture = {
     capture: function (element, pointerId) {
         if (element && typeof element.setPointerCapture === 'function') {

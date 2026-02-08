@@ -2,6 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+// Interop for DropZone drag state while the user is moving items.
+// Used from:
+// - DropZone container setup
+// - Drop item move/reset and target detection
+// The JS side keeps movement in transient CSS transforms so C# can decide final reorder/target on drop.
 window.mudDragAndDrop = {
 
     initDropZone: (id) => {

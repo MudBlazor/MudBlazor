@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+// Auto-grow textarea behavior for the MudInput component.
+// Height adjustments run in JS to read live layout metrics and preserve ancestor scroll positions during reflow.
 window.mudInputSizing = {
     init: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
