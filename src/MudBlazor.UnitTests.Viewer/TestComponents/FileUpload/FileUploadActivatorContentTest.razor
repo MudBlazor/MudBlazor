@@ -23,7 +23,6 @@
 
 <MudText>File Upload with Activator Content</MudText>
 <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-               @ref="@_fileUpload"
                AppendMultipleFiles="true"
                DragAndDrop="true"
                tabindex="-1"
@@ -70,7 +69,6 @@
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string _dragClass = DefaultDragClass;
     private bool _dragging = false;
-    private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
     private void SetDragClass()
     {
