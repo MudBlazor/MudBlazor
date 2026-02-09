@@ -79,7 +79,6 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@v6
         with:
-          name: coverage-report-${{ matrix.project-path }}
           path: |
             ${{ matrix.project-path }}/TestResults/coverage.cobertura.xml
             ${{ matrix.project-path }}/junit.xml
