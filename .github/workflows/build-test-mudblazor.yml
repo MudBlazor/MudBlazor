@@ -87,14 +87,8 @@ jobs:
         with:
           name: coverage-report-${{ steps.project.outputs.name }}
           path: |
+            ${{ matrix.project-path }}/TestResults/coverage.cobertura.xml
             ${{ matrix.project-path }}/junit.xml
-
-      # - name: Upload coverage report
-      #   uses: codecov/codecov-action@v5
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     report_type: test_results
-      #     files: ${{ matrix.project-path }}/junit.xml
 
   upload-codecov:
     needs: build-test
@@ -107,9 +101,12 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Publish coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          files: |
-            **/junit.xml
 
   build-only:
     runs-on: ubuntu-latest
