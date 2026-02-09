@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components;
 
 [TestFixture]
-public class ExitPromptsTests : BunitTest
+public class ExitPromptTests : BunitTest
 {
     [Test]
     public async Task JsIsCalledCorrectly()
