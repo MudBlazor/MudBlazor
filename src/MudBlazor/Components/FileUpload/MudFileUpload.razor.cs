@@ -257,6 +257,11 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
+        private async Task OnDragResetAsync()
+        {
+            await _draggingState.SetValueAsync(false);
+        }
+
         private Task OnDragAreaClickAsync(MouseEventArgs _)
         {
             if (GetDisabledState())
@@ -295,13 +300,13 @@ namespace MudBlazor
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
 
         /// <summary>
-        /// Removes the file with the specified name from <see cref="Files"/>.
+        /// Removes all files with the specified name from <see cref="Files"/>.
         /// </summary>
-        /// <remarks>
-        /// Applies when <c>T</c> is <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
-        /// </remarks>
-        /// <param name="filename">The name of the file to remove.</param>
-        /// <returns><c>true</c> if the file was removed; otherwise, <c>false</c> if it does not exist.</returns>
+        /// <param name="filename">The name of the file(s) to remove.</param>
+        /// <returns>
+        /// <c>true</c> if one or more files were removed; otherwise, <c>false</c>
+        /// if no file with the specified name exists in the current selection.
+        /// </returns>
         public async Task<bool> RemoveFileAsync(string filename)
         {
             if (string.IsNullOrWhiteSpace(filename))
@@ -310,54 +315,108 @@ namespace MudBlazor
                 return false;
             }
 
-            switch (_filesState.Value)
+            var current = _filesState.Value;
+
+            switch (current)
             {
                 case IBrowserFile singleFile when singleFile.Name == filename:
-                    await _filesState.SetValueAsync(default); // Remove the single file by setting Files to null/default
+                    // Single selection with matching name: clear selection
+                    await _filesState.SetValueAsync(default);
                     return true;
 
                 case IReadOnlyList<IBrowserFile> fileList:
-                    var updatedList = fileList.Where(file => file.Name != filename).ToList();
-                    if (updatedList.Count == fileList.Count)
                     {
-                        Logger.LogInformation("File '{Filename}' not found in the current selection.", filename);
-                        return false; // No file was removed
+                        var updatedList = fileList.Where(f => f.Name != filename).ToList();
+                        if (updatedList.Count == fileList.Count)
+                        {
+                            Logger.LogDebug("File '{Filename}' not found in the current selection.", filename);
+                            return false;
+                        }
+
+                        if (updatedList.Count == 0)
+                        {
+                            // Treat removal of the last file as "no selection"
+                            await _filesState.SetValueAsync(default);
+                        }
+                        else
+                        {
+                            // T is expected to be IReadOnlyList<IBrowserFile> here
+                            await _filesState.SetValueAsync((T)(object)updatedList);
+                        }
+
+                        return true;
                     }
 
-                    if (updatedList.Count == 0)
-                    {
-                        await _filesState.SetValueAsync(default); // When the last file is removed, treat it as "no selection"
-                    }
-                    else
-                    {
-                        await _filesState.SetValueAsync((T)(object)updatedList); // Cast to T to update Files
-                    }
-                    return true;
+                case null:
+                    Logger.LogDebug("No files are currently selected.");
+                    return false;
 
                 default:
-                    Logger.LogInformation("No files are currently selected.");
+                    Logger.LogWarning(
+                        "File removal by name is not supported for the current files type '{Type}'.",
+                        current.GetType().FullName);
                     return false;
             }
         }
 
         /// <summary>
-        /// Removes the specified file from <see cref="Files"/>.
+        /// Removes the specified file instance from <see cref="Files"/>.
         /// </summary>
-        /// <remarks>
-        /// Applies when <c>T</c> is <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
-        /// </remarks>
-        /// <param name="file">The file to remove.</param>
-        /// <returns><c>true</c> if the file was removed; otherwise, <c>false</c> if it does not exist.</returns>
+        /// <param name="file">The file instance to remove.</param>
+        /// <returns>
+        /// <c>true</c> if the specified file instance was removed; otherwise, <c>false</c>.
+        /// </returns>
         public async Task<bool> RemoveFileAsync(IBrowserFile file)
         {
-            if (file == null)
+            if (file is null)
             {
                 Logger.LogWarning("Attempted to remove a null file.");
                 return false;
             }
 
-            return await RemoveFileAsync(file.Name);
+            var current = _filesState.Value;
+
+            switch (current)
+            {
+                case IBrowserFile singleFile when ReferenceEquals(singleFile, file):
+                    // Single selection with the same instance: clear selection
+                    await _filesState.SetValueAsync(default);
+                    return true;
+
+                case IReadOnlyList<IBrowserFile> fileList:
+                    {
+                        // Remove this specific instance (reference-based via List.Remove)
+                        var updatedList = fileList.ToList();
+                        if (!updatedList.Remove(file))
+                        {
+                            Logger.LogDebug("The specified file instance was not found in the current selection.");
+                            return false;
+                        }
+
+                        if (updatedList.Count == 0)
+                        {
+                            await _filesState.SetValueAsync(default);
+                        }
+                        else
+                        {
+                            await _filesState.SetValueAsync((T)(object)updatedList);
+                        }
+
+                        return true;
+                    }
+
+                case null:
+                    Logger.LogDebug("No files are currently selected.");
+                    return false;
+
+                default:
+                    Logger.LogWarning(
+                        "File removal by instance is not supported for the current files type '{Type}'.",
+                        current.GetType().FullName);
+                    return false;
+            }
         }
+
 
         /// <summary>
         /// Clears the selected files and resets the internal file inputs.

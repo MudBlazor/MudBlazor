@@ -20,9 +20,9 @@
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
                        @attributes="UserAttributes"
-                       @ondrop="@(() => _draggingState.SetValueAsync(false))"
-                       @ondragleave="@(() => _draggingState.SetValueAsync(false))"
-                       @ondragend="@(() => _draggingState.SetValueAsync(false))"
+                       @ondrop="OnDragResetAsync"
+                       @ondragleave="OnDragResetAsync"
+                       @ondragend="OnDragResetAsync"
                        id="@GetInputId(localIndex)"
                        required="@Required"
                        aria-required="@Required.ToString().ToLowerInvariant()" />
@@ -77,8 +77,7 @@
                                      Disabled="GetDisabledState()"
                                      Text="@file"
                                      CloseIcon="@Icons.Material.Outlined.Close"
-                                     OnClose="@(() => OnFileChipCloseAsync(file))"
-                                     tabindex="-1" />
+                                     OnClose="@(() => OnFileChipCloseAsync(file))" />
                         }
                     </span>
                 }
