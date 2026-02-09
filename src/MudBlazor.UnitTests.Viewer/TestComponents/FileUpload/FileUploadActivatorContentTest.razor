@@ -4,64 +4,65 @@
     }
 </style>
 
------------------
+<MudStack Spacing="4">
+    <MudPaper Outlined="true" Class="pa-4">
+        <MudText>Blank FileUpload Drag False</MudText>
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                       AppendMultipleFiles="true" />
+    </MudPaper>
 
-<MudText>Blank FileUpload Drag False</MudText>
-<MudFileUpload T="IReadOnlyList<IBrowserFile>"
-               AppendMultipleFiles="true" />
+    <MudPaper Outlined="true" Class="pa-4">
+        <MudText>Blank FileUpload Drag True</MudText>
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                       Style="height: 300px;width: 300px;"
+                       AppendMultipleFiles="true"
+                       DragAndDrop="true" />
+    </MudPaper>
 
------------------
-
-<MudText>Blank FileUpload Drag True</MudText>
-<MudFileUpload T="IReadOnlyList<IBrowserFile>"
-               Style="height: 300px;width: 300px;"
-               AppendMultipleFiles="true"
-               DragAndDrop="true" />
-
-
-----------------
-
-<MudText>File Upload with Activator Content</MudText>
-<MudFileUpload T="IReadOnlyList<IBrowserFile>"
-               AppendMultipleFiles="true"
-               DragAndDrop="true"
-               tabindex="-1"
-               @bind-Dragging="@_dragging"
-               @bind-Dragging:after="@ClearDragClass">
-    <CustomContent>
-        <MudPaper Height="300px"
-                  Outlined="true"
-                  @onclick="@context.OpenFilePickerAsync"
-                  @ondragenter="@SetDragClass"
-                  Class="@_dragClass">
-            <MudText Typo="Typo.h6">
-                Drag and drop files here or click
-            </MudText>
-            @foreach (var file in context.GetFilenames())
-            {
-                <MudChip T="string"
-                         Color="Color.Dark"
-                         Text="@file"
-                         tabindex="-1" />
-            }
-            <MudToolBar Gutters="@false"
-                        Class="relative d-flex justify-end gap-4 z-11">
-                <MudButton Color="Color.Primary"
-                           OnClick="@context.OpenFilePickerAsync"
-                           Variant="Variant.Filled">
-                    Open file picker
-                </MudButton>
-                <MudButton Color="Color.Error"
-                           Disabled="@(!context.GetFilenames().Any())"
-                           OnClick="@context.ClearAsync"
-                           Variant="Variant.Filled">
-                    Clear
-                </MudButton>
-            </MudToolBar>
-        </MudPaper>
-    </CustomContent>
-    <SelectedTemplate />
-</MudFileUpload>
+    <MudPaper Outlined="true" Class="pa-4">
+        <MudText>File Upload with Activator Content</MudText>
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                       AppendMultipleFiles="true"
+                       DragAndDrop="true"
+                       tabindex="-1"
+                       @bind-Dragging="@_dragging"
+                       @bind-Dragging:after="@ClearDragClass">
+            <CustomContent>
+                <MudPaper Height="300px"
+                          Outlined="true"
+                          @onclick="@context.OpenFilePickerAsync"
+                          @ondragenter="@SetDragClass"
+                          Class="@_dragClass">
+                    <MudText Typo="Typo.h6">
+                        Drag and drop files here or click
+                    </MudText>
+                    @foreach (var file in context.GetFilenames())
+                    {
+                        <MudChip T="string"
+                                 Color="Color.Dark"
+                                 Text="@file"
+                                 tabindex="-1" />
+                    }
+                    <MudToolBar Gutters="@false"
+                                Class="relative d-flex justify-end gap-4 z-11">
+                        <MudButton Color="Color.Primary"
+                                   OnClick="@context.OpenFilePickerAsync"
+                                   Variant="Variant.Filled">
+                            Open file picker
+                        </MudButton>
+                        <MudButton Color="Color.Error"
+                                   Disabled="@(!context.GetFilenames().Any())"
+                                   OnClick="@context.ClearAsync"
+                                   Variant="Variant.Filled">
+                            Clear
+                        </MudButton>
+                    </MudToolBar>
+                </MudPaper>
+            </CustomContent>
+            <SelectedTemplate />
+        </MudFileUpload>
+    </MudPaper>
+</MudStack>
 
 @code {
 #nullable enable
