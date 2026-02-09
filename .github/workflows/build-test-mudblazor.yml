@@ -107,6 +107,9 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          files: |
+            **/junit.xml
 
   build-only:
     runs-on: ubuntu-latest
