@@ -14,8 +14,6 @@ namespace MudBlazor;
 public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 {
     private bool _navigatedAway;
-    private string TitleToDisplay => Title ?? Localizer[LanguageResource.MudExitPrompt_Title];
-    private string TextToDisplay => Text ?? Localizer[LanguageResource.MudExitPrompt_Text];
     private IDisposable? _locationChangingRegistration;
 
     [Inject]
@@ -65,6 +63,10 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     /// </remarks>
     [Parameter, Category(CategoryTypes.ExitPrompt.Behavior)]
     public bool NativeOnly { get; set; }
+
+    private string TitleToDisplay => Title ?? Localizer[LanguageResource.MudExitPrompt_Title];
+
+    private string TextToDisplay => Text ?? Localizer[LanguageResource.MudExitPrompt_Text];
 
     public MudExitPrompt()
     {
