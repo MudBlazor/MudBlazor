@@ -22,10 +22,10 @@
                @ondragenter="@SetDragClass"
                @ondragleave="@ClearDragClass"
                @ondragend="@ClearDragClass">
-    <ActivatorContent>
+    <CustomContent>
         <MudPaper Height="300px"
                   Outlined="true"
-                  Class="@_dragClass">
+                  Class="@_dragClass" @onclick="@context.OpenFilePickerAsync">
             <MudText Typo="Typo.h6">
                 Drag and drop files here or click
             </MudText>
@@ -38,7 +38,7 @@
                       Height="200"
                       Src="@_imageSource" />
         </MudPaper>
-    </ActivatorContent>
+    </CustomContent>
 </MudFileUpload>
 <MudToolBar Gutters="@false"
             Class="relative d-flex justify-end gap-4">
@@ -53,6 +53,8 @@
 </MudToolBar>
 
 @code {
+    public static string __description__ = "Tests drag-and-drop activator behavior with preview, open picker, and clear actions.";
+
     [Parameter]
     public IBrowserFile? File { get; set; }
 

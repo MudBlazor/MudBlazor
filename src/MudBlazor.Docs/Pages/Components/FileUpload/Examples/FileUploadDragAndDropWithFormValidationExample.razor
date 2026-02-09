@@ -25,7 +25,7 @@
                            @ref="@_fileUpload"
                            @bind-Files="_model.Files"
                            For="@(() => _model.Files)"
-                           AppendMultipleFiles
+                           AppendMultipleFiles="true"
                            Hidden="@false"
                            InputClass="file-upload-input"
                            ErrorText="@string.Empty"
@@ -34,26 +34,26 @@
                            @ondragenter="@SetDragClass"
                            @ondragleave="@ClearDragClass"
                            @ondragend="@ClearDragClass">
-                <ActivatorContent>
+                <CustomContent>
                     <MudPaper Height="300px"
                               Outlined="true"
                               Class="@_dragClass">
                         <MudText Typo="Typo.h6">
-                            Drag and drop files here or click
+                            Drag files here or click to browse
                         </MudText>
                         @foreach (var file in _model.Files?.Select(file => file.Name) ?? Enumerable.Empty<string>())
                         {
                             <MudChip T="string" Color="Color.Dark" Text="@file" />
                         }
                     </MudPaper>
-                </ActivatorContent>
+                </CustomContent>
             </MudFileUpload>
             <MudToolBar Gutters="@false"
                         Class="relative d-flex justify-end gap-4">
                 <MudButton Color="Color.Primary"
                            OnClick="@OpenFilePickerAsync"
                            Variant="Variant.Filled">
-                    Open file picker
+                    Browse files
                 </MudButton>
                 <MudButton Color="Color.Primary"
                            Disabled="@(!_isValid || !_isTouched || _model.Files is null || !_model.Files.Any())"
@@ -84,27 +84,23 @@
     </MudForm>
 </MudStack>
 
-@code {
+@code
+{
 #nullable enable
-    public class Model
-    {
-        public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
-    }
-
-    private Model _model =  new();
-    private ModelFluentValidator _validationRules = new();
+    private const string FileContent = "this is content";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private readonly Model _model = new();
+    private readonly ModelFluentValidator _validationRules = new();
+    private string _dragClass = DefaultDragClass;
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
     private bool _isValid;
     private bool _isTouched;
-    private const string FileContent = "this is content";
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
-    private string _dragClass = DefaultDragClass;
 
     private void Upload()
     {
         // Upload the files here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("TODO: Upload your files!");
+        Snackbar.Add("Upload started (demo).");
     }
 
     private void SetDragClass()
@@ -119,13 +115,18 @@
     private Task ClearAsync()
         => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
 
+    public class Model
+    {
+        public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
+    }
+
     public class ModelFluentValidator : AbstractValidator<Model>
     {
         public ModelFluentValidator()
         {
             RuleFor(x => x.Files)
                 .NotEmpty()
-                .WithMessage("There must be at least 1 file.");
+                .WithMessage("Please select at least one file.");
         }
 
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
