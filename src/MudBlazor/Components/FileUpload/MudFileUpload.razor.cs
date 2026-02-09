@@ -396,6 +396,14 @@ namespace MudBlazor
         {
             T? value;
 
+            if (args.FileCount > MaximumFileCount)
+            {
+                // Notify the consumer about the exceeded file count
+                _validationErrors.Add(Localizer[LanguageResource.MudFileUpload_MaximumFileCountExceeded, args.FileCount, MaximumFileCount]);
+                await NotifyValueChangedAsync(default); // Reset the value to indicate no valid files were processed
+                return;
+            }
+
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
                 value = (T?)(object)ProcessMultipleFiles(args.GetMultipleFiles(MaximumFileCount));

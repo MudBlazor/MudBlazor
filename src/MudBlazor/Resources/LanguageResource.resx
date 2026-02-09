@@ -480,4 +480,7 @@
   <data name="MudFileUpload_FileSizeError" xml:space="preserve">
     <value>File '{0}' exceeds the maximum allowed size of {1} bytes.</value>
   </data>
+  <data name="MudFileUpload_MaximumFileCountExceeded" xml:space="preserve">
+    <value>'{0}' exceeds the maximum file count of '{1}'</value>
+  </data>
 </root>
