@@ -100,22 +100,35 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
             return;
         }
 
-        var allow = NativeOnly
-            ? await JsRuntime.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation")
-            : await DialogService.ShowMessageBoxAsync(
-                TitleToDisplay,
-                TextToDisplay,
-                Localizer[LanguageResource.MudExitPrompt_Exit],
-                Localizer[LanguageResource.MudExitPrompt_Cancel]
-            ) == true;
-        if (!allow)
+        if (!await IsNavigationAllowedAsync())
         {
             context.PreventNavigation();
+            return;
         }
-        else
-        {
-            _navigatedAway = true;
-        }
+
+        _navigatedAway = true;
+    }
+
+    private Task<bool> IsNavigationAllowedAsync()
+    {
+        return NativeOnly
+            ? IsNativeNavigationAllowedAsync()
+            : IsDialogNavigationAllowedAsync();
+    }
+
+    private async Task<bool> IsNativeNavigationAllowedAsync()
+    {
+        return await JsRuntime.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation");
+    }
+
+    private async Task<bool> IsDialogNavigationAllowedAsync()
+    {
+        return await DialogService.ShowMessageBoxAsync(
+            TitleToDisplay,
+            TextToDisplay,
+            Localizer[LanguageResource.MudExitPrompt_Exit],
+            Localizer[LanguageResource.MudExitPrompt_Cancel]
+        ) == true;
     }
 
     private async Task EnableAsync()
