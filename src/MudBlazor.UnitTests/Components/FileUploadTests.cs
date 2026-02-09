@@ -609,7 +609,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(typeof(IBrowserFile))]
         [TestCase(typeof(IReadOnlyList<IBrowserFile>))]
         [TestCase(null)]
-        public void GetFileNames_ShouldNotThrow_ForDifferentTypes(Type type)
+        public void GetFilenames_ShouldNotThrow_ForDifferentTypes(Type type)
         {
             // Act & Assert
             Action action = type switch
