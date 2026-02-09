@@ -8,13 +8,13 @@ class MudExitPrompt {
         this._handleBeforeUnload = this._handleBeforeUnload.bind(this);
     }
 
-    enable(localizedText) {
+    enable(text) {
         if (this.isEnabled) {
             return;
         }
         this.isEnabled = true;
-        this.localizedText = localizedText;
-        
+        this.setText(text);
+
         window.addEventListener('beforeunload', this._handleBeforeUnload);
     }
 
@@ -27,12 +27,16 @@ class MudExitPrompt {
         window.removeEventListener('beforeunload', this._handleBeforeUnload);
     }
 
+    setText(text) {
+        this.text = text;
+    }
+
     handleBeforeNavigation() {
         if (!this.isEnabled) {
             return true;
         }
 
-        return window.confirm(this.localizedText);
+        return window.confirm(this.text);
     }
 
     _handleBeforeUnload(e) {

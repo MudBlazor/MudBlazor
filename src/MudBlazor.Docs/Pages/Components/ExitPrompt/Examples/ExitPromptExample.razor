@@ -1,8 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSwitch Label="Disabled" @bind-Value="_isDisabled" Color="Color.Error"/>
-<MudExitPrompt Disabled="_isDisabled"/>
+<MudStack Spacing="1">
+    <MudSwitch Label="Disabled" @bind-Value="_isDisabled" Color="Color.Primary"/>
+    <MudSwitch Label="Native only" @bind-Value="_nativeOnly" Color="Color.Primary"/>
+</MudStack>
+
+<MudExitPrompt Disabled="_isDisabled" NativeOnly="_nativeOnly"/>
 
 @code {
     private bool _isDisabled;
+    private bool _nativeOnly;
 }
