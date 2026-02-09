@@ -1,5 +1,16 @@
-﻿// noinspection JSUnusedGlobalSymbols
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+// noinspection JSUnusedGlobalSymbols
+/**
+ * SplitPanel resize behavior for the MudSplitPanel component.
+ * Owns pointer/keyboard interaction and ARIA value updates for smooth resizing.
+ */
 class MudSplitPanel {
+    /**
+     * Creates and stores a split panel runtime instance for a container ID.
+     */
     static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
         window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap);
     }
@@ -46,6 +57,9 @@ class MudSplitPanel {
         this.update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, true);
     }
 
+    /**
+     * Removes listeners and disposes the split panel runtime instance.
+     */
     destroy() {
         this.divider.removeEventListener("mousedown", this._onMouseDown);
         this.divider.removeEventListener("touchstart", this._onMouseDown);
@@ -58,6 +72,9 @@ class MudSplitPanel {
     }
 
     // noinspection JSUnusedGlobalSymbols
+    /**
+     * Updates runtime options and recalculates panel sizes when needed.
+     */
     update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, forceRecalculateSize = false) {
         const shouldRecalculateSize = horizontal !== this.horizontal || forceRecalculateSize;
         this.horizontal = horizontal;
@@ -77,6 +94,9 @@ class MudSplitPanel {
         }
     }
 
+    /**
+     * Resets both panel sizes using either the provided size or initial configuration.
+     */
     resetSizes(firstPanelSize = null) {
         this.firstPanel.style.width = "100%";
         this.secondPanel.style.width = "100%";
@@ -91,10 +111,16 @@ class MudSplitPanel {
         }
     }
 
+    /**
+     * Returns the current divider offset in pixels.
+     */
     getDividerPosition() {
         return this.horizontal ? this.firstPanel.clientHeight : this.firstPanel.clientWidth;
     }
 
+    /**
+     * Sets the divider offset in pixels.
+     */
     setDividerPosition(offset) {
         this.resetSizes(offset);
     }
@@ -250,22 +276,37 @@ if (!window.mudSplitPanel) {
     window.splitPanels = {};
 }
 
+/**
+ * Updates split panel options for an existing container ID.
+ */
 window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minPanelSize, panelGap) {
     window.splitPanels[id].update(horizontal, resetOnDoubleClick, minPanelSize, panelGap);
 };
 
+/**
+ * Resets the divider position to the configured initial value.
+ */
 window.mudSplitPanel_resetDividerPosition = function (id) {
     window.splitPanels[id].resetSizes();
 };
 
+/**
+ * Returns the divider position for a split panel container ID.
+ */
 window.mudSplitPanel_getDividerPosition = function (id) {
     return window.splitPanels[id].getDividerPosition();
 };
 
+/**
+ * Sets the divider position for a split panel container ID.
+ */
 window.mudSplitPanel_setDividerPosition = function (id, offset) {
     window.splitPanels[id].setDividerPosition(offset);
 };
 
+/**
+ * Disposes the split panel runtime instance for a container ID.
+ */
 window.mudSplitPanel_destroy = function (id) {
     window.splitPanels[id].destroy();
 };

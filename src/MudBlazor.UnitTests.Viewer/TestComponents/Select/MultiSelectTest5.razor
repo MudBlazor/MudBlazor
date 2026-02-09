@@ -6,10 +6,7 @@
 </MudSelect>
 
 @code {
-    private readonly IEnumerable<string> _selectedValues = new HashSet<string>
-    { 
-        "Programista", "test"
-    };
+    private readonly IReadOnlyCollection<string> _selectedValues = ["Programista", "test"];
 
     private readonly HashSet<string> _posts = ["Programista", "Programista 2", "test", "Technik", "Tester", "Tester tester"];
 }

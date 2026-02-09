@@ -24,8 +24,8 @@
 </MudSelect>
 
 @code {
-    private IEnumerable<TestEnum> _selectedOptions = [TestEnum.Value2];
-    private IEnumerable<int> _selectedOptionsInt = [1, 2];
+    private IReadOnlyCollection<TestEnum> _selectedOptions = [TestEnum.Value2];
+    private IReadOnlyCollection<int> _selectedOptionsInt = [1, 2];
     private readonly List<int> _intTestList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     private static string EnumMultiSelectionTextFunc(IReadOnlyList<string> selectedValues)

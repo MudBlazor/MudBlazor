@@ -2,12 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Scroll utility interop surface used by the ScrollManager service.
+ * Centralizes DOM/container edge cases such as lock nesting and container fallbacks.
+ */
 class MudScrollManager {
     constructor() {
         this._lockCount = 0; // internal tracking for the # of overlay locks
     }
 
-    //scrolls to year in MudDatePicker
+    /**
+     * Scrolls the year list to center a selected year.
+     */
     scrollToYear(elementId) {
         const element = document.getElementById(elementId);
 
@@ -16,8 +22,9 @@ class MudScrollManager {
         }
     }
 
-    // sets the scroll position of the elements container,
-    // to the position of the element with the given element id
+    /**
+     * Scrolls a list container so the target item is aligned to the top.
+     */
     scrollToListItem(elementId) {
         const element = document.getElementById(elementId);
         if (element) {
@@ -28,19 +35,26 @@ class MudScrollManager {
         }
     }
 
-    //scrolls to the selected element. Default is documentElement (i.e., html element)
+    /**
+     * Scrolls the selected container, or the root document element when not found.
+     */
     scrollTo(selector, left, top, behavior) {
         const element = document.querySelector(selector) || document.documentElement;
         element.scrollTo({ left, top, behavior });
     }
 
-    //scrolls the provided selector into view
+    /**
+     * Scrolls the target element into view with centered vertical alignment.
+     */
     scrollIntoView(selector, behavior) {
         const element = document.querySelector(selector) || document.documentElement;
         if (element)
             element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
     }
 
+    /**
+     * Scrolls a container (or page) to its bottom edge.
+     */
     scrollToBottom(selector, behavior) {
         const element = document.querySelector(selector);
         if (element) {
@@ -56,7 +70,9 @@ class MudScrollManager {
         }
     }
 
-    //locks the scroll of the selected element. Default is body
+    /**
+     * Adds a scroll-lock class with lock counting to support nested overlays.
+     */
     lockScroll(selector, lockclass) {
         if (this._lockCount === 0) {
             const element = document.querySelector(selector) || document.body;
@@ -70,7 +86,9 @@ class MudScrollManager {
         this._lockCount++;
     }
 
-    //unlocks the scroll. Default is body
+    /**
+     * Removes one scroll lock and unlocks when the lock count reaches zero.
+     */
     unlockScroll(selector, lockclass) {
         this._lockCount = Math.max(0, this._lockCount - 1); // subtract 1 or stop at 0
         if (this._lockCount === 0) {
@@ -81,6 +99,9 @@ class MudScrollManager {
         }
     }
 
+    /**
+     * Jumps near a virtualized item and then refines position once the target renders.
+     */
     scrollToVirtualizedItem(containerId, itemIndex, itemHeight, targetItemId, behaviorString) {
         const container = document.getElementById(containerId);
         if (!container) {

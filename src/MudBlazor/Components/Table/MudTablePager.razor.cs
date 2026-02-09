@@ -27,6 +27,9 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        /// <summary>
+        /// Displays pager controls right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

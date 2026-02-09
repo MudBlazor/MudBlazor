@@ -62,7 +62,8 @@
                                          id="@_id"
                                          @onpointerdown="OnColorOverlayClick"
                                          @onpointerup="OnColorOverlayClick"
-                                         @onpointermove="OnPointerMoveAsync">
+                                         @onpointermove="OnPointerMoveAsync"
+                                         @onpointerleave="OnPointerLeaveAsync">
                                         <svg class="mud-picker-color-selector"
                                              height="26"
                                              width="26"
@@ -113,7 +114,7 @@
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
                                          aria-label="@(_collectionOpen ? @Localizer[LanguageResource.MudColorPicker_HideSwatches] : @Localizer[LanguageResource.MudColorPicker_ShowSwatches])">
-                                        <div class="mud-picker-color-fill" style="@($"background: {_valueState.Value?.ToString(MudColorOutputFormats.RGBA)};")"></div>
+                                        <div class="mud-picker-color-fill" style="@($"background: {ValueOrDefault.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }
                                 @if (ShowSliders && !_collectionOpen)

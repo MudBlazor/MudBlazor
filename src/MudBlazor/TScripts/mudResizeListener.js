@@ -2,8 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Viewport resize listener used by responsive services and components.
+ * Supports throttled callbacks and breakpoint-aware notifications.
+ */
 class MudResizeListener {
-
     constructor(id) {
         this.logger = function () { };
         this.options = {};
@@ -14,6 +17,9 @@ class MudResizeListener {
         this.handleResize = this.throttleResizeHandler.bind(this);
     }
 
+    /**
+     * Starts listening for window resize events with the provided options.
+     */
     listenForResize(dotnetRef, options) {
         if (this.dotnet) {
             this.options = options;
@@ -31,6 +37,9 @@ class MudResizeListener {
         this.breakpoint = this.getBreakpoint(window.innerWidth);
     }
 
+    /**
+     * Debounces resize notifications according to reportRate.
+     */
     throttleResizeHandler() {
         clearTimeout(this.throttleResizeHandlerId);
         this.throttleResizeHandlerId = window.setTimeout(
@@ -39,6 +48,9 @@ class MudResizeListener {
         );
     }
 
+    /**
+     * Sends a resize notification to .NET, honoring breakpoint-only mode.
+     */
     resizeHandler() {
         if (this.options.notifyOnBreakpointOnly) {
             const bp = this.getBreakpoint(window.innerWidth);
@@ -72,16 +84,25 @@ class MudResizeListener {
         }
     }
 
+    /**
+     * Stops resize notifications for this listener instance.
+     */
     cancelListener() {
         this.dotnet = undefined;
         window.removeEventListener("resize", this.handleResize);
     }
 
+    /**
+     * Evaluates a media query and returns whether it currently matches.
+     */
     matchMedia(query) {
         const m = window.matchMedia(query).matches;
         return m;
     }
 
+    /**
+     * Returns the current viewport size.
+     */
     getBrowserWindowSize() {
         return {
             height: window.innerHeight,
@@ -89,6 +110,9 @@ class MudResizeListener {
         };
     }
 
+    /**
+     * Maps viewport width to MudBlazor breakpoint index.
+     */
     getBreakpoint(width) {
         if (width >= this.options.breakpointDefinitions["Xxl"])
             return 5;
@@ -108,6 +132,9 @@ class MudResizeListener {
 window.mudResizeListener = new MudResizeListener();
 window.mudResizeListenerFactory = {
     mapping: {},
+    /**
+     * Creates a resize listener for the provided ID when one does not already exist.
+     */
     listenForResize: (dotnetRef, options, id) => {
         const map = window.mudResizeListenerFactory.mapping;
         if (map[id]) {
@@ -119,6 +146,9 @@ window.mudResizeListenerFactory = {
         map[id] = listener;
     },
 
+    /**
+     * Cancels and removes a resize listener by ID.
+     */
     cancelListener: (id) => {
         const map = window.mudResizeListenerFactory.mapping;
 
@@ -131,12 +161,18 @@ window.mudResizeListenerFactory = {
         delete map[id];
     },
 
+    /**
+     * Cancels and removes multiple listeners.
+     */
     cancelListeners: (ids) => {
         for (let i = 0; i < ids.length; i++) {
             window.mudResizeListenerFactory.cancelListener(ids[i]);
         }
     },
 
+    /**
+     * Cancels and removes all listeners managed by the factory.
+     */
     dispose() {
         const map = window.mudResizeListenerFactory.mapping;
         for (const id in map) {

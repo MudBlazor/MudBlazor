@@ -9,7 +9,7 @@
 
 @code { 
     private string _value  = "Nothing selected";
-    private IEnumerable<string> _options = new HashSet<string>() { "Lion" };
+    private IReadOnlyCollection<string> _options = ["Lion"];
 
     private readonly string[] _felines =
     [

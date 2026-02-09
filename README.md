@@ -129,4 +129,4 @@ Contributions from the community are what make MudBlazor successful.
 > 1. Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/discussions/12086) for help with breaking changes.  
 > 2. Static rendering is not supported. [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes)
 > 3. Use an up-to-date browser. [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms)
-> 4. Want to test the latest features? Check out our [nightly builds](/NIGHTLY-BUILDS.md)!
+> 4. Want to test the latest features? Learn about our [nightly builds](https://github.com/MudBlazor/MudBlazor/discussions/12621)!

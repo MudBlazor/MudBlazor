@@ -19,7 +19,7 @@
 
 @code {
     private string _value = "Nothing selected";
-    private IEnumerable<string> _options  = new List<string> { "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"};
+    private IReadOnlyCollection<string> _options  = ["Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"];
 
     private readonly string[] _felines =
     [

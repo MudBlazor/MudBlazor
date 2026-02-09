@@ -42,6 +42,9 @@ namespace MudBlazor
         [CascadingParameter]
         protected internal MudBaseItemsControl<MudCarouselItem>? Parent { get; set; }
 
+        /// <summary>
+        /// Displays this item right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

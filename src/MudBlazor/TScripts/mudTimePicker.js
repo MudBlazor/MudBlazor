@@ -2,7 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Pointer interaction model for the analog clock UI in MudTimePicker.
+ * Tracks pressed state so drag-over-stick selection remains continuous.
+ */
 window.mudTimePicker = {
+    /**
+     * Attaches pointer handlers for clock stick hover/select interactions.
+     */
     initPointerEvents: (clock, dotNetHelper) => {
         let isPointerDown = false;
 
@@ -73,6 +80,9 @@ window.mudTimePicker = {
         };
     },
 
+    /**
+     * Detaches pointer handlers previously registered on the clock container.
+     */
     destroyPointerEvents: (container) => {
         if (container == null) {
             return;

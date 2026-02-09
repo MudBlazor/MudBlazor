@@ -1,8 +1,15 @@
-// Copyright (c) MudBlazor 2023
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Auto-grow textarea sizing logic for the MudInput component.
+ * Uses live layout metrics and restores ancestor scroll positions during reflow.
+ */
 window.mudInputSizing = {
+    /**
+     * Initializes auto-sizing behavior for a textarea element.
+     */
     init: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
@@ -85,11 +92,17 @@ window.mudInputSizing = {
         elem.updateParameters(maxLines);
         elem.adjustSizingHeight();
     },
+    /**
+     * Recalculates the current textarea height.
+     */
     adjustHeight: (elem) => {
         if (typeof elem.adjustSizingHeight === 'function') {
             elem.adjustSizingHeight();
         }
     },
+    /**
+     * Updates auto-sizing parameters and reapplies sizing.
+     */
     updateParams: (elem, maxLines) => {
         if (typeof elem.updateParameters === 'function') {
             elem.updateParameters(maxLines);
@@ -98,6 +111,9 @@ window.mudInputSizing = {
             elem.adjustSizingHeight();
         }
     },
+    /**
+     * Removes auto-sizing listeners and restores the element's original sizing state.
+     */
     destroy: (elem) => {
         if (elem == null) {
             return;
