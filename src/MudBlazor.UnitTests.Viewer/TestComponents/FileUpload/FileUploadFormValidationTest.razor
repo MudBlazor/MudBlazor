@@ -8,6 +8,8 @@
 <MudButton OnClick="() => Form.Validate()">Submit</MudButton>
 
 @code {
+    public static string __description__ = "Tests MudForm validation behavior for single and multiple file upload bindings.";
+
     [Parameter]
     public bool SuppressOnChangeWhenInvalid { get; set; }
 

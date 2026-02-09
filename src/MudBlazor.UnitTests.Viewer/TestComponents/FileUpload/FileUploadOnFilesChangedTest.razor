@@ -10,6 +10,8 @@
 </MudFileUpload>
 
 @code {
+    public static string __description__ = "Tests assigning selected file state from the OnFilesChanged callback.";
+
     public IBrowserFile? File { get; private set; }
 
     private void UploadFiles(InputFileChangeEventArgs args)

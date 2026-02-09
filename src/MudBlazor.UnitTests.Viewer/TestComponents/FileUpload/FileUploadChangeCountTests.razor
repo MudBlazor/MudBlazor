@@ -20,6 +20,8 @@
 </MudStack>
 
 @code {
+    public static string __description__ = "Tests FilesChanged and OnFilesChanged callback invocation counts.";
+
     public int FilesChangedCount { get; private set; }
 
     public int OnFilesChangedCount { get; private set; }
