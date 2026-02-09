@@ -15,7 +15,7 @@
     "vulnerabilityAlerts": {
         "enabled": true,
         "addLabels": [
-            "awaiting triage"
+            "security"
         ]
     },
     "packageRules": [
@@ -41,13 +41,27 @@
             "enabled": false
         },
         {
+            "description": "Keep updates in draft while release age is unknown or immature.",
+            "matchJsonata": [
+                "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
+            ],
+            "draftPR": true,
+            "prBodyNotes": [
+                "Draft reason: this target version is either under 14 days old or does not publish a reliable release timestamp yet."
+            ]
+        },
+        {
+            "description": "Keep major NuGet updates in draft for manual review of potential breaking changes.",
             "matchManagers": [
                 "nuget"
             ],
             "matchUpdateTypes": [
                 "major"
             ],
-            "draftPR": true
+            "draftPR": true,
+            "prBodyNotes": [
+                "Draft reason: this is a major update."
+            ]
         },
         {
             "matchFileNames": [
@@ -61,14 +75,39 @@
         },
         {
             "matchFileNames": [
-                "src/**/MudBlazor.UnitTests*.csproj",
                 "src/**/MudBlazor.Docs*.csproj"
             ],
-            "matchUpdateTypes": [
-                "patch",
-                "minor"
+            "addLabels": [
+                "docs"
+            ]
+        },
+        {
+            "matchFileNames": [
+                "src/**/MudBlazor.UnitTests*.csproj"
             ],
-            "automerge": true
+            "addLabels": [
+                "tests"
+            ]
+        },
+        {
+            "description": "Group Bun toolchain updates and request Bun reviewer.",
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchPackageNames": [
+                "bun",
+                "BunDotNet.Cli"
+            ],
+            "matchFileNames": [
+                "src/Directory.Build.props"
+            ],
+            "groupName": "bun toolchain",
+            "groupSlug": "bun-toolchain",
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
         }
     ],
     "customManagers": [
@@ -81,14 +120,7 @@
                 "<BunVersion>(?<currentValue>.*?)</BunVersion>"
             ],
             "depNameTemplate": "bun",
-            "datasourceTemplate": "npm",
-            "groupName": "bun toolchain",
-            "groupSlug": "bun-toolchain",
-            "separateMajorMinor": false,
-            "separateMultipleMajor": false,
-            "reviewers": [
-                "meenzen"
-            ]
+            "datasourceTemplate": "npm"
         },
         {
             "customType": "regex",
@@ -99,14 +131,7 @@
                 "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
             ],
             "depNameTemplate": "BunDotNet.Cli",
-            "datasourceTemplate": "nuget",
-            "groupName": "bun toolchain",
-            "groupSlug": "bun-toolchain",
-            "separateMajorMinor": false,
-            "separateMultipleMajor": false,
-            "reviewers": [
-                "meenzen"
-            ]
+            "datasourceTemplate": "nuget"
         }
     ]
 }
