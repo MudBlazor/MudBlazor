@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Options specific to donut charts, extending <see cref="PieChartOptions"/>.
 /// </summary>
@@ -14,7 +13,6 @@ public class DonutChartOptions : PieChartOptions
     /// The width of the donut ring as a ratio of the chart size.
     /// </summary>
     public double DonutRingRatio { get; set; } = 0.25;
-
 
     public static implicit operator DonutChartOptions(ChartOptions options) => new()
     {

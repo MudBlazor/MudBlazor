@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Utilities.Background.Batch;
 
-#nullable enable
 /// <summary>
 /// Represents a batch periodic queue for managing items of type <typeparamref name="T"/>.
 /// </summary>

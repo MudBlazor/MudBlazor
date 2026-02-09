@@ -2,16 +2,23 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Recovers pointer hits for elements intentionally styled with `pointer-events: none`.
+ * Temporarily enables pointer events to perform hit-testing and report matches to .NET.
+ */
 class MudPointerEventsNone {
     constructor() {
         this.dotnet = null;
-        this.logger = (msg, ...args) => { };
+        this.logger = () => { };
         this.pointerDownHandlerRef = null;
         this.pointerUpHandlerRef = null;
         this.pointerDownMap = new Map();
         this.pointerUpMap = new Map();
     }
 
+    /**
+     * Starts global pointer listeners for an element configured with pointer-events-none behavior.
+     */
     listenForPointerEvents(dotNetReference, elementId, options) {
         if (!options) {
             this.logger("options object is required but was not provided");
@@ -21,7 +28,7 @@ class MudPointerEventsNone {
         if (options.enableLogging) {
             this.logger = (msg, ...args) => console.log("[MudBlazor | PointerEventsNone]", msg, ...args);
         } else {
-            this.logger = (msg, ...args) => { };
+            this.logger = () => { };
         }
 
         this.logger("Called listenForPointerEvents", { dotNetReference, elementId, options });
@@ -68,10 +75,16 @@ class MudPointerEventsNone {
         }
     }
 
+    /**
+     * Handles global pointerdown and routes matching IDs to .NET.
+     */
     pointerDownHandler(event) {
         this._handlePointerEvent(event, this.pointerDownMap, "RaiseOnPointerDown");
     }
 
+    /**
+     * Handles global pointerup and routes matching IDs to .NET.
+     */
     pointerUpHandler(event) {
         this._handlePointerEvent(event, this.pointerUpMap, "RaiseOnPointerUp");
     }
@@ -128,6 +141,9 @@ class MudPointerEventsNone {
         this.dotnet.invokeMethodAsync(raiseMethod, matchingIds);
     }
 
+    /**
+     * Stops pointer listener participation for a specific element ID.
+     */
     cancelListener(elementId) {
         if (!elementId) {
             this.logger("cancelListener called with invalid elementId");
@@ -156,6 +172,9 @@ class MudPointerEventsNone {
         }
     }
 
+    /**
+     * Removes global listeners and clears all tracked element subscriptions.
+     */
     dispose() {
         if (!this.dotnet && !this.pointerDownHandlerRef && !this.pointerUpHandlerRef) {
             this.logger("dispose() called but instance was already cleaned up");

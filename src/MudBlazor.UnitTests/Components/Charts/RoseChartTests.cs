@@ -151,7 +151,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Interaction_SelectedIndex()
+    public async Task RoseChart_Interaction_SelectedIndex()
     {
         var selectedIndex = -1;
         var comp = Context.Render<Rose<double>>(parameters => parameters
@@ -164,16 +164,16 @@ public class RoseChartTests : BunitTest
         );
 
         // Click on the first path segment (index 0)
-        comp.FindAll("path.mud-chart-serie").First().Click();
+        await comp.FindAll("path.mud-chart-serie").First().ClickAsync();
         selectedIndex.Should().Be(0);
 
         // Click on the third path segment (index 2)
-        comp.FindAll("path.mud-chart-serie").Last().Click();
+        await comp.FindAll("path.mud-chart-serie").Last().ClickAsync();
         selectedIndex.Should().Be(2);
     }
 
     [Test]
-    public void RoseChart_CanHideSeries_Test()
+    public async Task RoseChart_CanHideSeries()
     {
         var chartData = new double[] { 10, 20, 30, 40 };
         string[] chartLabels = { "Petal 1", "Petal 2", "Petal 3", "Petal 4" };
@@ -207,20 +207,20 @@ public class RoseChartTests : BunitTest
         }
 
         // Hide "Petal 1"
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+        await seriesCheckboxes[0].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeFalse("Petal 1 checkbox should be unchecked after hiding");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Petal 1 path should be hidden");
         comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Petal 2 path should remain visible");
 
         // Show "Petal 1" again
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+        await seriesCheckboxes[0].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeTrue("Petal 1 checkbox should be checked after re-showing");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Petal 1 path should be visible again");
 
         // Hide "Petal 3"
-        comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+        await seriesCheckboxes[2].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeFalse("Petal 3 checkbox should be unchecked after hiding");
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Petal 3 path should be hidden");
@@ -229,7 +229,7 @@ public class RoseChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Petal 4 path should still be visible");
 
         // Show "Petal 3" again
-        comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+        await seriesCheckboxes[2].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeTrue("Petal 3 checkbox should be checked after re-showing");
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Petal 3 path should be visible again");
@@ -340,7 +340,6 @@ public class RoseChartTests : BunitTest
         svgElement.GetAttribute("width").Should().Be("80%");
         svgElement.GetAttribute("height").Should().Be("80%");
 
-
         // Assert that chart content (petals) are defined
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(2);
     }
@@ -436,7 +435,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_CanHideSeries_WithAggregationByDataSet_ShouldHideCorrectSeriesPetal()
+    public async Task RoseChart_CanHideSeries_WithAggregationByDataSet_ShouldHideCorrectSeriesPetal()
     {
         var chartSeries = new List<ChartSeries<double>>
         {
@@ -476,21 +475,19 @@ public class RoseChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[0]}']").Count.Should().Be(1, "Petal for Set A with correct color should exist.");
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[1]}']").Count.Should().Be(1, "Petal for Set B with correct color should exist.");
 
-
         // Hide "Set A"
-        comp.InvokeAsync(() => checkboxSetA.Change(false));
+        await checkboxSetA.ChangeAsync(false);
 
         legendCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-query after change
         legendCheckboxes[0].IsChecked().Should().BeFalse("Checkbox for Set A should be unchecked");
         legendCheckboxes[1].IsChecked().Should().BeTrue("Checkbox for Set B should remain checked");
-
 
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[0]}']").Count.Should().Be(0, "Petal for Set A should be hidden.");
         comp.FindAll($"path.mud-chart-serie[stroke='{_baseChartPalette[1]}']").Count.Should().Be(1, "Petal for Set B should still be visible.");
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(1); // Only Set B's petal remains
 
         // Show "Set A" Again
-        comp.InvokeAsync(() => checkboxSetA.Change(true));
+        await checkboxSetA.ChangeAsync(true);
 
         legendCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-query
         legendCheckboxes[0].IsChecked().Should().BeTrue("Checkbox for Set A should be checked again");
@@ -592,7 +589,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldDisplayDefaultTooltip_OnPetalHover_When_ShowToolTipsTrue()
+    public async Task RoseChart_Tooltips_ShouldDisplayDefaultTooltip_OnPetalHover_When_ShowToolTipsTrue()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
@@ -610,19 +607,19 @@ public class RoseChartTests : BunitTest
         petals.Count.Should().Be(2);
         var firstPetal = petals.First();
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull("Tooltip should be present in the DOM after mouseover");
 
         tooltip.QuerySelector("text tspan").InnerHtml.Should().Be("A - 10");
 
-        firstPetal.TriggerEvent("onmouseout", new MouseEventArgs());
+        await firstPetal.MouseOutAsync();
         comp.FindAll("g.svg-tooltip").Should().BeEmpty();
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldNotDisplayDefaultTooltip_When_ShowToolTipsFalse()
+    public async Task RoseChart_Tooltips_ShouldNotDisplayDefaultTooltip_When_ShowToolTipsFalse()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
@@ -640,14 +637,14 @@ public class RoseChartTests : BunitTest
         petals.Count.Should().Be(2);
         var firstPetal = petals.First();
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltip = comp.FindAll("g.svg-tooltip");
         tooltip.Should().BeEmpty();
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldRenderCustomTooltip_When_TooltipTemplateIsProvided()
+    public async Task RoseChart_Tooltips_ShouldRenderCustomTooltip_When_TooltipTemplateIsProvided()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0 } } };
         var chartLabels = new[] { "A", "B" };
@@ -673,7 +670,7 @@ public class RoseChartTests : BunitTest
         var petals = comp.FindAll("path.mud-chart-serie");
         var firstPetal = petals.First();
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var customContent = comp.Find("div.custom-tooltip-content");
         customContent.Should().NotBeNull();
@@ -681,7 +678,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Tooltips_ShouldPositionTooltipWithCustomLogic_When_TooltipPositionFuncIsProvided()
+    public async Task RoseChart_Tooltips_ShouldPositionTooltipWithCustomLogic_When_TooltipPositionFuncIsProvided()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0 } } };
         var chartLabels = new[] { "A" };
@@ -700,7 +697,7 @@ public class RoseChartTests : BunitTest
 
         var firstPetal = comp.Find("path.mud-chart-serie");
 
-        firstPetal.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstPetal.MouseOverAsync();
 
         var tooltipDiv = comp.Find("g.svg-tooltip text");
         tooltipDiv.Should().NotBeNull();
@@ -743,7 +740,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Option_ChartPalette_ShouldApplyCustomPaletteColorsToPetals()
+    public async Task RoseChart_Option_ChartPalette_ShouldApplyCustomPaletteColorsToPetals()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0, 30.0 } } };
         var customPalette = new[] { "rgb(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)" }; // Red, Green, Blue
@@ -760,7 +757,7 @@ public class RoseChartTests : BunitTest
 
         for (var i = 0; i < petals.Count; i++)
         {
-            var markup = petals[i].ToMarkup();
+            var markup = petals[i].OuterHtml;
             var expectedColor = customPalette[i];
             markup.Should().Contain($"stroke=\"{expectedColor}\"");
             markup.Should().Contain($"fill=\"{expectedColor}\"");
@@ -768,7 +765,7 @@ public class RoseChartTests : BunitTest
     }
 
     [Test]
-    public void RoseChart_Option_ChartPalette_ShouldCycleColors_When_DataPointsExceedPaletteSize()
+    public async Task RoseChart_Option_ChartPalette_ShouldCycleColors_When_DataPointsExceedPaletteSize()
     {
         var chartSeries = new List<ChartSeries<double>> { new() { Data = new[] { 10.0, 20.0, 30.0, 40.0 } } };
         var customPalette = new[] { "rgb(255, 0, 0)", "rgb(0, 255, 0)" };
@@ -785,7 +782,7 @@ public class RoseChartTests : BunitTest
 
         for (var i = 0; i < petals.Count; i++)
         {
-            var markup = petals[i].ToMarkup();
+            var markup = petals[i].OuterHtml;
             var expectedColor = customPalette[i % customPalette.Length];
             markup.Should().Contain($"stroke=\"{expectedColor}\"");
             markup.Should().Contain($"fill=\"{expectedColor}\"");

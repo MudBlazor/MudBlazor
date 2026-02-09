@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Interop;
 
-#nullable enable
 
 internal class PointerEventsNoneInterop
 {

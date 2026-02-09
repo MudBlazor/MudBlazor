@@ -9,11 +9,10 @@ using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// An overlay providing the user with information, a choice, or other input.
+    /// Displays an overlay that prompts users to confirm an action or provide additional information.
     /// </summary>
     /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>

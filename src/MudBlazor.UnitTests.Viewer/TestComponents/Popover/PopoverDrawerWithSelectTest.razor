@@ -53,7 +53,7 @@
     private string? _height;
     private string _selectedValue = string.Empty;
     private string _value = "Nothing selected";
-    private IEnumerable<string> _options = new HashSet<string> { "Alaska" };
+    private IReadOnlyCollection<string> _options = ["Alaska"];
     private readonly string[] _states =
     [
         "Alabama", "Alaska", "American Samoa", "Arizona",

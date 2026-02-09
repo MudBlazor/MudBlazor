@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents a service that serves to listen to browser window size changes and breakpoints.
 /// </summary>

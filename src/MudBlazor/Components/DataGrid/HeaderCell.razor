@@ -1,9 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using System.Diagnostics
 @using MudBlazor.Resources
+@using Microsoft.JSInterop
 @typeparam T
 
 @inject InternalMudLocalizer Localizer
+@inject IJSRuntime JSRuntime
 
 @if (IsOnlyHeader)
 {
@@ -26,7 +29,13 @@ else if (Column != null && !Column.HiddenState.Value)
         }
         @if (resizable)
         {
-            <div @onpointerdown=OnResizerPointerDown @onpointerover=OnResizerPointerOver @onpointerleave=OnResizerPointerLeave
+            <div @ref="_resizerElement"
+                 @onpointerdown="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerDown)" 
+                 @onpointerdown:stopPropagation="true"
+                 @onpointermove="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerMove)" 
+                 @onpointerup="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerUp)"
+                 @onpointerover="@OnResizerPointerOver"
+                 @onpointerleave="this.AsNonRenderingEventHandler(OnResizerPointerLeave)"
                  class="@ResizerClass" style="@ResizerStyle" />
         }
     </th>
@@ -36,15 +45,19 @@ else if (Column != null && !Column.HiddenState.Value)
 
     internal RenderFragment TableHeader()
     {
+        Debug.Assert(Column is not null);
+        Debug.Assert(DataGrid is not null);
+        var headerTemplate = Column.GetHeaderTemplate();
+
         return
         @<text>
         <span class="column-header">
             @if (sortable)
             {
                 <span class="@SortHeaderClass" @onclick="SortChangedAsync">
-                    @if (Column.HeaderTemplate != null)
+                    @if (headerTemplate != null)
                     {
-                        @Column.HeaderTemplate(Column.headerContext)
+                        @headerTemplate(Column.headerContext);
                     }
                     else if (IncludeHierarchyToggle)
                     {
@@ -58,9 +71,9 @@ else if (Column != null && !Column.HiddenState.Value)
             }
             else
             { 
-                @if (Column.HeaderTemplate != null)
+                @if (headerTemplate != null)
                 {
-                    @Column.HeaderTemplate(Column.headerContext)
+                    @headerTemplate(Column.headerContext);
                 }
                 else if (IncludeHierarchyToggle)
                 {
@@ -151,7 +164,7 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     <MudGrid>
                         <MudItem xs="12">
-                            @DataGrid.Filter(Column.FilterContext.FilterDefinition, Column)
+                            @DataGrid?.Filter(Column.FilterContext.FilterDefinition!, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
                             <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>

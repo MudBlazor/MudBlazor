@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -16,13 +15,14 @@ namespace MudBlazor
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
     /// <seealso cref="MudPickerToolbar" />
-    public partial class MudPicker<T> : MudFormComponent<T, string>
+    public abstract partial class MudPicker<T> : MudFormComponent<T, string>
     {
         private string? _text;
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
-        private bool _keyInterceptorObserving = false;
-        private readonly string _elementId = Identifier.Create("picker");
+        private bool _keyInterceptorObserving;
+
+        internal string ElementId { get; } = Identifier.Create("picker");
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -38,7 +38,7 @@ namespace MudBlazor
                 .AddClass($"mud-elevation-{Elevation ?? 0}", PickerVariant != PickerVariant.Inline)
                 .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
                 .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
-                .AddClass("mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-disabled", GetDisabledState())
                 .AddClass(Class)
                 .Build();
 
@@ -55,6 +55,9 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
                 .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
+                .AddStyle("opacity", "0.5", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("pointer-events", "none", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("filter", "grayscale(1)", GetDisabledState() && PickerVariant == PickerVariant.Static)
                 .AddStyle(Style)
                 .Build();
 
@@ -210,11 +213,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.<br />
-        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <see cref="ClearIcon"/> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Prevents the user from interacting with this button.
@@ -466,8 +479,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
-
-
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
         /// </summary>
@@ -635,7 +646,29 @@ namespace MudBlazor
                     new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                .HookKeyDown(OnHandleKeyDownAsync)
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDown("Backspace", HandleBackspaceAsync)
+                    .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
+        }
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
+        private async Task HandleBackspaceAsync(KeyboardEventArgs args)
+        {
+            // Ctrl+Shift+Backspace clears the value
+            if (args.CtrlKey && args.ShiftKey)
+            {
+                await ClearAsync();
+                await SetValueCoreAsync(default);
+                await ResetAsync();
+            }
+        }
+
+        protected internal virtual Task OnHandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            return Task.CompletedTask;
         }
 
         private async Task OnClickAsync(MouseEventArgs args)
@@ -688,7 +721,7 @@ namespace MudBlazor
             }
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
 
         protected virtual async Task OnClosedAsync()
@@ -696,7 +729,7 @@ namespace MudBlazor
             await OnPickerClosedAsync();
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "none"));
         }
 
         protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
@@ -717,28 +750,6 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
-        {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-            switch (args.Key)
-            {
-                case "Backspace":
-                    if (args.CtrlKey && args.ShiftKey)
-                    {
-                        await ClearAsync();
-                        await SetValueAsync(default);
-                        await ResetAsync();
-                    }
-
-                    break;
-                case "Escape":
-                case "Tab":
-                    await CloseAsync(false);
-                    break;
-            }
-        }
-
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
@@ -746,7 +757,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
     }

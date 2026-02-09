@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// An item within a <see cref="MudList{T}"/> component.
@@ -34,8 +33,8 @@ namespace MudBlazor
                 .AddClass("mud-list-item-gutters", GetGutters())
                 .AddClass("mud-list-item-clickable", GetClickable())
                 .AddClass("mud-ripple", Ripple && GetClickable())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToStringFast(true)}-text", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-{MudList?.Color.ToStringFast(true)}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
@@ -227,6 +226,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Expanding)]
         public bool Expanded { get; set; }
 
+        /// <summary>
+        /// Occurs when <see cref="Expanded"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 

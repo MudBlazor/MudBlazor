@@ -13,9 +13,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// An interactive menu that displays a list of options.
+    /// Displays a list of options that users can select from. Make menus easy to open, close, and select. Menus can open from a variety of components.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
     public partial class MudMenu : MudComponentBase, IDisposable
@@ -35,7 +34,7 @@ namespace MudBlazor
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
-        private DateTime _lastKeyboardActivation = DateTime.MinValue;
+        private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
 
         [Inject]
@@ -43,6 +42,9 @@ namespace MudBlazor
 
         [Inject]
         private IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         public MudMenu()
         {
@@ -146,7 +148,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon when <see cref="Icon"/> is set.
+        /// The color of the <see cref="StartIcon"/> and <see cref="EndIcon"/> icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Inherit"/>.
@@ -156,7 +158,7 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The icon displayed before the text.
+        /// The icon displayed before the text when <see cref="Icon"/> is not set. Also used for nested <see cref="MudMenu"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -166,7 +168,7 @@ namespace MudBlazor
         public string? StartIcon { get; set; }
 
         /// <summary>
-        /// The icon displayed after the text.
+        /// The icon displayed after the text when <see cref="Icon"/> is not set.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -176,7 +178,7 @@ namespace MudBlazor
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// The color of this menu's button when <see cref="Icon"/> is not set.
+        /// The color of this menu's button when <see cref="Icon"/> is not set, or the color of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.
@@ -186,8 +188,11 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of this menu's button when <see cref="Icon" /> is not set.
+        /// The size of this menu's button when <see cref="Icon"/> is not set, or the size of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
         public Size Size { get; set; } = Size.Medium;
@@ -304,8 +309,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
         public bool PopoverFixed { get; set; }
-
-
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
@@ -567,6 +570,9 @@ namespace MudBlazor
                 return;
             }
 
+            // Prevent conflicting actions.
+            CancelPendingActions();
+
             _isTransient = transient;
 
             // Set the menu position to the cursor if the event has coordinates.
@@ -625,7 +631,7 @@ namespace MudBlazor
             {
                 // Determine if the click matches the expected activation event.
                 // This indicates it's a synthetic click following Enter/Space
-                var timeSinceKeyboard = DateTime.UtcNow - _lastKeyboardActivation;
+                var timeSinceKeyboard = TimeProvider.GetUtcNow() - _lastKeyboardActivation;
                 if (timeSinceKeyboard.TotalMilliseconds < 50)
                 {
                     return Task.CompletedTask;
@@ -695,7 +701,7 @@ namespace MudBlazor
 
                 try
                 {
-                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _hoverCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _hoverCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -736,7 +742,7 @@ namespace MudBlazor
 
                 try
                 {
-                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _leaveCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _leaveCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -946,7 +952,7 @@ namespace MudBlazor
                         var submenu = FindSubmenuForItem(menuItem);
                         if (submenu != null)
                         {
-                            submenu._lastKeyboardActivation = DateTime.UtcNow;
+                            submenu._lastKeyboardActivation = TimeProvider.GetUtcNow();
                             submenu._lastInteractionWasKeyboard = true;
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
@@ -959,7 +965,7 @@ namespace MudBlazor
 
                     case MudMenu menu:
                         // For MudMenu items, always open the submenu
-                        menu._lastKeyboardActivation = DateTime.UtcNow;
+                        menu._lastKeyboardActivation = TimeProvider.GetUtcNow();
                         menu._lastInteractionWasKeyboard = true;
                         await menu.OpenSubMenuAsync(EventArgs.Empty);
                         break;
@@ -1146,7 +1152,7 @@ namespace MudBlazor
             if (e.Key == "Enter" || e.Key == " ")
             {
                 _lastInteractionWasKeyboard = true;
-                _lastKeyboardActivation = DateTime.UtcNow;
+                _lastKeyboardActivation = TimeProvider.GetUtcNow();
 
                 await ToggleMenuAsync(e);
             }

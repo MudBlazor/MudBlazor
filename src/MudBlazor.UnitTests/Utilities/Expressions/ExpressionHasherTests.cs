@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         }
 
         [Test]
-        public void ExpressionHasherTests_Get_Null_HashCode_Test()
+        public void ExpressionHasherTests_Get_Null_HashCode()
         {
             Expression<Func<ExpressionTestClass, string?>>? exp1 = null;
             Expression<Func<ExpressionTestClass, string?>>? exp2 = null;
@@ -382,7 +382,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
 
             h1.Equals(h2).Should().BeFalse();
         }
-
 
         [Test(Description = "VisitIndex")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test14()

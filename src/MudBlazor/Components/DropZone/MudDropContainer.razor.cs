@@ -12,7 +12,6 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 
-#nullable enable
 
     /// <summary>
     /// A container of <see cref="MudDropZone{T}"/> components for drag-and-drop operations.

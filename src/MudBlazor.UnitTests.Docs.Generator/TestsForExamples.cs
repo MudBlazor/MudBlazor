@@ -18,6 +18,7 @@ public class TestsForExamples
             var cb = new CodeBuilder();
 
             cb.AddHeader();
+            cb.AddLine("using System.Collections.Generic;");
             cb.AddLine("using MudBlazor.Docs.Examples;");
             cb.AddLine("using MudBlazor.Docs.Wireframes;");
             cb.AddLine("using NUnit.Framework;");
@@ -32,26 +33,24 @@ public class TestsForExamples
             cb.AddLine("{");
             cb.IndentLevel++;
 
-            foreach (var entry in Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
-                .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
-            {
-                if (entry.EndsWith("Code.razor"))
-                    continue;
-                var filename = Path.GetFileName(entry);
-                var componentName = Path.GetFileNameWithoutExtension(filename);
-                if (!filename.Contains(Paths.ExampleDiscriminator))
-                    continue;
-                // skip over table/data grid virtualization since it takes too long.
-                if (filename == "TableVirtualizationExample.razor" || filename == "DataGridVirtualizationExample.razor")
-                    continue;
-                cb.AddLine("[Test]");
-                cb.AddLine($"public void {componentName}_Test()");
-                cb.AddLine("{");
-                cb.IndentLevel++;
-                cb.AddLine($"ctx.Render<{componentName}>();");
-                cb.IndentLevel--;
-                cb.AddLine("}");
-            }
+            // Generate static test case data
+            WriteExampleCases(cb);
+
+            // Generate single test method using TestCaseSource
+            cb.AddLine("[Test]");
+            cb.AddLine("[TestCaseSource(nameof(ExampleCases))]");
+            cb.AddLine("public void Example_Renders(string componentName, System.Type componentType)");
+            cb.AddLine("{");
+            cb.IndentLevel++;
+            cb.AddLine("_ctx.Render(builder =>");
+            cb.AddLine("{");
+            cb.IndentLevel++;
+            cb.AddLine("builder.OpenComponent(0, componentType);");
+            cb.AddLine("builder.CloseComponent();");
+            cb.IndentLevel--;
+            cb.AddLine("});");
+            cb.IndentLevel--;
+            cb.AddLine("}");
 
             cb.IndentLevel--;
             cb.AddLine("}");
@@ -70,5 +69,35 @@ public class TestsForExamples
         }
 
         return success;
+    }
+
+    /// <summary>
+    /// Writes the ExampleCases method that yields TestCaseData for each example component.
+    /// </summary>
+    private void WriteExampleCases(CodeBuilder cb)
+    {
+        cb.AddLine("public static IEnumerable<TestCaseData> ExampleCases()");
+        cb.AddLine("{");
+        cb.IndentLevel++;
+
+        foreach (var entry in Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
+            .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
+        {
+            if (entry.EndsWith("Code.razor"))
+                continue;
+            var filename = Path.GetFileName(entry);
+            var componentName = Path.GetFileNameWithoutExtension(filename);
+            if (!filename.Contains(Paths.ExampleDiscriminator))
+                continue;
+            // skip over table/data grid virtualization since it takes too long.
+            if (filename == "TableVirtualizationExample.razor" || filename == "DataGridVirtualizationExample.razor")
+                continue;
+
+            cb.AddLine($"yield return new TestCaseData(\"{componentName}\", typeof({componentName})).SetName(\"{componentName}\");");
+        }
+
+        cb.IndentLevel--;
+        cb.AddLine("}");
+        cb.AddLine();
     }
 }

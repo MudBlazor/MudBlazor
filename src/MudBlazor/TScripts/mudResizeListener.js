@@ -2,10 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Viewport resize listener used by responsive services and components.
+ * Supports throttled callbacks and breakpoint-aware notifications.
+ */
 class MudResizeListener {
-
     constructor(id) {
-        this.logger = function (message) { };
+        this.logger = function () { };
         this.options = {};
         this.throttleResizeHandlerId = -1;
         this.dotnet = undefined;
@@ -14,6 +17,9 @@ class MudResizeListener {
         this.handleResize = this.throttleResizeHandler.bind(this);
     }
 
+    /**
+     * Starts listening for window resize events with the provided options.
+     */
     listenForResize(dotnetRef, options) {
         if (this.dotnet) {
             this.options = options;
@@ -22,7 +28,7 @@ class MudResizeListener {
 
         this.options = options;
         this.dotnet = dotnetRef;
-        this.logger = options.enableLogging ? console.log : (message) => { };
+        this.logger = options.enableLogging ? console.log : () => { };
         this.logger(`[MudBlazor] Reporting resize events at rate of: ${this.options.reportRate}ms`);
         window.addEventListener("resize", this.handleResize, false);
         if (!this.options.suppressInitEvent) {
@@ -31,6 +37,9 @@ class MudResizeListener {
         this.breakpoint = this.getBreakpoint(window.innerWidth);
     }
 
+    /**
+     * Debounces resize notifications according to reportRate.
+     */
     throttleResizeHandler() {
         clearTimeout(this.throttleResizeHandlerId);
         this.throttleResizeHandlerId = window.setTimeout(
@@ -39,9 +48,12 @@ class MudResizeListener {
         );
     }
 
+    /**
+     * Sends a resize notification to .NET, honoring breakpoint-only mode.
+     */
     resizeHandler() {
         if (this.options.notifyOnBreakpointOnly) {
-            let bp = this.getBreakpoint(window.innerWidth);
+            const bp = this.getBreakpoint(window.innerWidth);
             if (bp == this.breakpoint) {
                 return;
             }
@@ -72,16 +84,25 @@ class MudResizeListener {
         }
     }
 
+    /**
+     * Stops resize notifications for this listener instance.
+     */
     cancelListener() {
         this.dotnet = undefined;
         window.removeEventListener("resize", this.handleResize);
     }
 
+    /**
+     * Evaluates a media query and returns whether it currently matches.
+     */
     matchMedia(query) {
-        let m = window.matchMedia(query).matches;
+        const m = window.matchMedia(query).matches;
         return m;
     }
 
+    /**
+     * Returns the current viewport size.
+     */
     getBrowserWindowSize() {
         return {
             height: window.innerHeight,
@@ -89,6 +110,9 @@ class MudResizeListener {
         };
     }
 
+    /**
+     * Maps viewport width to MudBlazor breakpoint index.
+     */
     getBreakpoint(width) {
         if (width >= this.options.breakpointDefinitions["Xxl"])
             return 5;
@@ -108,39 +132,51 @@ class MudResizeListener {
 window.mudResizeListener = new MudResizeListener();
 window.mudResizeListenerFactory = {
     mapping: {},
+    /**
+     * Creates a resize listener for the provided ID when one does not already exist.
+     */
     listenForResize: (dotnetRef, options, id) => {
-        var map = window.mudResizeListenerFactory.mapping;
+        const map = window.mudResizeListenerFactory.mapping;
         if (map[id]) {
             return;
         }
 
-        var listener = new MudResizeListener(id);
+        const listener = new MudResizeListener(id);
         listener.listenForResize(dotnetRef, options);
         map[id] = listener;
     },
 
+    /**
+     * Cancels and removes a resize listener by ID.
+     */
     cancelListener: (id) => {
-        var map = window.mudResizeListenerFactory.mapping;
+        const map = window.mudResizeListenerFactory.mapping;
 
         if (!map[id]) {
             return;
         }
 
-        var listener = map[id];
+        const listener = map[id];
         listener.cancelListener();
         delete map[id];
     },
 
+    /**
+     * Cancels and removes multiple listeners.
+     */
     cancelListeners: (ids) => {
         for (let i = 0; i < ids.length; i++) {
             window.mudResizeListenerFactory.cancelListener(ids[i]);
         }
     },
 
+    /**
+     * Cancels and removes all listeners managed by the factory.
+     */
     dispose() {
-        var map = window.mudResizeListenerFactory.mapping;
-        for (var id in map) {
+        const map = window.mudResizeListenerFactory.mapping;
+        for (const id in map) {
             window.mudResizeListenerFactory.cancelListener(id);
         }
     }
-}
+};

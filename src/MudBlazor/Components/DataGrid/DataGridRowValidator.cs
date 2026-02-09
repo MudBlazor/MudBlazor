@@ -34,7 +34,6 @@ namespace MudBlazor
             get => _errors.ToArray();
         }
 
-#nullable enable
         /// <summary>
         /// The data to validate for this row.
         /// </summary>
@@ -43,7 +42,6 @@ namespace MudBlazor
 #nullable disable
 
         protected HashSet<string> _errors = new HashSet<string>();
-
 
         void IForm.FieldChanged(IFormComponent formControl, object newValue)
         {

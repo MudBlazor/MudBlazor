@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the top portion of a <see cref="MudCard"/>.
     /// </summary>
@@ -14,8 +13,12 @@ namespace MudBlazor
     public partial class MudCardHeader : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-header")
+            .AddClass("mud-card-header-padding", ParentCard?.ContentPadding ?? true)
             .AddClass(Class)
             .Build();
+
+        [CascadingParameter]
+        private MudCard? ParentCard { get; set; }
 
         /// <summary>
         /// The avatar to display within this header.

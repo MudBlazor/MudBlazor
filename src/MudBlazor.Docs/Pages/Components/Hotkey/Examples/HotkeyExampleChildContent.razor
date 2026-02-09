@@ -33,5 +33,5 @@
     private bool _disabled;
     private JsKey _selectedKey = JsKey.KeyA;
     private bool _hideChildContentOnRepress = true;
-    private IEnumerable<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.ControlLeft];
+    private IReadOnlyCollection<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.ControlLeft];
 }

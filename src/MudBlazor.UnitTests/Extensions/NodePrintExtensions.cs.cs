@@ -4,7 +4,6 @@ using AngleSharp.Html;
 
 namespace MudBlazor.UnitTests;
 
-
 /// <summary>
 /// Helper methods for pretty printing markup from <see cref="INode"/> and <see cref="INodeList"/>.
 /// </summary>

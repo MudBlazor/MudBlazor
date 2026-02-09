@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 namespace MudBlazor;
-#nullable enable
 
 /// <summary>
 /// Represents the path of a link (edge) between two nodes in a Sankey chart.
@@ -41,7 +40,6 @@ public sealed class EdgePath : SvgPath
     /// </remarks>
     public required NodeRect Target { get; set; }
 }
-
 
 /// <summary>
 /// Represents a rectangular node in a Sankey chart, including its position,

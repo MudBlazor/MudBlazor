@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class DefaultConverter
 {
     internal sealed class StringConverter : IReversibleConverter<string?, string?>

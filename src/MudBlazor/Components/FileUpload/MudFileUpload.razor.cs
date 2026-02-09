@@ -11,11 +11,9 @@ using MudBlazor.Interfaces;
 using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A form component for uploading one or more files.  For <c>T</c>, use either <c>IBrowserFile</c> for a single file or <c>IReadOnlyList&lt;IBrowserFile&gt;</c> for multiple files.
@@ -36,11 +34,6 @@ namespace MudBlazor
         /// </summary>
         public MudFileUpload()
         {
-            Converter = new DefaultConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
             using var registerScope = CreateRegisterScope();
             _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
                 .WithParameter(() => Files)
@@ -314,9 +307,19 @@ namespace MudBlazor
             FieldChanged(value);
         }
 
+        /// <inheritdoc />
+        protected override IConverter<T?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
+
         protected internal override T? ReadValue => _filesState.Value;
 
-        protected override Task SetValueAsync(T? value) => _filesState.SetValueAsync(value);
+        protected override Task SetValueCoreAsync(T? value) => _filesState.SetValueAsync(value);
 
         protected override async Task ValidateValue()
         {

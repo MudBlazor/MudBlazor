@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the current state of a cell in a <see cref="MudDataGrid{T}"/>.
     /// </summary>

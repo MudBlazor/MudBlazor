@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A set of action buttons.  

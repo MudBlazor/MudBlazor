@@ -3,12 +3,12 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Comparer;
 
+#nullable enable
 [TestFixture]
 public class CollectionComparerTests
 {
-
     [Test]
-    public void EqualsTest()
+    public void Equals_TreatsCollectionsAsMultisets()
     {
         var comparer = new CollectionComparer<int>();
 
@@ -33,7 +33,7 @@ public class CollectionComparerTests
     }
 
     [Test]
-    public void GetHashCodeTest()
+    public void HashCode_TreatsCollectionsAsMultisets()
     {
         var comparer = CollectionComparer<int>.Default;
         // check equality
@@ -51,15 +51,8 @@ public class CollectionComparerTests
         comparer.GetHashCode([1, 2, 3]).Should().NotBe(comparer.GetHashCode([1, 2, 4]));
     }
 
-    private class LowercaseEqualityComparer : IEqualityComparer<string>
-    {
-        public bool Equals(string x, string y) => EqualityComparer<string>.Default.Equals(x?.ToLowerInvariant(), y?.ToLowerInvariant());
-
-        public int GetHashCode(string obj) => EqualityComparer<string>.Default.GetHashCode(obj?.ToLowerInvariant());
-    }
-
     [Test]
-    public void EqualsWithCustomComparerTest()
+    public void Equals_UsesCustomComparer()
     {
         var comparer = new CollectionComparer<string>(new LowercaseEqualityComparer());
 
@@ -82,7 +75,7 @@ public class CollectionComparerTests
     }
 
     [Test]
-    public void GetHashCodeWithCustomComparerTest()
+    public void HashCode_UsesCustomComparer()
     {
         var comparer = new CollectionComparer<string>(new LowercaseEqualityComparer());
 
@@ -102,5 +95,20 @@ public class CollectionComparerTests
         comparer.GetHashCode(["a", "b", "c"]).Should().NotBe(comparer.GetHashCode(["a", "b"]));
         comparer.GetHashCode(["a", "b", "c"]).Should().NotBe(comparer.GetHashCode(["a", "b", "x"]));
         comparer.GetHashCode(["a", "b", "c"]).Should().NotBe(comparer.GetHashCode(["a", "a", "x"]));
+    }
+
+    private class LowercaseEqualityComparer : IEqualityComparer<string?>
+    {
+        public bool Equals(string? x, string? y) => EqualityComparer<string>.Default.Equals(x?.ToLowerInvariant(), y?.ToLowerInvariant());
+
+        public int GetHashCode(string? obj)
+        {
+            if (obj is null)
+            {
+                return 0;
+            }
+
+            return EqualityComparer<string>.Default.GetHashCode(obj.ToLowerInvariant());
+        }
     }
 }

@@ -6,10 +6,12 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Provides JavaScript API services for various browser operations.
+/// Lightweight wrapper around common browser JS calls used across MudBlazor components.
 /// </summary>
+/// <remarks>
+/// Keeps interop usage centralized for tasks like clipboard, window navigation, and style updates so components stay focused on UI logic.
+/// </remarks>
 internal class JsApiService : IJsApiService
 {
     private readonly IJSRuntime _jsRuntime;

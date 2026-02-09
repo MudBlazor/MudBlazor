@@ -18,8 +18,7 @@
   }
 
   .mud-slider-input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
     position: relative;
     display: block;
     width: 100%;
@@ -44,7 +43,6 @@
 
     @include slider-thumb {
       appearance: none;
-      -webkit-appearance: none;
       border: none;
       border-radius: 50%;
       cursor: pointer;

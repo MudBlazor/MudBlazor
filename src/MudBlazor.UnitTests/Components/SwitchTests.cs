@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Switch;
@@ -11,34 +12,76 @@ namespace MudBlazor.UnitTests.Components
     public class SwitchTest : BunitTest
     {
         [Test]
-        public async Task SwitchTest_KeyboardNavigation()
+        public async Task Switch_KeyboardNavigation()
         {
-            var comp = Context.Render<MudSwitch<bool>>();
+            var comp = Context.Render<MudSwitchBasicTest>();
+            var switchInstance = comp.FindComponent<MudSwitch<bool>>().Instance;
+            IElement MudSwitch() => comp.Find("#switch");
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "Delete", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "NumpadEnter", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(false));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(true));
+            await comp.InvokeAsync(() => MudSwitch().KeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
+        }
+
+        [Test]
+        public void Switch_AriaLabel()
+        {
+            var comp = Context.Render<SwitchAriaLabelTest>();
+            var switches = comp.FindAll(".mud-input-control-boolean-input");
+
+            // verify switch one maintains it's original structure, no aria class used, label with a span element
+            switches[0].GetElementsByClassName("mud-sr-only").Count().Should().Be(0);
+            var element0 = comp.Find(".s1 label.mud-switch span.mud-typography");
+            element0.HasAttribute("aria-hidden").Should().BeFalse();
+
+            // switch two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
+            switches[1].GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            var element1 = comp.Find(".s2 label.mud-switch span.mud-typography");
+            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            var input1 = comp.Find(".s2 label.mud-switch input");
+            var input1ForId = input1.GetAttribute("aria-labelledby");
+            comp.Find($".s2 label.mud-switch #{input1ForId}").Should().NotBeNull();
+
+            // switch three should have original structure intact, no aria class used, label with a span element for child content
+            switches[2].GetElementsByClassName("mud-sr-only").Count().Should().Be(0);
+            var element2 = comp.Find(".s3 label.mud-switch span.mud-typography");
+            element2.HasAttribute("aria-hidden").Should().BeFalse();
+
+            // switch four should look identical to two except this time it's with ChildContent
+            switches[3].GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            var element3 = comp.Find(".s4 label.mud-switch span.mud-typography");
+            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            var input3 = comp.Find(".s4 label.mud-switch input");
+            var input3ForId = input3.GetAttribute("aria-labelledby");
+            comp.Find($".s4 label.mud-switch #{input3ForId}").Should().NotBeNull();
+
+            // switch five has no label, no child content, just arialabel
+            switches[4].GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            comp.FindAll(".s5 label.mud-switch span.mud-typography").Count().Should().Be(0);
+            var input4 = comp.Find(".s5 label.mud-switch input");
+            var input4ForId = input4.GetAttribute("aria-labelledby");
+            comp.Find($".s5 label.mud-switch #{input4ForId}").Should().NotBeNull();
         }
 
         [Test]
@@ -51,7 +94,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Warning, Color.Dark)]
         [TestCase(Color.Error, Color.Primary)]
         [TestCase(Color.Dark, Color.Primary)]
-        public void SwitchColorTest(Color color, Color uncheckedcolor)
+        public async Task SwitchColor(Color color, Color uncheckedcolor)
         {
             var comp = Context.Render<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
 
@@ -60,23 +103,23 @@ namespace MudBlazor.UnitTests.Components
             var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
             box.ReadValue.Should().Be(false);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToStringFast(true)}-text", $"hover:mud-{uncheckedcolor.ToStringFast(true)}-hover" });
 
             // click and check if it has new color
-            comp.Find("input").Change(true);
+            await comp.Find("input").ChangeAsync(true);
             box.ReadValue.Should().Be(true);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToStringFast(true)}-text", $"hover:mud-{color.ToStringFast(true)}-hover" });
         }
 
         [Test]
-        public void SwitchDisabledTest()
+        public void SwitchDisabled()
         {
             var comp = Context.Render<SwitchWithLabelTest>();
             comp.FindAll("label.mud-switch")[3].ClassList.Should().Contain("mud-disabled"); // 4rd switch
         }
 
         [Test]
-        public void SwitchLabelPlacementTest()
+        public void SwitchLabelPlacement()
         {
             var comp = Context.Render<SwitchWithLabelTest>();
 
@@ -85,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwitchLabelTest()
+        public void SwitchLabel()
         {
             var value = new DisplayNameLabelClass();
 
@@ -134,7 +177,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
         }
-
 
         [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()

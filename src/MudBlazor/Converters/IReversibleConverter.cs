@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Extends <see cref="IConverter{TIn,TOut}"/> with the ability to convert values back from
 /// <typeparamref name="TOut"/> to <typeparamref name="TIn"/>.

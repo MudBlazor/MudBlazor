@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Combines <see cref="ParameterView"/> and <see cref="ParameterStateCollection"/> to provide
 /// complete information about parameter changes including current values and last values.

@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A grouping of values for a column in a <see cref="MudTable{T}"/>.

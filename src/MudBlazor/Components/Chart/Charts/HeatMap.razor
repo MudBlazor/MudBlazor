@@ -169,7 +169,7 @@
             </g>
 
             // XAxis Labels
-            var xAxisLabels = ChartLabels ?? [];
+            var xAxisLabels = ChartLabels;
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < xAxisLabels.Length)
             {
                 <g transform="translate(@((x + _cellDimension.Width / 2).ToStr()), @((y - CellPadding).ToStr()))">
@@ -348,7 +348,7 @@
             LabelX = x,
             LabelY = y,
             LabelXValue = ChartLabels.Length > _hoveredCell.Column ? ChartLabels[_hoveredCell.Column] : string.Empty,
-            LabelYValue = _hoveredCell.Value.ToString(),
+            LabelYValue = _hoveredCell.Value.ToString() ?? string.Empty,
         };
 
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(path) is { } pos
@@ -364,8 +364,8 @@
         else
         {
             var hoveredSeries = ChartSeries[_hoveredCell.Row];
-            var tooltipTitleFormat = hoveredSeries.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
-            var tooltipSubtitleFormat = hoveredSeries.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
+            var tooltipTitleFormat = hoveredSeries.TooltipTitleFormat ?? ChartOptions!.TooltipTitleFormat;
+            var tooltipSubtitleFormat = hoveredSeries.TooltipSubtitleFormat ?? ChartOptions!.TooltipSubtitleFormat;
 
             if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
             {

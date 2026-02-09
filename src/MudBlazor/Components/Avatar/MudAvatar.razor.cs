@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a component which displays circular user profile pictures, icons or text.
     /// </summary>
@@ -15,11 +14,11 @@ namespace MudBlazor
         protected MudAvatarGroup? AvatarGroup { get; set; }
 
         protected string Classname => new CssBuilder("mud-avatar")
-            .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
+            .AddClass($"mud-avatar-{Size.ToStringFast(true)}")
             .AddClass($"mud-avatar-rounded", Rounded)
             .AddClass($"mud-avatar-square", Square)
-            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+            .AddClass($"mud-avatar-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-avatar-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
             .AddClass($"mud-elevation-{Elevation.ToString()}")
             .AddClass(AvatarGroup?.GetAvatarSpacing() ?? new CssBuilder(), AvatarGroup != null)
             .AddClass(Class)

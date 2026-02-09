@@ -1,7 +1,14 @@
+// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 "use strict";
 
 // noinspection JSUnusedGlobalSymbols
-/** This is the companion class for the MudBlazor.MudHotkey component. */
+/**
+ * Companion interop for the MudHotkey component.
+ * Matches exact key-plus-modifier combinations to avoid accidental overlaps.
+ */
 class MudHotkeyListener {
     constructor() {
         this._EVENT_TYPE = "keydown";
@@ -11,16 +18,25 @@ class MudHotkeyListener {
         document.addEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
 
+    /**
+     * Releases global keyboard listeners.
+     */
     dispose() {
         document.removeEventListener(this._EVENT_TYPE, this._handleKeyEventBound);
     }
 
+    /**
+     * Registers a hotkey, or replaces an existing definition with the same hotkey ID.
+     */
     registerOrUpdateHotkey(dotnetRef, dotnetMethodId, hotkeyId, key, modifiers, preventDefault) {
         modifiers = modifiers || [];
         const newHotkey = this._createHotkey(dotnetRef, dotnetMethodId, hotkeyId, key, modifiers, preventDefault);
         this._hotkeys.set(hotkeyId, newHotkey);
     }
 
+    /**
+     * Removes a previously registered hotkey by ID.
+     */
     unregisterHotkey(hotkeyId) {
         if (this._hotkeys.has(hotkeyId)) {
             this._hotkeys.delete(hotkeyId);
@@ -49,6 +65,7 @@ class MudHotkeyListener {
 
             const allModifiersPressed = [...hotkey.modifiers].every(m => pressedModifiers.has(m));
             const noExtraModifiersPressed = [...pressedModifiers].every(m => hotkey.modifiers.has(m));
+            // Require an exact modifier match so broader shortcuts do not shadow more specific ones.
             if (allModifiersPressed && noExtraModifiersPressed) {
                 if (hotkey.preventDefault) {
                     e.preventDefault();
@@ -65,6 +82,7 @@ class MudHotkeyListener {
                     });
                 }
 
+                // Stop at first match to preserve deterministic registration order.
                 break;
             }
         }

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
-#nullable enable
 public class MultiDimensionSwipeEventArgs
 {
     /// <summary>

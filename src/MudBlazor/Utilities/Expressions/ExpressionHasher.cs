@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace MudBlazor.Utilities.Expressions;
-#nullable enable
+
 internal static class ExpressionHasher
 {
     private const int NullHashCode = 0x61E04917;

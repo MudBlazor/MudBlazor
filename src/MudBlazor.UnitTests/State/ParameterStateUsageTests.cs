@@ -29,7 +29,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public void SharedHandlerIntegrationTest()
+    public void SharedHandlerIntegration()
     {
         var comp = Context.Render<ParameterStateSharedHandlerTestComp>();
 
@@ -54,7 +54,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public void InheritanceIntegrationTest()
+    public void InheritanceIntegration()
     {
         var comp = Context.Render<ParameterStateSharedInheritanceHandlerTestComp>();
 
@@ -79,7 +79,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public void EventArgsIntegrationTest()
+    public void EventArgsIntegration()
     {
         var comp = Context.Render<ParameterStateEventArgsTestComp>();
         comp.Find(".parameter-changes").Children.Length.Should().Be(0);
@@ -92,7 +92,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task StaticComparerIntegrationTest()
+    public async Task StaticComparerIntegration()
     {
         var comp = Context.Render<ParameterStateComparerStaticTestComp>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
@@ -110,7 +110,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task SwapComparerInSequenceIntegrationTest()
+    public async Task SwapComparerInSequenceIntegration()
     {
         var comp = Context.Render<ParameterStateComparerSwapTestComp>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
@@ -128,7 +128,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when the associated value and comparer change at same time.")]
-    public async Task SwapComparerAtSameTimeIntegrationTest()
+    public async Task SwapComparerAtSameTimeIntegration()
     {
         var comp = Context.Render<ParameterStateComparerSwapTestComp>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
@@ -145,7 +145,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public void GetStateTestIntegrationTest()
+    public void GetStateTestIntegration()
     {
         var comp = Context.Render<ParameterStateEventArgsTestComp>();
         IElement IncrementButton() => comp.Find("button.increment-int-param");
@@ -166,7 +166,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public void GetStateTestFailureIntegrationTest()
+    public void GetStateTestFailureIntegration()
     {
         var comp = Context.Render<ParameterStateEventArgsTestComp>();
         IRenderedComponent<ParameterStateTestComp> StateComponent() => comp.FindComponent<ParameterStateTestComp>();
@@ -191,7 +191,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task Child_TwoWayBinding_Test()
+    public async Task Child_TwoWayBinding()
     {
         var expanded = false;
 
@@ -251,7 +251,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task Child_EventCallBackOnly_Test()
+    public async Task Child_EventCallBackOnly()
     {
         var callBackEvents = new List<bool>();
         Action<bool> expandedCallBack = value => { callBackEvents.Add(value); };
@@ -304,7 +304,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task Parent_TwoWayBinding_Test()
+    public async Task Parent_TwoWayBinding()
     {
         var comp = Context.Render<ParameterStateParentBindingTestComp>();
 
@@ -508,7 +508,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public async Task ParentChild_IsChildOriginatedChange_Test()
+    public async Task ParentChild_IsChildOriginatedChange()
     {
         var comp = Context.Render<ParameterStateChildParentTestComp>();
         IElement ButtonParent() => comp.Find("#parentBtn");
@@ -658,7 +658,6 @@ public class ParameterStateUsageTests : BunitTest
         child2.Instance.TextChanges.Count.Should().Be(10);
         child2.Instance.ValueChanges.Count.Should().Be(6);
 
-
         // Change History of child2
         // ButtonSetValueNullText
         child2.Instance.TextChanges[0].Value!.Should().Be("#fcefe5");
@@ -679,7 +678,6 @@ public class ParameterStateUsageTests : BunitTest
         child2.Instance.TextChanges[5].Value!.Should().Be("#662f18");
         child2.Instance.TextChanges[6].Value!.Should().Be("#30102a");
         child2.Instance.ValueChanges[4].Value!.ToString(MudColorOutputFormats.Hex).Should().Be("#30102a");
-
 
         // Change History of child1
         // ButtonSetValueNullText

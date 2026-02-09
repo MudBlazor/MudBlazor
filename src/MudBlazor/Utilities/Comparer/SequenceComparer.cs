@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Comparer;
 
-#nullable enable
 
 /// <summary>
 /// Compares two sequences element-by-element using a specified element comparer.
@@ -34,16 +33,7 @@ internal class SequenceComparer<T> : IEqualityComparer<IEnumerable<T?>?>
         if (ReferenceEquals(x, y)) return true;
         if (x is null || y is null) return false;
 
-        using var e1 = x.GetEnumerator();
-        using var e2 = y.GetEnumerator();
-
-        while (true)
-        {
-            var m1 = e1.MoveNext();
-            var m2 = e2.MoveNext();
-            if (!m1 || !m2) return m1 == m2;
-            if (!_elementComparer.Equals(e1.Current, e2.Current)) return false;
-        }
+        return x.SequenceEqual(y, _elementComparer);
     }
 
     /// <summary>

@@ -559,7 +559,6 @@ namespace MudBlazor.UnitTests.Components
             thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
             thirdDropZone.ClassList.Should().Contain("no-drop-class-from-container");
 
-
             //enter second drop zone
             await secondDropZone.DragEnterAsync(new DragEventArgs());
 
@@ -1250,9 +1249,8 @@ namespace MudBlazor.UnitTests.Components
             secondDropItemText.Should().Be("Second Item");
         }
 
-
         [Test]
-        public async Task DropZone_IsOriginTest()
+        public async Task DropZone_IsOrigin()
         {
             var comp = Context.Render<DropzoneBasicTest>();
 
@@ -1272,7 +1270,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DropZone_GetTransactionOriginZoneIdentifierTest()
+        public async Task DropZone_GetTransactionOriginZoneIdentifier()
         {
             var comp = Context.Render<DropzoneBasicTest>();
 

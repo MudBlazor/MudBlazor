@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A clickable item as part of a <see cref="MudRating"/>.
@@ -24,7 +23,7 @@ namespace MudBlazor
             new CssBuilder("mud-rating-item")
                 .AddClass("mud-ripple mud-ripple-icon", Ripple)
                 .AddClass("yellow-text.text-darken-3", Color == Color.Default)
-                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
+                .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default)
                 .AddClass("mud-rating-item-active", Active)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-readonly", ReadOnly)

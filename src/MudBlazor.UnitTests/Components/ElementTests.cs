@@ -48,10 +48,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ElementReferenceCapture()
+        public async Task ElementReferenceCapture()
         {
             var comp = Context.Render<ElementReferenceExceptionTest>();
-            comp.Find("#element-button").Click();
+            await comp.Find("#element-button").ClickAsync();
         }
     }
 }

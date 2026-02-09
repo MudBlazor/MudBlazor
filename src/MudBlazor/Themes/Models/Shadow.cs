@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the typography settings for Shadow.
     /// </summary>

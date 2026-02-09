@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Provides access to menu operations for external components and custom activators.

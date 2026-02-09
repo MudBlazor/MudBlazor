@@ -69,12 +69,32 @@ public class SplitPanelTests : BunitTest
     }
 
     [Test]
-    public async Task ExecutesResetSizesJsCall()
+    public async Task ExecutesResetDividerPositionJsCall()
     {
         var comp = Context.Render<SplitPanelTest>();
-        await comp.Instance.ResetSizesAsync();
+        await comp.Instance.ResetDividerPositionAsync();
 
-        var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_resetSizes");
+        var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_resetDividerPosition");
+        invocation.Arguments.Count.Should().Be(1);
+    }
+
+    [Test]
+    public async Task ExecutesSetDividerPositionJsCall()
+    {
+        var comp = Context.Render<SplitPanelTest>();
+        await comp.Instance.SetDividerPositionAsync(123);
+
+        var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_setDividerPosition");
+        invocation.Arguments.Count.Should().Be(2);
+    }
+
+    [Test]
+    public async Task ExecutesGetDividerPositionJsCall()
+    {
+        var comp = Context.Render<SplitPanelTest>();
+        await comp.Instance.GetDividerPositionAsync();
+
+        var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_getDividerPosition");
         invocation.Arguments.Count.Should().Be(1);
     }
 }

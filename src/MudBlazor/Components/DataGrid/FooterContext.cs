@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Represents the current state of a footer in a <see cref="MudDataGrid{T}"/>.
@@ -37,6 +36,11 @@ namespace MudBlazor
         /// The behaviors which can be performed on this footer.
         /// </summary>
         public FooterActions Actions { get; }
+
+        /// <summary>
+        /// Indicates whether the data grid supports multiple selection.
+        /// </summary>
+        public bool IsMultiSelection => _dataGrid.MultiSelection;
 
         /// <summary>
         /// Indicates whether all values are currently selected.

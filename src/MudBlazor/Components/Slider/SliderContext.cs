@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The current state of a <see cref="MudSlider{T}"/> component, containing both the value and nullable value.

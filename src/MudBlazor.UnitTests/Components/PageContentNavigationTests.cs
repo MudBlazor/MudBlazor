@@ -1,5 +1,4 @@
 ﻿
-
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
@@ -14,11 +13,11 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class PageContentNavigationTests : BunitTest
     {
+        [SetUp]
         public override void Setup()
         {
             base.Setup();
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), new MockScrollSpyFactory()));
-
         }
 
         [Test]
@@ -146,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NavigateBySections()
+        public async Task NavigateBySections()
         {
             var spyMock = new MockScrollSpy();
 
@@ -164,12 +163,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.AddSection(section2, false);
             comp.Instance.AddSection(section3, false);
 
-            comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
+            await comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
 
             for (var i = 0; i < 3; i++)
             {
                 var navLinks = comp.FindComponents<MudNavLink>();
-                navLinks[i].Find(".mud-nav-link").Click();
+                await navLinks[i].Find(".mud-nav-link").ClickAsync();
 
                 comp.Instance.ActiveSection.Should().Be(sections[i]);
                 navLinks = comp.FindComponents<MudNavLink>();

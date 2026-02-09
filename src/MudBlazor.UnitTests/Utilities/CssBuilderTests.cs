@@ -111,7 +111,6 @@ namespace UtilityTests
                             .AddClass("item-five", when: HasFive)
                             .Build();
 
-
             // Assert
             classToRender.Should().Be("item-one item-three item-four");
         }
@@ -335,30 +334,6 @@ namespace UtilityTests
 
             // Assert
             classToRender.Should().Be("item-one");
-        }
-
-        [Test]
-        public void AddClass_ShouldNotBeNullWithDefaultStruct()
-        {
-            // Arrange
-            var cssBuilder = default(CssBuilder);
-
-            // Act
-            cssBuilder.AddClass("test-class");
-            cssBuilder.AddClass("test-class-2");
-
-            // Assert
-            cssBuilder.Build().Should().Be("test-class test-class-2");
-        }
-
-        [Test]
-        public void Build_ShouldNotBeNullWithDefaultStruct()
-        {
-            // Arrange
-            var cssBuilder = default(CssBuilder);
-
-            // Assert
-            cssBuilder.Build().Should().Be("");
         }
     }
 }

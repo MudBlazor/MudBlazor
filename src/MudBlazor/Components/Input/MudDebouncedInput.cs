@@ -4,7 +4,6 @@ using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A base class for designing input components which update after a delay.
     /// </summary>
@@ -21,6 +20,9 @@ namespace MudBlazor
                 .WithComparer(DoubleEpsilonEqualityComparer.Default)
                 .WithChangeHandler(OnDebounceIntervalChangedAsync);
         }
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         /// <summary>
         /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
@@ -100,7 +102,7 @@ namespace MudBlazor
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {
-                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value));
+                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value), false, TimeProvider);
             }
             else
             {

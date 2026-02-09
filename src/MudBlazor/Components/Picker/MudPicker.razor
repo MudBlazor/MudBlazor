@@ -4,7 +4,6 @@
 
 @code
 {
-#nullable enable
     protected virtual RenderFragment? InputContent =>
         // note: Mask needs to remain before Text!
         @<MudTextField T="string"
@@ -35,23 +34,22 @@
                        Error="@ErrorState.Value"
                        ErrorText="@ErrorTextState.Value"
                        Clearable="@(Clearable && !GetReadOnlyState())"
+                       ClearIcon="@ClearIcon"
                        OnClearButtonClick="@(async () => await ClearAsync())"
                        ShrinkLabel="@ShrinkLabel"
                        KeyDownPreventDefault="Open"
                        InputId="@InputId"
                        @onclick="OnClickAsync" />;
 
-#nullable enable
     /// <summary>
     /// Gets the content to be rendered inside the picker.
     /// Override this property to provide custom content for the picker.
     /// </summary>
     protected virtual RenderFragment? PickerContent => null;
 
-#nullable enable
     protected virtual RenderFragment? Render =>
         @<CascadingValue Value="@this" IsFixed="true">
-            <div class="@PickerClassname" id="@_elementId">
+            <div class="@PickerClassname" id="@ElementId">
                 @if (PickerVariant != PickerVariant.Static)
                 {
                     <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">

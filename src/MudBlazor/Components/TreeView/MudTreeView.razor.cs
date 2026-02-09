@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// An extensively customizable tree view component for displaying hierarchical data, featuring item selection, lazy-loading, and templating support.
     /// </summary>
@@ -59,8 +58,8 @@ namespace MudBlazor
             new CssBuilder("mud-treeview")
                 .AddClass("mud-treeview-dense", Dense)
                 .AddClass("mud-treeview-hover", !Disabled && Hover && (!ReadOnly || ExpandOnClick))
-                .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
-                .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
+                .AddClass($"mud-treeview-selected-{Color.ToStringFast(true)}")
+                .AddClass($"mud-treeview-checked-{CheckBoxColor.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 
@@ -309,7 +308,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T?>>>>? ServerData { get; set; }
+        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T>>>>? ServerData { get; set; }
 
         /// <summary>
         /// Prevents selections from being changed.

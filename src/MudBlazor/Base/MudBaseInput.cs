@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.State;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a base class for designing form input components.
     /// </summary>
@@ -37,12 +35,6 @@ namespace MudBlazor
 
         protected MudBaseInput()
         {
-            Converter = new DefaultConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
-
             using var registerScope = CreateRegisterScope();
             _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
@@ -582,21 +574,7 @@ namespace MudBlazor
         /// <summary>
         /// Override to write Value to ParameterState instead of backing field.
         /// </summary>
-        protected override Task SetValueAsync(T? value) => _valueState.SetValueAsync(value);
-
-        /// <summary>
-        /// Sets the value, values, and text, and calls validation.
-        /// </summary>
-        /// <remarks>
-        /// This method is typically called when the user has changed the <see cref="Value"/> or <see cref="Text"/> programmatically.
-        /// </remarks>
-        /// <returns>
-        /// A <see cref="Task"/> object.
-        /// </returns>
-        public virtual Task ForceUpdate()
-        {
-            return SetValueAndUpdateTextAsync(ReadValue, force: true);
-        }
+        protected override Task SetValueCoreAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// Occurs when the value has changed internally.
@@ -611,12 +589,24 @@ namespace MudBlazor
 
         protected override string? GetFormat() => _formatState.Value;
 
+        /// <inheritdoc />
+        protected override IConverter<T?, string?> GetDefaultConverter()
+        {
+            return new DefaultConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
+
+        /// <inheritdoc />
         protected override async Task OnCultureAndFormatChangedAsync()
         {
             await base.OnCultureAndFormatChangedAsync();
             await UpdateTextPropertyAsync(false);
         }
 
+        /// <inheritdoc />
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();
@@ -762,11 +752,11 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.
         /// </remarks>
-        internal virtual InputType GetInputType() => InputType.Text;
+        protected internal virtual InputType GetInputType() => InputType.Text;
 
         protected internal string? ReadText => _textState.Value;
 
-        protected Task SetTextAsync(string? text) => _textState.SetValueAsync(text);
+        protected Task SetTextCoreAsync(string? text) => _textState.SetValueAsync(text);
 
         protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {

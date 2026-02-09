@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Clone;
 
-#nullable enable
 /// <summary>
 /// Represents an interface for resolving deep copy operations for objects of type <typeparamref name="T"/>.
 /// </summary>

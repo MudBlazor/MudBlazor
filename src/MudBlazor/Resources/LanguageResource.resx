@@ -348,6 +348,9 @@
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
     <value>Contents</value>
   </data>
+  <data name="MudTable_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
   <data name="MudTablePager_FirstPage" xml:space="preserve">
     <value>First page</value>
   </data>

@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable enable
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -11,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// A wizard that guides the user through a series of steps to complete a transaction.
+/// Guides users through a series of steps to complete a transaction, such as forms or wizards.
 /// </summary>
 public partial class MudStepper : MudComponentBase
 {

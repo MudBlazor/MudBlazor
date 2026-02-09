@@ -9,10 +9,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// Represents a set of multiple <see cref="MudChip{T}"/> components.
+/// A collection of multiple <see cref="MudChip{T}"/> components that allows single or multi-selection.
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
 /// <seealso cref="MudChip{T}"/>

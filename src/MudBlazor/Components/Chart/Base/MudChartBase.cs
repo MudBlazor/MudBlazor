@@ -8,7 +8,6 @@ using MudBlazor.Charts;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor;
 
 /// <summary>
@@ -92,7 +91,6 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     [Category(CategoryTypes.Chart.Appearance)]
     public RenderFragment? ChildContent { get; set; }
 
-
     /// <summary>
     /// The type of chart to display.
     /// </summary>
@@ -173,7 +171,7 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     /// The CSS classes for the chart component.
     /// </summary>
     protected string Classname => new CssBuilder("mud-chart")
-        .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}")
+        .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToStringFast(true)}")
         .AddClass(Class)
         .Build();
 

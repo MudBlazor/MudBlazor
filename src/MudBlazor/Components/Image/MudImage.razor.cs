@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A simple component that displays an image.
@@ -30,8 +29,8 @@ public partial class MudImage : MudComponentBase
     protected string Classname =>
         new CssBuilder("mud-image")
             .AddClass("fluid", Fluid)
-            .AddClass($"object-{ObjectFit.ToDescriptionString()}")
-            .AddClass($"object-{ObjectPosition.ToDescriptionString()}")
+            .AddClass($"object-{ObjectFit.ToStringFast(true)}")
+            .AddClass($"object-{ObjectPosition.ToStringFast(true)}")
             .AddClass($"mud-elevation-{Elevation}", Elevation > 0)
             .AddClass(Class)
             .Build();

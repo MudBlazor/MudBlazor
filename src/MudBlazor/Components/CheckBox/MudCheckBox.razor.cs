@@ -5,12 +5,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a form input for boolean values or selecting multiple items in a list.
+    /// A form input for boolean values or selecting multiple items in a list. Use checkboxes (instead of switches or radio buttons) if multiple options can be selected from a list.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
     /// <seealso cref="MudRadio{T}"/>
+    /// <seealso cref="MudSwitch{T}"/>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         private readonly string _elementId = Identifier.Create("checkbox");
@@ -29,12 +29,12 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToStringFast(true)}")
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
-            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
             .AddClass($"mud-disabled", GetDisabledState())
@@ -154,64 +154,7 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
-        {
-            if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
-            {
-                return;
-            }
-
-            switch (obj.Key)
-            {
-                case "Delete":
-                    await SetBoolValueAsync(false, true);
-                    break;
-                case "Enter" or "NumpadEnter":
-                    await SetBoolValueAsync(true, true);
-                    break;
-                case "Backspace":
-                    if (TriState)
-                    {
-                        await SetBoolValueAsync(null, true);
-                    }
-
-                    break;
-                case " ":
-                    switch (BoolValue)
-                    {
-                        case null:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                        case true:
-                            await SetBoolValueAsync(false, true);
-                            break;
-                        case false when TriState:
-                            await SetBoolValueAsync(null, true);
-                            break;
-                        case false:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                    }
-
-                    break;
-            }
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            if (Label is null && For is not null)
-            {
-                Label = For.GetLabelString();
-            }
-            // if Aria Label has a value add aria-labeled by
-            if (!string.IsNullOrWhiteSpace(AriaLabel))
-            {
-                // we use try add in case the user has already set an aria-labelledby attribute
-                UserAttributes.TryAdd("aria-labelledby", _ariaId);
-            }
-        }
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -227,7 +170,12 @@ namespace MudBlazor
                         new("Backspace", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDown("Backspace", HandleBackspaceAsync)
+                        .OnKeyDown(" ", HandleSpaceAsync)));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -246,11 +194,28 @@ namespace MudBlazor
             {
                 return BoolValue is not null;
             }
-            else
-            {
-                return base.HasValue(value);
-            }
+
+            return base.HasValue(value);
         }
+
+        private bool CanHandleKeys() => KeyboardEnabled && !GetDisabledState() && !GetReadOnlyState();
+
+        private Task HandleSpaceAsync()
+        {
+            bool? nextValue = BoolValue switch
+            {
+                null => true,
+                true => false,
+                false when TriState => null,
+                false => true
+            };
+
+            return SetBoolValueAsync(nextValue, true);
+        }
+
+        private Task HandleBackspaceAsync() => TriState
+                ? SetBoolValueAsync(null, true)
+                : Task.CompletedTask;
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

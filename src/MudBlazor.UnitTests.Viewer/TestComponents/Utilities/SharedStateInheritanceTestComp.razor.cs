@@ -92,7 +92,6 @@ public partial class SharedStateInheritanceTestComp : AnotherComponentBase
     private readonly ParameterState<int> _x;
     private readonly ParameterState<int> _y;
 
-
     [Parameter]
     public int B { get; set; }
 

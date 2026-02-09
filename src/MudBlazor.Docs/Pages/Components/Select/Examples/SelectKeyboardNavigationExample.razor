@@ -7,8 +7,8 @@
     <MudSelectItem Value="@("Irish Coffee")" />
 </MudSelect>
 
-<MudSelect T="string" Label="US States" HelperText="Pick your favorite states with keys" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
-    @foreach (var state in states)
+<MudSelect T="string" Label="US States" HelperText="Pick your favorite states with keys" MultiSelection="true" @bind-Value="_value" @bind-SelectedValues="_options">
+    @foreach (var state in _states)
     {
         <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
     }
@@ -16,11 +16,11 @@
 
 @code {
 
-    private string value { get; set; } = "Nothing selected";
-    private IEnumerable<string> options { get; set; } = new List<string>() { "Alaska" };
+    private string _value = "Nothing selected";
+    private IReadOnlyCollection<string> _options = ["Alaska"];
 
-    private string[] states =
-    {
+    private readonly string[] _states =
+    [
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
         "Delaware", "District of Columbia", "Federated States of Micronesia",
@@ -34,6 +34,6 @@
         "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
 }

@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A drawer used to navigate sections on a page.

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Utility class for opting out of rerendering in Blazor when an EventCallback is invoked.
 /// By default, components inherit from ComponentBase, which automatically invokes StateHasChanged

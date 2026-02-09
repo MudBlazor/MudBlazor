@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the chip and tests if the OnClick event works
         /// </summary>
         [Test]
-        public void Chip_OnClick()
+        public async Task Chip_OnClick()
         {
             var comp = Context.Render<ChipOnClickTest>();
             // print the generated html
@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on chip
-            chip.Click();
+            await chip.ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClick");
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the close button and tests if the OnClose event works
         /// </summary>
         [Test]
-        public void Chip_OnClose()
+        public async Task Chip_OnClose()
         {
             var comp = Context.Render<ChipOnClickTest>();
             // print the generated html
@@ -144,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on close button
-            comp.Find("button.mud-chip-close-button").Click();
+            await comp.Find("button.mud-chip-close-button").ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");

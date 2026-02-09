@@ -6,10 +6,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A scrollable list for displaying text, avatars, and icons.
+    /// A scrollable list for displaying text, avatars, and icons. Use lists to help users find a specific item and act on it.
     /// </summary>
     /// <remarks>
     /// This component contains an optional <see cref="MudListSubheader"/> and one or more <see cref="MudListItem{T}"/>.

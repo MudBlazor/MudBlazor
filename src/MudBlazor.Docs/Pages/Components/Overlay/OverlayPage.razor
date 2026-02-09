@@ -20,14 +20,14 @@
                         <CodeInline>ZIndex</CodeInline> defaults to <CodeInline>5</CodeInline>.
                     </li>
                     <li>
-                        The <CodeInline Tag="true">MudOverlay</CodeInline> does not cover high-priority elements like the <CodeInline Tag="true">MudAppBar</CodeInline> 
-                        or <CodeInline Tag="true">MudDrawer</CodeInline> when used alone as they render above overlays due to 
+                        The <CodeInline Tag="true">MudOverlay</CodeInline> does not cover high-priority elements like the <CodeInline Tag="true">MudAppBar</CodeInline>
+                        or <CodeInline Tag="true">MudDrawer</CodeInline> when used alone as they render above overlays due to
                         <MudLink Href="/customization/default-theme#mudtheme-zindex">theme-level defaults</MudLink>.
                     </li>
                     <li>
-                        Unless excluded, the <CodeInline Tag="true">MudOverlay</CodeInline> is scaffolded globally via the <CodeInline Tag="true">MudPopoverProvider</CodeInline>, 
-                        meaning only one overlay instance is active at a time. When scaffolded alongside a <CodeInline Tag="true">MudPopover</CodeInline> 
-                        the overlay is assigned a ZIndex exactly one less than the popover so the popover remains interactive and visually above the overlay. 
+                        Unless excluded, the <CodeInline Tag="true">MudOverlay</CodeInline> is scaffolded globally via the <CodeInline Tag="true">MudPopoverProvider</CodeInline>,
+                        meaning only one overlay instance is active at a time. When scaffolded alongside a <CodeInline Tag="true">MudPopover</CodeInline>
+                        the overlay is assigned a ZIndex exactly one less than the popover so the popover remains interactive and visually above the overlay.
                     </li>
                 </ul>
             </MudText>
@@ -103,6 +103,7 @@
           <SectionHeader Title="Positioning">
             <Description>
               By default, <CodeInline>MudOverlay</CodeInline> is scaffolded into the <CodeInline>MudPopoverProvider</CodeInline>, producing a singleton stack where the most recently created overlay sits on top and stacks back down in reverse creation order as overlays close.
+	              In this context, an "overlay view" simply means a scaffolded overlay instance (the scrim/backdrop) that gets added to the stack by a component such as a popover, menu, or select.
               <MudAlert Dense Severity="Severity.Info">The scaffolded ZIndex will be the higher value between the explicit `ZIndex` parameter and the internally calculated value. This means an explicit `ZIndex` does not automatically override the scaffolded value if the latter is higher.</MudAlert>
               <ul class="bullet-list">
                 <li>Set <CodeInline>Absolute="true"</CodeInline> to scope the overlay to its parent (excluded from scaffolding).</li>
