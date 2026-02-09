@@ -65,6 +65,8 @@
 
     private void UploadFiles(IReadOnlyList<IBrowserFile> files)
     {
+        if (files == null)
+            return;
         foreach (var file in files)
         {
             _files.Add(file);
