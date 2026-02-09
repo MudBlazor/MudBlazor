@@ -99,7 +99,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Download coverage report
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
 
       - name: Publish coverage
         uses: codecov/codecov-action@v5
