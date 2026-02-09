@@ -76,9 +76,14 @@ jobs:
       - name: Test ${{ matrix.project-path }}
         run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
 
+      - name: Extract project name
+        id: project
+        run: echo "name=${{ matrix.project-path##*/ }}" >> $GITHUB_OUTPUT
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v6
         with:
+          name: coverage-report-${{ steps.project.outputs.name }}
           path: |
             ${{ matrix.project-path }}/TestResults/coverage.cobertura.xml
             ${{ matrix.project-path }}/junit.xml
