@@ -26,7 +26,7 @@ public class ParameterStateAnalyzerTests
         Assert.That(supportedDiagnostics, Has.Length.EqualTo(3));
         Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0010"));
         Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0011"));
-        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0012"));
+        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0013"));
     }
 
     [Test]
