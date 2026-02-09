@@ -447,6 +447,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensures the default drag-and-drop activator uses a semantic button.
+        /// </summary>
+        [Test]
+        public void FileUpload_DragAndDrop_DefaultActivator_Should_Render_Button()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.DragAndDrop, true));
+
+            var dragAreaButton = comp.Find("button.mud-file-upload-dragarea");
+            dragAreaButton.GetAttribute("type").Should().Be("button");
+        }
+
+        /// <summary>
+        /// Ensures clicking the default drag-and-drop activator opens the native file picker.
+        /// </summary>
+        [Test]
+        public async Task FileUpload_DragAndDrop_DefaultActivator_Click_Should_OpenFilePicker()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.DragAndDrop, true));
+
+            await comp.Find("button.mud-file-upload-dragarea").ClickAsync();
+
+            Context.JSInterop.Invocations.Should().ContainSingle(invocation => invocation.Identifier == "mudFileUpload.openFilePicker");
+        }
+
+        /// <summary>
+        /// Ensures the default drag-and-drop activator reflects disabled state.
+        /// </summary>
+        [Test]
+        public void FileUpload_DragAndDrop_DefaultActivator_Should_Respect_Disabled_State()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.DragAndDrop, true)
+                .Add(x => x.Disabled, true));
+
+            var dragAreaButton = comp.Find("button.mud-file-upload-dragarea");
+            dragAreaButton.HasAttribute("disabled").Should().BeTrue();
+            dragAreaButton.ClassList.Should().NotContain("mud-file-upload-dragarea-clickable");
+        }
+
+        /// <summary>
         /// Tests RemoveFileAsync functionality for single file
         /// </summary>
         [Test]

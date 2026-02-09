@@ -31,13 +31,14 @@
         {
             @if (DragAndDrop)
             {
-                <MudPaper Outlined="true"
-                          @onclick="OnDragAreaClickAsync"
-                          @ondragenter="OnDragEnterAsync"
-                          Class="@DragClass">
+                <button type="button"
+                        class="@DragClass"
+                        disabled="@GetDisabledState()"
+                        @onclick="OnDragAreaClickAsync"
+                        @ondragenter="OnDragEnterAsync">
                     <MudIcon Disabled="GetDisabledState()" Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
-                    <MudText Color="@(GetDisabledState() ? Color.Default : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
-                </MudPaper>
+                    <MudText Color="@(GetDisabledState() ? Color.Inherit : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
+                </button>
             }
             else
             {

@@ -53,6 +53,7 @@ namespace MudBlazor
 
         protected string DragClass =>
             new CssBuilder("mud-file-upload-dragarea")
+                .AddClass("mud-file-upload-dragarea-clickable", !GetDisabledState())
                 .AddClass("mud-border-primary", _draggingState.Value)
                 .Build();
 
