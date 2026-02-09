@@ -29,7 +29,7 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     private InternalMudLocalizer Localizer { get; set; } = null!;
 
     /// <summary>
-    /// The title of the message box to show on exit.
+    /// The title shown in the confirmation dialog.
     /// </summary>
     /// <remarks>
     /// Defaults to the localized version of <i>"Confirm navigation"</i>.
@@ -38,7 +38,7 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     public string? Title { get; set; }
 
     /// <summary>
-    /// The text to show on exit.
+    /// The message shown in the confirmation dialog.
     /// </summary>
     /// <remarks>
     /// Defaults to the localized version of <i>"Leave site? Changes you made may not be saved."</i>.
@@ -47,18 +47,22 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     public string? Text { get; set; }
 
     /// <summary>
-    /// Disables the exit prompt.
+    /// Disables exit prompt protection.
     /// </summary>
     /// <remarks>
+    /// When set to <c>true</c>, navigation proceeds without confirmation and JS unload protection is removed.
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter, Category(CategoryTypes.ExitPrompt.Behavior)]
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Uses the browser's native prompt instead of the message box.
+    /// Uses the browser's native confirmation prompt for in-app navigation.
     /// </summary>
     /// <remarks>
+    /// When <c>false</c>, navigation inside the app uses a MudBlazor message box with <see cref="Title"/> and <see cref="Text"/>.
+    /// When <c>true</c>, in-app navigation uses the browser <c>confirm</c> dialog and <see cref="Title"/> is ignored.
+    /// Tab close, refresh, and direct URL navigation always use the browser's native unload prompt.
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter, Category(CategoryTypes.ExitPrompt.Behavior)]
