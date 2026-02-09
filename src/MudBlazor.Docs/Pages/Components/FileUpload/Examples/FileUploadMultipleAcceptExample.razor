@@ -1,22 +1,27 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudGrid>
-    <MudItem md="4">
-        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+    <MudItem md="12">
+        <MudStack Row Wrap="Wrap.Wrap" Spacing="8" AlignItems="AlignItems.Center">
             <MudText Typo="Typo.h6">Multiple files</MudText>
-            <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles" />
-        </MudStack>
-    </MudItem>
-    <MudItem md="4">
-        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudFileUpload @ref="@_fileUploadMultiple" 
+                           @bind-Files="_filesMultiple" 
+                           SelectedTemplate="@(files => builder => { })"
+                           AppendMultipleFiles />
+
             <MudText Typo="Typo.h6">Single .pdf file</MudText>
-            <MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2" />
-        </MudStack>
-    </MudItem>
-    <MudItem md="4">
-        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudFileUpload @ref="@_fileUploadPDF"
+                           T="IBrowserFile"
+                           Accept=".pdf"
+                           @bind-Files="_filesPDF"
+                           SelectedTemplate="@(files => builder => { })" />
+
             <MudText Typo="Typo.h6">Images only</MudText>
-            <MudFileUpload @ref="@_fileUpload" T="IReadOnlyList<IBrowserFile>" Accept=".png, .jpg, .tiff" FilesChanged="UploadFiles" MaximumFileCount="100">
+            <MudFileUpload @ref="@_fileUploadImages" 
+                           @bind-Files="_filesImages" 
+                           Accept=".png, .jpg, .tiff" 
+                           AppendMultipleFiles 
+                           MaximumFileCount="100">
                 <CustomContent>
                     <MudButton Variant="Variant.Filled"
                                Color="Color.Primary"
@@ -25,68 +30,126 @@
                         Choose images
                     </MudButton>
                 </CustomContent>
-                <SelectedTemplate Context="fileValues">
-                    @if (fileValues != null)
-                    {
-                        @foreach (var file in fileValues)
-                        {
-                            <MudTooltip Color="Color.Tertiary">
-                                <ChildContent>
-                                    <MudChip T="string"
-                                             Color="Color.Secondary"
-                                             Disabled="@(_fileUpload?.Disabled ?? false)"
-                                             Text="@file.Name"
-                                             CloseIcon="@Icons.Material.Outlined.Close"
-                                             OnClose="@(async () => await RemoveFileAsync(file.Name))"
-                                             tabindex="-1" />
-                                </ChildContent>
-                                <TooltipContent>
-                                    <code>@file.Size bytes</code>
-                                </TooltipContent>
-                            </MudTooltip>
-                        }
-                    }
-                </SelectedTemplate>
+                <SelectedTemplate />
             </MudFileUpload>
         </MudStack>
     </MudItem>
-    @if (_files != null)
-    {
-        <MudItem md="12" Class="d-flex justify-center">
-            <MudText Typo="@Typo.h6">Total files: @_files.Count()</MudText>
-        </MudItem>
-    }
+
+    <MudItem xs="12">
+        <MudPaper Class="pa-4">
+            <MudStack Spacing="2">
+                <MudExpansionPanels Elevation="0">
+                    <MudExpansionPanel Class="bold" Text="@($"({_files.Count}) files")" Expanded="false">
+                        @if (_files.Any())
+                        {
+                            <MudList T="IBrowserFile" Dense="true">
+                                @foreach (var file in _files)
+                                {
+                                    <MudListItem T="IBrowserFile" Value="file" @key="@file">
+                                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="1" Class="w-100">
+                                            <MudText>@file.Name (@($"{file.Size / 1024d:N1} kB"))</MudText>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                                           Color="Color.Default"
+                                                           Size="Size.Small"
+                                                           Disabled="_uploading"
+                                                           aria-label="Remove file"
+                                                           OnClick="@(() => RemoveFileFromUploadsAsync(file))" />
+                                        </MudStack>
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2">No files selected.</MudText>
+                        }
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Disabled="!_files.Any() || _uploading"
+                           OnClick="UploadFilesAsync"
+                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                    Upload
+                </MudButton>
+
+                @if (_uploading || _progress > 0)
+                {
+                    <MudProgressLinear Color="Color.Primary"
+                                       Value="_progress"
+                                       Indeterminate="_uploading && _files.Count == 0" />
+                    <MudText Typo="Typo.caption">@_statusText</MudText>
+                }
+            </MudStack>
+        </MudPaper>
+    </MudItem>
 </MudGrid>
 
 @code
 {
-    private readonly IList<IBrowserFile> _files = new List<IBrowserFile>();
-    private MudFileUpload<IReadOnlyList<IBrowserFile>> _fileUpload;
+#nullable enable
+    private IReadOnlyList<IBrowserFile> _filesMultiple = [];
+    private IBrowserFile? _filesPDF; 
+    private IReadOnlyList<IBrowserFile> _filesImages = [];
+    private IList<IBrowserFile> _files => (_filesMultiple ?? Enumerable.Empty<IBrowserFile>())
+        .Concat(_filesPDF != null ? new[] { _filesPDF } : Enumerable.Empty<IBrowserFile>()) 
+        .Concat(_filesImages ?? Enumerable.Empty<IBrowserFile>())
+        .ToList();
 
-    private void UploadFiles(IReadOnlyList<IBrowserFile> files)
+    private MudFileUpload<IReadOnlyList<IBrowserFile>> _fileUploadMultiple = default!;
+    private MudFileUpload<IBrowserFile> _fileUploadPDF = default!;
+    private MudFileUpload<IReadOnlyList<IBrowserFile>> _fileUploadImages = default!;
+
+    private bool _uploading;
+    private int _progress;
+    private string _statusText = "Waiting for files.";
+
+    private async Task UploadFilesAsync()
     {
-        if (files == null)
+        if (!_files.Any())
+        {
+            _statusText = "No files to upload.";
             return;
-        foreach (var file in files)
-        {
-            _files.Add(file);
         }
-        //TODO upload the files to the server
+
+        // Create a snapshot of the files to avoid altering the collection during iteration
+        var filesSnapshot = _files.ToList();
+
+        _uploading = true;
+        _progress = 0;
+        _statusText = "Uploading...";
+
+        var total = filesSnapshot.Count;
+        for (var index = 0; index < total; index++)
+        {
+            var file = filesSnapshot[index];
+            await Task.Delay(1000); // Simulate file upload
+            _progress = (int)Math.Round((index + 1d) / total * 100);
+            _statusText = index + 1 == total ? "Upload complete." : $"Uploading {index + 1} of {total}...";
+            await RemoveFileFromUploadsAsync(file);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        _uploading = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private async Task RemoveFileAsync(string file)
+    private async Task RemoveFileFromUploadsAsync(IBrowserFile file)
     {
-        _files.Remove(_files.FirstOrDefault(x => x.Name == file));
+        var fileUploads = new object[] { _fileUploadMultiple, _fileUploadPDF, _fileUploadImages };
 
-        if (_fileUpload is not null)
+        foreach (var fileUpload in fileUploads)
         {
-            await _fileUpload.RemoveFileAsync(file);
-        }
-    }
+            if (fileUpload is MudFileUpload<IReadOnlyList<IBrowserFile>> multipleUpload && await multipleUpload.RemoveFileAsync(file))
+            {
+                return; // File removed from multiple files upload
+            }
 
-    private void UploadFiles2(IBrowserFile file)
-    {
-        _files.Add(file);
-        //TODO upload the files to the server
+            if (fileUpload is MudFileUpload<IBrowserFile> singleUpload && await singleUpload.RemoveFileAsync(file))
+            {
+                return; // File removed from single file upload
+            }
+        }
     }
 }
