@@ -301,27 +301,62 @@ namespace MudBlazor
         /// Applies when <c>T</c> is <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
         /// </remarks>
         /// <param name="filename">The name of the file to remove.</param>
-        public async Task RemoveFileAsync(string filename)
+        /// <returns><c>true</c> if the file was removed; otherwise, <c>false</c> if it does not exist.</returns>
+        public async Task<bool> RemoveFileAsync(string filename)
         {
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                Logger.LogWarning("Attempted to remove a file with an invalid filename.");
+                return false;
+            }
+
             switch (_filesState.Value)
             {
                 case IBrowserFile singleFile when singleFile.Name == filename:
                     await _filesState.SetValueAsync(default); // Remove the single file by setting Files to null/default
-                    break;
+                    return true;
 
                 case IReadOnlyList<IBrowserFile> fileList:
                     var updatedList = fileList.Where(file => file.Name != filename).ToList();
+                    if (updatedList.Count == fileList.Count)
+                    {
+                        Logger.LogInformation("File '{Filename}' not found in the current selection.", filename);
+                        return false; // No file was removed
+                    }
+
                     if (updatedList.Count == 0)
                     {
-                        // When the last file is removed in multi-file mode, treat it as "no selection"
-                        await _filesState.SetValueAsync(default);
+                        await _filesState.SetValueAsync(default); // When the last file is removed, treat it as "no selection"
                     }
                     else
                     {
                         await _filesState.SetValueAsync((T)(object)updatedList); // Cast to T to update Files
                     }
-                    break;
+                    return true;
+
+                default:
+                    Logger.LogInformation("No files are currently selected.");
+                    return false;
             }
+        }
+
+        /// <summary>
+        /// Removes the specified file from <see cref="Files"/>.
+        /// </summary>
+        /// <remarks>
+        /// Applies when <c>T</c> is <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
+        /// </remarks>
+        /// <param name="file">The file to remove.</param>
+        /// <returns><c>true</c> if the file was removed; otherwise, <c>false</c> if it does not exist.</returns>
+        public async Task<bool> RemoveFileAsync(IBrowserFile file)
+        {
+            if (file == null)
+            {
+                Logger.LogWarning("Attempted to remove a null file.");
+                return false;
+            }
+
+            return await RemoveFileAsync(file.Name);
         }
 
         /// <summary>
