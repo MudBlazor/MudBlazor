@@ -50,7 +50,7 @@
             <SectionHeader Title="SelectedTemplate">
                 <Description>
                     Use <CodeInline>SelectedTemplate</CodeInline> to customize how selected files are rendered. If you want to suppress the default chip list,
-                    provide an empty <CodeInline>&lt;SelectedTemplate /&gt;</CodeInline>. The <CodeInline>&#64;context</CodeInline> parameter matches <CodeInline>T</CodeInline>.
+                    provide an empty <CodeInline>&lt;SelectedTemplate /&gt;</CodeInline> or <CodeInline>SelectedTemplate="&#64;(files => builder => { })"</CodeInline>. The <CodeInline>&#64;context</CodeInline> parameter matches <CodeInline>T</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadSelectedTemplateExample)">
