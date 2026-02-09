@@ -78,7 +78,9 @@ jobs:
 
       - name: Extract project name
         id: project
-        run: echo "name=${{ matrix.project-path##*/ }}" >> $GITHUB_OUTPUT
+        run: |
+          path="${{ matrix.project-path }}"
+          echo "name=${path##*/}" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v6
