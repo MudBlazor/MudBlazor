@@ -83,7 +83,7 @@ jobs:
           echo "name=${path##*/}" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v6
         with:
           name: coverage-report-${{ steps.project.outputs.name }}
@@ -93,7 +93,7 @@ jobs:
 
   upload-codecov:
     needs: build-test
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
