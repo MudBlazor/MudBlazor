@@ -58,7 +58,7 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Whether to always use the browsers native prompt instead of the message box.
+    /// Uses the browser's native prompt instead of the message box.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
