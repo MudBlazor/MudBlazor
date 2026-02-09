@@ -154,8 +154,8 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     }
 
     protected virtual async ValueTask DisposeAsyncCore()
-    {                                                                                                                                                                                     
-        _locationChangingRegistration?.Dispose(); 
+    {
+        _locationChangingRegistration?.Dispose();
         if (!Disabled && _navigatedAway)
         {
             await DisableAsync();
