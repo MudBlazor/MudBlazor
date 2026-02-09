@@ -62,7 +62,7 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter, Category(CategoryTypes.ExitPrompt.Behavior)]
-    public bool NativeOnly { get; set; }
+    public bool UseNativePrompt { get; set; }
 
     private string TitleToDisplay => Title ?? Localizer[LanguageResource.MudExitPrompt_Title];
 
@@ -111,7 +111,7 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 
     private Task<bool> IsNavigationAllowedAsync()
     {
-        return NativeOnly
+        return UseNativePrompt
             ? IsNativeNavigationAllowedAsync()
             : IsDialogNavigationAllowedAsync();
     }

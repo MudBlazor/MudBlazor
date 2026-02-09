@@ -21,7 +21,7 @@ public class ExitPromptTests : BunitTest
         Context.Services.AddSingleton(jsRuntimeMock.Object);
         Context.Services.AddSingleton<NavigationManager>(s => s.GetRequiredService<BunitNavigationManager>());
 
-        var component = Context.Render<MudExitPrompt>(x => x.Add(p => p.NativeOnly, true));
+        var component = Context.Render<MudExitPrompt>(x => x.Add(p => p.UseNativePrompt, true));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()), Times.Exactly(1));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Never);
 
