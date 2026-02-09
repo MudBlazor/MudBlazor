@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BunVersion>1.3.6</BunVersion>
+    <BunVersion>1.3.9</BunVersion>
     <BunDotNetVersion>1.2.0</BunDotNetVersion>
     <BunWrapper>dotnet tool exec BunDotNet.Cli@$(BunDotNetVersion) --yes -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
   </PropertyGroup>
