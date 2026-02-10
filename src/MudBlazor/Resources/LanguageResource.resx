@@ -438,6 +438,12 @@
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
     <value>Column options</value>
   </data>
+  <data name="MudFileUpload_DragAndDrop" xml:space="preserve">
+    <value>Drag files here or click to browse</value>
+  </data>
+  <data name="MudFileUpload_Button" xml:space="preserve">
+    <value>Browse files</value>
+  </data>
   <data name="Converter_InvalidBoolean" xml:space="preserve">
     <value>Not a valid boolean</value>
   </data>
@@ -512,5 +518,8 @@
   </data>
   <data name="MudFileUpload_FileSizeError" xml:space="preserve">
     <value>File '{0}' exceeds the maximum allowed size of {1} bytes.</value>
+  </data>
+  <data name="MudFileUpload_MaximumFileCountExceeded" xml:space="preserve">
+    <value>Selected {0} files, which exceeds the maximum of {1}</value>
   </data>
 </root>

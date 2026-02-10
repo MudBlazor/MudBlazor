@@ -1,12 +1,13 @@
 ﻿<MudFileUpload T="IBrowserFile"
                FilesChanged="@FilesChanged"
-               OnFilesChanged="@OnFilesChanged" >
-    <ActivatorContent>
+               OnFilesChanged="@OnFilesChanged">
+    <CustomContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
+                   OnClick="@context.OpenFilePickerAsync"
                    StartIcon="@Icons.Material.Filled.CloudUpload">
         </MudButton>
-    </ActivatorContent>
+    </CustomContent>
 </MudFileUpload>
 
 <MudStack>
@@ -19,6 +20,8 @@
 </MudStack>
 
 @code {
+    public static string __description__ = "Tests FilesChanged and OnFilesChanged callback invocation counts.";
+
     public int FilesChangedCount { get; private set; }
 
     public int OnFilesChangedCount { get; private set; }

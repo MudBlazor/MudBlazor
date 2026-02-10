@@ -1,0 +1,242 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+@inject HttpClient Http
+
+<MudText Typo="Typo.h6">Single file</MudText>
+<MudFileUpload @bind-Files=@_file Class="mud-width-full">
+    <CustomContent>
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Class="mud-width-full">
+            <MudButton Variant="Variant.Filled" OnClick="@context.OpenFilePickerAsync" Style="min-width: 150px;">
+                Choose file
+            </MudButton>
+            <MudPaper Class="mud-width-full flex-wrap d-flex align-center justify-center mud-border-primary mud-text-primary"
+                      Style="background-color:inherit;"
+                      Outlined="true">
+                @(context.GetFilenames().Count > 0 ? context.GetFilenames()[0] : string.Empty)
+            </MudPaper>
+        </MudButtonGroup>
+    </CustomContent>
+    <SelectedTemplate />
+</MudFileUpload>
+
+<MudText Typo="Typo.h6">Upload progress</MudText>
+<MudFileUpload @bind-Files=@_uploadFile Class="mud-width-full">
+    <CustomContent>
+        <MudButtonGroup Color="Color.Secondary" Variant="Variant.Filled" Class="mud-width-full">
+            <MudButton Variant="Variant.Filled" OnClick="@context.OpenFilePickerAsync" Style="min-width: 150px;">
+                Choose file
+            </MudButton>
+            <MudPaper Class="mud-width-full flex-wrap d-flex align-center justify-center mud-border-secondary mud-text-secondary"
+                      Style="background-color:inherit;"
+                      Outlined="true">
+                @if (_uploading)
+                {
+                    <MudProgressLinear Class="mx-2" Color="Color.Tertiary" Size="Size.Large" Value="_uploadValue" Min="_uploadMin" Max="_uploadMax" />
+                }
+                else
+                {
+                    @(context.GetFilenames().Count > 0 ? context.GetFilenames()[0] : " ")
+                }
+            </MudPaper>
+            <MudButton Variant="Variant.Filled" OnClick="@Upload" Disabled="@(!context.GetFilenames().Any())">
+                Upload
+            </MudButton>
+        </MudButtonGroup>
+    </CustomContent>
+    <SelectedTemplate />
+</MudFileUpload>
+
+<MudText Typo="Typo.h6">Interactive file chips</MudText>
+<MudFileUpload @bind-Files="@_files"
+               Class="mud-width-full"
+               MaximumFileCount="5"
+               AppendMultipleFiles="true">
+    <CustomContent>
+        <MudButtonGroup Color="Color.Info" Variant="Variant.Filled" Class="mud-width-full">
+            <MudButton Color="Color.Info" OnClick="@context.OpenFilePickerAsync" Style="min-width: 150px;">
+                Choose files
+            </MudButton>
+            <MudPaper Class="mud-width-full flex-wrap d-flex align-center justify-center mud-border-info mud-text-info"
+                      Style="background-color:inherit;"
+                      Outlined="true">
+                @foreach (string f in context.GetFilenames())
+                {
+                    <MudChip T="string"
+                             Color="Color.Info"
+                             Size="Size.Small"
+                             OnClose="@(async () => await context.RemoveFileAsync(f))"
+                             CloseIcon="@Icons.Material.Outlined.Delete">
+                        @f
+                    </MudChip>
+                }
+            </MudPaper>
+        </MudButtonGroup>
+    </CustomContent>
+    <SelectedTemplate />
+</MudFileUpload>
+
+<MudCard Style="width: 60%;">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Edit employee</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Disabled="_editMode" Color="Color.Primary" OnClick="@(() => _editMode = !_editMode)" />
+            <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="@ResetPicture" />
+            <MudIconButton Icon="@Icons.Material.Filled.Close" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudTextField @bind-Value="_employeeName" ReadOnly="@(!_editMode)" Label="Employee Name" />
+        <MudStack Class="my-2" Row AlignItems="AlignItems.Center">
+            @if (_swapping)
+            {
+                <MudProgressCircular Color="Color.Info" Style="height:64px;width:64px;" Indeterminate="true" />
+            }
+            else
+            {
+                <MudImage Src="@_base64" Alt="Employee Image" Height="64" Width="64" Elevation="25" Class="rounded-lg" />
+            }
+            @if (_editMode)
+            {
+                <MudSpacer />
+                <MudFileUpload @bind-Files="@_pictureFile"
+                               OnFilesChanged="@SwapPicture"
+                               Accept=".jpg,.bmp,.tiff,.jpeg,.png">
+                    <SelectedTemplate />
+                </MudFileUpload>
+                <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="@ResetPicture" />
+            }
+        </MudStack>
+    </MudCardContent>
+    @if (_editMode)
+    {
+        <MudCardActions Class="gap-4">
+            <MudSpacer />
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" Disabled="@string.IsNullOrWhiteSpace(_employeeName)">
+                Save
+            </MudButton>
+            <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="@(() => _editMode = !_editMode)">
+                Cancel
+            </MudButton>
+        </MudCardActions>
+    }
+</MudCard>
+
+@code
+{
+    private readonly int _uploadMin = 0;
+    private readonly int _uploadMax = 100;
+    private IBrowserFile _uploadFile = new DummyBrowserFile("upload.jpg", DateTimeOffset.Now, 524288000, "image/jpeg", new byte[1024]);
+    private bool _uploading;
+    private int _uploadValue = 0;
+    private IBrowserFile _file = new DummyBrowserFile("test.jpg", DateTimeOffset.Now, 1024, "image/jpeg", new byte[1024]);
+    private IBrowserFile _pictureFile;
+    private IReadOnlyList<IBrowserFile> _files =
+    [
+        new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+        new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+    ];
+    private bool _editMode = true;
+    private bool _swapping;
+    private string _employeeName = "Catherine Doe";
+    private string _base64 = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // set _base64 from images/mony.jpg
+        await ResetPicture();
+    }
+
+    private async Task ResetPicture()
+    {
+        var imagePath = "wwwroot/images/mony.jpg";
+        _base64 = await ConvertImageToBase64(imagePath);
+        StateHasChanged();
+    }
+
+    public async Task Upload()
+    {
+        _uploading = true;
+        StateHasChanged();
+
+        // Simulate file upload progress
+        for (_uploadValue = _uploadMin; _uploadValue <= _uploadMax; _uploadValue += (int)(_uploadMax / 100))
+        {
+            await Task.Delay(50); // Simulate delay for progress
+            StateHasChanged();
+        }
+
+        _uploadFile = default;
+        _uploading = false;
+        Snackbar.Add("File uploaded", Severity.Success);
+    }
+
+    private async Task<string> ConvertImageToBase64(string filePath)
+    {
+        try
+        {
+            // Remove leading wwwroot/ if present, as static files are served from root
+            var relativePath = filePath.StartsWith("wwwroot/") ? filePath.Substring(7) : filePath;
+            var response = await Http.GetAsync(relativePath);
+            if (!response.IsSuccessStatusCode)
+                return string.Empty;
+            var imageBytes = await response.Content.ReadAsByteArrayAsync();
+            // Try to get content type from response, fallback to jpeg
+            var contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg";
+            return $"data:{contentType};base64,{Convert.ToBase64String(imageBytes)}";
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
+
+    private async Task SwapPicture()
+    {
+        if (_pictureFile == null)
+        {
+            Snackbar.Add("No file selected!", Severity.Warning);
+            return;
+        }
+        if (_pictureFile.Size > 5242880)
+        {
+            Snackbar.Add("File size exceeds 5MB!", Severity.Error);
+            return;
+        }
+        _swapping = true;
+        StateHasChanged();
+        using var stream = _pictureFile.OpenReadStream(5242880); // Limit to 5MB.
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        var fileBytes = memoryStream.ToArray();
+
+        // Update base64 string
+        _base64 = $"data:{_pictureFile.ContentType};base64,{Convert.ToBase64String(fileBytes)}";
+        Snackbar.Add("Image updated successfully!", Severity.Success);
+
+        // Clear the file upload field
+        _pictureFile = null;
+        _swapping = false;
+    }
+
+    public class DummyBrowserFile : IBrowserFile
+    {
+        public string Name { get; }
+        public DateTimeOffset LastModified { get; }
+        public long Size { get; }
+        public string ContentType { get; }
+        public byte[] Content { get; }
+
+        public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)
+        {
+            Name = name;
+            LastModified = lastModified;
+            Size = size;
+            ContentType = contentType;
+            Content = content;
+        }
+
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
+    }
+}
