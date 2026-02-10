@@ -51,17 +51,6 @@
             ]
         },
         {
-            "description": "Keep updates in draft when merge confidence is low.",
-            "matchConfidence": [
-                "low",
-                "very low"
-            ],
-            "draftPR": true,
-            "prBodyNotes": [
-                "> [!WARNING]\n> Renovate reported low merge confidence for this update."
-            ]
-        },
-        {
             "matchFileNames": [
                 "src/MudBlazor/MudBlazor.csproj"
             ],
