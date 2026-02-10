@@ -11,55 +11,63 @@
  */
 class MudExitPrompt {
     constructor() {
-        this.isEnabled = false;
+        this._prompts = new Map();
         this._handleBeforeUnload = this._handleBeforeUnload.bind(this);
     }
 
     /**
      * Enables exit prompting and sets the current confirmation text.
      */
-    enable(text) {
-        if (this.isEnabled) {
-            return;
+    enable(id, text) {
+        const hasActivePrompts = this._prompts.size > 0;
+        this._prompts.set(id, text);
+        if (!hasActivePrompts) {
+            window.addEventListener('beforeunload', this._handleBeforeUnload);
         }
-
-        this.isEnabled = true;
-        this.setText(text);
-        window.addEventListener('beforeunload', this._handleBeforeUnload);
     }
 
     /**
      * Disables exit prompting and removes unload protection listeners.
      */
-    disable() {
-        if (!this.isEnabled) {
-            return;
+    disable(id) {
+        if (!this._prompts.has(id)) {
+            this._throwPromptNotFound(id);
         }
 
-        this.isEnabled = false;
-        window.removeEventListener('beforeunload', this._handleBeforeUnload);
+        this._prompts.delete(id);
+        if (this._prompts.size === 0) {
+            window.removeEventListener('beforeunload', this._handleBeforeUnload);
+        }
     }
 
     /**
      * Updates the confirmation text shown for protected navigation.
      */
-    setText(text) {
-        this.text = text;
+    setText(id, text) {
+        if (!this._prompts.has(id)) {
+            this._throwPromptNotFound(id);
+        }
+
+        this._prompts.set(id, text);
     }
 
     /**
      * Handles in-app navigation checks and returns whether navigation may continue.
      */
-    handleBeforeNavigation() {
-        if (!this.isEnabled) {
-            return true;
+    handleBeforeNavigation(id) {
+        if (!this._prompts.has(id)) {
+            this._throwPromptNotFound(id);
         }
 
-        return window.confirm(this.text);
+        return window.confirm(this._prompts.get(id));
+    }
+
+    _throwPromptNotFound(id) {
+        throw new Error(`[MudBlazor] MudExitPrompt: Prompt with id '${id}' is not registered.`);
     }
 
     _handleBeforeUnload(e) {
-        if (this.isEnabled) {
+        if (this._prompts.size > 0) {
             // Browsers only show a native confirmation when preventDefault/returnValue is set.
             e.preventDefault();
             e.returnValue = '';
