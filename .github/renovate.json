@@ -46,9 +46,6 @@
                 "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
             ],
             "draftPR": true,
-            "addLabels": [
-                "on hold"
-            ],
             "prBodyNotes": [
                 "> [!WARNING]\n> Target version is either under 14 days old or does not publish a reliable release timestamp yet."
             ]
@@ -60,9 +57,6 @@
                 "very low"
             ],
             "draftPR": true,
-            "addLabels": [
-                "on hold"
-            ],
             "prBodyNotes": [
                 "> [!WARNING]\n> Renovate reported low merge confidence for this update."
             ]
