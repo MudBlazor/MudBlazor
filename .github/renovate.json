@@ -74,22 +74,6 @@
             "enabled": false
         },
         {
-            "matchFileNames": [
-                "src/**/MudBlazor.Docs*.csproj"
-            ],
-            "addLabels": [
-                "docs"
-            ]
-        },
-        {
-            "matchFileNames": [
-                "src/**/MudBlazor.UnitTests*.csproj"
-            ],
-            "addLabels": [
-                "tests"
-            ]
-        },
-        {
             "description": "Group Bun toolchain updates and request Bun reviewer.",
             "matchManagers": [
                 "custom.regex"
