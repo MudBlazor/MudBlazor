@@ -46,21 +46,25 @@
                 "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
             ],
             "draftPR": true,
+            "addLabels": [
+                "on hold"
+            ],
             "prBodyNotes": [
-                "Draft reason: this target version is either under 14 days old or does not publish a reliable release timestamp yet."
+                "> [!WARNING]\n> Draft reason: this target version is either under 14 days old or does not publish a reliable release timestamp yet."
             ]
         },
         {
-            "description": "Keep major NuGet updates in draft for manual review of potential breaking changes.",
-            "matchManagers": [
-                "nuget"
-            ],
-            "matchUpdateTypes": [
-                "major"
+            "description": "Keep updates in draft when merge confidence is low.",
+            "matchConfidence": [
+                "low",
+                "very low"
             ],
             "draftPR": true,
+            "addLabels": [
+                "on hold"
+            ],
             "prBodyNotes": [
-                "Draft reason: this is a major update."
+                "> [!WARNING]\n> Draft reason: Renovate reported low merge confidence for this update."
             ]
         },
         {
