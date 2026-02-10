@@ -132,6 +132,24 @@ public class ExitPromptTests : BunitTest
     }
 
     [Test]
+    public async Task TextUpdateWhileUnregistered_DoesNotCallSetTextInterop()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        var component = RenderExitPrompt(text: "Initial text");
+        var promptId = js.EnabledPromptIds.Single();
+
+        // Act
+        await component.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, true));
+        var textUpdateCount = js.TextUpdates.Count;
+        await component.SetParametersAndRenderAsync(p => p.Add(x => x.Text, "Updated while unregistered"));
+
+        // Assert
+        js.DisabledPromptIds.Should().ContainSingle().Which.Should().Be(promptId);
+        js.TextUpdates.Should().HaveCount(textUpdateCount);
+    }
+
+    [Test]
     public async Task NativePrompt_NavigationCallsHandleBeforeNavigation()
     {
         // Arrange
@@ -160,6 +178,56 @@ public class ExitPromptTests : BunitTest
         await component.InvokeAsync(() => navigationManager.NavigateTo("/dialog-navigation"));
 
         // Assert
+        dialogServiceMock.Verify(x => x.ShowMessageBoxAsync(
+            It.IsAny<string?>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<DialogOptions?>()), Times.Once);
+        js.NativeNavigationChecks.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task DialogPrompt_BlocksNavigationWhenDialogReturnsFalse()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        var dialogServiceMock = ReplaceDialogServiceWithMock(false);
+        var component = RenderExitPrompt(useNativePrompt: false);
+        var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+        var currentUri = navigationManager.Uri;
+
+        // Act
+        await component.InvokeAsync(() => navigationManager.NavigateTo("/dialog-blocked-false"));
+
+        // Assert
+        navigationManager.Uri.Should().Be(currentUri);
+        dialogServiceMock.Verify(x => x.ShowMessageBoxAsync(
+            It.IsAny<string?>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<DialogOptions?>()), Times.Once);
+        js.NativeNavigationChecks.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task DialogPrompt_BlocksNavigationWhenDialogReturnsNull()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        var dialogServiceMock = ReplaceDialogServiceWithMock(null);
+        var component = RenderExitPrompt(useNativePrompt: false);
+        var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+        var currentUri = navigationManager.Uri;
+
+        // Act
+        await component.InvokeAsync(() => navigationManager.NavigateTo("/dialog-blocked-null"));
+
+        // Assert
+        navigationManager.Uri.Should().Be(currentUri);
         dialogServiceMock.Verify(x => x.ShowMessageBoxAsync(
             It.IsAny<string?>(),
             It.IsAny<string>(),
@@ -237,6 +305,65 @@ public class ExitPromptTests : BunitTest
         firstPromptId.Should().NotBe(secondPromptId);
         js.DisabledPromptIds.Should().Contain(firstPromptId);
         js.NativeNavigationChecks.Should().ContainSingle().Which.Should().Be(secondPromptId);
+    }
+
+    [Test]
+    public async Task MultipleInstances_DisposingOneStillAllowsOtherToHandleNavigation()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        var first = RenderExitPrompt(useNativePrompt: true, text: "First prompt");
+        var second = RenderExitPrompt(useNativePrompt: true, text: "Second prompt");
+
+        var firstPromptId = js.EnabledPromptIds[0];
+        var secondPromptId = js.EnabledPromptIds[1];
+        var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+
+        // Act
+        await first.InvokeAsync(async () => await first.Instance.DisposeAsync());
+        await second.InvokeAsync(() => navigationManager.NavigateTo("/two-prompts-dispose"));
+
+        // Assert
+        js.DisabledPromptIds.Should().Contain(firstPromptId);
+        js.NativeNavigationChecks.Should().ContainSingle().Which.Should().Be(secondPromptId);
+    }
+
+    [Test]
+    public async Task MultipleInstances_DisposeOrder_DisablesMatchingPromptIds()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        var first = RenderExitPrompt(useNativePrompt: true, text: "First prompt");
+        var second = RenderExitPrompt(useNativePrompt: true, text: "Second prompt");
+
+        var firstPromptId = js.EnabledPromptIds[0];
+        var secondPromptId = js.EnabledPromptIds[1];
+
+        // Act
+        await second.InvokeAsync(async () => await second.Instance.DisposeAsync());
+        await first.InvokeAsync(async () => await first.Instance.DisposeAsync());
+
+        // Assert
+        js.DisabledPromptIds.Should().Equal(secondPromptId, firstPromptId);
+    }
+
+    [Test]
+    public async Task DisposedPrompt_DoesNotIssueFurtherNativeNavigationChecks()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        var activePrompt = RenderExitPrompt(useNativePrompt: true, text: "Active prompt");
+        var promptId = js.EnabledPromptIds.Single();
+        var driver = RenderExitPrompt(disabled: true);
+        var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+
+        // Act
+        await activePrompt.InvokeAsync(async () => await activePrompt.Instance.DisposeAsync());
+        await driver.InvokeAsync(() => navigationManager.NavigateTo("/after-dispose"));
+
+        // Assert
+        js.DisabledPromptIds.Should().Contain(promptId);
+        js.NativeNavigationChecks.Should().BeEmpty();
     }
 
     [Test]
