@@ -57,6 +57,7 @@
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
+            aria-selected="@GetAriaSelected(itemBag.Item)"
             @onclick="@((args) => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu="@((args) => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
@@ -65,7 +66,7 @@
                 {
                     if (!column.HiddenState.Value)
                     {
-                        @DataGrid.Cell(column, itemBag.Item)
+                        @DataGrid.Cell(column, itemBag.Item, itemBag.Index)
                     }
                 }
             </CascadingValue>
@@ -74,13 +75,13 @@
         {
             @if (DataGrid.ChildRowRenderer != null)
             {
-                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item))
+                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Index))
             }
             @if (DataGrid.ChildRowContent != null)
             {
                 <tr class="mud-table-row">
                     <td class="mud-table-cell mud-table-child-content" colspan="1000">
-                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item))
+                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Index))
                     </td>
                 </tr>
             }
@@ -96,3 +97,7 @@
         </tr>
     </NoRecordsContent>
 </MudVirtualize>
+
+@code {
+    private string GetAriaSelected(T item) => DataGrid.Selection.Contains(item).ToString().ToLowerInvariant();
+}

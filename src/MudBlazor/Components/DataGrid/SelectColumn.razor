@@ -10,7 +10,8 @@
             return @<MudCheckBox T="bool?"
                                  Size="@Size"
                                  Value="@context.IsAllSelected"
-                                 ValueChanged="@context.Actions.SetSelectAllAsync" />;
+                                 ValueChanged="@context.Actions.SetSelectAllAsync"
+                                 UserAttributes="@GetSelectAllAttributes()" />;
         }
 
         return null!;
@@ -21,7 +22,8 @@
                       Size="@Size"
                       Value="@context.Selected"
                       ValueChanged="@context.Actions.SetSelectedItemAsync"
-                      Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)" />;
+                      Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)"
+                      UserAttributes="@GetRowCheckboxAttributes(context)" />;
 
     private RenderFragment<FooterContext<T>>? GetSelectFooterTemplate() => context =>
     {
@@ -30,7 +32,8 @@
             return @<MudCheckBox T="bool?"
                                  Size="@Size"
                                  Value="@context.IsAllSelected"
-                                 ValueChanged="@context.Actions.SetSelectAllAsync" />;
+                                 ValueChanged="@context.Actions.SetSelectAllAsync"
+                                 UserAttributes="@GetSelectAllAttributes()" />;
         }
 
         return null!;

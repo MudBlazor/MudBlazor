@@ -47,6 +47,11 @@ namespace MudBlazor
         #endregion
 
         public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item)
+            : this(dataGrid, column, item, -1)
+        {
+        }
+
+        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item, int rowIndex)
         {
             _dataGrid = dataGrid;
             _column = column;
@@ -55,7 +60,7 @@ namespace MudBlazor
             OnStartedEditingItem();
 
             // Create the CellContext
-            _cellContext = new CellContext<T>(_dataGrid, _item);
+            _cellContext = rowIndex >= 0 ? new CellContext<T>(_dataGrid, _item, rowIndex) : new CellContext<T>(_dataGrid, _item);
         }
 
         public async Task StringValueChangedAsync(string? value)
