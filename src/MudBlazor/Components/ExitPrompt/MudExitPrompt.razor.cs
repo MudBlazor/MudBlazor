@@ -14,7 +14,6 @@ namespace MudBlazor;
 public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 {
     private readonly string _promptId = Identifier.Create("exitPrompt");
-    private bool _isPromptEnabled;
     private IDisposable? _locationChangingRegistration;
 
     [Inject]
@@ -90,11 +89,12 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 
         if (firstRender)
         {
-            _locationChangingRegistration = NavigationManager.RegisterLocationChangingHandler(OnLocationChanging);
             if (!Disabled)
             {
                 await EnableAsync();
             }
+
+            _locationChangingRegistration = NavigationManager.RegisterLocationChangingHandler(OnLocationChanging);
         }
     }
 
@@ -117,12 +117,6 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
         // For in-app navigation, optionally use the browser confirm dialog when native prompts are enabled.
         if (UseNativePrompt)
         {
-            // If JS prompt wiring is not active yet, do not block navigation.
-            if (!_isPromptEnabled)
-            {
-                return true;
-            }
-
             return await JsRuntime.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", _promptId);
         }
 
@@ -137,18 +131,21 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 
     private async Task EnableAsync()
     {
-        if (!IsJSRuntimeAvailable || _isPromptEnabled)
+        if (!IsJSRuntimeAvailable || Disabled)
         {
             return;
         }
 
         var success = await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudExitPrompt.enable", _promptId, TextToDisplay);
-        _isPromptEnabled = success;
+        if (!success)
+        {
+            throw new InvalidOperationException($"Failed to enable {nameof(MudExitPrompt)} JS interop for prompt '{_promptId}'.");
+        }
     }
 
     private async Task SetTextAsync()
     {
-        if (!IsJSRuntimeAvailable || !_isPromptEnabled)
+        if (!IsJSRuntimeAvailable || Disabled || _locationChangingRegistration is null)
         {
             return;
         }
@@ -158,16 +155,12 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 
     private async Task DisableAsync()
     {
-        if (!IsJSRuntimeAvailable || !_isPromptEnabled)
+        if (!IsJSRuntimeAvailable || _locationChangingRegistration is null)
         {
             return;
         }
 
-        var success = await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudExitPrompt.disable", _promptId);
-        if (success)
-        {
-            _isPromptEnabled = false;
-        }
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudExitPrompt.disable", _promptId);
     }
 
     /// <inheritdoc />
@@ -180,6 +173,9 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     protected virtual async ValueTask DisposeAsyncCore()
     {
         _locationChangingRegistration?.Dispose();
-        await DisableAsync();
+        if (!Disabled)
+        {
+            await DisableAsync();
+        }
     }
 }
