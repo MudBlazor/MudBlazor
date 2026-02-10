@@ -62,6 +62,15 @@
             ]
         },
         {
+            "description": "Request Core Team review for vulnerability alerts.",
+            "matchUpdateTypes": [
+                "vulnerability"
+            ],
+            "reviewers": [
+                "team:core-team"
+            ]
+        },
+        {
             "matchFileNames": [
                 "src/MudBlazor/MudBlazor.csproj"
             ],
