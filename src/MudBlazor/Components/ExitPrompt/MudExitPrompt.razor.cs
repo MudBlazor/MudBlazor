@@ -112,25 +112,21 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
         }
     }
 
-    private Task<bool> IsNavigationAllowedAsync()
+    private async Task<bool> IsNavigationAllowedAsync()
     {
-        return UseNativePrompt
-            ? IsNativeNavigationAllowedAsync()
-            : IsDialogNavigationAllowedAsync();
-    }
-
-    private async Task<bool> IsNativeNavigationAllowedAsync()
-    {
-        if (!_isPromptEnabled)
+        // For in-app navigation, optionally use the browser confirm dialog when native prompts are enabled.
+        if (UseNativePrompt)
         {
-            return true;
+            // If JS prompt wiring is not active yet, do not block navigation.
+            if (!_isPromptEnabled)
+            {
+                return true;
+            }
+
+            return await JsRuntime.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", _promptId);
         }
 
-        return await JsRuntime.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", _promptId);
-    }
-
-    private async Task<bool> IsDialogNavigationAllowedAsync()
-    {
+        // Otherwise, use the MudBlazor confirmation dialog and allow navigation only on explicit confirmation.
         return await DialogService.ShowMessageBoxAsync(
             TitleToDisplay,
             TextToDisplay,
