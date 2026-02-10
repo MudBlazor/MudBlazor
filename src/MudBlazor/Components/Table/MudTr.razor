@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor
 @implements IDisposable
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 <tr id="@RowId" class="@Classname" @onclick="@OnRowClickedAsync" @onpointerenter="@RowMouseEnterEventCallback" @onpointerleave="@RowMouseLeaveEventCallback" style="@Style"
     @attributes="@UserAttributes" aria-disabled="@Disabled">
@@ -16,19 +18,21 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context?.EditButtonDisabled(Item) ?? false"/>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context?.EditButtonDisabled(Item) ?? false"
+                        aria-label="@Localizer[LanguageResource.MudTable_EditRow]"/>
                 }
             }
             else if (ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true)
             {
                 <div style="display: flex;">
                     <MudTooltip Text="@Context?.Table?.CommitEditTooltip">
-                        <MudIconButton Class="pa-0" Icon="@Context?.Table?.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table?.Validator?.IsValid ?? false))"/>
+                        <MudIconButton Class="pa-0" Icon="@Context?.Table?.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table?.Validator?.IsValid ?? false))" 
+                            aria-label="@Localizer[LanguageResource.MudTable_CommitRow]"/>
                     </MudTooltip>
                     @if (Context?.Table?.CanCancelEdit ?? false)
                     {
                         <MudTooltip Text="@Context?.Table?.CancelEditTooltip">
-                            <MudIconButton Class="pa-0 ml-4" Icon="@Context?.Table?.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small"/>
+                            <MudIconButton Class="pa-0 ml-4" Icon="@Context?.Table?.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" aria-label="@Localizer[LanguageResource.MudTable_CancelEditRow]" />
                         </MudTooltip>
                     }
                 </div>
@@ -59,19 +63,21 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context?.EditButtonDisabled(Item)?? false"/>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context?.EditButtonDisabled(Item)?? false"
+                                   aria-label="@Localizer[LanguageResource.MudTable_EditRow]" />
                 }
             }
             else if (ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true)
             {
                 <div style="display: flex;">
                     <MudTooltip Text="@Context.Table.CommitEditTooltip">
-                        <MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table.Validator?.IsValid ?? false))"/>
+                        <MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table.Validator?.IsValid ?? false))"
+                                       aria-label="@Localizer[LanguageResource.MudTable_CommitRow]" />
                     </MudTooltip>
                     @if (Context.Table.CanCancelEdit)
                     {
                         <MudTooltip Text="@Context.Table.CancelEditTooltip">
-                            <MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small"/>
+                            <MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" aria-label="@Localizer[LanguageResource.MudTable_CancelEditRow]" />
                         </MudTooltip>
                     }
                 </div>
