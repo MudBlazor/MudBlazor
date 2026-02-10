@@ -13,7 +13,6 @@ namespace MudBlazor;
 /// </remarks>
 public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
 {
-    private bool _navigatedAway;
     private IDisposable? _locationChangingRegistration;
 
     [Inject]
@@ -109,8 +108,6 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
             context.PreventNavigation();
             return;
         }
-
-        _navigatedAway = true;
     }
 
     private Task<bool> IsNavigationAllowedAsync()
@@ -175,9 +172,6 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
     protected virtual async ValueTask DisposeAsyncCore()
     {
         _locationChangingRegistration?.Dispose();
-        if (!Disabled && _navigatedAway)
-        {
-            await DisableAsync();
-        }
+        await DisableAsync();
     }
 }

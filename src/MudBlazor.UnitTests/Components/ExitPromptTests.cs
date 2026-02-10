@@ -12,6 +12,26 @@ namespace MudBlazor.UnitTests.Components;
 public class ExitPromptTests : BunitTest
 {
     [Test]
+    public async Task DisposeWithoutNavigationDisablesPrompt()
+    {
+        // Arrange: provide a JS runtime mock and wire NavigationManager to bUnit's implementation.
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()));
+        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()));
+        Context.Services.AddSingleton(jsRuntimeMock.Object);
+        Context.Services.AddSingleton<NavigationManager>(s => s.GetRequiredService<BunitNavigationManager>());
+
+        // Initial render should register the prompt once.
+        Context.Render<MudExitPrompt>();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.enable", It.IsAny<object[]>()), Times.Exactly(1));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Never);
+
+        // Disposal should unregister even when no navigation occurred.
+        await Context.DisposeComponentsAsync();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudExitPrompt.disable", It.IsAny<object[]>()), Times.Exactly(1));
+    }
+
+    [Test]
     public async Task JsInteropIsCalledCorrectly()
     {
         // Arrange: provide a JS runtime mock and wire NavigationManager to bUnit's implementation.
