@@ -50,6 +50,21 @@ public class ExitPromptTests : BunitTest
     }
 
     [Test]
+    public async Task DisabledFirstDispose_DoesNotCallDisableInterop()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        RenderExitPrompt(disabled: true);
+
+        // Act
+        await Context.DisposeComponentsAsync();
+
+        // Assert
+        js.EnabledPromptIds.Should().BeEmpty();
+        js.DisabledPromptIds.Should().BeEmpty();
+    }
+
+    [Test]
     public async Task DisposesAndUnregistersPrompt()
     {
         // Arrange
@@ -97,6 +112,23 @@ public class ExitPromptTests : BunitTest
         // Assert
         js.TextUpdates.Should().HaveCount(initialTextUpdateCount + 1);
         js.TextUpdates.Last().Should().Be((promptId, "Updated text"));
+    }
+
+    [Test]
+    public async Task TextUpdateWhileDisabled_DoesNotCallSetTextInterop()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        var component = RenderExitPrompt(disabled: true, text: "Initial text");
+
+        // Act
+        await component.SetParametersAndRenderAsync(p => p
+            .Add(x => x.Disabled, true)
+            .Add(x => x.Text, "Updated while disabled"));
+
+        // Assert
+        js.EnabledPromptIds.Should().BeEmpty();
+        js.TextUpdates.Should().BeEmpty();
     }
 
     [Test]
