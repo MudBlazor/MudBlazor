@@ -490,7 +490,7 @@
     <value>Leave site? Changes you made may not be saved.</value>
   </data>
   <data name="MudExitPrompt_Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>Ok</value>
   </data>
   <data name="MudExitPrompt_Cancel" xml:space="preserve">
     <value>Cancel</value>
