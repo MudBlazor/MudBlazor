@@ -16,6 +16,9 @@
         "enabled": true,
         "addLabels": [
             "security"
+        ],
+        "reviewers": [
+            "team:core-team"
         ]
     },
     "packageRules": [
@@ -59,15 +62,6 @@
             "draftPR": true,
             "prBodyNotes": [
                 "> [!WARNING]\n> Renovate reported low merge confidence for this update."
-            ]
-        },
-        {
-            "description": "Request Core Team review for vulnerability alerts.",
-            "matchUpdateTypes": [
-                "vulnerability"
-            ],
-            "reviewers": [
-                "team:core-team"
             ]
         },
         {
