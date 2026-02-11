@@ -2037,8 +2037,7 @@ namespace MudBlazor.UnitTests.Components
             
             comp.Instance.IsFormValid.Should().BeFalse();
             
-            var datePicker = comp.FindComponent<MudDatePicker>();
-            await datePicker.InvokeAsync(() => datePicker.Instance.Date = new DateTime(2000, 1, 1));
+            await comp.InvokeAsync(() => comp.Instance.BirthDate = new DateTime(2000, 1, 1));
             
             comp.Instance.IsFormValid.Should().BeTrue();
         }
