@@ -276,7 +276,7 @@ namespace MudBlazor
                 // This handles cases where the user's bound variable conflicts with the form's internal state
                 var hasRequiredFields = _formControls.Any(x => x.Required);
                 var expectedValid = !hasRequiredFields;
-                
+
                 if (expectedValid != IsValid)
                 {
                     IsValid = expectedValid;
