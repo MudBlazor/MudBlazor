@@ -2041,7 +2041,7 @@ namespace MudBlazor.UnitTests.Components
             var datePickerComp = comp.FindComponent<MudDatePicker>();
             await datePickerComp.Find("input").ChangeAsync(new DateTime(2000, 1, 1).ToShortDateString());
 
-            comp.Instance.IsFormValid.Should().BeTrue();
+            await comp.WaitForAssertionAsync(() => comp.Instance.IsFormValid.Should().BeTrue());
         }
     }
 }
