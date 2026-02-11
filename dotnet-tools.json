@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "bundotnet.cli": {
+      "version": "1.2.0",
+      "commands": [
+        "bun"
+      ],
+      "rollForward": false
+    }
+  }
+}

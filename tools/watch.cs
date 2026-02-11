@@ -57,9 +57,8 @@ static async Task Run()
     string[] assetsProcessArgs =
     [
         "tool",
-        "exec",
-        $"BunDotNet.Cli@{versions.BunDotNetVersion}",
-        "--yes",
+        "run",
+        "bun",
         "--",
         "wrapper",
         "--version",
@@ -123,7 +122,6 @@ static Versions GetVersions(string buildPropsFile)
     return new Versions
     {
         BunVersion = doc.Descendants(nameof(Versions.BunVersion)).First().Value,
-        BunDotNetVersion = doc.Descendants(nameof(Versions.BunDotNetVersion)).First().Value,
     };
 }
 
@@ -153,5 +151,4 @@ static async Task RedirectStreams(Process process, string prefix)
 class Versions
 {
     public required string BunVersion { get; init; }
-    public required string BunDotNetVersion { get; init; }
 }
