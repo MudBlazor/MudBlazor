@@ -2032,14 +2032,17 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.IsFormValid.Should().BeFalse();
 
-            var textField = comp.FindComponents<MudTextField<string>>().First();
+            var textField = comp.FindComponent<MudTextField<string>>();
             await comp.InvokeAsync(() => textField.Instance.SetTextAsync("John"));
             await comp.InvokeAsync(() => textField.Instance.BlurAsync());
 
             comp.Instance.IsFormValid.Should().BeFalse();
 
             var datePickerComp = comp.FindComponent<MudDatePicker>();
-            await datePickerComp.Find("input").ChangeAsync(new DateTime(2000, 1, 1).ToShortDateString());
+            var date = new DateTime(2000, 1, 1);
+            var pickerCulture = datePickerComp.Instance.Culture ?? CultureInfo.CurrentCulture;
+            var input = date.ToString(pickerCulture.DateTimeFormat.ShortDatePattern, pickerCulture);
+            await datePickerComp.Find("input").ChangeAsync(input);
 
             await comp.WaitForAssertionAsync(() => comp.Instance.IsFormValid.Should().BeTrue());
         }

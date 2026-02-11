@@ -268,18 +268,21 @@ namespace MudBlazor
             return !SuppressRenderingOnValidation || _shouldRender;
         }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
+                // If there are required fields, the form should start as invalid
+                // This ensures the IsValid binding is properly initialized even if the user
+                // bound IsValid to a variable that starts as true
                 var hasRequiredFields = _formControls.Any(x => x.Required);
-                var valid = !hasRequiredFields;
-                if (valid != IsValid)
+                if (hasRequiredFields && IsValid)
                 {
-                    SetIsValid(valid);
+                    IsValid = false;
+                    await IsValidChanged.InvokeAsync(IsValid);
                 }
             }
-            return base.OnAfterRenderAsync(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         protected override void OnInitialized()
