@@ -749,7 +749,8 @@ namespace MudBlazor.UnitTests.Components
                 .Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should()
                 // Only months with 31 days not disabled
-                .BeEquivalentTo(new[]
+                .BeEquivalentTo(
+                    new[]
                     {
                         false,
                         true,
@@ -2020,7 +2021,7 @@ namespace MudBlazor.UnitTests.Components
         public void RequiredDatePicker_FormIsValid_ShouldBeFalseInitially()
         {
             var comp = Context.Render<DatePickerRequiredFormValidationTest>();
-            
+
             comp.Instance.IsFormValid.Should().BeFalse();
         }
 
@@ -2028,17 +2029,17 @@ namespace MudBlazor.UnitTests.Components
         public async Task RequiredDatePicker_FormIsValid_ShouldBeTrueAfterFillingAllFields()
         {
             var comp = Context.Render<DatePickerRequiredFormValidationTest>();
-            
+
             comp.Instance.IsFormValid.Should().BeFalse();
-            
+
             var textField = comp.FindComponents<MudTextField<string>>().First();
             await comp.InvokeAsync(() => textField.Instance.SetTextAsync("John"));
             await comp.InvokeAsync(() => textField.Instance.BlurAsync());
-            
+
             comp.Instance.IsFormValid.Should().BeFalse();
-            
+
             await comp.InvokeAsync(() => comp.Instance.BirthDate = new DateTime(2000, 1, 1));
-            
+
             comp.Instance.IsFormValid.Should().BeTrue();
         }
     }
