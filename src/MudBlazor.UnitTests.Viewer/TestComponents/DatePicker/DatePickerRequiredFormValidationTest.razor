@@ -1,0 +1,13 @@
+<MudForm @bind-IsValid="@IsFormValid">
+    <MudTextField @bind-Value="@Name" Label="Name" Required="true" />
+    <MudDatePicker @bind-Date="@BirthDate" Label="Birth Date" Required="true" />
+</MudForm>
+
+@code
+{
+    public static string __description__ = "Form with required DatePicker should not be valid until date is selected.";
+
+    public bool IsFormValid { get; set; }
+    public string? Name { get; set; }
+    public DateTime? BirthDate { get; set; }
+}

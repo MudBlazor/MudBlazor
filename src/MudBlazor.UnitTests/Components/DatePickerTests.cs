@@ -2015,5 +2015,32 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.PickerMonth?.Month.Should().Be(12);
             return comp;
         }
+
+        [Test]
+        public void RequiredDatePicker_FormIsValid_ShouldBeFalseInitially()
+        {
+            var comp = Context.Render<DatePickerRequiredFormValidationTest>();
+            
+            comp.Instance.IsFormValid.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task RequiredDatePicker_FormIsValid_ShouldBeTrueAfterFillingAllFields()
+        {
+            var comp = Context.Render<DatePickerRequiredFormValidationTest>();
+            
+            comp.Instance.IsFormValid.Should().BeFalse();
+            
+            var textField = comp.FindComponents<MudTextField<string>>().First();
+            await comp.InvokeAsync(() => textField.Instance.SetTextAsync("John"));
+            await comp.InvokeAsync(() => textField.Instance.BlurAsync());
+            
+            comp.Instance.IsFormValid.Should().BeFalse();
+            
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            await datePicker.InvokeAsync(() => datePicker.Instance.Date = new DateTime(2000, 1, 1));
+            
+            comp.Instance.IsFormValid.Should().BeTrue();
+        }
     }
 }

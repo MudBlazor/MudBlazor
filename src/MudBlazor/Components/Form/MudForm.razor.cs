@@ -272,14 +272,12 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var hasRequiredFields = _formControls.Any(x => x.Required);
+                var valid = !hasRequiredFields;
                 if (valid != IsValid)
                 {
-                    // the user probably bound a variable to IsValid, and it conflicts with our state.
-                    // let's set this right
                     SetIsValid(valid);
                 }
-
             }
             return base.OnAfterRenderAsync(firstRender);
         }
