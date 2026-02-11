@@ -73,7 +73,8 @@
                 "BunDotNet.Cli"
             ],
             "matchFileNames": [
-                "src/Directory.Build.props"
+                "src/Directory.Build.props",
+                "dotnet-tools.json"
             ],
             "groupName": "bun toolchain",
             "groupSlug": "bun-toolchain",
@@ -99,10 +100,10 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
-                "/(^|/)Directory\\.Build\\.props$/"
+                "/(^|/)dotnet-tools\\.json$/"
             ],
             "matchStrings": [
-                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
+                "\"bundotnet\\.cli\"\\s*:\\s*\\{[^}]*\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
             ],
             "depNameTemplate": "BunDotNet.Cli",
             "datasourceTemplate": "nuget"
