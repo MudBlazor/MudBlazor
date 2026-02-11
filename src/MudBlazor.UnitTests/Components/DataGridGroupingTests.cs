@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
 
             button.GetAttribute("aria-label").Should().Be("Expand group");
 
-            await button.ClickAsync(new MouseEventArgs());
+            await button.ClickAsync();
 
             button.GetAttribute("aria-label").Should().Be("Collapse group");
         }

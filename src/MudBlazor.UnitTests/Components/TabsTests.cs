@@ -825,11 +825,8 @@ namespace MudBlazor.UnitTests.Components
 
             await switchInput.ChangeAsync(new ChangeEventArgs { Value = true });
 
-            comp.WaitForAssertion(() =>
-            {
-                var button = comp.Find("button.mud-icon-button");
-                button.GetAttribute("aria-label").Should().Be("Scroll tabs up");
-            });
+            var button = comp.Find("button.mud-icon-button");
+            button.GetAttribute("aria-label").Should().Be("Scroll tabs up");
         }
 
         [Test]

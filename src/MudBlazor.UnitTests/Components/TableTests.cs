@@ -2037,7 +2037,7 @@ namespace MudBlazor.UnitTests.Components
 
             button.GetAttribute("aria-label").Should().Be("Edit row");
 
-            await button.ClickAsync(new MouseEventArgs());
+            await button.ClickAsync();
 
             button.GetAttribute("aria-label").Should().Be("Commit edit");
         }
@@ -2048,7 +2048,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableInlineEditCancelTest>();
             var rows = comp.FindAll("tbody tr");
             var row = rows.First(r => r.TextContent.Contains('B'));
-            await row.ClickAsync(new MouseEventArgs());
+            await row.ClickAsync();
 
             var buttons = comp.FindAll("button.mud-icon-button");
 
@@ -2264,7 +2264,7 @@ namespace MudBlazor.UnitTests.Components
 
             button.GetAttribute("aria-label").Should().Be("Expand group");
 
-            await button.ClickAsync(new MouseEventArgs());
+            await button.ClickAsync();
 
             button.GetAttribute("aria-label").Should().Be("Collapse group");
         }
