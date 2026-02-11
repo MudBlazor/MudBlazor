@@ -498,6 +498,7 @@ namespace MudBlazor
 
         internal string FooterClassname =>
             new CssBuilder("mud-table-cell")
+                .AddClass("footer-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
                 .Build();
