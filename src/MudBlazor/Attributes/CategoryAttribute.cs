@@ -572,5 +572,11 @@ namespace MudBlazor
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
+
+        public static class ExitPrompt
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
     }
 }

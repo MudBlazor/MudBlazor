@@ -16,6 +16,9 @@
         "enabled": true,
         "addLabels": [
             "security"
+        ],
+        "reviewers": [
+            "team:core-team"
         ]
     },
     "packageRules": [
@@ -47,20 +50,7 @@
             ],
             "draftPR": true,
             "prBodyNotes": [
-                "Draft reason: this target version is either under 14 days old or does not publish a reliable release timestamp yet."
-            ]
-        },
-        {
-            "description": "Keep major NuGet updates in draft for manual review of potential breaking changes.",
-            "matchManagers": [
-                "nuget"
-            ],
-            "matchUpdateTypes": [
-                "major"
-            ],
-            "draftPR": true,
-            "prBodyNotes": [
-                "Draft reason: this is a major update."
+                "> [!WARNING]\n> Target version is either under 14 days old or does not publish a reliable release timestamp yet."
             ]
         },
         {

@@ -79,7 +79,6 @@ namespace MudBlazor.Docs.Services
             .AddItem("Collapse", typeof(MudCollapse))
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
             .AddItem("Split Panel", typeof(MudSplitPanel))
-            .AddItem("Hotkey", typeof(MudHotkey))
 
             //GROUPS
 
@@ -131,6 +130,13 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
                 .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
+
+            // Functional
+            .AddNavGroup("Functional", false, new DocsComponents()
+                .AddItem("Exit Prompt", typeof(MudExitPrompt))
+                .AddItem("Hotkey", typeof(MudHotkey))
+            )
+
             // this must be last!
             .GetComponentsSortedByName();
 
@@ -138,33 +144,33 @@ namespace MudBlazor.Docs.Services
         /// Features menu links
         /// </summary>
         public IEnumerable<DocsLink> Features => _features ??= new List<DocsLink>
-            {
-                new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
-                new DocsLink {Title = "Colors", Href = "features/colors"},
-                new DocsLink {Title = "Elevation", Href = "features/elevation"},
-                new DocsLink {Title = "Converters", Href = "features/converters"},
-                new DocsLink {Title = "Icon Reference", Href = "features/icons"}, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
-                new DocsLink {Title = "Parameter State", Href = "features/parameterstate"},
-                new DocsLink {Title = "Masking", Href = "features/masking"},
-                new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
-                new DocsLink {Title = "Localization", Href = "features/localization"},
-                new DocsLink {Title = "Analyzers", Href = "features/analyzers"},
-                new DocsLink {Title = "Services", Href = "features/services"},
-                new DocsLink {Title = "Chat (deprecated)", Href = "components/chat"}, // TODO: there is no component to reference so it's added under features instead so the page is still searchable. remove this in v10.
-            }.OrderBy(x => x.Title);
+        {
+            new DocsLink { Title = "Breakpoints", Href = "features/breakpoints" },
+            new DocsLink { Title = "Colors", Href = "features/colors" },
+            new DocsLink { Title = "Elevation", Href = "features/elevation" },
+            new DocsLink { Title = "Converters", Href = "features/converters" },
+            new DocsLink { Title = "Icon Reference", Href = "features/icons" }, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
+            new DocsLink { Title = "Parameter State", Href = "features/parameterstate" },
+            new DocsLink { Title = "Masking", Href = "features/masking" },
+            new DocsLink { Title = "RTL Languages", Href = "features/rtl-languages" },
+            new DocsLink { Title = "Localization", Href = "features/localization" },
+            new DocsLink { Title = "Analyzers", Href = "features/analyzers" },
+            new DocsLink { Title = "Services", Href = "features/services" },
+            new DocsLink { Title = "Chat (deprecated)", Href = "components/chat" }, // TODO: there is no component to reference so it's added under features instead so the page is still searchable. remove this in v10.
+        }.OrderBy(x => x.Title);
 
         /// <summary>
         /// Customization menu links
         /// </summary>
         public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>
         {
-            new DocsLink {Title = "Default theme", Href="customization/default-theme"},
-            new DocsLink {Title = "Overview", Href = "customization/overview"},
-            new DocsLink {Title = "Palette", Href = "customization/palette"},
-            new DocsLink {Title = "Typography", Href = "customization/typography"},
-            new DocsLink {Title = "z-index", Href = "customization/z-index"},
-            new DocsLink {Title = "Pseudo CSS", Href = "customization/pseudocss"},
-            new DocsLink {Title = "Globals", Href="customization/globals", Order = 100},
+            new DocsLink { Title = "Default theme", Href = "customization/default-theme" },
+            new DocsLink { Title = "Overview", Href = "customization/overview" },
+            new DocsLink { Title = "Palette", Href = "customization/palette" },
+            new DocsLink { Title = "Typography", Href = "customization/typography" },
+            new DocsLink { Title = "z-index", Href = "customization/z-index" },
+            new DocsLink { Title = "Pseudo CSS", Href = "customization/pseudocss" },
+            new DocsLink { Title = "Globals", Href = "customization/globals", Order = 100 },
         }.OrderBy(link => link.Order).ThenBy(x => x.Title);
 
         /// <summary>
@@ -172,35 +178,35 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> Utilities => _utilities ??= new List<DocsLink>
         {
-            new DocsLink {Group = "Layout", Title = "Display", Href = "utilities/display"},
-            new DocsLink {Group = "Layout", Title = "Z-Index", Href = "utilities/z-index"},
-            new DocsLink {Group = "Layout", Title = "Overflow", Href = "utilities/overflow"},
-            new DocsLink {Group = "Layout", Title = "Visibility", Href = "utilities/visibility"},
-            new DocsLink {Group = "Layout", Title = "Object Fit", Href = "utilities/object-fit"},
-            new DocsLink {Group = "Layout", Title = "Object Position", Href = "utilities/object-position"},
-            new DocsLink {Group = "Layout", Title = "Position", Href = "utilities/position"},
+            new DocsLink { Group = "Layout", Title = "Display", Href = "utilities/display" },
+            new DocsLink { Group = "Layout", Title = "Z-Index", Href = "utilities/z-index" },
+            new DocsLink { Group = "Layout", Title = "Overflow", Href = "utilities/overflow" },
+            new DocsLink { Group = "Layout", Title = "Visibility", Href = "utilities/visibility" },
+            new DocsLink { Group = "Layout", Title = "Object Fit", Href = "utilities/object-fit" },
+            new DocsLink { Group = "Layout", Title = "Object Position", Href = "utilities/object-position" },
+            new DocsLink { Group = "Layout", Title = "Position", Href = "utilities/position" },
 
-            new DocsLink {Group = "Flexbox", Title = "Enable Flexbox", Href = "utilities/enable-flex"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Direction", Href = "utilities/flex-direction"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Wrap", Href = "utilities/flex-wrap"},
-            new DocsLink {Group = "Flexbox", Title = "Flex", Href = "utilities/flex"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Grow", Href = "utilities/flex-grow"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Shrink", Href = "utilities/flex-shrink"},
-            new DocsLink {Group = "Flexbox", Title = "Order", Href = "utilities/order"},
-            new DocsLink {Group = "Flexbox", Title = "Gap", Href = "utilities/gap"},
-            new DocsLink {Group = "Flexbox", Title = "Justify Content", Href = "utilities/justify-content"},
-            new DocsLink {Group = "Flexbox", Title = "Align Content", Href = "utilities/align-content"},
-            new DocsLink {Group = "Flexbox", Title = "Align Items", Href = "utilities/align-items"},
-            new DocsLink {Group = "Flexbox", Title = "Align Self", Href = "utilities/align-self"},
+            new DocsLink { Group = "Flexbox", Title = "Enable Flexbox", Href = "utilities/enable-flex" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Direction", Href = "utilities/flex-direction" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Wrap", Href = "utilities/flex-wrap" },
+            new DocsLink { Group = "Flexbox", Title = "Flex", Href = "utilities/flex" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Grow", Href = "utilities/flex-grow" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Shrink", Href = "utilities/flex-shrink" },
+            new DocsLink { Group = "Flexbox", Title = "Order", Href = "utilities/order" },
+            new DocsLink { Group = "Flexbox", Title = "Gap", Href = "utilities/gap" },
+            new DocsLink { Group = "Flexbox", Title = "Justify Content", Href = "utilities/justify-content" },
+            new DocsLink { Group = "Flexbox", Title = "Align Content", Href = "utilities/align-content" },
+            new DocsLink { Group = "Flexbox", Title = "Align Items", Href = "utilities/align-items" },
+            new DocsLink { Group = "Flexbox", Title = "Align Self", Href = "utilities/align-self" },
 
-            new DocsLink {Group = "Spacing", Title = "Spacing", Href = "utilities/spacing"},
+            new DocsLink { Group = "Spacing", Title = "Spacing", Href = "utilities/spacing" },
 
-            new DocsLink {Group = "Borders", Title = "Border Radius", Href = "utilities/border-radius"},
-            new DocsLink {Group = "Borders", Title = "Border Style", Href = "utilities/border-style"},
-            new DocsLink {Group = "Borders", Title = "Border Width", Href = "utilities/border-width"},
+            new DocsLink { Group = "Borders", Title = "Border Radius", Href = "utilities/border-radius" },
+            new DocsLink { Group = "Borders", Title = "Border Style", Href = "utilities/border-style" },
+            new DocsLink { Group = "Borders", Title = "Border Width", Href = "utilities/border-width" },
 
-            new DocsLink {Group = "Interactivity", Title = "Cursor", Href = "utilities/cursor"},
-            new DocsLink {Group = "Interactivity", Title = "Pointer Events", Href = "utilities/pointer-events"},
+            new DocsLink { Group = "Interactivity", Title = "Cursor", Href = "utilities/cursor" },
+            new DocsLink { Group = "Interactivity", Title = "Pointer Events", Href = "utilities/pointer-events" },
         };
 
         public IEnumerable<MudComponent> Components => _docsComponents;
@@ -264,6 +270,7 @@ namespace MudBlazor.Docs.Services
                 {
                     return component.Name;
                 }
+
                 if (component.GroupComponents != null)
                 {
                     foreach (var groupComponent in component.GroupComponents)
@@ -275,6 +282,7 @@ namespace MudBlazor.Docs.Services
                     }
                 }
             }
+
             return null;
         }
 
@@ -329,6 +337,7 @@ namespace MudBlazor.Docs.Services
                     return component;
                 }
             }
+
             return null;
         }
 
@@ -345,6 +354,7 @@ namespace MudBlazor.Docs.Services
             {
                 return parent;
             }
+
             // Are there child types to search?
             if (parent.ChildTypes != null)
             {
@@ -357,6 +367,7 @@ namespace MudBlazor.Docs.Services
                     }
                 }
             }
+
             // Are there sub-menus to search?
             if (parent.IsNavGroup && parent.GroupComponents != null)
             {
@@ -370,6 +381,7 @@ namespace MudBlazor.Docs.Services
                     }
                 }
             }
+
             return null;
         }
     }
