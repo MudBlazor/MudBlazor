@@ -13,6 +13,11 @@ namespace MudBlazor.Docs.Services
         /// Return the inner text of the HTML element referenced by given id
         /// </summary>
         ValueTask<string> GetInnerTextByIdAsync(string id);
+
+        /// <summary>
+        /// Scrolls the active navigation link into view
+        /// </summary>
+        ValueTask ScrollToActiveNavLinkAsync();
     }
 
     public class DocsJsApiService : IDocsJsApiService
@@ -28,6 +33,12 @@ namespace MudBlazor.Docs.Services
         public ValueTask<string> GetInnerTextByIdAsync(string id)
         {
             return _jsRuntime.InvokeAsync<string>($"mudBlazorDocs.getInnerTextById", id);
+        }
+
+        /// <inheritdoc cref="IDocsJsApiService"/>
+        public ValueTask ScrollToActiveNavLinkAsync()
+        {
+            return _jsRuntime.InvokeVoidAsync("mudBlazorDocs.scrollToActiveNavLink");
         }
     }
 }
