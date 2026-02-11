@@ -358,7 +358,7 @@
     <value>Loading...</value>
   </data>
   <data name="MudTable_ExpandGroup" xml:space="preserve">
-    <value>Collapse group</value>
+    <value>Expand group</value>
   </data>
   <data name="MudTable_EditRow" xml:space="preserve">
     <value>Edit row</value>
@@ -367,7 +367,7 @@
     <value>Cancel edit</value>
   </data>
   <data name="MudTable_CollapseGroup" xml:space="preserve">
-    <value>Expand group</value>
+    <value>Collapse group</value>
   </data>
   <data name="MudTable_CommitRow" xml:space="preserve">
     <value>Commit edit</value>

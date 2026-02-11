@@ -16,7 +16,7 @@
                 @if (GroupDefinition?.Expandable ?? false)
                 {
                     <MudIconButton Class="mud-table-row-expander" Icon="@(Expanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => Expanded = !Expanded)"
-                                       aria-label="@(Expanded ? Localizer[LanguageResource.MudTable_ExpandGroup] : Localizer[LanguageResource.MudTable_CollapseGroup])" />
+                                       aria-label="@(Expanded? Localizer[LanguageResource.MudTable_CollapseGroup] : Localizer[LanguageResource.MudTable_ExpandGroup])" />
                 }
                 else
                 {
