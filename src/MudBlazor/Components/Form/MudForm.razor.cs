@@ -272,13 +272,14 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                // If there are required fields, the form should start as invalid
-                // This ensures the IsValid binding is properly initialized even if the user
-                // bound IsValid to a variable that starts as true
+                // Ensure IsValid binding is properly initialized based on whether there are required fields
+                // This handles cases where the user's bound variable conflicts with the form's internal state
                 var hasRequiredFields = _formControls.Any(x => x.Required);
-                if (hasRequiredFields && IsValid)
+                var expectedValid = !hasRequiredFields;
+                
+                if (expectedValid != IsValid)
                 {
-                    IsValid = false;
+                    IsValid = expectedValid;
                     await IsValidChanged.InvokeAsync(IsValid);
                 }
             }
