@@ -40,10 +40,9 @@ namespace MudBlazor
         public IEnumerable<T>? CurrentItems { get; set; }
 
         private string Classname =>
-            new CssBuilder("footer-cell")
+            new CssBuilder(Column?.FooterClassname)
                 .AddClass(Column?.FooterClassFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.FooterClass)
-                .AddClass(Column?.FooterClassname)
                 .AddClass(Class)
                 .Build();
 

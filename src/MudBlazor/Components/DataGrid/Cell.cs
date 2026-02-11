@@ -29,13 +29,13 @@ namespace MudBlazor
         }
 
         internal string ComputedClass =>
-            new CssBuilder(_column.CellClassFunc?.Invoke(_item))
-                .AddClass(_column.CellClass)
-                .AddClass("mud-table-cell")
+            new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", _column.HideSmall)
                 .AddClass("sticky-left", _column.StickyLeft)
                 .AddClass("sticky-right", _column.StickyRight)
                 .AddClass($"edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.Editable)
+                .AddClass(_column.CellClassFunc?.Invoke(_item))
+                .AddClass(_column.CellClass)
                 .Build();
 
         internal string ComputedStyle =>
