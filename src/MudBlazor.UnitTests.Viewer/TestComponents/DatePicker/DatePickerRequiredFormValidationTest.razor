@@ -8,6 +8,9 @@
     public static string __description__ = "Form with required DatePicker should not be valid until date is selected.";
 
     public bool IsFormValid { get; set; }
+    
+    [Parameter]
     public string? Name { get; set; }
+    
     public DateTime? BirthDate { get; set; }
 }
