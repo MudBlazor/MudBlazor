@@ -2032,9 +2032,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.IsFormValid.Should().BeFalse();
 
-            var textField = comp.FindComponent<MudTextField<string>>();
-            await comp.InvokeAsync(() => textField.Instance.SetTextAsync("John"));
-            await comp.InvokeAsync(() => textField.Instance.BlurAsync());
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.Name, "John"));
 
             comp.Instance.IsFormValid.Should().BeFalse();
 
