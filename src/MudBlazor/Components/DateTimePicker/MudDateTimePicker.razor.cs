@@ -41,24 +41,30 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string DateTimeFormat
         {
-            get => (Converter as DefaultConverter<DateTime?>)?.Format;
+            get => _dateTimeFormat;
             set
             {
-                if (Converter is DefaultConverter<DateTime?> defaultConverter)
+                if (_dateTimeFormat == value)
                 {
-                    defaultConverter.Format = value ?? $"{Culture.DateTimeFormat.ShortDatePattern} {Culture.DateTimeFormat.ShortTimePattern}";
+                    return;
                 }
-                DateFormatChangedAsync(value);
+
+                _dateTimeFormat = value;
+
+                Touched = true;
+                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
         }
+        private string _dateTimeFormat = string.Empty;
 
-        /// <summary>
-        /// Occurs when the <see cref="DateFormat"/> has changed.
-        /// </summary>
-        protected virtual Task DateFormatChangedAsync(string newFormat)
+        /// <inheritdoc />
+        protected override IConverter<DateTime?, string?> GetDefaultConverter()
         {
-            Touched = true;
-            return SetTextAsync(Converter.Set(_value), false);
+            return new TimeSpanConverter
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         /// <summary>
@@ -187,7 +193,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Func<DateTime, bool> IsDateTimeDisabledFunc { get; set; }
+        public Func<DateTime, bool> IsDateTimeDisabledFunc { get; set; } = (_) => false;
 
         /// <summary>
         /// Function to conditionally apply new classes to specific days.
@@ -211,12 +217,9 @@ namespace MudBlazor
 
         private MudDatePicker _datePickerRef { get; set; }
 
-        public MudDateTimePicker() : base(new DefaultConverter<DateTime?>())
+        public MudDateTimePicker()
         {
-            Converter.GetFunc = OnGet;
-            Converter.SetFunc = OnSet;
-            ((DefaultConverter<DateTime?>)Converter).Culture = Culture;
-            ((DefaultConverter<DateTime?>)Converter).Format = $"{Culture.DateTimeFormat.ShortDatePattern} {Culture.DateTimeFormat.ShortTimePattern}";
+            AdornmentIcon = Icons.Material.Filled.EditCalendar;
         }
 
         protected override async Task OnPickerOpenedAsync()
@@ -233,38 +236,24 @@ namespace MudBlazor
             return base.OnOpenedAsync();
         }
 
-        protected string OnSet(DateTime? value)
-        {
-            return value?.ToString(GetDateTimeFormat()) ?? null;
-        }
-
         protected DateTime? OnGet(string value)
         {
             if (!string.IsNullOrEmpty(value))
             {
                 DateTime date;
-                if (System.DateTime.TryParseExact(value, GetDateTimeFormat(), Culture, DateTimeStyles.None, out date))
+                if (System.DateTime.TryParseExact(value, GetFormat(), GetCulture(), DateTimeStyles.None, out date))
                 {
                     return date;
                 }
-                if (System.DateTime.TryParse(value, Culture, DateTimeStyles.None, out date))
+                if (System.DateTime.TryParse(value, GetCulture(), DateTimeStyles.None, out date))
                 {
                     return date;
                 }
             }
-            HandleParsingError();
             return null;
         }
 
-        protected void HandleParsingError()
-        {
-            const string ParsingErrorMessage = "Not a valid datetime";
-            Converter.GetError = true;
-            Converter.GetErrorMessage = (ParsingErrorMessage, []);
-            Converter.OnError?.Invoke(ParsingErrorMessage, []);
-        }
-
-        protected override async Task StringValueChangedAsync(string value)
+        protected override async Task StringValueChangedAsync(string? value)
         {
             Touched = true;
             if (string.IsNullOrEmpty(value))
@@ -273,18 +262,13 @@ namespace MudBlazor
             }
             else
             {
-                DateTime? dateTime = Converter.Get(value);
+                DateTime? dateTime = ConvertGet(value);
                 if (dateTime is not null)
                 {
                     await SetDateTimeAsync(dateTime, false);
                 }
             }
             await base.StringValueChangedAsync(value);
-        }
-
-        protected string GetDateTimeFormat()
-        {
-            return ((DefaultConverter<DateTime?>)Converter).Format;
         }
 
         protected DateTime? GetPartialDateTime()
@@ -316,7 +300,7 @@ namespace MudBlazor
                     .Replace("m", "-")
                     .Replace("s", "-");
             }
-            return (_datePicked?.Add(_timePicked ?? TimeSpan.Zero) ?? System.DateTime.MinValue.Add(_timePicked ?? TimeSpan.Zero)).ToString(dateTimeFormat, Culture);
+            return (_datePicked?.Add(_timePicked ?? TimeSpan.Zero) ?? System.DateTime.MinValue.Add(_timePicked ?? TimeSpan.Zero)).ToString(dateTimeFormat, GetCulture());
         }
 
         protected virtual void OnFormattedDateClick()
@@ -392,8 +376,7 @@ namespace MudBlazor
                 _value = date;
                 if (updateValue)
                 {
-                    Converter.GetError = false;
-                    await SetTextAsync(Converter.Set(_value), false);
+                    await SetTextAsync(ConvertSet(_value), false);
                 }
                 await DateTimeChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
