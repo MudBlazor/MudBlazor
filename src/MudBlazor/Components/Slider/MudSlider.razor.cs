@@ -6,7 +6,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Allows users to select a value within a specified range. Sliders should present the full range of available values and the value should take effect immediately.
     /// </summary>

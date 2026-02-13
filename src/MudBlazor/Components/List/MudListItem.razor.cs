@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// An item within a <see cref="MudList{T}"/> component.
@@ -227,6 +226,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Expanding)]
         public bool Expanded { get; set; }
 
+        /// <summary>
+        /// Occurs when <see cref="Expanded"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 

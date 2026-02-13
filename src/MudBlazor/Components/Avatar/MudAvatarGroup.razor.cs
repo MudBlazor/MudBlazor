@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a grouping of multiple <see cref="MudAvatar"/> components.
     /// </summary>

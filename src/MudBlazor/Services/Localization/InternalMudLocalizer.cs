@@ -3,11 +3,12 @@ using Microsoft.Extensions.Localization;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// The <see cref="InternalMudLocalizer"/> service forwards translations to the <see cref="ILocalizationInterceptor"/> service.
-/// By default, the <see cref="DefaultLocalizationInterceptor"/> is used, though custom implementations can be provided.
+/// Internal localization entry point that delegates translation work to configured interceptors.
 /// </summary>
+/// <remarks>
+/// Components access localization through this class so they can be decoupled from specific resource providers. By default it uses <see cref="DefaultLocalizationInterceptor"/>, but applications can plug in custom interceptors.
+/// </remarks>
 internal sealed class InternalMudLocalizer
 {
     private readonly ILocalizationInterceptor _interceptor;

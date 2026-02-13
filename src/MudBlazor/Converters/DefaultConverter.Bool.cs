@@ -6,7 +6,6 @@ using System.Globalization;
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class DefaultConverter
 {
     internal sealed class BoolConverter : IReversibleConverter<bool?, string?>, IReversibleConverter<bool, string?>

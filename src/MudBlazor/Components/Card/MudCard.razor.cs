@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Cards contain actions, text, or media like images or graphics. Keeping a card to a single subject keeps the design clean.
     /// </summary>

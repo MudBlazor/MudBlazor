@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 
-#nullable enable
 
 namespace MudBlazor
 {

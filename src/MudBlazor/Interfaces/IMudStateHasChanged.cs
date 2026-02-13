@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Interfaces;
 
-#nullable enable
 public interface IMudStateHasChanged
 {
     /// <summary>

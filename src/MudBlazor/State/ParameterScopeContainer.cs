@@ -10,7 +10,6 @@ using MudBlazor.State.Invocation;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents a collection of registered parameters.
 /// This class is part of MudBlazor's ParameterState framework.

@@ -4,7 +4,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
-#nullable enable
 /// <summary>
 /// Helper that creates a type-based dispatcher for converting values using per-type converters.
 /// </summary>

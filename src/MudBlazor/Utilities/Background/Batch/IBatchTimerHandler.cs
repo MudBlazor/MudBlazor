@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Utilities.Background.Batch;
 
-#nullable enable
 /// <summary>
 /// Represents a handler for batch timer events in conjunction with <see cref="BatchPeriodicQueue{T}"/>.
 /// </summary>

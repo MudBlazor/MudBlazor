@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// An input pattern mask which accepts date values.
 /// </summary>

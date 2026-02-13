@@ -2,6 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Core placement helpers for popovers, tooltips, and menus.
+ * Owns collision handling, flip logic, and shared repositioning behavior.
+ */
 window.mudpopoverHelper = {
     // set by the class MudPopover in initialize
     mainContainerClass: null,
@@ -778,8 +782,11 @@ window.mudpopoverHelper = {
     }
 };
 
+/**
+ * Manages popover lifecycle, observers, and event subscriptions.
+ * Coordinates helper-driven positioning with open/close state transitions.
+ */
 class MudPopover {
-
     constructor() {
         this.map = {};
         this.contentObserver = null;
@@ -788,7 +795,9 @@ class MudPopover {
         this.onScrollableNodes = (node) => window.mudpopoverHelper.handleScroll(node);
     }
 
-    // adds scroll listeners to node + parents up to body
+    /**
+     * Registers scroll listeners on scrollable ancestors up to the body element.
+     */
     popoverScrollListener(node) {
         let currentNode = node.parentNode;
         const scrollableElements = [];
@@ -810,6 +819,9 @@ class MudPopover {
         return scrollableElements;
     }
 
+    /**
+     * Creates resize/scroll observers required for one popover instance.
+     */
     createObservers(id) {
         // make sure observer lists are starting clear
         this.disposeObservers(id);
@@ -848,6 +860,9 @@ class MudPopover {
         }
     }
 
+    /**
+     * Disposes resize/scroll observers and listeners for one popover instance.
+     */
     disposeObservers(id) {
         // Get references to items that need cleanup
         const { scrollableElements, parentResizeObserver } = this.map[id];
@@ -871,6 +886,9 @@ class MudPopover {
         this.map[id].parentResizeObserver = null;
     }
 
+    /**
+     * Activates observers and performs transition-aware repositioning for an opened popover.
+     */
     openPopover(target, id) {
         // create observers for this popover (resizeObserver and scroll Listeners)
         this.createObservers(id);
@@ -888,6 +906,9 @@ class MudPopover {
         }, interval);
     }
 
+    /**
+     * Handles provider mutations that affect popover open state and placement.
+     */
     callbackPopover(mutation) {
         // good viewertests to check anytime you make a change
         // DrawerDialogSelectTest, OverlayNestedFreezeTest, OverlayDialogTest, PopoverDataGridFilterOptionsTest
@@ -947,6 +968,9 @@ class MudPopover {
         }
     }
 
+    /**
+     * Initializes the popover runtime and global observers for the provider container.
+     */
     initialize(containerClass, flipMargin, overflowPadding) {
         // only happens when the PopoverService is created which happens on application start and anytime the service might crash
         // "mud-popover-provider" is the default name of containerClass.
@@ -970,6 +994,9 @@ class MudPopover {
         window.addEventListener('scroll', this.onScroll, { passive: true });
     }
 
+    /**
+     * Ensures the main popover provider container is observed for relevant mutations.
+     */
     observeMainContainer() {
 
         const mainContent = document.body.getElementsByClassName(window.mudpopoverHelper.mainContainerClass);
@@ -1015,6 +1042,9 @@ class MudPopover {
         this.contentObserver = observer;
     }
 
+    /**
+     * Computes the maximum transition/animation time across a popover and its ancestors.
+     */
     getTransitionTimes(id) {
         let node = document.getElementById(`popover-${id}`);
         if (!node) {
@@ -1043,6 +1073,9 @@ class MudPopover {
         return maxTime;
     }
 
+    /**
+     * Parses CSS time values (`ms`/`s`) into milliseconds.
+     */
     parseTime(timeStr) {
         if (!timeStr) return 0;
         timeStr = timeStr.trim();
@@ -1146,6 +1179,9 @@ class MudPopover {
         }
     }
 
+    /**
+     * Returns all currently tracked popover IDs.
+     */
     getAllObservedContainers() {
         return Object.keys(this.map);
     }
@@ -1155,6 +1191,9 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
     window.mudpopoverHelper.placePopoverByClassSelector();
 }, 25);
 
+/**
+ * Repositions popovers after scroll events from body or nested scroll containers.
+ */
 window.mudpopoverHelper.handleScroll = function (node = null) {
     // node is a container scrollable element, doesn't need fixed position or flip always to fire
     // does need itself to be repositioned to stay anchored to where it's at

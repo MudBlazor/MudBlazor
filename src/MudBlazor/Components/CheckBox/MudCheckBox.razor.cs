@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A form input for boolean values or selecting multiple items in a list. Use checkboxes (instead of switches or radio buttons) if multiple options can be selected from a list.
     /// </summary>
@@ -155,60 +154,7 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
-        {
-            if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
-            {
-                return;
-            }
-
-            switch (obj.Key)
-            {
-                case "Delete":
-                    await SetBoolValueAsync(false, true);
-                    break;
-                case "Enter" or "NumpadEnter":
-                    await SetBoolValueAsync(true, true);
-                    break;
-                case "Backspace":
-                    if (TriState)
-                    {
-                        await SetBoolValueAsync(null, true);
-                    }
-
-                    break;
-                case " ":
-                    switch (BoolValue)
-                    {
-                        case null:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                        case true:
-                            await SetBoolValueAsync(false, true);
-                            break;
-                        case false when TriState:
-                            await SetBoolValueAsync(null, true);
-                            break;
-                        case false:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                    }
-
-                    break;
-            }
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            // if Aria Label has a value add aria-labeled by
-            if (!string.IsNullOrWhiteSpace(AriaLabel))
-            {
-                // we use try add in case the user has already set an aria-labelledby attribute
-                UserAttributes.TryAdd("aria-labelledby", _ariaId);
-            }
-        }
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -224,7 +170,12 @@ namespace MudBlazor
                         new("Backspace", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDown("Backspace", HandleBackspaceAsync)
+                        .OnKeyDown(" ", HandleSpaceAsync)));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -243,11 +194,28 @@ namespace MudBlazor
             {
                 return BoolValue is not null;
             }
-            else
-            {
-                return base.HasValue(value);
-            }
+
+            return base.HasValue(value);
         }
+
+        private bool CanHandleKeys() => KeyboardEnabled && !GetDisabledState() && !GetReadOnlyState();
+
+        private Task HandleSpaceAsync()
+        {
+            bool? nextValue = BoolValue switch
+            {
+                null => true,
+                true => false,
+                false when TriState => null,
+                false => true
+            };
+
+            return SetBoolValueAsync(nextValue, true);
+        }
+
+        private Task HandleBackspaceAsync() => TriState
+                ? SetBoolValueAsync(null, true)
+                : Task.CompletedTask;
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

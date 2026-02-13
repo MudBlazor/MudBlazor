@@ -8,7 +8,6 @@ using MudBlazor.Utilities.Converter;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// An expandable branch of a <see cref="MudTreeView{T}"/>.
     /// </summary>

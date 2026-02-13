@@ -6,7 +6,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A scrollable list for displaying text, avatars, and icons. Use lists to help users find a specific item and act on it.

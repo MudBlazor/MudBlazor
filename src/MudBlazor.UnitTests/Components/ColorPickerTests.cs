@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ColorPickerMode.Should().Be(ColorPickerMode.RGB);
             comp.Instance.ColorPickerView.Should().Be(ColorPickerView.Spectrum);
             comp.Instance.UpdateBindingIfOnlyHSLChanged.Should().BeFalse();
-            comp.Instance.ReadValue.Should().Be(_defaultColor);
+            comp.Instance.ReadValue.Should().Be(null);
             comp.Instance.Palette.Should().BeEquivalentTo(_mudGridPaletteDefaultColors);
             comp.Instance.DragEffect.Should().BeTrue();
         }
@@ -534,6 +534,21 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowPreview, true));
 
             _ = comp.Find(_colorDotCssSelector);
+        }
+
+        [Test]
+        public void ShowPreview_ShouldUseDefaultColor_WhenValueIsNull()
+        {
+            var comp = Context.Render<MudColorPicker>(p =>
+            {
+                p.Add(x => x.Value, null);
+                p.Add(x => x.ShowPreview, true);
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+            });
+
+            var colorDot = comp.Find(_colorDotCssSelector);
+            var style = colorDot.GetAttribute("style");
+            style.Should().Be($"background: {_defaultColor.ToString(MudColorOutputFormats.RGBA)};");
         }
 
         [Test]
@@ -1061,8 +1076,9 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 2);
             var expectedColor = _defaultColor;
 
+            //HSL picker inputs should remain the same when the value is cleared
             await CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);
-            comp.FindComponent<MudColorPicker>().Instance.ReadValue.Should().Be(_defaultColor);
+            comp.FindComponent<MudColorPicker>().Instance.ReadValue.Should().Be(null);
         }
 
         [Test]
@@ -1150,6 +1166,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.PickerVariant, PickerVariant.Static);
                 p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
+                p.Add(x => x.Value, _defaultColor);
             });
 
             var overlay = comp.Find(CssSelector);

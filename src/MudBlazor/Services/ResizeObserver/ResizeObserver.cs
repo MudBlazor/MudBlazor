@@ -5,11 +5,14 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 
 namespace MudBlazor.Services;
-#nullable enable
 
 /// <summary>
-/// Observes resize events on elements and provides size information.
+/// Watches elements for size changes and keeps a local cache of their bounds for fast lookup.
 /// </summary>
+/// <remarks>
+/// This service bridges Blazor components to the browser ResizeObserver API through JS interop.
+/// Components use it to subscribe once and then query cached sizes during rendering without extra JS roundtrips.
+/// </remarks>
 internal sealed class ResizeObserver : IResizeObserver
 {
     private bool _disposed;
@@ -134,17 +137,20 @@ internal sealed class ResizeObserver : IResizeObserver
     }
 
     /// <summary>
-    /// Represents the size change update information.
+    /// Payload sent from JavaScript to describe which element changed and its latest bounds.
     /// </summary>
+    /// <remarks>
+    /// The interop layer batches multiple element updates so the observer can refresh its cache in one pass.
+    /// </remarks>
     /// <param name="Id">The identifier of the element.</param>
     /// <param name="Size">The new size of the element.</param>
     public record SizeChangeUpdateInfo(Guid Id, BoundingClientRect Size);
 
     /// <summary>
-    /// Comparer for <see cref="ElementReference"/> to improve performance.
+    /// Compares <see cref="ElementReference"/> instances by their element id to speed dictionary lookups.
     /// </summary>
     /// <remarks>
-    /// This is needed because runtime provided implementation is not efficient for struct.
+    /// This avoids the slower default implementation when using <see cref="ElementReference"/> as dictionary keys.
     /// </remarks>
     internal class ElementReferenceComparer : IEqualityComparer<ElementReference>
     {

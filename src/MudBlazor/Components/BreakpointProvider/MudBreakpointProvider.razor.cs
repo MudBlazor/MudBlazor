@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Exposes the current breakpoint (xs, sm, md, lg, xl) to child components via a cascading parameter.
     /// </summary>

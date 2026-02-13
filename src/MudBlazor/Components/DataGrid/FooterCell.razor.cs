@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a cell displayed at the bottom of a column.
     /// </summary>

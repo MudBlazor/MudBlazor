@@ -2,13 +2,23 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Manages client-side drag state for DropZone interactions.
+ * Uses transient transforms so .NET can finalize ordering and targets on drop.
+ */
 window.mudDragAndDrop = {
-
+    /**
+     * Initializes native drag events for a drop-zone root element.
+     * Enables browser dragover/drop behavior needed by the DropZone workflow.
+     */
     initDropZone: (id) => {
         const elem = document.getElementById(id);
         elem.addEventListener('dragover', (event) => event.preventDefault());
         elem.addEventListener('dragstart', (event) => event.dataTransfer.setData('', event.target.id));
     },
+    /**
+     * Clears relative positioning during active dragging so hit-testing stays stable.
+     */
     makeDropZonesNotRelative: () => {
         const firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
         for (const dropItem of firstDropItems) {
@@ -20,8 +30,12 @@ window.mudDragAndDrop = {
             dropZone.style.position = 'unset';
         }
     },
+    /**
+     * Returns the first drop-zone identifier under a viewport coordinate.
+     */
     getDropZoneIdentifierOnPosition: (x, y) => {
         const elems = document.elementsFromPoint(x, y);
+        // Use top-to-bottom hit testing so nested layouts still resolve the visually closest zone.
         const dropZones = elems.filter(e => e.classList.contains('mud-drop-zone'));
         const dropZone = dropZones[0];
         if (dropZone) {
@@ -29,6 +43,9 @@ window.mudDragAndDrop = {
         }
         return "";
     },
+    /**
+     * Returns the target drop-item index under a viewport coordinate, excluding the dragged item.
+     */
     getDropIndexOnPosition: (x, y, id) => {
         //const selfItem = document.getElementById(id);
 
@@ -41,6 +58,9 @@ window.mudDragAndDrop = {
         }
         return "";
     },
+    /**
+     * Restores relative positioning after drag operations complete.
+     */
     makeDropZonesRelative: () => {
         const dropZones = document.getElementsByClassName('mud-drop-zone');
         for (const dropZone of dropZones) {
@@ -51,35 +71,37 @@ window.mudDragAndDrop = {
             dropItem.style.position = 'relative';
         }
     },
+    /**
+     * Applies incremental translation to the dragged element.
+     * Persists accumulated offsets in data attributes between pointer events.
+     */
     moveItemByDifference: (id, dx, dy) => {
         const elem = document.getElementById(id);
-        
 
-
-        // keep the ACCUMULATED dragged position in the data-x/data-y attributes
+        // Persist offsets on the element so each pointer move can stay incremental.
         const tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
         const ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
 
-
-        // translate the element
+        // translate3d keeps drag movement smooth and avoids forcing layout recalculation.
         elem.style.webkitTransform =
             elem.style.transform =
             'translate3d(' + tx + 'px, ' + ty + 'px, 10px)';
-        
-        // update the posiion attributes
+
+        // Update data attributes so subsequent move deltas accumulate correctly.
         elem.setAttribute('data-x', tx);
         elem.setAttribute('data-y', ty);
     },
+    /**
+     * Resets transform and accumulated drag offsets for an item.
+     */
     resetItem: (id) => {
         const elem = document.getElementById(id);
         if (elem) {
-            // translate the element
             elem.style.webkitTransform =
                 elem.style.transform = '';
-            // update the posiion attributes
+            // Reset stored offsets so the next drag starts from a clean origin.
             elem.setAttribute('data-x', 0);
             elem.setAttribute('data-y', 0);
         }
-        
     }
 };

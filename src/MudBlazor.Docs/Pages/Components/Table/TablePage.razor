@@ -20,9 +20,10 @@
         <DocsPageSection>
             <SectionHeader Title="Click Event and display for selected Row">
                 <Description>
-                    The <CodeInline>RowClassFunc</CodeInline> function can be used to customize the display of the selected row. <CodeInline>RowClickEvent</CodeInline> is triggered each time the row is clicked. 
-                    <CodeInline>tableRowClickEventArgs.MouseEventArgs.Detail</CodeInline> can be used to find out whether it was a single or double click.
-                    In addition, the <CodeInline>RowClass</CodeInline> can be used to apply a general row style independent of the selection state. In this example we show a pointer cursor.
+                    <CodeInline>RowClassFunc</CodeInline> can be used to customize the display of the selected row. Rows can be individually disabled by using the <CodeInline>RowDisabledFunc</CodeInline>. 
+                    In addition, the <CodeInline>RowClass</CodeInline> can be used to apply a general row style independent of the selection state and the <CodeInline>DisabledRowClass</CodeInline> can be used to customize disabled rows.
+                    <br/>
+                    <CodeInline>RowClickEvent</CodeInline> is triggered each time the row is clicked. <CodeInline>TableRowClickEventArgs.MouseEventArgs.Detail</CodeInline> can be used to find out whether it was a single or double click.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableRowClassFuncExample)" ShowCode="false" Block="true" FullWidth="true">

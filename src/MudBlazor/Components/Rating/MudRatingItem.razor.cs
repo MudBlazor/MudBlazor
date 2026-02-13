@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A clickable item as part of a <see cref="MudRating"/>.

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents an additional column for a <see cref="MudDataGrid{T}"/> which isn't tied to data.
     /// </summary>

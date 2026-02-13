@@ -1,9 +1,11 @@
 ﻿namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
-/// Options for configuring the <see cref="IResizeObserver"/>.
+/// Configuration knobs for resize observation, including debounce timing and optional logging.
 /// </summary>
+/// <remarks>
+/// Consumers pass these options when registering or creating an <see cref="IResizeObserver"/> to tune how often callbacks fire and to enable diagnostics while troubleshooting layout behavior.
+/// </remarks>
 public class ResizeObserverOptions
 {
     /// <summary>

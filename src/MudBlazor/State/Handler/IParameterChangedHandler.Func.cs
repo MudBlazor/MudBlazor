@@ -4,7 +4,6 @@
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents a wrapper class for implementing the <see cref="IParameterChangedHandler{T}"/> interface
 /// </summary>

@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides a comparer for <see cref="IReadOnlyCollection{T}"/> values using a <see cref="IEqualityComparer{T}"/>.
 /// Equality is set-based: two collections are equal if they contain the same distinct elements,

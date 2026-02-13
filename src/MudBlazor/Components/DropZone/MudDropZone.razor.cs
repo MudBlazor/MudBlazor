@@ -12,7 +12,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A location which can participate in a drag-and-drop operation.

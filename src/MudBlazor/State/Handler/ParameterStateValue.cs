@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents a non-generic snapshot of a parameter's name, current value, and last value.
 /// </summary>

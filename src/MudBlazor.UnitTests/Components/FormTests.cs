@@ -601,6 +601,69 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// ColorPicker should be validated like every other form component
+        /// </summary>
+        [Test]
+        public async Task FormWithColorPicker()
+        {
+            var comp = Context.Render<FormWithColorPickerTest>(parameters => parameters.Add(x => x.ColorValue, null));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var colorPickerComp = comp.FindComponent<MudColorPicker>();
+            var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
+            // check initial state: form should not be valid because colorpicker is required
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
+            colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            // input a valid color
+            await colorPickerComp.FindAll("input")[0].ChangeAsync("#111111");
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
+            colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            // clear selection
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ColorValue, null));
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            colorPicker.GetState(x => x.Error).Should().BeTrue();
+            colorPicker.GetState(x => x.ErrorText).Should().Be("Required");
+        }
+
+        /// <summary>
+        /// ColorPicker should be validated like every other form component when text input is cleared
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_ColorPicker_When_EditableInputCleared()
+        {
+            var comp = Context.Render<FormWithColorPickerTest>(parameters => parameters.Add(x => x.ColorValue, null));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var colorPickerComp = comp.FindComponent<MudColorPicker>();
+            var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
+            await colorPickerComp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Editable, true));
+            // check initial state: form should not be valid because colorpicker is required
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
+            colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            // input a valid color
+            await colorPickerComp.FindAll("input")[0].ChangeAsync("#111111");
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            colorPicker.GetState(x => x.Error).Should().BeFalse();
+            colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            // clear selection
+            await colorPickerComp.FindAll("input")[0].ChangeAsync(null);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            colorPicker.GetState(x => x.Error).Should().BeTrue();
+            colorPicker.GetState(x => x.ErrorText).Should().Be("Required");
+        }
+
+        /// <summary>
         /// ColorPicker should be validated like every other form component when color is changed via inputs
         /// </summary>
         [Test]

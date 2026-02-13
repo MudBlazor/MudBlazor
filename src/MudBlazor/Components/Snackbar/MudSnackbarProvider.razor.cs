@@ -5,7 +5,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-#nullable enable
 
 namespace MudBlazor
 {
@@ -14,6 +13,9 @@ namespace MudBlazor
         [Inject]
         private ISnackbar Snackbars { get; set; } = null!;
 
+        /// <summary>
+        /// Displays snackbar positions right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

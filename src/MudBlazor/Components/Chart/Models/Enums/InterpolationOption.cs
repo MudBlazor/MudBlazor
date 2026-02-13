@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 using MudBlazor.Charts;
 
-#nullable enable
 
 namespace MudBlazor
 {

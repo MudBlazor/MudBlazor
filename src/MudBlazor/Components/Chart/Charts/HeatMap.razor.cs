@@ -13,7 +13,6 @@ using MudBlazor.Interop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
 
 namespace MudBlazor.Charts
 {

@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// A simple reversible converter whose forward and backward delegates can be supplied (deferred) after construction.
 /// </summary>

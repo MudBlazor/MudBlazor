@@ -3,7 +3,6 @@ using System.Numerics;
 using System.Text;
 using MudBlazor.Extensions;
 
-#nullable enable
 namespace MudBlazor.Charts
 {
     /// <summary>

@@ -4,7 +4,6 @@
 
 using MudBlazor.Utilities;
 
-#nullable enable
 
 namespace MudBlazor.Charts;
 

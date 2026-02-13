@@ -22,7 +22,7 @@
 @code {
     public static string __description__ = "Test for the Select All option with one disabled SelectItem";
     private readonly List<string> _allItems = [];
-    private IEnumerable<string> _selectedItems = new HashSet<string>();
+    private IReadOnlyCollection<string> _selectedItems = [];
 
     protected override void OnInitialized()
     {

@@ -7,7 +7,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class DefaultConverter
 {
     internal sealed class GuidConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>

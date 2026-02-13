@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Options specific to donut charts, extending <see cref="PieChartOptions"/>.
 /// </summary>

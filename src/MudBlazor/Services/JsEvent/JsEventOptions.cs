@@ -4,7 +4,12 @@
 
 namespace MudBlazor.Services
 {
-#nullable enable
+    /// <summary>
+    /// Options for subscribing to DOM events through <see cref="IJsEvent"/>.
+    /// </summary>
+    /// <remarks>
+    /// Use these settings to target specific elements and enable optional logging while debugging event subscriptions.
+    /// </remarks>
     public class JsEventOptions
     {
         /// <summary>

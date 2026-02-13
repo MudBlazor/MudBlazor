@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// An input mask consisting of a regular expression.
 /// </summary>

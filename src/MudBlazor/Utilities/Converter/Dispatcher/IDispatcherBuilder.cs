@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
-#nullable enable
 /// <summary>
 /// Builder API used to register per-type converters and produce a dispatcher that routes conversions
 /// to the appropriate registered converter.

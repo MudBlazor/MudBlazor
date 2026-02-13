@@ -1,7 +1,6 @@
 ﻿using MudBlazor.Charts;
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
@@ -569,6 +568,12 @@ namespace MudBlazor
         }
 
         public static class Hotkey
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class ExitPrompt
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";

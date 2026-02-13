@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     // TODO: Maybe can inherit from MudBaseInput?
     /// <summary>
     /// A component similar to <see cref="MudTextField{T}"/> which supports custom content.

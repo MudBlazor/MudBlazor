@@ -12,7 +12,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
   &.mud-table-square {
-    border-radius: 0px;
+    border-radius: 0;
   }
 
   &.mud-table-outlined {
@@ -91,7 +91,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
   .mud-table-sort-label-icon {
     font-size: 18px;
-    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     margin-left: 4px;
     user-select: none;
     margin-right: 4px;
@@ -218,12 +218,12 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       & .mud-table-row {
         .mud-table-cell:first-child {
           border-right: none;
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
 
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
       }
     }
@@ -232,7 +232,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       & .mud-table-row {
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
 
         .mud-table-cell:only-child {
@@ -255,7 +255,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       & .mud-table-row {
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
       }
     }
@@ -278,42 +278,50 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   & * .mud-table-root {
     .mud-table-head {
       & * .mud-table-cell:first-child {
-        border-radius: var(--mud-default-borderradius) 0px 0px 0px;
+        border-radius: var(--mud-default-borderradius) 0 0 0;
       }
 
       & * .mud-table-cell:last-child {
-        border-radius: 0px var(--mud-default-borderradius) 0px 0px;
+        border-radius: 0 var(--mud-default-borderradius) 0 0;
       }
+
       //Shared Sticky Header Styles
       .mud-table-cell, .mud-table-loading {
         background-color: var(--mud-palette-surface);
         position: sticky;
         z-index: 2;
       }
+
       // Row 1 (always)
       .mud-table-cell {
         top: 0;
       }
+
       // Row 2 (filter or panel row)
       .filter-header-cell {
         top: $header-height;
       }
+
       // Row 2 (filter or panel row if table is dense)
       &.mud-table-dense .filter-header-cell {
         top: $header-height-dense;
       }
+
       // Row 2 (loading row without filter header)
       .mud-table-loading {
         top: $header-height;
       }
+
       // Row 2 (loading row without filter header if table is dense)
       &.mud-table-dense .mud-table-loading {
         top: $header-height-dense;
       }
+
       // Row 3 (loading row with filter header)
       &:has(.filter-header-cell) .mud-table-loading {
         top: $header-height-with-filter;
       }
+
       // Row 3 (loading row with filter header if table is dense)
       &.mud-table-dense:has(.filter-header-cell) .mud-table-loading {
         top: $header-height-with-filter-dense;
@@ -334,7 +342,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 
   & * .mud-table-root {
-
     .mud-table-foot {
       position: sticky;
       z-index: 2;
@@ -347,7 +354,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
-
 .mud-table-row {
   color: inherit;
   display: table-row;
@@ -355,8 +361,22 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   vertical-align: middle;
 }
 
+.mud-table-row-disabled {
+  color: var(--mud-palette-text-disabled);
+  cursor: default;
+  pointer-events: none;
+
+  & .mud-table-cell {
+    color: var(--mud-palette-text-disabled) !important;
+  }
+}
+
 .mud-table-hover {
   & .mud-table-container .mud-table-root .mud-table-body {
+    & .mud-table-row {
+      cursor: pointer;
+    }
+
     @media(hover: hover) and (pointer: fine) {
       & .mud-table-row:hover {
         background-color: var(--mud-palette-table-hover);
@@ -471,11 +491,11 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   cursor: pointer;
   margin-left: 10px !important;
   margin-right: 10px !important;
-  margin-top: 0px !important;
+  margin-top: 0 !important;
   min-width: 52px;
 
   & .mud-select-input {
-    margin-top: 0px !important;
+    margin-top: 0 !important;
     padding: 0 7px !important;
   }
 
@@ -526,7 +546,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 .mud-header-togglehierarchy .mud-table-row-expander {
-    padding: 6px;
+  padding: 6px;
 }
 
 .mud-table-row-expander {
@@ -536,7 +556,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   margin-inline-end: -2px;
 }
 
-@mixin table-display-smalldevices ($breakpoint) {
+@mixin table-display-smalldevices($breakpoint) {
   .mud-#{$breakpoint}table {
     .mud-table-root .mud-table-head .mud-table-row,
     .mud-table-root .mud-table-foot {
@@ -569,7 +589,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       text-align: start !important;
     }
 
-
     &.mud-table-dense {
       & .mud-table-cell {
         padding: 6px 16px;
@@ -596,7 +615,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
     }
 
     .mud-table-pagination {
-
       .mud-table-pagination-spacer {
         flex: none;
       }
@@ -636,8 +654,9 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
     }
   }
 }
+
 // Table Pagination Flex Wrapper on old phones
-@media (max-width:360px) {
+@media (max-width: 360px) {
   .mud-table {
     .mud-table-pagination {
       .mud-select {
@@ -655,7 +674,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
-@media (max-width:416px) {
+@media (max-width: 416px) {
   .mud-table {
     .mud-table-pagination {
       .mud-table-pagination-toolbar {
@@ -677,26 +696,26 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
-@media (max-width:$breakpoint-sm) {
+@media (max-width: $breakpoint-sm) {
   @include table-display-smalldevices("xs-");
 }
 
-@media (max-width:$breakpoint-md) {
+@media (max-width: $breakpoint-md) {
   @include table-display-smalldevices("sm-");
 }
 
-@media (max-width:$breakpoint-lg) {
+@media (max-width: $breakpoint-lg) {
   @include table-display-smalldevices("md-");
 }
 
-@media (max-width:$breakpoint-xl) {
+@media (max-width: $breakpoint-xl) {
   @include table-display-smalldevices("lg-");
 }
 
-@media (max-width:$breakpoint-xxl) {
+@media (max-width: $breakpoint-xxl) {
   @include table-display-smalldevices("xl-");
 }
 
-@media (min-width:$breakpoint-xxl) {
+@media (min-width: $breakpoint-xxl) {
   @include table-display-smalldevices("xxl-");
 }

@@ -2,12 +2,19 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Shared ElementReference interop surface for focus, selection, and DOM metrics.
+ * Centralizes browser-specific behavior used by components and extension helpers.
+ */
 class MudElementReference {
     constructor() {
         this.listenerId = 0;
         this.eventListeners = {};
     }
 
+    /**
+     * Moves focus to the provided element.
+     */
     focus (element) {
         if (element)
         {
@@ -15,16 +22,24 @@ class MudElementReference {
         }
     }
 
+    /**
+     * Removes focus from the provided element.
+     */
     blur(element) {
         if (element) {
             element.blur();
         }
     }
 
+    /**
+     * Focuses the first tabbable descendant, with optional skipping.
+     * Falls back to the container when not enough tabbable elements exist.
+     */
     focusFirst (element, skip = 0, min = 0) {
         if (element)
         {
             const tabbables = window.getTabbableElements(element);
+            // Fallback avoids trapping focus when a dialog/container has too few tabbable children.
             if (tabbables.length <= min)
                 element.focus();
             else
@@ -32,6 +47,10 @@ class MudElementReference {
         }
     }
 
+    /**
+     * Focuses the last tabbable descendant, with optional reverse skipping.
+     * Falls back to the container when not enough tabbable elements exist.
+     */
     focusLast (element, skip = 0, min = 0) {
         if (element)
         {
@@ -43,13 +62,20 @@ class MudElementReference {
         }
     }
 
+    /**
+     * Stores the currently active element on the container for later restoration.
+     */
     saveFocus (element) {
         if (element)
         {
+            // Store on the container instance so restoration survives intermediate re-renders.
             element['mudblazor_savedFocus'] = document.activeElement;
         }
     }
 
+    /**
+     * Restores focus previously captured by saveFocus.
+     */
     restoreFocus (element) {
         if (element)
         {
@@ -60,6 +86,10 @@ class MudElementReference {
         }
     }
 
+    /**
+     * Selects a text range and focuses the element.
+     * Uses legacy-compatible APIs when needed.
+     */
     selectRange(element, pos1, pos2) {
         if (element)
         {
@@ -79,6 +109,9 @@ class MudElementReference {
         }
     }
 
+    /**
+     * Selects the element's full text content.
+     */
     select(element) {
         if (element)
         {
@@ -86,6 +119,9 @@ class MudElementReference {
         }
     }
 
+    /**
+     * Returns a serializable bounding rectangle enriched with scroll and viewport data.
+     */
     getBoundingClientRect(element) {
         if (!element) return;
 
@@ -99,6 +135,9 @@ class MudElementReference {
         return rect;
     }
 
+    /**
+     * Replaces the element className in one operation.
+     */
     changeCss (element, css) {
         if (element)
         {
@@ -106,11 +145,18 @@ class MudElementReference {
         }
     }
 
+    /**
+     * Removes a tracked event listener by event name and listener ID.
+     */
     removeEventListener (element, event, eventId) {
         element.removeEventListener(event, this.eventListeners[eventId]);
         delete this.eventListeners[eventId];
     }
 
+    /**
+     * Adds an event listener that always prevents default behavior.
+     * Returns a generated listener ID for later removal.
+     */
     addDefaultPreventingHandler(element, eventName) {
         const listener = function (e) {
             // Only prevent default if not already prevented
@@ -124,10 +170,17 @@ class MudElementReference {
         return this.listenerId;
     }
 
+    /**
+     * Removes a default-preventing listener by its generated listener ID.
+     */
     removeDefaultPreventingHandler(element, eventName, listenerId) {
         this.removeEventListener(element, eventName, listenerId);
     }
 
+    /**
+     * Adds default-preventing listeners for multiple event names.
+     * Returns listener IDs aligned with the provided event list.
+     */
     addDefaultPreventingHandlers(element, eventNames) {
         const listeners = [];
 
@@ -139,6 +192,9 @@ class MudElementReference {
         return listeners;
     }
 
+    /**
+     * Removes default-preventing listeners for multiple event names.
+     */
     removeDefaultPreventingHandlers(element, eventNames, listenerIds) {
         for (let index = 0; index < eventNames.length; ++index) {
             const eventName = eventNames[index];
@@ -147,19 +203,23 @@ class MudElementReference {
         }
     }
 
-    // ios doesn't trigger Blazor/React/Other dom style blur event so add a base event listener here 
+    // ios doesn't trigger Blazor/React/Other dom style blur event so add a base event listener here
     // that will trigger with IOS Done button and regular blur events
+    /**
+     * Attaches a blur bridge that calls back into .NET.
+     * Used to normalize blur behavior on iOS virtual keyboard flows.
+     */
     addOnBlurEvent(element, dotNetReference) {
         if (!element) return;
 
         element._mudBlurHandler = function (e) {
             if (!element || !document.contains(element)) {
-                // Element is no longer in the DOM, clean up
+                // iOS keyboard flows can blur after disposal; clean up to prevent stale callbacks.
                 window.mudElementRef.removeOnBlurEvent(element);
                 return;
             }
             e.preventDefault();
-            
+
             if (dotNetReference) {
                 dotNetReference.invokeMethodAsync('CallOnBlurredAsync').catch(err => {
                     console.warn("Error invoking CallOnBlurredAsync, possibly disposed:", err);
@@ -173,6 +233,9 @@ class MudElementReference {
         element.addEventListener('blur', element._mudBlurHandler);
     }
 
+    /**
+     * Detaches the blur bridge previously installed by addOnBlurEvent.
+     */
     removeOnBlurEvent(element) {
         if (!element) return;
         if (element._mudBlurHandler) {

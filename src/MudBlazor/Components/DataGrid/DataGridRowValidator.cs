@@ -9,7 +9,6 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the validation logic for a <see cref="MudDataGrid{T}"/> row.
     /// </summary>
@@ -35,7 +34,6 @@ namespace MudBlazor
             get => _errors.ToArray();
         }
 
-#nullable enable
         /// <summary>
         /// The data to validate for this row.
         /// </summary>

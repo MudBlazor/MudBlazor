@@ -2,7 +2,6 @@
 
 namespace MudBlazor.State.Comparer;
 
-#nullable enable
 /// <summary>
 /// Provides functionality to compare instances of <see cref="ParameterMetadata"/> or <see cref="IParameterComponentLifeCycle.Metadata"/> for equality.
 /// </summary>

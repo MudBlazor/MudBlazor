@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Represents a popover component.
 /// </summary>
@@ -20,12 +19,12 @@ public interface IPopover
     /// <summary>
     /// The CSS class of the popover.
     /// </summary>
-    public string PopoverClass { get; }
+    string PopoverClass { get; }
 
     /// <summary>
     /// The inline styles of the popover.
     /// </summary>
-    public string PopoverStyles { get; }
+    string PopoverStyles { get; }
 
     /// <summary>
     /// Shows the popover.

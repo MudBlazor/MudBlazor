@@ -4,7 +4,6 @@
 
 using System.Globalization;
 
-#nullable enable
 namespace MudBlazor.Utilities
 {
     public class NaturalComparer : IComparer<object?>

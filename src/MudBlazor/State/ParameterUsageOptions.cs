@@ -4,7 +4,6 @@
 
 namespace MudBlazor.State;
 
-#nullable enable
 [Flags]
 public enum ParameterUsageOptions
 {

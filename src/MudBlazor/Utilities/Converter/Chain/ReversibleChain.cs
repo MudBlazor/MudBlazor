@@ -3,7 +3,6 @@ using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Chain;
 
-#nullable enable
 /// <summary>
 /// A chainable, reversible converter that supports both forward and backward conversions.
 /// </summary>

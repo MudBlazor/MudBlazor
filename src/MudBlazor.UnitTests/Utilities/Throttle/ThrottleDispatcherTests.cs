@@ -401,4 +401,36 @@ public class ThrottleDispatcherTests
         // So we should only see 1 execution (or maybe 2 if timing is tight)
         counter.Should().BeLessThanOrEqualTo(2);
     }
+
+    [Test]
+    public async Task ThrottleAsync_RapidCallsWithFastAction_ThrottlesCorrectly()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var dispatcher = new ThrottleDispatcher(50, timeProvider);
+        var counter = 0;
+        Task Invoke()
+        {
+            Interlocked.Increment(ref counter);
+            return Task.CompletedTask;
+        }
+
+        // Act - First call executes immediately (leading edge)
+        await dispatcher.ThrottleAsync(Invoke);
+        counter.Should().Be(1);
+
+        // Rapid calls within the interval should be suppressed even though the task completed
+        timeProvider.Advance(TimeSpan.FromMilliseconds(10));
+        await dispatcher.ThrottleAsync(Invoke);
+        counter.Should().Be(1);
+
+        timeProvider.Advance(TimeSpan.FromMilliseconds(10));
+        await dispatcher.ThrottleAsync(Invoke);
+        counter.Should().Be(1);
+
+        // After the interval elapses, the next call should execute
+        timeProvider.Advance(TimeSpan.FromMilliseconds(50));
+        await dispatcher.ThrottleAsync(Invoke);
+        counter.Should().Be(2);
+    }
 }

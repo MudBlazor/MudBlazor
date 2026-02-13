@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A surface for grouping other components, generally used for foregrounds and can be combined with Flex for layout.

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>

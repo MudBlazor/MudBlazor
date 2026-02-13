@@ -9,7 +9,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor;
 
-#nullable enable
 internal sealed partial class TimeSpanConverter : IReversibleConverter<TimeSpan?, string>, ICultureAwareConverter
 {
     public const string Format24Hours = "HH:mm";

@@ -3,7 +3,6 @@ using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Utilities.Converter.Chain;
 
-#nullable enable
 /// <summary>
 /// Wraps a forward conversion delegate and provides a fluent API to compose converter pipelines.
 /// </summary>

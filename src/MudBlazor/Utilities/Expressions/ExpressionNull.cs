@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 
 namespace MudBlazor.Utilities.Expressions;
 
-#nullable enable
 internal static class ExpressionNull
 {
     /// <summary>

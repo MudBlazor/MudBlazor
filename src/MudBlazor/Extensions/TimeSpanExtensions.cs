@@ -5,7 +5,6 @@
 // ReSharper disable once CheckNamespace
 namespace MudBlazor;
 
-#nullable enable
 internal static class TimeSpanExtensions
 {
     public static string ToIsoString(this TimeSpan self, bool seconds = false, bool ms = false)

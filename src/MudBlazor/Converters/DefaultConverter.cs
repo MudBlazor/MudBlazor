@@ -13,7 +13,6 @@ using static MudBlazor.DefaultConverter;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Default reversible converter that converts between <typeparamref name="T"/> and <see cref="string"/>.
 /// </summary>
