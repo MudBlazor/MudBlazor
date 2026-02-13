@@ -1,4 +1,5 @@
-﻿@namespace MudBlazor.Charts
+@namespace MudBlazor.Charts
+@namespace MudBlazor.Charts
 @inherits MudRadialChartBase<T, RadarChartOptions>
 @typeparam T
 
@@ -15,6 +16,7 @@
                      ChartLabels="@ChartLabels"
                      ChartOptions="@ChartOptions"
                      ChartGrid="@RenderChartGrid()"
+                     ChartLabelsFragment="@RenderChartLabels()"
                      ChartDataPoints="@RenderChartDataPoints"
                      CustomGraphics="@CustomGraphics"
                      HoveredSegment="@_hoveredSegment"
@@ -32,26 +34,24 @@
 @code {
     private RenderFragment RenderChartGrid() => builder =>
     {
-        if (ChartOptions?.ShowGridLines is not true || _gridLines.Count == 0) return;
-
         var seq = 0;
-
-        // Grid lines group
-        builder.OpenElement(seq++, "g");
-        builder.AddAttribute(seq++, "class", "mud-chart-radar-grid");
-        foreach (var gridLine in _gridLines)
+        if (ChartOptions?.ShowGridLines is true && _gridLines.Count > 0)
         {
-            builder.OpenElement(seq++, "path");
-            builder.AddAttribute(seq++, "class", "mud-chart-grid-line");
-            builder.AddAttribute(seq++, "d", gridLine.Data);
-            builder.AddAttribute(seq++, "fill", "none");
-            builder.AddAttribute(seq++, "stroke", ChartOptions.GridLineColor);
-            builder.AddAttribute(seq++, "stroke-width", ChartOptions.GridLineWidth);
+            builder.OpenElement(seq++, "g");
+            builder.AddAttribute(seq++, "class", "mud-chart-radar-grid");
+            foreach (var gridLine in _gridLines)
+            {
+                builder.OpenElement(seq++, "path");
+                builder.AddAttribute(seq++, "class", "mud-chart-grid-line");
+                builder.AddAttribute(seq++, "d", gridLine.Data);
+                builder.AddAttribute(seq++, "fill", "none");
+                builder.AddAttribute(seq++, "stroke", ChartOptions.GridLineColor);
+                builder.AddAttribute(seq++, "stroke-width", ChartOptions.GridLineWidth);
+                builder.CloseElement();
+            }
             builder.CloseElement();
         }
-        builder.CloseElement(); // </g>
 
-        // Axis lines group
         builder.OpenElement(seq++, "g");
         builder.AddAttribute(seq++, "class", "mud-chart-radar-axes");
         foreach (var axisLine in _axisLines)
@@ -63,18 +63,27 @@
             builder.AddAttribute(seq++, "stroke", ChartOptions.AxisLineColor);
             builder.AddAttribute(seq++, "stroke-width", ChartOptions.AxisLineWidth);
             builder.CloseElement();
+        }
+        builder.CloseElement(); // </g>
+    };
 
-            if (ChartOptions.ShowAxisLabels)
+    private RenderFragment RenderChartLabels() => builder =>
+    {
+        var seq = 0;
+        if (ChartOptions.ShowAxisLabels)
+        {
+            builder.OpenElement(seq++, "g");
+            builder.AddAttribute(seq++, "class", "mud-chart-radar-axis-labels");
+            foreach (var axisLine in _axisLines)
             {
                 var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : (axisLine.LabelX < 0 ? "end" : "start");
                 var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : (axisLine.LabelY < 0 ? "auto" : "hanging");
                 builder.AddMarkupContent(seq++,
-                    $"<text class='mud-chart-axis-label' x='{axisLine.LabelX.ToStr()}' y='{axisLine.LabelY.ToStr()}' font-size='12px' text-anchor='{anchor}' dominant-baseline='{baseline}'>{axisLine.LabelYValue}</text>");
+                    $"<text class='mud-chart-axis-label' x='{axisLine.LabelX.ToStr()}' y='{axisLine.LabelY.ToStr()}' font-size='12px' text-anchor='{anchor}' dominant-baseline='{baseline}' fill='currentColor'>{axisLine.LabelYValue}</text>");
             }
+            builder.CloseElement();
         }
-        builder.CloseElement(); // </g>
 
-        // Axis value labels group 
         builder.OpenElement(seq++, "g");
         builder.AddAttribute(seq++, "class", "mud-chart-radar-axis-values");
         foreach (var axisValue in _axisValues)
@@ -107,5 +116,20 @@
             builder.CloseElement();
         }
     };
-
 }
+
+
+
+
+
+
+
+
+
+
+
+}    };        }            builder.CloseElement();            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (i) => await SetSelectedPointAsync(point)));            builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnSegmentMouseOut));            builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnSegmentMouseOver(e, point)));            builder.AddAttribute(seq++, "fill", color);            builder.AddAttribute(seq++, "r", ChartOptions.DataPointRadius);            builder.AddAttribute(seq++, "cy", ToS(point.LabelY));            builder.AddAttribute(seq++, "cx", ToS(point.LabelX));            builder.AddAttribute(seq++, "class", "mud-chart-series-point");            builder.OpenElement(seq++, "circle");        {        foreach (var point in path.Points)        var seq = 0;                        : string.Empty;                        ? ChartOptions.ChartPalette.GetValue(path.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+n        var color = ChartOptions!.ChartPalette?.Length > 0        if (ChartOptions?.ShowDataMarkers is not true || path.Points.Count == 0) return;    {    private RenderFragment RenderChartDataPoints(SvgPolygon path) => builder =>    };        builder.CloseElement(); // </g>        }                $"<text class='mud-chart-axis-value' x='{axisValue.LabelX.ToStr()}' y='{axisValue.LabelY.ToStr()}' font-size='10px' text-anchor='start' dominant-baseline='middle' fill='#666'>{axisValue.LabelYValue}</text>");            builder.AddMarkupContent(seq++,        {        foreach (var axisValue in _axisValues)        builder.AddAttribute(seq++, "class", "mud-chart-radar-axis-values");        builder.OpenElement(seq++, "g");
+n        // Axis value labels group (rendered after paths)        }            builder.CloseElement();            }                    $"<text class='mud-chart-axis-label' x='{axisLine.LabelX.ToStr()}' y='{axisLine.LabelY.ToStr()}' font-size='12px' text-anchor='{anchor}' dominant-baseline='{baseline}' fill='currentColor'>{axisLine.LabelYValue}</text>");                builder.AddMarkupContent(seq++,                var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : (axisLine.LabelY < 0 ? "auto" : "hanging");                var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : (axisLine.LabelX < 0 ? "end" : "start");            {            foreach (var axisLine in _axisLines)            builder.AddAttribute(seq++, "class", "mud-chart-radar-axis-labels");            builder.OpenElement(seq++, "g");            // Axis labels group (rendered after paths so labels appear on top)        {
+n        if (ChartOptions.ShowAxisLabels)        var seq = 0;    {    private RenderFragment RenderChartLabels() => builder =>    };        builder.CloseElement(); // </g>        }            builder.CloseElement();            builder.AddAttribute(seq++, "stroke-width", ChartOptions.AxisLineWidth);            builder.AddAttribute(seq++, "stroke", ChartOptions.AxisLineColor);            builder.AddAttribute(seq++, "fill", "none");            builder.AddAttribute(seq++, "d", axisLine.Data);            builder.AddAttribute(seq++, "class", "mud-chart-axis-line");            builder.OpenElement(seq++, "path");        {        foreach (var axisLine in _axisLines)        builder.AddAttribute(seq++, "class", "mud-chart-radar-axes");        builder.OpenElement(seq++, "g");
+n        // Axis lines group (drawn under the paths)        }            builder.CloseElement(); // </g>            }                builder.CloseElement();                builder.AddAttribute(seq++, "stroke-width", ChartOptions.GridLineWidth);                builder.AddAttribute(seq++, "stroke", ChartOptions.GridLineColor);                builder.AddAttribute(seq++, "fill", "none");                builder.AddAttribute(seq++, "d", gridLine.Data);                builder.AddAttribute(seq++, "class", "mud-chart-grid-line");                builder.OpenElement(seq++, "path");            {            foreach (var gridLine in _gridLines)            builder.AddAttribute(seq++, "class", "mud-chart-radar-grid");            builder.OpenElement(seq++, "g");        {        if (ChartOptions?.ShowGridLines is true && _gridLines.Count > 0)n        // Grid lines group (optional)

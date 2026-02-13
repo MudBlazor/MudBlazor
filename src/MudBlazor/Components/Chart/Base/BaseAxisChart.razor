@@ -13,7 +13,7 @@
         @if (XAxisTitle is not null)
         {
             <g transform="translate(@(ToS(ViewBoxWidth / 2)), 10)">
-                <text class="mud-charts-yaxis axis-title" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@XAxisTitle</text>
+                <text class="mud-charts-xaxis axis-title" font-size="14px" text-anchor="middle" dominant-baseline="hanging" fill="currentColor">@XAxisTitle</text>
             </g>
         }
         @if (ChartOptions?.YAxisLines is true)
@@ -38,7 +38,7 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in HorizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value}</text>")
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto' fill='currentColor'>{horizontalLineValue.Value}</text>")
         }
     </g>
     @if (YAxisTitle is not null)
@@ -54,7 +54,7 @@
             var x = verticalLineValue.X.ToStr();
             var y = verticalLineValue.Y.ToStr();
             var rotation = (-ChartOptions?.XAxisLabelRotation ?? 0).ToString();
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})' fill='currentColor'>{verticalLineValue.Value}</text>")
         }
     </g>
     <g class="@($"mud-charts-{ChartType?.ToString().ToLower()}-series")">
