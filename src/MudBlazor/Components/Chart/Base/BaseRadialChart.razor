@@ -5,7 +5,8 @@
 @typeparam T
 @typeparam TChartOptions
 
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @(ToS(Radius * 2)) @(ToS(Radius * 2))" style="@HoveredStylename">
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height"
+     viewBox="0 0 @(ToS(Radius * 2)) @(ToS(Radius * 2))" style="@HoveredStylename">
     <Filters />
 
     <g transform="translate(@Radius.ToStr(), @Radius.ToStr())">
@@ -19,33 +20,37 @@
 
         @foreach (var item in Paths)
         {
-            <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
-                  class="mud-chart-serie"
-                  fill-opacity="@ChartOptions.FillOpacity"
-                  stroke="@GetColor(item.Index)"
+            <path @onclick="() => OnPathClick.InvokeAsync(item.Index)" class="mud-chart-serie"
+                  fill-opacity="@ChartOptions.FillOpacity" stroke="@GetColor(item.Index)"
                   stroke-width="@(ChartOptions is IHasDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
-                  fill="@GetColor(item.Index)"
-                  d="@item.Data"
+                  fill="@GetColor(item.Index)" d="@item.Data"
                   pointer-events="@(ChartOptions is IHasDataPointOptions ? "none" : "all")"
                   @onmouseover="(e) => OnMouseOver.InvokeAsync((Args: e, Segment: item))"
                   @onmouseout="() => OnMouseOut.InvokeAsync()">
             </path>
 
-                @if (ChartOptions is IHasValueLabelOptions { ShowValues: true  } && item is SvgPetal petal)
-                {
-                    <g class="mud-chart-labels">
-                        @if (!string.IsNullOrEmpty(item.LabelXValue) || !string.IsNullOrEmpty(item.LabelYValue))
-                        {
-                            @RenderValueLabel(petal);
-                        }
-                    </g>
-                }
+            @if (ChartOptions is IHasValueLabelOptions { ShowValues: true } && item is SvgPetal petal)
+            {
+                <g class="mud-chart-labels">
+                    @if (!string.IsNullOrEmpty(item.LabelXValue) || !string.IsNullOrEmpty(item.LabelYValue))
+                    {
+                        @RenderValueLabel(petal)
+                        ;
+                    }
+                </g>
+            }
 
             @if (item is SvgPolygon points && ChartDataPoints is not null)
             {
                 @ChartDataPoints(points)
             }
         }
+        @* Render any chart labels/axis values on top of segments *@
+        @if (ChartLabelsFragment is not null)
+        {
+            @ChartLabelsFragment
+        }
+
     </g>
 
     @CustomGraphics
@@ -67,12 +72,16 @@
         else
         {
             var tooltipFormat = BuildTooltipFormat();
-            <ChartTooltip Title="@tooltipFormat.title" Subtitle="@tooltipFormat.subtitle" Color="@color" X="@tooltipX" Y="@tooltipY" />
+            <ChartTooltip Title="@tooltipFormat.title" Subtitle="@tooltipFormat.subtitle" Color="@color" X="@tooltipX"
+                          Y="@tooltipY" />
         }
     }
 </svg>
 
 @code {
+    [Parameter]
+    public RenderFragment? ChartLabelsFragment { get; set; }
+
     RenderFragment RenderValueLabel(SvgPetal path) => builder =>
     {
         var seq = 0;

@@ -204,13 +204,26 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
             if (string.IsNullOrWhiteSpace(label))
                 continue;
 
+            // Only add legend items for slices/segments that actually have a rendered path
+            // or that are explicitly visible in a DataSet aggregation.
+            var hasPathForIndex = _paths.Any(p => p.Index == i);
+            var visibleForLegend = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
+                ? !HiddenIndices.Contains(i) && hasPathForIndex
+                : (i < ChartSeries.Count && ChartSeries[i].Visible && hasPathForIndex) || (i < ChartSeries.Count && ChartSeries[i].Visible && !hasPathForIndex);
+
+            if (!hasPathForIndex && ChartOptions!.AggregationOption == AggregationOption.GroupByLabel)
+                continue;
+
+            if (!visibleForLegend)
+                continue;
+
             _legends.Add(new SvgLegend
             {
                 Index = i,
                 Labels = label,
                 Visible = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
                     ? !HiddenIndices.Contains(i)
-                    : ChartSeries[i].Visible,
+                    : (i < ChartSeries.Count ? ChartSeries[i].Visible : true),
                 OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
             });
         }
