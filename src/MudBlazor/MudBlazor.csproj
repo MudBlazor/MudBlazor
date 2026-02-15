@@ -123,6 +123,9 @@
     <Message Importance="High"
              Text="Building MudBlazor web assets (outer build)" />
 
+    <Exec Command="$(BunToolRestore)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
     <Exec Command="$(BunWrapper) run build.mjs"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
@@ -138,6 +141,9 @@
 
     <Message Importance="High"
              Text="Building MudBlazor web assets (inner build, TFM: $(TargetFramework))" />
+
+    <Exec Command="$(BunToolRestore)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
 
     <Exec Command="$(BunWrapper) run build.mjs"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
