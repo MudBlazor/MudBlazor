@@ -1,6 +1,7 @@
 import "./mudAAAlicense";
 import "./mudDragAndDrop";
 import "./mudElementReference";
+import "./mudExitPrompt";
 import "./mudFileUpload";
 import "./mudHelpers";
 import "./mudHotkeyListener";

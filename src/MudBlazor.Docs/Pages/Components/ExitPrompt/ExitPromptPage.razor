@@ -1,0 +1,18 @@
+﻿@page "/components/exitprompt"
+
+<DocsPage>
+    <DocsPageHeader Title="Exit Prompt" Component="@nameof(MudExitPrompt)"/>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    Prevent accidental navigation loss by showing a confirmation when users leave a page.
+                    Use <CodeInline>Disabled</CodeInline> to enable protection conditionally, and <CodeInline>UseNativePrompt</CodeInline> to choose between MudBlazor and browser-native prompts.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ExitPromptExample)">
+                <ExitPromptExample/>
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
