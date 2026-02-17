@@ -121,7 +121,7 @@ namespace MudBlazor
         {
             // Normalize the DateRange before exception is thrown
             range = NormalizeDateRange(range);
-            
+
             if (_dateRange != range)
             {
                 var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
@@ -511,7 +511,7 @@ namespace MudBlazor
             var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;
         }
-        
+
         /// <summary>
         /// Normalize a date by treating DateTime.MinValue as null
         /// This prevents an ArgumentOutOfRangeException from happening when performing date arithmetic
@@ -522,11 +522,11 @@ namespace MudBlazor
         {
             if (date is null)
                 return null;
-            
+
             // Treat DateTime.MinValue as null
             if (date.Value == DateTime.MinValue)
                 return null;
-            
+
             return date;
         }
 
@@ -547,6 +547,6 @@ namespace MudBlazor
 
             return new DateRange(start, end);
         }
-        
+
     }
 }
