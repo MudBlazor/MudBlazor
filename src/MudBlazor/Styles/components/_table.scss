@@ -361,9 +361,9 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   vertical-align: middle;
 }
 
-  .mud-table-row-clickable {
-    cursor: pointer;
-  }
+.mud-table-row-clickable {
+  cursor: pointer;
+}
 
 .mud-table-row-disabled {
   color: var(--mud-palette-text-disabled);
