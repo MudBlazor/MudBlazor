@@ -6225,6 +6225,80 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.Instance._openHierarchies.Count.Should().Be(0));
         }
 
+        [Test]
+        public async Task DataGridFilterDefinitionsPreloadTest()
+        {
+            var comp = Context.Render<DataGridFilterDefinitionsPreloadTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterDefinitionsPreloadTest.Model>>();
+
+            // Wait for the filter to be applied after OnAfterRenderAsync
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance.FilterDefinitions.Count.Should().Be(1));
+
+            // Check that the filter definition has the correct column and value
+            var filterDef = dataGrid.Instance.FilterDefinitions.First();
+            filterDef.Column.Should().NotBeNull("Filter definition should have a column reference");
+            filterDef.Value.Should().Be("Sam", "Filter definition should have the correct value");
+
+            // Get the Name column
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName("Name");
+            nameColumn.Should().NotBeNull("Name column should exist");
+
+            // Verify that the filter's column matches the name column
+            filterDef.Column.Should().BeSameAs(nameColumn, "Filter definition's column should be the same instance as the Name column");
+
+            // Access FilterContext to verify it picks up the existing filter
+            var filterContext = nameColumn!.FilterContext;
+            filterContext.Should().NotBeNull("FilterContext should not be null");
+            filterContext.FilterDefinition.Should().NotBeNull("FilterContext.FilterDefinition should not be null");
+
+            // This is the key test - the FilterContext should have found the existing filter definition
+            filterContext.FilterDefinition.Should().BeSameAs(filterDef, "FilterContext should reference the same filter definition that was added");
+            filterContext.FilterDefinition!.Value.Should().Be("Sam", "FilterContext's filter definition should have the correct value");
+            filterContext.FilterDefinition.Operator.Should().Be(FilterOperator.String.Contains);
+        }
+
+        [Test]
+        public async Task DataGridFilterDefinitionsPreloadColumnFilterRowTest()
+        {
+            var comp = Context.Render<DataGridFilterDefinitionsPreloadColumnFilterRowTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterDefinitionsPreloadColumnFilterRowTest.Model>>();
+
+            // Wait for the filter to be applied after OnAfterRenderAsync
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance.FilterDefinitions.Count.Should().Be(1));
+
+            // Check that the filter definition has the correct column and value
+            var filterDef = dataGrid.Instance.FilterDefinitions.First();
+            filterDef.Column.Should().NotBeNull("Filter definition should have a column reference");
+            filterDef.Value.Should().Be("C", "Filter definition should have the correct value as reported in issue #8060");
+
+            // Get the Name column
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName("Name");
+            nameColumn.Should().NotBeNull("Name column should exist");
+
+            // Verify that the filter's column matches the name column
+            filterDef.Column.Should().BeSameAs(nameColumn, "Filter definition's column should be the same instance as the Name column");
+
+            // Access FilterContext to verify it picks up the existing filter - this is what was broken in #8060
+            var filterContext = nameColumn!.FilterContext;
+            filterContext.Should().NotBeNull("FilterContext should not be null");
+            filterContext.FilterDefinition.Should().NotBeNull("FilterContext.FilterDefinition should not be null");
+
+            // The key fix - the FilterContext should reference the programmatically added filter
+            filterContext.FilterDefinition.Should().BeSameAs(filterDef, "FilterContext should reference the same filter definition that was added");
+            filterContext.FilterDefinition!.Value.Should().Be("C", "FilterContext should show the filter value 'C' in the UI");
+            filterContext.FilterDefinition.Operator.Should().Be(FilterOperator.String.Contains, "FilterContext should show the correct operator");
+
+            // Verify the user can now modify the filter
+            filterContext.FilterDefinition.Value = "A";
+            filterContext.FilterDefinition.Value.Should().Be("A", "User should be able to modify the filter value");
+
+            // Verify the filter can be removed
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0, "Filter should be removable");
+        }
+
         #endregion
     }
 }
