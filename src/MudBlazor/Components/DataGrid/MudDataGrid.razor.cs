@@ -47,9 +47,9 @@ namespace MudBlazor
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         internal (double Top, double Left) _openPosition = (0, 0);
 
-        private readonly ParameterState<T?> _selectedItemState;
-        private readonly ParameterState<HashSet<T>?> _selectedItemsState;
-        private readonly ParameterState<bool> _expandSingleRowState;
+        protected readonly ParameterState<T?> SelectedItemState;
+        protected readonly ParameterState<HashSet<T>?> SelectedItemsState;
+        protected readonly ParameterState<bool> ExpandSingleRowState;
 
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
@@ -69,17 +69,17 @@ namespace MudBlazor
                 .WithParameter(() => Items)
                 .WithChangeHandler(OnItemsChangedAsync);
 
-            _selectedItemState = registerScope.RegisterParameter<T?>(nameof(SelectedItem))
+            SelectedItemState = registerScope.RegisterParameter<T?>(nameof(SelectedItem))
                 .WithParameter(() => SelectedItem)
                 .WithEventCallback(() => SelectedItemChanged)
                 .WithChangeHandler(OnSelectedItemChangedAsync);
 
-            _selectedItemsState = registerScope.RegisterParameter<HashSet<T>?>(nameof(SelectedItems))
+            SelectedItemsState = registerScope.RegisterParameter<HashSet<T>?>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged)
                 .WithChangeHandler(OnSelectedItemsChanged);
 
-            _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
+            ExpandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
                 .WithParameter(() => ExpandSingleRow)
                 .WithChangeHandler(OnExpandSingleRowChangedAsync);
         }
@@ -324,17 +324,17 @@ namespace MudBlazor
         public EventCallback<T> CanceledEditingItem { get; set; }
 
         /// <summary>
-        /// Invoked when the user saves changes to an item, allowing for validation, 
+        /// Invoked when the user saves changes to an item, allowing for validation,
         /// persistence, or other processing.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// The callback receives a separate instance of the item with the committed values, 
-        /// preventing changes from being applied to the underlying data source before 
+        /// The callback receives a separate instance of the item with the committed values,
+        /// preventing changes from being applied to the underlying data source before
         /// validation or processing completes.
         /// </para>
         /// <para>
-        /// Return a <see cref="DataGridEditFormAction"/> value to control the edit form behavior. 
+        /// Return a <see cref="DataGridEditFormAction"/> value to control the edit form behavior.
         /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>:
         /// </para>
         /// <list type="bullet">
@@ -828,7 +828,7 @@ namespace MudBlazor
             // Handle SelectedItem reset if needed
             if (selectedItemChanged)
             {
-                await _selectedItemState.SetValueAsync(default);
+                await SelectedItemState.SetValueAsync(default);
             }
 
             // Clean up hierarchy expansions for removed items
@@ -842,7 +842,7 @@ namespace MudBlazor
 
         private async Task CleanupStaleSelectionsAsync()
         {
-            if (Selection.Count == 0 && _selectedItemState.Value is null)
+            if (Selection.Count == 0 && SelectedItemState.Value is null)
                 return;
 
             var currentItems = BuildCurrentItemsSet();
@@ -853,7 +853,7 @@ namespace MudBlazor
 
             if (selectedItemChanged)
             {
-                await _selectedItemState.SetValueAsync(default);
+                await SelectedItemState.SetValueAsync(default);
             }
 
             if (selectionChanged)
@@ -888,7 +888,7 @@ namespace MudBlazor
             var selectionChanged = Selection.RemoveWhere(s => !currentItems.Contains(s)) > 0;
 
             // Check if SelectedItem needs to be reset
-            var selectedItemChanged = _selectedItemState.Value is not null && !currentItems.Contains(_selectedItemState.Value);
+            var selectedItemChanged = SelectedItemState.Value is not null && !currentItems.Contains(SelectedItemState.Value);
 
             return (selectionChanged, selectedItemChanged);
         }
@@ -909,7 +909,7 @@ namespace MudBlazor
             }
 
             // Check if SelectedItem needs to be reset
-            var selectedItemChanged = _selectedItemState.Value is not null && removedItems.Contains(_selectedItemState.Value);
+            var selectedItemChanged = SelectedItemState.Value is not null && removedItems.Contains(SelectedItemState.Value);
 
             return (selectionChanged, selectedItemChanged);
         }
@@ -940,7 +940,7 @@ namespace MudBlazor
         private async Task FireSelectionChangedEventsAsync()
         {
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
-            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
+            await SelectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
             SelectedItemsChangedEvent?.Invoke(Selection);
         }
 
@@ -1551,7 +1551,7 @@ namespace MudBlazor
             }
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
-            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
+            await SelectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
         }
 
         private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>?> args)
@@ -1844,29 +1844,29 @@ namespace MudBlazor
                 }
 
                 Selection.Add(item);
-                await _selectedItemState.SetValueAsync(item);
+                await SelectedItemState.SetValueAsync(item);
             }
             else
             {
                 Selection.Remove(item);
                 if (Comparer != null)
                 {
-                    if (Comparer.Equals(item, _selectedItemState.Value))
+                    if (Comparer.Equals(item, SelectedItemState.Value))
                     {
-                        await _selectedItemState.SetValueAsync(default);
+                        await SelectedItemState.SetValueAsync(default);
                     }
                 }
                 else
                 {
-                    if (item.Equals(_selectedItemState.Value))
+                    if (item.Equals(SelectedItemState.Value))
                     {
-                        await _selectedItemState.SetValueAsync(default);
+                        await SelectedItemState.SetValueAsync(default);
                     }
                 }
             }
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
-            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
+            await SelectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
@@ -1913,7 +1913,7 @@ namespace MudBlazor
             }
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
-            await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
+            await InvokeAsync(() => SelectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
@@ -2620,7 +2620,7 @@ namespace MudBlazor
         public async Task ToggleHierarchyVisibilityAsync(T item)
         {
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
-            if (_expandSingleRowState.Value)
+            if (ExpandSingleRowState.Value)
             {
                 foreach (var openedHierarchy in _openHierarchies.Where(x => x != null && !x.Equals(item)))
                 {
