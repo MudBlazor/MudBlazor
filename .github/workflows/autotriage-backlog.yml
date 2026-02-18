@@ -46,7 +46,7 @@ jobs:
           issue-numbers: ${{ github.event.inputs.issues }}
           prompt-path: .github/AutoTriage.prompt
           enabled: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.enabled) }}
-          model-fast: gemini-2.5-flash
+          model-fast: gemini-2.5-flash-lite
           model-fast-temperature: 0.0
           max-fast-runs: 20 # keep it low so we don't keep checking the same issues (for staleness, etc)
           model-pro: gemini-3-flash-preview # use a cheaper model since we've already scanned the issues before
