@@ -83,8 +83,16 @@
                 var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : (axisLine.LabelX < 0 ? "end" : "start");
                 var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : (axisLine.LabelY < 0 ? "auto" : "hanging");
 
-                builder.AddMarkupContent(seq++,
-                    $"<text class='mud-chart-axis-label' x='{axisLine.LabelX.ToStr()}' y='{axisLine.LabelY.ToStr()}' font-size='12px' text-anchor='{anchor}' dominant-baseline='{baseline}' fill='currentColor'>{axisLine.LabelYValue}</text>");
+                builder.OpenElement(seq++, "text");
+                builder.AddAttribute(seq++, "class", "mud-chart-axis-label");
+                builder.AddAttribute(seq++, "x", axisLine.LabelX.ToStr());
+                builder.AddAttribute(seq++, "y", axisLine.LabelY.ToStr());
+                builder.AddAttribute(seq++, "font-size", "12px");
+                builder.AddAttribute(seq++, "text-anchor", anchor);
+                builder.AddAttribute(seq++, "dominant-baseline", baseline);
+                builder.AddAttribute(seq++, "fill", "currentColor");
+                builder.AddContent(seq++, axisLine.LabelYValue);
+                builder.CloseElement();
             }
         }
         builder.CloseElement();
@@ -95,8 +103,16 @@
 
         foreach (var axisValue in _axisValues)
         {
-            builder.AddMarkupContent(seq++,
-                $"<text class='mud-chart-axis-value' x='{axisValue.LabelX.ToStr()}' y='{axisValue.LabelY.ToStr()}' font-size='10px' text-anchor='start' dominant-baseline='middle' fill='currentcolor'>{axisValue.LabelYValue}</text>");
+            builder.OpenElement(seq++, "text");
+            builder.AddAttribute(seq++, "class", "mud-chart-axis-value");
+            builder.AddAttribute(seq++, "x", axisValue.LabelX.ToStr());
+            builder.AddAttribute(seq++, "y", axisValue.LabelY.ToStr());
+            builder.AddAttribute(seq++, "font-size", "10px");
+            builder.AddAttribute(seq++, "text-anchor", "start");
+            builder.AddAttribute(seq++, "dominant-baseline", "middle");
+            builder.AddAttribute(seq++, "fill", "currentColor");
+            builder.AddContent(seq++, axisValue.LabelYValue);
+            builder.CloseElement();
         }
         builder.CloseElement(); // </g>
     };
