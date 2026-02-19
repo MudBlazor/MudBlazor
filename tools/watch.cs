@@ -22,6 +22,7 @@ static async Task Run()
     var assetBuildScript = Path.Combine(mudblazorProjectDirectory, "build.mjs");
     var buildPropsFile = Path.Combine(srcDirectory, "Directory.Build.props");
     var versions = GetVersions(buildPropsFile);
+    RestoreTools(repositoryRoot);
 
     using var docsProcess = new Process()
     {
@@ -123,6 +124,29 @@ static Versions GetVersions(string buildPropsFile)
     {
         BunVersion = doc.Descendants(nameof(Versions.BunVersion)).First().Value,
     };
+}
+
+static void RestoreTools(string repositoryRoot)
+{
+    using var process = new Process
+    {
+        StartInfo = new ProcessStartInfo
+        {
+            FileName = "dotnet",
+            Arguments = "tool restore",
+            WorkingDirectory = repositoryRoot,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        },
+    };
+
+    process.Start();
+    process.WaitForExit();
+
+    if (process.ExitCode != 0)
+    {
+        throw new InvalidOperationException("Failed to restore dotnet tools.");
+    }
 }
 
 static async Task RedirectStreams(Process process, string prefix)
