@@ -264,6 +264,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DatePicker_ShouldClearValidationError_WhenInvalidDateIsQuicklyErased()
+        {
+            var comp = Context.Render<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+
+            var invalid = "INVALID_DATE";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+
+            picker.GetState(x => x.Error).Should().BeTrue();
+            picker.ConversionError.Should().BeTrue();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, ""));
+
+            picker.GetState(x => x.Error).Should().BeFalse();
+            picker.ConversionError.Should().BeFalse();
+            picker.Date.Should().Be(null);
+        }
+
+        [Test]
         public void Check_Initial_Date_Format()
         {
             DateTime? date = new DateTime(2021, 1, 13);

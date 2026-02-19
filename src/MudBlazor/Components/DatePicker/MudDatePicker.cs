@@ -33,7 +33,7 @@ namespace MudBlazor
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
         private const int DebounceTimeoutMs = 100;
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue)
+        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate = false)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
@@ -44,9 +44,10 @@ namespace MudBlazor
 
             /* See #7866 for more details
              * When the date is set in the UI, this method gets called with the same value multiple time. This guard
-             * debounces the value to the same value in a short time frame is ignored
+             * debounces the value to the same value in a short time frame is ignored. The debounce is ignored if
+             * foreceUpdate is true
              */
-            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
+            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs && !forceUpdate)
             {
                 return;
             }
@@ -86,6 +87,12 @@ namespace MudBlazor
                 await BeginValidateAsync();
                 FieldChanged(_value);
             }
+            else if (forceUpdate)
+            {
+                // If the field is quickly cleared after an error: just reset and resubmit.
+                ResetConverterErrors();
+                await BeginValidateAsync();
+            }
         }
 
         protected override Task DateFormatChangedAsync(string? newFormat)
@@ -97,8 +104,11 @@ namespace MudBlazor
         protected override Task StringValueChangedAsync(string? value)
         {
             Touched = true;
+            var hadConversionError = ConversionError;
+            var date = ConvertGet(value);
             // Update the date property (without updating back the Value property)
-            return SetDateAsync(ConvertGet(value), false);
+            // If the date had a conversion error and is now null or empty forceUpdate is true
+            return SetDateAsync(date, false, forceUpdate: string.IsNullOrEmpty(value) && hadConversionError);
         }
 
         protected override string GetDayClasses(int month, DateTime day)
