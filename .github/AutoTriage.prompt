@@ -119,11 +119,11 @@ Purpose: Capture essential details early so maintainers can act quickly, while s
 
 ### Step 1 — Check for maintainer involvement
 - Treat a maintainer as "involved" if the thread is assigned to a maintainer, the author is a maintainer, or any maintainer has commented after the original post.
-- If a maintainer is involved (or the thread is a pull request), do not post an information-request comment. Instead, you may reflect the maintainer's explicit asks by applying the appropriate `needs:` label(s) and then let humans lead the discussion.
+- If a maintainer is involved, do not post an information-request comment. Instead, you may reflect the maintainer's explicit asks by applying the appropriate `needs:` label(s) and then let humans lead the discussion.
 - Skip reviving dormant threads (no human comments for >=28 days); maintainers will decide whether to re-engage.
 
-### Step 2 — Evaluate essential gaps (first-touch issues only)
-- When no maintainer is involved and you are the first triager, scan the report for objective blockers that prevent confirming, reproducing, or scoping the request (e.g., missing reproduction, unknown environment, unclear enhancement scope).
+### Step 2 — Evaluate essential gaps (first-touch threads only)
+- When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change (e.g., missing reproduction, unknown environment, unclear enhancement scope, or a vague PR title/description that cannot be made specific from available context).
 - If the report already contains enough information to understand and act, take no action.
 
 ### Step 3 — Compose the request comment
@@ -148,7 +148,7 @@ Valid `needs:` labels:
 Rules for `needs:` labels:
 - When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
 - When mirroring a maintainer's explicit request, add the corresponding `needs:` label only if their comment is the latest human guidance and the information is still outstanding.
-- Remove `needs:` labels as soon as the requested information or changes arrive, or if a newer human comment supersedes the request.
+- Remove `needs:` labels as soon as the requested information or changes arrive, or if a newer human comment explicitly supersedes the request (for example: "no repro needed", "closing as duplicate", or equivalent clear direction).
 
 ## Questions
 
@@ -179,11 +179,10 @@ Rules:
 When to edit:
 - Use `newTitle` field to propose changes
 - Typos, spelling, capitalization, grammar
-- Title is misleading, unclear, or violates format guidelines
+- Title is misleading, unclear/vague, or violates format guidelines
 - New context was added since it was last edited (e.g., new reproduction, logs, confirmations, commits) that substantially changes the scope, making the current title no longer accurate
 
 When NOT to edit:
-- Thread was created in the last 10 minutes <!-- Let the backlog workflow catch it -->
 - Thread is a draft pull request
 - Has any `needs:` label
 - The author or a maintainer has criticized a title change you made
@@ -196,6 +195,7 @@ When NOT to edit:
   - Always add the most relevant prefix + a colon (e.g. "MudDataGrid: Fix row selection flicker", "MudStack: Add new component")
   - Prefer to prefix with "Docs: " if only labeled with `docs`, Tests: " if only labeled with `tests`, "Build: " if only labeled with `build`
   - Always use the literal name (e.g. "MudAutoComplete" -> "MudAutocomplete", "DatePicker" -> "MudDatePicker", "Sankey chart" -> "SankeyChart")
+- Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); they belong in the PR description or comments instead
 - Prioritize clarity and searchability over brevity
 
 ## Inactivity Rules
