@@ -83,9 +83,13 @@
         <DocsPageSection>
             <SectionHeader Title="Individual Dropdown Settings">
                 <Description>
-                    Some components combine <MudLink Href="/components/popover">MudPopover</MudLink> with <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage item lists. For these components, appearance and behavior are configured via their dropdown-related parameters (such as <CodeInline>PopoverFixed</CodeInline>, <CodeInline>AnchorOrigin</CodeInline>, <CodeInline>TransformOrigin</CodeInline>, and <CodeInline>RelativeWidth</CodeInline>), which map to the underlying <CodeInline>MudPopover</CodeInline>; global defaults come from popover options.
+                    Some components combine <MudLink Href="/components/popover">MudPopover</MudLink> with <MudLink Href="/components/overlay">MudOverlay</MudLink> 
+                    to manage item lists. For these components, appearance and behavior are configured via their dropdown-related parameters (such as <CodeInline>PopoverFixed</CodeInline>, 
+                    <CodeInline>AnchorOrigin</CodeInline>, <CodeInline>TransformOrigin</CodeInline>, and <CodeInline>RelativeWidth</CodeInline>), which map to the 
+                    underlying <CodeInline>MudPopover</CodeInline>. Global defaults for popover behavior can be configured via <CodeInline>AddMudServices</CodeInline> using 
+                    <CodeInline>PopoverOptions</CodeInline>, such as <CodeInline>ModalOverlay</CodeInline> and <CodeInline>OverflowBehavior</CodeInline>.
 
-                    <ul class="ml-2">
+                    <ul class="ml-2 my-2">
                         <li><CodeInline>PopoverFixed = false</CodeInline> -- The popover does not remain fixed during scrolling.</li>
 
                         <li>
@@ -98,7 +102,7 @@
                         <li><CodeInline>AnchorOrigin</CodeInline> -- Determines the popover anchor position.</li>
                         <li><CodeInline>TransformOrigin</CodeInline> -- Determines the transform origin point.</li>
 
-                        <li><CodeInline>OverflowBehavior</CodeInline> -- Adjusts popover behavior when space is limited.</li>
+                        <li><CodeInline>OverflowBehavior</CodeInline> -- Adjusts popover behavior when space is limited.
                         <ul class="ml-4">
                             <li>
                                 <MudText Typo="Typo.caption">
@@ -108,9 +112,10 @@
                                     <CodeInline>AddMudServices(options => options.PopoverOptions.OverflowBehavior = ...)</CodeInline>.
                                 </MudText>
                             </li>
-                        </ul>
+                            </ul>
+                        </li>
 
-                        <li><CodeInline>Modal</CodeInline> -- Prevents interaction with background elements.</li>
+                        <li><CodeInline>Modal</CodeInline> -- Prevents interaction with background elements.
                         <ul class="ml-4">
                             <li>
                                 <MudText Typo="Typo.caption">
@@ -120,10 +125,9 @@
                                     <CodeInline>AddMudServices(options => options.PopoverOptions.ModalOverlay = ...)</CodeInline>.
                                 </MudText>
                             </li>
-                        </ul>
-                    </ul>
-
-                    Global defaults for popover behavior can be configured via <CodeInline>AddMudServices</CodeInline> using <CodeInline>PopoverOptions</CodeInline>.
+                            </ul>
+                        </li>
+                    </ul>                    
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(PopoverIndividualSettingsExample)" ShowCode="false">
