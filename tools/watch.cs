@@ -135,17 +135,33 @@ static void RestoreTools(string repositoryRoot)
             FileName = "dotnet",
             Arguments = "tool restore",
             WorkingDirectory = repositoryRoot,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
         },
     };
 
     process.Start();
+    var outputTask = process.StandardOutput.ReadToEndAsync();
+    var errorTask = process.StandardError.ReadToEndAsync();
     process.WaitForExit();
+    var output = outputTask.GetAwaiter().GetResult();
+    var error = errorTask.GetAwaiter().GetResult();
+
+    if (!string.IsNullOrWhiteSpace(output))
+    {
+        Console.WriteLine(output.TrimEnd());
+    }
+
+    if (!string.IsNullOrWhiteSpace(error))
+    {
+        Console.Error.WriteLine(error.TrimEnd());
+    }
 
     if (process.ExitCode != 0)
     {
-        throw new InvalidOperationException("Failed to restore dotnet tools.");
+        throw new InvalidOperationException($"Failed to restore dotnet tools. Exit code: {process.ExitCode}");
     }
 }
 
