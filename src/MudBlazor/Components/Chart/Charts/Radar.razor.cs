@@ -151,7 +151,12 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     {
         Debug.Assert(ChartOptions is not null);
         var axisAngle = currentAngle;
-        var gridLevels = T.CreateSaturating(ChartOptions.GridLevels);
+        var gridLevelsOption = ChartOptions.GridLevels;
+
+        if (gridLevelsOption <= 0)
+            return;
+        
+        var gridLevels = T.CreateSaturating(gridLevelsOption);
         var stepValue = T.Max(T.CreateSaturating(1), axisMaxValue / gridLevels);
 
         for (var i = T.One; i <= gridLevels; i++)
