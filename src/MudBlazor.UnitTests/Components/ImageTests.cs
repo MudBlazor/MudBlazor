@@ -129,6 +129,35 @@ namespace MudBlazor.UnitTests.Components
 
             img.GetAttribute("src").Should().Be(initialSrc);
         }
+
+        [Test]
+        public void Image_NoCache_AppendsCacheBustingQueryString()
+        {
+            var src = "https://myimgsource.com/image.png";
+
+            var comp = Context.Render<MudImage>(parameters => parameters
+                .Add(p => p.Src, src)
+                .Add(p => p.NoCache, true)
+            );
+
+            var img = comp.Find("img");
+            img.GetAttribute("src").Should().StartWith(src + "?v=");
+        }
+
+        [Test]
+        public void Image_NoCache_False_DoesNotAppendQueryString()
+        {
+            var src = "https://myimgsource.com/image.png";
+
+            var comp = Context.Render<MudImage>(parameters => parameters
+                .Add(p => p.Src, src)
+                .Add(p => p.NoCache, false)
+            );
+
+            var img = comp.Find("img");
+            img.GetAttribute("src").Should().Be(src);
+        }
+
     }
 }
 
