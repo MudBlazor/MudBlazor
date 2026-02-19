@@ -29,6 +29,10 @@
     }
   }
 
+  &:focus:not(:focus-visible) {
+    background-color: transparent;
+  }
+
   &:disabled {
     color: var(--mud-palette-action-disabled);
     background-color: transparent;
