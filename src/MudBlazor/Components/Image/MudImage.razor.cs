@@ -130,9 +130,9 @@ public partial class MudImage : MudComponentBase
     /// <summary>
     /// Gets the computed image source, appending a cache-busting timestamp when <see cref="NoCache"/> is enabled.
     /// </summary>
-    private string? ComputedSrc => NoCache && !string.IsNullOrEmpty(Src)
-    ? $"{Src}?v={DateTime.UtcNow.Ticks}"
-    : Src;
+    private string? ComputedSrc => NoCache && !string.IsNullOrEmpty(_srcState.Value)
+    ? $"{_srcState.Value}?v={DateTime.UtcNow.Ticks}"
+    : _srcState.Value;
 
     /// <summary>
     /// Handles the image error event and sets the fallback image source.
