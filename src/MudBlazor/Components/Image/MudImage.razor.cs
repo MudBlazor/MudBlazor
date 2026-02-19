@@ -60,6 +60,17 @@ public partial class MudImage : MudComponentBase
     public string? FallbackSrc { get; set; }
 
     /// <summary>
+    /// Prevents the browser from caching this image.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>. When <c>true</c>, appends a unique timestamp to the image URL.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Image.Behavior)]
+    public bool NoCache { get; set; }
+
+
+    /// <summary>
     /// The alternate text for this image.
     /// </summary>
     [Parameter]
@@ -115,6 +126,13 @@ public partial class MudImage : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public ObjectPosition ObjectPosition { set; get; } = ObjectPosition.Center;
+
+    /// <summary>
+    /// Gets the computed image source, appending a cache-busting timestamp when <see cref="NoCache"/> is enabled.
+    /// </summary>
+    private string? ComputedSrc => NoCache && !string.IsNullOrEmpty(Src)
+    ? $"{Src}?v={DateTime.UtcNow.Ticks}"
+    : Src;
 
     /// <summary>
     /// Handles the image error event and sets the fallback image source.

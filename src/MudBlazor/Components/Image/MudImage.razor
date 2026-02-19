@@ -1,4 +1,4 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<img @attributes="UserAttributes" src="@_srcState.Value" alt="@Alt" class="@Classname" style="@Style" width="@Width" height="@Height" @onerror="OnErrorAsync">
+<img @attributes="UserAttributes" src="@ComputedSrc" alt="@Alt" class="@Classname" style="@Style" width="@Width" height="@Height" @onerror="OnErrorAsync">
