@@ -22,7 +22,7 @@ static async Task Run()
     var assetBuildScript = Path.Combine(mudblazorProjectDirectory, "build.mjs");
     var buildPropsFile = Path.Combine(srcDirectory, "Directory.Build.props");
     var versions = GetVersions(buildPropsFile);
-    RestoreTools(repositoryRoot);
+    await RestoreTools(repositoryRoot);
 
     using var docsProcess = new Process()
     {
@@ -126,7 +126,7 @@ static Versions GetVersions(string buildPropsFile)
     };
 }
 
-static void RestoreTools(string repositoryRoot)
+static async Task RestoreTools(string repositoryRoot)
 {
     using var process = new Process
     {
@@ -145,9 +145,9 @@ static void RestoreTools(string repositoryRoot)
     process.Start();
     var outputTask = process.StandardOutput.ReadToEndAsync();
     var errorTask = process.StandardError.ReadToEndAsync();
-    process.WaitForExit();
-    var output = outputTask.GetAwaiter().GetResult();
-    var error = errorTask.GetAwaiter().GetResult();
+    await Task.WhenAll(outputTask, errorTask, process.WaitForExitAsync());
+    var output = await outputTask;
+    var error = await errorTask;
 
     if (!string.IsNullOrWhiteSpace(output))
     {
