@@ -146,8 +146,8 @@ static async Task RestoreTools(string repositoryRoot)
     var outputTask = process.StandardOutput.ReadToEndAsync();
     var errorTask = process.StandardError.ReadToEndAsync();
     await Task.WhenAll(outputTask, errorTask, process.WaitForExitAsync());
-    var output = await outputTask;
-    var error = await errorTask;
+    var output = outputTask.Result;
+    var error = errorTask.Result;
 
     if (!string.IsNullOrWhiteSpace(output))
     {
