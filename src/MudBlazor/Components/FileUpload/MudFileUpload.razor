@@ -1,10 +1,7 @@
 ﻿@inherits MudFormComponent<T, string>
-
 @typeparam T
 @namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Forms
-@using MudBlazor.Interfaces
-
 @{
 #pragma warning disable CS0618 // Type or member is obsolete
 }
@@ -18,31 +15,73 @@
                        OnChange="OnChangeAsync"
                        class="@GetInputClass(localIndex)"
                        style="@InputStyle"
-                       hidden="@(Hidden ? "" : null)"
+                       hidden="@(Hidden && !_draggingState.Value ? "" : null)"
                        multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
                        @attributes="UserAttributes"
+                       @ondrop="OnDragResetAsync"
+                       @ondragleave="OnDragResetAsync"
+                       @ondragend="OnDragResetAsync"
                        id="@GetInputId(localIndex)"
                        required="@Required"
                        aria-required="@Required.ToString().ToLowerInvariant()" />
         }
-        @if (ActivatorContent != null)
+        @if (CustomContent == null)
         {
-            <CascadingValue Value="@((IActivatable)this)"
-                            IsFixed="true">
-                <CascadingValue Name="ParentDisabled"
-                                Value="GetDisabledState()">
-                    <div @onclick="OpenFilePickerAsync"
-                         disabled="@GetDisabledState()">
-                        @ActivatorContent
-                    </div>
-                </CascadingValue>
+            @if (DragAndDrop)
+            {
+                <button type="button"
+                        class="@DragClass"
+                        disabled="@GetDisabledState()"
+                        @onclick="OnDragAreaClickAsync"
+                        @ondragenter="OnDragEnterAsync">
+                    <MudIcon Disabled="GetDisabledState()" Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
+                    <MudText Color="@(GetDisabledState() ? Color.Inherit : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
+                </button>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           Disabled="GetDisabledState()"
+                           OnClick="@OpenFilePickerAsync">
+                    @Localizer[Resources.LanguageResource.MudFileUpload_Button]
+                </MudButton>
+            }
+        }
+        else
+        {
+            <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
+                <div>
+                    @CustomContent(this)
+                </div>
             </CascadingValue>
         }
-        @if (SelectedTemplate != null)
-        {
-            @SelectedTemplate(_filesState.Value)
-        }
+        <div class="mud-file-upload-files mt-1">
+            @if (SelectedTemplate != null)
+            {
+                @SelectedTemplate(_filesState.Value)
+            }
+            else
+            {
+                <!-- Make sure there is at least one file -->
+                @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
+                {
+                    <span class="mud-file-upload-filelist">
+                        @foreach (var file in GetFilenames())
+                        {
+                            <MudChip T="string"
+                                     Color="Color.Secondary"
+                                     Disabled="GetDisabledState()"
+                                     Text="@file"
+                                     CloseIcon="@Icons.Material.Outlined.Close"
+                                     OnClose="@(() => OnFileChipCloseAsync(file))" />
+                        }
+                    </span>
+                }
+            }
+        </div>
     </InputContent>
 </MudInputControl>

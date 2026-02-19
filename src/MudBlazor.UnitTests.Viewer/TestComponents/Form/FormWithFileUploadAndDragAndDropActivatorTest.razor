@@ -29,7 +29,7 @@
                            @ondragenter="@SetDragClass"
                            @ondragleave="@ClearDragClass"
                            @ondragend="@ClearDragClass">
-                <ActivatorContent>
+                <CustomContent>
                     <MudPaper Height="300px"
                               Outlined="true"
                               Class="@_dragClass">
@@ -41,7 +41,7 @@
                                  Text="@_model.File?.Name"
                                  tabindex="-1" />
                     </MudPaper>
-                </ActivatorContent>
+                </CustomContent>
             </MudFileUpload>
             <MudToolBar Gutters="@false"
                         Class="relative d-flex justify-end gap-4">
