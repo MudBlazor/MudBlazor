@@ -83,39 +83,47 @@
         <DocsPageSection>
             <SectionHeader Title="Individual Dropdown Settings">
                 <Description>
-                    Some components combine <MudLink Href="/components/popover">MudPopover</MudLink> with <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage item lists. These can be customized using dropdown settings, which sets default appearance and behavior options:
+                    Some components combine <MudLink Href="/components/popover">MudPopover</MudLink> with <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage item lists. Appearance and behavior are now configured directly on <CodeInline>MudPopover</CodeInline> and through global popover options.
+
                     <ul class="ml-2">
-                        <li><CodeInline>PopoverFixed = false</CodeInline> -- Popover does not remain fixed during scrolling.</li>
+                        <li><CodeInline>Fixed = false</CodeInline> -- The popover does not remain fixed during scrolling.</li>
+
+                        <li>
+                            <CodeInline>RelativeWidth</CodeInline> -- Controls how the popover width relates to its activator.
+                            Accepts <CodeInline>DropdownWidth.Relative</CodeInline>,
+                            <CodeInline>DropdownWidth.Adaptive</CodeInline>, or
+                            <CodeInline>DropdownWidth.Ignore</CodeInline>.
+                        </li>
+
+                        <li><CodeInline>AnchorOrigin</CodeInline> -- Determines the popover anchor position.</li>
+                        <li><CodeInline>TransformOrigin</CodeInline> -- Determines the transform origin point.</li>
+
                         <li><CodeInline>OverflowBehavior</CodeInline> -- Adjusts popover behavior when space is limited.</li>
                         <ul class="ml-4">
                             <li>
                                 <MudText Typo="Typo.caption">
-                                    * Defaults to <CodeInline>PopoverOptions.OverflowBehavior</CodeInline> which is <CodeInline>FlipAlways</CodeInline> by default. Can be configured globally via <CodeInline>AddMudServices(options => options.PopoverOptions.OverflowBehavior = ...)</CodeInline>.
+                                    * Defaults to <CodeInline>PopoverOptions.OverflowBehavior</CodeInline>
+                                    which is <CodeInline>FlipAlways</CodeInline> by default.
+                                    Can be configured globally via
+                                    <CodeInline>AddMudServices(options => options.PopoverOptions.OverflowBehavior = ...)</CodeInline>.
                                 </MudText>
                             </li>
                         </ul>
+
                         <li><CodeInline>Modal</CodeInline> -- Prevents interaction with background elements.</li>
                         <ul class="ml-4">
                             <li>
                                 <MudText Typo="Typo.caption">
-                                    * Defaults to <CodeInline>PopoverOptions.ModalOverlay</CodeInline> which is <CodeInline>false</CodeInline> by default. Can be configured globally via <CodeInline>AddMudServices(options => options.PopoverOptions.ModalOverlay = ...)</CodeInline>.
+                                    * Defaults to <CodeInline>PopoverOptions.ModalOverlay</CodeInline>
+                                    which is <CodeInline>false</CodeInline> by default.
+                                    Can be configured globally via
+                                    <CodeInline>AddMudServices(options => options.PopoverOptions.ModalOverlay = ...)</CodeInline>.
                                 </MudText>
                             </li>
                         </ul>
                     </ul>
-                    <br />Additional settings on the <CodeInline>MudMenu</CodeInline> component include:
-                    <ul class="ml-2">
-                        <li><CodeInline>RelativeWidth = DropdownWidth.Ignore</CodeInline> -- Width adjusts independently.</li>
-                        <li><CodeInline>AnchorOrigin = Origin.BottomLeft</CodeInline> -- Popover opening position.</li>
-                        <ul class="ml-4">
-                            <li>
-                                <MudText Typo="Typo.caption">
-                                    * Defaults apply if AnchorOrigin or TransformOrigin aren't explicitly set, with nested behavior available for customization.
-                                </MudText>
-                            </li>
-                        </ul>
-                        <li><CodeInline>TransformOrigin = Origin.TopLeft</CodeInline> -- Transform origin point.</li>
-                    </ul>
+
+                    Global defaults for popover behavior can be configured via <CodeInline>AddMudServices</CodeInline> using <CodeInline>PopoverOptions</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(PopoverIndividualSettingsExample)" ShowCode="false">
