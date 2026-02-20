@@ -133,9 +133,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         if (_dragHandleCount > 0)
         {
             _dragHandleCount--;
+            StateHasChanged();
         }
-
-        StateHasChanged();
     }
 
     #endregion
@@ -327,6 +326,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 
     protected string Classname =>
         new CssBuilder("mud-drop-item")
+            .AddClass("mud-drop-item-draggable", IsEffectivelyDraggable)
             .AddClass(DraggingClass, _dragOperationIsInProgress)
             .AddClass(DisabledClass, Disabled)
             .AddClass(Class)

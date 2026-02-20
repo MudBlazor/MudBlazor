@@ -21,7 +21,7 @@
   user-select: none;
 }
 
-.mud-drop-item:not(.mud-drop-item-preview-start):not(:has(.mud-drag-handle)) {
+.mud-drop-item.mud-drop-item-draggable:not(.mud-drop-item-preview-start) {
   cursor: grab;
 
   &:active {
