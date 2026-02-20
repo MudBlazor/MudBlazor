@@ -6,9 +6,10 @@
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick && ActivatorContent is null ? ToggleMenuAsync : null)!)"
-     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
-     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
+     @onclick="HandleRootClick"
+     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
+     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)"
+     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick)"
      @onkeydown="TrackKeyboardInteraction">
     @if (GetActivatorHidden())
     {
@@ -58,7 +59,7 @@
                        Disabled="@Disabled"
                        Ripple="@Ripple"
                        DropShadow="@DropShadow"
-                       OnClick="@ToggleMenuAsync"
+                       ClickPropagation="true"
                        aria-label="@AriaLabel">
                 @Label
             </MudButton>
@@ -89,7 +90,7 @@
                        Disabled="@Disabled"
                        Ripple="@Ripple"
                        DropShadow="@DropShadow"
-                       OnClick="@ToggleMenuAsync"
+                       ClickPropagation="true"
                        aria-label="@AriaLabel" />
     }
 

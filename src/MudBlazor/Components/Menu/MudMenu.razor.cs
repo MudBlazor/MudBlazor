@@ -1157,5 +1157,30 @@ namespace MudBlazor
                 await ToggleMenuAsync(e);
             }
         }
+
+        private async Task HandleRootClick(EventArgs args)
+        {
+            if (ActivationEvent == MouseEvent.RightClick)
+            {
+                return;
+            }
+
+            if (ActivationEvent == MouseEvent.LeftClick)
+            {
+                await ToggleMenuAsync(args);
+            }
+
+            if (ActivationEvent == MouseEvent.MouseOver)
+            {
+                if (_openState.Value)
+                {
+                    await CloseMenuAsync();
+                }
+                else
+                {
+                    await OpenMenuAsync(args);
+                }
+            }
+        }
     }
 }

@@ -174,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Clicking the button should close the menu.
-            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.Find("div.mud-menu").ClickAsync();
             // Check that the component is closed
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
 
@@ -274,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("button.mud-button-root")[0].ClickAsync(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             //Standart button menu -- right click
-            await comp.FindAll("button.mud-button-root")[1].ClickAsync(new MouseEventArgs() { Button = 2 });
+            await comp.FindAll("div.mud-menu")[1].ContextMenuAsync(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("button.mud-button-root")[2].ClickAsync(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             //Icon button menu -- right click
-            await comp.FindAll("button.mud-button-root")[3].ClickAsync(new MouseEventArgs() { Button = 2 });
+            await comp.FindAll("button.mud-button-root")[3].ContextMenuAsync(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
@@ -301,7 +301,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("button.mud-button-root")[3].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             //Activator content menu -- left click
-            await comp.FindAll("button.mud-button-root")[4].ClickAsync();
+            await comp.FindAll("div.mud-menu")[4].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
             comp.FindAll("a.mud-menu-item").Count.Should().Be(2);
