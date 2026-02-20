@@ -572,6 +572,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensures that no mt-1 spacing is applied when SelectedTemplate is used,
+        /// even if files are present.
+        /// </summary>
+        [Test]
+        public void FileUpload_SelectedTemplate_Should_Not_Apply_Mt1_To_Wrapper()
+        {
+            // Arrange
+            IReadOnlyList<IBrowserFile> files =
+            [
+                new DummyBrowserFile("a.txt", DateTimeOffset.Now, 0, "text/plain", [])
+            ];
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(x => x.Files, files)
+                .Add(x => x.SelectedTemplate, context => builder =>
+                {
+                    builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
+                }));
+
+            // Act
+            var wrapper = comp.Find(".mud-file-upload-files");
+
+            // Assert
+            wrapper.ClassList.Should().NotContain("mt-1");
+        }
+
+        /// <summary>
         /// Tests the SuppressOnChangeWhenInvalid behavior in the FileUpload component
         /// </summary>
         [Test]
