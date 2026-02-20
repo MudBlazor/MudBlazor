@@ -2029,6 +2029,36 @@ namespace MudBlazor.UnitTests.Components
             timesClicked.Should().Be(2); //clicking the button should not trigger the row click event
         }
 
+        [Test]
+        public async Task Table_EditButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<TableEditButtonRenderTest>();
+            var button = comp.Find("button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Edit row");
+
+            await button.ClickAsync();
+
+            button.GetAttribute("aria-label").Should().Be("Commit edit");
+        }
+
+        [Test]
+        public async Task Table_InlineEditButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<TableInlineEditCancelTest>();
+            var rows = comp.FindAll("tbody tr");
+            var row = rows.First(r => r.TextContent.Contains('B'));
+            await row.ClickAsync();
+
+            var buttons = comp.FindAll("button.mud-icon-button");
+
+            var buttonCommit = buttons[0];
+            var buttonCancel = buttons[1];
+
+            buttonCommit.GetAttribute("aria-label").Should().Be("Commit edit");
+            buttonCancel.GetAttribute("aria-label").Should().Be("Cancel edit");
+        }
+
         /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
@@ -2224,6 +2254,19 @@ namespace MudBlazor.UnitTests.Components
             table.Context.GroupRows.Count.Should().Be(2);
             table.Context.GroupRows.ElementAt(0).Expanded.Should().BeFalse();
             table.Context.GroupRows.ElementAt(1).Expanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task TableGrouping_GroupRow_ShowAriaLabel()
+        {
+            var comp = Context.Render<TableGroupingTest3>();
+            var button = comp.Find("button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Expand group");
+
+            await button.ClickAsync();
+
+            button.GetAttribute("aria-label").Should().Be("Collapse group");
         }
 
         /// <summary>
