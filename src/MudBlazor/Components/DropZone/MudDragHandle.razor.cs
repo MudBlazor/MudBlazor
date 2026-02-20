@@ -62,7 +62,7 @@ public partial class MudDragHandle<T> : MudComponentBase, IDisposable where T : 
 
     protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("touch-action", "none", !(_dropItem?.Disabled ?? true))
+            .AddStyle("touch-action", "none", _dropItem is { Disabled: false })
             .AddStyle(Style)
             .Build();
 
