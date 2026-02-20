@@ -14,6 +14,8 @@ namespace MudBlazor
         /// </summary>
         private Virtualize<T>? _virtualizeContainerReference;
 
+        private readonly Dictionary<string, object?> _virtualizeAttributes = new();
+
         /// <summary>
         /// Set false to turn off virtualization
         /// </summary>
@@ -83,6 +85,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public string SpacerElement { get; set; } = "div";
+
+        /// <inheritdoc/>
+        protected override void OnParametersSet()
+        {
+            _virtualizeAttributes.Clear();
+#if NET9_0_OR_GREATER
+            _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
+#endif
+        }
 
         /// <summary>
         /// Refreshes the data in the Virtualize component asynchronously.

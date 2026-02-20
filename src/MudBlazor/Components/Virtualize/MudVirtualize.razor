@@ -7,7 +7,7 @@
 {
     if (ItemsProvider is not null)
     {
-        <Virtualize TItem="T" @ref="@_virtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" MaxItemCount="@MaxItemCount" SpacerElement="@SpacerElement">
+        <Virtualize TItem="T" @ref="@_virtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement" @attributes="@_virtualizeAttributes">
             <ChildContent>
                 @if (ChildContent is not null)
                 {
@@ -24,7 +24,7 @@
     }
     else
     {
-        <Virtualize TItem="T" @ref="@_virtualizeContainerReference" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" MaxItemCount="@MaxItemCount" SpacerElement="@SpacerElement">
+        <Virtualize TItem="T" @ref="@_virtualizeContainerReference" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement" @attributes="@_virtualizeAttributes">
             <ChildContent>
                 @if (ChildContent is not null)
                 {

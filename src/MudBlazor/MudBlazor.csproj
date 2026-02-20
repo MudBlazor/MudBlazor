@@ -179,15 +179,6 @@
     </ItemGroup>
   </Target>
   
-  <!-- Use net8-specific MudVirtualize.razor (without MaxItemCount) for net8.0 -->
-  <ItemGroup>
-    <Content Remove="Components/Virtualize/net8/MudVirtualize.razor" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <Content Remove="Components/Virtualize/MudVirtualize.razor" />
-    <Content Include="Components/Virtualize/net8/MudVirtualize.razor" />
-  </ItemGroup>
-
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="build.mjs" />
