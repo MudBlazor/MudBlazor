@@ -34,7 +34,6 @@ public class VirtualizeTests : BunitTest
         ItemProviderNoData().InnerHtml.Should().Be("No data");
     }
 
-#if NET9_0_OR_GREATER
     [Test]
     public void VirtualizeMaxItemCount_IsPassedToInnerVirtualize()
     {
@@ -46,5 +45,4 @@ public class VirtualizeTests : BunitTest
         var innerVirtualize = comp.FindComponent<Virtualize<string>>();
         innerVirtualize.Instance.MaxItemCount.Should().Be(42);
     }
-#endif
 }
