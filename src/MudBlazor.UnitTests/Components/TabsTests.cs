@@ -3,6 +3,7 @@ using System.Reflection;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
@@ -808,6 +809,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ScrollableTabButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<ScrollableTabsTest>();
+            var button = comp.Find("button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Scroll tabs left");
+        }
+
+        [Test]
+        public async Task ScrollableTabButtonVertical_ShowAriaLabel()
+        {
+            var comp = Context.Render<ScrollableTabsTest>();
+            var switchInput = comp.Find("input[type='checkbox'].mud-switch-input");
+
+            await switchInput.ChangeAsync(new ChangeEventArgs { Value = true });
+
+            var button = comp.Find("button.mud-icon-button");
+            button.GetAttribute("aria-label").Should().Be("Scroll tabs up");
+        }
+
+        [Test]
         public async Task PanelAdd_ScrollButtonsBecomeVisible()
         {
             var observer = new MockResizeObserver
@@ -1300,6 +1322,18 @@ namespace MudBlazor.UnitTests.Components
             tabs[0].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
             tabs[1].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeFalse(); // The close icon is not shown.
             tabs[2].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
+        }
+
+        [Test]
+        public async Task TabPanel_DynamicTabButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<DynamicTabsSimpleTest>();
+            var buttons = comp.FindAll("button.mud-icon-button");
+            var buttonClose = buttons[0];
+            var buttonAdd = buttons[2];
+
+            buttonClose.GetAttribute("aria-label").Should().Be("Close tab");
+            buttonAdd.GetAttribute("aria-label").Should().Be("Add tab");
         }
 
         [Test]

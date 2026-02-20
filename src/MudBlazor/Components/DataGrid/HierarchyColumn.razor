@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
 @typeparam T
 
 <TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderClassFunc="@HeaderClassFunc"
@@ -18,7 +20,8 @@
                 Icon="@GetGroupIcon(context)" 
                 OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
                 Size="@IconSize"
-                Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
+                Disabled="ButtonDisabledFunc.Invoke(context.Item)"
+                aria-label="@(context.OpenHierarchies.Contains(context.Item) ? @Localizer[LanguageResource.MudDataGrid_CollapseGroup] : @Localizer[LanguageResource.MudDataGrid_ExpandGroup])" />
         }
     </CellTemplate>
 </TemplateColumn>

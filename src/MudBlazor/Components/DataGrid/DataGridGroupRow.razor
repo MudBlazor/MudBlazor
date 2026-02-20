@@ -1,12 +1,14 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
 @typeparam T
 
 <tr class="mud-table-row">
     <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
         <div style="display:flex; align-items:center;">
-            <MudIconButton Class="mud-table-row-expander" Icon="@(DataGrid.GetGroupIcon(_expanded))"
-                           OnClick="@GroupExpandClick" />
+            <MudIconButton Class="mud-table-row-expander" Icon="@(DataGrid.GetGroupIcon(_expanded))" OnClick="@GroupExpandClick"
+                           aria-label="@(_expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseGroup] : @Localizer[LanguageResource.MudDataGrid_ExpandGroup])" />
             @if (GroupDefinition.GroupTemplate is not null)
             {
                 @GroupDefinition.GroupTemplate(GroupDefinition)

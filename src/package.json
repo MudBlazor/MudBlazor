@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.0",
     "sass": "^1.97.2"
   },
   "trustedDependencies": ["sass"]
