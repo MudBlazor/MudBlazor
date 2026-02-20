@@ -33,7 +33,10 @@ namespace MudBlazor
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
         private const int DebounceTimeoutMs = 100;
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate = false)
+        protected Task SetDateAsync(DateTime? date, bool updateValue)
+            => SetDateAsync(date, updateValue, false);
+        
+        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
