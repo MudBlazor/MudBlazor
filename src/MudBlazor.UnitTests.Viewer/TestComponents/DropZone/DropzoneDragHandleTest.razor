@@ -1,0 +1,37 @@
+@namespace MudBlazor.UnitTests.TestComponents.DropZone
+
+<MudDropContainer T="SimpleDropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated">
+    <ChildContent>
+        <MudDropZone T="SimpleDropItem" Identifier="Zone 1" Class="first-drop-zone" Style="min-height: 100px; border: 1px dashed gray;" />
+        <MudDropZone T="SimpleDropItem" Identifier="Zone 2" Class="second-drop-zone" Style="min-height: 100px; border: 1px dashed gray;" />
+    </ChildContent>
+    <ItemRenderer>
+        <div class="drop-item">
+            <MudDragHandle T="SimpleDropItem">
+                <div class="drag-handle">Handle</div>
+            </MudDragHandle>
+            <div class="content">@context.Name</div>
+        </div>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private List<SimpleDropItem> _items = new()
+    {
+        new SimpleDropItem { Name = "Item 1", Selector = "Zone 1" }
+    };
+
+    private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropInfo)
+    {
+        if (dropInfo.Item is not null)
+        {
+            dropInfo.Item.Selector = dropInfo.DropzoneIdentifier;
+        }
+    }
+
+    public class SimpleDropItem
+    {
+        public string? Name { get; set; }
+        public string? Selector { get; set; }
+    }
+}

@@ -19,6 +19,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private double _onTouchStartY;
     private double _onTouchLastX;
     private double _onTouchLastY;
+    private int _dragHandleCount = 0;
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -95,9 +96,57 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     [Category(CategoryTypes.DropZone.Sorting)]
     public bool HideContent { get; set; }
 
+    /// <summary>
+    /// Gets whether this item has at least one registered <see cref="MudDragHandle{T}"/>.
+    /// When <c>true</c>, the item itself is not directly draggable — only the handle triggers the drag.
+    /// </summary>
+    public bool HasDragHandle => _dragHandleCount > 0;
+
+    /// <summary>
+    /// Returns <c>true</c> when the outer div should carry <c>draggable="true"</c>.
+    /// This is suppressed when a <see cref="MudDragHandle{T}"/> is present so that only
+    /// the handle element initiates the browser drag gesture.
+    /// </summary>
+    private bool IsEffectivelyDraggable => !Disabled && !HasDragHandle;
+
+    #region Drag-handle registration
+
+    /// <summary>
+    /// Called by a child <see cref="MudDragHandle{T}"/> when it is initialized.
+    /// Increments the handle reference count and, once at least one handle exists,
+    /// suppresses the default full-item draggable behavior.
+    /// </summary>
+    internal void RegisterDragHandle()
+    {
+        _dragHandleCount++;
+        // Re-render so the draggable attribute reflects the new state.
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Called by a child <see cref="MudDragHandle{T}"/> when it is disposed.
+    /// Decrements the handle reference count and restores full-item draggable behavior
+    /// when no handles remain.
+    /// </summary>
+    internal void UnregisterDragHandle()
+    {
+        if (_dragHandleCount > 0)
+        {
+            _dragHandleCount--;
+        }
+
+        StateHasChanged();
+    }
+
+    #endregion
+
     #region Event handling and callbacks
 
-    private async Task DragStartedAsync()
+    private Task OnTouchStart(TouchEventArgs e) => IsEffectivelyDraggable ? TouchStartedAsync(e) : Task.CompletedTask;
+    private Task OnTouchMove(TouchEventArgs e) => IsEffectivelyDraggable ? TouchMovedAsync(e) : Task.CompletedTask;
+    private Task OnTouchEnd(TouchEventArgs e) => IsEffectivelyDraggable ? TouchEndedAsync(e) : Task.CompletedTask;
+
+    internal async Task DragStartedAsync()
     {
         if (Container is null)
         {
@@ -109,7 +158,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         await OnDragStarted.InvokeAsync();
     }
 
-    private async Task TouchStartedAsync(TouchEventArgs e)
+    internal async Task TouchStartedAsync(TouchEventArgs e)
     {
         if (Index == -1) return; //the -1 item shouldn't be ever moved.
         if (Disabled) return; //disabled items shouldn't be moved.
@@ -147,7 +196,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         StateHasChanged();
     }
 
-    private async Task DragEndedAsync(DragEventArgs e)
+    internal async Task DragEndedAsync(DragEventArgs e)
     {
         if (_dragOperationIsInProgress)
         {
@@ -163,7 +212,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         }
     }
 
-    private async Task TouchMovedAsync(TouchEventArgs e)
+    internal async Task TouchMovedAsync(TouchEventArgs e)
     {
         if (Index == -1 || Disabled) return;
 
@@ -189,7 +238,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         //JS.InvokeVoidAsync("draggableTouch");
     }
 
-    private async Task TouchEndedAsync(TouchEventArgs e)
+    internal async Task TouchEndedAsync(TouchEventArgs e)
     {
         if (Index == -1 || Disabled)
         {
@@ -285,7 +334,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 
     protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("touch-action", "none", !Disabled)
+            .AddStyle("touch-action", "none", IsEffectivelyDraggable)
             .AddStyle("transform", "translate3d(0px, 0px, 0px)")
             .AddStyle(Style)
             .Build();
