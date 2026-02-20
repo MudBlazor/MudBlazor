@@ -14,8 +14,8 @@ namespace MudBlazor
         /// </summary>
         private Virtualize<T>? _virtualizeContainerReference;
 
+        // TODO: Remove splatting workaround when .NET 8 support is dropped and pass MaxItemCount directly as an attribute instead (#12701).
         private readonly Dictionary<string, object?> _virtualizeAttributes = new();
-        // TODO: Remove _virtualizeAttributes splatting workaround when .NET 8 support is dropped. Pass MaxItemCount directly as an attribute instead.
 
         /// <summary>
         /// Set false to turn off virtualization
