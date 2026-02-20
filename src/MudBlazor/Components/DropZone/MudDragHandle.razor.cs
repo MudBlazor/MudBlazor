@@ -46,7 +46,7 @@ public partial class MudDragHandle<T> : MudComponentBase, IDisposable where T : 
     /// The parent drop item provided by the <see cref="MudDynamicDropItem{T}"/> ancestor.
     /// </summary>
     [CascadingParameter]
-    private MudDynamicDropItem<T>? _dropItem { get; set; }
+    private MudDynamicDropItem<T>? DropItem { get; set; }
 
     /// <summary>
     /// The content displayed inside the drag handle.
@@ -62,37 +62,32 @@ public partial class MudDragHandle<T> : MudComponentBase, IDisposable where T : 
 
     protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("touch-action", "none", _dropItem is { Disabled: false })
+            .AddStyle("touch-action", "none", DropItem is { Disabled: false })
             .AddStyle(Style)
             .Build();
 
     /// <inheritdoc/>
     protected override void OnInitialized()
     {
-        if (_dropItem is null)
+        if (DropItem is null)
         {
             throw new InvalidOperationException(
                 $"{nameof(MudDragHandle<T>)} must be placed inside a {nameof(MudDynamicDropItem<T>)}.");
         }
 
-        _dropItem.RegisterDragHandle();
         base.OnInitialized();
+        DropItem.RegisterDragHandle();
     }
 
-    private Task OnDragStartedAsync() =>
-        _dropItem?.DragStartedAsync() ?? Task.CompletedTask;
+    private Task OnDragStartedAsync() => DropItem?.DragStartedAsync() ?? Task.CompletedTask;
 
-    private Task OnDragEndedAsync(DragEventArgs e) =>
-        _dropItem?.DragEndedAsync(e) ?? Task.CompletedTask;
+    private Task OnDragEndedAsync(DragEventArgs e) => DropItem?.DragEndedAsync(e) ?? Task.CompletedTask;
 
-    private Task OnTouchStartedAsync(TouchEventArgs e) =>
-        _dropItem?.TouchStartedAsync(e) ?? Task.CompletedTask;
+    private Task OnTouchStartedAsync(TouchEventArgs e) => DropItem?.TouchStartedAsync(e) ?? Task.CompletedTask;
 
-    private Task OnTouchMovedAsync(TouchEventArgs e) =>
-        _dropItem?.TouchMovedAsync(e) ?? Task.CompletedTask;
+    private Task OnTouchMovedAsync(TouchEventArgs e) => DropItem?.TouchMovedAsync(e) ?? Task.CompletedTask;
 
-    private Task OnTouchEndedAsync(TouchEventArgs e) =>
-        _dropItem?.TouchEndedAsync(e) ?? Task.CompletedTask;
+    private Task OnTouchEndedAsync(TouchEventArgs e) => DropItem?.TouchEndedAsync(e) ?? Task.CompletedTask;
 
     /// <summary>
     /// Releases resources used by this drag handle and unregisters it from the parent item.
@@ -103,7 +98,7 @@ public partial class MudDragHandle<T> : MudComponentBase, IDisposable where T : 
         {
             if (disposing)
             {
-                _dropItem?.UnregisterDragHandle();
+                DropItem?.UnregisterDragHandle();
             }
 
             _disposedValue = true;
