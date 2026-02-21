@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudTableBase
 @using MudBlazor.Utilities
 @using MudBlazor.Resources
@@ -98,7 +98,10 @@
                                     @{
                                         var itemIndex = FilteredItems.ToList().IndexOf(item);
                                         var generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
-                                        var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndex)).Build();
+                                        var rowClass = new CssBuilder(RowClass)
+                                            .AddClass(RowClassFunc?.Invoke(item, itemIndex))
+                                            .AddClass("mud-table-row-clickable", OnRowClick.HasDelegate && !IsRowDisabled(item))
+                                            .Build();
                                         var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndex)).Build();
                                     }
                                     <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
@@ -213,7 +216,7 @@
                      var itemIndexForId = FilteredItems.ToList().IndexOf(item);
                      var generatedRowId = itemIndexForId != -1 ? $"{_tableId}_row_{itemIndexForId}" : null;
 
-                     var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndexForId)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).Build();
+                     var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndexForId)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).AddClass("mud-table-row-clickable", OnRowClick.HasDelegate && !IsRowDisabled(item)).Build();
                      var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndexForId)).Build();
                  }
                  <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"

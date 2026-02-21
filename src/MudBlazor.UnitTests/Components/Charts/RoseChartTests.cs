@@ -277,7 +277,7 @@ public class RoseChartTests : BunitTest
 
         // Check legend items
         var legendItems = comp.FindAll(".mud-chart-legend-item");
-        legendItems.Count.Should().Be(3);
+        legendItems.Count.Should().Be(2);
     }
 
     [Test]

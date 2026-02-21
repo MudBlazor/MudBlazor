@@ -121,12 +121,12 @@ namespace MudBlazor
 
                 if (string.IsNullOrEmpty(InfoFormat))
                 {
-                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, $"{filteredItemsCount:N0}"];
+                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, $"{firstItem:N0}", $"{lastItem:N0}", $"{filteredItemsCount:N0}"];
                 }
 
                 return InfoFormat
-                    .Replace("{first_item}", $"{firstItem}")
-                    .Replace("{last_item}", $"{lastItem}")
+                    .Replace("{first_item}", $"{firstItem:N0}")
+                    .Replace("{last_item}", $"{lastItem:N0}")
                     .Replace("{all_items}", $"{filteredItemsCount:N0}");
             }
         }

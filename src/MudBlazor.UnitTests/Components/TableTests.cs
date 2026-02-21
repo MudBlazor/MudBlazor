@@ -2029,6 +2029,36 @@ namespace MudBlazor.UnitTests.Components
             timesClicked.Should().Be(2); //clicking the button should not trigger the row click event
         }
 
+        [Test]
+        public async Task Table_EditButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<TableEditButtonRenderTest>();
+            var button = comp.Find("button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Edit row");
+
+            await button.ClickAsync();
+
+            button.GetAttribute("aria-label").Should().Be("Commit edit");
+        }
+
+        [Test]
+        public async Task Table_InlineEditButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<TableInlineEditCancelTest>();
+            var rows = comp.FindAll("tbody tr");
+            var row = rows.First(r => r.TextContent.Contains('B'));
+            await row.ClickAsync();
+
+            var buttons = comp.FindAll("button.mud-icon-button");
+
+            var buttonCommit = buttons[0];
+            var buttonCancel = buttons[1];
+
+            buttonCommit.GetAttribute("aria-label").Should().Be("Commit edit");
+            buttonCancel.GetAttribute("aria-label").Should().Be("Cancel edit");
+        }
+
         /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
@@ -2224,6 +2254,19 @@ namespace MudBlazor.UnitTests.Components
             table.Context.GroupRows.Count.Should().Be(2);
             table.Context.GroupRows.ElementAt(0).Expanded.Should().BeFalse();
             table.Context.GroupRows.ElementAt(1).Expanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task TableGrouping_GroupRow_ShowAriaLabel()
+        {
+            var comp = Context.Render<TableGroupingTest3>();
+            var button = comp.Find("button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Expand group");
+
+            await button.ClickAsync();
+
+            button.GetAttribute("aria-label").Should().Be("Collapse group");
         }
 
         /// <summary>
@@ -3086,5 +3129,64 @@ namespace MudBlazor.UnitTests.Components
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
         }
 
+        [Test]
+        public void RowGetsClickableClass_WhenOnRowClickProvided()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, new[] { 1 })
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent",
+                        (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.OnRowClick, _ => { })
+            );
+
+            var row = comp.Find("tr.mud-table-row");
+
+            row.ClassList.Should().Contain("mud-table-row-clickable");
+        }
+        [Test]
+        public void RowDoesNotGetClickableClass_WhenOnRowClickNotProvided()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, new[] { 1 })
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent",
+                        (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+            );
+
+            var row = comp.Find("tr.mud-table-row");
+
+            row.ClassList.Should().NotContain("mud-table-row-clickable");
+        }
+
+        [Test]
+        public void RowDoesNotGetClickableClass_WhenDisabled()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, new[] { 1 })
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent",
+                        (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.OnRowClick, _ => { })
+                .Add(p => p.RowDisabledFunc, _ => true)
+            );
+
+            var row = comp.Find("tr.mud-table-row");
+
+            row.ClassList.Should().NotContain("mud-table-row-clickable");
+            row.ClassList.Should().Contain("mud-table-row-disabled");
+        }
     }
 }
