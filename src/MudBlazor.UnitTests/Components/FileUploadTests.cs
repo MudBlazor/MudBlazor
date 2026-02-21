@@ -572,11 +572,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Ensures that no mt-1 spacing is applied when SelectedTemplate is used,
-        /// even if files are present.
+        /// The wrapper must apply spacing class "mt-1" 
+        /// if and only if no SelectedTemplate is provided.
         /// </summary>
         [Test]
-        public void FileUpload_SelectedTemplate_Should_Not_Apply_Mt1_To_Wrapper()
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void FileUpload_FilesContainer_TopSpacing_Should_Depend_On_SelectedTemplate(
+            bool hasSelectedTemplate,
+            bool expectedMt1)
         {
             // Arrange
             IReadOnlyList<IBrowserFile> files =
@@ -584,18 +588,25 @@ namespace MudBlazor.UnitTests.Components
                 new DummyBrowserFile("a.txt", DateTimeOffset.Now, 0, "text/plain", [])
             ];
 
-            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
-                .Add(x => x.Files, files)
-                .Add(x => x.SelectedTemplate, context => builder =>
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
+            {
+                parameters.Add(x => x.Files, files);
+
+                if (hasSelectedTemplate)
                 {
-                    builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
-                }));
+                    parameters.Add(x => x.SelectedTemplate, context => builder =>
+                    {
+                        builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
+                    });
+                }
+            });
 
             // Act
             var wrapper = comp.Find(".mud-file-upload-files");
+            var hasMt1 = wrapper.ClassList.Contains("mt-1");
 
             // Assert
-            wrapper.ClassList.Should().NotContain("mt-1");
+            hasMt1.Should().Be(expectedMt1);
         }
 
         /// <summary>
