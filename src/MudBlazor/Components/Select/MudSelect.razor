@@ -135,8 +135,8 @@ the auto close feature and call CloseMenu in OnClosed. The modeless auto close
 feature relies on pointerdown event resulting in the same order of events.
 -->
 <MudOverlay Visible="_openState.Value"
-            @onpointerdown="@(() => CloseMenu(false))"
+            @onpointerdown="@CloseMenuFromOverlayAsync"
             LockScroll="@LockScroll"
             AutoClose="@(!GetModal())"
             Modal="@GetModal()"
-            OnClosed="@(() => CloseMenu(false))"/>
+            OnClosed="@CloseMenuFromOverlayAsync"/>

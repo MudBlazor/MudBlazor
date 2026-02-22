@@ -1089,6 +1089,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_ClickingSelectWhileOpen_ClosesWithoutReopening()
+        {
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            IElement Input() => comp.Find("div.mud-input-control");
+            IElement Menu() => comp.Find("div.mud-popover");
+
+            await Input().MouseDownAsync(new MouseEventArgs { Button = 0, ClientX = 10, ClientY = 10 });
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().Contain("mud-popover-open"));
+
+            var overlay = comp.Find("div.mud-overlay");
+            await overlay.PointerDownAsync(new PointerEventArgs { Button = 0, ClientX = 10, ClientY = 10 });
+            await Input().MouseDownAsync(new MouseEventArgs { Button = 0, ClientX = 10, ClientY = 10 });
+
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().NotContain("mud-popover-open"));
+            select.Instance.Open.Should().BeFalse();
+        }
+
+        [Test]
         public async Task Select_KeyboardNavigation_SingleSelect()
         {
             var keyInterceptorService = Context.AddKeyInterceptorService();
