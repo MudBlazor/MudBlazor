@@ -209,6 +209,29 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
+        /// Gets the effective label, falling back to a <c>label</c> value in <see cref="MudComponentBase.UserAttributes"/> if <see cref="Label"/> is <c>null</c>.
+        /// </summary>
+        protected string? EffectiveLabel
+        {
+            get
+            {
+                if (Label is not null)
+                    return Label;
+
+                if (UserAttributes is null)
+                    return null;
+
+                foreach (var (key, value) in UserAttributes)
+                {
+                    if (string.Equals(key, "label", StringComparison.OrdinalIgnoreCase) && value is not null)
+                        return value.ToString();
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Displays the Clear icon button.
         /// </summary>
         /// <remarks>

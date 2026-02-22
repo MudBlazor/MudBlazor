@@ -4,7 +4,7 @@
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
-        <MudInputControl Label="@Label"
+        <MudInputControl Label="@EffectiveLabel"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
                          HelperText="@HelperText"
@@ -26,7 +26,7 @@
                           Class="@InputClassname" Margin="@Margin"
                           Variant="@Variant"
                           Typo="@Typo"
-                          Label="@Label"
+                          Label="@EffectiveLabel"
                           Value="@ReadText" Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="@GetReadOnlyState()"

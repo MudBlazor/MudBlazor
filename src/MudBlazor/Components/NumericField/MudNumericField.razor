@@ -4,7 +4,7 @@
 
 <CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl id="@_elementId"
-                     Label="@Label"
+                     Label="@EffectiveLabel"
                      Variant="@Variant"
                      HelperId="@GetHelperId()"
                      HelperText="@HelperText"
@@ -28,7 +28,7 @@
                           Style="@Style"
                           Variant="@Variant"
                           Typo="@Typo"
-                          Label="@Label"
+                          Label="@EffectiveLabel"
                           Value="@ReadText"
                           ValueChanged="@OnInputValueChanged"
                           Placeholder="@Placeholder"

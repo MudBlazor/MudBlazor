@@ -1513,6 +1513,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A select component with a label set via UserAttributes should display the label.
+        /// </summary>
+        [Test]
+        public void SelectWithLabelInUserAttributes_Should_DisplayLabel()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters
+                => parameters.Add(p => p.UserAttributes, new Dictionary<string, object>
+                {
+                    { "Label", "User Attribute Label" }
+                }));
+
+            comp.Find("label").TextContent.Should().Be("User Attribute Label");
+        }
+
+        /// <summary>
+        /// A select component with a label set via UserAttributes (lowercase key) should display the label.
+        /// </summary>
+        [Test]
+        public void SelectWithLowercaseLabelInUserAttributes_Should_DisplayLabel()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters
+                => parameters.Add(p => p.UserAttributes, new Dictionary<string, object>
+                {
+                    { "label", "User Attribute Label" }
+                }));
+
+            comp.Find("label").TextContent.Should().Be("User Attribute Label");
+        }
+
+        /// <summary>
+        /// A select component with an explicit Label parameter should use the explicit label, ignoring any UserAttributes label.
+        /// </summary>
+        [Test]
+        public void SelectWithExplicitLabelAndUserAttributesLabel_Should_UseExplicitLabel()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Explicit Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Label", "User Attribute Label" }
+                    }));
+
+            comp.Find("label").TextContent.Should().Be("Explicit Label");
+        }
+
+        /// <summary>
         /// Optional Select should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
