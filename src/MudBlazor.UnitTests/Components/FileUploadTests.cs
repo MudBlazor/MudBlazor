@@ -572,6 +572,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The wrapper must apply spacing class "mt-1" 
+        /// if and only if no SelectedTemplate is provided.
+        /// </summary>
+        [Test]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void FileUpload_FilesContainer_TopSpacing_Should_Depend_On_SelectedTemplate(
+            bool hasSelectedTemplate,
+            bool expectedMt1)
+        {
+            // Arrange
+            IReadOnlyList<IBrowserFile> files =
+            [
+                new DummyBrowserFile("a.txt", DateTimeOffset.Now, 0, "text/plain", [])
+            ];
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
+            {
+                parameters.Add(x => x.Files, files);
+
+                if (hasSelectedTemplate)
+                {
+                    parameters.Add(x => x.SelectedTemplate, context => builder =>
+                    {
+                        builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
+                    });
+                }
+            });
+
+            // Act
+            var wrapper = comp.Find(".mud-file-upload-files");
+            var hasMt1 = wrapper.ClassList.Contains("mt-1");
+
+            // Assert
+            hasMt1.Should().Be(expectedMt1);
+        }
+
+        /// <summary>
         /// Tests the SuppressOnChangeWhenInvalid behavior in the FileUpload component
         /// </summary>
         [Test]

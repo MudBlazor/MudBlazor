@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using MudBlazor.UnitTests.TestComponents.Virtualize;
 using NUnit.Framework;
 
@@ -31,5 +32,17 @@ public class VirtualizeTests : BunitTest
         ItemNoData().InnerHtml.Should().Be("No data");
         ItemVirtualizedNoData().InnerHtml.Should().Be("No data");
         ItemProviderNoData().InnerHtml.Should().Be("No data");
+    }
+
+    [Test]
+    public void VirtualizeMaxItemCount_IsPassedToInnerVirtualize()
+    {
+        var comp = Context.Render<MudVirtualize<string>>(p => p
+            .Add(x => x.Items, new List<string> { "a" })
+            .Add(x => x.Enabled, true)
+            .Add(x => x.MaxItemCount, 42));
+
+        var innerVirtualize = comp.FindComponent<Virtualize<string>>();
+        innerVirtualize.Instance.MaxItemCount.Should().Be(42);
     }
 }

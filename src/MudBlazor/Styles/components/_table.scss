@@ -361,6 +361,10 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   vertical-align: middle;
 }
 
+.mud-table-row-clickable {
+  cursor: pointer;
+}
+
 .mud-table-row-disabled {
   color: var(--mud-palette-text-disabled);
   cursor: default;
@@ -373,10 +377,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
 .mud-table-hover {
   & .mud-table-container .mud-table-root .mud-table-body {
-    & .mud-table-row {
-      cursor: pointer;
-    }
-
     @media(hover: hover) and (pointer: fine) {
       & .mud-table-row:hover {
         background-color: var(--mud-palette-table-hover);

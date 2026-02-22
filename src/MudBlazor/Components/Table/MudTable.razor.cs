@@ -11,7 +11,7 @@ namespace MudBlazor
     // Note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
     /// <summary>
-    /// A sortable, filterable table with multiselection and pagination.
+    /// A sortable, filterable table with multiselection, pagination, responsive layout, and child rows.
     /// </summary>
     /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable

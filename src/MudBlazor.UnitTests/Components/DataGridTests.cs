@@ -3418,6 +3418,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_HierarchyColumn_ShowAriaLabel()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnTest>();
+            var button = comp.Find("tbody tr button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Expand group");
+
+            await button.ClickAsync(new MouseEventArgs());
+
+            button.GetAttribute("aria-label").Should().Be("Collapse group");
+        }
+
+        [Test]
         public void DataGridChildRowContent()
         {
             var comp = Context.Render<DataGridChildRowContentTest>();

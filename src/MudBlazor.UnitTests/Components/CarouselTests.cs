@@ -311,5 +311,28 @@ namespace MudBlazor.UnitTests.Components
             // check the final button amount
             comp.FindAll("button.mud-icon-button").Count.Should().Be(6); //left + right + 4 items
         }
+
+        /// <summary>
+        /// Testing ArrowsColor parameter
+        /// </summary>
+        [Test]
+        public async Task Carousel_ArrowsColor()
+        {
+            var comp = Context.Render<MudCarousel<object>>();
+
+            // By default, arrows use Color.Inherit
+            comp.FindAll("button.mud-inherit-text").Count.Should().Be(2);
+            comp.FindAll("button.mud-primary-text").Count.Should().Be(0);
+
+            // Setting ArrowsColor to Primary
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ArrowsColor, Color.Primary));
+            comp.FindAll("button.mud-inherit-text").Count.Should().Be(0);
+            comp.FindAll("button.mud-primary-text").Count.Should().Be(2);
+
+            // Resetting ArrowsColor to null restores Color.Inherit
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ArrowsColor, null));
+            comp.FindAll("button.mud-inherit-text").Count.Should().Be(2);
+            comp.FindAll("button.mud-primary-text").Count.Should().Be(0);
+        }
     }
 }
