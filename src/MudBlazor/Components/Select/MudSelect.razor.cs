@@ -708,16 +708,13 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private async Task CloseMenuFromOverlayAsync()
-        {
-            await CloseMenu(false);
-        }
+        private Task CloseMenuFromOverlayAsync() => CloseMenu(false);
 
-        private async Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
+        private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
         {
             // Apply comparer and refresh selected values
             _selectedValues = new HashSet<T?>(_selectedValues, arg.Value);
-            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, arg.Value));
+            return _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, arg.Value));
         }
 
         private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
@@ -1084,10 +1081,12 @@ namespace MudBlazor
             await ScrollToItemAsync(item);
         }
 
-        internal Task HandlePointerDown(PointerEventArgs args)
+        private Task HandlePointerDown(PointerEventArgs args)
         {
             if (args.Button != 0)
+            {
                 return Task.CompletedTask;
+            }
 
             // In modeless mode, the overlay auto-close is triggered on pointerdown.
             // If the pointerdown started on this select while it was open, the follow-up
