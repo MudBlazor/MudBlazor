@@ -355,7 +355,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// handles if a user focuses this item with the keyboard.
+        /// Handles if a user focuses this item with the keyboard.
         /// </summary>
         internal async Task OnFocusAsync()
         {

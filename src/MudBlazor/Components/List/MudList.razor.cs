@@ -286,7 +286,7 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(FieldId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
-            base.OnAfterRender(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
             if (firstRender && TopLevelList == this)
             {
                 if (SelectionMode == SelectionMode.MultiSelection)
@@ -306,7 +306,7 @@ namespace MudBlazor
                 return;
 
             var key = args.Key.ToLowerInvariant();
-            if (string.IsNullOrWhiteSpace(key) == false
+            if (!string.IsNullOrWhiteSpace(key)
                 && key.Length == 1
                 && char.IsLetterOrDigit(key[0]))
             {
@@ -335,7 +335,8 @@ namespace MudBlazor
                         if (_activeItemId is not null)
                         {
                             var item = _items.FirstOrDefault(x => x.ItemId == _activeItemId);
-                            item?.OnItemClickAsync();
+                            if (item is not null)
+                                await item.OnItemClickAsync();
                         }
 
                         break;
@@ -517,12 +518,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// gets the role of the MudList
+        /// Gets the role of the MudList
         /// </summary>
-        /// <returns>the role of the MudList</returns>
+        /// <returns>The role of the MudList</returns>
         /// <remarks>
-        /// If <see crew="readonly"/> is true, the role is "list". Otherwise, the role is "listbox".
-        ///     </remarks>
+        /// If <see cref="readonly"/> is true, the role is "list". Otherwise, the role is "listbox".
+        /// </remarks>
         private string GetRole()
         {
             return GetReadOnly() ? "list" : "listbox";
