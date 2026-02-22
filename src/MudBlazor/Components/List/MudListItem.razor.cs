@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -374,7 +374,6 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            // setup key interceptor    
             if (firstRender)
             {
                 var options = new KeyInterceptorOptions(
@@ -494,13 +493,6 @@ namespace MudBlazor
             catch (Exception) { /*ignore*/ }
         }
 
-        /// <summary>
-        /// Gets the role of the list item.
-        /// </summary>
-        /// <returns>The role of the list item.</returns>
-        /// <remarks>
-        /// If <see cref="ReadOnly"/> is <c>true</c>, the role is <c>listitem</c>. Otherwise, the role is <c>option</c>.
-        /// </remarks>
         private string GetRole()
         {
             return ReadOnly ? "listitem" : "option";
@@ -538,7 +530,7 @@ namespace MudBlazor
         {
             if (MudList is null)
             {
-                //defaults to 1, since GetAriaPosInSet must be greater than 0
+                // GetAriaPosInSet must be greater than 0.
                 return "1";
             }
 
@@ -549,7 +541,7 @@ namespace MudBlazor
         {
             if (MudList is null)
             {
-                //respect the size limit
+                // Respect the size limit.
                 return "1";
             }
 
