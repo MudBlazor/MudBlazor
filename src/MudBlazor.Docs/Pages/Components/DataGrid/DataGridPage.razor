@@ -1,7 +1,12 @@
 ﻿@page "/components/datagrid"
 
 <DocsPage>
-    <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)" />
+    <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)">
+        <Description>
+            Supports advanced column filtering, inline and form-based cell editing with validation, data aggregation, column grouping, reordering, resizing, sticky columns, and server-side <CodeInline>IQueryable</CodeInline> support.
+            For a simpler, template-driven table with responsive breakpoint layout, see <MudLink Href="/components/table">MudTable</MudLink>.
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
@@ -17,35 +22,6 @@
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridBasicExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridBasicExample />
             </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="MudDataGrid vs MudTable">
-                <Description>
-                    Both <CodeInline>&lt;MudDataGrid></CodeInline> and <CodeInline>&lt;MudTable></CodeInline> display tabular data, but they differ in complexity and feature set.
-                    Use this guidance to choose the right component for your scenario.
-                    <br><br>
-                    <strong>Choose <MudLink Href="/components/datagrid">MudDataGrid</MudLink> when you need:</strong>
-                    <ul>
-                        <li>Per-column filtering with multiple filter operators</li>
-                        <li>Inline cell editing or form-based row editing with validation</li>
-                        <li>Data aggregation (sum, average, min, max) in column footers</li>
-                        <li>Column grouping, reordering, resizing, or hiding via a columns panel</li>
-                        <li>Row detail view / expandable row renderer</li>
-                        <li>Server-side data via <CodeInline>IQueryable</CodeInline> (e.g. Entity Framework Core), where filters and sorting translate directly to database queries</li>
-                        <li>Sticky columns</li>
-                    </ul>
-                    <strong>Choose <MudLink Href="/components/table">MudTable</MudLink> when you need:</strong>
-                    <ul>
-                        <li>A lightweight table with minimal setup</li>
-                        <li>Full control over row markup using a <CodeInline>&lt;RowTemplate></CodeInline></li>
-                        <li>Built-in responsive breakpoint layout (collapses to mobile card view)</li>
-                        <li>Child rows / expandable row content</li>
-                        <li>Simple use cases where the extra features of MudDataGrid are not required</li>
-                    </ul>
-                    If you need a plain HTML table without any MudBlazor logic, see <MudLink Href="/components/simpletable">SimpleTable</MudLink>.
-                </Description>
-            </SectionHeader>
         </DocsPageSection>
 
         <DocsPageSection>
