@@ -327,6 +327,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     protected string Classname =>
         new CssBuilder("mud-drop-item")
             .AddClass("mud-drop-item-draggable", IsEffectivelyDraggable)
+            .AddClass("mud-touch-none", IsEffectivelyDraggable)
             .AddClass(DraggingClass, _dragOperationIsInProgress)
             .AddClass(DisabledClass, Disabled)
             .AddClass(Class)
@@ -334,7 +335,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 
     protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("touch-action", "none", IsEffectivelyDraggable)
             .AddStyle("transform", "translate3d(0px, 0px, 0px)")
             .AddStyle(Style)
             .Build();
