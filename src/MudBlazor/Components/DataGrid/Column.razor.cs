@@ -445,13 +445,13 @@ namespace MudBlazor
         /// <para>
         /// When <see cref="MudDataGrid{T}.EditMode"/> is <see cref="DataGridEditMode.Cell"/>, standard columns commit
         /// their value automatically on change. Custom controls inside an <see cref="EditTemplate"/> do not trigger
-        /// <see cref="MudDataGrid{T}.CommittedItemChanges"/> automatically. To commit from a custom control, call
-        /// <see cref="CellContext{T}.CellActions.CommitEditingItemAsync"/> in a value-changed handler:
+        /// <see cref="MudDataGrid{T}.CommittedItemChanges"/> automatically. Track changes directly in a value-changed
+        /// handler instead:
         /// </para>
         /// <code>
         /// &lt;EditTemplate&gt;
         ///     &lt;MudDatePicker Date="@context.Item.Date"
-        ///         DateChanged="@(async d => { context.Item.Date = d; await context.Actions.CommitEditingItemAsync(); })" /&gt;
+        ///         DateChanged="@(d => { context.Item.Date = d; TrackChange(context.Item); })" /&gt;
         /// &lt;/EditTemplate&gt;
         /// </code>
         /// </remarks>

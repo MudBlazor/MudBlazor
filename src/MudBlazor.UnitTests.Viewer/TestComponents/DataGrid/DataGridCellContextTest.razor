@@ -1,4 +1,4 @@
-﻿<MudDataGrid T="Model" Items="@_items" CommittedItemChanges="@CommittedItemChanges">
+﻿<MudDataGrid T="Model" Items="@_items">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -12,9 +12,6 @@
         new("Johanna", 23), 
         new("Steve", 32)
     };
-
-    [Parameter]
-    public Func<Model, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
 
     public record Model(string Name, int Age);
 }

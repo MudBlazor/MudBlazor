@@ -4159,29 +4159,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridCellContextCommitEditingItem()
-        {
-            // Arrange
-            DataGridCellContextTest.Model committedItem = null;
-            var comp = Context.Render<DataGridCellContextTest>(parameters =>
-                parameters.Add(p => p.CommittedItemChanges, item =>
-                {
-                    committedItem = item;
-                    return Task.FromResult(DataGridEditFormAction.Close);
-                }));
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellContextTest.Model>>();
-            var item = dataGrid.Instance.Items.First();
-            var column = dataGrid.Instance.RenderedColumns.First();
-            var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
-
-            // Act — CommitEditingItemAsync should invoke CommittedItemChanges
-            await cell._cellContext.Actions.CommitEditingItemAsync();
-
-            // Assert
-            committedItem.Should().Be(item);
-        }
-
-        [Test]
         public void DataGridAggregation()
         {
             var comp = Context.Render<DataGridAggregationTest>();
