@@ -43,7 +43,7 @@
     </g>
     @if (YAxisTitle is not null)
     {
-        <g transform="translate(@(ToS(-1 * (_yAxisLabelSize?.Width ?? 2 / 2))), @(ToS(ViewBoxHeight / 2)))">
+        <g transform="translate(10, @(ToS(ViewBoxHeight / 2)))">
             <text class="mud-charts-yaxis axis-title" transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
         </g>
     }
@@ -65,17 +65,10 @@
 
     @CustomGraphics
 
-    @if (ChartOptions?.ShowToolTips is true) 
+    @if (ChartOptions?.ShowToolTips is true)
     {
         <g class="mud-charts-tooltip" style="@TooltipStylename">
             @TooltipContent
         </g>
     }
 </svg>
-
-@* @if (XAxisTitle is not null)
-{
-    <MudStack Class="mt-2" Row="true" Justify="Justify.Center">
-        <MudText Class="mud-charts-xaxis axis-title" Typo="Typo.body2">@XAxisTitle</MudText>
-    </MudStack>
-} *@

@@ -45,4 +45,14 @@ public interface IAxisChartOptions : IChartOptions
     /// Rotation angle to rotate the labels in degrees.
     /// </summary>
     public int XAxisLabelRotation { get; set; }
+
+    /// <summary>
+    /// The title of the X-axis.
+    /// </summary>
+    public string? XAxisTitle { get; set; }
+
+    /// <summary>
+    /// The title of the Y-axis.
+    /// </summary>
+    public string? YAxisTitle { get; set; }
 }
