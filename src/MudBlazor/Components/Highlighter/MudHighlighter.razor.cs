@@ -10,7 +10,6 @@ using MudBlazor.Components.Highlighter; // Added for FragmentInfo
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A component which highlights words or phrases within text.

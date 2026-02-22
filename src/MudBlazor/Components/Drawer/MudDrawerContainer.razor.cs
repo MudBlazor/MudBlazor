@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A container for a <see cref="MudDrawer"/> component.
@@ -14,7 +13,7 @@ namespace MudBlazor
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
-        private List<MudDrawer> _drawers = new();
+        private readonly List<MudDrawer> _drawers = new();
 
         protected virtual string Classname =>
             new CssBuilder()
@@ -34,6 +33,9 @@ namespace MudBlazor
                 .AddStyle(Style)
                 .Build();
 
+        /// <summary>
+        /// Displays drawers right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -59,21 +61,21 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private string GetDrawerClass(MudDrawer? drawer)
+        private static string GetDrawerClass(MudDrawer? drawer)
         {
             if (drawer is null)
             {
                 return string.Empty;
             }
 
-            var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
+            var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToStringFast(true)}";
             if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
-                className += $"-{drawer.GetState<Breakpoint>(nameof(MudDrawer.Breakpoint)).ToDescriptionString()}";
+                className += $"-{drawer.Breakpoint.ToStringFast(true)}";
             }
             className += $"-{drawer.GetPosition()}";
 
-            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
+            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToStringFast(true)}";
 
             return className;
         }
@@ -98,7 +100,7 @@ namespace MudBlazor
             return drawer.Height;
         }
 
-        private string? GetMiniDrawerWidth(MudDrawer? drawer)
+        private static string? GetMiniDrawerWidth(MudDrawer? drawer)
         {
             if (drawer is null)
             {

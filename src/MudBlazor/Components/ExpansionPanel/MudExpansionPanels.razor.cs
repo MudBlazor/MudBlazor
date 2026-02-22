@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A container which manages <see cref="MudExpansionPanel"/> components such that when one panel is expanded the others are collapsed automatically.
     /// </summary>
@@ -24,13 +23,10 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Square { get; set; }
 
         /// <summary>
         /// Allows multiple panels to be expanded at the same time.

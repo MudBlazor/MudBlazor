@@ -66,13 +66,20 @@
                 }
             </CascadingValue>
         </tr>
-        @if (DataGrid.ChildRowContent != null && (DataGrid._openHierarchies.Contains(itemBag.Item) || !DataGrid.HasHierarchyColumn))
+        @if ((DataGrid.ChildRowContent != null || DataGrid.ChildRowRenderer != null)&& (DataGrid._openHierarchies.Contains(itemBag.Item) || !DataGrid.HasHierarchyColumn))
         {
-            <tr class="mud-table-row">
-                <td class="mud-table-cell mud-table-child-content" colspan="1000">
-                    @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item))
-                </td>
-            </tr>
+            @if (DataGrid.ChildRowRenderer != null)
+            {
+                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item))
+            }
+            @if (DataGrid.ChildRowContent != null)
+            {
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell mud-table-child-content" colspan="1000">
+                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item))
+                    </td>
+                </tr>
+            }
         }
     </ChildContent>
     <NoRecordsContent>

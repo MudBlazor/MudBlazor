@@ -12,12 +12,11 @@ namespace MudBlazor;
 /// </summary>
 /// <seealso cref="MudPicker{T}" />
 /// <seealso cref="MudPickerContent" />
-#nullable enable
 public partial class MudPickerToolbar : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-picker-toolbar")
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+            .AddClass($"mud-theme-{Color.ToStringFast(true)}")
             .AddClass("mud-picker-toolbar-landscape",
                 Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
             .AddClass(Class)

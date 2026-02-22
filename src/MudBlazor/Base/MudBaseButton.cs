@@ -5,7 +5,6 @@ using static System.String;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a base class for designing button components.
     /// </summary>
@@ -132,6 +131,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             SetDefaultValues();
         }
 

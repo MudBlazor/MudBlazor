@@ -1,13 +1,10 @@
-﻿@using MudBlazor.Internal
-@using MudBlazor.Resources
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudPicker<TimeSpan?>
 @inject InternalMudLocalizer Localizer
 
 @Render
 
 @code {
-
     protected override RenderFragment PickerContent => 
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerToolbar Class="@ToolbarClassname" Style="@Style" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
@@ -100,5 +97,4 @@
             </div>
         </MudPickerContent>
     </CascadingValue>;
-
 }

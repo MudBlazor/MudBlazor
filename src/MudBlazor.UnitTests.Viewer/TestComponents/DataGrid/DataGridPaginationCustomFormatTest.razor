@@ -1,0 +1,19 @@
+﻿<MudDataGrid Items="@_items" RowsPerPage="10">
+    <Columns>
+        <PropertyColumn Property="x => x.Number" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Item" InfoFormat="Total: {all_items}" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private readonly List<Item> _items = Enumerable.Range(1, 1000)
+        .Select(i => new Item(i))
+        .ToList();
+    
+    private class Item(int number)
+    {
+        public int Number { get; set; } = number;
+    }
+}

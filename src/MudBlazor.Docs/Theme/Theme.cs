@@ -37,8 +37,6 @@ namespace MudBlazor.Docs
             return theme;
         }
 
-
-
         #region Docs
 
         private static readonly PaletteLight DocsLightPalette = new()

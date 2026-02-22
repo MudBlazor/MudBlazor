@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the display behavior of a <see cref="MudPicker{T}"/> component.
 /// </summary>
+[EnumExtensions]
 public enum PickerVariant
 {
     /// <summary>

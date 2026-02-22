@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MudBlazor.Interpolation
+﻿namespace MudBlazor.Interpolation
 {
     internal class Matrix
     {

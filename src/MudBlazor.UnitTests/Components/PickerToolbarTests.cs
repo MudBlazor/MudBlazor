@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -14,7 +14,7 @@ public class PickerToolbarTests : BunitTest
     [Test]
     public void PickerToolbar_ShouldBeLandscape_WhenStaticAndOrientationLandscape()
     {
-        var component = Context.RenderComponent<MudPickerToolbar>(parameters => parameters
+        var component = Context.Render<MudPickerToolbar>(parameters => parameters
             .Add(p => p.PickerVariant, PickerVariant.Static)
             .Add(p => p.Orientation, Orientation.Landscape));
 
@@ -27,7 +27,7 @@ public class PickerToolbarTests : BunitTest
     [TestCase(PickerVariant.Dialog)]
     public void PickerToolbar_ShouldNotBeLandscape_WhenNonStaticAndOrientationLandscape(PickerVariant pickerVariant)
     {
-        var component = Context.RenderComponent<MudPickerToolbar>(parameters => parameters
+        var component = Context.Render<MudPickerToolbar>(parameters => parameters
             .Add(p => p.PickerVariant, pickerVariant)
             .Add(p => p.Orientation, Orientation.Landscape));
 

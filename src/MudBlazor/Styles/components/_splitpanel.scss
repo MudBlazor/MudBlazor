@@ -1,0 +1,46 @@
+.mud-split-panel {
+  display: flex;
+
+  &.absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+  }
+
+  .child-panel {
+    flex: 1 1 auto;
+    overflow: hidden;
+    background-color: var(--mud-palette-surface);
+
+    &.transparent {
+      background: transparent;
+    }
+  }
+
+  .divider {
+    cursor: ew-resize;
+    position: relative;
+    outline: none;
+
+    &.horizontal {
+      cursor: n-resize;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      bottom: -12px;
+      left: -12px;
+      right: -12px;
+    }
+
+    &:focus {
+      outline: 2px solid var(--mud-palette-action-default-hover);
+      outline-offset: 2px;
+    }
+  }
+}

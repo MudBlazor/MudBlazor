@@ -1,0 +1,18 @@
+
+<MudSwitch Class="s1" @bind-Value="Val1" Label="Switch One" />
+<MudSwitch Class="s2" @bind-Value="Val2" Color="Color.Primary" AriaLabel="Option Two" Label="Switch Two" />
+<MudSwitch Class="s3" @bind-Value="Val3" Color="Color.Secondary">
+    <span>Misc Content</span>
+</MudSwitch>
+<MudSwitch Class="s4" @bind-Value="Val4" Color="Color.Secondary" AriaLabel="Option Four">
+    <span>Misc Content</span>
+</MudSwitch>
+<MudSwitch Class="s5" @bind-Value="Val5" Disabled="true" AriaLabel="Option Five" />
+
+@code {
+    public bool Val1 { get; set; } = true;
+    public bool Val2 { get; set; } = false;
+    public bool Val3 { get; set; } = false;
+    public bool Val4 { get; set; } = true;
+    public bool Val5 { get; set; } = false;
+}

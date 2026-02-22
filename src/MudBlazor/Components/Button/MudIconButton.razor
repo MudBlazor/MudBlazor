@@ -7,7 +7,7 @@
             Style="@Style"
             @attributes="UserAttributes" 
             @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
-            type="@ButtonType.ToDescriptionString()" 
+            type="@ButtonType.ToStringFast(true)" 
             href="@Href" 
             target="@Target"
             rel="@GetRel()"

@@ -1,10 +1,12 @@
-﻿@using System.Net.Http.Json
+﻿﻿@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
+@using System.Linq
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid Items="@Elements.Take(4)">
+<MudDataGrid T="Element" Items="@Elements.Take(10)" MultiSelection="true" SelectedItemsChanged="@SelectedItemsChanged">
     <Columns>
+        <SelectColumn DisabledFunc="@(item => item.Number % 5 == 0)" />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />
@@ -13,11 +15,30 @@
     </Columns>
 </MudDataGrid>
 
-@code { 
+@if (_selectedItems != null && _selectedItems.Any())
+{
+    <MudText Typo="Typo.subtitle1" Class="mt-4">Selected Items:</MudText>
+    foreach (var item in _selectedItems)
+    {
+        <MudText Typo="Typo.body2">@item.Name</MudText>
+    }
+}
+else
+{
+    <MudText Typo="Typo.body2" Class="mt-4">No items selected.</MudText>
+}
+
+@code {
     private IEnumerable<Element> Elements = new List<Element>();
+    private HashSet<Element> _selectedItems = new HashSet<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    private void SelectedItemsChanged(HashSet<Element> items)
+    {
+        _selectedItems = items;
     }
 }

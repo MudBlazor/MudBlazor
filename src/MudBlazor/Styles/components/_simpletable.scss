@@ -30,18 +30,27 @@
       > td, th {
         display: table-cell;
         padding: 16px;
-        font-size: 0.875rem;
         text-align: start;
-        font-weight: 400;
-        line-height: 1.43;
         border-bottom: 1px solid var(--mud-palette-table-lines);
-        letter-spacing: 0.01071em;
         vertical-align: inherit;
       }
 
+      > td {
+        font-size: var(--mud-typography-body2-size);
+        font-family: var(--mud-typography-body2-family);
+        font-weight: var(--mud-typography-body2-weight);
+        line-height: var(--mud-typography-body2-lineheight);
+        letter-spacing: var(--mud-typography-body2-letterspacing);
+        text-transform: var(--mud-typography-body2-text-transform);
+      }
+
       > th {
-        font-weight: 500;
-        line-height: 1.5rem;
+        font-size: var(--mud-typography-subtitle2-size);
+        font-family: var(--mud-typography-subtitle2-family);
+        font-weight: var(--mud-typography-subtitle2-weight);
+        line-height: var(--mud-typography-subtitle2-lineheight);
+        letter-spacing: var(--mud-typography-subtitle2-letterspacing);
+        text-transform: var(--mud-typography-subtitle2-text-transform);
       }
     }
   }

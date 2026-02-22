@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A picture displayed via an SVG path or font.
@@ -20,8 +19,8 @@ namespace MudBlazor
             new CssBuilder("mud-icon-root")
                 .AddClass("mud-icon-default", Color == Color.Default && !Disabled)
                 .AddClass("mud-svg-icon", !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith("<"))
-                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit && !Disabled)
-                .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default && Color != Color.Inherit && !Disabled)
+                .AddClass($"mud-icon-size-{Size.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 

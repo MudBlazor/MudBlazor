@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using FluentAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;

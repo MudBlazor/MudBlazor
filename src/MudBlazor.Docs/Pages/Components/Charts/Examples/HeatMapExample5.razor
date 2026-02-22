@@ -2,7 +2,7 @@
 
 <MudPaper Class="pa-4">
     <MudChart ChartType="ChartType.HeatMap" ChartSeries="@_series" ChartOptions="@_options"
-              XAxisLabels="@_xLabels" Width="100%" Height="350px"></MudChart>
+              ChartLabels="@_xLabels" Width="100%" Height="350px"></MudChart>
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudGrid Spacing="2" Class="d-flex">
@@ -24,9 +24,9 @@
 
 @code {
     private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
-    private List<ChartSeries> _series = [];
-    private ChartOptions _options = new();
-    private bool _showValueLabels = true;
+    private List<ChartSeries<double>> _series = [];
+    private HeatMapChartOptions _options = new();
+    private bool _showValueLabels = false;
     private bool _showValueToolTips = true;
     private string[] _xLabels = [];
 
@@ -39,7 +39,7 @@
 
     private void BuildOptions()
     {
-        var options = new ChartOptions
+        var options = new HeatMapChartOptions
         {
             ChartPalette = _colors,
             ShowLabels = _showValueLabels,
@@ -51,7 +51,7 @@
     private void RandomizeData()
     {
         string[] xaxis = ["A", "B", "C",];
-        var heatMapSeries = new List<ChartSeries>();
+        var heatMapSeries = new List<ChartSeries<double>>();
         var dataPoints = xaxis.Length;
         foreach (var x in xaxis)
         {
@@ -60,7 +60,7 @@
             {
                 data[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
             }
-            heatMapSeries.Add(new ChartSeries { Name = x, Data = data });
+            heatMapSeries.Add(new() { Name = x, Data = data });
         }
         _xLabels = xaxis;
         _series = heatMapSeries;

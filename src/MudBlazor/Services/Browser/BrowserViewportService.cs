@@ -13,10 +13,12 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents a service that serves to listen to browser window size changes and breakpoints.
+/// Tracks browser window size changes and resolves them to MudBlazor breakpoints.
 /// </summary>
+/// <remarks>
+/// This service manages the JS listener lifecycle, caches the latest size, and notifies observers so components can respond to viewport changes without rolling their own interop.
+/// </remarks>
 internal sealed class BrowserViewportService : IBrowserViewportService
 {
     private bool _disposed;
@@ -285,7 +287,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         // Instead, it checks if a listener with the corresponding ResizeOption already exists (which is why it implements IEquatable), and only creates a new listener if necessary.
         // In certain scenarios, you may have multiple observers monitoring changes (e.g., 10 observers), but only a single JavaScript listener on the other side.
         // Without this optimization, the number of observers and JavaScript listeners would be equal.
-        if (javaScriptListenerId == default)
+        if (javaScriptListenerId == Guid.Empty)
         {
             // Create new listener on JS side
             var dotNetReference = _dotNetReferenceLazy.Value;

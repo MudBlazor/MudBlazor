@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
     /// Represents a piece of text as an SVG path.
     /// </summary>
     [DebuggerDisplay("X={X}, Y={Y}, Value={Value}")]
-    internal class SvgText
+    public sealed class SvgText
     {
         /// <summary>
         /// The horizontal position of the text.

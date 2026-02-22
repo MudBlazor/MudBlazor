@@ -15,7 +15,7 @@
         <MudText Typo="Typo.subtitle2">"</MudText>
     </MudItem>
     <MudItem xs="6">
-        <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;string&gt;</MudText>
+        <MudText Typo="Typo.subtitle2">SelectedValues: IReadOnlyCollection&lt;string&gt;</MudText>
         <MudText Typo="Typo.subtitle2">{</MudText>
         <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", _options.Select(x=>$"\"{x}\"")))</MudText>
         <MudText Typo="Typo.subtitle2">}</MudText>
@@ -24,7 +24,7 @@
 
 @code {
     private string _value = "Nothing selected";
-    private IEnumerable<string> _options = new HashSet<string> { "Alaska" };
+    private IReadOnlyCollection<string> _options = ["Alaska"];
     private readonly string[] _states =
     [
         "Alabama", "Alaska", "American Samoa", "Arizona",

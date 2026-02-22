@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Specifies how items are drawn in a <see cref="MudTimeline" />.
 /// </summary>
+[EnumExtensions]
 public enum TimelinePosition
 {
     /// <summary>

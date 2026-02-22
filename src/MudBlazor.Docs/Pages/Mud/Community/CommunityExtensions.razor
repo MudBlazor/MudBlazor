@@ -48,7 +48,7 @@
                             @foreach (var json in _jsonExtensions.Where(x => x.Category.Equals(category.ToString(), StringComparison.InvariantCultureIgnoreCase)))
                             {
                                 <MudItem xs="12" sm="6" lg="4">
-                                    <ExtensionCard Extension="@json" CategoryName="@category.ToDescriptionString()" />
+                                    <ExtensionCard Extension="@json" CategoryName="@category.ToStringFast(true)" />
                                 </MudItem>
                             }
                         }

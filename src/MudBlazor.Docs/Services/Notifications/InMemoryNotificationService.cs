@@ -84,7 +84,6 @@ public class InMemoryNotificationService : INotificationService
         return Task.CompletedTask;
     }
 
-
     public void Preload()
     {
         _messages.Add(new NotificationMessage(

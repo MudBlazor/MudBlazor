@@ -3,7 +3,7 @@
 <MudDynamicTabs @ref="@_dynamicTabs" @bind-ActivePanelIndex="@_userIndex"
                 AddTab="@OnAddTab" CloseTab="@OnCloseTab"
                 AddIconToolTip="Click to add a new tab" CloseIconToolTip="Close tab. All data will be lost"
-                PanelClass="px-4 py-6" Elevation="4" Rounded ApplyEffectsToContainer>
+                TabPanelsClass="px-4 py-6" Elevation="4" Rounded ApplyEffectsToContainer>
     @foreach (var tab in _userTabs)
     {
         <MudTabPanel ID="@tab.Id" Text="@tab.Label" ShowCloseIcon="@tab.ShowCloseIcon">@tab.Content</MudTabPanel>

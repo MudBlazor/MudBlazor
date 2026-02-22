@@ -28,7 +28,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/> or <see cref="Icons.Material.Filled.ChevronLeft"/> if RightToLeft.
     /// </remarks>
     [Parameter]
-    public string ClosedIcon { get; set; }
+    public string? ClosedIcon { get; set; }
 
     /// <summary>
     /// The icon to display for the open button.
@@ -37,7 +37,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
     /// </remarks>
     [Parameter]
-    public string OpenIcon { get; set; }
+    public string? OpenIcon { get; set; }
 
     /// <summary>
     /// The size of the open and close icons.
@@ -98,7 +98,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
     /// </remarks>
     [Parameter]
-    public string HeaderClass { get; set; }
+    public string? HeaderClass { get; set; }
 
     /// <summary>
     /// The function which calculates CSS classes for the header.
@@ -107,7 +107,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
     /// </remarks>
     [Parameter]
-    public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
+    public Func<IEnumerable<T>, string>? HeaderClassFunc { get; set; }
 
     /// <summary>
     /// The CSS style applied to this column's header.
@@ -119,21 +119,20 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// The function which calculates CSS styles for the header.
     /// </summary>
     [Parameter]
-    public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
+    public Func<IEnumerable<T>, string>? HeaderStyleFunc { get; set; }
 
     /// <summary>
     /// The template used to display this column's header.
     /// </summary>
     [Parameter]
-    public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
+    public RenderFragment<HeaderContext<T>>? HeaderTemplate { get; set; }
 
     /// <summary>
     /// The template used to display this column's value cells.
     /// </summary>
     [Parameter]
-    public RenderFragment<CellContext<T>> CellTemplate { get; set; }
+    public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
 
-#nullable enable
     /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>

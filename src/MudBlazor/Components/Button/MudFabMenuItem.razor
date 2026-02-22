@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor
+@inherits MudFab
+
+<MudFab Class="@Classname"
+        Style="@Style"
+        Color="@Color"
+        Size="@Size"
+        StartIcon="@StartIcon"
+        EndIcon="@EndIcon"
+        IconColor="@IconColor"
+        IconSize="@IconSize"
+        Label="@Label"
+        ClickPropagation="true"
+        @attributes="@UserAttributes"
+        @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+        role="menuitem"/>

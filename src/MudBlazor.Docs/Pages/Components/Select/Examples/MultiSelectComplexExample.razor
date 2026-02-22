@@ -9,7 +9,7 @@
 
 <MudGrid Class="mt-6 px-4">
     <MudItem xs="6">
-        <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;State&gt;</MudText>
+        <MudText Typo="Typo.subtitle2">SelectedValues: IReadOnlyCollection&lt;State&gt;</MudText>
         <MudText Typo="Typo.subtitle2">{</MudText>
         <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", _options.Select(x=>$"\"{x}\"")))</MudText>
         <MudText Typo="Typo.subtitle2">}</MudText>
@@ -18,7 +18,7 @@
 
 @code {
 #nullable enable
-    private IEnumerable<State> _options = new HashSet<State> { new("Alaska") };
+    private IReadOnlyCollection<State> _options = [new("Alaska")];
 
     private readonly State[] _states =
     [

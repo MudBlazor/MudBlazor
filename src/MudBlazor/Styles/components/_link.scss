@@ -30,4 +30,20 @@
       text-decoration: none;
     }
   }
+
+  .mud-link-icon-start,
+  .mud-link-icon-end {
+    &.mud-icon-root {
+      font-size: inherit;
+      vertical-align: middle;
+    }
+  }
+
+  .mud-link-icon-start {
+    margin-inline-end: 4px;
+  }
+
+  .mud-link-icon-end {
+    margin-inline-start: 4px;
+  }
 }

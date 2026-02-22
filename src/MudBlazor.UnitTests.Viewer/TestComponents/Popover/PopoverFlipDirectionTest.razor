@@ -37,7 +37,7 @@
         </div>
     </MudCollapse>
     <MudMenu Label="Open Scrollable Menu" FullWidth="true" AnchorOrigin="_anchor" TransformOrigin="_transform" RelativeWidth="DropdownWidth.Adaptive"
-             DropdownSettings="_dropdownSettings">
+             OverflowBehavior="OverflowBehavior.FlipAlways">
         <MudMenuItem Label="AAAAAAAAAAAAA Long" />
         <MudMenuItem Label="AAAAAAAAAAAAA List" />
         <MudMenuItem Label="AAAAAAAAAAAAA Is" />
@@ -91,11 +91,6 @@
     private Origin _anchor = Origin.BottomLeft;
     private Origin _transform = Origin.TopLeft;
 
-	private readonly DropdownSettings _dropdownSettings = new()
-    {
-		OverflowBehavior = OverflowBehavior.FlipAlways
-	};
-	
 	private void OnExpandCollapseClick() => _expanded = !_expanded;
 
     private async Task OnExpandCollapseFor5sClickAsync()

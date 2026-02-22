@@ -1,0 +1,118 @@
+﻿@page "/mud/project/team"
+@inject GitHubApiClient _gitHubApiClient;
+
+<PageTitle>Meet the Team - MudBlazor</PageTitle>
+<DocsPage DisplayFooter="true">
+
+    <MudContainer>
+        @* Preamble *@
+        <MudText Typo="Typo.h3" GutterBottom="true">Meet the Team</MudText>
+        <MudText Typo="Typo.subtitle1">
+            MudBlazor is an open-source project powered by a growing global community of contributors.
+            What began as a small initiative has evolved into a mature UI framework, maintained by volunteers who review code, guide development, and keep the project moving forward.
+            Contributions of all kinds are welcome, from a single pull request to ongoing involvement, and the community continues to expand with every release.
+            <MudLink Href="/mud/introduction" Typo="Typo.inherit">Read more</MudLink>
+        </MudText>
+
+        @* Core Team *@
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Primary">Core Team</MudText>
+        <MudText Class="mb-8">
+            Project leads who oversee development and review contributions in their free time.
+        </MudText>
+        <MudGrid>
+            @foreach (var member in TeamMemberData.GetTeam().Where(c => c.Team == Team.Core || c.Team == Team.CoreMaintainer))
+            {
+                <MudItem xs="12" md="6">
+                    <MudTeamCard Member="member" />
+                </MudItem>
+            }
+        </MudGrid>
+
+        @* Contribution Team *@
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Secondary">Contribution Team</MudText>
+        <MudText Class="mb-8">
+            Community members in close collaboration, recognized for their high-quality contributions.
+        </MudText>
+        <MudGrid>
+            @foreach (var contributor in TeamMemberData.GetTeam().Where(c => c.Team == Team.Contribution))
+            {
+                <MudItem xs="12" md="6">
+                    <MudTeamCard Member="contributor" />
+                </MudItem>
+            }
+        </MudGrid>
+
+        @* Hall of Fame *@
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Tertiary">Hall of Fame</MudText>
+        <MudText Class="mb-8">
+            Previous team members who are no longer active, but whose contributions should not be forgotten.
+        </MudText>
+        <MudGrid>
+            @foreach (var contributor in TeamMemberData.GetHallOfFameTeam())
+            {
+                <MudItem xs="12" md="6">
+                    <MudTeamCard Member="contributor" DisplayTeam="true" />
+                </MudItem>
+            }
+        </MudGrid>
+
+        @* Awesome Coders *@
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true">Awesome coders</MudText>
+        <MudText Class="mb-8">
+            Developers who generously allowed us to reuse parts of their code.
+        </MudText>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudContributor Firstname="Alessandro" Lastname="Ghidini" AvatarLink="https://avatars1.githubusercontent.com/u/251532?s=460&v=4" GitHubLink="https://github.com/sotsera/sotsera.blazor.toaster">
+                    Donated the Sotsera Blazor Toaster code
+                </MudContributor>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudContributor Firstname="Chris" Lastname="Sainty" AvatarLink="https://avatars2.githubusercontent.com/u/6171719?s=460&u=02c821ee398d3601618b845f28514b9ad33d4306&v=4" GitHubLink="https://github.com/Blazored/Modal">
+                    Donated the Blazored Modal source code
+                </MudContributor>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudContributor Firstname="Zachary" Lastname="Patten" AvatarLink="https://avatars1.githubusercontent.com/u/3385986?s=460&u=e7884f25057513e6987883867a16bc167ce4a6a6&v=4" GitHubLink="https://github.com/ZacharyPatten/Towel">
+                    Donated the XmlDoc loading code for the docs
+                </MudContributor>
+            </MudItem>
+        </MudGrid>
+
+        @* All Contributors *@
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true">All contributors</MudText>
+        <MudText Class="mb-8">
+            A growing community of developers who’ve contributed code on GitHub.
+        </MudText>
+        <MudGrid>
+            @if (_githubContributors == null)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                @foreach (var contributor in _githubContributors.OrderByDescending(x => x.Contributions))
+                {
+                    <MudItem xs="12" md="6">
+                        <MudContributor Firstname="@contributor.Login" AvatarLink="@contributor.AvatarUrl" GitHubLink="@contributor.HtmlUrl" />
+                    </MudItem>
+                }
+            }
+        </MudGrid>
+    </MudContainer>
+
+    <MudContainer>
+        <div class="my-16"></div>
+    </MudContainer>
+
+</DocsPage>
+
+@code
+{
+    private GithubContributors[] _githubContributors;
+    protected override async Task OnInitializedAsync()
+    {
+        _githubContributors = await _gitHubApiClient.GetContributorsAsync();
+        StateHasChanged();
+    }
+}

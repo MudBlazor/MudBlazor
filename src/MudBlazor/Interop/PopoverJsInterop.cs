@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Interop;
 
-#nullable enable
 internal class PopoverJsInterop
 {
     private readonly IJSRuntime _jsRuntime;

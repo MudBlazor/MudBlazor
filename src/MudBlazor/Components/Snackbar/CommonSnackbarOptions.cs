@@ -3,7 +3,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The options which control Snackbar pop-ups.
@@ -54,9 +53,10 @@ public abstract class CommonSnackbarOptions
     /// Shows the snackbar until a user manually closes it.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
+    /// Defaults to <c>null</c>.  When <c>null</c>, snackbars that define an
+    /// <see cref="SnackbarOptions.Action"/> will require user interaction by default.
     /// </remarks>
-    public bool RequireInteraction { get; set; } = false;
+    public bool? RequireInteraction { get; set; }
 
     /// <summary>
     /// Blurs the background of the snackbar.

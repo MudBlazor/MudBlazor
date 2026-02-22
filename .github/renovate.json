@@ -8,13 +8,17 @@
         "mergeConfidence:all-badges"
     ],
     "labels": [
-        "dependency"
+        "dependency",
+        "build"
     ],
-    "minimumReleaseAge": "14 days",
+    "commitMessagePrefix": "Build: ",
     "vulnerabilityAlerts": {
         "enabled": true,
-        "labels": [
-            "triage needed"
+        "addLabels": [
+            "security"
+        ],
+        "reviewers": [
+            "team:core-team"
         ]
     },
     "packageRules": [
@@ -31,13 +35,23 @@
             "enabled": false
         },
         {
-            "matchManagers": [
-                "nuget"
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj"
             ],
-            "matchUpdateTypes": [
-                "major"
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp.Workspaces"
             ],
-            "draftPR": true
+            "enabled": false
+        },
+        {
+            "description": "Keep updates in draft while release age is unknown or immature.",
+            "matchJsonata": [
+                "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
+            ],
+            "draftPR": true,
+            "prBodyNotes": [
+                "> [!WARNING]\n> Target version is either under 14 days old or does not publish a reliable release timestamp yet."
+            ]
         },
         {
             "matchFileNames": [
@@ -50,15 +64,48 @@
             "enabled": false
         },
         {
+            "description": "Group Bun toolchain updates and request Bun reviewer.",
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchPackageNames": [
+                "bun",
+                "BunDotNet.Cli"
+            ],
             "matchFileNames": [
-                "src/**/MudBlazor.UnitTests*.csproj",
-                "src/**/MudBlazor.Docs*.csproj"
+                "src/Directory.Build.props"
             ],
-            "matchUpdateTypes": [
-                "patch",
-                "minor"
+            "groupName": "bun toolchain",
+            "groupSlug": "bun-toolchain",
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
+        }
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
             ],
-            "automerge": true
+            "matchStrings": [
+                "<BunVersion>(?<currentValue>.*?)</BunVersion>"
+            ],
+            "depNameTemplate": "bun",
+            "datasourceTemplate": "npm"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Directory\\.Build\\.props$/"
+            ],
+            "matchStrings": [
+                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
+            ],
+            "depNameTemplate": "BunDotNet.Cli",
+            "datasourceTemplate": "nuget"
         }
     ]
 }

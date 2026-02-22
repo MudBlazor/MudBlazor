@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A table similar to <see cref="MudTable{T}"/> but with basic styling features.
@@ -49,13 +48,10 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.SimpleTable.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Square { get; set; }
 
         /// <summary>
         /// Uses compact padding for all rows.

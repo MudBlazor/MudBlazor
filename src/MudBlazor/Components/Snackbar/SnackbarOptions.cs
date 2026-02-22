@@ -3,7 +3,6 @@
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// The options applied to an individual snackbar.
@@ -91,6 +90,8 @@ namespace MudBlazor
         /// Defaults to <see cref="SnackbarDuplicatesBehavior.GlobalDefault"/> which is set via <see cref="SnackbarConfiguration.PreventDuplicates"/>.
         /// </remarks>
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
+
+        internal bool RequiresInteraction => RequireInteraction ?? !string.IsNullOrWhiteSpace(Action);
 
         /// <summary>
         /// Creates new options for a snackbar.

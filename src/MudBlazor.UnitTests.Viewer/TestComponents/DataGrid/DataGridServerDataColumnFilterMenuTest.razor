@@ -1,4 +1,4 @@
-
+﻿
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudDataGrid T="Model" Filterable="true" ServerData="ServerDataFunc" FilterMode="DataGridFilterMode.ColumnFilterMenu">
@@ -24,7 +24,7 @@
         new Model("John", 32, Severity.Warning, false, null)
     };
 
-    private async Task<GridData<Model>> ServerDataFunc(GridState<Model> gridState)
+    private async Task<GridData<Model>> ServerDataFunc(GridState<Model> gridState, CancellationToken token)
     {
         _serverCallCount++;
         StateHasChanged();

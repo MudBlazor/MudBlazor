@@ -1,0 +1,28 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace MudBlazor.Justification.StackedBars;
+
+internal class SpaceBetweenStrategy : IStackedBarPositionStrategy
+{
+    public double[] CalculatePositions(StackedBarContext ctx)
+    {
+        var positions = new double[ctx.MaxColumns];
+
+        if (ctx.MaxColumns == 1)
+        {
+            positions[0] = ctx.HorizontalStartSpace + (ctx.BarWidth / 2) + (ctx.HorizontalSpace - ctx.BarWidth) / 2;
+            return positions;
+        }
+
+        var totalBarWidth = ctx.MaxColumns * ctx.BarWidth;
+        var spaceBetween = (ctx.HorizontalSpace - totalBarWidth) / (ctx.MaxColumns - 1);
+        var start = ctx.HorizontalStartSpace + (ctx.BarWidth / 2);
+
+        for (var i = 0; i < ctx.MaxColumns; i++)
+            positions[i] = start + i * (ctx.BarWidth + spaceBetween);
+
+        return positions;
+    }
+}

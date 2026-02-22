@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Interfaces
 {
-#nullable enable
     public interface IForm
     {
         public bool IsValid { get; }

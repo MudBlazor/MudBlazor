@@ -8,7 +8,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor.Interop;
 
-#nullable enable
 internal class ResizeListenerInterop
 {
     private readonly IJSRuntime _jsRuntime;

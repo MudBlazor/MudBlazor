@@ -1,6 +1,4 @@
-﻿@using MudBlazor.Extensions
-
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
 <MudContainer Class="mt-8" Style="justify-items: center">
     <MudPaper Class="mt-4 px-8">
@@ -17,8 +15,7 @@
             <MudStack Row Class="justify-center">
                 @foreach (var step in _stepper.Steps)
                 {
-                    @*Using the GetState extension on the component reference*@
-                    <MudChip T="string" Color="@GetColor(step.GetState(s => s.Completed))">
+                    <MudChip T="string" Color="@GetColor(step.Completed)">
                         @step.Title
                     </MudChip>
                 }
@@ -27,7 +24,6 @@
             <MudStack Row Class="justify-center">
                 @foreach (var step in _stepper.Steps)
                 {
-                    @*Directly accessing the property via component reference*@
                     <MudChip T="string" Color="@GetColor(step.Completed)">
                         @step.Title
                     </MudChip>
@@ -40,5 +36,5 @@
 @code {
     private MudStepper _stepper = null!;
 
-    private Color GetColor(bool completed) => completed ? Color.Success : Color.Error;
+    private static Color GetColor(bool completed) => completed ? Color.Success : Color.Error;
 }

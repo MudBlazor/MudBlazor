@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 internal static class SnackbarStateExtensions
 {
     public static bool IsShowing(this SnackbarState state) => state == SnackbarState.Showing;

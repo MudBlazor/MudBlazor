@@ -1,0 +1,106 @@
+name: deploy-mudblazor-nightly
+
+on:
+  workflow_run:
+    workflows: ["build-test-mudblazor"]
+    types:
+      - completed
+    branches:
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+jobs:
+  get-nightly-version:
+    runs-on: ubuntu-latest
+    # Only run on the main repository, not forks, and only if tests succeeded
+    if: ${{ github.repository == 'MudBlazor/MudBlazor' && (github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch') }}
+    permissions:
+      contents: read
+    outputs:
+      VERSION: ${{ steps.get-version.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history for tags
+
+      - name: Get latest tag and generate nightly version
+        id: get-version
+        run: |
+          # Get the latest tag
+          LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          
+          # If no tag found, use default version
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.1"
+          fi
+          
+          # Remove 'v' prefix
+          VERSION="${LATEST_TAG#v}"
+          
+          # Append nightly identifier with run number
+          NIGHTLY_VERSION="${VERSION}-nightly.${GITHUB_RUN_NUMBER}"
+          
+          echo "Latest tag: $LATEST_TAG"
+          echo "Nightly version: $NIGHTLY_VERSION"
+          echo "VERSION=$NIGHTLY_VERSION" >> $GITHUB_OUTPUT
+
+  deploy-nightly:
+    runs-on: ubuntu-latest
+    needs: get-nightly-version
+    # Only run on the main repository, not forks
+    if: github.repository == 'MudBlazor/MudBlazor'
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          # We only need the latest SDK for publishing
+          dotnet-version: 10.x
+
+      - name: Restore dependencies
+        working-directory: src/MudBlazor
+        run: dotnet restore
+
+      - name: Pack nuget package
+        working-directory: ./src/MudBlazor
+        run: dotnet pack -c Release --no-restore --output nupkgs /p:Version=${{ needs.get-nightly-version.outputs.VERSION }}
+
+      - name: Check package contains css
+        shell: pwsh
+        run: ./tools/CheckPackageContainsStaticAssets.ps1 ./src/MudBlazor/nupkgs MudBlazor.min.css
+
+      - name: Check package contains js
+        shell: pwsh
+        run: ./tools/CheckPackageContainsStaticAssets.ps1 ./src/MudBlazor/nupkgs MudBlazor.min.js
+
+      - name: Publish nightly package to GitHub Packages
+        working-directory: ./src/MudBlazor
+        run: |
+          dotnet nuget push nupkgs/*.nupkg \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --skip-duplicate
+
+      - name: Upload nightly package as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: mudblazor-nightly-${{ needs.get-nightly-version.outputs.VERSION }}
+          path: ./src/MudBlazor/nupkgs/*.nupkg
+          retention-days: 30

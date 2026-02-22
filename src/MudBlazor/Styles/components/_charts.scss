@@ -49,7 +49,7 @@
   }
 
 
-  & .mud-chart-donut, .mud-chart-pie, mud-chart-line {
+  & .mud-chart-donut, .mud-chart-pie, mud-chart-line, mud-chart-bar {
     display: flex;
     margin: auto;
   }
@@ -93,6 +93,10 @@
 }
 
 .mud-charts-xaxis {
+  fill: var(--mud-palette-text-primary);
+}
+
+.mud-chart-axis-label {
   fill: var(--mud-palette-text-primary);
 }
 
@@ -165,7 +169,6 @@
 }
 
 .mud-chart-sankey text {
-  fill: var(--mud-palette-text-primary);
   font-family: var(--mud-typography-caption-family), sans-serif;
   font-weight: var(--mud-typography-caption-weight);
   line-height: var(--mud-typography-caption-lineheight);

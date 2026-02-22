@@ -59,6 +59,7 @@
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">Manual</p>
         <MudSwitch @bind-Value="_editTriggerRowClick" Color="Color.Primary">On Row Click</MudSwitch>
     </div>
+    <MudSwitch @bind-Value="_validateOnCommit" Color="Color.Primary">Validate On Commit</MudSwitch>
 </div>
 
 <MudExpansionPanels Style="flex:1">
@@ -84,6 +85,7 @@
     private bool _isCellEditMode;
     private List<string> _events = new();
     private bool _editTriggerRowClick;
+    private bool _validateOnCommit;
     private MudDataGrid<Element> _elementGrid = default!;
 
     protected override async Task OnInitializedAsync()
@@ -122,7 +124,7 @@
         _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    private void CommittedItemChanges(Element item)
+    private Task<DataGridEditFormAction> CommittedItemChanges(Element item)
     {
         // update code for the backing data here
         if (item.Number == 0) // new item
@@ -141,5 +143,10 @@
             }            
         }   
         _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+
+        if (_validateOnCommit && item.Molar < 0)
+            return Task.FromResult(DataGridEditFormAction.KeepOpen);
+
+        return Task.FromResult(DataGridEditFormAction.Close);
     }
 }

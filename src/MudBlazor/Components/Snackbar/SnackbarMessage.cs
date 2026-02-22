@@ -4,7 +4,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-#nullable enable
 
 namespace MudBlazor.Components.Snackbar;
 

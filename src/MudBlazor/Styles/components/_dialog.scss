@@ -130,6 +130,10 @@
     justify-content: flex-end;
     border-bottom-left-radius: var(--mud-default-borderradius);
     border-bottom-right-radius: var(--mud-default-borderradius);
+
+    &:empty {
+      display: none;
+    }
   }
 }
 

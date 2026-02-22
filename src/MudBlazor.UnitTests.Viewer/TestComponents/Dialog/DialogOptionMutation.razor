@@ -29,5 +29,5 @@
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
-    private Task DoSomething() => DialogService.ShowMessageBox("Warning", "Are you sure you wish to do something?", yesText: "Do it", cancelText: "Cancel");
+    private Task DoSomething() => DialogService.ShowMessageBoxAsync("Warning", "Are you sure you wish to do something?", yesText: "Do it", cancelText: "Cancel");
 }

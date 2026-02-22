@@ -6,10 +6,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// Represents a compact element used to enter information, select a choice, filter content, or trigger an action.
+/// Compact elements used to enter information, select a choice, filter content, or trigger an action.
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
 /// <seealso cref="MudChipSet{T}"/>
@@ -57,9 +56,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public IJsApiService? JsApiService { get; set; }
 
     protected string Classname => new CssBuilder("mud-chip")
-        .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
-        .AddClass($"mud-chip-size-{GetSize().ToDescriptionString()}")
-        .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
+        .AddClass($"mud-chip-{GetVariant().ToStringFast(true)}")
+        .AddClass($"mud-chip-size-{GetSize().ToStringFast(true)}")
+        .AddClass($"mud-chip-color-{GetColor().ToStringFast(true)}")
         .AddClass("mud-clickable", IsButton || IsAnchor)
         .AddClass("mud-ripple", IsButton && GetRipple())
         .AddClass("mud-chip-label", GetLabel())
@@ -382,7 +381,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// When <c>true</c>, the chip is displayed in a selected state.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.Chip.Behavior)]
     public bool Selected { get; set; }
 
@@ -425,9 +424,16 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
                     new("Delete", preventDown: "key+none")
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keyDown: HandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
+                    .OnKeyDownAny(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
         }
     }
+
+    private bool CanHandleKeys() => !GetDisabled() && !GetReadOnly();
+
+    protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_chipContainerId, KeyEventKind.Down, obj);
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)
     {
@@ -457,24 +463,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
 
         StateHasChanged();
-    }
-
-    private async Task HandleKeyDownAsync(KeyboardEventArgs args)
-    {
-        if (GetDisabled() || GetReadOnly())
-        {
-            return;
-        }
-
-        switch (args.Key)
-        {
-            case " ":
-                await OnClickAsync(new MouseEventArgs());
-                break;
-            case "Backspace" or "Delete":
-                await OnCloseAsync(new MouseEventArgs());
-                break;
-        }
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Docs.Models;
 using NUnit.Framework;
 

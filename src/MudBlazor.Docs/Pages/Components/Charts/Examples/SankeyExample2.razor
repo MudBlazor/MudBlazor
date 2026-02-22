@@ -1,4 +1,6 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using MudBlazor.Charts
+
+@namespace MudBlazor.Docs.Examples
 
 <MudStack Row="true" Justify="Justify.Center" Class="mud-width-full">
     <MudPaper Class="pa-4">
@@ -11,40 +13,40 @@
 </MudStack>
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Sankey" Nodes="@_nodes" Edges="@_edges" Width="@($"{_width}px")" Height="@($"{_height}px")" ChartOptions="@_options" NodeChartOptions="_nodeChartOptions"/>
+    <MudChart ChartType="ChartType.Sankey" ChartSeries="@_series" Width="@($"{_width}px")" Height="@($"{_height}px")" ChartOptions="@_options" />
 </MudPaper>
 
 <MudGrid>
     <MudItem xs="12" Class="d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Class="pt-4">
             <MudTooltip Text="Show edge values">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.ShortText" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_nodeChartOptions.ShowEdgeLabels"/>
+                <MudToggleIconButton Icon="@Icons.Material.Filled.ShortText" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowEdgeLabels" />
             </MudTooltip>
             <MudTooltip Text="Show labels">
                 <MudToggleIconButton Icon="@Icons.Material.Filled.Textsms" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowLabels"/>
             </MudTooltip>
             <MudTooltip Text="Show node values">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.Money" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_nodeChartOptions.ShowNodeValues"/>
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Money" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowNodeValues" />
             </MudTooltip>
             <MudTooltip Text="Highlight on hover">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.Highlight" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_nodeChartOptions.HighlightOnHover"/>
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Highlight" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HighlightOnHover" />
             </MudTooltip>
             <MudTooltip Text="Hide nodes with no edges">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.DisabledVisible" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_nodeChartOptions.HideNodesWithNoEdges"/>
+                <MudToggleIconButton Icon="@Icons.Material.Filled.DisabledVisible" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HideNodesWithNoEdges" />
             </MudTooltip>
             <MudTooltip Text="Order nodes by value">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.Sort" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_nodeChartOptions.OrderNodesByValue"/>
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Sort" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.OrderNodesByValue" />
             </MudTooltip>
         </MudButtonGroup>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudSlider @bind-Value="_nodeChartOptions.NodeWidth" Max="50" ValueLabel="true">Node width</MudSlider>
+        <MudSlider @bind-Value="_options.NodeWidth" Max="50" ValueLabel="true">Node width</MudSlider>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudSlider @bind-Value="_nodeChartOptions.MinVerticalSpacing" Max="30" ValueLabel="true">Min. vertical spacing</MudSlider>
+        <MudSlider @bind-Value="_options.MinVerticalSpacing" Max="30" ValueLabel="true">Min. vertical spacing</MudSlider>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudSlider @bind-Value="_nodeChartOptions.EdgeOpacity" Step="0.01" Max="1" ValueLabel="true">Edge opacity</MudSlider>
+        <MudSlider @bind-Value="_options.EdgeOpacity" Step="0.01" Max="1" ValueLabel="true">Edge opacity</MudSlider>
     </MudItem>
     <MudItem xs="12" md="6">
         <MudSlider @bind-Value="_width" ValueLabel="true" Max="2000">Chart width</MudSlider>
@@ -53,13 +55,13 @@
         <MudSlider @bind-Value="_height" ValueLabel="true" Max="2000">Chart height</MudSlider>
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudColorPicker Label="Highlighting color" @bind-Text="@_nodeChartOptions.HighlightColor"/>
+        <MudColorPicker Label="Highlighting color" @bind-Text="@_options.HighlightColor" />
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudNumericField @bind-Value="_nodeChartOptions.HideNodesSmallerThan" Label="Hide nodes smaller than"/>
+        <MudNumericField @bind-Value="_options.HideNodesSmallerThan" Label="Hide nodes smaller than" />
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudSelect @bind-Value="_nodeChartOptions.LabelFontSize" Label="Label font size">
+        <MudSelect @bind-Value="_options.LabelFontSize" Label="Label font size">
             <MudSelectItem Value="@("0.25rem")">0.25rem</MudSelectItem>
             <MudSelectItem Value="@("0.33rem")">0.33rem</MudSelectItem>
             <MudSelectItem Value="@("0.5rem")">0.5rem</MudSelectItem>
@@ -70,15 +72,15 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudNumericField @bind-Value="_nodeChartOptions.LabelPadding" Label="Label padding"/>
+        <MudNumericField @bind-Value="_options.LabelPadding" Label="Label padding" />
     </MudItem>
 </MudGrid>
 
 @code {
-    private List<SankeyChartNode> _nodes = [];
-    private List<SankeyChartEdge> _edges = [];
-    private readonly ChartOptions _options = new();
-    private readonly NodeChartOptions _nodeChartOptions = new()
+    private List<SankeyNode> _nodes = [];
+    private List<SankeyEdge<double>> _edges = [];
+    private List<ChartSeries<double>> _series = [];
+    private readonly SankeyChartOptions _options = new()
     {
         NodeWidth = 5,
         MinVerticalSpacing = 5,
@@ -112,7 +114,7 @@
             for (var i = 0; i < nodesInCurrentColumn; i++)
             {
                 var nodeName = $"Node_{col}_{i}";
-                _nodes.Add(new SankeyChartNode(nodeName, col));
+                _nodes.Add(new SankeyNode(nodeName, col));
             }
         }
 
@@ -163,7 +165,7 @@
                         remainingEdgeValue -= edgeValue;
                     }
 
-                    _edges.Add(new SankeyChartEdge(sourceNode.Name, targetNode.Name, Math.Round(edgeValue)));
+                    _edges.Add(new SankeyEdge<double>(sourceNode.Name, targetNode.Name, Math.Round(edgeValue)));
                     nodeInputs[targetNode.Name] += edgeValue;
                 }
             }
@@ -174,7 +176,18 @@
             }
         }
 
-        _edges.RemoveAll(e => e.Value <= 0);
+        _edges.RemoveAll(e => e.Weight <= 0);
+
+        _series = new List<ChartSeries<double>>()
+        {
+            new()
+            {
+                Name = "Generated Data",
+                Data = _edges
+            }
+        };
+
+        _options.NodeOverrides = _nodes;
 
         StateHasChanged();
     }

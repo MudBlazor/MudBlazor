@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
     /// <summary>
@@ -13,7 +12,6 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         private int _currentPage = 0;
-        private bool _isFirstRendered = false;
         internal int? _rowsPerPage;
         internal object? _editingItem = null;
         internal bool Editing => _editingItem != null;
@@ -57,7 +55,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public string? AriaLabel { get; set; }
 
-
         /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.
         /// </summary>
@@ -83,13 +80,10 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
-#pragma warning restore CS0618 // Type or member is obsolete
+        public bool Square { get; set; }
 
         /// <summary>
         /// Shows borders around the table.
@@ -255,7 +249,7 @@ namespace MudBlazor
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
                 CurrentPageChanged.InvokeAsync(_currentPage);
-                if (_isFirstRendered)
+                if (HasRendered)
                 {
                     InvokeServerLoadFunc();
                 }
@@ -641,14 +635,6 @@ namespace MudBlazor
         /// </remarks>
         public abstract TableContext TableContext { get; }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                _isFirstRendered = true;
-
-            return base.OnAfterRenderAsync(firstRender);
-        }
-
         /// <summary>
         /// Changes the current page.
         /// </summary>
@@ -691,7 +677,6 @@ namespace MudBlazor
                 return;
             }
 
-
             var currentPageHasChanged = false;
 
             // On intialization, don't reset CurrentPage
@@ -710,7 +695,7 @@ namespace MudBlazor
                 CurrentPageChanged.InvokeAsync(_currentPage);
             }
 
-            if (_isFirstRendered)
+            if (HasRendered)
             {
                 InvokeServerLoadFunc();
             }

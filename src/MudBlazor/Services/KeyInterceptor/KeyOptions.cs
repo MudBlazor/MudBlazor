@@ -4,12 +4,12 @@
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
-/// <para>Configuration for preventDefault() and stopPropagation() control</para>
+/// Configuration for how a specific key should be intercepted, including preventDefault/stopPropagation expressions and which C# callbacks should fire.
+/// </summary>
+/// <remarks>
 /// <para>
-/// For PreventDown, PreventUp, StopDown and StopUp the configuration which key combinations should match
-/// is a JavaScript boolean expression.
+/// For PreventDown, PreventUp, StopDown and StopUp the configuration which key combinations should match is a JavaScript boolean expression.
 /// </para>
 /// <para>
 /// Examples:
@@ -21,10 +21,8 @@ namespace MudBlazor.Services;
 ///          PreventDown=null or PreventDown="none"
 ///  * Prevent key down of unmodified keystrokes such as "Tab":
 ///          PreventDown="key+none"
-///  * Prevent key down of Tab and Ctrl+Tab
-///          PreventDown="key+none|key+ctrl"
-///  * Prevent key down of just Ctrl+Tab
-///          PreventDown="key+ctrl"
+///  * Prevent key down of Tab and Ctrl+Tab PreventDown="key+none|key+ctrl"
+///  * Prevent key down of just Ctrl+Tab PreventDown="key+ctrl"
 ///  * Prevent key down of Ctrl+Tab and Shift+Tab but not Shift+Ctrl+Tab:
 ///          PreventDown="key+shift|key+ctrl"
 ///  * Prevent key down of Shift+Ctrl+Tab and Ctrl+Tab but not Shift+Tab:
@@ -34,7 +32,10 @@ namespace MudBlazor.Services;
 ///  * Prevent any combination of key and modifiers, even the unmodified key:
 ///          PreventDown="any"
 /// </para>
-/// </summary>
+/// <para>
+/// Use this when you need fine-grained control over browser key behavior and want to keep the configuration declarative instead of ad-hoc JS interop.
+/// </para>
+/// </remarks>
 public class KeyOptions
 {
     /// <summary>
@@ -78,6 +79,11 @@ public class KeyOptions
     public string StopUp { get; init; } = "none";
 
     /// <summary>
+    /// Invoke event KeyDown on C# side only for the initial keydown event and not for the repeats.
+    /// </summary>
+    public bool IgnoreDownRepeats { get; init; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="KeyOptions"/> class.
     /// </summary>
     public KeyOptions()
@@ -94,6 +100,7 @@ public class KeyOptions
     /// <param name="preventUp">Configuration for preventDefault() on key up events.</param>
     /// <param name="stopDown">Configuration for stopPropagation() on key down events.</param>
     /// <param name="stopUp">Configuration for stopPropagation() on key up events.</param>
+    /// <param name="ignoreDownRepeats">Ignore keydown repeat events.</param>
     public KeyOptions(
         string? key,
         bool subscribeDown = false,
@@ -101,7 +108,8 @@ public class KeyOptions
         string preventDown = "none",
         string preventUp = "none",
         string stopDown = "none",
-        string stopUp = "none")
+        string stopUp = "none",
+        bool ignoreDownRepeats = false)
     {
         Key = key;
         PreventDown = preventDown;
@@ -110,5 +118,6 @@ public class KeyOptions
         SubscribeUp = subscribeUp;
         StopDown = stopDown;
         StopUp = stopUp;
+        IgnoreDownRepeats = ignoreDownRepeats;
     }
 }

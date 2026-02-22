@@ -5,6 +5,7 @@
 using System.Reflection;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Docs.Compiler;
 
@@ -155,6 +156,16 @@ public class ApiDocumentationBuilder
         return false;
     }
 
+    private static bool ImplementsConverterInterface(Type type)
+    {
+        if (!type.IsClass) return false;
+
+        return type
+            .GetInterfaces()
+            .Any(i => i.IsGenericType
+                      && i.GetGenericTypeDefinition() == typeof(IConverter<,>));
+    }
+
     /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
@@ -175,6 +186,22 @@ public class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
+        // Early exit: if ApiDocumentation.generated.cs exists and is newer than all input assemblies, skip generation
+        if (File.Exists(Paths.ApiDocumentationFilePath))
+        {
+            var outputLastWrite = File.GetLastWriteTimeUtc(Paths.ApiDocumentationFilePath);
+            var newestInputTime = Assemblies
+                .Select(a => File.GetLastWriteTimeUtc(a.Location))
+                .DefaultIfEmpty(DateTime.MinValue)
+                .Max();
+
+            if (outputLastWrite > newestInputTime)
+            {
+                Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date, skipping generation.");
+                return true;
+            }
+        }
+
         AddTypesToDocument();
         ResolveSeeAlsoLinks();
         FindDeclaringTypes();
@@ -202,6 +229,7 @@ public class ApiDocumentationBuilder
                     && !IsExcluded(type)
                     // ... which aren't interfaces
                     && !type.IsInterface
+                    && !ImplementsConverterInterface(type)
                     // ... which aren't source generators
                     && !type.Name.Contains("SourceGenerator")
                     // ... which aren't extension classes
@@ -715,6 +743,13 @@ public class ApiDocumentationBuilder
         if (currentCode != writer.ToString())
         {
             File.WriteAllText(Paths.ApiDocumentationFilePath, writer.ToString());
+            Console.WriteLine("ApiDocumentationBuilder: Updated ApiDocumentation.generated.cs");
+        }
+        else
+        {
+            // Touch the file to update its timestamp so future checks skip regeneration
+            File.SetLastWriteTimeUtc(Paths.ApiDocumentationFilePath, DateTime.UtcNow);
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged, touched timestamp.");
         }
     }
 
@@ -736,14 +771,12 @@ public class ApiDocumentationBuilder
         var fieldCoverage = wellDocumentedFields / (double)Fields.Count;
         var eventCoverage = wellDocumentedEvents / (double)Events.Count;
 
-        Console.WriteLine(@"XML Documentation Coverage for MudBlazor:");
-        Console.WriteLine();
-        Console.WriteLine(@$"Types:      {wellDocumentedTypes} of {Types.Count} ({typeCoverage:P0}) types");
-        Console.WriteLine(@$"Properties: {wellDocumentedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
-        Console.WriteLine(@$"Methods:    {wellDocumentedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
-        Console.WriteLine(@$"Fields:     {wellDocumentedFields} of {Fields.Count} ({fieldCoverage:P0}) fields");
-        Console.WriteLine(@$"Events:     {wellDocumentedEvents} of {Events.Count} ({eventCoverage:P0}) events/EventCallback");
-        Console.WriteLine();
+        Console.WriteLine(
+            @$"XML Doc Coverage: T {wellDocumentedTypes}/{Types.Count} ({typeCoverage:P0}), " +
+            @$"P {wellDocumentedProperties}/{Properties.Count} ({propertyCoverage:P0}), " +
+            @$"M {wellDocumentedMethods}/{Methods.Count} ({methodCoverage:P0}), " +
+            @$"F {wellDocumentedFields}/{Fields.Count} ({fieldCoverage:P0}), " +
+            @$"E {wellDocumentedEvents}/{Events.Count} ({eventCoverage:P0})");
     }
 
     /// <summary>

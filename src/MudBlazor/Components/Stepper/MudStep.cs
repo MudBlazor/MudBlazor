@@ -4,13 +4,12 @@ using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor;
 
 /// <summary>
 /// A individual step as part of a <see cref="MudStepper"/>.
 /// </summary>
-public class MudStep : MudComponentBase, IAsyncDisposable
+public class MudStep : MudComponentBase, IStepContext, IAsyncDisposable
 {
     public MudStep()
     {
@@ -34,10 +33,10 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     }
 
     private bool _disposed;
-    internal ParameterState<bool> CompletedState { get; private set; }
-    internal ParameterState<bool> DisabledState { get; private set; }
-    internal ParameterState<bool> HasErrorState { get; private set; }
-    internal ParameterState<bool> SkippedState { get; private set; }
+    internal readonly ParameterState<bool> CompletedState;
+    internal readonly ParameterState<bool> DisabledState;
+    internal readonly ParameterState<bool> HasErrorState;
+    internal readonly ParameterState<bool> SkippedState;
 
     internal string Styles => new StyleBuilder()
         .AddStyle(Style)
@@ -50,15 +49,15 @@ public class MudStep : MudComponentBase, IAsyncDisposable
 
     internal string LabelIconClassname =>
         new CssBuilder("mud-step-label-icon")
-            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", CompletedState && !HasErrorState && Parent?.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", HasErrorState)
-            .AddClass($"mud-{(SkippedStepColor.HasValue ? SkippedStepColor.Value.ToDescriptionString() : Parent?.SkippedStepColor.ToDescriptionString())}", SkippedState)
-            .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
+            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToStringFast(true) : Parent?.CompletedStepColor.ToStringFast(true))}", CompletedState && !HasErrorState && Parent?.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToStringFast(true) : Parent?.ErrorStepColor.ToStringFast(true))}", HasErrorState)
+            .AddClass($"mud-{(SkippedStepColor.HasValue ? SkippedStepColor.Value.ToStringFast(true) : Parent?.SkippedStepColor.ToStringFast(true))}", SkippedState)
+            .AddClass($"mud-{Parent?.CurrentStepColor.ToStringFast(true)}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
             .Build();
 
     internal string LabelContentClassname =>
         new CssBuilder("mud-step-label-content")
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", HasErrorState)
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToStringFast(true) : Parent?.ErrorStepColor.ToStringFast(true))}-text", HasErrorState)
             .Build();
 
     internal string Classname => new CssBuilder()
@@ -66,7 +65,8 @@ public class MudStep : MudComponentBase, IAsyncDisposable
         .AddClass(Class)
         .Build();
 
-    [CascadingParameter] internal MudStepper? Parent { get; set; }
+    [CascadingParameter]
+    internal MudStepper? Parent { get; set; }
 
     /// <summary>
     /// The content for this step.
@@ -140,7 +140,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool Completed { get; set; }
 
@@ -154,7 +154,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Prevents this step from being selected.
     /// </summary>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool Disabled { get; set; }
 
@@ -171,7 +171,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool HasError { get; set; }
 
@@ -198,15 +198,17 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool Skippable { get; set; }
+
     /// <summary>
     /// Whether this step has been skipped.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public bool Skipped { get; set; }
+
     /// <summary>
     /// Occurs when <see cref="Skipped"/> has changed.
     /// </summary>
@@ -214,6 +216,19 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<bool> SkippedChanged { get; set; }
 
+    /// <inheritdoc />
+    bool IStepContext.Skipped => SkippedState.Value;
+
+    /// <inheritdoc />
+    bool IStepContext.Completed => CompletedState.Value;
+
+    /// <inheritdoc />
+    bool IStepContext.Disabled => DisabledState.Value;
+
+    /// <inheritdoc />
+    bool IStepContext.HasError => HasErrorState.Value;
+
+    /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
@@ -222,11 +237,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             await p.AddStepAsync(this);
     }
 
-    private void OnParameterChanged() => RefreshParent();
-
-    /// <summary>
-    /// Sets the <see cref="HasError"/> parameter, and optionally refreshes the parent <see cref="MudStepper"/>.
-    /// </summary>
+    /// <inheritdoc />
     public async Task SetHasErrorAsync(bool value, bool refreshParent = true)
     {
         await HasErrorState.SetValueAsync(value);
@@ -234,9 +245,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             RefreshParent();
     }
 
-    /// <summary>
-    /// Sets the <see cref="Completed"/> parameter, and optionally refreshes the parent <see cref="MudStepper"/>.
-    /// </summary>
+    /// <inheritdoc />
     public async Task SetCompletedAsync(bool value, bool refreshParent = true)
     {
         await CompletedState.SetValueAsync(value);
@@ -244,9 +253,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             RefreshParent();
     }
 
-    /// <summary>
-    /// Sets the <see cref="Disabled"/> parameter, and optionally refreshes the parent <see cref="MudStepper"/>.
-    /// </summary>
+    /// <inheritdoc />
     public async Task SetDisabledAsync(bool value, bool refreshParent = true)
     {
         await DisabledState.SetValueAsync(value);
@@ -254,9 +261,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             RefreshParent();
     }
 
-    /// <summary>
-    /// Sets the <see cref="Skipped"/> parameter, and optionally refreshes the parent <see cref="MudStepper"/>.
-    /// </summary>
+    /// <inheritdoc />
     public async Task SetSkippedAsync(bool value, bool refreshParent = true)
     {
         await SkippedState.SetValueAsync(value);
@@ -264,22 +269,32 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             RefreshParent();
     }
 
-    private void RefreshParent()
+    private void OnParameterChanged() => RefreshParent();
+
+    private void RefreshParent() => (Parent as IMudStateHasChanged)?.StateHasChanged();
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
     {
-        (Parent as IMudStateHasChanged)?.StateHasChanged();
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
-    /// Releases resources used by this component.
+    /// Called to dispose this instance.
     /// </summary>
-    public async ValueTask DisposeAsync()
+    protected virtual async ValueTask DisposeAsyncCore()
     {
         if (_disposed)
+        {
             return;
+        }
 
         _disposed = true;
-        var p = Parent;
-        if (p is not null)
-            await p.RemoveStepAsync(this); // this will probably be async later
+        var parent = Parent;
+        if (parent is not null)
+        {
+            await parent.RemoveStepAsync(this);
+        }
     }
 }

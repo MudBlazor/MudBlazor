@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.ExpansionPanel;
 using NUnit.Framework;
@@ -12,17 +12,17 @@ namespace MudBlazor.UnitTests.Components
     {
 
         [OneTimeSetUp]
-        public void Init()
+        public static void Init()
         {
-            AssertionOptions.FormattingOptions.MaxDepth = 100;
-            AssertionOptions.FormattingOptions.MaxLines = 5000;
+            AssertionConfiguration.Current.Formatting.MaxDepth = 100;
+            AssertionConfiguration.Current.Formatting.MaxLines = 5000;
         }
 
         [OneTimeTearDown]
-        public void Cleanup()
+        public static void Cleanup()
         {
-            AssertionOptions.FormattingOptions.MaxDepth = 5;
-            AssertionOptions.FormattingOptions.MaxLines = 100;
+            AssertionConfiguration.Current.Formatting.MaxDepth = 5;
+            AssertionConfiguration.Current.Formatting.MaxLines = 100;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_Respects_Collapsing_Order()
         {
-            var comp = Context.RenderComponent<ExpansionPanelExpansionsTest>();
+            var comp = Context.Render<ExpansionPanelExpansionsTest>();
             //the order in which the panels are going to be clicked
             //First, the first; then, the third, and then the second
             var sequence = new List<int> { 0, 2, 1 };
@@ -57,14 +57,14 @@ namespace MudBlazor.UnitTests.Components
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]
-        public void MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
+        public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
         {
-            var comp = Context.RenderComponent<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
+            var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
 
             //click in the three headers
             //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             //{
-            //    header.Click();
+            //    await header.ClickAsync();
             //}
 
             //Only one panel should be expanded
@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_MultiExpansion_Doesnt_Collapse_Others()
         {
-            var comp = Context.RenderComponent<ExpansionPanelMultiExpansionTest>();
+            var comp = Context.Render<ExpansionPanelMultiExpansionTest>();
 
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
@@ -98,16 +98,16 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should expand panel
         /// </summary>
         [Test]
-        public void MudExpansionPanel_IsInitiallyExpanded_Expands()
+        public async Task MudExpansionPanel_IsInitiallyExpanded_Expands()
         {
-            var comp = Context.RenderComponent<ExpansionPanelStartExpandedTest>();
+            var comp = Context.Render<ExpansionPanelStartExpandedTest>();
 
             // one panel is expanded initially
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
             panels.Count.Should().Be(1);
 
             var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First();
-            header.Click();
+            await header.ClickAsync();
 
             //we could close the panel
             panels = comp.FindAll(".mud-panel-expanded").ToList();
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_IsInitiallyExpanded_Works_With_Multi_Expanded()
         {
-            var comp = Context.RenderComponent<ExpansionPanelStartExpandedMultipleTest>();
+            var comp = Context.Render<ExpansionPanelStartExpandedMultipleTest>();
 
             // three panels is expanded initially
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
@@ -140,37 +140,37 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_Other()
         {
-            var comp = Context.RenderComponent<ExpansionPanelStartExpandedTest>();
+            var comp = Context.Render<ExpansionPanelStartExpandedTest>();
             var panel = comp.FindComponent<MudExpansionPanel>();
-            panel.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Disabled, true));
+            await panel.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.Disabled, true));
 
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.ToggleExpansionAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ToggleExpansionAsync checks for Disabled, so nothing happens
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ToggleExpansionAsync checks for Disabled, so nothing happens
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.ExpandAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeTrue()); // ExpandAsync ignores Disabled
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeTrue()); // ExpandAsync ignores Disabled
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.CollapseAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ExpandAsync ignores Disabled
-            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ExpandAsync ignores Disabled
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel2Expanded.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Panel3Expanded.Should().BeFalse());
         }
 
         /// <summary>
         /// Tests that ExpandAll method expands all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_ExpandAllAync()
+        public async Task MudExpansionPanel_ExpandAll()
         {
-            var panels = Context.RenderComponent<MudExpansionPanels>();
-            var panel1 = new MudExpansionPanel();
-            var panel2 = new MudExpansionPanel();
-            var panel3 = new MudExpansionPanel();
+            var panels = Context.Render<MudExpansionPanels>();
+            var panel1 = Context.Render<MudExpansionPanel>().Instance;
+            var panel2 = Context.Render<MudExpansionPanel>().Instance;
+            var panel3 = Context.Render<MudExpansionPanel>().Instance;
             await panels.Instance.AddPanelAsync(panel1);
             await panels.Instance.AddPanelAsync(panel2);
             await panels.Instance.AddPanelAsync(panel3);
@@ -190,12 +190,12 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAll method collapses all panels.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllAsync()
+        public async Task MudExpansionPanel_CollapseAll()
         {
-            var panels = Context.RenderComponent<MudExpansionPanels>();
-            var panel1 = new MudExpansionPanel();
-            var panel2 = new MudExpansionPanel();
-            var panel3 = new MudExpansionPanel();
+            var panels = Context.Render<MudExpansionPanels>();
+            var panel1 = Context.Render<MudExpansionPanel>().Instance;
+            var panel2 = Context.Render<MudExpansionPanel>().Instance;
+            var panel3 = Context.Render<MudExpansionPanel>().Instance;
             await panels.Instance.AddPanelAsync(panel1);
             await panels.Instance.AddPanelAsync(panel2);
             await panels.Instance.AddPanelAsync(panel3);
@@ -218,12 +218,12 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that CollapseAllExcept method collapses all panels except one.
         /// </summary>
         [Test]
-        public async Task MudExpansionPanel_CollapseAllExceptAsync()
+        public async Task MudExpansionPanel_CollapseAllExcept()
         {
-            var panels = Context.RenderComponent<MudExpansionPanels>();
-            var panel1 = new MudExpansionPanel();
-            var panel2 = new MudExpansionPanel();
-            var panel3 = new MudExpansionPanel();
+            var panels = Context.Render<MudExpansionPanels>();
+            var panel1 = Context.Render<MudExpansionPanel>().Instance;
+            var panel2 = Context.Render<MudExpansionPanel>().Instance;
+            var panel3 = Context.Render<MudExpansionPanel>().Instance;
             await panels.Instance.AddPanelAsync(panel1);
             await panels.Instance.AddPanelAsync(panel2);
             await panels.Instance.AddPanelAsync(panel3);
@@ -248,54 +248,54 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_TwoWayBinding()
         {
-            var comp = Context.RenderComponent<ExpansionPanelTwoWayBIndingTest>();
+            var comp = Context.Render<ExpansionPanelTwoWayBIndingTest>();
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion2);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion3);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion4);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeTrue());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion3);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion2);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
 
             await comp.InvokeAsync(comp.Instance.ToggleExpansion1);
 
-            comp.WaitForAssertion(() => comp.Instance.Expansion[0].Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[0].Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[1].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[2].Should().BeFalse());
+            await comp.WaitForAssertionAsync(() => comp.Instance.Expansion[3].Should().BeFalse());
         }
 
         /// <summary>
@@ -304,30 +304,30 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_Handles_KeyDown_For_Toggle()
         {
-            var comp = Context.RenderComponent<ExpansionPanelKeyboardTest>();
+            var comp = Context.Render<ExpansionPanelKeyboardTest>();
             var header = comp.Find(".mud-expand-panel-header");
 
             comp.Markup.Should().NotContain("mud-panel-expanded");
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             comp.Markup.Should().Contain("mud-panel-expanded");
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = " " });
             comp.Markup.Should().NotContain("mud-panel-expanded");
         }
 
         /// <summary>
         /// Tests that buttons and other interactive content within a collapsed expansion panel 
         /// are properly hidden from accessibility tools and keyboard navigation by being placed 
-        /// in a container with the hidden attribute.
+        /// in a container with the visibility:hidden attribute.
         /// </summary>
         [Test]
         public void MudExpansionPanel_Button_IsInHiddenContainer_When_Panel_Collapsed()
         {
-            var comp = Context.RenderComponent<ExpansionPanelKeyboardTest>();
+            var comp = Context.Render<ExpansionPanelKeyboardTest>();
             var button = comp.Find("button");
             var hiddenParent = button
                 .GetAncestors()
                 .OfType<IElement>()
-                .FirstOrDefault(e => e.HasAttribute("hidden"));
+                .FirstOrDefault(e => e.ClassList.Contains("invisible"));
 
             hiddenParent.Should().NotBeNull("button should not be accessible when the panel is collapsed");
         }
@@ -338,7 +338,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_HandleKeyDownAsync_IgnoresKeys_When_Disabled()
         {
-            var comp = Context.RenderComponent<MudExpansionPanel>(parameters => parameters
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters
                 .Add(p => p.Disabled, true)
                 .Add(p => p.Text, "Disabled Panel"));
 
@@ -346,11 +346,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-panel-expanded");
 
             // Try to expand with Enter key - should be ignored
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             comp.Markup.Should().NotContain("mud-panel-expanded");
 
             // Try to expand with Space key - should be ignored
-            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            await header.KeyDownAsync(new KeyboardEventArgs { Key = " " });
             comp.Markup.Should().NotContain("mud-panel-expanded");
         }
 
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_KeepContentAlive_True_RendersContentWhenCollapsed()
         {
-            var comp = Context.RenderComponent<MudExpansionPanel>(parameters => parameters
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters
                 .Add(p => p.Text, "Test Panel")
                 .Add(p => p.KeepContentAlive, true)
                 .Add(p => p.ChildContent, builder => builder.AddMarkupContent(0, "<button>Test Button</button>")));
@@ -368,8 +368,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-panel-expanded");
             comp.Find("button").Should().NotBeNull();
 
-            var contentDiv = comp.Find(".mud-expand-panel-content");
-            contentDiv.HasAttribute("hidden").Should().BeTrue();
+            var contentDiv = comp.Find(".mud-collapse-container");
+            contentDiv.ClassList.Contains("invisible").Should().BeTrue();
         }
 
         /// <summary>
@@ -378,7 +378,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_KeepContentAlive_False_DoesNotRenderContentWhenCollapsed()
         {
-            var comp = Context.RenderComponent<MudExpansionPanel>(parameters => parameters
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters
                 .Add(p => p.Text, "Test Panel")
                 .Add(p => p.KeepContentAlive, false)
                 .Add(p => p.ChildContent, builder => builder.AddMarkupContent(0, "<button>Test Button</button>")));
@@ -393,7 +393,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_Gutters_True_AppliesGuttersToHeaderAndContent()
         {
-            var comp = Context.RenderComponent<ExpansionPanelGuttersTrueTest>();
+            var comp = Context.Render<ExpansionPanelGuttersTrueTest>();
 
             var header = comp.Find(".mud-expand-panel-header");
             header.ClassList.Should().Contain("mud-expand-panel-header-gutters");
@@ -408,7 +408,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_Gutters_False_RemovesGuttersFromHeaderAndContent()
         {
-            var comp = Context.RenderComponent<ExpansionPanelGuttersFalseTest>();
+            var comp = Context.Render<ExpansionPanelGuttersFalseTest>();
 
             var header = comp.Find(".mud-expand-panel-header");
             header.ClassList.Should().NotContain("mud-expand-panel-header-gutters");
@@ -423,7 +423,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_ParentGuttersFalse_OverridesChildGutters()
         {
-            var comp = Context.RenderComponent<ExpansionPanelParentGuttersFalseTest>();
+            var comp = Context.Render<ExpansionPanelParentGuttersFalseTest>();
 
             var header = comp.Find(".mud-expand-panel-header");
             header.ClassList.Should().NotContain("mud-expand-panel-header-gutters");

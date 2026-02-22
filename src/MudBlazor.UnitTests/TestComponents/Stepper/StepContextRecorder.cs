@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
@@ -18,6 +17,7 @@ public class StepContextRecorder : ComponentBase
 
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
         Capture?.Invoke(Context);
     }
 
