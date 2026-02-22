@@ -59,6 +59,7 @@
   }
 }
 
-.mud-touch-none {
+.mud-drop-item[draggable="true"],
+.mud-drag-handle[draggable="true"] {
   touch-action: none;
 }

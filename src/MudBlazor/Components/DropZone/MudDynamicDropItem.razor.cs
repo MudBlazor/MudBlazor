@@ -97,8 +97,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     public bool HideContent { get; set; }
 
     /// <summary>
-    /// Gets whether this item has at least one registered <see cref="MudDragHandle{T}"/>.
-    /// When <c>true</c>, the item itself is not directly draggable — only the handle triggers the drag.
+    /// At least one <see cref="MudDragHandle{T}"/> is registered for this item.
+    /// When <c>true</c>, the item is not directly draggable and drag starts from a handle.
     /// </summary>
     public bool HasDragHandle => _dragHandleCount > 0;
 
@@ -112,7 +112,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     #region Drag-handle registration
 
     /// <summary>
-    /// Called by a child <see cref="MudDragHandle{T}"/> when it is initialized.
     /// Increments the handle reference count and, once at least one handle exists,
     /// suppresses the default full-item draggable behavior.
     /// </summary>
@@ -124,7 +123,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     }
 
     /// <summary>
-    /// Called by a child <see cref="MudDragHandle{T}"/> when it is disposed.
     /// Decrements the handle reference count and restores full-item draggable behavior
     /// when no handles remain.
     /// </summary>
@@ -327,7 +325,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     protected string Classname =>
         new CssBuilder("mud-drop-item")
             .AddClass("mud-drop-item-draggable", IsEffectivelyDraggable)
-            .AddClass("mud-touch-none", IsEffectivelyDraggable)
             .AddClass(DraggingClass, _dragOperationIsInProgress)
             .AddClass(DisabledClass, Disabled)
             .AddClass(Class)

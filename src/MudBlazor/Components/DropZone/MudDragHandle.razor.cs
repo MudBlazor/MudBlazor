@@ -58,7 +58,6 @@ public partial class MudDragHandle<T> : MudComponentBase, IDisposable where T : 
     protected string Classname =>
         new CssBuilder("mud-drag-handle")
             .AddClass(Class)
-            .AddClass("mud-touch-none", DropItem is { Disabled: false })
             .Build();
 
     /// <inheritdoc/>

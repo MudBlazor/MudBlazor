@@ -4,7 +4,7 @@
 
 <div class="@Classname"
      style="@Style"
-     draggable="@(!(DropItem?.Disabled ?? true) ? "true" : "false")"
+     draggable="@((DropItem?.Disabled is false).ToString().ToLowerInvariant())"
      @ondragstart="OnDragStartedAsync"
      @ondragstart:stopPropagation="true"
      @ondragend="OnDragEndedAsync"

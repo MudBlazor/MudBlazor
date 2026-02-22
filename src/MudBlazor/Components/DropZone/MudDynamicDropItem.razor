@@ -7,7 +7,7 @@
          id="@_id"
          index="@Index"
          @attributes="UserAttributes"
-         draggable="@(IsEffectivelyDraggable ? "true" : "false")"
+         draggable="@IsEffectivelyDraggable.ToString().ToLowerInvariant()"
          @ondragstart="DragStartedAsync"
          @ontouchstart="OnTouchStart"
          @ontouchend="OnTouchEnd"
