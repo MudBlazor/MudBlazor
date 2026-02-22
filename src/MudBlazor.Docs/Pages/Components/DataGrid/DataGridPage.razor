@@ -1,7 +1,11 @@
 ﻿@page "/components/datagrid"
 
 <DocsPage>
-    <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)" />
+    <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)">
+        <Description>
+            For a simpler, template-driven table with responsive breakpoint layout, see <MudLink Href="/components/table">MudTable</MudLink>.
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
@@ -107,6 +111,11 @@
                     By default, each editable cell uses an appropriate input component based on the data type.
                     You can provide custom editing UI using an <CodeInline Tag>EditTemplate</CodeInline>
                     (see the <CodeInline>Position</CodeInline> column in the example below).
+                    In <CodeInline>Form</CodeInline> mode the built-in Save button commits changes automatically.
+                    In <CodeInline>Cell</CodeInline> mode, standard columns automatically invoke
+                    <CodeInline>CommittedItemChanges</CodeInline> when the value changes, but custom controls inside
+                    an <CodeInline Tag>EditTemplate</CodeInline> do not. Track changes directly in the value-changed
+                    callback instead.
                     <br /><br />
 
                     <strong>Programmatic Editing</strong>
@@ -291,6 +300,24 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Column Sizing">
+                <Description>
+                    Use the <CodeInline>&lt;ColGroup></CodeInline> render fragment to set the initial widths of each column.
+                    Widths can be expressed as percentages (e.g. <CodeInline>width: 20%</CodeInline>) or fixed values (e.g. <CodeInline>width: 120px</CodeInline>).
+                    When columns are also resizable, these values serve as the initial widths before the user drags the resize handles.
+                    <br><br>
+                    To prevent long text from wrapping inside a cell, apply <CodeInline>white-space: nowrap</CodeInline> via the column's
+                    <CodeInline>CellStyle</CodeInline> parameter. Combine it with <CodeInline>overflow: hidden</CodeInline> and
+                    <CodeInline>text-overflow: ellipsis</CodeInline> (and <CodeInline>max-width: 0</CodeInline> to make the ellipsis
+                    work together with a percentage-based column width) for a cleaner truncated display.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnSizingExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnSizingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Resizing">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to resize columns interactively when
@@ -298,6 +325,7 @@
                     There are two modes for resizing: <CodeInline>ResizeMode.Container</CodeInline> and <CodeInline>ResizeMode.Column</CodeInline>.
                     <CodeInline>ResizeMode.Container</CodeInline> resizes the entire data grid while <CodeInline>ResizeMode.Column</CodeInline> only resizes
                     columns using available space within the data grid.
+                    Initial column widths for resizable grids can be set using <CodeInline>&lt;ColGroup></CodeInline> as shown in the Column Sizing example above.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridResizeExample)" ShowCode="false" Block="true" FullWidth="true">

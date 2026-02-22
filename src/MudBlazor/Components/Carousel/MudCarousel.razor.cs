@@ -82,6 +82,16 @@ namespace MudBlazor
         public Position BulletsPosition { get; set; } = Position.Bottom;
 
         /// <summary>
+        /// The color of arrows when <see cref="ShowArrows"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When <c>null</c>, <see cref="Color.Inherit"/> is used.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Color? ArrowsColor { get; set; }
+
+        /// <summary>
         /// The color of bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
