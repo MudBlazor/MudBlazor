@@ -1,16 +1,15 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 @attribute [CascadingTypeParameter(nameof(T))]
 
-<div 
-    role="@GetRole()" 
-    id="@FieldId"  
-    @attributes="UserAttributes" 
-    class="@Classname" 
-    style="@Style"
-    aria-multiselectable="@GetAriaMultiselectableValue()"
-    aria-activedescendant="@_activeItemId">
+<div role="@GetRole()"
+     id="@FieldId"
+     @attributes="UserAttributes"
+     class="@Classname"
+     style="@Style"
+     aria-multiselectable="@GetAriaMultiSelectableValue()"
+     aria-activedescendant="@_activeItemId">
     <CascadingValue Value="@this" IsFixed="true">
         @ChildContent
     </CascadingValue>
