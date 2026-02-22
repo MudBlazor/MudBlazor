@@ -285,6 +285,29 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
+        /// Gets the effective label, falling back to a <c>label</c> value in <see cref="MudComponentBase.UserAttributes"/> if <see cref="Label"/> is <c>null</c>.
+        /// </summary>
+        protected string? EffectiveLabel
+        {
+            get
+            {
+                if (Label is not null)
+                    return Label;
+
+                if (UserAttributes is null)
+                    return null;
+
+                foreach (var (key, value) in UserAttributes)
+                {
+                    if (string.Equals(key, "label", StringComparison.OrdinalIgnoreCase) && value is not null)
+                        return value.ToString();
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Automatically receives focus.
         /// </summary>
         /// <remarks>
@@ -636,13 +659,6 @@ namespace MudBlazor
             if (Label == null && For != null)
             {
                 Label = For.GetLabelString();
-            }
-
-            if (Label == null)
-            {
-                Label = UserAttributes
-                    .FirstOrDefault(x => x.Key.Equals("label", StringComparison.OrdinalIgnoreCase))
-                    .Value?.ToString();
             }
 
             _userAttributesId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();

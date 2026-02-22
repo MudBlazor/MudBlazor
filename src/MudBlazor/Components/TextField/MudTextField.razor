@@ -3,7 +3,7 @@
 @inherits MudDebouncedInput<T>
 
 <CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
-    <MudInputControl Label="@Label"
+    <MudInputControl Label="@EffectiveLabel"
                      Variant="@Variant"
                      HelperId="@GetHelperId()"
                      HelperText="@HelperText"
@@ -25,8 +25,8 @@
                 {
                     <MudInput T="string"
                               @ref="InputReference"
-                              Label="@Label"
                               @attributes="UserAttributes"
+                              Label="@EffectiveLabel"
                               InputType="@InputType"
                               InputMode="@InputMode"
                               Lines="@Lines"
@@ -72,8 +72,8 @@
                 else
                 {
                     <MudMask @ref="_maskReference"
-                             Label="@Label"
                              @attributes="UserAttributes"
+                             Label="@EffectiveLabel"
                              Mask="@_mask"
                              InputType="@InputType"
                              InputMode="@InputMode"

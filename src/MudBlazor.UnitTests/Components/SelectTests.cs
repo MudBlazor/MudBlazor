@@ -1543,7 +1543,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When a label is set both via the explicit Label parameter and via UserAttributes, the explicit Label takes priority.
+        /// A select component with an explicit Label parameter should use the explicit label, ignoring any UserAttributes label.
         /// </summary>
         [Test]
         public void SelectWithExplicitLabelAndUserAttributesLabel_Should_UseExplicitLabel()
