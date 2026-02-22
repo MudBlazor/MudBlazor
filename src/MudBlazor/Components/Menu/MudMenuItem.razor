@@ -37,7 +37,7 @@
     @if (ActivatesSubMenu && !HideSubMenuArrow)
     {
         <MudIcon Class="mud-menu-submenu-icon"
-                 Icon="@Icons.Material.Filled.ArrowRight"
+                 Icon="@(RightToLeft ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowRight)"
                  Disabled="GetDisabled()" />
     }
 </MudElement>

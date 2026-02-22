@@ -133,6 +133,12 @@ namespace MudBlazor
         protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
 
         /// <summary>
+        /// Enables right-to-left layout.
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
+
+        /// <summary>
         /// The menu item is acting as the activator for a sub menu.
         /// </summary>
         protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
