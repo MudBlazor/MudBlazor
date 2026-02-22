@@ -25,7 +25,7 @@
 
 @code {
     private JsKey _selectedKey = JsKey.KeyB;
-    private IEnumerable<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.ControlLeft];
+    private IReadOnlyCollection<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.ControlLeft];
 
     private void OnHotKey()
     {

@@ -3,7 +3,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The options which control Snackbar pop-ups.

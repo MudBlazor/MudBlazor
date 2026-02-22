@@ -9,7 +9,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class DefaultConverter
 {
     internal sealed class BigIntegerConverter(Func<CultureInfo> culture, Func<string?> format)

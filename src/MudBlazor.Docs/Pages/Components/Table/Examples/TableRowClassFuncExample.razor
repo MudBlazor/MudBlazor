@@ -15,7 +15,8 @@
     }
 </style>
 
-<MudTable T="Element" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @bind-SelectedItem="@_selectedElement" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@RowClickEvent">
+<MudTable T="Element" @bind-SelectedItem="_selectedElement" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" RowClassFunc="@SelectedRowClassFunc"
+          OnRowClick="@RowClickEvent" RowDisabledFunc="@(context => _rowTwoIsDisabled && context.Number == 2)">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -46,6 +47,7 @@
         }
     </MudExpansionPanel>
 </MudExpansionPanels>
+<MudSwitch Label="Disable row 2" @bind-Value="_rowTwoIsDisabled" Color="Color.Primary"/>
 
 @code {
 
@@ -59,6 +61,7 @@
     private Element _selectedElement;
     private int _selectedRowNumber = -1;
     private readonly List<string> _clickedEvents = [];
+    private bool _rowTwoIsDisabled;
 
     private void RowClickEvent(TableRowClickEventArgs<Element> tableRowClickEventArgs)
     {

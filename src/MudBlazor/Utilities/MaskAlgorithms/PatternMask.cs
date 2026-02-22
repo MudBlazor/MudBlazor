@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// A simple input mask consisting of characters.
 /// </summary>

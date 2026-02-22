@@ -563,7 +563,7 @@ namespace MudBlazor.UnitTests.Charts
             // The ChartTooltip component should be present
             var bar = comp.Find("path.mud-chart-bar");
 
-            await bar.TriggerEventAsync("onmouseover", new MouseEventArgs());
+            await bar.MouseOverAsync();
 
             var tooltip = comp.Find("g.svg-tooltip");
             tooltip.Should().NotBeNull();
@@ -693,7 +693,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var bar = comp.Find("path.mud-chart-bar");
 
-            await bar.TriggerEventAsync("onmouseover", new MouseEventArgs());
+            await bar.MouseOverAsync();
 
             var customContent = comp.Find("div.custom-tooltip-content");
             customContent.Should().NotBeNull();
@@ -722,7 +722,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var bar = comp.Find("path.mud-chart-bar");
 
-            await bar.TriggerEventAsync("onmouseover", new MouseEventArgs());
+            await bar.MouseOverAsync();
 
             _tooltipPositionFuncCalled.Should().BeTrue();
 

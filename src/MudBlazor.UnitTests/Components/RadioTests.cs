@@ -1,7 +1,9 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -25,6 +27,50 @@ namespace MudBlazor.UnitTests.Components
             // Input content should not have main class (Classname), but should have input class (InputClass)
             comp.FindAll(".mud-radio-group.some-main-class").Should().BeEmpty();
             comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
+        }
+
+        [Test]
+        public void Radio_AriaLabel()
+        {
+            var comp = Context.Render<RadioAriaLabelTest>();
+
+            // verify radio one maintains it's original structure, no aria class used, label with a span element
+            var r1 = comp.Find(".r1");
+            r1.GetElementsByClassName("mud-sr-only").Count().Should().Be(0);
+            var element0 = comp.Find(".r1 label.mud-radio span.mud-typography");
+            element0.HasAttribute("aria-hidden").Should().BeFalse();
+
+            // radio two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
+            var r2 = comp.Find(".r2");
+            r2.GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            var element1 = comp.Find(".r2 label.mud-radio span.mud-typography");
+            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            var input1 = comp.Find(".r2 label.mud-radio input");
+            var input1ForId = input1.GetAttribute("aria-labelledby");
+            comp.Find($".r2 label.mud-radio #{input1ForId}").Should().NotBeNull();
+
+            // radio three should have original structure intact, no aria class used, label with a span element for child content
+            var r3 = comp.Find(".r3");
+            r3.GetElementsByClassName("mud-sr-only").Count().Should().Be(0);
+            var element2 = comp.Find(".r3 label.mud-radio span.mud-typography");
+            element2.HasAttribute("aria-hidden").Should().BeFalse();
+
+            // radio four should look identical to two except this time it's with ChildContent
+            var r4 = comp.Find(".r4");
+            r4.GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            var element3 = comp.Find(".r4 label.mud-radio span.mud-typography");
+            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            var input3 = comp.Find(".r4 label.mud-radio input");
+            var input3ForId = input3.GetAttribute("aria-labelledby");
+            comp.Find($".r4 label.mud-radio #{input3ForId}").Should().NotBeNull();
+
+            // radio five has no label, no child content, just arialabel
+            var r5 = comp.Find(".r5");
+            r5.GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            comp.FindAll(".r5 label.mud-radio span.mud-typography").Count().Should().Be(0);
+            var input4 = comp.Find(".r5 label.mud-radio input");
+            var input4ForId = input4.GetAttribute("aria-labelledby");
+            comp.Find($".r5 label.mud-radio #{input4ForId}").Should().NotBeNull();
         }
 
         [Test]
@@ -225,10 +271,10 @@ namespace MudBlazor.UnitTests.Components
             var radio = comp.FindComponent<MudRadioGroup<string>>();
             radio.Instance.Value.Should().Be(null);
 
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be(null));
 
             //Can't tabbed around the radios in test.
@@ -247,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
             await radio.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
             await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
 
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
         }
 
@@ -388,6 +434,18 @@ namespace MudBlazor.UnitTests.Components
             create(readOnly = true, disabled = false).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = false, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = true, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+        }
+
+        [Test]
+        public void RadioLabel()
+        {
+            var value = new DisplayNameLabelClass();
+
+            var comp = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean));
+            comp.Instance.Label.Should().Be("Boolean LabelAttribute"); //label should be set by the attribute
+
+            var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
+            comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }
 }

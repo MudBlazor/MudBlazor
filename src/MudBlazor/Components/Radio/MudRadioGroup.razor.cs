@@ -8,7 +8,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A group of <see cref="MudRadio{T}"/> components.

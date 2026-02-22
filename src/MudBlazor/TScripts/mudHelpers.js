@@ -2,6 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Cross-cutting DOM helpers shared by interop modules and chart sizing flows.
+ * Exposes small global utilities consumed by other TScripts and component interop calls.
+ */
+
+/**
+ * Returns tabbable descendants used by focus-management helpers.
+ */
 window.getTabbableElements = (element) => {
     return element.querySelectorAll(
         "a[href]:not([tabindex='-1'])," +
@@ -17,8 +25,12 @@ window.getTabbableElements = (element) => {
     );
 };
 
-//from: https://github.com/RemiBou/BrowserInterop
-window.serializeParameter = (data, spec) => {
+/**
+ * Serializes complex browser objects into interop-safe plain data.
+ */
+// Legacy serializer kept on `window` for JS interop payload normalization in browser-only call paths.
+// Source inspiration: https://github.com/RemiBou/BrowserInterop
+function serializeParameter(data, spec) {
     if (typeof data == "undefined" ||
         data === null) {
         return null;
@@ -29,12 +41,12 @@ window.serializeParameter = (data, spec) => {
         return data;
     }
 
-    let res = (Array.isArray(data)) ? [] : {};
+    const res = (Array.isArray(data)) ? [] : {};
     if (!spec) {
         spec = "*";
     }
 
-    for (let i in data) {
+    for (const i in data) {
         let currentMember = data[i];
 
         if (typeof currentMember === 'function' || currentMember === null) {
@@ -48,7 +60,7 @@ window.serializeParameter = (data, spec) => {
                 continue;
             }
         } else {
-            currentMemberSpec = "*"
+            currentMemberSpec = "*";
         }
 
         if (typeof currentMember === 'object') {
@@ -57,7 +69,7 @@ window.serializeParameter = (data, spec) => {
                 for (let j = 0; j < currentMember.length; j++) {
                     const arrayItem = currentMember[j];
                     if (typeof arrayItem === 'object') {
-                        res[i].push(this.serializeParameter(arrayItem, currentMemberSpec));
+                        res[i].push(serializeParameter(arrayItem, currentMemberSpec));
                     } else {
                         res[i].push(arrayItem);
                     }
@@ -67,11 +79,9 @@ window.serializeParameter = (data, spec) => {
                 if (currentMember.length === 0) {
                     res[i] = [];
                 } else {
-                    res[i] = this.serializeParameter(currentMember, currentMemberSpec);
+                    res[i] = serializeParameter(currentMember, currentMemberSpec);
                 }
             }
-
-
         } else {
             // string, number or boolean
             if (currentMember === Infinity) { //infinity is not serialized by JSON.stringify
@@ -84,9 +94,13 @@ window.serializeParameter = (data, spec) => {
     }
 
     return res;
-};
+}
 
-// mudGetSvgBBox is a helper function to get the size of an svgElement
+window.serializeParameter = serializeParameter;
+
+/**
+ * Returns the SVG bounding box in a plain object for .NET interop.
+ */
 window.mudGetSvgBBox = (svgElement) => {
     if (svgElement == null) return null;
 
@@ -99,9 +113,10 @@ window.mudGetSvgBBox = (svgElement) => {
     };
 };
 
-// mudObserveElementSize is a helper function to observe the size of an element and notify a .NET reference.
-// It will automatically unobserve when the element is removed from the DOM.
-// The notification will be throttled to at most once every debounceMillis (defaults to 200ms).
+/**
+ * Observes element size changes and forwards throttled updates to a .NET callback.
+ * Automatically stops observing when the element is removed from the DOM.
+ */
 window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElementSizeChanged', debounceMillis = 200) => {
     if (!element) return;
 
@@ -119,7 +134,9 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
                 dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
             }
             catch (error) {
-                this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                if (typeof window.logger === "function") {
+                    window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                }
             }
         } else {
             // Otherwise, schedule a notification after the remaining delay.
@@ -133,7 +150,9 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
                     dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
                 }
                 catch (error) {
-                    this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                    if (typeof window.logger === "function") {
+                        window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                    }
                 }
             }, debounceMillis - timeSinceLast);
         }

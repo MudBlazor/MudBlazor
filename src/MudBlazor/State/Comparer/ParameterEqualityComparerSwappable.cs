@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State.Comparer;
 
-#nullable enable
 /// <summary>
 /// Represents a hot swappable parameter comparer.
 /// </summary>

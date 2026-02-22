@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Converts values from <typeparamref name="TIn"/> to <typeparamref name="TOut"/>.
 /// </summary>

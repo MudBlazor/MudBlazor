@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MudBlazor;
+﻿namespace MudBlazor;
 
 /// <summary>
 /// A range of values.

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-#nullable enable
 
 namespace MudBlazor.Charts;
 

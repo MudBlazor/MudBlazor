@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace MudBlazor.Utilities.ObserverManager;
 
-#nullable enable
 /// <summary>
 /// Maintains a collection of observers.
 /// </summary>

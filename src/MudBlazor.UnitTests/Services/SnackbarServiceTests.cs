@@ -6,6 +6,7 @@ using AwesomeAssertions;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Time.Testing;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services;
@@ -26,7 +27,8 @@ public class SnackbarServiceTests : BunitTest
     {
         // Arrange
         var configuration = Options.Create(new SnackbarConfiguration { ClearAfterNavigation = true });
-        var sut = new SnackbarService(_navigationManager, configuration);
+        var timeProvider = new FakeTimeProvider();
+        var sut = new SnackbarService(_navigationManager, timeProvider, configuration);
         sut.Add("Test message");
         sut.ShownSnackbars.Should().NotBeEmpty();
 
@@ -42,7 +44,8 @@ public class SnackbarServiceTests : BunitTest
     {
         // Arrange
         var configuration = Options.Create(new SnackbarConfiguration { ClearAfterNavigation = false });
-        var sut = new SnackbarService(_navigationManager, configuration);
+        var timeProvider = new FakeTimeProvider();
+        var sut = new SnackbarService(_navigationManager, timeProvider, configuration);
         sut.Add("Test message");
 
         // Act
@@ -57,7 +60,8 @@ public class SnackbarServiceTests : BunitTest
     {
         // Arrange
         var configuration = Options.Create(new SnackbarConfiguration { ClearAfterNavigation = false });
-        var sut = new SnackbarService(_navigationManager, configuration);
+        var timeProvider = new FakeTimeProvider();
+        var sut = new SnackbarService(_navigationManager, timeProvider, configuration);
         sut.Add("Test message", configure: options => options.CloseAfterNavigation = true);
         sut.Add("Another message", configure: options => options.CloseAfterNavigation = false);
 

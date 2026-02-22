@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using MudBlazor.Interfaces;
 
-#nullable enable
 namespace MudBlazor.Utilities
 {
     public class FormFieldChangedEventArgs

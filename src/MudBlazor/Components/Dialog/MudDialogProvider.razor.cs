@@ -6,7 +6,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -25,6 +24,7 @@ namespace MudBlazor
     {
         private DialogOptions _globalDialogOptions = new();
         private readonly List<IDialogReference> _dialogs = [];
+        private string? _currentUri;
 
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
@@ -154,11 +154,38 @@ namespace MudBlazor
             return base.OnAfterRenderAsync(firstRender);
         }
 
+        internal void SetOptions(Guid id, DialogOptions options)
+        {
+            var reference = GetDialogReference(id);
+            if (reference != null)
+                reference.InjectOptions(options);
+        }
+
         internal void DismissInstance(Guid id, DialogResult result)
         {
             var reference = GetDialogReference(id);
             if (reference != null)
                 DismissInstance(reference, result);
+        }
+
+        internal bool ShouldDismissOnNavigation(IDialogReference dialog, string newUri)
+        {
+            if (dialog.Options?.CloseOnNavigation == null)
+            {
+                return HasRouteChanged(newUri);
+            }
+
+            return dialog.Options.CloseOnNavigation.Value;
+        }
+
+        internal bool HasRouteChanged(string newUri)
+        {
+            if (_currentUri == null)
+            {
+                return true;
+            }
+
+            return !string.Equals(_currentUri, newUri, StringComparison.OrdinalIgnoreCase);
         }
 
         private Task AddInstanceAsync(IDialogReference dialog)
@@ -194,7 +221,15 @@ namespace MudBlazor
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
         {
-            DismissAll();
+            var newUri = NavigationManager.ToAbsoluteUri(args.Location).AbsolutePath.TrimEnd('/');
+
+            foreach (var dialog in _dialogs.ToArray().Where(d => ShouldDismissOnNavigation(d, newUri)))
+            {
+                DismissInstance(dialog, DialogResult.Cancel());
+            }
+
+            _currentUri = newUri;
+            StateHasChanged();
         }
 
         protected virtual void Dispose(bool disposing)

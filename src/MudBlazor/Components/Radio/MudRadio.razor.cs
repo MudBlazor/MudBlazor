@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Allows the user to select a single choice from a group of options. Use radio buttons (not switches) when only one item can be selected from a list.
@@ -22,6 +21,7 @@ namespace MudBlazor
     {
         private IMudRadioGroup? _parent;
         private string _elementId = Identifier.Create("radio");
+        private readonly string _ariaId = Identifier.Create("radio-aria-");
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
@@ -73,6 +73,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
+
+        /// <summary>
+        /// The Aria Label to be assigned to the radio button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Used to improve accessibility for screen readers. Adds an <c>aria-labelledby</c> to the <c>input</c> element.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// Uses compact vertical padding.
@@ -167,27 +177,15 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState() && !(MudRadioGroup?.GetReadOnlyState() ?? false);
+
+        private async Task HandleBackspaceAsync()
         {
-            if (GetDisabledState() || GetReadOnlyState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (MudRadioGroup is not null)
             {
-                return;
-            }
-
-            switch (keyboardEventArgs.Key)
-            {
-                case "Enter" or "NumpadEnter" or " ":
-                    await SelectAsync();
-                    break;
-                case "Backspace":
-                    {
-                        if (MudRadioGroup is not null)
-                        {
-                            await MudRadioGroup.ResetAsync();
-                        }
-
-                        break;
-                    }
+                await MudRadioGroup.ResetAsync();
             }
         }
 
@@ -217,7 +215,10 @@ namespace MudBlazor
                         new("Backspace", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)
+                        .OnKeyDown("Backspace", HandleBackspaceAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);

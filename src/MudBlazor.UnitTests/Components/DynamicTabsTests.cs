@@ -108,7 +108,7 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint since it's not active");
 
-                await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+                await item.ParentElement.PointerEnterAsync();
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("close here");
 
-                await item.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+                await item.ParentElement.PointerLeaveAsync();
 
             }
 
@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
-                await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+                await item.ParentElement.PointerEnterAsync();
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -145,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("add here");
 
-                await item.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+                await item.ParentElement.PointerLeaveAsync();
             }
         }
 

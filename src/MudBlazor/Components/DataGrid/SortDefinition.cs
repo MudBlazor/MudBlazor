@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents information about sorting in a <see cref="MudDataGrid{T}"/>.

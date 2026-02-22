@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Detects and responds to swipe gestures for navigation or actions.

@@ -4,12 +4,12 @@
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
-/// <para>Configuration for preventDefault() and stopPropagation() control</para>
+/// Configuration for how a specific key should be intercepted, including preventDefault/stopPropagation expressions and which C# callbacks should fire.
+/// </summary>
+/// <remarks>
 /// <para>
-/// For PreventDown, PreventUp, StopDown and StopUp the configuration which key combinations should match
-/// is a JavaScript boolean expression.
+/// For PreventDown, PreventUp, StopDown and StopUp the configuration which key combinations should match is a JavaScript boolean expression.
 /// </para>
 /// <para>
 /// Examples:
@@ -21,10 +21,8 @@ namespace MudBlazor.Services;
 ///          PreventDown=null or PreventDown="none"
 ///  * Prevent key down of unmodified keystrokes such as "Tab":
 ///          PreventDown="key+none"
-///  * Prevent key down of Tab and Ctrl+Tab
-///          PreventDown="key+none|key+ctrl"
-///  * Prevent key down of just Ctrl+Tab
-///          PreventDown="key+ctrl"
+///  * Prevent key down of Tab and Ctrl+Tab PreventDown="key+none|key+ctrl"
+///  * Prevent key down of just Ctrl+Tab PreventDown="key+ctrl"
 ///  * Prevent key down of Ctrl+Tab and Shift+Tab but not Shift+Ctrl+Tab:
 ///          PreventDown="key+shift|key+ctrl"
 ///  * Prevent key down of Shift+Ctrl+Tab and Ctrl+Tab but not Shift+Tab:
@@ -34,7 +32,10 @@ namespace MudBlazor.Services;
 ///  * Prevent any combination of key and modifiers, even the unmodified key:
 ///          PreventDown="any"
 /// </para>
-/// </summary>
+/// <para>
+/// Use this when you need fine-grained control over browser key behavior and want to keep the configuration declarative instead of ad-hoc JS interop.
+/// </para>
+/// </remarks>
 public class KeyOptions
 {
     /// <summary>

@@ -16,8 +16,8 @@ internal class PopoverServiceMock : PopoverService
 {
     private readonly IPopoverTimerMock _popoverTimerMock;
 
-    public PopoverServiceMock(ILogger<PopoverService> logger, IJSRuntime jsInterop, IPopoverTimerMock? popoverTimerMock = null, IOptions<PopoverOptions>? options = null)
-        : base(logger, jsInterop, options)
+    public PopoverServiceMock(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IPopoverTimerMock? popoverTimerMock = null, IOptions<PopoverOptions>? options = null)
+        : base(logger, jsInterop, timeProvider, options)
     {
         _popoverTimerMock = popoverTimerMock ?? new PopoverTimerEmpty();
     }

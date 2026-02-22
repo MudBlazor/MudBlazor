@@ -1,8 +1,5 @@
 ﻿@page "/"
 @using System.Reflection
-@using Microsoft.AspNetCore.Components
-@using Microsoft.AspNetCore.Components.Web
-@using MudBlazor
 @using FuzzySharp
 @inject NavigationManager NavManager
 @implements IDisposable
@@ -38,7 +35,7 @@
 
                 <div class="test-viewer-results">
                     <MudVirtualize Items="@_filteredEntries" Enabled="true" Context="entry">
-                        <MudButton Variant="Variant.Text" Color="Color.Inherit" FullWidth="true" DisableElevation="true"
+                        <MudButton Variant="Variant.Text" Color="Color.Inherit" FullWidth="true"
                                    Class="@GetEntryClass(entry)" OnClick="() => Select(entry.Type)">
                             <div class="test-viewer-result-row">
                                 <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.DisplayName</MudText>
@@ -235,8 +232,6 @@
     private string ThemeIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
 
     private string ThemeLabel => _isDarkMode ? "Light mode" : "Dark mode";
-
-    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
 
     private string SearchText
     {

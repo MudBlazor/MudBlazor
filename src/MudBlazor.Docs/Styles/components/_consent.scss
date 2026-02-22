@@ -6,7 +6,7 @@
   left: 0;
   pointer-events: none;
   width: 100%;
-  z-index: var(--mud-zindex-popover);
+  z-index: calc(var(--mud-zindex-snackbar) + 1);
 }
 
 .mud-cc-content {

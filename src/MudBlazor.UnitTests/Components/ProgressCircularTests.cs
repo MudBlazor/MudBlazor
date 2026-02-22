@@ -44,6 +44,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
+            container.GetAttribute("aria-busy").Should().Be("true");
             container.GetAttribute("aria-valuenow").Should().Be(valueValue.ToString());
             container.GetAttribute("aria-valuemin").Should().Be(minValue.ToString());
             container.GetAttribute("aria-valuemax").Should().Be(maxValue.ToString());
@@ -181,6 +182,51 @@ namespace MudBlazor.UnitTests.Components
 
             var viewBoxAttributeIndeterminate = svgElementIndeterminate.GetAttribute("viewBox");
             viewBoxAttributeIndeterminate.Should().Be(expectedViewBox);
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeFalse_WhenValueEqualsMax()
+        {
+            // When Value >= Max, aria-busy should be "false" (progress is complete)
+            var comp = Context.Render<MudProgressCircular>(x =>
+            {
+                x.Add(y => y.Value, 100);
+                x.Add(y => y.Min, 0);
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-circular");
+            container.GetAttribute("aria-busy").Should().Be("false");
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeTrue_WhenValueLessThanMax()
+        {
+            // When Value < Max, aria-busy should be "true" (progress in progress)
+            var comp = Context.Render<MudProgressCircular>(x =>
+            {
+                x.Add(y => y.Value, 50);
+                x.Add(y => y.Min, 0);
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-circular");
+            container.GetAttribute("aria-busy").Should().Be("true");
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeTrue_WhenIndeterminate()
+        {
+            // When Indeterminate is true, aria-busy should always be "true"
+            var comp = Context.Render<MudProgressCircular>(x =>
+            {
+                x.Add(y => y.Indeterminate, true);
+                x.Add(y => y.Value, 100); // Even when Value >= Max
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-circular");
+            container.GetAttribute("aria-busy").Should().Be("true");
         }
     }
 }

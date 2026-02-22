@@ -8,7 +8,6 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class DefaultConverter
 {
     public sealed class DateTimeConverter(Func<CultureInfo> culture, Func<string?> format)

@@ -7,7 +7,6 @@ using System.Reflection;
 
 namespace MudBlazor.Utilities.Expressions;
 
-#nullable enable
 internal static class PropertyPath
 {
     public static PropertyHolder Visit<TSource, TResult>(Expression<Func<TSource, TResult>> expression)

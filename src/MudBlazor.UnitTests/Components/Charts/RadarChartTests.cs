@@ -905,7 +905,7 @@ public class RadarChartTests : BunitTest
         seriesPath.Should().NotBeNull();
 
         // Simulate mouseover to trigger tooltip
-        await seriesPath.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await seriesPath.MouseOverAsync();
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull();
@@ -940,7 +940,7 @@ public class RadarChartTests : BunitTest
 
         var seriesPath = comp.Find("path.mud-chart-serie");
         seriesPath.Should().NotBeNull();
-        await seriesPath.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await seriesPath.MouseOverAsync();
 
         var tooltipContent = comp.Find("div.custom-tooltip-test");
         tooltipContent.Should().NotBeNull();
@@ -969,7 +969,7 @@ public class RadarChartTests : BunitTest
         dataMarkers.Count.Should().Be(seriesData.Length);
 
         var firstMarker = dataMarkers.First();
-        await firstMarker.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await firstMarker.MouseOverAsync();
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull();
@@ -992,7 +992,7 @@ public class RadarChartTests : BunitTest
         // Re-find marker and re-trigger hover after re-render
         dataMarkers = comp.FindAll("circle.mud-chart-series-point");
         firstMarker = dataMarkers.First();
-        await firstMarker.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await firstMarker.MouseOverAsync();
 
         var customTooltipContent = comp.Find("div.custom-tooltip-test");
         customTooltipContent.Should().NotBeNull();
@@ -1001,7 +1001,7 @@ public class RadarChartTests : BunitTest
         // Hover on the second marker
         dataMarkers = comp.FindAll("circle.mud-chart-series-point");
         var secondMarker = dataMarkers[1];
-        await secondMarker.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await secondMarker.MouseOverAsync();
         customTooltipContent = comp.Find("div.custom-tooltip-test"); // Re-find, content should update
         customTooltipContent.TextContent.Should().Be($"{seriesName}, Value: {seriesData[1]}");
     }
@@ -1027,12 +1027,12 @@ public class RadarChartTests : BunitTest
         seriesPath.Should().NotBeNull();
 
         // Mouse over to show tooltip
-        await seriesPath.TriggerEventAsync("onmouseover", new MouseEventArgs());
+        await seriesPath.MouseOverAsync();
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull("Tooltip should be visible on mouseover.");
 
         // Mouse out to hide tooltip
-        await seriesPath.TriggerEventAsync("onmouseout", new MouseEventArgs());
+        await seriesPath.MouseOutAsync();
         comp.FindAll("g.svg-tooltip").Count.Should().Be(0, "Tooltip content should be removed or hidden on mouseout.");
     }
 

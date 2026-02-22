@@ -1,8 +1,15 @@
-// Copyright (c) MudBlazor 2023
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Auto-grow textarea sizing logic for the MudInput component.
+ * Uses live layout metrics and restores ancestor scroll positions during reflow.
+ */
 window.mudInputSizing = {
+    /**
+     * Initializes auto-sizing behavior for a textarea element.
+     */
     init: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
@@ -18,7 +25,7 @@ window.mudInputSizing = {
             } else {
                 maxHeight = 0;
             }
-        }
+        };
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
         elem.adjustSizingHeight = function (didReflow = false) {
@@ -39,9 +46,9 @@ window.mudInputSizing = {
                 elem.style.textAlign = null;
             }
 
-            let minHeight = lineHeight * elem.rows + paddingTop;
+            const minHeight = lineHeight * elem.rows + paddingTop;
             let newHeight = Math.max(minHeight, elem.scrollHeight);
-            let initialOverflowY = elem.style.overflowY;
+            const initialOverflowY = elem.style.overflowY;
             if (maxHeight > 0 && newHeight > maxHeight) {
                 // Content height exceeds the max height so we'll see a scrollbar.
                 elem.style.overflowY = 'auto';
@@ -66,14 +73,14 @@ window.mudInputSizing = {
                 elem.style.textAlign = 'end'; // Change to something other than the default.
                 elem.adjustSizingHeight(true);
             }
-        }
+        };
 
         // Terminate sizing and restore the input element back to its original state.
         elem.restoreToInitialState = function () {
             elem.removeEventListener('input', elem.adjustSizingHeight);
             elem.style.overflowY = null;
             elem.style.height = null;
-        }
+        };
 
         // Adjust height when input happens.
         elem.addEventListener('input', elem.adjustSizingHeight);
@@ -85,11 +92,17 @@ window.mudInputSizing = {
         elem.updateParameters(maxLines);
         elem.adjustSizingHeight();
     },
+    /**
+     * Recalculates the current textarea height.
+     */
     adjustHeight: (elem) => {
         if (typeof elem.adjustSizingHeight === 'function') {
             elem.adjustSizingHeight();
         }
     },
+    /**
+     * Updates auto-sizing parameters and reapplies sizing.
+     */
     updateParams: (elem, maxLines) => {
         if (typeof elem.updateParameters === 'function') {
             elem.updateParameters(maxLines);
@@ -98,6 +111,9 @@ window.mudInputSizing = {
             elem.adjustSizingHeight();
         }
     },
+    /**
+     * Removes auto-sizing listeners and restores the element's original sizing state.
+     */
     destroy: (elem) => {
         if (elem == null) {
             return;

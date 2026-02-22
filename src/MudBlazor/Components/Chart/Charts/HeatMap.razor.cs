@@ -13,7 +13,6 @@ using MudBlazor.Interop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
 
 namespace MudBlazor.Charts
 {
@@ -551,7 +550,7 @@ namespace MudBlazor.Charts
             }).CatchAndLog();
         }
 
-        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T> cell)
+        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
         }

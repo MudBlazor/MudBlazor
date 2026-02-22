@@ -771,14 +771,12 @@ public class ApiDocumentationBuilder
         var fieldCoverage = wellDocumentedFields / (double)Fields.Count;
         var eventCoverage = wellDocumentedEvents / (double)Events.Count;
 
-        Console.WriteLine(@"XML Documentation Coverage for MudBlazor:");
-        Console.WriteLine();
-        Console.WriteLine(@$"Types:      {wellDocumentedTypes} of {Types.Count} ({typeCoverage:P0}) types");
-        Console.WriteLine(@$"Properties: {wellDocumentedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
-        Console.WriteLine(@$"Methods:    {wellDocumentedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
-        Console.WriteLine(@$"Fields:     {wellDocumentedFields} of {Fields.Count} ({fieldCoverage:P0}) fields");
-        Console.WriteLine(@$"Events:     {wellDocumentedEvents} of {Events.Count} ({eventCoverage:P0}) events/EventCallback");
-        Console.WriteLine();
+        Console.WriteLine(
+            @$"XML Doc Coverage: T {wellDocumentedTypes}/{Types.Count} ({typeCoverage:P0}), " +
+            @$"P {wellDocumentedProperties}/{Properties.Count} ({propertyCoverage:P0}), " +
+            @$"M {wellDocumentedMethods}/{Methods.Count} ({methodCoverage:P0}), " +
+            @$"F {wellDocumentedFields}/{Fields.Count} ({fieldCoverage:P0}), " +
+            @$"E {wellDocumentedEvents}/{Events.Count} ({eventCoverage:P0})");
     }
 
     /// <summary>

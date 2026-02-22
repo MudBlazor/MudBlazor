@@ -1,4 +1,5 @@
 ﻿using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
@@ -20,7 +21,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx = new BunitContext();
             _ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             _ctx.Services.AddSingleton(TimeProvider.System);
-            _ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            _ctx.Services.AddSingleton<NavigationManager>(new BunitNavigationManager(_ctx));
             _ctx.Services.AddSingleton<IDialogService>(new DialogService());
             _ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
             _ctx.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());
@@ -29,8 +30,6 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx.Services.AddTransient<IJsApiService, MockJsApiService>();
             _ctx.Services.AddTransient<IDocsJsApiService, MockDocsJsApiService>();
             _ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
-            _ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
-            _ctx.Services.AddTransient<IEventListener, MockEventListener>();
             _ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
             _ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             _ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();

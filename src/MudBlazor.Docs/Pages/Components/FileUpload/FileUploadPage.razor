@@ -4,30 +4,41 @@
 <DocsPage>
     <DocsPageHeader Title="File Upload" Component="@nameof(MudFileUpload<T>)">
         <Description>
-            <MudText Typo="@Typo.body1" Class="mt-4">
-                To create a file upload button, two elements are needed: an activator (using the <CodeInline>ActivatorContent</CodeInline> parameter) and an <CodeInline>input</CodeInline>.
+            <MudText Typo="@Typo.body1" Class="my-4">
+                A <CodeInline>MudFileUpload</CodeInline> handles file selection and validation, but you decide how and when to upload the files.
             </MudText>
-            <br />
-            <MudText Typo="@Typo.body1">
-                The <CodeInline>MudFileUpload</CodeInline> component provides public <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline>
-                methods that can be used as <CodeInline>OnClick</CodeInline> events for buttons.
+            <MudText Typo="@Typo.body1" Class="my-4">
+                The component ships with a default button and drag-and-drop area plus a built-in
+                <CodeInline>SelectedTemplate</CodeInline> to show the chosen files. For advanced layouts, use <CodeInline>CustomContent</CodeInline>, which exposes the
+                component instance so you can call <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline>.
             </MudText>
-            <br />
-            <MudText Typo="@Typo.body1">
-                After uploading the files, you will receive an <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline> or <CodeInline>IBrowserFile</CodeInline> and you will need to manually handle the upload in <CodeInline>HandleFilesChanged</CodeInline>.
-                Instead of using <CodeInline>multiple</CodeInline> to allow multiple files, you set T to <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline>. Using <CodeInline>IBrowserFile</CodeInline> restricts the component to a single file.
+            <MudText Typo="@Typo.body1" Class="my-4">
+                After selection, the component yields an <CodeInline>IBrowserFile</CodeInline> or an <CodeInline>IReadOnlyList&lt;IBrowserFile&gt;</CodeInline>. Set <CodeInline>T</CodeInline> to
+                <CodeInline>IReadOnlyList&lt;IBrowserFile&gt;</CodeInline> for multiple files, or to <CodeInline>IBrowserFile</CodeInline> to enforce a single file.
             </MudText>
-            <br />
-            <br />
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Use any type of MudButton">
+            <SectionHeader Title="Basic Usage (Single Button or Drag-and-Drop)">
                 <Description>
-                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the <CodeInline>ActivatorContent</CodeInline> render fragment.
-                    A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will disable its child button automatically.
+                    Use a <CodeInline>MudFileUpload</CodeInline>, set <CodeInline>T</CodeInline>, and choose the options you need. For drag-and-drop, set <CodeInline>DragAndDrop</CodeInline>
+                    to <CodeInline>true</CodeInline>. The drag area fills its parent by default, and you can target <CodeInline>.mud-file-upload-dragarea</CodeInline> for additional styling.
+                    When <CodeInline>Disabled</CodeInline> is <CodeInline>true</CodeInline>, the component disables its internal controls automatically.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadBasicExample)">
+                <FileUploadBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Content">
+                <Description>
+                    Use a <CodeInline>MudButton</CodeInline>, <CodeInline>MudIconButton</CodeInline>, <CodeInline>MudFab</CodeInline>, or any custom markup with the
+                    <CodeInline>CustomContent</CodeInline> render fragment. The fragment receives the <CodeInline>MudFileUpload</CodeInline> context so you can call its API.
+                    When <CodeInline>Disabled</CodeInline> is <CodeInline>true</CodeInline>, the component disables its child controls automatically.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadButtonExample)">
@@ -36,10 +47,22 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="SelectedTemplate">
+                <Description>
+                    Use <CodeInline>SelectedTemplate</CodeInline> to customize how selected files are rendered. If you want to suppress the default chip list,
+                    provide an empty <CodeInline>&lt;SelectedTemplate /&gt;</CodeInline> or <CodeInline>SelectedTemplate="&#64;(files => builder => { })"</CodeInline>. The <CodeInline>&#64;context</CodeInline> parameter matches <CodeInline>T</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadSelectedTemplateExample)">
+                <FileUploadSelectedTemplateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Multiple and Accept">
                 <Description>
-                    Allow multiple files with <CodeInline>T="IReadOnlyList&#60IBrowserFile&#62"</CodeInline> or limit the valid file types with <CodeInline>Accept</CodeInline>.
-                    To upload more than 10 files, you must specify a <CodeInline>MaximumFileCount</CodeInline>.
+                    Set <CodeInline>T="IReadOnlyList&lt;IBrowserFile&gt;"</CodeInline> or bind <CodeInline>Files</CodeInline> to an <CodeInline>IReadOnlyList&lt;IBrowserFile&gt;</CodeInline> to allow multiple files.
+                    Use <CodeInline>Accept</CodeInline> to limit valid file types. To select more than 10 files at a time, set <CodeInline>MaximumFileCount</CodeInline>.
 
                     <MudAlert Class="my-3"
                               Dense
@@ -47,7 +70,7 @@
                         Note: Some browsers or platforms may require specific values for the <CodeInline>Accept</CodeInline> attribute.
                         <br>
                         <br>
-                        In MAUI using an Android device for example, you should use <CodeInline>Accept="image/png, image/jpg"</CodeInline> rather than <CodeInline>Accept=".png, .jpg"</CodeInline>.
+                        In MAUI on Android, use <CodeInline>Accept="image/png, image/jpg"</CodeInline> rather than <CodeInline>Accept=".png, .jpg"</CodeInline>.
                         <br>
                         Refer to the <a href="https://learn.microsoft.com/dotnet/maui/platform-integration/storage/file-picker?view=net-maui-8.0&tabs=android#platform-differences">MAUI docs</a> for more information.
                     </MudAlert>
@@ -62,9 +85,8 @@
         <DocsPageSection>
             <SectionHeader Title="Form Validation">
                 <Description>
-                    Use the <CodeInline>For</CodeInline> property to validate your files within a form, and bind your files to your model class using <CodeInline>&#64;bind-Files</CodeInline>.
-                    You can then handle the file upload logic within your <CodeInline>MudForm</CodeInline> submit method.
-                    The component provides a public <CodeInline>ClearAsync</CodeInline> method that you can use as <CodeInline>OnClick</CodeInline> handler for a button to clear files and update the form state.
+                    Use <CodeInline>For</CodeInline> to validate against your model, and bind with <CodeInline>&#64;bind-Files</CodeInline>. Handle the upload in your
+                    <CodeInline>MudForm</CodeInline> submit handler. You can also call <CodeInline>ClearAsync</CodeInline> to reset files and update form state.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadValidationExample)">
@@ -75,9 +97,9 @@
         <DocsPageSection>
             <SectionHeader Title="Event Options">
                 <Description>
-                    You can use either <CodeInline>Files</CodeInline> and <CodeInline>FilesChanged</CodeInline> or the <CodeInline>OnFilesChanged</CodeInline> callback.
-                    The former is better when used within a <CodeInline>MudForm</CodeInline>, and the latter is better for custom scenarios.
-                    When using <CodeInline>OnFilesChanged</CodeInline>, it will fire regardless of validation by default, but can be configured to only fire when valid using <CodeInline>SuppressOnChangeWhenInvalid</CodeInline>.
+                    <CodeInline>MudFileUpload</CodeInline> offers two approaches for handling file changes. For <CodeInline>MudForm</CodeInline> integration, use
+                    <CodeInline>Files</CodeInline>/<CodeInline>FilesChanged</CodeInline>. For custom handling, use <CodeInline>OnFilesChanged</CodeInline>; it fires even when
+                    validation fails unless <CodeInline>SuppressOnChangeWhenInvalid</CodeInline> is set to <CodeInline>true</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadEventOptionsExample)">
@@ -86,21 +108,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="SelectedTemplate">
-                <Description>
-                    You can use the <CodeInline>SelectedTemplate</CodeInline> RenderFragment to display the current files.
-                    Its <CodeInline>&#64;context</CodeInline> parameter matches <CodeInline>T</CodeInline>.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadSelectedTemplateExample)">
-                <FileUploadSelectedTemplateExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
             <SectionHeader Title="Append Multiple Files">
                 <Description>
-                    With <CodeInline>AppendMultipleFiles</CodeInline> set to true, when additional files are selected they will be appended to the existing list.
+                    When <CodeInline>AppendMultipleFiles</CodeInline> is <CodeInline>true</CodeInline>, new selections are appended to the existing list.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadAppendMultipleExample)">
@@ -109,13 +119,29 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Drag and Drop Example">
-                <Description>Using the examples below, you can compose a drag-and-drop uploader.</Description>
+            <SectionHeader Title="Drag-and-Drop Examples">
+                <Description>
+                    You can customize the look, feel, and behavior of <CodeInline>MudFileUpload</CodeInline> extensively. Use <CodeInline>CustomContent</CodeInline> to build your
+                    own buttons or drop area, and call API methods like <CodeInline>ClearAsync</CodeInline> or <CodeInline>OpenFilePickerAsync</CodeInline> from the context.
+                    The following examples show both the built-in drag-and-drop behavior and fully custom approaches.
+                </Description>
             </SectionHeader>
             <SectionSubGroups>
                 <DocsPageSection>
-                    <SectionHeader Title="Custom Scenario">
-                        <Description></Description>
+                    <SectionHeader Title="Using Built-In Controls">
+                        <Description>
+                            The component provides properties to manage drag-and-drop behavior and drop-zone visibility. You can customize the drop zone inside
+                            <CodeInline>CustomContent</CodeInline> and use an <CodeInline>@@ondragenter</CodeInline> handler to set <CodeInline>Dragging</CodeInline>. When the drag ends,
+                            the control resets <CodeInline>Dragging</CodeInline> to <CodeInline>false</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadCustomExample)">
+                        <FileUploadCustomExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Create a Custom Solution">
+                        <Description>Alternatively, you can create your own custom solution by directly managing drag events and controlling the visibility of the input drop zone.</Description>
                     </SectionHeader>
                     <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadDragAndDropCustomScenarioExample)">
                         <FileUploadDragAndDropCustomScenarioExample />
@@ -123,10 +149,20 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="With Form Validation">
-                        <Description></Description>
+                        <Description>
+                            This example demonstrates how to combine drag-and-drop functionality with form validation, showing how to validate files before upload and provide user feedback.
+                        </Description>
                     </SectionHeader>
                     <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadDragAndDropWithFormValidationExample)">
                         <FileUploadDragAndDropWithFormValidationExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Different Examples">
+                        <Description>Explore different styling and interaction ideas with the default APIs.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadMiscExample)">
+                        <FileUploadMiscExample />
                     </SectionContent>
                 </DocsPageSection>
             </SectionSubGroups>

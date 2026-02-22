@@ -4,7 +4,6 @@ using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
-#nullable enable
 namespace MudBlazor.Charts
 {
     /// <summary>

@@ -8,7 +8,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>

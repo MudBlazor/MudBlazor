@@ -19,6 +19,7 @@ using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetPara
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    [NonParallelizable]
     public class AutocompleteTests : BunitTest
     {
         [Test]
@@ -2329,7 +2330,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
         {
-            // The default PopoverOptions should have OverflowBehavior.FlipOnOpen and ModalOverlay = false
+            // The default PopoverOptions should have OverflowBehavior.FlipAlways and ModalOverlay = false
             var auto = Context.Render<MudAutocomplete<string>>();
 
             // Verify that the component is using the global defaults

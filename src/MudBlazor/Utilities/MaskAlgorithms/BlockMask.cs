@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// A mask consisting of contiguous sets of characters.
 /// </summary>

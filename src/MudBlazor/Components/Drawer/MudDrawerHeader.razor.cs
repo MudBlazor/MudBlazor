@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents content at the top of a <see cref="MudDrawer"/>.

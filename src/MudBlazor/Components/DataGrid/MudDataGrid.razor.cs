@@ -16,9 +16,8 @@ using MudBlazor.Utilities.Clone;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a sortable, filterable data grid with multiselection and pagination.
+    /// Represents a sortable, filterable data grid with multiselection, pagination, editing, grouping, aggregation, and server-side <see cref="IQueryable{T}"/> support.
     /// </summary>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
@@ -27,7 +26,6 @@ namespace MudBlazor
         private MudForm? _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
-        private IEnumerable<T>? _items;
         internal bool _groupInitialExpanded = true;
         internal MudVirtualize<IndexBag<T>>? _mudVirtualize;
         private bool _isFirstRendered = false;
@@ -65,8 +63,12 @@ namespace MudBlazor
         public MudDataGrid()
         {
             Selection = new HashSet<T>(Comparer);
-            SelectedItems = Selection;
+            SelectedItems = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<IEnumerable<T>?>(nameof(Items))
+                .WithParameter(() => Items)
+                .WithChangeHandler(OnItemsChangedAsync);
+
             _selectedItemState = registerScope.RegisterParameter<T?>(nameof(SelectedItem))
                 .WithParameter(() => SelectedItem)
                 .WithEventCallback(() => SelectedItemChanged)
@@ -310,7 +312,7 @@ namespace MudBlazor
         /// Occurs when edit mode begins for an item.
         /// </summary>
         /// <remarks>
-        /// If changes are committed, the <see cref="CommittedItemChanges"/> event occurs.  If editing is canceled, the <see cref="CanceledEditingItem"/> occurs.
+        /// If changes are committed, the <see cref="CommittedItemChanges"/> delegate is called. If editing is canceled, the <see cref="CanceledEditingItem"/> occurs.
         /// </remarks>
         [Parameter]
         public EventCallback<T> StartedEditingItem { get; set; }
@@ -322,10 +324,26 @@ namespace MudBlazor
         public EventCallback<T> CanceledEditingItem { get; set; }
 
         /// <summary>
-        /// Occurs when the user saved changes to an item.
+        /// Invoked when the user saves changes to an item, allowing for validation, 
+        /// persistence, or other processing.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The callback receives a separate instance of the item with the committed values, 
+        /// preventing changes from being applied to the underlying data source before 
+        /// validation or processing completes.
+        /// </para>
+        /// <para>
+        /// Return a <see cref="DataGridEditFormAction"/> value to control the edit form behavior. 
+        /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>:
+        /// </para>
+        /// <list type="bullet">
+        /// <item><see cref="DataGridEditFormAction.Close"/> - Accepts changes and closes the form</item>
+        /// <item><see cref="DataGridEditFormAction.KeepOpen"/> - Rejects changes and keeps the form open for corrections</item>
+        /// </list>
+        /// </remarks>
         [Parameter]
-        public EventCallback<T> CommittedItemChanges { get; set; }
+        public Func<T, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
 
         /// <summary>
         /// Occurs when a field changes in the edit dialog.
@@ -752,29 +770,8 @@ namespace MudBlazor
         /// <remarks>
         /// One row will be displayed per item.  Use the <see cref="ServerData"/> function instead of this property to get data on demand.
         /// </remarks>
-        [Parameter]
-        public IEnumerable<T>? Items
-        {
-            get => _items;
-            set
-            {
-                if (_items == value)
-                    return;
-
-                _items = value;
-
-                // Always clean up stale selections when Items is reassigned.
-                // For INotifyCollectionChanged (e.g., ObservableCollection), the event handler
-                // additionally handles incremental changes (add/remove without reassigning).
-                CleanupStaleSelections();
-                CleanupStaleHierarchyExpansions();
-
-                OnPagerStateChanged();
-                SetupGrouping();
-                ApplyInitialExpansionForItems(_items);
-                SetupCollectionChangeTracking();
-            }
-        }
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
+        public IEnumerable<T>? Items { get; set; }
 
         private void OnPagerStateChanged()
         {
@@ -790,7 +787,7 @@ namespace MudBlazor
 
         private void SetupCollectionChangeTracking()
         {
-            if (_items is INotifyCollectionChanged changed)
+            if (Items is INotifyCollectionChanged changed)
             {
                 changed.CollectionChanged += (s, e) =>
                 {
@@ -865,32 +862,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Synchronous version of CleanupStaleSelectionsAsync for use in property setters.
-        /// </summary>
-        private void CleanupStaleSelections()
-        {
-            if (Selection.Count == 0 && _selectedItemState.Value is null)
-                return;
-
-            var currentItems = BuildCurrentItemsSet();
-            var (selectionChanged, selectedItemChanged) = PruneSelectionAndSelectedItem(currentItems);
-
-            if (!selectionChanged && !selectedItemChanged)
-                return;
-
-            // Fire and forget with proper exception handling
-            if (selectedItemChanged)
-            {
-                InvokeAsync(() => _selectedItemState.SetValueAsync(default)).CatchAndLog();
-            }
-
-            if (selectionChanged)
-            {
-                InvokeAsync(FireSelectionChangedEventsAsync).CatchAndLog();
-            }
-        }
-
         private void CleanupStaleHierarchyExpansions()
         {
             if (_openHierarchies.Count == 0 && _initialExpansions.Count == 0)
@@ -905,7 +876,7 @@ namespace MudBlazor
         /// </summary>
         private HashSet<T> BuildCurrentItemsSet()
         {
-            return _items is not null ? new HashSet<T>(_items, Comparer) : new HashSet<T>(Comparer);
+            return Items is not null ? new HashSet<T>(Items, Comparer) : new HashSet<T>(Comparer);
         }
 
         /// <summary>
@@ -968,8 +939,8 @@ namespace MudBlazor
         /// </summary>
         private async Task FireSelectionChangedEventsAsync()
         {
-            await _selectedItemsState.SetValueAsync(Selection);
-            await SelectedItemsChanged.InvokeAsync(Selection);
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
             SelectedItemsChangedEvent?.Invoke(Selection);
         }
 
@@ -1547,6 +1518,20 @@ namespace MudBlazor
                 await ClearCurrentSortings();
         }
 
+        private async Task OnItemsChangedAsync(ParameterChangedEventArgs<IEnumerable<T>?> args)
+        {
+            // Always clean up stale selections when Items is reassigned.
+            // For INotifyCollectionChanged (e.g., ObservableCollection), the event handler
+            // additionally handles incremental changes (add/remove without reassigning).
+            await CleanupStaleSelectionsAsync();
+            CleanupStaleHierarchyExpansions();
+
+            OnPagerStateChanged();
+            SetupGrouping();
+            ApplyInitialExpansionForItems(args.Value);
+            SetupCollectionChangeTracking();
+        }
+
         private async Task OnSelectedItemChangedAsync(ParameterChangedEventArgs<T?> args)
         {
             if (args.Value is null)
@@ -1565,20 +1550,21 @@ namespace MudBlazor
                 Selection.Add(args.Value);
             }
 
-            await _selectedItemsState.SetValueAsync(Selection);
-            // doesn't fire due to hashset reference not changing, so fire it manually
-            await SelectedItemsChanged.InvokeAsync(Selection);
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
         }
 
         private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>?> args)
         {
+            // Make defensive copy to avoid shared references between parent and child
             if (args.Value == null)
             {
                 Selection.Clear();
             }
             else
             {
-                Selection = args.Value;
+                Selection.Clear();
+                Selection.UnionWith(args.Value);
             }
         }
 
@@ -1712,9 +1698,9 @@ namespace MudBlazor
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
                     _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
                     // Apply expansion now if items or _serverData.Items is already set
-                    if (_items is not null)
+                    if (Items is not null)
                     {
-                        ApplyInitialExpansionForItems(_items);
+                        ApplyInitialExpansionForItems(Items);
                     }
                     else if (_serverData?.Items?.Any() == true)
                     {
@@ -1879,9 +1865,8 @@ namespace MudBlazor
                 }
             }
 
-            await _selectedItemsState.SetValueAsync(Selection);
-            // manually invoke due to ParameterState not seeing state change with HashSet
-            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
@@ -1927,9 +1912,8 @@ namespace MudBlazor
                 Selection.UnionWith(itemsToSelect);
             }
 
-            await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
-            // manually invoke due to ParameterState not seeing state change with HashSet
-            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
@@ -1976,7 +1960,8 @@ namespace MudBlazor
         internal async Task CommitItemChangesAsync(T item)
         {
             // Here, we need to validate at the cellular level...
-            await CommittedItemChanges.InvokeAsync(item);
+            if (CommittedItemChanges != null)
+                _ = await CommittedItemChanges(item); // ignore return value in cell edit mode
         }
 
         /// <summary>
@@ -1997,13 +1982,17 @@ namespace MudBlazor
 
             if (_editingSourceItem != null)
             {
-                foreach (var property in _properties)
+                if (CommittedItemChanges != null)
                 {
-                    if (property.CanWrite)
-                        property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+                    var closeBehavior = await CommittedItemChanges(_editingItem);
+
+                    if (closeBehavior == DataGridEditFormAction.KeepOpen)
+                        return;
                 }
 
-                await CommittedItemChanges.InvokeAsync(_editingSourceItem);
+                foreach (var property in _properties.Where(p => p.CanWrite))
+                    property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+
                 ClearEditingItem();
                 _isEditFormOpen = false;
             }
@@ -2659,17 +2648,9 @@ namespace MudBlazor
 
         #region Resize feature
 
-        [Inject]
-        private IEventListenerFactory EventListenerFactory { get; set; } = null!;
         internal bool IsResizing { get; set; }
 
         private ElementReference _gridElement;
-        private DataGridColumnResizeService<T>? _resizeService;
-
-        internal DataGridColumnResizeService<T> ResizeService => _resizeService ??= new DataGridColumnResizeService<T>(this, EventListenerFactory);
-
-        internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
-            => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode, RightToLeft);
 
         internal async Task<double> GetActualHeight()
         {
@@ -2692,8 +2673,6 @@ namespace MudBlazor
         protected virtual void Dispose(bool disposing)
         {
             _serverDataCancellationTokenSource?.Dispose();
-            // TODO: Use IAsyncDisposable for MudDataGrid
-            _resizeService?.DisposeAsync().CatchAndLog();
         }
 
         private sealed class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>

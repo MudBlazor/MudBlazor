@@ -13,7 +13,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a vertical set of values.
     /// </summary>
@@ -31,7 +30,7 @@ namespace MudBlazor
         /// The data grid which owns this column.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T>? DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
 
@@ -438,6 +437,24 @@ namespace MudBlazor
         /// <summary>
         /// The template for editing values in this cell.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When <see cref="MudDataGrid{T}.EditMode"/> is <see cref="DataGridEditMode.Form"/>, the built-in Save button
+        /// automatically invokes <see cref="MudDataGrid{T}.CommittedItemChanges"/> — no extra handling is required.
+        /// </para>
+        /// <para>
+        /// When <see cref="MudDataGrid{T}.EditMode"/> is <see cref="DataGridEditMode.Cell"/>, standard columns commit
+        /// their value automatically on change. Custom controls inside an <see cref="EditTemplate"/> do not trigger
+        /// <see cref="MudDataGrid{T}.CommittedItemChanges"/> automatically. Track changes directly in a value-changed
+        /// handler instead:
+        /// </para>
+        /// <code>
+        /// &lt;EditTemplate&gt;
+        ///     &lt;MudDatePicker Date="@context.Item.Date"
+        ///         DateChanged="@(d => { context.Item.Date = d; TrackChange(context.Item); })" /&gt;
+        /// &lt;/EditTemplate&gt;
+        /// </code>
+        /// </remarks>
         [Parameter]
         public RenderFragment<CellContext<T>>? EditTemplate { get; set; }
 
@@ -499,6 +516,7 @@ namespace MudBlazor
 
         internal string FooterClassname =>
             new CssBuilder("mud-table-cell")
+                .AddClass("footer-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
                 .Build();
@@ -557,7 +575,7 @@ namespace MudBlazor
         #endregion
 
         internal int SortIndex { get; set; } = -1;
-        internal HeaderCell<T>? HeaderCell { get; set; }
+        internal HeaderCell<T> HeaderCell { get; set; } = null!;
 
         private Func<T, object?>? _sortBy;
         internal Func<T, object?>? groupBy;

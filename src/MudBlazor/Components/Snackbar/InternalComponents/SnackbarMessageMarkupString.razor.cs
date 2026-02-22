@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Components.Snackbar.InternalComponents;
 
-#nullable enable
 public partial class SnackbarMessageMarkupString : ComponentBase
 {
     /// <summary>

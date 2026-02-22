@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interpolation;
 
-#nullable enable
 namespace MudBlazor.Charts
 {
     /// <summary>

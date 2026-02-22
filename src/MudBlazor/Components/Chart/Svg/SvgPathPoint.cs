@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 namespace MudBlazor;
-#nullable enable
 
 /// <summary>
 /// Represents a specific point along an <see cref="SvgPath"/>.

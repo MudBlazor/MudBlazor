@@ -8,7 +8,6 @@ using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
-#nullable enable
 /// <summary>
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>

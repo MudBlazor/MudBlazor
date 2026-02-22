@@ -426,32 +426,32 @@ namespace MudBlazor.UnitTests.Components
             // initial state
             comp.FindAll(".mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll(".mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-false");
-            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[0].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Vodka chip
             await comp.FindAll("button.mud-chip")[0].ClickAsync();
             comp.Find("div.selection").TrimmedText().Should().Be("Vodka");
             comp.FindAll(".mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll(".mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-true");
-            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[0].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Olive checkbox
             await comp.FindAll("input.mud-checkbox-input")[2].ChangeAsync(true);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive, Vodka");
             comp.FindAll(".mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll(".mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-true");
-            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[0].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[2].ClassList.Should().Contain("mud-checkbox-true");
 
             // click Vodka checkbox
             await comp.FindAll("input.mud-checkbox-input")[0].ChangeAsync(false);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive");
             comp.FindAll(".mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll(".mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-false");
-            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[0].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox .mud-icon-button")[2].ClassList.Should().Contain("mud-checkbox-true");
         }
 
         [Test]

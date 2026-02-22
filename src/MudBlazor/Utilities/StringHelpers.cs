@@ -2,7 +2,6 @@
 
 namespace MudBlazor.Utilities;
 
-#nullable enable
 internal static partial class StringHelpers
 {
     /// <summary>

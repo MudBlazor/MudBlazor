@@ -4,10 +4,12 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Listens to scroll events on a specified element.
+    /// JS-backed scroll listener that streams scroll updates from a selector to .NET callbacks.
     /// </summary>
+    /// <remarks>
+    /// Use this when components need continuous scroll data (e.g., lazy loading or scroll shadows) without reimplementing interop wiring.
+    /// </remarks>
     internal sealed class ScrollListener : IScrollListener
     {
         private readonly string _listenerId = Identifier.Create("scrollListener");

@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A 12-point grid system for organizing content with responsive breakpoints for different screen sizes.

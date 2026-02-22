@@ -7,7 +7,6 @@ using System.Numerics;
 using System.Text;
 using MudBlazor.Extensions;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable

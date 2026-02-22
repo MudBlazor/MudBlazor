@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 
 namespace MudBlazor.Utilities.Comparer;
 
-#nullable enable
 /// <summary>
 /// Provides a reference-based equality comparison for <see cref="CultureInfo"/> objects.
 /// </summary>

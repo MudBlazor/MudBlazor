@@ -2,7 +2,6 @@
 
 namespace MudBlazor
 {
-#nullable enable
     [ExcludeFromCodeCoverage]
     public static class Colors
     {

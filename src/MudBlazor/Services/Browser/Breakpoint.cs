@@ -3,7 +3,6 @@ using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Indicates a browser width used to trigger behaviors.
 /// </summary>

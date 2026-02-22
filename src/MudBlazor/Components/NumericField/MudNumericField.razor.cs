@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -308,7 +307,10 @@ namespace MudBlazor
 
                 var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("ArrowUp", Increment)
+                        .OnKeyDown("ArrowDown", Decrement)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -327,21 +329,11 @@ namespace MudBlazor
             }
         }
 
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-
-            switch (obj.Key)
-            {
-                case "ArrowUp":
-                    await Increment();
-                    break;
-                case "ArrowDown":
-                    await Decrement();
-                    break;
-            }
-
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
             await OnKeyDown.InvokeAsync(obj);
         }
 
@@ -483,7 +475,7 @@ namespace MudBlazor
         //https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
         private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
 
-        private static string? FormatParam(T value)
+        private static string? FormatParam(T? value)
         {
             if (value is IFormattable f)
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);

@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// An extensively customizable tree view component for displaying hierarchical data, featuring item selection, lazy-loading, and templating support.
     /// </summary>
@@ -309,7 +308,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T?>>>>? ServerData { get; set; }
+        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T>>>>? ServerData { get; set; }
 
         /// <summary>
         /// Prevents selections from being changed.

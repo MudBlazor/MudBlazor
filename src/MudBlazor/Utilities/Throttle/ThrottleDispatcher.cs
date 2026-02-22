@@ -4,7 +4,6 @@
 
 namespace MudBlazor.Utilities.Throttle;
 
-#nullable enable
 /// <summary>
 /// Limits the rate at which an action can be invoked.
 /// </summary>
@@ -128,10 +127,10 @@ internal sealed class ThrottleDispatcher : IDisposable
             var now = _timeProvider.GetUtcNow();
             var timeSinceLastExecution = now - _lastExecutionStartTime;
 
-            // If we have a running task, and we're within the interval, return the same task
-            if (_currentTask is not null && !_currentTask.IsCompleted && timeSinceLastExecution < _interval)
+            // Within the throttle interval - suppress execution (allow retry after faults)
+            if (timeSinceLastExecution < _interval && _currentTask is not null && !_currentTask.IsFaulted)
             {
-                return _currentTask;
+                return _currentTask.IsCompleted ? Task.CompletedTask : _currentTask;
             }
 
             // Clear completed task if it exists

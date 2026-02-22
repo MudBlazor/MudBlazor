@@ -14,7 +14,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a column filter shown when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
     /// </summary>
@@ -26,7 +25,7 @@ namespace MudBlazor
         /// The <see cref="MudDataGrid{T}"/> containing this filter cell.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T>? DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         /// <summary>
         /// The column associated with this filter cell.

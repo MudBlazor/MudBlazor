@@ -18,6 +18,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="MudBlazor.Analyzers.TestComponents/MudBlazor.Analyzers.TestComponents.csproj" />
+    <Project Path="MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj" />
     <Project Path="MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj" />
     <Project Path="MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj" />
     <Project Path="MudBlazor.UnitTests.Shared/MudBlazor.UnitTests.Shared.csproj" />

@@ -1,0 +1,38 @@
+﻿<MudDialogProvider />
+
+<MudDataGrid T="Model" Items="@_items" ReadOnly="false"
+             EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick"
+             CommittedItemChanges="CommittedItemChangesAsync">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "A test viewer for visibility testing of CommittedItemChanges";
+
+    private readonly List<Model> _items = new List<Model>
+    {
+        new Model { Name = "John", Age = 45 },
+        new Model { Name = "Johanna", Age = 23 }
+    };
+
+    public class Model
+    {
+        public required string Name { get; set; }
+
+        public required int Age { get; set; }
+    }
+
+    private async Task<DataGridEditFormAction> CommittedItemChangesAsync(Model item)
+    {
+        // Simulate server call.
+        await Task.Delay(5);
+
+        if (item.Age < 0)
+            return DataGridEditFormAction.KeepOpen;
+
+        return DataGridEditFormAction.Close;
+    }
+}
