@@ -11,6 +11,7 @@ namespace MudBlazor
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
         private ITimer? _timer;
+
         // Default is true, we need the form children to render
         private bool _shouldRender = true;
 
@@ -38,7 +39,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Form.ValidatedData)]
         public RenderFragment? ChildContent { get; set; }
-        
+
         /// <summary>
         /// Whether all inputs and child forms passed validation.
         /// </summary>
@@ -50,13 +51,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
         public bool IsValid { get; set; } = true;
-        
+
         /// <summary>
         /// Occurs when <see cref="IsValid"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> IsValidChanged { get; set; }
-        
+
         /// <summary>
         /// Whether any input's value has changed.
         /// </summary>
@@ -226,7 +227,7 @@ namespace MudBlazor
             {
                 _errors.Add(error);
             }
-            
+
             // Form can only be valid if:
             // - No errors
             // - All required fields have been touched (and thus validated)
@@ -280,7 +281,11 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            ParentMudForm?.ChildForms.Add(this);
+            if (ParentMudForm is not null)
+            {
+                ParentMudForm.ChildForms.Add(this);
+                ParentMudForm.ReevaluateValidity();
+            }
 
             base.OnInitialized();
         }
@@ -296,7 +301,7 @@ namespace MudBlazor
         {
             return ValidateAsync();
         }
-        
+
         /// <summary>
         /// Forces a validation of all form controls (including in child forms).
         /// </summary>
@@ -386,6 +391,14 @@ namespace MudBlazor
 
             IsValid = isValidIncludingChildren;
             IsValidChanged.InvokeAsync(IsValid).CatchAndLog();
+            ParentMudForm?.ReevaluateValidity();
+        }
+
+        private void ReevaluateValidity()
+        {
+            var noErrors = _formControls.All(x => !x.HasErrors);
+            var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
+            SetIsValid(noErrors && requiredAllTouched);
         }
 
         private void EvaluateForm(bool debounce = true)
@@ -421,7 +434,7 @@ namespace MudBlazor
         void IForm.Add(IFormComponent formControl)
         {
             if (formControl.Required) SetIsValid(false);
-            
+
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);
         }
