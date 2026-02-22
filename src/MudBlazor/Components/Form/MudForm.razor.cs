@@ -10,6 +10,12 @@ namespace MudBlazor
     /// </summary>
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
+        // Note: w/o any children the form is automatically valid.
+        // It stays valid, as long as non-required fields are added or
+        // a required field is added or the user touches a field that fails validation.
+        private bool _valid = true;
+        private bool _touched = false;
+
         private ITimer? _timer;
 
         // Default is true, we need the form children to render
@@ -50,7 +56,11 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
-        public bool IsValid { get; set; } = true;
+        public bool IsValid
+        {
+            get => _valid && ChildForms.All(x => x.IsValid);
+            set => _valid = value;
+        }
 
         /// <summary>
         /// Occurs when <see cref="IsValid"/> has changed.
@@ -68,7 +78,14 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
-        public bool IsTouched { get; set; }
+        public bool IsTouched
+        {
+            get => _touched;
+            set
+            {
+                /* readonly parameter! */
+            }
+        }
 
         /// <summary>
         /// Occurs when <see cref="IsTouched"/> has changed.
@@ -193,7 +210,14 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
-        public string[] Errors { get; set; } = [];
+        public string[] Errors
+        {
+            get => _errors.ToArray();
+            set
+            {
+                /* readonly */
+            }
+        }
 
         /// <summary>
         /// Occurs when <see cref="Errors"/> has changed.
@@ -235,20 +259,19 @@ namespace MudBlazor
             var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
             var valid = noErrors && requiredAllTouched;
 
-            var oldTouched = IsTouched;
-            IsTouched = _formControls.Any(x => x.Touched);
+            var oldTouched = _touched;
+            _touched = _formControls.Any(x => x.Touched);
             try
             {
                 _shouldRender = false;
                 SetIsValid(valid);
-                Errors = _errors.ToArray();
                 await ErrorsChanged.InvokeAsync(Errors);
-                if (oldTouched != IsTouched)
+                if (oldTouched != _touched)
                 {
-                    await IsTouchedChanged.InvokeAsync(IsTouched);
+                    await IsTouchedChanged.InvokeAsync(_touched);
                     if (ParentMudForm != null)
                     {
-                        await ParentMudForm.IsTouchedChanged.InvokeAsync(IsTouched);
+                        await ParentMudForm.IsTouchedChanged.InvokeAsync(_touched);
                     }
                 }
             }
@@ -281,11 +304,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (ParentMudForm is not null)
-            {
-                ParentMudForm.ChildForms.Add(this);
-                ParentMudForm.ReevaluateValidity();
-            }
+            ParentMudForm?.ChildForms.Add(this);
 
             base.OnInitialized();
         }
@@ -368,10 +387,9 @@ namespace MudBlazor
         /// <remarks>
         /// When called, <see cref="IsTouched"/> becomes <c>false</c>.
         /// </remarks>
-        [Obsolete("Bind IsTouched instead.")]
         public void ResetTouched()
         {
-            IsTouched = false;
+            _touched = false;
         }
 
         private void SetDefaultControlValidation(IFormComponent formComponent)
@@ -386,19 +404,10 @@ namespace MudBlazor
 
         private void SetIsValid(bool value)
         {
-            var isValidIncludingChildren = value && ChildForms.All(x => x.IsValid);
-            if (IsValid == isValidIncludingChildren) return;
-
-            IsValid = isValidIncludingChildren;
+            if (IsValid == value)
+                return;
+            IsValid = value;
             IsValidChanged.InvokeAsync(IsValid).CatchAndLog();
-            ParentMudForm?.ReevaluateValidity();
-        }
-
-        private void ReevaluateValidity()
-        {
-            var noErrors = _formControls.All(x => !x.HasErrors);
-            var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
-            SetIsValid(noErrors && requiredAllTouched);
         }
 
         private void EvaluateForm(bool debounce = true)

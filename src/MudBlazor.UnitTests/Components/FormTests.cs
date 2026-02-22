@@ -226,6 +226,10 @@ namespace MudBlazor.UnitTests.Components
             // input a date, isTouched should be true
             await dateComp.Find("input").ChangeAsync("2001-01-31");
             form.IsTouched.Should().Be(true);
+
+            // resetTouched should set the IsTouched property to default(false)
+            await comp.InvokeAsync(() => form.ResetTouched());
+            form.IsTouched.Should().Be(false);
         }
 
         /// <summary>

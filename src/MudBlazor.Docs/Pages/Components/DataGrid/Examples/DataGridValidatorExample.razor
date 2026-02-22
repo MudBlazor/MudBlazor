@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudForm @ref="_form" @bind-IsTouched="_formIsTouched" ValidationDelay="0">
+<MudForm @ref="_form" ValidationDelay="0">
     <MudDataGrid T="Item" Items="_items" Validator="@(_bindValidatorToForm ? _form : _defaultValidator)">
         <Columns>
             <TemplateColumn Title="Name">
@@ -22,7 +22,6 @@
 {
     private readonly Interfaces.IForm _defaultValidator = new DataGridRowValidator();
     private MudForm _form;
-    private bool _formIsTouched { get; set; }
     private bool _bindValidatorToForm = true;
 
     private readonly Item[] _items =
@@ -52,7 +51,7 @@
         if (firstRender)
         {
             await _form.ValidateAsync();
-            _formIsTouched = false;
+            _form.ResetTouched();
         }
     }
 
