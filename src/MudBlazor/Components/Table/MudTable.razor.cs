@@ -12,6 +12,7 @@ namespace MudBlazor
 
     /// <summary>
     /// A sortable, filterable table with multiselection and pagination.
+    /// Supports full control over row markup via a row template, built-in responsive breakpoint layout, and child rows.
     /// </summary>
     /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable

@@ -18,6 +18,7 @@ namespace MudBlazor
 {
     /// <summary>
     /// Represents a sortable, filterable data grid with multiselection and pagination.
+    /// Supports advanced column filtering, inline and form-based cell editing with validation, data aggregation, column grouping, reordering, resizing, sticky columns, and server-side <see cref="IQueryable{T}"/> support.
     /// </summary>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
