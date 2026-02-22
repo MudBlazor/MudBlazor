@@ -1,30 +1,20 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable BL0005 // Set parameter outside component
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.DateTimePicker;
 using NUnit.Framework;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
+#nullable enable
     [TestFixture]
     public class DateTimePickerTests : BunitTest
     {
         [Test]
         public void Default()
         {
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
             var picker = comp.Instance;
 
             picker.Text.Should().Be(null);
@@ -47,11 +37,11 @@ namespace MudBlazor.UnitTests.Components
         public void DatePicker_Render_Performance()
         {
             // warmup
-            Context.RenderComponent<MudDateTimePicker>();
+            Context.Render<MudDateTimePicker>();
             // measure
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 1000; i++)
-                Context.RenderComponent<MudDateTimePicker>();
+                Context.Render<MudDateTimePicker>();
             watch.Stop();
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
@@ -60,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DateTimePicker_OpenClose_Performance()
         {
             // warmup
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
             var datepicker = comp.Instance;
             // measure
             var watch = Stopwatch.StartNew();
@@ -90,7 +80,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DateTimePicker_TitleDateTimeFormat_Test()
         {
-            var comp = OpenPicker(Parameter("TitleDateTimeFormat", "hh yyyy MMMM dddd"));
+            var comp = OpenPicker(parameters => parameters
+                .Add(p => p.TitleDateTimeFormat, "hh yyyy MMMM dddd"));
 
         }
 
@@ -98,45 +89,52 @@ namespace MudBlazor.UnitTests.Components
         public async Task SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
             var culture = CultureInfo.CurrentCulture;
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTimeFormat, "yyyy-MM-dd HH:mm:ss"));
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateTime.Should().Be(null);
-            comp.SetParam(p => p.Text, DateTime.Parse("2020-10-23 20:30:00").ToString(picker.DateTimeFormat));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Text, DateTime.Parse("2020-10-23 20:30:00").ToString(picker.DateTimeFormat)));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-23 20:30:00"));
-            comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 12:45:20"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTime, DateTime.Parse("2020-10-26 12:45:20")));
             picker.Text.Should().Be(DateTime.Parse("2020-10-26 12:45:20").ToString(picker.DateTimeFormat));
         }
 
         [Test]
         public async Task DateTimePicker_Should_ApplyDateFormat()
         {
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateTime.Should().Be(null);
-            comp.SetParam(p => p.DateTimeFormat, "dd/MM/yyyy HH:mm");
-            comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture);
-            comp.SetParam(p => p.Text, "23/10/2020 20:30" /*"10/23/2020 20:30:00"*/);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTimeFormat, "dd/MM/yyyy HH:mm")
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.Text, "23/10/2020 20:30" /*"10/23/2020 20:30:00"*/));
             await Task.Delay(500);
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-23 20:30:00"));
-            comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 12:45:20"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTime, DateTime.Parse("2020-10-26 12:45:20")));
             picker.Text.Should().Be("26/10/2020 12:45");
         }
 
         [Test]
         public async Task DatePicker_Should_ApplyDateFormatAfterDate()
         {
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateTime.Should().Be(null);
-            comp.SetParam(p => p.DateTimeFormat, "dd/MM/yyyy HH:mm");
-            comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
-            comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTimeFormat, "dd/MM/yyyy HH:mm")
+                .Add(p => p.Culture, CultureInfo.InvariantCulture) // <-- this makes a huge difference!
+                .Add(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00")));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-26 15:45:00"));
             picker.Text.Should().Be("26/10/2020 15:45");
         }
@@ -144,39 +142,45 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePicker_Should_ApplyCultureDateFormat()
         {
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateTime.Should().Be(null);
 
             var customCulture = new CultureInfo("en-US");
-            comp.SetParam(p => p.Culture, customCulture);
-            comp.SetParam(p => p.DateTimeFormat, "dd MM yyyy HH:mm");
-
-            comp.SetParam(p => p.Text, "23 10 2020 23:45");
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Culture, customCulture)
+                .Add(p => p.DateTimeFormat, "dd MM yyyy HH:mm")
+                .Add(p => p.Text, "23 10 2020 23:45"));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-23 23:45:00"));
-            comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 23:45:00"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTime, DateTime.Parse("2020-10-26 23:45:00")));
             picker.Text.Should().Be("26 10 2020 23:45");
 
-            comp.SetParam(p => p.DateTimeFormat, "yyyy-MM-dd HH:mm");
-            comp.SetParam(p => p.Text, "2024-03-13 00:00");
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTimeFormat, "yyyy-MM-dd HH:mm")
+                .Add(p => p.Text, "2024-03-13 00:00"));
             picker.DateTime.Should().Be(DateTime.Parse("2024-03-13 00:00"));
-            comp.SetParam(p => p.DateTime, DateTime.Parse("2024-3-16 00:00"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTime, DateTime.Parse("2024-3-16 00:00")));
             picker.Text.Should().Be("2024-03-16 00:00");
         }
 
         [Test]
         public async Task DatePicker_Should_DateFormatTakesPrecedenceOverCulture()
         {
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateTime.Should().Be(null);
-            comp.SetParam(p => p.DateTimeFormat, "dd MM yyyy HH:mm");
-            comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
-            comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateTimeFormat, "dd MM yyyy HH:mm")
+                .Add(p => p.Culture, CultureInfo.InvariantCulture) // <-- this makes a huge difference!
+                .Add(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00")));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-26 15:45:00"));
             picker.Text.Should().Be("26 10 2020 15:45");
         }
@@ -185,13 +189,14 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePicker_Should_Clear()
         {
             var culture = CultureInfo.CurrentCulture;
-            var comp = Context.RenderComponent<MudDateTimePicker>();
+            var comp = Context.Render<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateTime.Should().Be(null);
-            comp.SetParam(p => p.Clearable, true);
-            comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00")));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-26 15:45:00"));
             picker.Text.Should().Be(DateTime.Parse("2020-10-26 15:45:00").ToString(picker.DateTimeFormat));
             //clear the input
@@ -206,7 +211,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var culture = CultureInfo.CurrentCulture;
             DateTime? date = DateTime.Parse("2024-01-28 10:15:00");
-            var comp = Context.RenderComponent<MudDateTimePicker>(parameters => parameters
+            var comp = Context.Render<MudDateTimePicker>(parameters => parameters
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
                 .Add(p => p.DateTimeFormat, "dd/MM/yyyy HH:mm")
                 .Add(p => p.DateTime, date)
@@ -217,48 +222,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void StringChange_ShouldUpdateValue()
+        public async Task StringChange_ShouldUpdateValue()
         {
             var culture = CultureInfo.CurrentCulture;
             string dateFormat = $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
-            var comp = Context.RenderComponent<MudDateTimePicker>(parameters => parameters
+            var comp = Context.Render<MudDateTimePicker>(parameters => parameters
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
                 .Add(p => p.DateTimeFormat, "dd/MM/yyyy HH:mm")
             );
-            comp.SetParam(p => p.Text, "28/01/2024 10:15");
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Text, "28/01/2024 10:15"));
             comp.Instance.DateTime.Should().Be(DateTime.Parse("2024-01-28 10:15"));
-            comp.SetParam(p => p.Text, string.Empty);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Text, string.Empty));
             comp.Instance.DateTime.Should().Be(null);
         }
 
         [Test]
         public void FirstDayOfWeekTest()
         {
-            var comp = OpenPicker(Parameter("FirstDayOfWeek", DayOfWeek.Monday));
+            var comp = OpenPicker(parameters => parameters
+                .Add(x => x.FirstDayOfWeek, DayOfWeek.Monday));
             var picker = comp.FindComponent<MudDateTimePicker>();
             comp.FindAll("div.mud-picker-calendar-header-day > span")[0].TrimmedText().Should().Be("Mon");
         }
 
         [Test]
-        public void ShowWeekNumbers()
+        public async Task ShowWeekNumbers()
         {
-            var comp = OpenPicker(Parameter("ShowWeekNumbers", true));
+            var comp = OpenPicker(parameters => parameters
+                .Add(p => p.ShowWeekNumbers, true));
             comp.FindAll(".mud-picker-calendar-week").Count.Should().Be(5 + 2);
 
-            comp.SetParametersAndRender(Parameter("ShowWeekNumbers", false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.ShowWeekNumbers, false));
             comp.FindAll(".mud-picker-calendar-week").Count.Should().Be(0);
         }
 
-        public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(params ComponentParameter[] parameters)
+        public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleDateTimePickerTest>>? parameterBuilder = null)
         {
             IRenderedComponent<SimpleDateTimePickerTest> comp;
-            if (parameters is null or [])
+            if (parameterBuilder is null)
             {
-                comp = Context.RenderComponent<SimpleDateTimePickerTest>();
+                comp = Context.Render<SimpleDateTimePickerTest>();
             }
             else
             {
-                comp = Context.RenderComponent<SimpleDateTimePickerTest>(parameters);
+                comp = Context.Render<SimpleDateTimePickerTest>(parameterBuilder);
             }
 
             // should not be open
@@ -283,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToYear_CheckYearsShown()
         {
-            var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Year));
+            var comp = OpenPicker(parameters => parameters.Add(p => p.DateOpenTo, OpenTo.Year));
             comp.Instance.DateTime.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -292,7 +302,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToYear_ClickYear_CheckMonthsShown()
         {
-            var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Year));
+            var comp = OpenPicker(parameters => parameters.Add(p => p.DateOpenTo, OpenTo.Year));
             comp.Instance.DateTime.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -303,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToYear_ClickYear_CheckMonthsShown_Close_Reopen_CheckYearsShown()
         {
-            var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Year));
+            var comp = OpenPicker(parameters => parameters.Add(p => p.DateOpenTo, OpenTo.Year));
             comp.Instance.DateTime.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -321,7 +331,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenToMonth_CheckMonthsShown()
         {
-            var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Month));
+            var comp = OpenPicker(parameters => parameters.Add(p => p.DateOpenTo, OpenTo.Month));
             comp.Instance.DateTime.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
@@ -339,7 +349,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_ClickYear_CheckYearsShown()
         {
-            var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Month));
+            var comp = OpenPicker(parameters => parameters.Add(p => p.DateOpenTo, OpenTo.Month));
             // should show years
             comp.FindAll("button.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
@@ -358,10 +368,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DateTimePicker_SetPickerMonth_Test()
         {
-            var comp = OpenPicker([
-                    Parameter("PickerMonth", DateTime.Parse("2024-02-01")),
-                    Parameter("IsDateTimeDisabledFunc", (DateTime dateTime) => dateTime.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-                ]);
+            var comp = OpenPicker(parameters => parameters
+                .Add(p => p.PickerMonth, DateTime.Parse("2024-02-01"))
+                .Add(p => p.IsDateTimeDisabledFunc, (DateTime dateTime) => dateTime.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
             var picker = comp.FindComponent<MudDateTimePicker>();
             comp.Find("button.mud-button-month").TextContent.Should().Contain("February");
             comp.Find("button.mud-button-month").TextContent.Should().Contain("2024");

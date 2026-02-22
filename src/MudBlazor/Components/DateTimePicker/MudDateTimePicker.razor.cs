@@ -5,6 +5,7 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.VisualBasic;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
@@ -55,16 +56,22 @@ namespace MudBlazor
                 SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
         }
-        private string _dateTimeFormat = string.Empty;
+        private string _dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
         /// <inheritdoc />
         protected override IConverter<DateTime?, string?> GetDefaultConverter()
         {
-            return new TimeSpanConverter
+            return new DefaultConverter<DateTime?>()
             {
                 Culture = GetCulture,
-                Format = GetFormat
+                Format = GetFormat,
             };
+        }
+
+        /// <inheritdoc/>
+        protected override string? GetFormat()
+        {
+            return DateTimeFormat;
         }
 
         /// <summary>
@@ -200,7 +207,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
+        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; } = _ => string.Empty;
 
         /// <summary>
         /// Called when the title date is clicked.
@@ -215,7 +222,7 @@ namespace MudBlazor
         private bool _datePickedChanged { get; set; }
         private bool _timePickedChanged { get; set; }
 
-        private MudDatePicker _datePickerRef { get; set; }
+        private MudDatePicker _datePickerRef { get; set; } = default!;
 
         public MudDateTimePicker()
         {
@@ -234,23 +241,6 @@ namespace MudBlazor
             _datePicked = _value?.Date;
             _timePicked = _value?.TimeOfDay;
             return base.OnOpenedAsync();
-        }
-
-        protected DateTime? OnGet(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                DateTime date;
-                if (System.DateTime.TryParseExact(value, GetFormat(), GetCulture(), DateTimeStyles.None, out date))
-                {
-                    return date;
-                }
-                if (System.DateTime.TryParse(value, GetCulture(), DateTimeStyles.None, out date))
-                {
-                    return date;
-                }
-            }
-            return null;
         }
 
         protected override async Task StringValueChangedAsync(string? value)

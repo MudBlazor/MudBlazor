@@ -1,4 +1,5 @@
 ﻿@using MudBlazor.Internal
+@using MudBlazor.State
 @namespace MudBlazor
 @inherits MudPicker<DateTime?>
 
@@ -14,11 +15,11 @@
         <MudPickerContent>
             <div class="mud-picker-datetime-layout">
                 <MudDatePicker @ref="_datePickerRef" PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" Disabled="@Disabled"
-                               FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" ShowToolbar="false" Culture="@Culture"
+                               FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" ShowToolbar="false" Culture="@GetCulture()"
                                OpenTo="@DateOpenTo" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateTimeFormat"
                                NextIcon="@DateNextIcon" PreviousIcon="@DatePreviousIcon" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc"
                                PickerMonth="@PickerMonth" PickerMonthChanged="@OnPickerMonthChanged" />
-                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" Disabled="@Disabled" Culture="@Culture"
+                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" Disabled="@Disabled" Culture="@GetCulture()"
                                ShowToolbar="false" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
             </div>
         </MudPickerContent>
