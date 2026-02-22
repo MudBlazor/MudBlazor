@@ -4,7 +4,7 @@
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@OuterClassname" id="@ElementId" @onfocusout="@OnFocusOutAsync" @onclick:stopPropagation @onmousedown:stopPropagation>
-        <MudInputControl Label="@EffectiveLabel"
+        <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
                          HelperText="@HelperText"
@@ -26,7 +26,7 @@
                           Class="@InputClassname"
                           Margin="@Margin"
                           Placeholder="@Placeholder"
-                          Label="@EffectiveLabel"
+                          Label="@Label"
                           Variant="@Variant"
                           Typo="@Typo"
                           Value="@(Strict && !IsValueInList ? null : ReadText)"
@@ -62,10 +62,10 @@
                     <MudStack Class="@FillerClassname" Spacing="1" Row>
                         @{
                             var value = _longestItem is { Value: not null } ? ToStringFunc ?.Invoke(_longestItem.Value) ?? ConvertSet(_longestItem.Value) : string.Empty;
-                            var useLabel = EffectiveLabel is not null && Placeholder is null && !ShrinkLabel
+                            var useLabel = Label is not null && Placeholder is null && !ShrinkLabel
                                         && (Adornment != Adornment.Start || (AdornmentIcon is null && AdornmentText is null));
 
-                            var defaultValue = useLabel ? EffectiveLabel : Placeholder;
+                            var defaultValue = useLabel ? Label : Placeholder;
                         }
                         @if (defaultValue?.Length > value!.Length)
                         {

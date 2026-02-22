@@ -6,18 +6,18 @@
 @code{
 
     protected override RenderFragment InputContent=>
-        @<MudInputControl Label="@EffectiveLabel" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
+        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
                           ErrorText="@ErrorTextState.Value" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
                           @onclick="async () => { if (!Editable) await ToggleStateAsync(); }" ForId="@FieldId">
                <InputContent>
                    <MudRangeInput @ref="_rangeInput"
-                                  @attributes="UserAttributes"
                                   InputType="@InputType.Text"
                                   Class="@PickerInputClassname"
                                   Style="@Style"
                                   Variant="@Variant"
                                   ReadOnly="@(!Editable)"
-                                  Label="@EffectiveLabel"
+                                  Label="@Label"
+                                  @attributes="UserAttributes"
                                   @bind-Value="@RangeText"
                                   Disabled="@GetDisabledState()"
                                   Adornment="@Adornment"

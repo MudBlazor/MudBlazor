@@ -8,9 +8,9 @@
         // note: Mask needs to remain before Text!
         @<MudTextField T="string"
                        @ref="_inputReference"
-                       @attributes="UserAttributes"
                        Style="@Style"
-                       Label="@EffectiveLabel"
+                       Label="@Label"
+                       @attributes="UserAttributes"
                        Mask="@_mask"
                        @bind-Value:get="@ReadText"
                        @bind-Value:set="@WriteTextAsync"
