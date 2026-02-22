@@ -1101,6 +1101,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().Contain("mud-popover-open"));
 
             var overlay = comp.Find("div.mud-overlay");
+            await Input().PointerDownAsync(new PointerEventArgs { Button = 0, ClientX = 10, ClientY = 10 });
             await overlay.PointerDownAsync(new PointerEventArgs { Button = 0, ClientX = 10, ClientY = 10 });
             await Input().MouseDownAsync(new MouseEventArgs { Button = 0, ClientX = 10, ClientY = 10 });
 

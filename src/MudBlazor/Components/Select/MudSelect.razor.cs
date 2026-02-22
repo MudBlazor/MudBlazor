@@ -30,11 +30,10 @@ namespace MudBlazor
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTimeOffset _lastSearchTime = DateTimeOffset.MinValue;
-        private DateTimeOffset _suppressMouseDownToggleUntil = DateTimeOffset.MinValue;
+        private bool _suppressMouseDownToggleForCurrentPointerSequence;
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
-        private static readonly TimeSpan _mouseDownToggleSuppressionDuration = TimeSpan.FromMilliseconds(75);
 
         internal string ElementId { get; } = Identifier.Create("select");
 
@@ -711,7 +710,6 @@ namespace MudBlazor
 
         private async Task CloseMenuFromOverlayAsync()
         {
-            _suppressMouseDownToggleUntil = TimeProvider.GetUtcNow().Add(_mouseDownToggleSuppressionDuration);
             await CloseMenu(false);
         }
 
@@ -1086,22 +1084,30 @@ namespace MudBlazor
             await ScrollToItemAsync(item);
         }
 
+        internal Task HandlePointerDown(PointerEventArgs args)
+        {
+            if (args.Button != 0)
+                return Task.CompletedTask;
+
+            // In modeless mode, the overlay auto-close is triggered on pointerdown.
+            // If the pointerdown started on this select while it was open, the follow-up
+            // mousedown on the select must not reopen the menu in the same click sequence.
+            _suppressMouseDownToggleForCurrentPointerSequence = _openState.Value;
+            return Task.CompletedTask;
+        }
+
         internal Task HandleMouseDown(MouseEventArgs args)
         {
             if (args.Button != 0) // if it wasn't left click drop out
                 return Task.CompletedTask;
 
-            var now = TimeProvider.GetUtcNow();
-            if (!_openState.Value && now <= _suppressMouseDownToggleUntil)
+            if (!_openState.Value && _suppressMouseDownToggleForCurrentPointerSequence)
             {
-                _suppressMouseDownToggleUntil = DateTimeOffset.MinValue;
+                _suppressMouseDownToggleForCurrentPointerSequence = false;
                 return Task.CompletedTask;
             }
 
-            if (now > _suppressMouseDownToggleUntil)
-            {
-                _suppressMouseDownToggleUntil = DateTimeOffset.MinValue;
-            }
+            _suppressMouseDownToggleForCurrentPointerSequence = false;
 
             return ToggleMenu();
         }
