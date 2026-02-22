@@ -51,6 +51,7 @@ namespace MudBlazor
                 SetSelectedItemAsync = x => dataGrid.SetSelectedItemAsync(x, item),
                 StartEditingItemAsync = () => dataGrid.SetEditingItemAsync(item),
                 CancelEditingItemAsync = () => dataGrid.CancelEditingItemAsync(),
+                CommitEditingItemAsync = () => dataGrid.CommitItemChangesAsync(item),
                 ToggleHierarchyVisibilityForItemAsync = () => dataGrid.ToggleHierarchyVisibilityAsync(item),
                 GetGroupIcon = (expanded, rightToLeft) => dataGrid.GetGroupIcon(expanded, rightToLeft),
             };
@@ -75,6 +76,17 @@ namespace MudBlazor
             /// The function which ends editing.
             /// </summary>
             public required Func<Task> CancelEditingItemAsync { get; init; }
+
+            /// <summary>
+            /// The function which commits all pending edits for the item and invokes <see cref="MudDataGrid{T}.CommittedItemChanges"/>.
+            /// </summary>
+            /// <remarks>
+            /// When using a custom <see cref="Column{T}.EditTemplate"/> in <see cref="DataGridEditMode.Cell"/> mode, call this
+            /// from a value-changed handler (e.g. <c>ValueChanged</c>) to trigger <see cref="MudDataGrid{T}.CommittedItemChanges"/>.
+            /// In <see cref="DataGridEditMode.Form"/> mode the built-in Save button commits changes automatically and
+            /// this method does not need to be called manually.
+            /// </remarks>
+            public required Func<Task> CommitEditingItemAsync { get; init; }
 
             /// <summary>
             /// The function which toggles hierarchy visibility.

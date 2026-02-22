@@ -107,6 +107,12 @@
                     By default, each editable cell uses an appropriate input component based on the data type.
                     You can provide custom editing UI using an <CodeInline Tag>EditTemplate</CodeInline>
                     (see the <CodeInline>Position</CodeInline> column in the example below).
+                    In <CodeInline>Form</CodeInline> mode the built-in Save button commits changes automatically.
+                    In <CodeInline>Cell</CodeInline> mode, standard columns automatically invoke
+                    <CodeInline>CommittedItemChanges</CodeInline> when the value changes, but custom controls inside
+                    an <CodeInline Tag>EditTemplate</CodeInline> do not. To trigger
+                    <CodeInline>CommittedItemChanges</CodeInline> from a custom control, call
+                    <CodeInline>context.Actions.CommitEditingItemAsync()</CodeInline> from its value-changed callback.
                     <br /><br />
 
                     <strong>Programmatic Editing</strong>

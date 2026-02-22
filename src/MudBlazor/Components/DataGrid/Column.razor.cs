@@ -437,6 +437,24 @@ namespace MudBlazor
         /// <summary>
         /// The template for editing values in this cell.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When <see cref="MudDataGrid{T}.EditMode"/> is <see cref="DataGridEditMode.Form"/>, the built-in Save button
+        /// automatically invokes <see cref="MudDataGrid{T}.CommittedItemChanges"/> — no extra handling is required.
+        /// </para>
+        /// <para>
+        /// When <see cref="MudDataGrid{T}.EditMode"/> is <see cref="DataGridEditMode.Cell"/>, standard columns commit
+        /// their value automatically on change. Custom controls inside an <see cref="EditTemplate"/> do not trigger
+        /// <see cref="MudDataGrid{T}.CommittedItemChanges"/> automatically. To commit from a custom control, call
+        /// <see cref="CellContext{T}.CellActions.CommitEditingItemAsync"/> in a value-changed handler:
+        /// </para>
+        /// <code>
+        /// &lt;EditTemplate&gt;
+        ///     &lt;MudDatePicker Date="@context.Item.Date"
+        ///         DateChanged="@(async d => { context.Item.Date = d; await context.Actions.CommitEditingItemAsync(); })" /&gt;
+        /// &lt;/EditTemplate&gt;
+        /// </code>
+        /// </remarks>
         [Parameter]
         public RenderFragment<CellContext<T>>? EditTemplate { get; set; }
 
