@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -517,19 +517,12 @@ namespace MudBlazor
             ParentList?.Unregister(this);
         }
 
-        /// <summary>
-        /// Gets the role of the MudList
-        /// </summary>
-        /// <returns>The role of the MudList</returns>
-        /// <remarks>
-        /// If <see cref="readonly"/> is true, the role is "list". Otherwise, the role is "listbox".
-        /// </remarks>
         private string GetRole()
         {
             return GetReadOnly() ? "list" : "listbox";
         }
 
-        private string GetAriaMultiselectableValue() => SelectionMode == SelectionMode.MultiSelection ? "true" : "false";
+        private string GetAriaMultiSelectableValue() => SelectionMode == SelectionMode.MultiSelection ? "true" : "false";
 
         private async Task FocusAdjacentItemAsync(int direction)
         {
@@ -570,12 +563,11 @@ namespace MudBlazor
 
             if (!string.IsNullOrWhiteSpace(startChar))
             {
-                // Find first item that starts with the letter
+                // Find first item that starts with the letter.
                 var currentItem = items.FirstOrDefault(x => x.ItemId == _activeItemId);
-                if (currentItem is not null &&
-                    currentItem.Text?.ToLowerInvariant().StartsWith(startChar) == true)
+                if (currentItem is not null && currentItem.Text?.ToLowerInvariant().StartsWith(startChar) == true)
                 {
-                    // Step through items starting with the same letter
+                    // Step through items starting with the same letter.
                     items = items.SkipWhile(x => x != currentItem).Skip(1);
                 }
                 items = items.Where(x => x.Text?.ToLowerInvariant().StartsWith(startChar) == true);
@@ -592,6 +584,7 @@ namespace MudBlazor
         {
             if (_items.Count == 0)
                 return;
+
             var item = _items.LastOrDefault(x => !x.Disabled);
             if (item is null)
                 return;
