@@ -228,7 +228,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FileUploadFormValidationTest>();
 
             var form = comp.Instance.Form;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
 
             form.IsValid.Should().BeFalse(); //form is invalid to start
 
@@ -243,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
             var singleInput = single.FindComponent<InputFile>();
             singleInput.UploadFiles(fileContent[0]); //upload first file
 
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
 
             single.Instance.GetState(x => x.ErrorText).Should().BeNull();
             single.Markup.Should().NotContain("'File' must not be empty.");
@@ -253,7 +253,7 @@ namespace MudBlazor.UnitTests.Components
             var multipleInput = multiple.FindComponent<InputFile>();
             multipleInput.UploadFiles(fileContent); //upload second files
 
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
 
             single.Instance.GetState(x => x.ErrorText).Should().BeNull();
             single.Markup.Should().NotContain("'Files' must not be empty.");

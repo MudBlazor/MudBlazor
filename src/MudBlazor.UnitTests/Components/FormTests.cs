@@ -226,10 +226,6 @@ namespace MudBlazor.UnitTests.Components
             // input a date, isTouched should be true
             await dateComp.Find("input").ChangeAsync("2001-01-31");
             form.IsTouched.Should().Be(true);
-
-            // resetTouched should set the IsTouched property to default(false)
-            await comp.InvokeAsync(() => form.ResetTouched());
-            form.IsTouched.Should().Be(false);
         }
 
         /// <summary>
@@ -1195,7 +1191,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[5].BlurAsync();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1240,7 +1236,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[9].BlurAsync();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1295,7 +1291,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[9].BlurAsync();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeTrue();
 
             var textfields = comp.FindComponents<MudTextField<string>>();

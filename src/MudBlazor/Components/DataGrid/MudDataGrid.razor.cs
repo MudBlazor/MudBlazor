@@ -1974,7 +1974,7 @@ namespace MudBlazor
         {
             Debug.Assert(_editingItem is not null);
             Debug.Assert(_editForm is not null);
-            await _editForm.Validate();
+            await _editForm.ValidateAsync();
             if (!_editForm.IsValid)
             {
                 return;

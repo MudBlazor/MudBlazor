@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(0);
 
             // after validating, the form should be invalid with errors
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
             checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
             checkbox.Markup.Should().Contain("You must select a value");
@@ -202,21 +202,21 @@ namespace MudBlazor.UnitTests.Components
 
             // state: true, form should be valid
             await checkbox.Find("input").ChangeAsync(true);
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeTrue();
             checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
             checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // state: false, form should be valid
             await checkbox.Find("input").ChangeAsync(false);
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeTrue();
             checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
             checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
             // state: null, form should be invalid again
             await checkbox.Find("input").ChangeAsync(null);
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
             checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
             checkbox.Markup.Should().Contain("You must select a value");

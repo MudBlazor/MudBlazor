@@ -52,6 +52,12 @@ namespace MudBlazor
         public bool IsValid { get; set; } = true;
         
         /// <summary>
+        /// Occurs when <see cref="IsValid"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> IsValidChanged { get; set; }
+        
+        /// <summary>
         /// Whether any input's value has changed.
         /// </summary>
         /// <remarks>
@@ -62,6 +68,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public bool IsTouched { get; set; }
+
+        /// <summary>
+        /// Occurs when <see cref="IsTouched"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> IsTouchedChanged { get; set; }
 
         /// <summary>
         /// Prevents the user from interacting with this form.
@@ -127,18 +139,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public int Spacing { set; get; }
-
-        /// <summary>
-        /// Occurs when <see cref="IsValid"/> has changed.
-        /// </summary>
-        [Parameter]
-        public EventCallback<bool> IsValidChanged { get; set; }
-
-        /// <summary>
-        /// Occurs when <see cref="IsTouched"/> has changed.
-        /// </summary>
-        [Parameter]
-        public EventCallback<bool> IsTouchedChanged { get; set; }
 
         /// <summary>
         /// Occurs when an <see cref="IFormComponent"/> within this form has changed.
@@ -213,12 +213,11 @@ namespace MudBlazor
         // Keeps track of validation. If the input was validated at least once, the value will be true.
         protected HashSet<IFormComponent> _formControls = [];
         protected HashSet<string> _errors = [];
+        protected HashSet<MudForm> ChildForms { get; } = [];
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
-
-        protected HashSet<MudForm> ChildForms { get; } = [];
 
         protected async Task OnEvaluateForm()
         {
@@ -292,7 +291,7 @@ namespace MudBlazor
         /// <remarks>
         /// Validation will occur even if form controls haven't changed yet.
         /// </remarks>
-        [Obsolete("Use ValidateAsync instead.", true)]
+        [Obsolete("Use ValidateAsync instead.")]
         public Task Validate()
         {
             return ValidateAsync();
@@ -364,6 +363,7 @@ namespace MudBlazor
         /// <remarks>
         /// When called, <see cref="IsTouched"/> becomes <c>false</c>.
         /// </remarks>
+        [Obsolete("Bind IsTouched instead.")]
         public void ResetTouched()
         {
             IsTouched = false;
