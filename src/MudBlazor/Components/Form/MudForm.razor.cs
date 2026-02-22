@@ -10,11 +10,6 @@ namespace MudBlazor
     /// </summary>
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
-        // Note: w/o any children the form is automatically valid.
-        // It stays valid, as long as non-required fields are added or
-        // a required field is added or the user touches a field that fails validation.
-        private bool _valid = true;
-        private bool _touched = false;
         private ITimer? _timer;
         // Default is true, we need the form children to render
         private bool _shouldRender = true;
@@ -43,34 +38,30 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Form.ValidatedData)]
         public RenderFragment? ChildContent { get; set; }
-
+        
         /// <summary>
         /// Whether all inputs and child forms passed validation.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When this value changes, <see cref="IsValidChanged"/> occurs.
+        /// Defaults to <c>true</c>.
+        /// When this value changes, <see cref="IsValidChanged"/> occurs.
+        /// Note: A form without children is always valid.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
-        public bool IsValid
-        {
-            get => _valid && ChildForms.All(x => x.IsValid);
-            set => _valid = value;
-        }
-
-        // Note: w/o any children the form is automatically valid.
-        // It stays valid, as long as non-required fields are added or
-        // a required field is added or the user touches a field that fails validation.
-
+        public bool IsValid { get; set; } = true;
+        
         /// <summary>
         /// Whether any input's value has changed.
         /// </summary>
         /// <remarks>
-        /// When <c>true</c>, an input has changed in this form or any child forms.  Becomes <c>false</c> when input values have been reset.  When this value changes, <see cref="IsTouchedChanged"/> occurs.
+        /// When <c>true</c>, an input has changed in this form or any child forms.
+        /// Becomes <c>false</c> when input values have been reset.
+        /// When this value changes, <see cref="IsTouchedChanged"/> occurs.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
-        public bool IsTouched { get => _touched; set {/* readonly parameter! */ } }
+        public bool IsTouched { get; set; }
 
         /// <summary>
         /// Prevents the user from interacting with this form.
@@ -96,7 +87,8 @@ namespace MudBlazor
         /// The delay, in milliseconds, before performing validation.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>300</c> (300 milliseconds).  This delay can improve rendering performance for larger forms with inputs which set <see cref="MudBaseInput{T}.Immediate"/> to <c>true</c>.
+        /// Defaults to <c>300</c> (300 milliseconds).
+        /// This delay can improve rendering performance for larger forms with inputs which set <see cref="MudBaseInput{T}.Immediate"/> to <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
@@ -106,18 +98,20 @@ namespace MudBlazor
         /// Prevents child components from rendering when <see cref="IsValid"/> changes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, rendering performance may improve for larger forms and older devices.
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, rendering performance may improve for larger forms and older devices.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
-        public bool SuppressRenderingOnValidation { get; set; } = false;
+        public bool SuppressRenderingOnValidation { get; set; }
 
         /// <summary>
         /// Prevents this form from being submitted when <c>Enter</c> is pressed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>false</c>, the form will submit when <c>Enter</c> is pressed, and any parent dialog will close.  See: 
-        /// <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">Implicit Form Submission</see>.
+        /// Defaults to <c>true</c>.
+        /// When <c>false</c>, the form will submit when <c>Enter</c> is pressed, and any parent dialog will close.
+        /// See: <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">Implicit Form Submission</see>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
@@ -127,7 +121,8 @@ namespace MudBlazor
         /// The amount of spacing between input components, in increments of <c>4px</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>.  A spacing of <c>1</c> means <c>4px</c>, <c>2</c> means <c>8px</c>, and so on.
+        /// Defaults to <c>0</c>.
+        /// A spacing of <c>1</c> means <c>4px</c>, <c>2</c> means <c>8px</c>, and so on.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
@@ -197,11 +192,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
-        public string[] Errors
-        {
-            get => _errors.ToArray();
-            set { /* readonly */ }
-        }
+        public string[] Errors { get; set; } = [];
 
         /// <summary>
         /// Occurs when <see cref="Errors"/> has changed.
@@ -219,7 +210,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Form.ValidatedData)]
         public object? Model { get; set; }
 
-        // keeps track of validation. if the input was validated at least once the value will be true
+        // Keeps track of validation. If the input was validated at least once, the value will be true.
         protected HashSet<IFormComponent> _formControls = [];
         protected HashSet<string> _errors = [];
 
@@ -233,27 +224,31 @@ namespace MudBlazor
         {
             _errors.Clear();
             foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
+            {
                 _errors.Add(error);
-            // form can only be valid if:
-            // - none have an error
-            // - all required fields have been touched (and thus validated)
-            var noErrors = _formControls.All(x => x.HasErrors == false);
+            }
+            
+            // Form can only be valid if:
+            // - No errors
+            // - All required fields have been touched (and thus validated)
+            var noErrors = _formControls.All(x => !x.HasErrors);
             var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
             var valid = noErrors && requiredAllTouched;
 
-            var oldTouched = _touched;
-            _touched = _formControls.Any(x => x.Touched);
+            var oldTouched = IsTouched;
+            IsTouched = _formControls.Any(x => x.Touched);
             try
             {
                 _shouldRender = false;
                 SetIsValid(valid);
+                Errors = _errors.ToArray();
                 await ErrorsChanged.InvokeAsync(Errors);
-                if (oldTouched != _touched)
+                if (oldTouched != IsTouched)
                 {
-                    await IsTouchedChanged.InvokeAsync(_touched);
+                    await IsTouchedChanged.InvokeAsync(IsTouched);
                     if (ParentMudForm != null)
                     {
-                        await ParentMudForm.IsTouchedChanged.InvokeAsync(_touched);
+                        await ParentMudForm.IsTouchedChanged.InvokeAsync(IsTouched);
                     }
                 }
             }
@@ -272,15 +267,15 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = _formControls.All(x => !x.Required);
                 if (valid != IsValid)
                 {
-                    // the user probably bound a variable to IsValid, and it conflicts with our state.
-                    // let's set this right
+                    // The user probably bound a variable to IsValid, and it conflicts with our state.
+                    // => Let's set this right
                     SetIsValid(valid);
                 }
-
             }
+
             return base.OnAfterRenderAsync(firstRender);
         }
 
@@ -297,13 +292,25 @@ namespace MudBlazor
         /// <remarks>
         /// Validation will occur even if form controls haven't changed yet.
         /// </remarks>
-        public async Task Validate()
+        [Obsolete("Use ValidateAsync instead.", true)]
+        public Task Validate()
+        {
+            return ValidateAsync();
+        }
+        
+        /// <summary>
+        /// Forces a validation of all form controls (including in child forms).
+        /// </summary>
+        /// <remarks>
+        /// Validation will occur even if form controls haven't changed yet.
+        /// </remarks>
+        public async Task ValidateAsync()
         {
             await Task.WhenAll(_formControls.Select(x => x.ValidateAsync()));
 
             if (ChildForms.Count > 0)
             {
-                await Task.WhenAll(ChildForms.Select(x => x.Validate()));
+                await Task.WhenAll(ChildForms.Select(x => x.ValidateAsync()));
             }
 
             EvaluateForm(debounce: false);
@@ -359,7 +366,7 @@ namespace MudBlazor
         /// </remarks>
         public void ResetTouched()
         {
-            _touched = false;
+            IsTouched = false;
         }
 
         private void SetDefaultControlValidation(IFormComponent formComponent)
@@ -374,9 +381,10 @@ namespace MudBlazor
 
         private void SetIsValid(bool value)
         {
-            if (IsValid == value)
-                return;
-            IsValid = value;
+            var isValidIncludingChildren = value && ChildForms.All(x => x.IsValid);
+            if (IsValid == isValidIncludingChildren) return;
+
+            IsValid = isValidIncludingChildren;
             IsValidChanged.InvokeAsync(IsValid).CatchAndLog();
         }
 
@@ -384,9 +392,13 @@ namespace MudBlazor
         {
             _timer?.Dispose();
             if (debounce && ValidationDelay > 0)
+            {
                 _timer = TimeProvider.CreateTimer(OnTimerComplete, null, TimeSpan.FromMilliseconds(ValidationDelay), Timeout.InfiniteTimeSpan);
+            }
             else
+            {
                 _ = OnEvaluateForm();
+            }
         }
 
         private void OnTimerComplete(object? stateInfo)
@@ -408,8 +420,8 @@ namespace MudBlazor
 
         void IForm.Add(IFormComponent formControl)
         {
-            if (formControl.Required)
-                SetIsValid(false);
+            if (formControl.Required) SetIsValid(false);
+            
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);
         }
