@@ -949,6 +949,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TextField_OnlyValidateIfDirty_WithNonDefaultInitialValue_ShouldNotValidateOnBlur()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Value, string.Empty)
+                .Add(p => p.Required, true)
+                .Add(p => p.OnlyValidateIfDirty, true));
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // blur without user interaction should not trigger validation
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // user types then clears — now dirty, validation should fire
+            await comp.Find("input").ChangeAsync("x");
+            await comp.Find("input").ChangeAsync("");
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+        }
+
+        [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
         {
             var comp = Context.Render<MudTextField<int?>>(parameters => parameters
