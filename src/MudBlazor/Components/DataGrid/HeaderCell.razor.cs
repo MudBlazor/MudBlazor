@@ -75,9 +75,9 @@ namespace MudBlazor
         public SortDirection SortDirection { get; set; }
 
         private string Classname =>
-            new CssBuilder(Column?.HeaderClass)
+            new CssBuilder(Column?.HeaderClassname)
                 .AddClass(Column?.HeaderClassFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
-                .AddClass(Column?.HeaderClassname)
+                .AddClass(Column?.HeaderClass)
                 .AddClass(Class)
                 .Build();
 
