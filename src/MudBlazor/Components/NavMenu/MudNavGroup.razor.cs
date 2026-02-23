@@ -83,7 +83,7 @@ namespace MudBlazor
         /// The content within the title area.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  When set, overrides the <see cref="Title"/> property.
+        /// Defaults to <c>null</c>.  When set, overrides the <see cref="Title"/> property for display purposes only.  The <see cref="Title"/> property is still used for the <c>aria-label</c> attribute of the underlying button for accessibility.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]

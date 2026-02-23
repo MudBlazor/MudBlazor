@@ -14,6 +14,9 @@ namespace MudBlazor
         /// </summary>
         private Virtualize<T>? _virtualizeContainerReference;
 
+        // TODO: Remove splatting workaround when .NET 8 support is dropped and pass MaxItemCount directly as an attribute instead (#12701).
+        private readonly Dictionary<string, object?> _virtualizeAttributes = new();
+
         /// <summary>
         /// Set false to turn off virtualization
         /// </summary>
@@ -65,6 +68,7 @@ namespace MudBlazor
         [Parameter]
         public float ItemSize { get; set; } = 50f;
 
+#if NET9_0_OR_GREATER
         /// <summary>
         /// Gets or sets the maximum number of items that will be rendered, even if the client reports
         /// that its viewport is large enough to show more. The default value is 100.
@@ -75,12 +79,22 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public int MaxItemCount { get; set; } = 100;
+#endif
 
         /// <summary>
         /// Gets or sets tag name of the HTML element that will be used as virtualization spacer. Default is div.
         /// </summary>
         [Parameter]
         public string SpacerElement { get; set; } = "div";
+
+        /// <inheritdoc/>
+        protected override void OnParametersSet()
+        {
+            _virtualizeAttributes.Clear();
+#if NET9_0_OR_GREATER
+            _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
+#endif
+        }
 
         /// <summary>
         /// Refreshes the data in the Virtualize component asynchronously.

@@ -1158,5 +1158,23 @@ namespace MudBlazor.UnitTests.Components
             // Modal should be null (using PopoverOptions defaults)
             menu.Instance.Modal.Should().BeNull();
         }
+
+        [Test]
+        public async Task NestedMenu_SubMenuArrow_PointsRightInLtr()
+        {
+            var comp = Context.Render<MenuWithNestingTest>();
+            await comp.Find("button:contains('1')").ClickAsync();
+            var icon = comp.Find(".mud-menu-submenu-icon");
+            icon.InnerHtml.Should().Contain("M10 17l5-5-5-5v10z"); // ArrowRight path
+        }
+
+        [Test]
+        public async Task NestedMenu_SubMenuArrow_PointsLeftInRtl()
+        {
+            var comp = Context.Render<MenuWithNestingTest>(p => p.AddCascadingValue("RightToLeft", true));
+            await comp.Find("button:contains('1')").ClickAsync();
+            var icon = comp.Find(".mud-menu-submenu-icon");
+            icon.InnerHtml.Should().Contain("M14 7l-5 5 5 5V7z"); // ArrowLeft path
+        }
     }
 }

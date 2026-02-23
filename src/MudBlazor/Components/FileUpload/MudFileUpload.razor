@@ -59,13 +59,16 @@
                 </div>
             </CascadingValue>
         }
-        <div class="mud-file-upload-files mt-1">
-            @if (SelectedTemplate != null)
-            {
+
+        @if (SelectedTemplate != null)
+        {
+            <div class="mud-file-upload-files">
                 @SelectedTemplate(_filesState.Value)
-            }
-            else
-            {
+            </div>
+        }
+        else
+        {
+            <div class="mud-file-upload-files mt-1">
                 <!-- Make sure there is at least one file -->
                 @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
                 {
@@ -81,7 +84,7 @@
                         }
                     </span>
                 }
-            }
-        </div>
+            </div>
+        }
     </InputContent>
 </MudInputControl>
