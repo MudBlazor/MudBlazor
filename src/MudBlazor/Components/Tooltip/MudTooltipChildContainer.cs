@@ -11,9 +11,10 @@ namespace MudBlazor;
 /// This component is used to prevent re-rendering of the child content when the tooltip's internal state changes.
 /// It only re-renders when the parent component of the tooltip re-renders (signaled by UpdateCount).
 /// </summary>
-public class MudTooltipChildContainer : ComponentBase
+public class MudTooltipChildContainer : IComponent
 {
     private int _lastUpdateCount;
+    private RenderHandle _renderHandle;
 
     /// <summary>
     /// The child content to render.
@@ -28,16 +29,23 @@ public class MudTooltipChildContainer : ComponentBase
     public int UpdateCount { get; set; }
 
     /// <inheritdoc />
-    protected override void OnInitialized() => _lastUpdateCount = UpdateCount;
+    void IComponent.Attach(RenderHandle renderHandle) => _renderHandle = renderHandle;
 
     /// <inheritdoc />
-    protected override bool ShouldRender()
+    Task IComponent.SetParametersAsync(ParameterView parameters)
     {
+        parameters.SetParameterProperties(this);
+
         var changed = UpdateCount != _lastUpdateCount;
         _lastUpdateCount = UpdateCount;
-        return changed;
+        // Only recalculate if changed
+        if (changed)
+        {
+            _renderHandle.Render(BuildRenderTree);
+        }
+
+        return Task.CompletedTask;
     }
 
-    /// <inheritdoc />
-    protected override void BuildRenderTree(RenderTreeBuilder builder) => builder.AddContent(0, ChildContent);
+    private void BuildRenderTree(RenderTreeBuilder builder) => builder.AddContent(0, ChildContent);
 }
