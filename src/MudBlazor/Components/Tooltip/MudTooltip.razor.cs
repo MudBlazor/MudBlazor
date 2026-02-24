@@ -223,7 +223,7 @@ namespace MudBlazor
         /// <inheritdoc />
         public override Task SetParametersAsync(ParameterView parameters)
         {
-            _parentUpdateCount++;
+            unchecked { _parentUpdateCount++; }
 
             return base.SetParametersAsync(parameters);
         }
