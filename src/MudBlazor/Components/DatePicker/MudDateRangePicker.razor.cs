@@ -531,7 +531,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Normalize a date range by checking the start date and end date for DateRange.MinValue
+        /// Normalize a date range by checking the start date and end date for DateTime.MinValue
         /// This prevents an ArgumentOutOfRangeException from happening when performing date arithmetic
         /// </summary>
         /// <see cref="NormalizeDate"/>
