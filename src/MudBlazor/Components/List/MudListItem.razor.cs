@@ -338,7 +338,7 @@ namespace MudBlazor
 
         internal void SetSelected(bool selected)
         {
-            if (GetDisabled() || _selected == selected)
+            if (_selected == selected)
             {
                 return;
             }

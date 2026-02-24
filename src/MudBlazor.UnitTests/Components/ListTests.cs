@@ -104,6 +104,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ListMultiSelection_DisabledItems_ShouldDisplaySelectedState()
+        {
+            var comp = Context.Render<ListMultiSelectionTest>(self => self.Add(x => x.SelectedValues, ["Apple Juice", "Orange Juice"]));
+            var list = comp.FindComponent<MudList<string>>().Instance;
+            var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
+            comp.Find("p.selected-values").TrimmedText().Should().Be("Apple Juice, Orange Juice");
+            GetCheckBox("Apple Juice").ReadValue.Should().Be(true);
+            GetCheckBox("Orange Juice").ReadValue.Should().Be(true);
+        }
+
+        [Test]
         public async Task ListMultiSelectionBinding()
         {
             var comp = Context.Render<ListMultiSelectionBindingTest>();
