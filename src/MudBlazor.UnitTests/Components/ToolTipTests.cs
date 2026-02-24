@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
-﻿using AngleSharp.Html.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
