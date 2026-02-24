@@ -35,7 +35,7 @@ namespace MudBlazor
 
         protected Task SetDateAsync(DateTime? date, bool updateValue)
             => SetDateAsync(date, updateValue, false);
-        
+
         protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
@@ -48,7 +48,7 @@ namespace MudBlazor
             /* See #7866 for more details
              * When the date is set in the UI, this method gets called with the same value multiple time. This guard
              * debounces the value to the same value in a short time frame is ignored. The debounce is ignored if
-             * foreceUpdate is true
+             * forceUpdate is true
              */
             if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs && !forceUpdate)
             {
